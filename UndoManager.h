@@ -196,21 +196,81 @@ public:
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+class CBufPtr {
+	public:
+		int	m_index;
+		int	m_size;
+
+	void Setup (int size) { 
+		if (m_index >= (m_size = size))
+			m_index = m_size - 1;
+		}
+
+	const CBufPtr& operator= (CBufPtr& other) {
+		m_index = other.m_index;
+		m_size = other.m_size;
+		}
+
+	const CBufPtr& operator= (int i) { m_index = i; }
+
+	const int& operator++ () { return m_index = ++m_index % m_size; }
+
+	const int& operator++ (int) { return m_index = ++m_index % m_size; }
+
+	const int& operator-- () { return m_index = ((m_index == 0) ? m_size : m_index) - 1; }
+
+	const int& operator-- (int) { return m_index = ((m_index == 0) ? m_size : m_index) - 1; }
+
+	const int& operator-= (int i) { 
+		m_index -= i; 
+		if (m_index < 0)
+			m_index += m_size;
+		return m_index;
+		}
+
+	const int& operator+= (int i) { 
+		m_index += i; 
+		if (m_index >= m_size)
+			m_index -= m_size;
+		return m_index;
+		}
+
+	const int operator- (int i) { 
+		int h = m_index - i; 
+		if (h < 0)
+			h += m_size;
+		return h;
+		}
+
+	const int operator+ (int i) { 
+		int h = m_index + i; 
+		if (h >= m_size)
+			h -= m_size;
+		return h;
+		}
+
+	CBufPtr (int size = 0) : m_size (size), m_index (0) {}
+};
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 class CUndoManager
 {
 	private:
 		CUndoData	m_buffer [MAX_UNDOS];
-		int			m_nHead;
-		int			m_nTail;
-		int			m_nCurrent;
-		CUndoData	m_current;
+		CBufPtr		m_nHead (MAX_UNDOS);
+		CBufPtr		m_nTail (MAX_UNDOS);
+		CBufPtr		m_nCurrent (MAX_UNDOS);
 		//CUndoItem*	m_head;
 		//CUndoItem*	m_tail;
 		//CUndoItem*	m_current;
-		int			m_maxSize;
+		int			m_nMaxSize;
 		int			m_size;
 		int			m_delay;
 		int			m_enabled;
+		int			m_mode;
 		int			m_nModified;
 		uint			m_nId;
 
@@ -247,7 +307,7 @@ class CUndoManager
 
 		int SetMaxSize (int maxSize);
 
-		inline int MaxSize (void) { return m_maxSize; }
+		inline int MaxSize (void) { return m_nMaxSize; }
 
 		inline void Lock (void) { Delay (true); }
 
@@ -267,6 +327,10 @@ class CUndoManager
 
 private:
 		void Append (void);
+
+		inline int Advance (int i) { return (i == m_nMaxSize - 1) ? 0 : i + 1; }
+
+		inline int Reverse (int i) { return (i == 0) ? m_nMaxSize - 1 : i - 1; }
 };
 
 extern CUndoManager undoManager;

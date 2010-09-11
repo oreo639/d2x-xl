@@ -181,8 +181,9 @@ CUndoManager::CUndoManager (int maxSize)
 m_nHead = m_nTail = m_nCurrent = -1;
 m_size = 0;
 m_enabled = 1;
-m_maxSize = maxSize;
+m_nMaxSize = maxSize;
 m_nModified = 0;
+m_mode = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -218,16 +219,16 @@ for (;;) {
 	m_buffer [m_nTail].Destroy ();
 	if (m_nTail == m_nCurrent)
 		break;
-	if (--m_nTail < 0)
-		m_nTail = m_maxSize - 1;
+	m_nTail = Reverse (m_nTail);
 	}
 if (m_nCurrent == m_nHead) {
 	m_nHead = m_nTail = m_nCurrent = -1;
 	m_nId = 0;
 	}
 else {
+	m_nTail = Reverse (m_nTail);
 	if (--m_nTail < 0)
-		m_nTail = m_maxSize - 1;
+		m_nTail = m_nMaxSize - 1;
 	m_nCurrent = m_nTail;
 	m_nId = Current ()->Id ();
 	}
@@ -244,13 +245,13 @@ else if (maxSize > MAX_UNDOS)
 Enable (maxSize > 0);
 int nExcess = Count () - maxSize;
 if (nExcess > 0) {
-	for (m_nCurrent = m_nTail; nExcess > 0; nExcess--) {
-		if (--m_nCurrent < 0)
-			m_nCurrent = m_maxSize - 1;
-		}
+	m_nCurrent -= nExcess;
 	Truncate ();
 	}
-return m_maxSize = maxSize;
+m_nHead.Setup (maxSize);
+m_nTail.Setup (maxSize);
+m_nCurrent.Setup (maxSize);
+return m_nMaxSize = maxSize;
 }
 
 //------------------------------------------------------------------------------
@@ -259,14 +260,17 @@ bool CUndoManager::Undo (void)
 {
 if (!m_enabled)
 	return false;
-if ((m_nHead < 0) || (m_nCurrent == (m_nHead + 1) % m_maxSize))
+if (m_nCurrent == m_nHead)
 	return false;
-int nId = Current ()->Id ();
-do {
-	Current ()->Restore ();
-	if (--m_nCurrent < 0)
-		m_nCurrent = m_maxSize - 1;
-	} while ((m_nCurrent != m_nHead) && (Current ()->Id () == nId));
+// need a backup of the current state when starting to undo
+if ((m_mode == 0) && (m_nCurrent == m_nTail + 1)) {
+	m_current.Destroy ();
+	m_current.Backup (udAll);
+	}
+
+m_mode = 1;
+--m_nCurrent;
+Current ()->Restore ();
 return true;
 }
 
@@ -276,13 +280,17 @@ bool CUndoManager::Redo (void)
 {
 if (!m_enabled)
 	return false;
-if (m_nCurrent == m_nTail)
+CBufPtr nEnd = m_nTail + 1;
+if (m_nCurrent == nEnd)
 	return false;
-int nId = Current ()->Id ();
-do {
+if (m_mode == 0)
+	return false;
+
+m_mode = 2;
+if (++m_nCurrent != nEnd)
 	Current ()->Restore ();
-	m_nCurrent = ++m_nCurrent % m_maxSize;
-	} while ((m_nCurrent != m_nTail) && (Current ()->Id () == nId));
+else 
+	m_current.Restore ();
 return true;
 }
 
@@ -291,14 +299,13 @@ return true;
 void CUndoManager::Append (void)
 {
 if (m_nHead = -1)
-	m_nHead = m_nTail = m_nCurrent = 0;
+	m_nHead = m_nTail = 0;
 else {
 	Truncate ();
-	m_nTail = ++m_nTail % m_maxSize;
-	if (m_nTail == m_nHead) {	// buffer full
+	if (++m_nTail == m_nHead) {	// buffer full
 		int nId = Head ()->Id ();
 		do { // remove all items with same backup id from buffer start
-			m_nHead = ++m_nHead % m_maxSize;
+			m_nHead = ++m_nHead % m_nMaxSize;
 #if DETAIL_BACKUP
 			delete Head ()->m_item;
 #else
@@ -307,6 +314,7 @@ else {
 			} while (Head ()->Id () == nId);
 		}
 	}
+m_nCurrent = m_nTail + 1;
 }
 
 //------------------------------------------------------------------------------
@@ -352,7 +360,7 @@ if (!m_current.Cleanup ()) {
 
 int CUndoManager::Count (void)
 {
-return (m_nTail > m_nHead) ? (m_nTail - m_nHead + 1) : m_nTail + m_nHead - m_maxSize;
+return (m_nTail > m_nHead) ? (m_nTail - m_nHead + 1) : m_nTail + m_nHead - m_nMaxSize;
 }
 
 //------------------------------------------------------------------------------
@@ -391,6 +399,10 @@ void CUndoManager::Begin (int dataFlags)
 {
 if (0 == m_nModified++) 
 	Update ();
+if (m_mode != 0) {
+	m_mode = 0;
+	m_current.Destroy ();
+	}
 m_current.Backup (dataFlags);
 Lock ();
 }
