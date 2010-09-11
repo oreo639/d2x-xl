@@ -116,9 +116,9 @@ class CReactorTrigger : public CTriggerTargets, public CGameItem {
 
 		virtual CGameItem* Clone (void);
 
-		//virtual void Backup (eEditType editType = opModify);
+		virtual void Backup (eEditType editType = opModify);
 
-		//virtual CGameItem* Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* destP);
 };
 
 //------------------------------------------------------------------------

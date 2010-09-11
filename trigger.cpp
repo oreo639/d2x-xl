@@ -262,17 +262,19 @@ CTriggerTargets::Clear ();
 }
 
 // -----------------------------------------------------------------------------
-// make a copy of this vertex for the undo manager
-// if vertex was modified, make a copy of the current vertex
-// if vertex was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
+
+CGameItem* CReactorTrigger::Copy (CGameItem* destP)
+{
+if (destP != null)
+	*dynamic_cast<CReactorTrigger*> (destP) = *this;
+return destP;
+}
+
+// -----------------------------------------------------------------------------
 
 CGameItem* CReactorTrigger::Clone (void)
 {
-CReactorTrigger* cloneP = new CReactorTrigger;	// only make a copy if modified
-if (cloneP != null) 
-	*cloneP = *this;
-return cloneP;
+return Copy (new CReactorTrigger);	// only make a copy if modified
 }
 
 // -----------------------------------------------------------------------------

@@ -248,11 +248,11 @@ public:
 
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 
-	//virtual CGameItem* Clone (void);
+	virtual CGameItem* Clone (void);
 
-	//virtual void Backup (eEditType editType = opModify);
+	virtual void Backup (eEditType editType = opModify);
 
-	//virtual CGameItem* Copy (CGameItem* destP);
+	virtual CGameItem* Copy (CGameItem* destP);
 
 	//virtual void Undo (void);
 
