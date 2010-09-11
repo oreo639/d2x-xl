@@ -188,13 +188,13 @@ CWall *wallP = current.Wall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
-	if (theMine->IsD2XLevel ())
+	if (DLE.IsD2XLevel ())
 		current.LightColor ()->Clear ();
 	}
 else {
 	if (!m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = TRUE);
-	if (theMine->IsD2XLevel ()) {
+	if (DLE.IsD2XLevel ()) {
 		CColor *plc = current.LightColor ();
 		if (!plc->m_info.index) {	// set light color to white for new lights
 			plc->m_info.index = 255;
@@ -346,7 +346,7 @@ void CTextureTool::OnLButtonDown (UINT nFlags, CPoint point)
 {
 	CRect		rcPal;
 
-if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
+if (/*(DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
 	GetCtrlClientRect (&m_paletteWnd, rcPal);
 	if (PtInRect (rcPal, point)) {
 		point.x -= rcPal.left;

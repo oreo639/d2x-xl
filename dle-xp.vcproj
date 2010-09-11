@@ -803,6 +803,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\dle-xp.h"
+					>
+				</File>
+				<File
 					RelativePath="MainFrm.h"
 					>
 				</File>
@@ -1626,10 +1630,6 @@
 				>
 				<File
 					RelativePath=".\dle-xp-res.h"
-					>
-				</File>
-				<File
-					RelativePath=".\dle-xp.h"
 					>
 				</File>
 				<File

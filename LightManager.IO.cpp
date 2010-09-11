@@ -1,4 +1,6 @@
+
 #include "Mine.h"
+#include "dle-xp.h"
 
 //------------------------------------------------------------------------------
 
@@ -112,7 +114,7 @@ if (theMine->LevelVersion () > 6) {
 
 void CLightManager::ReadLightDeltas (CFileManager& fp, int nFileVersion)
 {
-if (theMine->IsD2File ()) {
+if (DLE.IsD2File ()) {
 
 	bool bD2X = (theMine->LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
 	int i;

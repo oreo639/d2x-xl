@@ -83,7 +83,7 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
 // App command to run the dialog
-void CDlcApp::OnAppAbout()
+void CDLE::OnAppAbout()
 {
 	CAboutDlg aboutDlg;
 	aboutDlg.DoModal();
@@ -120,10 +120,10 @@ if (m_nTimer == (int) nIdEvent) {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CDlcApp
+// CDLE
 
-BEGIN_MESSAGE_MAP(CDlcApp, CWinApp)
-	//{{AFX_MSG_MAP(CDlcApp)
+BEGIN_MESSAGE_MAP(CDLE, CWinApp)
+	//{{AFX_MSG_MAP(CDLE)
 	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 		//    DO NOT EDIT what you see in these blocks of generated code!
@@ -136,9 +136,9 @@ BEGIN_MESSAGE_MAP(CDlcApp, CWinApp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CDlcApp construction
+// CDLE construction
 
-CDlcApp::CDlcApp()
+CDLE::CDLE()
 {
 m_pDlcDoc = null;
 m_bSplashScreen = 1;
@@ -149,9 +149,9 @@ undoManager.Reset ();
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// The one and only CDlcApp object
+// The one and only CDLE object
 
-CDlcApp DLE;
+CDLE DLE;
 
 
 // {3F315842-67AC-11d2-AE2A-00C0F03014A5}
@@ -159,7 +159,7 @@ static const CLSID clsid  =
 { 0x3f315842, 0x67ac, 0x11d2, { 0xae, 0x2a, 0x0, 0xc0, 0xf0, 0x30, 0x14, 0xa5 } };
 
 /////////////////////////////////////////////////////////////////////////////
-// CDlcApp initialization
+// CDLE initialization
 
 #ifdef _DEBUG
 
@@ -177,7 +177,7 @@ errno = EINVAL;
 
 #endif
 
-BOOL CDlcApp::InitInstance()
+BOOL CDLE::InitInstance()
 {
 #ifdef _DEBUG
 	_set_invalid_parameter_handler (DLE_XP_invalid_parameter);
@@ -282,12 +282,12 @@ BOOL CDlcApp::InitInstance()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CDlcApp commands
+// CDLE commands
 
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CDlcApp message handlers
+// CDLE message handlers
 	
 CDLCModule _Module;
 
@@ -317,7 +317,7 @@ LONG CDLCModule::Lock()
 
                         /*--------------------------*/
 
-int CDlcApp::ExitInstance()
+int CDLE::ExitInstance()
 {
 if (m_bATLInited) {
 	_Module.RevokeClassObjects();
@@ -328,7 +328,7 @@ return CWinApp::ExitInstance();
 
                         /*--------------------------*/
 
-CDocument* CDlcApp::OpenDocumentFile (LPCTSTR lpszFileName)
+CDocument* CDLE::OpenDocumentFile (LPCTSTR lpszFileName)
 {
 	int	nAction = IDOK;
 
@@ -339,7 +339,7 @@ return CWinApp::OpenDocumentFile (lpszFileName);
 
                         /*--------------------------*/
 
-BOOL CDlcApp::InitATL()
+BOOL CDLE::InitATL()
 {
 m_bATLInited = TRUE;
 _Module.Init(ObjectMap, AfxGetInstanceHandle());
@@ -349,7 +349,7 @@ return TRUE;
 
                         /*--------------------------*/
 
-void CDlcApp::WritePrivateProfileInt (LPSTR szKey, int nValue)
+void CDLE::WritePrivateProfileInt (LPSTR szKey, int nValue)
 {
 	char	szValue [20];
 
@@ -359,7 +359,7 @@ WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
 
                         /*--------------------------*/
 
-void CDlcApp::SaveLayout ()
+void CDLE::SaveLayout ()
 {
 CHECKMINE;
 
@@ -395,7 +395,7 @@ WritePrivateProfileInt ("SplashScreen", m_bSplashScreen);
 
                         /*--------------------------*/
 
-void CDlcApp::LoadLayout ()
+void CDLE::LoadLayout ()
 {
 CHECKMINE;
 

@@ -531,7 +531,7 @@ GetWalls ();
 nType = int (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if ((nType > WALL_CLOSED) && DLE.IsD1File ()) 
 	return;
-if ((nType > WALL_CLOAKED) && (theMine->IsStdLevel ())) 
+if ((nType > WALL_CLOAKED) && (DLE.IsStdLevel ())) 
 	return;
 
 m_defWall.Type () = m_nType = nType;

@@ -193,7 +193,7 @@ nOvlTex = m_info.nOvlTex & 0x1FFF;
 
 void CSide::InitUVL (short nTexture)
 {
-uint scale = (uint) textureManager.Textures (theMine->FileType (), nTexture)->Scale (nTexture);
+uint scale = (uint) textureManager.Textures (DLE.FileType (), nTexture)->Scale (nTexture);
 for (int i = 0; i < 4; i++) {
 	m_info.uvls [i].u = defaultUVLs [i].u / scale;
 	m_info.uvls [i].v = defaultUVLs [i].v / scale;
@@ -230,7 +230,7 @@ void CSide::Reset (void)
 m_info.nBaseTex = 0; 
 m_info.nOvlTex = 0; 
 CUVL* uvls = m_info.uvls;
-double scale = textureManager.Textures (theMine->FileType (), m_info.nBaseTex)->Scale (m_info.nBaseTex);
+double scale = textureManager.Textures (DLE.FileType (), m_info.nBaseTex)->Scale (m_info.nBaseTex);
 for (int i = 0; i < 4; i++, uvls++) {
 	uvls->u = (short) (defaultUVLs [i].u / scale); 
 	uvls->v = (short) (defaultUVLs [i].v / scale); 

@@ -241,8 +241,8 @@ GetDlgItem (IDC_CUBE_DELBOT)->EnableWindow ((IsRobotMaker (segP) || IsEquipMaker
 GetDlgItem (IDC_CUBE_WALLDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
 GetDlgItem (IDC_CUBE_TRIGGERDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
 GetDlgItem (IDC_CUBE_ADD_REPAIRCEN)->EnableWindow (DLE.IsD2File ());
-GetDlgItem (IDC_CUBE_OWNER)->EnableWindow (theMine->IsD2XLevel ());
-GetDlgItem (IDC_CUBE_GROUP)->EnableWindow (theMine->IsD2XLevel ());
+GetDlgItem (IDC_CUBE_OWNER)->EnableWindow (DLE.IsD2XLevel ());
+GetDlgItem (IDC_CUBE_GROUP)->EnableWindow (DLE.IsD2XLevel ());
 }
 
                         /*--------------------------*/
@@ -599,7 +599,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 		// check to see if we are adding a fuel center
 		case SEGMENT_FUNC_REPAIRCEN:
-			if (theMine->IsStdLevel ()) {
+			if (DLE.IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -634,7 +634,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 		case SEGMENT_FUNC_TEAM_BLUE:
 		case SEGMENT_FUNC_TEAM_RED:
-			if (theMine->IsStdLevel ()) {
+			if (DLE.IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -647,7 +647,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			break;
 
 		case SEGMENT_FUNC_SPEEDBOOST:
-			if (theMine->IsStdLevel ()) {
+			if (DLE.IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -658,7 +658,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			break;
 
 		case SEGMENT_FUNC_SKYBOX:
-			if (theMine->IsStdLevel ()) {
+			if (DLE.IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -669,7 +669,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			break;
 
 		case SEGMENT_FUNC_EQUIPMAKER:
-			if (theMine->IsStdLevel ()) {
+			if (DLE.IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");

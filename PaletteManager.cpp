@@ -237,7 +237,7 @@ const char* CPaletteManager::Resource (void)
 	char		szFile [256];
 
 int id = IDR_GROUPA_256;
-if (theMine && theMine->IsD1File ())
+if (theMine && DLE.IsD1File ())
 	return MAKEINTRESOURCE (IDR_PALETTE_256);
 CFileManager::SplitPath (descentPath [1], null, szFile, null);
 for (ppe = palExt; *(ppe->szFile); ppe++)

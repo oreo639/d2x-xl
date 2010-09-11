@@ -537,7 +537,7 @@ if (Count (0) + Count (1) == 0)
 else {
 	short i;
 
-	m_info [0].size = theMine->IsD1File () ? 54 : 52; // 54 = sizeof (trigger)
+	m_info [0].size = DLE.IsD1File () ? 54 : 52; // 54 = sizeof (trigger)
 	m_info [0].offset = fp.Tell ();
 
 	for (CWallTriggerIterator ti; ti; ti++)
@@ -651,7 +651,7 @@ return AutoAddTrigger (WALL_OPEN, 0, TT_MATCEN);
 
 bool CTriggerManager::AddShieldDrain (void) 
 {
-if (theMine->IsD2File ()) {
+if (DLE.IsD2File ()) {
 	ErrorMsg ("Descent 2 does not support shield damage Triggers ()");
    return false;
 	}
@@ -662,7 +662,7 @@ return AutoAddTrigger (WALL_OPEN, 0, TT_SHIELD_DAMAGE);
 
 bool CTriggerManager::AddEnergyDrain (void) 
 {
-if (theMine->IsD2File ()) {
+if (DLE.IsD2File ()) {
 	ErrorMsg ("Descent 2 does not support energy drain Triggers ()");
    return false;
 	}

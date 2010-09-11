@@ -506,7 +506,7 @@ if (nCustom) {
 
 int CTextureManager::ScrollSpeed (UINT16 texture, int *x, int *y)
 {
-if (theMine->FileType () == RDL_FILE)
+if (DLE.FileType () == RDL_FILE)
 	return 0;
 *x = 0; 
 *y = 0; 

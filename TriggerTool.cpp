@@ -712,7 +712,7 @@ if ((nType == TT_SMOKE_BRIGHTNESS) || ((nType >= TT_SMOKE_LIFE) && (nType <= TT_
 	ErrorMsg ("This trigger type is not supported any more.\nYou can use the effects tool to edit smoke emitters.");
 	return;
 	}
-if ((nType >= TT_TELEPORT) && (theMine->IsStdLevel ())) {
+if ((nType >= TT_TELEPORT) && (DLE.IsStdLevel ())) {
 	SelectItemData (CBType (), m_nType);
 	return;
 	}

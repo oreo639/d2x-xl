@@ -9,6 +9,7 @@
 #include "global.h"
 #include "FileManager.h"
 #include "Mine.h"
+#include "dle-xp.h"
 #include "ResourceManager.h"
 
 CRobotManager robotManager;
@@ -29,7 +30,7 @@ int CRobotManager::ReadHAM (char *pszFile, int type)
   static char d2xHamSig [4] = {'M','A','H','X'};
 
 if (!pszFile) {
-	if (theMine->IsD2File ()) {
+	if (DLE.IsD2File ()) {
 		CFileManager::SplitPath (descentPath [1], szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent2.ham");
 		}

@@ -234,7 +234,7 @@ switch (type) {
 		m_info.renderType = RT_POLYOBJ;
 		m_info.size = REACTOR_SIZE;
 		m_info.shields = REACTOR_SHIELD;
-		if (theMine->IsD1File ())
+		if (DLE.IsD1File ())
 			rType.polyModelInfo.nModel = REACTOR_CLIP_NUMBER;
 		else {
 			int model;
@@ -323,7 +323,7 @@ switch (m_info.type) {
 		nBitmap = (m_info.id < 66) ? 1 + m_info.id : 118 + (m_info.id - 66);
 		break;
 	case OBJ_CNTRLCEN:
-	if (theMine->IsD1File ())
+	if (DLE.IsD1File ())
 		nBitmap = 67;
 	else
 		switch (m_info.id) {
@@ -754,7 +754,7 @@ switch (m_info.renderType) {
 
 void CGameObject::Write (CFileManager& fp, int version, bool bFlag)
 {
-if (theMine->IsStdLevel () && (m_info.type >= OBJ_CAMBOT))
+if (DLE.IsStdLevel () && (m_info.type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
 fp.Write (m_info.type);

@@ -69,7 +69,7 @@ switch (type) {
 		m_info.hps = 0;
 		// define texture to be energy
 		if (nTexture == -1)
-			segmentManager.SetTextures (key, theMine->IsD1File () ? 328 : 353, 0); // energy
+			segmentManager.SetTextures (key, DLE.IsD1File () ? 328 : 353, 0); // energy
 		else if (nClip == -2)
 			segmentManager.SetTextures (key, 0, nTexture);
 		else
@@ -133,7 +133,7 @@ char nClip = m_info.nClip;
 
 		undoManager.Begin (udWalls);
 if (IsDoor ()) {
-	if (theMine->IsD1File ())
+	if (DLE.IsD1File ())
 		sideP->SetTextures (wallTexturesD1 [nClip][0], wallTexturesD1 [nClip][1]);
 	else
 		sideP->SetTextures (wallTexturesD2 [nClip][0], wallTexturesD2 [nClip][1]);

@@ -91,7 +91,7 @@ bool CLightManager::IsBlastableLight (int nBaseTex)
 nBaseTex &= 0x3fff;
 if (IsExplodingLight (nBaseTex))
 	return true;
-if (theMine->IsD1File ())
+if (DLE.IsD1File ())
 	return false;
 for (short* p = blastableLightsD2; *p >= 0; p++)
 	if (*p == nBaseTex)
@@ -257,7 +257,7 @@ bool CLightManager::HasCustomLightMap (void)
 {
 CResource res;
 byte *dataP;
-if (!(dataP = res.Load (theMine->IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
+if (!(dataP = res.Load (DLE.IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
 	return false;
 return memcmp (m_lightMap, dataP, sizeof (m_lightMap)) != 0;
 }
@@ -268,7 +268,7 @@ bool CLightManager::HasCustomLightColors (void)
 {
 CResource res;
 byte *dataP;
-if (!(dataP = res.Load (theMine->IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
+if (!(dataP = res.Load (DLE.IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
 	return false;
 return memcmp (&m_texColors [0], dataP, sizeof (m_texColors)) != 0;
 }
@@ -279,7 +279,7 @@ short CLightManager::LoadDefaults (void)
 {
 CResource res;
 byte *dataP;
-if (!(dataP = res.Load (theMine->IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
+if (!(dataP = res.Load (DLE.IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
 	return false;
 int i = res.Size () / (3 * sizeof (int) + sizeof (byte));
 #if _DEBUG
@@ -299,7 +299,7 @@ for (CColor* colorP = &m_texColors [0]; i; i--, colorP++) {
 	dataP += sizeof (int);
 	}
 
-if (!(dataP = res.Load (theMine->IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
+if (!(dataP = res.Load (DLE.IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
 	return false;
 memcpy (m_lightMap, dataP, min (res.Size (), sizeof (m_lightMap)));
 return 1;

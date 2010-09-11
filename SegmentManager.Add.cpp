@@ -168,7 +168,7 @@ return nNewSeg;
 
 bool CSegmentManager::Create (short nSegment, bool bCreate, byte nFunction, short nTexture, char* szError)
 {
-if ((szError != null) && theMine->IsD1File ()) {
+if ((szError != null) && DLE.IsD1File ()) {
 	if (!bExpertMode)
 		ErrorMsg (szError);
 	return false;
@@ -224,7 +224,7 @@ return true;
 
 bool CSegmentManager::CreateEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
-if (!theMine->IsD2XFile ()) {
+if (!DLE.IsD2XFile ()) {
 	ErrorMsg ("Equipment makers are only available in D2X-XL levels.");
 	return false;
 	}
@@ -244,7 +244,7 @@ return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER, bSetDefTextures
 
 bool CSegmentManager::CreateReactor (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
-return Create (nSegment, bCreate, SEGMENT_FUNC_REACTOR, bSetDefTextures ? theMine->IsD1File () ? 10 : 357 : -1, "Flag goals are not available in Descent 1.");
+return Create (nSegment, bCreate, SEGMENT_FUNC_REACTOR, bSetDefTextures ? DLE.IsD1File () ? 10 : 357 : -1, "Flag goals are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
@@ -304,7 +304,7 @@ if (nType == SEGMENT_FUNC_REPAIRCEN)
 	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? 433 : -1, "Repair centers are not available in Descent 1.");
 else {
 	short nLastSeg = current.m_nSegment;
-	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? theMine->IsD1File () ? 322 : 333 : -1);
+	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? DLE.IsD1File () ? 322 : 333 : -1);
 	if (nSegment < 0)
 		return -1;
 	if (bSetDefTextures) { // add energy spark walls to fuel center sides
@@ -483,7 +483,7 @@ CSegment *segP = Segment (nSegment);
 
 if (!m_bCreating)
 	segP->Backup ();
-double scale = textureManager.Textures (theMine->FileType (), nTexture)->Scale (nTexture);
+double scale = textureManager.Textures (DLE.FileType (), nTexture)->Scale (nTexture);
 
 undoManager.Begin (udSegments);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
@@ -582,7 +582,7 @@ else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell
 		// if there is a wall and it's a fuel cell delete it
 		CSideKey key (nSegment, nSide);
 		CWall *wallP = Wall (key);
-		if ((wallP != null) && (wallP->Type () == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333)))
+		if ((wallP != null) && (wallP->Type () == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (DLE.IsD1File () ? 322 : 333)))
 			wallManager.Delete (sideP->m_info.nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		CSideKey opp;
@@ -590,7 +590,7 @@ else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell
 			wallP = Wall (opp);
 			if ((wallP != null) && (wallP->Type () == WALL_ILLUSION)) {
 				CSide* oppSideP = Side (opp);
-				if (oppSideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333))
+				if (oppSideP->m_info.nBaseTex == (DLE.IsD1File () ? 322 : 333))
 					wallManager.Delete (oppSideP->m_info.nWall);
 				}
 			}
@@ -655,7 +655,7 @@ for (short i = triggerManager.ReactorTriggerCount (); i > 0; )
 	delSegP->Unmark (); 
 
 	// unlink any children with this segment number
-	CTexture* texP = textureManager.Textures (theMine->FileType ());
+	CTexture* texP = textureManager.Textures (DLE.FileType ());
 	for (CSegmentIterator si; si; si++) {
 		CSegment* segP = &(*si);
 		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {

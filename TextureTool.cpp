@@ -391,7 +391,7 @@ return (wallP != null) && (wallP->Type () == WALL_TRANSPARENT);
 
 void CTextureTool::UpdatePaletteWnd (void)
 {
-if (/*!nLayout && (theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
+if (/*!nLayout && (DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
 	EnableControls (IDC_TEXLIGHT_PALETTE + 1, IDC_TEXLIGHT_COLOR, TRUE);
 	m_paletteWnd.ShowWindow (SW_SHOW);
 	m_paletteWnd.DrawPalette ();

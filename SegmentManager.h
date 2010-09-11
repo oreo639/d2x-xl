@@ -15,7 +15,7 @@
 #define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes
 #define SEGMENT_LIMIT		8000 // D2X-XL max # of cubes
 
-#define MAX_SEGMENTS ((theMine == null) ? MAX_SEGMENTS_D2 : theMine->IsD1File () ? MAX_SEGMENTS_D1  : theMine->IsStdLevel () ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT)
+#define MAX_SEGMENTS ((theMine == null) ? MAX_SEGMENTS_D2 : DLE.IsD1File () ? MAX_SEGMENTS_D1  : DLE.IsStdLevel () ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT)
 
 #define MAX_NUM_MATCENS_D1			20
 #define MAX_NUM_MATCENS_D2			100
@@ -23,7 +23,7 @@
 #define MAX_NUM_RECHARGERS_D2		70
 #define MAX_NUM_RECHARGERS_D2X	500
 
-#define MAX_NUM_RECHARGERS ((theMine == null) ? MAX_NUM_RECHARGERS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_RECHARGERS_D2 : MAX_NUM_RECHARGERS_D2X)
+#define MAX_NUM_RECHARGERS ((theMine == null) ? MAX_NUM_RECHARGERS_D2X : (DLE.IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_RECHARGERS_D2 : MAX_NUM_RECHARGERS_D2X)
 
 //------------------------------------------------------------------------
 
