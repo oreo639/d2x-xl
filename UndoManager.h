@@ -172,7 +172,9 @@ public:
 	CUndoItem<CVertexColor>			m_vertexColors;
 	CUndoItem<CSecretExit>			m_secretExit;
 	CUndoItem<CReactorData>			m_reactorData;
+	CSelection							m_selections [2];
 
+	bool m_bSelections;
 	uint m_nId;
 
 	inline uint& Id (void) { return m_nId; }
@@ -187,7 +189,7 @@ public:
 
 	void Reset (void);
 
-	CUndoData () : m_nId (0) { }
+	CUndoData () : m_nId (0), m_bSelections (false) { }
 
 	~CUndoData () { Destroy (); }
 	};

@@ -124,6 +124,11 @@ if (dataFlags & udDynamicLight) {
 	m_deltaIndices.Backup (lightManager.LightDeltaIndex (0), &lightManager.DeltaIndexCount ());
 	m_deltaValues.Backup (lightManager.LightDeltaValue (0), &lightManager.DeltaValueCount ());
 	}
+
+if (!m_bSelections) {
+	memcpy (m_selections, selections, sizeof (selections));
+	m_bSelections = true;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -147,6 +152,7 @@ m_textureColors.Restore ();
 m_vertexColors.Restore ();
 m_deltaIndices.Restore ();
 m_deltaValues.Restore ();
+memcpy (selections, m_selections, sizeof (selections));
 }
 
 //------------------------------------------------------------------------------
@@ -170,6 +176,7 @@ m_textureColors.Reset ();
 m_vertexColors.Reset ();
 m_deltaIndices.Reset ();
 m_deltaValues.Reset ();
+m_bSelections = false;
 }
 
 //------------------------------------------------------------------------------
