@@ -547,9 +547,9 @@ if (info.count > 0) {
 		CSideKey key = (-Index (segP) - 1, 0); 
 		for (int nClass = 0; nClass < 2; nClass++) {
 			CTrigger* trigP = triggerManager.Trigger (0, nClass);
-			for (CTriggerIterator i (nClass); i; i++) {
-				if (i->Info ().type == TT_MATCEN)
-					i->Delete (key);
+			for (CTriggerIterator ti (nClass); ti; ti++) {
+				if (ti->Info ().type == TT_MATCEN)
+					ti->Delete (key);
 				}
 			}
 		undoManager.End ();

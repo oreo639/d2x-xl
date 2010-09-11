@@ -62,7 +62,7 @@ class CGameItemIterator {
 
 		//prefix increment
 		inline _T& operator++ () { 
-			if (m_index >= m_count - 1)
+			if (m_count <= 0)
 				return m_null;
 			--m_count;
 			return m_buffer [++m_index];
@@ -70,7 +70,7 @@ class CGameItemIterator {
 
 		// postfix increment
 		inline _T& operator++ (int) { 
-			if (m_index >= m_count)
+			if (m_count <= 0)
 				return m_null;
 			--m_count;
 			return m_buffer [m_index++];
@@ -78,7 +78,7 @@ class CGameItemIterator {
 
 		// prefix decrement
 		inline _T& operator-- () { 
-			if (m_index <= 0)
+			if (m_count <= 0)
 				return m_null;
 			--m_count;
 			return m_buffer [--m_index];
@@ -86,7 +86,7 @@ class CGameItemIterator {
 
 		// postfix decrement
 		inline _T& operator-- (int) { 
-			if (m_index < 0)
+			if (m_count <= 0)
 				return m_null;
 			--m_count;
 			return m_buffer [m_index--];

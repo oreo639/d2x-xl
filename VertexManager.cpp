@@ -105,12 +105,8 @@ for (CVertexIterator vi; vi; vi++)
 
 void CVertexManager::Read (CFileManager& fp, int nFileVersion)
 {
-ushort nVertex;
-
-for (int i = 0; i < Count (); i++) {
-	Add (&nVertex);
-	m_vertices [nVertex].Read (fp, nFileVersion);
-	}
+for (int i = 0; i < Count (); i++)
+	m_vertices [i].Read (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
