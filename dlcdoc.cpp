@@ -496,7 +496,7 @@ if (p) {
 
 void CDlcDoc::OnInsertSegment() 
 {
-segmentManager.Add ();
+segmentManager.Create ();
 }
 
 void CDlcDoc::OnDeleteSegment() 

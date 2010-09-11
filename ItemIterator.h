@@ -65,7 +65,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return m_buffer [++m_index];
+			return *(m_value = &m_buffer [++m_index]);
 			}
 
 		// postfix increment
@@ -73,7 +73,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return m_buffer [m_index++];
+			return *(m_value = &m_buffer [m_index++]);
 			}
 
 		// prefix decrement
@@ -81,7 +81,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return m_buffer [--m_index];
+			return *(m_value = &m_buffer [--m_index]);
 			}
 
 		// postfix decrement
@@ -89,7 +89,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return m_buffer [m_index--];
+			return *(m_value = &m_buffer [m_index--]);
 			}
 
 #endif // USE_FREELIST
