@@ -236,7 +236,7 @@ bool CUndoManager::Undo (void)
 {
 if (!m_enabled)
 	return false;
-if (m_nCurrent == m_nHead)
+if ((m_nHead < 0) || (m_nCurrent == (m_nHead + 1) % m_maxSize))
 	return false;
 int nId = Current ()->Id ();
 do {
@@ -316,13 +316,11 @@ return Id ();
 
 void CUndoManager::Backup (void)
 {
-if (m_current.Cleanup ()) 
-	Id ()--;
-else {
+if (!m_current.Cleanup ()) {
 	SetModified (true);
 	Append ();
 	*Tail () = m_current;
-	m_current.Reset ();
+	Id ()++;
 	}
 }
 

@@ -183,9 +183,7 @@ public:
 
 	void Destroy ();
 
-	void Reset (void) { memset (this, 0, sizeof (*this)); }
-
-	CUndoData () : m_nId (0) { Reset (); }
+	CUndoData () : m_nId (0) { }
 
 	~CUndoData () { Destroy (); }
 	};
