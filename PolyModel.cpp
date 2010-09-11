@@ -186,30 +186,29 @@ else {
 		fp.Close ();
 		return 1;
 		}
-	fp.ReadInt16 ();                              // read version
-	n  = fp.ReadInt16 ();                         // n_tmap_info
+	fp.ReadInt32 ();                              // read version
+	n  = fp.ReadUInt32 ();                         // n_tmap_info
 	fp.Seek (n * sizeof (ushort), SEEK_CUR);	 // bitmap_indicies
 	fp.Seek (n * sizeof (TMAP_INFO), SEEK_CUR); // tmap_info
-	n = fp.ReadInt16 ();                          // n_sounds
+	n = fp.ReadUInt32 ();                          // n_sounds
 	fp.Seek (n * sizeof (byte), SEEK_CUR);     // sounds
 	fp.Seek (n * sizeof (byte), SEEK_CUR);     // alt_sounds
-	n = fp.ReadInt16 ();                          // n_vclips
+	n = fp.ReadUInt32 ();                          // n_vclips
 	fp.Seek (n * sizeof (VCLIP), SEEK_CUR);     // video clips
-	n = fp.ReadInt16 ();                          // n_eclips
+	n = fp.ReadUInt32 ();                          // n_eclips
 	fp.Seek (n * sizeof (ECLIP), SEEK_CUR);     // effect clips
-	n = fp.ReadInt16 ();                          // n_wclips
+	n = fp.ReadUInt32 ();                          // n_wclips
 	fp.Seek (n * sizeof (WCLIP), SEEK_CUR);     // weapon clips
-	n = fp.Tell ();
-	n = fp.ReadInt16 ();                          // n_robots
+	n = fp.ReadUInt32 ();                          // n_robots
 	for (i = 0; i < n; i++) 
 		robotManager.RobotInfo (i)->Read (fp);
-	n = fp.ReadInt16 ();                          // n_robot_joints
+	n = fp.ReadUInt32 ();                          // n_wclips
 	fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     // robot joints
-	n = fp.ReadInt16 ();                          // n_weapon
+	n = fp.ReadUInt32 ();                          // n_wclips
 	fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon info
-	n = fp.ReadInt16 ();                          // n_powerups
+	n = fp.ReadUInt32 ();                          // n_wclips
 	fp.Seek (n * sizeof (POWERUP_TYPE_INFO), SEEK_CUR); // powerup info
-	n = fp.ReadInt16 ();                          // n_curModels
+	n = fp.ReadUInt32 ();                          // n_wclips
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
 		m_polyModels [i].Read (fp);
