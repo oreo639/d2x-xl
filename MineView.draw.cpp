@@ -809,7 +809,7 @@ CHECKMINE;
 		ushort rowOffset = (m_viewWidth + 3) & ~3;
 
 		CSide* sideP = segP->m_sides;
-		for (short nSide = 0; nSide < 6; nSide++) {
+		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 			if (segP->Child (nSide) != -1) { // not a solid side
 				CWall* wallP = sideP->Wall ();
 				if (wallP == null) // no wall either
