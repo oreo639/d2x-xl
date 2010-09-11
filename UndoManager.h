@@ -69,7 +69,7 @@ class CUndoItem {
 	public:
 		bool Backup (_T* source, int* length) {
 			int i = Create (source, *length);
-			if (i < 0)
+			if (i == 0)
 				return false;
 			if (i > 0)
 				m_sourceLength = length;

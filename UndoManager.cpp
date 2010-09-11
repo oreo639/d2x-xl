@@ -380,7 +380,7 @@ void CUndoManager::End (void)
 if (m_nModified > 0) {
 	Unlock ();
 	if (--m_nModified == 0)
-		Update ();
+		Backup ();
 	}
 }
 
