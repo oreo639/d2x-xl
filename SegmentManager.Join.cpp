@@ -493,8 +493,8 @@ segP->SetChild (cur1->m_nSide, cur2->m_nSegment);
 segP->m_info.owner = -1;
 segP->m_info.group = -1;
 segP->m_info.function = 0; 
-segP->m_info.nMatCen =-1; 
-segP->m_info.value =-1; 
+segP->m_info.nMatCen = -1; 
+segP->m_info.value = -1; 
 
 // define vert numbers
 for (i = 0; i < 4; i++) {

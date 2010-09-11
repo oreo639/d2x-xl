@@ -421,8 +421,8 @@ undoManager.End ();
 void CTriggerManager::DeleteTargets (CSideKey key) 
 {
 undoManager.Begin (udTriggers);
-for (CWallTriggerIterator ti; ti; ti++)
-	ti->Delete (key);
+for (CWallTriggerIterator wi; wi; wi++)
+	wi->Delete (key);
 
 for (short i = ObjTriggerCount (); i > 0; )
 	if (ObjTrigger (--i)->Delete (key) == 0) // no targets left
