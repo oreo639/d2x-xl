@@ -1598,14 +1598,14 @@ if (DLE.IsD1File ()) {
 		}
 	}
 else {
-	if (theMine->LevelVersion () < 8) {
+	if (DLE.LevelVersion () < 8) {
 		theMine->SetLevelVersion (8);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Vertigo level")
 		else
 			ErrorMsg ("Mine converted to a Vertigo level.");
 		}
-	else if (theMine->LevelVersion () < LEVEL_VERSION) {
+	else if (DLE.LevelVersion () < LEVEL_VERSION) {
 		theMine->SetLevelVersion (LEVEL_VERSION);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a D2X-XL level")

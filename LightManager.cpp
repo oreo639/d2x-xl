@@ -1,4 +1,6 @@
+
 #include "Mine.h"
+#include "dle-xp.h"
 
 CLightManager lightManager;
 

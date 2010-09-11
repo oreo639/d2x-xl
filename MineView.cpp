@@ -433,7 +433,7 @@ bool CMineView::SetLightStatus (void)
 	CVariableLight *flP = lightManager.VariableLight (0);
 	tLightStatus *pls;
 	bool bChange = false;
-	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
+	bool bD2XLights = (DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 	short nSrcSide, nSrcSeg, nSegment, nSide;
 
 // search delta light index to see if current side has a light

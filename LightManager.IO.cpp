@@ -20,9 +20,9 @@ fp.Write (m_lightMap, sizeof (m_lightMap), 1);
 
 void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp)
 {
-	bool bNewFormat = theMine->LevelVersion () >= nNewVersion;
+	bool bNewFormat = DLE.LevelVersion () >= nNewVersion;
 
-if (theMine->LevelVersion () > nFirstVersion) { 
+if (DLE.LevelVersion () > nFirstVersion) { 
 	for (; nColors; nColors--, pc++)
 		pc->Read (fp, 0, bNewFormat);
 	}
@@ -54,7 +54,7 @@ SaveColors (&m_texColors [0], MAX_TEXTURES_D2, fp);
 
 void CLightManager::ReadColors (CFileManager& fp)
 {
-if (theMine->LevelVersion () == 9) {
+if (DLE.LevelVersion () == 9) {
 #if 1
 	LoadColors (FaceColor (0), segmentManager.Count () * 6, 9, 14, fp);
 	LoadColors (FaceColor (0), segmentManager.Count () * 6, 9, 14, fp);
@@ -65,7 +65,7 @@ if (theMine->LevelVersion () == 9) {
 	fp.Read (VertexColors (), sizeof (CColor), vertexManager.Count ());
 #endif
 	}
-else if (theMine->LevelVersion () > 9) {
+else if (DLE.LevelVersion () > 9) {
 	LoadColors (VertexColor (0), vertexManager.Count (), 9, 15, fp);
 	LoadColors (FaceColor (0), segmentManager.Count () * 6, 9, 14, fp);
 	LoadColors (TexColor (0), MAX_TEXTURES_D2, 10, 16, fp);
@@ -85,7 +85,7 @@ SaveColors (TexColor (0), MAX_TEXTURES_D2, fp);
 
 void CLightManager::ReadVariableLights (CFileManager& fp)
 {
-if (theMine->LevelVersion () > 6) {
+if (DLE.LevelVersion () > 6) {
 	lightManager.Count () = (short) fp.ReadInt32 ();
 	for (int i = 0; i < lightManager.Count (); i++) {
 		if (i < MAX_VARIABLE_LIGHTS)
@@ -102,7 +102,7 @@ if (theMine->LevelVersion () > 6) {
 
 void CLightManager::WriteVariableLights (CFileManager& fp)
 {
-if (theMine->LevelVersion () > 6) {
+if (DLE.LevelVersion () > 6) {
 	 fp.Write (lightManager.Count ());
 	for (int i = 0; i < lightManager.Count (); i++) {
 		VariableLight (i)->Write (fp);
@@ -116,7 +116,7 @@ void CLightManager::ReadLightDeltas (CFileManager& fp, int nFileVersion)
 {
 if (DLE.IsD2File ()) {
 
-	bool bD2X = (theMine->LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
+	bool bD2X = (DLE.LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
 	int i;
 
 	for (i = 0; i < m_deltaIndexInfo.count; i++)
@@ -131,10 +131,10 @@ if (DLE.IsD2File ()) {
 void CLightManager::WriteLightDeltas (CFileManager& fp, int nFileVersion)
 {
 if (DeltaIndexCount () > 0) {
-	if ((theMine->LevelVersion () >= 15) && (nFileVersion >= 34)) 
+	if ((DLE.LevelVersion () >= 15) && (nFileVersion >= 34)) 
 		SortDeltaIndex ();
 
-	bool bD2X = (theMine->LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
+	bool bD2X = (DLE.LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
 	int i;
 
 	m_deltaIndexInfo.size = 6;

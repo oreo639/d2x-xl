@@ -417,7 +417,7 @@ int CLightManager::FindLightDelta (short nSegment, short nSide, short *pi)
 	int	j = DeltaIndexCount ()++;
 	CLightDeltaIndex	*dliP = LightDeltaIndex (0);
 
-if ((theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34)) {
+if ((DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34)) {
 	for (; i < j; i++, dliP++)
 		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (byte) nSide))
 			return i;
@@ -441,7 +441,7 @@ bool CLightManager::CalcLightDeltas (int force, int nDepth)
 DeltaValueCount () = 0;
 DeltaIndexCount () = 0;
 
-bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
+bool bD2XLights = (DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 
 m_fLightScale = 1.0; ///= 100.0;
 //#pragma omp parallel

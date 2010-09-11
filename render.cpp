@@ -35,7 +35,7 @@ void RenderFace (CSegment *segP, short nSide,
 	CDoubleMatrix A, IA, B, UV;
 	//double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
 	CUVL *uvls;
-	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
+	bool bD2XLights = (DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 	
 	// TEMPORARY
 	CSideKey face (short (segP - segmentManager.Segment (0)), nSide);

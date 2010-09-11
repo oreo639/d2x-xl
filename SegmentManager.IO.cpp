@@ -20,7 +20,7 @@ if (m_segmentInfo.offset >= 0) {
 	fp.Seek (m_segmentInfo.offset);
 
 	int nLevelType = DLE.IsD2XLevel () ? 2 : DLE.IsD2File () ? 1 : 0;
-	int nLevelVersion = theMine->LevelVersion ();
+	int nLevelVersion = DLE.LevelVersion ();
 	int i;
 
 	for (i = 0; i < Count (); i++) {
@@ -50,7 +50,7 @@ else {
 	m_segmentInfo.offset = fp.Tell ();
 
 	int nLevelType = DLE.IsD2XLevel () ? 2 : DLE.IsD2File () ? 1 : 0;
-	int nLevelVersion = theMine->LevelVersion ();
+	int nLevelVersion = DLE.LevelVersion ();
 
 	for (int i = 0; i < Count (); i++)
 		m_segments [i].Write (fp, nLevelType, nFileVersion);

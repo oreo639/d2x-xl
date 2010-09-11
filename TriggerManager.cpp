@@ -543,7 +543,7 @@ else {
 	for (CWallTriggerIterator ti; ti; ti++)
 		ti->Write (fp, nFileVersion, false);
 
-	if (theMine->LevelVersion () >= 12) {
+	if (DLE.LevelVersion () >= 12) {
 		fp.Write (ObjTriggerCount ());
 		if (ObjTriggerCount () > 0) {
 			SortObjTriggers ();
