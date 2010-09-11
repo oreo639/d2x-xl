@@ -211,43 +211,57 @@ class CBufPtr {
 		m_size = other.m_size;
 		}
 
-	const CBufPtr& operator= (int i) { m_index = i; }
+	const CBufPtr& operator= (const int i) { m_index = i; }
 
-	const int& operator++ () { return m_index = ++m_index % m_size; }
+	const bool operator== (const int i) { return m_index == i; }
 
-	const int& operator++ (int) { return m_index = ++m_index % m_size; }
+	const bool operator== (const CBufPtr& other) { return m_index == other.m_index; }
 
-	const int& operator-- () { return m_index = ((m_index == 0) ? m_size : m_index) - 1; }
+	const int operator++ (int) { 
+		int i = m_index;
+		m_index = ++m_index % m_size; 
+		return i;
+		}
 
-	const int& operator-- (int) { return m_index = ((m_index == 0) ? m_size : m_index) - 1; }
+	const int operator++ () { return m_index = ++m_index % m_size; }
 
-	const int& operator-= (int i) { 
+	const int operator-- (int) { 
+		int i = m_index;
+		m_index = ((m_index == 0) ? m_size : m_index) - 1; 
+		return i;
+		}
+
+	const int operator-- () { return m_index = ((m_index == 0) ? m_size : m_index) - 1; }
+
+	const int operator-= (const int i) { 
 		m_index -= i; 
 		if (m_index < 0)
 			m_index += m_size;
 		return m_index;
 		}
 
-	const int& operator+= (int i) { 
+	const int operator+= (const int i) { 
 		m_index += i; 
 		if (m_index >= m_size)
 			m_index -= m_size;
 		return m_index;
 		}
 
-	const int operator- (int i) { 
+	const int operator- (const int i) { 
 		int h = m_index - i; 
 		if (h < 0)
 			h += m_size;
 		return h;
 		}
 
-	const int operator+ (int i) { 
+	const int operator+ (const int i) { 
 		int h = m_index + i; 
 		if (h >= m_size)
 			h -= m_size;
 		return h;
 		}
+
+	const int operator* (void) { return m_index; }
 
 	CBufPtr (int size = 0) : m_size (size), m_index (0) {}
 };

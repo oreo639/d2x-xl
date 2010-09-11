@@ -213,29 +213,6 @@ return b;
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Truncate (void)
-{
-for (;;) {
-	m_buffer [m_nTail].Destroy ();
-	if (m_nTail == m_nCurrent)
-		break;
-	m_nTail = Reverse (m_nTail);
-	}
-if (m_nCurrent == m_nHead) {
-	m_nHead = m_nTail = m_nCurrent = -1;
-	m_nId = 0;
-	}
-else {
-	m_nTail = Reverse (m_nTail);
-	if (--m_nTail < 0)
-		m_nTail = m_nMaxSize - 1;
-	m_nCurrent = m_nTail;
-	m_nId = Current ()->Id ();
-	}
-}
-
-//------------------------------------------------------------------------------
-
 int CUndoManager::SetMaxSize (int maxSize)
 {
 if (maxSize < 1)
@@ -287,11 +264,36 @@ if (m_mode == 0)
 	return false;
 
 m_mode = 2;
-if (++m_nCurrent != nEnd)
-	Current ()->Restore ();
-else 
+if (++m_nCurrent == nEnd)
 	m_current.Restore ();
+else 
+	Current ()->Restore ();
 return true;
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoManager::Truncate (void)
+{
+if (m_nCurrent == m_nTail + 1)
+	return; // at end of undo list already
+do {
+	m_buffer [*m_nTail].Destroy ();
+	if (m_nTail == m_nCurrent)
+		break;
+	m_nTail = Reverse (m_nTail);
+	}
+if (m_nCurrent == m_nHead) {
+	m_nHead = m_nTail = m_nCurrent = -1;
+	m_nId = 0;
+	}
+else {
+	m_nTail = Reverse (m_nTail);
+	if (--m_nTail < 0)
+		m_nTail = m_nMaxSize - 1;
+	m_nCurrent = m_nTail;
+	m_nId = Current ()->Id ();
+	}
 }
 
 //------------------------------------------------------------------------------
