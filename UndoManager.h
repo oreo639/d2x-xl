@@ -60,9 +60,9 @@ class CUndoItem {
 					m_length = -1;
 					return 0;
 					}
+				memcpy (m_backup, source, m_length * sizeof (_T));
 				}
 			m_source = source;
-			memcpy (m_backup, m_source, m_length * sizeof (_T));
 			return 1;
 			}
 

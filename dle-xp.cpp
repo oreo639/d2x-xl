@@ -143,7 +143,6 @@ CDLE::CDLE()
 m_pDlcDoc = null;
 m_bSplashScreen = 1;
 m_bMaximized = false;
-undoManager.Reset ();
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 }

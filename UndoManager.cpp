@@ -177,7 +177,7 @@ m_deltaValues.Reset ();
 //------------------------------------------------------------------------------
 
 CUndoManager::CUndoManager (int maxSize)
-	: m_nHead (DLE_MAX_UNDOS, -1), m_nTail (DLE_MAX_UNDOS, -1), m_nCurrent (DLE_MAX_UNDOS, -1)
+	: m_nHead (maxSize, -1), m_nTail (maxSize, -1), m_nCurrent (maxSize, -1)
 {
 m_size = 0;
 m_enabled = 1;
