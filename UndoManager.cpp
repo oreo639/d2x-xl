@@ -178,7 +178,9 @@ m_deltaValues.Reset ();
 
 CUndoManager::CUndoManager (int maxSize)
 {
-m_nHead = m_nTail = m_nCurrent = -1;
+m_nHead = -1;
+m_nTail = -1;
+m_nCurrent = -1;
 m_size = 0;
 m_enabled = 1;
 m_nMaxSize = maxSize;
@@ -217,8 +219,8 @@ int CUndoManager::SetMaxSize (int maxSize)
 {
 if (maxSize < 1)
 	maxSize = 0;
-else if (maxSize > MAX_UNDOS)
-	maxSize = MAX_UNDOS;
+else if (maxSize > DLE_MAX_UNDOS)
+	maxSize = DLE_MAX_UNDOS;
 Enable (maxSize > 0);
 int nExcess = Count () - maxSize;
 if (nExcess > 0) {
@@ -264,7 +266,7 @@ if (m_mode == 0)
 	return false;
 
 m_mode = 2;
-if (++m_nCurrent == nEnd)
+if (++m_nCurrent == *nEnd)
 	m_current.Restore ();
 else 
 	Current ()->Restore ();
@@ -277,22 +279,23 @@ void CUndoManager::Truncate (void)
 {
 if (m_nCurrent == m_nTail + 1)
 	return; // at end of undo list already
+
+--m_nCurrent;
 do {
 	m_buffer [*m_nTail].Destroy ();
-	if (m_nTail == m_nCurrent)
-		break;
-	m_nTail = Reverse (m_nTail);
-	}
+	m_nTail--;
+	} while (m_nTail != m_nCurrent);
+++m_nCurrent;
+
 if (m_nCurrent == m_nHead) {
-	m_nHead = m_nTail = m_nCurrent = -1;
+	m_nHead = -1;
+	m_nTail = -1;
+	m_nCurrent = -1;
 	m_nId = 0;
 	}
 else {
-	m_nTail = Reverse (m_nTail);
-	if (--m_nTail < 0)
-		m_nTail = m_nMaxSize - 1;
-	m_nCurrent = m_nTail;
-	m_nId = Current ()->Id ();
+	--m_nTail;
+	m_nId = Tail ()->Id () + 1;
 	}
 }
 
@@ -300,11 +303,13 @@ else {
 
 void CUndoManager::Append (void)
 {
-if (m_nHead = -1)
-	m_nHead = m_nTail = 0;
+if (m_nHead == -1) {
+	m_nHead = 0,
+	m_nTail = 0;
+	}
 else {
 	Truncate ();
-	if (++m_nTail == m_nHead) {	// buffer full
+	if (++m_nTail == *m_nHead) {	// buffer full
 		int nId = Head ()->Id ();
 		do { // remove all items with same backup id from buffer start
 			m_nHead = ++m_nHead % m_nMaxSize;
@@ -362,7 +367,7 @@ if (!m_current.Cleanup ()) {
 
 int CUndoManager::Count (void)
 {
-return (m_nTail > m_nHead) ? (m_nTail - m_nHead + 1) : m_nTail + m_nHead - m_nMaxSize;
+return (m_nTail > m_nHead) ? (m_nTail - *m_nHead + 1) : m_nTail + *m_nHead - m_nMaxSize;
 }
 
 //------------------------------------------------------------------------------
@@ -424,7 +429,7 @@ if (m_nModified > 0) {
 
 bool CUndoManager::Revert (void)
 {
-if (!m_enabled || m_delay || !m_nHead)
+if (!m_enabled || m_delay || (m_nHead == -1))
 	return false;
 Undo ();
 Truncate ();

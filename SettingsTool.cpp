@@ -127,7 +127,7 @@ m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags,
 m_bUseTexColors = GetPrivateProfileInt ("DLE-XP", "UseTexColors", m_bUseTexColors, INIFILE);
 m_nViewDist = GetPrivateProfileInt ("DLE-XP", "ViewDistance", 0, INIFILE);
 m_nMineCenter = GetPrivateProfileInt ("DLE-XP", "MineCenter", 0, INIFILE);
-m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", MAX_UNDOS, INIFILE);
+m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", DLE_MAX_UNDOS, INIFILE);
 m_bNoRefresh = false;
 m_bInvalid = false;
 }
@@ -155,7 +155,7 @@ m_texViewFlags = DLE.TextureView ()->GetViewFlags ();
 m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, INIFILE);
 m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, INIFILE);
 m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, INIFILE);
-m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", MAX_UNDOS, INIFILE);
+m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", DLE_MAX_UNDOS, INIFILE);
 InitSlider (IDC_PREFS_VIEWDIST, 0, MAX_VIEWDIST);
 int i;
 for (i = 0; i <= MAX_VIEWDIST; i++)

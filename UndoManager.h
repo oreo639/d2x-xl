@@ -3,7 +3,7 @@
 
 #include "mine.h"
 
-#define MAX_UNDOS			500
+#define DLE_MAX_UNDOS			500
 #define DETAIL_BACKUP	0
 
 //------------------------------------------------------------------------------
@@ -198,73 +198,89 @@ public:
 
 class CBufPtr {
 	public:
-		int	m_index;
 		int	m_size;
+		int	m_index;
 
-	void Setup (int size) { 
-		if (m_index >= (m_size = size))
-			m_index = m_size - 1;
-		}
+		void Setup (int size) { 
+			if (m_index >= (m_size = size))
+				m_index = m_size - 1;
+			}
 
-	const CBufPtr& operator= (CBufPtr& other) {
-		m_index = other.m_index;
-		m_size = other.m_size;
-		}
+		const CBufPtr& operator= (CBufPtr& other) {
+			m_index = other.m_index;
+			m_size = other.m_size;
+			return *this;
+			}
 
-	const CBufPtr& operator= (const int i) { m_index = i; }
+		const CBufPtr& operator= (const int i) { 
+			m_index = i; 
+			return *this;
+			}
 
-	const bool operator== (const int i) { return m_index == i; }
+		const bool operator== (const int i) { return m_index == i; }
 
-	const bool operator== (const CBufPtr& other) { return m_index == other.m_index; }
+		const bool operator== (const CBufPtr& other) { return m_index == other.m_index; }
 
-	const int operator++ (int) { 
-		int i = m_index;
-		m_index = ++m_index % m_size; 
-		return i;
-		}
+		const bool operator!= (const int i) { return m_index != i; }
 
-	const int operator++ () { return m_index = ++m_index % m_size; }
+		const bool operator!= (const CBufPtr& other) { return m_index != other.m_index; }
 
-	const int operator-- (int) { 
-		int i = m_index;
-		m_index = ((m_index == 0) ? m_size : m_index) - 1; 
-		return i;
-		}
+		const bool operator< (const int i) { return m_index < i; }
 
-	const int operator-- () { return m_index = ((m_index == 0) ? m_size : m_index) - 1; }
+		const bool operator> (const int i) { return m_index > i; }
 
-	const int operator-= (const int i) { 
-		m_index -= i; 
-		if (m_index < 0)
-			m_index += m_size;
-		return m_index;
-		}
+		const bool operator< (const CBufPtr& other) { return m_index < other.m_index; }
 
-	const int operator+= (const int i) { 
-		m_index += i; 
-		if (m_index >= m_size)
-			m_index -= m_size;
-		return m_index;
-		}
+		const bool operator> (const CBufPtr& other) { return m_index > other.m_index; }
 
-	const int operator- (const int i) { 
-		int h = m_index - i; 
-		if (h < 0)
-			h += m_size;
-		return h;
-		}
+		const int operator++ (int) { 
+			int i = m_index;
+			m_index = ++m_index % m_size; 
+			return i;
+			}
 
-	const int operator+ (const int i) { 
-		int h = m_index + i; 
-		if (h >= m_size)
-			h -= m_size;
-		return h;
-		}
+		const int operator++ () { return m_index = ++m_index % m_size; }
 
-	const int operator* (void) { return m_index; }
+		const int operator-- (int) { 
+			int i = m_index;
+			m_index = ((m_index == 0) ? m_size : m_index) - 1; 
+			return i;
+			}
 
-	CBufPtr (int size = 0) : m_size (size), m_index (0) {}
-};
+		const int operator-- () { return m_index = ((m_index == 0) ? m_size : m_index) - 1; }
+
+		const int operator-= (const int i) { 
+			m_index -= i; 
+			if (m_index < 0)
+				m_index += m_size;
+			return m_index;
+			}
+
+		const int operator+= (const int i) { 
+			m_index += i; 
+			if (m_index >= m_size)
+				m_index -= m_size;
+			return m_index;
+			}
+
+		const int operator- (const int i) { 
+			int h = m_index - i; 
+			if (h < 0)
+				h += m_size;
+			return h;
+			}
+
+		const int operator+ (const int i) { 
+			int h = m_index + i; 
+			if (h >= m_size)
+				h -= m_size;
+			return h;
+			}
+
+		const int operator* (void) { return m_index; }
+
+		CBufPtr (int size = DLE_MAX_UNDOS) : m_size (size), m_index (0) {}
+	};
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -273,10 +289,11 @@ class CBufPtr {
 class CUndoManager
 {
 	private:
-		CUndoData	m_buffer [MAX_UNDOS];
-		CBufPtr		m_nHead (MAX_UNDOS);
-		CBufPtr		m_nTail (MAX_UNDOS);
-		CBufPtr		m_nCurrent (MAX_UNDOS);
+		CUndoData	m_buffer [DLE_MAX_UNDOS];
+		CBufPtr		m_nHead; // (DLE_MAX_UNDOS);
+		CBufPtr		m_nTail; // (DLE_MAX_UNDOS);
+		CBufPtr		m_nCurrent; // (DLE_MAX_UNDOS);
+		CUndoData	m_current;
 		//CUndoItem*	m_head;
 		//CUndoItem*	m_tail;
 		//CUndoItem*	m_current;
@@ -289,11 +306,11 @@ class CUndoManager
 		uint			m_nId;
 
 	public:
-		inline CUndoData* Head (void) { return (m_nHead < 0) ? null : &m_buffer [m_nHead]; }
+		inline CUndoData* Head (void) { return (m_nHead < 0) ? null : &m_buffer [*m_nHead]; }
 
-		inline CUndoData* Tail (void) { return (m_nTail < 0) ? null : &m_buffer [m_nTail]; }
+		inline CUndoData* Tail (void) { return (m_nTail < 0) ? null : &m_buffer [*m_nTail]; }
 
-		inline CUndoData* Current (void) { return (m_nCurrent < 0) ? null : &m_buffer [m_nCurrent]; }
+		inline CUndoData* Current (void) { return (m_nCurrent < 0) ? null : &m_buffer [*m_nCurrent]; }
 
 		int Backup (CGameItem* parent, eEditType editType);
 
