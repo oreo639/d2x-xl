@@ -289,8 +289,12 @@ if (nSegments > SEGMENT_LIMIT) {
 if (IsD1File () ? nVertices > MAX_SEGMENTS_D1 : IsStdLevel () && (nVertices > MAX_SEGMENTS_D2))
 	ErrorMsg ("Warning: Too many Segments for this level version");
 
-// if we are happy with the number of verts and Segments (), then proceed...
-//ClearMineData ();
+objectManager.ResetInfo ();
+wallManager.ResetInfo ();
+triggerManager.ResetInfo ();
+segmentManager.ResetInfo ();
+lightManager.ResetInfo ();
+
 vertexManager.Count () = nVertices;
 vertexManager.FileOffset () = fp.Tell ();
 vertexManager.Read (fp, FileInfo ().version);
@@ -319,13 +323,6 @@ return 0;
 short CMine::LoadGameData (CFileManager& fp, bool bNewMine) 
 {
 int startOffset = fp.Tell ();
-
-// Set default values
-objectManager.ResetInfo ();
-wallManager.ResetInfo ();
-triggerManager.ResetInfo ();
-segmentManager.ResetInfo ();
-lightManager.ResetInfo ();
 
 // Read in FileInfo () to get size of saved fileinfo.
 if (fp.Seek (startOffset, SEEK_SET)) {
