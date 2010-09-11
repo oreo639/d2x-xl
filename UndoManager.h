@@ -279,7 +279,7 @@ class CBufPtr {
 
 		const int operator* (void) { return m_index; }
 
-		CBufPtr (int size = DLE_MAX_UNDOS) : m_size (size), m_index (0) {}
+		CBufPtr (int size = DLE_MAX_UNDOS, int index = -1) : m_size (size), m_index (index) {}
 	};
 
 //------------------------------------------------------------------------------
@@ -290,9 +290,9 @@ class CUndoManager
 {
 	private:
 		CUndoData	m_buffer [DLE_MAX_UNDOS];
-		CBufPtr		m_nHead; // (DLE_MAX_UNDOS);
-		CBufPtr		m_nTail; // (DLE_MAX_UNDOS);
-		CBufPtr		m_nCurrent; // (DLE_MAX_UNDOS);
+		CBufPtr		m_nHead;
+		CBufPtr		m_nTail;
+		CBufPtr		m_nCurrent;
 		CUndoData	m_current;
 		//CUndoItem*	m_head;
 		//CUndoItem*	m_tail;
