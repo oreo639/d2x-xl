@@ -110,6 +110,8 @@ class CUndoItem {
 				return false;
 			if (m_length != *m_sourceLength)
 				return true;
+			if (m_backup == null)
+				return false;
 			return memcmp (m_backup, m_source, m_length * sizeof (_T)) != 0;
 			}
 
