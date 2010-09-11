@@ -257,14 +257,13 @@ bool CUndoManager::Redo (void)
 {
 if (!m_enabled)
 	return false;
-CBufPtr nEnd = m_nTail + 1;
-if (m_nCurrent == nEnd)
+if (m_nCurrent == m_nTail + 1)
 	return false;
 if (m_mode == 0)
 	return false;
 
 m_mode = 2;
-if (++m_nCurrent == *nEnd)
+if (++m_nCurrent == *m_nTail + 1)
 	m_current.Restore ();
 else 
 	Current ()->Restore ();
