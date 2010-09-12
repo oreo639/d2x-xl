@@ -76,6 +76,7 @@ m_textureColors.Destroy ();
 m_vertexColors.Destroy ();
 m_secretExit.Destroy ();
 m_reactorData.Destroy ();
+m_bSelections = false;
 }
 
 //------------------------------------------------------------------------------
@@ -287,10 +288,10 @@ if (m_nCurrent == m_nTail + 1)
 	return; // at end of undo list already
 
 //--m_nCurrent;
-do {
+while (m_nTail != m_nCurrent) {
 	m_buffer [*m_nTail].Destroy ();
 	m_nTail--;
-	} while (m_nTail != m_nCurrent);
+	} 
 ++m_nCurrent;
 
 if (m_nCurrent == m_nHead) {
