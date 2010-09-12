@@ -168,18 +168,16 @@ void CLightManager::ComputeStaticLight (double fLightScale, bool bAll, bool bCop
 undoManager.Begin (udSegments | udStaticLight);
 if (bAll)
 	CLEAR (VertexColors ());
-else {
-	for (CSegmentIterator si; si; si++) {
-		CSegment *segP = &(*si);
-		if (segP->m_info.wallFlags & MARKED_MASK) {
-			segP->Backup ();
-			CSide* sideP = segP->m_sides;
-			for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
-				for (int i = 0; i < 4; i++) {
-					sideP->m_info.uvls [i].l = 0;
-					if (!bAll)
-						VertexColor (segP->m_info.verts [sideVertTable [nSide][i]])->Clear ();
-					}
+for (CSegmentIterator si; si; si++) {
+	CSegment *segP = &(*si);
+	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
+		segP->Backup ();
+		CSide* sideP = segP->m_sides;
+		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+			for (int i = 0; i < 4; i++) {
+				sideP->m_info.uvls [i].l = 0;
+				if (!bAll)
+					VertexColor (segP->m_info.verts [sideVertTable [nSide][i]])->Clear ();
 				}
 			}
 		}
@@ -274,6 +272,8 @@ uint	vertBrightness, lightBrightness;
 byte*	sideVerts = sideVertTable [nSide];
 
 for (int i = 0; i < 4; i++, uvlP++) {
+	if (segP->m_info.verts [sideVerts [i]] == 2180)
+		i = i;
 	CColor* vertColorP = VertexColor (segP->m_info.verts [sideVerts [i]]);
 	vertBrightness = (ushort) uvlP->l;
 	lightBrightness = (uint) (brightness * (m_cornerLights ? m_cornerLights [i] : 1.0));
@@ -339,7 +339,7 @@ bool bWall = false;
 				continue;
 			if (childSegP->Child (nChildSide) >= 0) {
 				CWall* wallP = childSegP->Side (nChildSide)->Wall ();
-				if ((wallP == null) || !wallP->IsDoor ())
+				if ((wallP == null) || !wallP->IsVisible ())
 					continue;
 				}
 
