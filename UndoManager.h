@@ -320,8 +320,6 @@ class CUndoManager
 
 		inline uint& Id (void) { return m_nId; }
 
-		bool Update (bool bForce = false);
-
 		bool Undo ();
 
 		bool Redo ();
@@ -332,8 +330,6 @@ class CUndoManager
 
 		bool Revert ();
 
-		void Delay (bool bDelay);
-
 		int Count (void);
 
 		int Enable (int bEnable);
@@ -341,10 +337,6 @@ class CUndoManager
 		int SetMaxSize (int maxSize);
 
 		inline int MaxSize (void) { return m_nMaxSize; }
-
-		inline void Lock (void) { Delay (true); }
-
-		inline void Unlock (void) { Delay (false); }
 
 		void SetModified (bool bModified);
 

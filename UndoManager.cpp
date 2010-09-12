@@ -204,8 +204,10 @@ Reset ();
 
 void CUndoManager::Reset ()
 {
-m_nCurrent = m_nHead;
-Truncate ();
+if (m_nHead != -1) {
+	m_nCurrent = m_nHead;
+	Truncate ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -284,7 +286,7 @@ void CUndoManager::Truncate (void)
 if (m_nCurrent == m_nTail + 1)
 	return; // at end of undo list already
 
---m_nCurrent;
+//--m_nCurrent;
 do {
 	m_buffer [*m_nTail].Destroy ();
 	m_nTail--;
@@ -376,29 +378,6 @@ return (m_nTail > m_nHead) ? (m_nTail - *m_nHead + 1) : m_nTail + *m_nHead - m_n
 
 //------------------------------------------------------------------------------
 
-bool CUndoManager::Update (bool bForce)
-{
-if (!m_enabled || m_delay)
-	return false;
-if (m_nCurrent != m_nTail) {
-	m_nCurrent = m_nTail;
-	m_nId++;
-	}
-return true;
-}
-
-//------------------------------------------------------------------------------
-
-void CUndoManager::Delay (bool bDelay)
-{
-if (bDelay)
-	m_delay++;
-else if (m_delay > 0)
-	m_delay--;
-}
-
-//------------------------------------------------------------------------------
-
 void CUndoManager::SetModified (bool bModified) 
 {
 DLE.GetDocument ()->SetModifiedFlag (bModified);
@@ -408,25 +387,20 @@ DLE.GetDocument ()->SetModifiedFlag (bModified);
 
 void CUndoManager::Begin (int dataFlags) 
 {
-if (0 == m_nModified++) 
-	Update ();
+++m_nModified;
 if (m_mode != 0) {
 	m_mode = 0;
 	m_current.Destroy ();
 	}
 m_current.Backup (dataFlags);
-Lock ();
 }
 
 //------------------------------------------------------------------------------
 
 void CUndoManager::End (void) 
 {
-if (m_nModified > 0) {
-	Unlock ();
-	if (--m_nModified == 0)
-		Backup ();
-	}
+if ((m_nModified > 0) && (--m_nModified == 0))
+	Backup ();
 }
 
 //------------------------------------------------------------------------------
