@@ -108,7 +108,7 @@ class CUndoItem {
 		bool Diff (void) {
 			if (m_length < 0)
 				return false;
-			if (m_length != *m_sourceLength)
+			if ((m_sourceLength != null) && (m_length != *m_sourceLength))
 				return true;
 			if (m_backup == null)
 				return false;
