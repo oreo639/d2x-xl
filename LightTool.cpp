@@ -59,7 +59,9 @@ m_fDeltaLight = 50.0;
 m_fVertexLight = 50.0;
 m_nNoLightDeltas = 2;
 m_bCopyTexLights = 0;
-lightManager.SetRenderDepth (DEFAULT_LIGHT_RENDER_DEPTH, DEFAULT_LIGHT_RENDER_DEPTH);
+m_staticRenderDepth = DEFAULT_LIGHT_RENDER_DEPTH;
+m_deltaRenderDepth = DEFAULT_LIGHT_RENDER_DEPTH;
+lightManager.SetRenderDepth ();
 m_deltaLightFrameRate = 100;
 m_bShowLightSource = 0;
 }

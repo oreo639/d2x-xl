@@ -61,8 +61,6 @@ triggerManager.ResetInfo ();
 lightManager.ResetInfo ();
 objectManager.ResetInfo ();
 m_nNoLightDeltas = 2;
-m_staticRenderDepth = DEFAULT_LIGHT_RENDER_DEPTH;
-m_deltaRenderDepth = DEFAULT_LIGHT_RENDER_DEPTH;
 objectManager.SortObjects () = true;
 m_bVertigo = false;
 m_pHxmExtraData = null;
