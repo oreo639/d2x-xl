@@ -296,7 +296,6 @@ if (m_nCurrent == m_nHead) {
 	m_nId = 0;
 	}
 else {
-	--m_nTail;
 	m_nId = Tail ()->Id () + 1;
 	}
 }

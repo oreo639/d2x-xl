@@ -435,8 +435,7 @@ return -1;
 bool CLightManager::CalcLightDeltas (int force, int nDepth) 
 {
 	// initialize totals
-	int		nErrors = 0;
-	double	m_cornerLights[4];
+	int nErrors = 0;
 
 DeltaValueCount () = 0;
 DeltaIndexCount () = 0;
