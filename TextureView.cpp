@@ -150,7 +150,7 @@ CHECKMINE;
 if (PickTexture (point, nBaseTex))
 	return;
 if (nFlags & MK_SHIFT) {
-	CGameObject *objP = objectManager.Object (current.m_nObject);
+	CGameObject *objP = objectManager.Object (current->m_nObject);
    if (objP->m_info.renderType != RT_POLYOBJ) 
 		return;
 	objP->rType.polyModelInfo.nOverrideTexture = nBaseTex;
@@ -160,7 +160,7 @@ else if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	segmentManager.SetTextures (current, nBaseTex, -1);
+	segmentManager.SetTextures (*current, nBaseTex, -1);
 	Refresh ();
 	}
 }
@@ -171,7 +171,7 @@ void CTextureView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 CHECKMINE;
 
-	CSide *sideP = current.Side ();
+	CSide *sideP = current->Side ();
 	short	nBaseTex;
 
 if (PickTexture (point, nBaseTex))
@@ -181,7 +181,7 @@ if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	segmentManager.SetTextures (current, -1, nBaseTex);
+	segmentManager.SetTextures (*current, -1, nBaseTex);
 	Refresh ();
 	}
 }
@@ -271,8 +271,8 @@ else {
 	}
 SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
 // figure out position of current texture
-int nBaseTex = current.Side ()->m_info.nBaseTex;
-int nOvlTex = current.Side ()->m_info.nOvlTex & 0x3fff; // strip rotation info
+int nBaseTex = current->Side ()->m_info.nBaseTex;
+int nOvlTex = current->Side ()->m_info.nOvlTex & 0x3fff; // strip rotation info
 CTexture tex (textureManager.m_bmBuf);
 
 CDC *pDC = GetDC();

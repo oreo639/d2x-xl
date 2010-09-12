@@ -285,7 +285,7 @@ void CMineView::CenterSegment (void)
 CHECKMINE;
 
 	CVertex *vertP = vertexManager.Vertex (0);
-	ushort *indexP = current.Segment ()->m_info.verts;
+	ushort *indexP = current->Segment ()->m_info.verts;
 
 m_move = (vertP [indexP [0]] +
 			 vertP [indexP [1]] +
@@ -309,7 +309,7 @@ CDlcDoc* pDoc = GetDocument();
 ASSERT_VALID(pDoc);
 if (!pDoc) return;
 
-m_move = -current.Object ()->Position ();
+m_move = -current->Object ()->Position ();
 Refresh (false);
 }
 

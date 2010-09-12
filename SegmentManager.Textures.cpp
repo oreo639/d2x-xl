@@ -7,7 +7,7 @@
 
 void CSegmentManager::Textures (CSideKey key, short& nBaseTex, short& nOvlTex)
 {
-current.Get (key);
+current->Get (key);
 Side (key)->GetTextures (nBaseTex, nOvlTex);
 }
 
@@ -18,7 +18,7 @@ bool CSegmentManager::SetTextures (CSideKey key, short nBaseTex, short nOvlTex)
 	bool bChange = false;
 
 undoManager.Begin (udSegments); 
-current.Get (key); 
+current->Get (key); 
 CSide *sideP = Side (key); 
 bChange = sideP->SetTextures (nBaseTex, nOvlTex);
 if (!bChange) {

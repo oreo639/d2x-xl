@@ -95,7 +95,7 @@ void CAdvObjTool::OnAccept (void)
 if (!(m_bInited && theMine))
 	return;
 UpdateData (TRUE);
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 objP->mType.physInfo.mass = m_mass;
 objP->mType.physInfo.drag = m_drag;
 objP->mType.physInfo.brakes = m_brakes;
@@ -141,7 +141,7 @@ if (objectManager.Count ()) {
 	EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, FALSE);
 	return;
 	}
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, TRUE);
 m_size = objP->m_info.size;
 m_shields = objP->m_info.shields;

@@ -184,18 +184,18 @@ void CTextureTool::UpdateLightWnd (void)
 {
 CHECKMINE;
 
-CWall *wallP = current.Wall ();
+CWall *wallP = current->Wall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
 	if (DLE.IsD2XLevel ())
-		current.LightColor ()->Clear ();
+		current->LightColor ()->Clear ();
 	}
 else {
 	if (!m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = TRUE);
 	if (DLE.IsD2XLevel ()) {
-		CColor *plc = current.LightColor ();
+		CColor *plc = current->LightColor ();
 		if (!plc->m_info.index) {	// set light color to white for new lights
 			plc->m_info.index = 255;
 			plc->m_info.color.r =
@@ -248,7 +248,7 @@ void CTextureTool::OnAddLight ()
 {
 if (m_iLight >= 0)
 	INFOMSG (" There is already a variable light.")
-else if (0 <= (m_iLight = lightManager.AddVariableLight (current, 0xAAAAAAAAL, F1_0 / 4))) {
+else if (0 <= (m_iLight = lightManager.AddVariableLight (*current, 0xAAAAAAAAL, F1_0 / 4))) {
 	UpdateLightWnd ();
 	DLE.MineView ()->Refresh ();
 	}
@@ -317,7 +317,7 @@ void CTextureTool::SetWallColor (void)
 {
 if (lightManager.UseTexColors ()) {
 	short			nSegment, nSide;
-	short			nBaseTex = current.Side ()->m_info.nBaseTex;
+	short			nBaseTex = current->Side ()->m_info.nBaseTex;
 	CSegment*	segP = segmentManager.Segment (0);
 	CSide*		sideP;
 	CWall			*wallP;
@@ -352,12 +352,12 @@ if (/*(DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
 		point.x -= rcPal.left;
 		point.y -= rcPal.top;
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
-			CWall *wallP = current.Wall ();
+			CWall *wallP = current->Wall ();
 			if (wallP && (wallP->Type () == WALL_TRANSPARENT)) {
 				wallP->Info ().cloakValue = m_nColorIndex;
 				SetWallColor ();
 				}
-			CColor *psc = current.LightColor ();
+			CColor *psc = current->LightColor ();
 			if (psc->m_info.index = m_nColorIndex) {
 				psc->m_info.color.r = (double) m_rgbColor.peRed / 255.0;
 				psc->m_info.color.g = (double) m_rgbColor.peGreen / 255.0;
@@ -370,8 +370,8 @@ if (/*(DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
 				}
 			//if (!wallP || (wallP->Type () != WALL_TRANSPARENT)) 
 				{
-				lightManager.SetTexColor (current.Side ()->m_info.nBaseTex, psc);
-				lightManager.SetTexColor (current.Side ()->m_info.nOvlTex, psc);
+				lightManager.SetTexColor (current->Side ()->m_info.nBaseTex, psc);
+				lightManager.SetTexColor (current->Side ()->m_info.nOvlTex, psc);
 				}
 			UpdateData (FALSE);
 			UpdatePaletteWnd ();
@@ -393,7 +393,7 @@ cc.rgbResult = RGB (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.peBlue);
 cc.lpCustColors = m_custColors;
 cc.Flags = CC_ANYCOLOR | CC_FULLOPEN | CC_RGBINIT | CC_SHOWHELP;
 if (ChooseColor (&cc)) {
-	CColor *psc = current.LightColor ();
+	CColor *psc = current->LightColor ();
 	psc->m_info.index = m_nColorIndex = 255;
 	m_rgbColor.peBlue = ((byte) (cc.rgbResult >> 16)) & 0xFF;
 	m_rgbColor.peGreen = ((byte) (cc.rgbResult >> 8)) & 0xFF;
@@ -401,8 +401,8 @@ if (ChooseColor (&cc)) {
 	psc->m_info.color.r = (double) m_rgbColor.peRed / 255.0;
 	psc->m_info.color.g = (double) m_rgbColor.peGreen / 255.0;
 	psc->m_info.color.b = (double) m_rgbColor.peBlue / 255.0;
-	lightManager.SetTexColor (current.Side ()->m_info.nBaseTex, psc);
-	lightManager.SetTexColor (current.Side ()->m_info.nOvlTex, psc);
+	lightManager.SetTexColor (current->Side ()->m_info.nBaseTex, psc);
+	lightManager.SetTexColor (current->Side ()->m_info.nOvlTex, psc);
 	UpdatePaletteWnd ();
 	}
 }

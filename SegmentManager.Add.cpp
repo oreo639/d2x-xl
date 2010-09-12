@@ -60,7 +60,7 @@ short CSegmentManager::Create (void)
 {
 	CSegment *newSegP, *curSegP; 
 	int		i;
-	short		nNewSeg, nNewSide, nCurSide = current.m_nSide; 
+	short		nNewSeg, nNewSide, nCurSide = current->m_nSide; 
 	ushort	newVerts [4]; 
 	short		nSide; 
 
@@ -78,7 +78,7 @@ if (vertexManager.Full ()) {
 	return -1;
 	}
 
-curSegP = Segment (current.m_nSegment); 
+curSegP = Segment (current->m_nSegment); 
 
 if (curSegP->Child (nCurSide) >= 0) {
 	ErrorMsg ("Can not add a new segment to a side\nwhich already has a segment attached."); 
@@ -104,7 +104,7 @@ newSegP->Setup ();
 // define children and special child
 newSegP->m_info.childFlags = 1 << oppSideTable [nCurSide]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
-	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? current.m_nSegment : -1);
+	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? current->m_nSegment : -1);
 
 // define textures
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -126,7 +126,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 newSegP->m_info.staticLight = curSegP->m_info.staticLight; 
 
 // delete variable light if it exists
-lightManager.DeleteVariableLight (CSideKey (current.m_nSegment, nCurSide)); 
+lightManager.DeleteVariableLight (CSideKey (current->m_nSegment, nCurSide)); 
 
 // update current segment
 curSegP->SetChild (nCurSide, nNewSeg); 
@@ -152,10 +152,10 @@ for (CSegmentIterator si; si; si++) {
 	}
 // auto align textures new segment
 for (nNewSide = 0; nNewSide < 6; nNewSide++)
-	AlignTextures (current.m_nSegment, nNewSide, nNewSeg, true, true); 
+	AlignTextures (current->m_nSegment, nNewSide, nNewSeg, true, true); 
 // set current segment to new segment
-current.m_nSegment = nNewSeg; 
-current.Segment ()->Backup (opAdd);
+current->m_nSegment = nNewSeg; 
+current->Segment ()->Backup (opAdd);
 //		SetLinesToDraw(); 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
@@ -303,19 +303,19 @@ undoManager.Begin (udSegments);
 if (nType == SEGMENT_FUNC_REPAIRCEN)
 	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? 433 : -1, "Repair centers are not available in Descent 1.");
 else {
-	short nLastSeg = current.m_nSegment;
+	short nLastSeg = current->m_nSegment;
 	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? DLE.IsD1File () ? 322 : 333 : -1);
 	if (nSegment < 0)
 		return -1;
 	if (bSetDefTextures) { // add energy spark walls to fuel center sides
-		current.m_nSegment = nLastSeg;
-		if (wallManager.Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1) != null) {
+		current->m_nSegment = nLastSeg;
+		if (wallManager.Create (*current, WALL_ILLUSION, 0, KEY_NONE, -1, -1) != null) {
 			CSideKey opp;
 			if (OppositeSide (opp))
 				wallManager.Create (opp, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
 			}
 		Segment (nSegment)->Backup ();
-		current.m_nSegment = nSegment;
+		current->m_nSegment = nSegment;
 		}
 	}
 undoManager.End ();
@@ -325,7 +325,7 @@ return nSegment;
 // ----------------------------------------------------------------------------- 
 // Calculate vertices when adding a new segment.
 
-#define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
+#define CURRENT_POINT(a) ((current->m_nPoint + (a))&0x03)
 
 void CSegmentManager::ComputeVertices (ushort newVerts [4])
 {
@@ -336,7 +336,7 @@ void CSegmentManager::ComputeVertices (ushort newVerts [4])
 	short				i, points [4]; 
 	CDoubleVector	center, oppCenter, newCenter, vNormal; 
 
-curSegP = Segment (current.m_nSegment); 
+curSegP = Segment (current->m_nSegment); 
 for (i = 0; i < 4; i++)
 	points [i] = CURRENT_POINT(i);
 	// METHOD 1: orthogonal with right angle on new side and standard cube side
@@ -345,9 +345,9 @@ for (i = 0; i < 4; i++)
 switch (m_nAddMode) {
 	case (ORTHOGONAL):
 		{
-		center = CalcSideCenter (current); 
-		oppCenter = CalcSideCenter (CSideKey (current.m_nSegment, oppSideTable [current.m_nSide])); 
-		vNormal = CalcSideNormal (current); 
+		center = CalcSideCenter (*current); 
+		oppCenter = CalcSideCenter (CSideKey (current->m_nSegment, oppSideTable [current->m_nSide])); 
+		vNormal = CalcSideNormal (*current); 
 		// set the length of the new cube to be one standard cube length
 		// scale the vector
 		vNormal *= 20; 
@@ -355,9 +355,9 @@ switch (m_nAddMode) {
 		newCenter = center + vNormal; 
 		// new method: extend points 0 and 1 with vNormal, then move point 0 toward point 1.
 		// point 0
-		a = vNormal + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(0)]]); 
+		a = vNormal + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current->m_nSide][CURRENT_POINT(0)]]); 
 		// point 1
-		b = vNormal + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(1)]]); 
+		b = vNormal + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current->m_nSide][CURRENT_POINT(1)]]); 
 		// center
 		c = Average (a, b);
 		// vector from center to point0 and its length
@@ -383,7 +383,7 @@ switch (m_nAddMode) {
 			A [i] += (newCenter - a); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
-			//nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]; 
+			//nVertex = curSegP->m_info.verts [sideVertTable [current->m_nSide][i]]; 
 			nVertex = newVerts [i];
 			*vertexManager.Vertex (nVertex) = A [i]; 
 			vertexManager.Vertex (nVertex)->Backup (); // update the newly added vertex instead of creating a new backup
@@ -394,15 +394,15 @@ switch (m_nAddMode) {
 	// METHOD 2: orghogonal with right angle on new side
 	case (EXTEND):
 		{
-		center = CalcSideCenter (current); 
-		oppCenter = CalcSideCenter (CSideKey (current.m_nSegment, oppSideTable [current.m_nSide])); 
-		vNormal = CalcSideNormal (current); 
+		center = CalcSideCenter (*current); 
+		oppCenter = CalcSideCenter (CSideKey (current->m_nSegment, oppSideTable [current->m_nSide])); 
+		vNormal = CalcSideNormal (*current); 
 		// calculate the length of the new cube
 		vNormal *= Distance (center, oppCenter); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
 			nVertex = newVerts [i];
-			*vertexManager.Vertex (nVertex) = *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]) + vNormal; 
+			*vertexManager.Vertex (nVertex) = *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current->m_nSide][i]]) + vNormal; 
 			vertexManager.Vertex (nVertex)->Backup (); // do not create a new backup right after adding this vertex
 			}
 		}
@@ -412,7 +412,7 @@ switch (m_nAddMode) {
 	case(MIRROR):
 		{
 		// copy side's four points into A
-		short nSide = current.m_nSide;
+		short nSide = current->m_nSide;
 		for (i = 0; i < 4; i++) {
 			A [i] = *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [nSide][i]]); 
 			A [i + 4] = *vertexManager.Vertex (curSegP->m_info.verts [oppSideVertTable [nSide][i]]); 
@@ -458,7 +458,7 @@ switch (m_nAddMode) {
 			B [i].Set (C [i].v.x, C [i].v.y * cos (angle1) + C [i].v.z * sin (angle1), C [i].v.z * cos (angle1) - C [i].v.y * sin (angle1)); 
 
 		// and translate back
-		nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][0]]; 
+		nVertex = curSegP->m_info.verts [sideVertTable [current->m_nSide][0]]; 
 		for (i = 4; i < 8; i++) 
 			A [i] = B [i] + *vertexManager.Vertex (nVertex); 
 
@@ -478,7 +478,7 @@ bool CSegmentManager::SetDefaultTexture (short nTexture)
 if (nTexture < 0)
 	return true;
 
-short nSegment = current.m_nSegment;
+short nSegment = current->m_nSegment;
 CSegment *segP = Segment (nSegment);
 
 if (!m_bCreating)
@@ -509,7 +509,7 @@ return true;
 bool CSegmentManager::Define (short nSegment, byte nFunction, short nTexture)
 {
 undoManager.Begin (udSegments);
-CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
+CSegment *segP = (nSegment < 0) ? current->Segment () : Segment (nSegment);
 if (!m_bCreating)
 	segP->Backup ();
 Undefine (Index (segP));
@@ -562,7 +562,7 @@ segP->m_info.nMatCen = -1;
 
 void CSegmentManager::Undefine (short nSegment)
 {
-	CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
+	CSegment *segP = (nSegment < 0) ? current->Segment () : Segment (nSegment);
 
 segP->Backup ();
 nSegment = Index (segP);
@@ -608,7 +608,7 @@ void CSegmentManager::Delete (short nDelSeg)
 if (Count () < 2)
 	return; 
 if (nDelSeg < 0)
-	nDelSeg = current.m_nSegment; 
+	nDelSeg = current->m_nSegment; 
 if (nDelSeg < 0 || nDelSeg >= Count ()) 
 	return; 
 

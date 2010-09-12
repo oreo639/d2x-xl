@@ -162,7 +162,7 @@ if (Full ()) {
 // if no wall at current side, try to add a wall of proper type
 undoManager.Begin (udTriggers);
 
-CWall* wallP = current.Wall ();
+CWall* wallP = current->Wall ();
 
 if (wallP == null) {
 	if (bAddWall) {
@@ -170,7 +170,7 @@ if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger\nsince the maximum number of walls is already reached.");
 			return null;
 			}
-		wallP = wallManager.Create (CSideKey (), (current.Child () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
+		wallP = wallManager.Create (CSideKey (), (current->Child () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
 		if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			undoManager.Unroll ();
@@ -242,7 +242,7 @@ if (nDelTrigger == NO_TRIGGER)
 	return;
 
 if (nDelTrigger < 0) {
-	CWall* wallP = current.Wall ();
+	CWall* wallP = current->Wall ();
 	if (wallP == null)
 		return;
 	nDelTrigger = wallP->Info ().nTrigger;
@@ -295,7 +295,7 @@ undoManager.End ();
 
 short CTriggerManager::FindBySide (short& nTrigger, CSideKey key)
 {
-current.Get (key);
+current->Get (key);
 CWall *wallP = wallManager.FindBySide (key);
 if (wallP != null) {
 	nTrigger = wallP->Info ().nTrigger;
@@ -355,7 +355,7 @@ undoManager.End ();
 
 CTrigger* CTriggerManager::AddToObject (short nObject, short type) 
 {
-	CGameObject* objP = (nObject < 0) ? current.Object () : objectManager.Object (nObject);
+	CGameObject* objP = (nObject < 0) ? current->Object () : objectManager.Object (nObject);
 
 if (objP == null) {
 	ErrorMsg ("Couldn't find object to attach triggers to.");
@@ -598,11 +598,11 @@ if (!HaveResources ())
 	return false;
 // make a new wall and a new trigger
 undoManager.Begin (udTriggers);
-CWall* wallP = wallManager.Create (current, (byte) wallType, wallFlags, KEY_NONE, -1, -1);
+CWall* wallP = wallManager.Create (*current, (byte) wallType, wallFlags, KEY_NONE, -1, -1);
 if (wallP != null) {
 	CTrigger* trigP = AddToWall (wallManager.Index (wallP), triggerType, false);
 	if (trigP != null) 
-		trigP->Add (other.m_nSegment, other.m_nSide);
+		trigP->Add (other->m_nSegment, other->m_nSide);
 	undoManager.End ();
 	DLE.MineView ()->Refresh ();
 	return true;
@@ -615,14 +615,14 @@ return false;
 
 bool CTriggerManager::AddDoorTrigger (short wallType, ushort wallFlags, ushort triggerType) 
 {
-if (other.Wall () == null) {
+if (other->Wall () == null) {
 	ErrorMsg ("Other cube's side is not on a wall.\n\n"
 				"Hint: Select a wall using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");
 	return false;
 	}
 // automatically change the trigger type to open if not a door
-if (other.Wall ()->Info ().type != WALL_DOOR)
+if (other->Wall ()->Info ().type != WALL_DOOR)
 	triggerType = TT_OPEN_WALL;
 return AutoAddTrigger (wallType, wallFlags, triggerType);
 }
@@ -638,7 +638,7 @@ return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
 
 bool CTriggerManager::AddRobotMaker (void) 
 {
-if (other.Segment ()->Info ().function != SEGMENT_FUNC_ROBOTMAKER) {
+if (other->Segment ()->Info ().function != SEGMENT_FUNC_ROBOTMAKER) {
 	ErrorMsg ("There is no robot maker cube selected.\n\n"
 				"Hint: Select a robot maker cube using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");

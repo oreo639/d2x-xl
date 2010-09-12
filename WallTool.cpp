@@ -266,11 +266,11 @@ if (!(m_bInited && theMine))
 	return;
 
 InitCBWallNo ();
-m_wallP [0] = current.Wall ();
+m_wallP [0] = current->Wall ();
 if (m_wallP [0] == null) {
 	strcpy_s (m_szMsg, sizeof (m_szMsg), "No wall for current side");
 	EnableControls (FALSE);
-	if (current.Segment ()->Child (current.m_nSide) >= 0)
+	if (current->Segment ()->Child (current->m_nSide) >= 0)
 		CToolDlg::EnableControls (IDC_WALL_ADD_DOOR_NORMAL, IDC_WALL_ADD_WALL_LAVAFALL, TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_WALL_TYPE)->EnableWindow (TRUE);
@@ -366,9 +366,9 @@ CSideKey keys [2];
 bool bRefresh = false;
 
 m_bDelayRefresh = true;
-segP [0] = current.Segment ();
-sideP [0] = current.Side ();
-keys [0] = current;
+segP [0] = current->Segment ();
+sideP [0] = current->Side ();
+keys [0] = *current;
 sideP [1] = segmentManager.OppositeSide (keys [0], keys [1]);
 if (sideP [1] != null) 
 	segP [1] = segmentManager.Segment (keys [1].m_nSegment);
@@ -380,7 +380,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
 		if ((DLE.IsD2File ()) && (segP [bSide]->Child (keys [bSide].m_nSide) == -1))
-			wallManager.Create (current, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
+			wallManager.Create (*current, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wallP = wallManager.Create (keys [bSide], m_defWall.Type (), m_defWall.Info ().flags, m_defWall.Info ().keys, m_defWall.Info ().nClip, m_defTexture)) {
 			if (wallP->Type () == m_defWall.Type ()) {
 				wallP->Info ().hps = m_defWall.Info ().hps;
@@ -502,7 +502,7 @@ if (m_nWall [0] < 0) {
 	return false;
 	}
 m_wallP [0] = wallManager.Wall (m_nWall [0]);
-(CSideKey) current = *((CSideKey *) m_wallP [0]);
+(CSideKey) *current = (CSideKey) *m_wallP [0];
 m_nTrigger = m_wallP [0]->Info ().nTrigger;
 GetOtherWall ();
 return true;
@@ -539,9 +539,9 @@ m_defWall.Type () = m_nType = nType;
 m_nWall [0] = CBWallNo ()->GetCurSel ();
 m_wallP [0] = wallManager.Wall (m_nWall [0]);
 */
-segP [0] = current.Segment ();
-sideP [0] = current.Side ();
-keys [0] = current;
+segP [0] = current->Segment ();
+sideP [0] = current->Side ();
+keys [0] = *current;
 if (segmentManager.OppositeSide (keys [0], keys [1])) {
 	segP [1] = segmentManager.Segment (keys [1].m_nSegment);
 	sideP [1] = segP [1]->m_sides + keys [1].m_nSide;

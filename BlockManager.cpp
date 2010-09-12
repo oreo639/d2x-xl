@@ -7,7 +7,7 @@ CBlockManager blockManager;
 
 //------------------------------------------------------------------------------
 
-#define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
+#define CURRENT_POINT(a) ((current->m_nPoint + (a))&0x03)
 
 //------------------------------------------------------------------------------
 
@@ -24,8 +24,8 @@ char *BLOCKOP_HINT =
 
 void CBlockManager::MakeTransformation (CDoubleMatrix& m, CDoubleVector& o)
 {
-ushort* verts = current.Segment ()->m_info.verts;
-byte* sideVerts = sideVertTable [current.m_nSide];
+ushort* verts = current->Segment ()->m_info.verts;
+byte* sideVerts = sideVertTable [current->m_nSide];
 o = *vertexManager.Vertex (verts [sideVerts [CURRENT_POINT(0)]]);
 // set x'
 m.rVec = *vertexManager.Vertex (verts [sideVerts [CURRENT_POINT(1)]]) - o;

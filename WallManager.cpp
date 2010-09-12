@@ -71,7 +71,7 @@ CWall* CWallManager::Create (CSideKey key, short type, ushort flags, byte keys, 
 if (!HaveResources ())
 	return null;
 
-current.Get (key);
+current->Get (key);
 
 CSegment *segP = segmentManager.Segment (key);
 CSide* sideP = segmentManager.Side (key);
@@ -148,11 +148,11 @@ if (nDelWall == NO_WALL)
 	return;
 CWall* delWallP;
 if (nDelWall < 0)
-	delWallP = current.Wall ();
+	delWallP = current->Wall ();
 else {
 	delWallP = Wall (nDelWall);
 	if (delWallP == null) {
-		delWallP = current.Wall ();
+		delWallP = current->Wall ();
 		nDelWall = Index (delWallP);
 		}
 	}
@@ -256,7 +256,7 @@ bool CWallManager::CreateDoor (byte type, byte flags, byte keys, char nClip, sho
 {
 undoManager.Begin (udSegments | udWalls);
 // add a door to the current segment/side
-if (Create (current, type, flags, keys, nClip, nTexture)) {
+if (Create (*current, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
 	CSideKey opp;
 	if (segmentManager.OppositeSide (opp) && Create (opp, type, flags, keys, nClip, nTexture)) {
@@ -370,10 +370,10 @@ if (!triggerManager.HaveResources ())
 	return false;
 // make a new wall and a new trigger
 undoManager.Begin (udSegments | udWalls);
-if (Create (current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
+if (Create (*current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	Wall (WallCount ()- 1)->Info ().nClip = 10;
-	segmentManager.SetTextures (current, 0, DLE.IsD1File () ? 444 : 508);
+	segmentManager.SetTextures (*current, 0, DLE.IsD1File () ? 444 : 508);
 	triggerManager.Create (WallCount () - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	CSideKey opp;
@@ -402,19 +402,19 @@ if (DLE.IsD1File ()) {
 if (!triggerManager.HaveResources ())
 	return false;
 
-int nLastSeg = current.m_nSegment;
+int nLastSeg = current->m_nSegment;
 undoManager.Begin (udSegments | udWalls);
 if (!segmentManager.Create ()) {
 	undoManager.Unroll ();
 	return false;
 	}
-int nNewSeg = current.m_nSegment;
-current.m_nSegment = nLastSeg;
-if (Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
+int nNewSeg = current->m_nSegment;
+current->m_nSegment = nLastSeg;
+if (Create (*current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	triggerManager.Create (WallCount () - 1, TT_SECRET_EXIT);
-	objectManager.SecretSegment () = current.m_nSegment;
+	objectManager.SecretSegment () = current->m_nSegment;
 	segmentManager.SetDefaultTexture (426);
-	current.m_nSegment = nNewSeg;
+	current->m_nSegment = nNewSeg;
 	segmentManager.SetDefaultTexture (426);
 	DLE.MineView ()->Refresh ();
 	undoManager.End ();
@@ -541,7 +541,7 @@ void CWallManager::CheckForDoor (CSideKey key)
 if (bExpertMode)
 	return;
 
-current.Get (key);
+current->Get (key);
 CWall* wallP = segmentManager.Wall (key);
 
 if (!wallP)

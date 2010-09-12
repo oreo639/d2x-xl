@@ -21,7 +21,7 @@ return pos;
 
 CDoubleVector CSegmentManager::CalcSideCenter (CSideKey key)
 {
-current.Get (key);
+current->Get (key);
 
 	CSegment _const_ * segP = Segment (key.m_nSegment);
 	byte*	sideVertP = &sideVertTable [key.m_nSide][0];
@@ -37,7 +37,7 @@ return v;
 
 CDoubleVector CSegmentManager::CalcSideNormal (CSideKey key)
 {
-current.Get (key);
+current->Get (key);
 CSegment _const_ * segP = Segment (key.m_nSegment);
 byte*	sideVertP = &sideVertTable [key.m_nSide][0];
 return -Normal (*(segP->Vertex (sideVertP [0])), *(segP->Vertex (sideVertP [1])), *(segP->Vertex (sideVertP [3])));
@@ -52,7 +52,7 @@ return -Normal (*(segP->Vertex (sideVertP [0])), *(segP->Vertex (sideVertP [1]))
 
 CSide _const_ * CSegmentManager::OppositeSide (CSideKey key, CSideKey& opp)
 {
-current.Get (key); 
+current->Get (key); 
 #ifdef _DEBUG
 if (key.m_nSegment < 0 || key.m_nSegment >= Count ())
 	return null; 
@@ -76,7 +76,7 @@ return null;
 
 int CSegmentManager::IsWall (CSideKey key)
 {
-current.Get (key); 
+current->Get (key); 
 return (Segment (key.m_nSegment)->Child (key.m_nSide) == -1) || (Wall (key) != null);
 }
 
@@ -169,8 +169,8 @@ void CSegmentManager::CopyOtherSegment (void)
 
 if (selections [0].m_nSegment == selections [1].m_nSegment)
 	return; 
-short nSegment = current.m_nSegment; 
-CSegment *otherSeg = other.Segment (); 
+short nSegment = current->m_nSegment; 
+CSegment *otherSeg = other->Segment (); 
 undoManager.Begin (udSegments);
 for (int nSide = 0; nSide < 6; nSide++)
 	if (SetTextures (CSideKey (nSegment, nSide), otherSeg->m_sides [nSide].m_info.nBaseTex, otherSeg->m_sides [nSide].m_info.nOvlTex))

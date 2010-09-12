@@ -102,14 +102,14 @@ if (vertexManager.Count () > (MAX_VERTICES - 1)) {
 	return; 
 	}
 
-CSegment* segP = Segment (current.m_nSegment); 
-vert = segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
+CSegment* segP = Segment (current->m_nSegment); 
+vert = segP->m_info.verts [sideVertTable [current->m_nSide][current->m_nPoint]]; 
 
 // check to see if current point is shared by any other cubes
 bool found = false; 
 segP = Segment (0);
 for (nSegment = 0; (nSegment < Count ()) && !found; nSegment++, segP++)
-	if (nSegment != current.m_nSegment)
+	if (nSegment != current->m_nSegment)
 		for (nVertex = 0; nVertex < 8; nVertex++)
 			if (segP->m_info.verts [nVertex] == vert) {
 				found = true; 
@@ -126,18 +126,18 @@ if (QueryMsg("Are you sure you want to unjoin this point?") != IDYES)
 undoManager.Begin (udSegments | udVertices);
 memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (vert), sizeof (*vertexManager.Vertex (0)));
 // replace existing point with new point
-segP = Segment (current.m_nSegment); 
-segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]] = vertexManager.Count (); 
+segP = Segment (current->m_nSegment); 
+segP->m_info.verts [sideVertTable [current->m_nSide][current->m_nPoint]] = vertexManager.Count (); 
 segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 // update total number of vertices
 vertexManager.Status (vertexManager.Count ()++) = 0; 
 
 for (short nSide = 0; nSide < 6; nSide++) {
-	CSideKey opp, key (current.m_nSegment, nSide);
-	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]) && OppositeSide (key, opp)) {
+	CSideKey opp, key (current->m_nSegment, nSide);
+	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [current->m_nSide][current->m_nPoint]]) && OppositeSide (key, opp)) {
 		UnlinkChild (opp.m_nSegment, opp.m_nSide);
-		UnlinkChild (current.m_nSegment, nSide); 
+		UnlinkChild (current->m_nSegment, nSide); 
 		}
 	}	
 
@@ -169,15 +169,15 @@ if (vertexManager.Count () > (MAX_VERTICES - 2)) {
 	return; 
 	}
 
-segP = Segment (current.m_nSegment); 
+segP = Segment (current->m_nSegment); 
 for (i = 0; i < 2; i++) {
-	nLine = sideLineTable [current.m_nSide][current.m_nLine]; 
-	vert [i] = Segment (current.m_nSegment)->m_info.verts [lineVertTable [nLine][i]]; 
+	nLine = sideLineTable [current->m_nSide][current->m_nLine]; 
+	vert [i] = Segment (current->m_nSegment)->m_info.verts [lineVertTable [nLine][i]]; 
 	// check to see if current points are shared by any other cubes
 	found [i] = false; 
 	segP = Segment (0);
 	for (nSegment = 0; (nSegment < Count ()) && !found [i]; nSegment++, segP++) {
-		if (nSegment != current.m_nSegment) {
+		if (nSegment != current->m_nSegment) {
 			for (nVertex = 0; nVertex < 8; nVertex++) {
 				if (segP->m_info.verts [nVertex] == vert [i]) {
 					found [i] = true; 
@@ -197,23 +197,23 @@ if (QueryMsg ("Are you sure you want to unjoin this line?") != IDYES)
 	return; 
 
 undoManager.Begin (udSegments | udVertices);
-segP = Segment (current.m_nSegment); 
+segP = Segment (current->m_nSegment); 
 // create a new points (copy of other vertices)
 for (i = 0; i < 2; i++)
 	if (found [i]) {
 		memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (vert [i]), sizeof (*vertexManager.Vertex (0)));
 		// replace existing points with new points
-		nLine = sideLineTable [current.m_nSide][current.m_nLine]; 
+		nLine = sideLineTable [current->m_nSide][current->m_nLine]; 
 		segP->m_info.verts [lineVertTable [nLine][i]] = vertexManager.Count (); 
 		segP->m_info.wallFlags &= ~MARKED_MASK; 
 		// update total number of vertices
 		vertexManager.Status (vertexManager.Count ()++) = 0; 
 		}
 for (short nSide = 0; nSide < 6; nSide++) {
-	CSideKey opp, key (current.m_nSegment, nSide);
+	CSideKey opp, key (current->m_nSegment, nSide);
 	if (IsLineOfSide (segP, nSide, nLine) && OppositeSide (key, opp)) {
 		UnlinkChild (opp.m_nSegment, opp.m_nSide);
-		UnlinkChild (current.m_nSegment, nSide); 
+		UnlinkChild (current->m_nSegment, nSide); 
 		}
 	}
 SetLinesToDraw(); 
@@ -243,9 +243,9 @@ void CSegmentManager::SplitSegments (int solidify, int nSide)
 if (tunnelMaker.Active ())
 	return; 
 
-segP = current.Segment (); 
+segP = current->Segment (); 
 if (nSide < 0)
-	nSide = current.m_nSide;
+	nSide = current->m_nSide;
 int nChildSeg = segP->Child (nSide); 
 if (nChildSeg == -1) {
 	ErrorMsg ("The current side is not connected to another cube"); 
@@ -256,7 +256,7 @@ for (i = 0; i < 4; i++)
 	vert [i] = segP->m_info.verts [sideVertTable [nSide][i]]; 
 	// check to see if current points are shared by any other cubes
 for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++)
-	if (nSegment != current.m_nSegment)
+	if (nSegment != current->m_nSegment)
 		for (i = 0, nFound = 0; i < 4; i++) {
 			found [i] = false;
 			for (nVertex = 0; nVertex < 8; nVertex++)
@@ -283,7 +283,7 @@ if (QueryMsg ("Are you sure you want to unjoin this side?") != IDYES)
 	return; 
 
 undoManager.Begin (udSegments | udVertices);
-segP = Segment (current.m_nSegment); 
+segP = Segment (current->m_nSegment); 
 if (nFound < 4)
 	solidify = 0;
 if (!solidify) {
@@ -302,7 +302,7 @@ if (!solidify) {
 	int nSide;
 	for (nSide = 0; nSide < 6; nSide++)
 		if (nSide != oppSideTable [nSide])
-			UnlinkChild (current.m_nSegment, nSide); 
+			UnlinkChild (current->m_nSegment, nSide); 
 	SetLinesToDraw(); 
 	INFOMSG (" Four new points were made for the current side."); 
 	}
@@ -312,12 +312,12 @@ else {
 	// yes, see if child has a side which points to the parent
 	int nChildSide;
 	for (nChildSide = 0; nChildSide < 6; nChildSide++)
-		if (childSegP->Child (nChildSide) == current.m_nSegment) 
+		if (childSegP->Child (nChildSide) == current->m_nSegment) 
 			break; 
 	// if we found the matching side
 	if (nChildSide < 6)
 		ResetSide (nChildSeg, nChildSide); 
-	ResetSide (current.m_nSegment, current.m_nSide); 
+	ResetSide (current->m_nSegment, current->m_nSide); 
 	SetLinesToDraw(); 
 	}
 undoManager.End ();
@@ -328,7 +328,7 @@ DLE.MineView ()->Refresh ();
 
 bool CSegmentManager::Split (void)
 {
-	CSegment*	centerSegP = current.Segment (), *segP, *childSegP;
+	CSegment*	centerSegP = current->Segment (), *segP, *childSegP;
 	short			nCenterSeg = segmentManager.Index (centerSegP);
 	short			nNewSegs [6];
 	ushort		nNewVerts [8];

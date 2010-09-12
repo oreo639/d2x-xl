@@ -105,7 +105,7 @@ return false;
 
 short CLightManager::VariableLight (CSideKey key) 
 {
-current.Get (key);
+current->Get (key);
 CVariableLight* flP = VariableLight (0);
 int i;
 for (i = Count (); i; i--, flP++)
@@ -131,7 +131,7 @@ if (Count () >= MAX_VARIABLE_LIGHTS) {
 	}
 
 short nBaseTex, nOvlTex;
-current.Side ()->GetTextures (nBaseTex, nOvlTex);
+current->Side ()->GetTextures (nBaseTex, nOvlTex);
 if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
 	if (!bExpertMode && (index < 0))
 		ErrorMsg ("Blinking lights can only be added to a side\n"
@@ -151,7 +151,7 @@ return VariableLight (index);
 
 short CLightManager::AddVariableLight (CSideKey key, uint mask, int time) 
 {
-current.Get (key);
+current->Get (key);
 if (VariableLight (key) != -1) {
 	if (!bExpertMode)
 		ErrorMsg ("There is already a variable light on this side");
@@ -195,7 +195,7 @@ if (index > -1) {
 
 bool CLightManager::DeleteVariableLight (CSideKey key) 
 {
-current.Get (key);
+current->Get (key);
 short index = VariableLight (key);
 if (index == -1)
 	return false;
@@ -207,7 +207,7 @@ return true;
 
 CColor* CLightManager::LightColor (CSideKey key, bool bUseTexColors) 
 { 
-current.Get (key);
+current->Get (key);
 if (bUseTexColors && UseTexColors ()) {
 	short nBaseTex, nOvlTex;
 	segmentManager.Textures (key, nBaseTex, nOvlTex);

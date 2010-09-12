@@ -204,12 +204,12 @@ AddTarget (nSegment, nSide);
 
 void CReactorTool::OnAddWallTarget ()
 {
-other = selections [current == selections [0]];
-int i = FindTarget (other.m_nSegment, other.m_nSide);
+other = &selections [!current->Index ()];
+int i = FindTarget (other->m_nSegment, other->m_nSide);
 if (i >= 0)
 	return;
 LBTargets ()->SetCurSel (i);
-AddTarget (other.m_nSegment, other.m_nSide + 1);
+AddTarget (other->m_nSegment, other->m_nSide + 1);
 }
 
 //------------------------------------------------------------------------
@@ -242,8 +242,8 @@ return m_triggerP->Find (nSegment, nSide);
 
 void CReactorTool::OnDeleteWallTarget ()
 {
-other = selections [current == selections [0]];
-int i = FindTarget (other.m_nSegment, other.m_nSide);
+other = &selections [!current->Index ()];
+int i = FindTarget (other->m_nSegment, other->m_nSide);
 if (i < 0) {
 	DEBUGMSG (" Reactor tool: Trigger doesn't target other cube's current side.");
 	return;
@@ -272,9 +272,9 @@ if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 short nSide = m_triggerP->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
-if ((current.m_nSegment == nSegment) && (current.m_nSide == nSide))
+if ((current->m_nSegment == nSegment) && (current->m_nSide == nSide))
 	return;
-(CSideKey) other = m_triggerP->Target (m_iTarget);
+(CSideKey) *other = m_triggerP->Target (m_iTarget);
 DLE.MineView ()->Refresh ();
 }
 

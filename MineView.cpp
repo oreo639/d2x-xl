@@ -728,15 +728,15 @@ void CMineView::HiliteTarget (void)
 {
 	int i, nTarget;
 
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 if ((objP->Type () != OBJ_EFFECT) || (objP->Id () != LIGHTNING_ID))
 	return;
-other.m_nObject = current.m_nObject;
+other->m_nObject = current->m_nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget) {
 	CGameObject* objP = objectManager.Object (0);
 	for (i = objectManager.Count (); i; i--, objP++) {
 		if ((objP->Type () == OBJ_EFFECT) && (objP->Id () == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
-			other.m_nObject = i;
+			other->m_nObject = i;
 			break;
 			return;
 			}
@@ -947,7 +947,7 @@ if (change.x || change.y) {
 			if (nFlags & MK_CONTROL)
 				SetMouseState (eMouseStateZoom);
 			else {
-				int v = vertexManager.Index (current.Vertex ());
+				int v = vertexManager.Index (current->Vertex ());
 				if ((abs (m_clickPos.x - m_viewPoints [v].x) < 5) && 
 					 (abs (m_clickPos.y - m_viewPoints [v].y) < 5)) {
 					SetMouseState (eMouseStateInitDrag);
@@ -1155,7 +1155,7 @@ if (m_bUpdate) {
 
 void CMineView::RefreshObject(short old_object, short new_object) 
 {
-current.m_nObject = new_object;
+current->m_nObject = new_object;
 DLE.ToolView ()->Refresh ();
 Refresh (false);
 }

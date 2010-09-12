@@ -421,7 +421,7 @@ if (pDC) {
 void CTriggerTool::DrawObjectImage ()
 {
 if (m_nClass) {
-	CGameObject *objP = current.Object ();
+	CGameObject *objP = current->Object ();
 	if ((objP->Type () == OBJ_ROBOT) || (objP->Type () == OBJ_CAMBOT) || (objP->Type () == OBJ_MONSTERBALL) || (objP->Type () == OBJ_SMOKE))
 		objP->Draw (&m_showObjWnd);
 	}
@@ -443,10 +443,10 @@ if (!m_bFindTrigger)
 	nTrigger = m_nTrigger;
 else {
 	if (m_nClass) {
-		if (current.m_nObject == triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject)
+		if (current->m_nObject == triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject)
 			return false;
 		for (int i = 0, j = triggerManager.ObjTriggerCount (); j; j--, i++) {
-			if (current.m_nObject == triggerManager.ObjTrigger (i)->Info ().nObject) {
+			if (current->m_nObject == triggerManager.ObjTrigger (i)->Info ().nObject) {
 				m_nTrigger = i;
 				return false;
 				}
@@ -552,7 +552,7 @@ if (m_nTrigger != -1) {
 	}
 CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO, IDC_TRIGGER_TRIGGERNO, TriggerCount () > 0);
 CToolDlg::EnableControls (IDC_TRIGGER_DELETEALL, IDC_TRIGGER_DELETEALL, TriggerCount () > 0);
-sideP = other.Side ();
+sideP = other->Side ();
 CTexToolDlg::Refresh (sideP->Info ().nBaseTex, sideP->Info ().nOvlTex, 1);
 if ((m_nTrigger >= 0) && (m_nType == TT_CHANGE_TEXTURE))
 	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, Texture1 (), Texture2 ());
@@ -672,7 +672,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if ((m_nTrigger == -1) || (m_nTrigger >= TriggerCount ()))
 	return;
 if (m_nClass) {
-	current.m_nObject = triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject;
+	current->m_nObject = triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject;
 	}
 else {
 	for (nWall = 0, wallP = wallManager.Wall (0); nWall < wallManager.WallCount (); nWall++, wallP++)
@@ -689,9 +689,9 @@ else {
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((current.m_nSegment != wallP->m_nSegment) ||
-		 (current.m_nSide != wallP->m_nSide)) {
-		(CSideKey) current = (CSideKey) *wallP;
+	if ((current->m_nSegment != wallP->m_nSegment) ||
+		 (current->m_nSide != wallP->m_nSide)) {
+		(CSideKey) *current = (CSideKey) *wallP;
 		}
 	}
 SetTriggerPtr ();
@@ -881,22 +881,22 @@ AddTarget (nSegment, nSide);
 
 void CTriggerTool::OnAddWallTarget ()
 {
-other = selections [current == selections [0]];
+other = &selections [!current->Index ()];
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
 if ((DLE.IsD1File ()) 
 	 ? (m_triggerP->Info ().flags & TRIGGER_MATCEN) != 0 
-	 : (m_triggerP->Type () == TT_MATCEN) && (other.Segment ()->Info ().function != SEGMENT_FUNC_ROBOTMAKER)
+	 : (m_triggerP->Type () == TT_MATCEN) && (other->Segment ()->Info ().function != SEGMENT_FUNC_ROBOTMAKER)
 	) {
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
 	}
-int i = FindTarget (other.m_nSegment, other.m_nSide);
+int i = FindTarget (other->m_nSegment, other->m_nSide);
 if (i > -1)
 	return;
-AddTarget (other.m_nSegment, other.m_nSide + 1);
+AddTarget (other->m_nSegment, other->m_nSide + 1);
 }
 
                         /*--------------------------*/
@@ -907,7 +907,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-AddTarget (current.m_nObject, 0);
+AddTarget (current->m_nObject, 0);
 }
 
 //------------------------------------------------------------------------
@@ -964,9 +964,9 @@ short nSide = m_triggerP->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
 
-if ((current.m_nSegment == nSegment) && (current.m_nSide == nSide))
+if ((current->m_nSegment == nSegment) && (current->m_nSide == nSide))
 	return;
-(CSideKey) other = m_triggerP->Target (m_iTarget);
+(CSideKey) *other = m_triggerP->Target (m_iTarget);
 DLE.MineView ()->Refresh ();
 }
 
@@ -1040,7 +1040,7 @@ return !m_nClass && (m_triggerP != null) && (m_iTarget >= 0) && (m_iTarget < m_t
 
 void CTriggerTool::SelectTexture (int nIdC, bool bFirst)
 {
-	CSide		*sideP = current.Side ();
+	CSide		*sideP = current->Side ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	int			index = pcb->GetCurSel ();
 	

@@ -344,8 +344,8 @@ CHECKMINE;
 
 bShowFrames = GetCheck (IDC_TEXTURE_SHOWFRAMES);
 
-short texture1 = current.Side ()->m_info.nBaseTex;
-short texture2 = current.Side ()->m_info.nOvlTex & 0x3fff;
+short texture1 = current->Side ()->m_info.nBaseTex;
+short texture2 = current->Side ()->m_info.nOvlTex & 0x3fff;
 
 if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
 	texture1 = 0;
@@ -377,11 +377,11 @@ bool CTextureTool::SideHasLight (void)
 {
 if (theMine == null) return false;
 
-if	((lightManager.IsLight (current.Side ()->m_info.nBaseTex) != -1) ||
-	 (((current.Side ()->OvlTex () & 0x3fff) != 0) &&
-	  (lightManager.IsLight (current.Side ()->m_info.nOvlTex & 0x3fff) != -1)))
+if	((lightManager.IsLight (current->Side ()->m_info.nBaseTex) != -1) ||
+	 (((current->Side ()->OvlTex () & 0x3fff) != 0) &&
+	  (lightManager.IsLight (current->Side ()->m_info.nOvlTex & 0x3fff) != -1)))
 	return true;
-CWall *wallP = current.Wall ();
+CWall *wallP = current->Wall ();
 return (wallP != null) && (wallP->Type () == WALL_TRANSPARENT);
 
 }
@@ -468,13 +468,13 @@ m_frame [0] = 0;
 m_frame [1] = 0;
 #endif
 
-segP = current.Segment ();
-sideP = current.Side ();
-colorP = current.LightColor ();
-int nSide = current.m_nSide;
+segP = current->Segment ();
+sideP = current->Side ();
+colorP = current->LightColor ();
+int nSide = current->m_nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
-wallP = current.Wall ();
+wallP = current->Wall ();
 m_nColorIndex = (wallP && (wallP->Type () == WALL_TRANSPARENT)) ? wallP->Info ().cloakValue : colorP->m_info.index;
 m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
 m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
@@ -635,7 +635,7 @@ return CToolDlg::OnKillActive ();
 
 void CTextureTool::AnimateTexture (void)
 {
-	CSegment *segP = current.Segment ();
+	CSegment *segP = current->Segment ();
 
 	ushort texture [2];
 	static int scroll_offset_x = 0;
@@ -644,7 +644,7 @@ void CTextureTool::AnimateTexture (void)
 	int x,y;
 	static int old_x,old_y;
 
-	CSide	*sideP = current.Side ();
+	CSide	*sideP = current->Side ();
 
 texture [0] = sideP->m_info.nBaseTex & 0x3fff;
 texture [1] = sideP->m_info.nOvlTex;
@@ -769,7 +769,7 @@ void CTextureTool::SelectTexture (int nIdC, bool bFirst)
 {
 CHECKMINE;
 
-	CSide		*sideP = current.Side ();
+	CSide		*sideP = current->Side ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	int			index = pcb->GetCurSel ();
 	
@@ -778,9 +778,9 @@ if (index <= 0)
 else {
 	short texture = (short) pcb->GetItemData (index);
 	if (bFirst)
-		segmentManager.SetTextures (current, texture, -1);
+		segmentManager.SetTextures (*current, texture, -1);
 	else
-		segmentManager.SetTextures (current, -1, texture);
+		segmentManager.SetTextures (*current, -1, texture);
 	}
 Refresh ();
 DLE.MineView ()->Refresh ();
@@ -793,7 +793,7 @@ void CTextureTool::OnSetLight ()
 CHECKMINE;
 
 UpdateData (TRUE);
-CSide *sideP = current.Side ();
+CSide *sideP = current->Side ();
 short mode = sideP->m_info.nOvlTex & 0xc000;
 int i, j;
 for (i = 0; i < 4; i++) {
@@ -835,7 +835,7 @@ void CTextureTool::OnSaveTexture ()
 CHECKMINE;
 
 	char			*t1Name, *t2Name;
-	CSide		*sideP = current.Side ();
+	CSide		*sideP = current->Side ();
 	CComboBox	*pcb;
 
 save_texture1 = sideP->m_info.nBaseTex & 0x3fff;
@@ -892,11 +892,11 @@ UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
 
-	CSide *sideP = current.Side ();
+	CSide *sideP = current->Side ();
 
 //CheckForDoor ();
 undoManager.Begin (udSegments);
-segmentManager.SetTextures (current, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+segmentManager.SetTextures (*current, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 for (int i = 0; i < 4; i++)
 	sideP->m_info.uvls [i].l = save_uvls [i].l;
 undoManager.End ();
@@ -922,7 +922,7 @@ undoManager.Begin (udSegments);
 CSegment *segP = segmentManager.Segment (0);
 for (short nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 	segP->Index () = 0;
-PasteTexture (current.m_nSegment, current.m_nSide, 100);
+PasteTexture (current->m_nSegment, current->m_nSide, 100);
 undoManager.End ();
 Refresh ();
 DLE.MineView ()->Refresh ();

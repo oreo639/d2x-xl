@@ -314,10 +314,10 @@ if (nVisible < 0)
 	nVisible = (short) TextureIsVisible ();
 if (nVisible > 0) {
 	if (nBaseTex < 0) {
-		short nSegment = m_bOtherSegment ? other.m_nSegment : current.m_nSegment;
-		short nSide = m_bOtherSegment ? other.m_nSide : current.m_nSide;
+		short nSegment = m_bOtherSegment ? other->m_nSegment : current->m_nSegment;
+		short nSide = m_bOtherSegment ? other->m_nSide : current->m_nSide;
 		if (nVisible = segmentManager.IsWall (CSideKey (nSegment, nSide))) {
-			CSide *sideP = m_bOtherSegment ? other.Side () : current.Side ();
+			CSide *sideP = m_bOtherSegment ? other->Side () : current->Side ();
 			nBaseTex = sideP->m_info.nBaseTex;
 			nOvlTex = sideP->m_info.nOvlTex & 0x3fff;
 			}
@@ -334,7 +334,7 @@ void CTexToolDlg::OnPaint ()
 {
 CToolDlg::OnPaint ();
 if (TextureIsVisible ()) {
-	CSide *sideP = m_bOtherSegment ? other.Side () : current.Side ();
+	CSide *sideP = m_bOtherSegment ? other->Side () : current->Side ();
 	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, sideP->m_info.nBaseTex, sideP->m_info.nOvlTex & 0x1fff);
 	}
 else
@@ -374,13 +374,13 @@ void CTexToolDlg::AnimateTexture (void)
 if (!TextureIsVisible ())
 	return;
 
-	CSegment *segP = m_bOtherSegment ? other.Segment () : current.Segment ();
+	CSegment *segP = m_bOtherSegment ? other->Segment () : current->Segment ();
 
 	ushort texture [2];
 	int bScroll;
 	int x,y;
 
-	CSide	*sideP = m_bOtherSegment ? other.Side () : current.Side ();
+	CSide	*sideP = m_bOtherSegment ? other->Side () : current->Side ();
 
 texture [0] = sideP->m_info.nBaseTex & 0x3fff;
 texture [1] = sideP->m_info.nOvlTex;

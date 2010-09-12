@@ -105,8 +105,8 @@ CHECKMINE;
 
 for (CSegmentIterator si; si; si++)
 	si->Index () = -1;
-segRef [0] = current.m_nSegment;	
-current.Segment ()->Index () = 0;
+segRef [0] = current->m_nSegment;	
+current->Segment ()->Index () = 0;
 
 int i = 1, h = 0, j = 0;
 int segCount = segmentManager.Count ();
@@ -209,7 +209,7 @@ for (CSegmentIterator si; si; si++) {
 	if (!Visible (segP))
 		continue;
 	DrawSegment (segP, bPartial);
-	if (si.Index () == current.m_nSegment) {
+	if (si.Index () == current->m_nSegment) {
 		DrawCurrentSegment (segP, bPartial);
 		m_pDC->SelectObject (m_penGray);
 		}
@@ -376,7 +376,7 @@ CHECKMINE;
 	else {
 		if (segP->m_info.wallFlags & MARKED_MASK)
 			m_pDC->SelectObject (m_penHiCyan);
-		else if (nSegment == current.m_nSegment)
+		else if (nSegment == current->m_nSegment)
 			if (SelectMode (eSelectCube)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);         // RED
 			else
@@ -392,7 +392,7 @@ CHECKMINE;
 	// draw current side
 	// must draw in same order as segment to avoid leftover pixels on screen
 	if (!clear_it) {
-		if (nSegment == current.m_nSegment)
+		if (nSegment == current->m_nSegment)
 			if (SelectMode (eSelectSide)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);        // RED
 			else
@@ -414,7 +414,7 @@ CHECKMINE;
 
 		// draw current line
 		// must draw in same order as segment to avoid leftover pixels on screen
-		if (nSegment == current.m_nSegment)
+		if (nSegment == current->m_nSegment)
 			if (SelectMode (eSelectLine)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);  // RED
 			else 
@@ -433,7 +433,7 @@ CHECKMINE;
 	// draw a circle around the current point
 	if (!clear_it) {
 		m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
-		if (nSegment == current.m_nSegment)
+		if (nSegment == current->m_nSegment)
 			if (SelectMode (eSelectPoint)) //  && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed); // RED
 			else
@@ -954,9 +954,9 @@ void CMineView::DrawCurrentSegment(CSegment *segP, bool bPartial)
 {
 CHECKMINE;
 
-	short nSide = current.m_nSide;
-	short linenum = current.m_nPoint;
-	short pointnum = current.m_nPoint;
+	short nSide = current->m_nSide;
+	short linenum = current->m_nPoint;
+	short pointnum = current->m_nPoint;
 
 	if (segP->m_info.wallFlags & MARKED_MASK) {
 		m_pDC->SelectObject(m_penCyan);
@@ -1339,7 +1339,7 @@ else {
 switch (clear_it) {
 	case 0: // normal
 	case 1: // gray
-		if (m_selectMode == OBJECT_MODE && nObject == current.m_nObject) 
+		if (m_selectMode == OBJECT_MODE && nObject == current->m_nObject) 
 			m_pDC->SelectObject(m_penRed); // RED
 		else {
 			switch(objP->Type ()) {
@@ -1398,7 +1398,7 @@ for (i = 0; i < 6; i++)
 		return;
 
 if ((DLE.IsD2File ()) &&
-	 (nObject == current.m_nObject) &&
+	 (nObject == current->m_nObject) &&
 	 (objP->Type () != OBJ_CAMBOT) && (objP->Type () != OBJ_MONSTERBALL) && 
 	 (objP->Type () != OBJ_EXPLOSION) && (objP->Type () != OBJ_SMOKE) && (objP->Type () != OBJ_EFFECT) &&
 	 (objP->m_info.renderType == RT_POLYOBJ) &&
@@ -1412,7 +1412,7 @@ else {
 	m_pDC->MoveTo (poly_draw [0].x,poly_draw [0].y);
 	for (poly = 0; poly < 6; poly++)
 		m_pDC->LineTo (poly_draw [poly].x, poly_draw [poly].y);
-	if (nObject == current.m_nObject) {
+	if (nObject == current->m_nObject) {
 		int dx,dy;
 		for (dx = -1; dx < 2; dx++) {
 			for (dy = -1; dy < 2; dy++) {
@@ -1423,7 +1423,7 @@ else {
 			}
 		}
 	}
-if ((nObject == current.m_nObject) || (nObject == other.m_nObject)) {
+if ((nObject == current->m_nObject) || (nObject == other->m_nObject)) {
 	CPen     pen, *pOldPen;
 	int		d;
 
@@ -1441,7 +1441,7 @@ if ((nObject == current.m_nObject) || (nObject == other.m_nObject)) {
 	d = (poly_draw [2].x - poly_draw [1].x);
 	if (d < 24)
 		d = 24;
-	pen.CreatePen (PS_SOLID, 2, (nObject == current.m_nObject) ? RGB (255,0,0) : RGB (255,208,0));
+	pen.CreatePen (PS_SOLID, 2, (nObject == current->m_nObject) ? RGB (255,0,0) : RGB (255,208,0));
 	pOldPen = m_pDC->SelectObject (&pen);
 	m_pDC->SelectObject ((HBRUSH)GetStockObject(HOLLOW_BRUSH));
 	m_pDC->Ellipse (poly_draw [0].x - d, poly_draw [0].y - d, poly_draw [0].x + d, poly_draw [0].y + d);
@@ -1499,7 +1499,7 @@ if (!clear_it) {
   }
 
 // draw highlighted Segments () (other first, then current)
-if (current == selections [0]) {
+if (*current == selections [0]) {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
 		DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nLine, selections [1].m_nPoint,clear_it);
 	DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nLine, selections [0].m_nPoint,clear_it);
@@ -1525,7 +1525,7 @@ if (tunnelMaker.Active ())
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    strcat_s (message, sizeof (message), "  point (x,y,z): (");
-   short vertex = segmentManager.Segment (0) [current.m_nSegment].m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]];
+   short vertex = segmentManager.Segment (0) [current->m_nSegment].m_info.verts [sideVertTable [current->m_nSide][current->m_nPoint]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
 				  vertexManager.Vertex (vertex)->v.x, vertexManager.Vertex (vertex)->v.y, vertexManager.Vertex (vertex)->v.z);
@@ -1536,35 +1536,35 @@ else {
 	strcat_s (message, sizeof (message), "  cube size: ");
 	CDoubleVector center1,center2;
    double length;
-   center1 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 0));
-	center2 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 2));
+   center1 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 0));
+	center2 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 2));
    length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 1));
-   center2 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 3));
+   center1 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 1));
+   center2 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 3));
    length = Distance (center1, center2);
    sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 4));
-   center2 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 5));
+   center1 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 4));
+   center2 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 5));
    length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}
 strcat_s (message, sizeof (message), ",  cube:");
-_itoa_s (current.m_nSegment, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (current->m_nSegment, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " side:");
-_itoa_s ((currSide = current.m_nSide) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s ((currSide = current->m_nSide) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " point:");
-_itoa_s (currPoint = current.m_nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (currPoint = current->m_nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");
-_itoa_s (current.Segment ()->m_info.verts [sideVertTable [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (current->Segment ()->m_info.verts [sideVertTable [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  textures:");
 strcat_s (message, sizeof (message), " 1st:");
-_itoa_s (current.Side ()->m_info.nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (current->Side ()->m_info.nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " 2nd:");
-_itoa_s (current.Side ()->m_info.nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (current->Side ()->m_info.nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  zoom:");
 double zoom_factor = log (10 * m_size.v.x) / log (1.2);

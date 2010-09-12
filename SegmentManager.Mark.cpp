@@ -7,7 +7,7 @@
 
 bool CSegmentManager::IsMarked (CSideKey key)
 {
-current.Get (key);
+current->Get (key);
 CSegment *segP = Segment (key.m_nSegment);
 for (int i = 0; i < 4; i++) {
 	if (!(vertexManager.Status (segP->m_info.verts [sideVertTable [key.m_nSide][i]]) & MARKED_MASK))
@@ -135,32 +135,32 @@ return nCount;
 void CSegmentManager::MarkSelected (void)
 {
 	bool	bSegMark = false; 
-	CSegment *segP = current.Segment (); 
+	CSegment *segP = current->Segment (); 
 	int i, p [8], nPoints; 
 
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case eSelectPoint:
 		nPoints = 1; 
-		p [0] = segP->Info ().verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
+		p [0] = segP->Info ().verts [sideVertTable [current->m_nSide][current->m_nPoint]]; 
 		break; 
 
 	case eSelectLine:
 		nPoints = 2; 
-		p [0] = segP->Info ().verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
-		p [1] = segP->Info ().verts [sideVertTable [current.m_nSide][(current.m_nPoint + 1) & 3]]; 
+		p [0] = segP->Info ().verts [sideVertTable [current->m_nSide][current->m_nPoint]]; 
+		p [1] = segP->Info ().verts [sideVertTable [current->m_nSide][(current->m_nPoint + 1) & 3]]; 
 		break; 
 
 	case eSelectSide:
 		nPoints = 4; 
 		for (i = 0; i < nPoints; i++)
-			p [i] = segP->Info ().verts [sideVertTable [current.m_nSide][i]]; 
+			p [i] = segP->Info ().verts [sideVertTable [current->m_nSide][i]]; 
 		break; 
 	default:
 		bSegMark = true; 
 	}
 
 if (bSegMark)
-	Mark (current.m_nSegment); 
+	Mark (current->m_nSegment); 
 else {
 	// set i to nPoints if all verts are marked
 	for (i = 0; i < nPoints; i++)

@@ -9,7 +9,7 @@ CTunnelMaker tunnelMaker;
 
 //------------------------------------------------------------------------------
 
-#define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
+#define CURRENT_POINT(a) ((current->m_nPoint + (a))&0x03)
 
 //------------------------------------------------------------------------------
 
@@ -229,7 +229,7 @@ undoManager.Begin (udSegments | udVertices);
 for (short nSegment = 0; nSegment < m_nLength; nSegment++) {
 	CSegment* segP = segmentManager.Segment (m_nSegments [nSegment]);
 	// copy current segment
-	*segP = *segmentManager.Segment (current.m_nSegment);
+	*segP = *segmentManager.Segment (current->m_nSegment);
 	for (short j = 0; j < 4; j++) {
 		ushort nVertex = 4 * nSegment + j;
 		if (nSegment == 0) {         // 1st segment
@@ -374,10 +374,10 @@ void CTunnelMaker::Stretch (void)
 
 //undoManager.UpdateBuffer(0);
 
-if (current.m_nSegment == m_info [0].m_nSegment)
+if (current->m_nSegment == m_info [0].m_nSegment)
 	if (m_info [0].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
 		m_info [0].m_length += TUNNEL_INTERVAL;
-if (current.m_nSegment == m_info [1].m_nSegment)
+if (current->m_nSegment == m_info [1].m_nSegment)
 	if (m_info [1].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
 		m_info [1].m_length += TUNNEL_INTERVAL;
 DLE.MineView ()->Refresh ();
@@ -390,10 +390,10 @@ void CTunnelMaker::Shrink (void)
 
 //  undoManager.UpdateBuffer(0);
 
-if (current.m_nSegment == m_info [0].m_nSegment)
+if (current->m_nSegment == m_info [0].m_nSegment)
 	if (m_info [0].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
 		m_info [0].m_length -= TUNNEL_INTERVAL;
-if (current.m_nSegment == m_info [1].m_nSegment)
+if (current->m_nSegment == m_info [1].m_nSegment)
 	if (m_info [1].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
 		m_info [1].m_length -= TUNNEL_INTERVAL;
 DLE.MineView ()->Refresh ();

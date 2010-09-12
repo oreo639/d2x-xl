@@ -52,8 +52,6 @@ objectManager.Count () = 0;
 m_levelVersion = 7;
 m_fileType = RL2_FILE;
 lightManager.Count () = 0;
-current = selections [0];
-other = selections [1];
 *m_szBlockFile = '\0';
 segmentManager.ResetInfo ();
 wallManager.ResetInfo ();
@@ -89,8 +87,8 @@ void CMine::Reset (void)
 {
 selections [0].Index () = 0;
 selections [1].Index () = 1;
-current = selections [0];
-other = selections [1];
+current = &selections [0];
+other = &selections [1];
 selections [0].m_nSegment = DEFAULT_SEGMENT;
 selections [0].m_nPoint = DEFAULT_POINT;
 selections [0].m_nLine = DEFAULT_LINE;

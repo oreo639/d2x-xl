@@ -82,14 +82,14 @@ if (!pbp)
 	return;
 segmentManager.UnmarkAll ();
 if (bCurSeg = MarkSegment (pbp->nSegment))
-	current.m_nSegment = pbp->nSegment;
+	current->m_nSegment = pbp->nSegment;
 MarkSegment (pbp->nChild);
 if ((pbp->nSide >= 0) && (pbp->nSide < MAX_SIDES_PER_SEGMENT))
-	current.m_nSide = pbp->nSide;
+	current->m_nSide = pbp->nSide;
 if ((pbp->nLine >= 0) && (pbp->nLine < 4))
-	current.m_nLine = pbp->nLine;
+	current->m_nLine = pbp->nLine;
 if ((pbp->nPoint >= 0) && (pbp->nPoint < 8))
-	current.m_nPoint = pbp->nPoint;
+	current->m_nPoint = pbp->nPoint;
 if ((pbp->nWall >= 0) && (pbp->nWall < wallManager.WallCount ()))
 	nWall = pbp->nWall;
 else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < triggerManager.WallTriggerCount ()))
@@ -98,15 +98,15 @@ else
 	wallP = null;
 if ((wallP != null) && MarkSegment (wallP->m_nSegment))
 	if (bCurSeg) {
-		other.m_nSegment = wallP->m_nSegment;
-		other.m_nSide = wallP->m_nSide;
+		other->m_nSegment = wallP->m_nSegment;
+		other->m_nSide = wallP->m_nSide;
 		}
 	else {
-		current.m_nSegment = wallP->m_nSegment;
-		current.m_nSide = wallP->m_nSide;
+		current->m_nSegment = wallP->m_nSegment;
+		current->m_nSide = wallP->m_nSide;
 		}
 if ((pbp->nObject >= 0) && (pbp->nObject < objectManager.Count ()))
-	current.m_nObject = pbp->nObject;
+	current->m_nObject = pbp->nObject;
 DLE.MineView ()->Refresh ();
 }
 

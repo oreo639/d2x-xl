@@ -12,8 +12,8 @@
 // -----------------------------------------------------------------------------
 
 CSelection selections [2];
-CSelection& current = selections [0];
-CSelection& other = selections [1];
+CSelection* current = &selections [0];
+CSelection* other = &selections [1];
 
 // -----------------------------------------------------------------------------
 

@@ -93,7 +93,7 @@ CHECKMINE;
 	int			index, curSel = 0;
 
 cbEffects->ResetContent ();
-CGameObject *curObj = current.Object (),
+CGameObject *curObj = current->Object (),
 			*objP = objectManager.Object (0);
 int i;
 for (i = 0; i < objectManager.Count (); i++, objP++) {
@@ -153,7 +153,7 @@ void CEffectTool::DoDataExchange (CDataExchange *pDX)
 {
 if (!HaveData (pDX)) 
 	return;
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 if (objP->Type () != OBJ_EFFECT)
 	return;
 if (objP->Id () == SMOKE_ID) {
@@ -232,7 +232,7 @@ void CEffectTool::EnableControls (BOOL bEnable)
 {
 if (!(m_bInited && theMine))
 	return;
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 CToolDlg::EnableControls (IDC_SMOKE_LIFE, IDC_SMOKE_BRIGHTNESS, (objP->Type () == OBJ_EFFECT) && (objP->Id () == SMOKE_ID));
 CToolDlg::EnableControls (IDC_LIGHTNING_ID, IDC_LIGHTNING_RANDOM, (objP->Type () == OBJ_EFFECT) && (objP->Id () == LIGHTNING_ID));
 CToolDlg::EnableControls (IDC_SOUND_FILE, IDC_SOUND_VOLUME, (objP->Type () == OBJ_EFFECT) && (objP->Id () == SOUND_ID));
@@ -273,7 +273,7 @@ void CEffectTool::OnAddSmoke ()
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 objP->Type () = OBJ_EFFECT;
 objP->Id () = SMOKE_ID;
 objP->m_info.renderType = RT_SMOKE;
@@ -288,7 +288,7 @@ void CEffectTool::OnAddLightning ()
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 objP->Type () = OBJ_EFFECT;
 objP->Id () = LIGHTNING_ID;
 objP->m_info.renderType = RT_LIGHTNING;
@@ -303,7 +303,7 @@ void CEffectTool::OnAddSound ()
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 objP->Type () = OBJ_EFFECT;
 objP->Id () = SOUND_ID;
 objP->m_info.renderType = RT_SOUND;
@@ -317,7 +317,7 @@ DLE.MineView ()->Refresh ();
 
 void CEffectTool::OnDelete ()
 {
-if (current.m_nObject == objectManager.Count ()) {
+if (current->m_nObject == objectManager.Count ()) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
@@ -325,7 +325,7 @@ if (objectManager.Count () == 1) {
 	ErrorMsg ("Cannot delete the last object");
 	return;
 	}
-if (current.Object ()->m_info.type != OBJ_EFFECT) {
+if (current->Object ()->m_info.type != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
 	}
@@ -340,7 +340,7 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 
 void CEffectTool::OnCopy ()
 {
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 if (objP->Type () != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
@@ -358,7 +358,7 @@ else if (m_nBufferId == SOUND_ID)
 
 void CEffectTool::OnPaste ()
 {
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 if (objP->Type () != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
@@ -403,7 +403,7 @@ Refresh ();
 
 void CEffectTool::OnSetObject ()
 {
-short nOld = current.m_nObject;
+short nOld = current->m_nObject;
 short nNew = short (CBEffects ()->GetItemData (CBEffects ()->GetCurSel ()));
 if (nOld != nNew) {
 	UpdateData (TRUE);
@@ -417,7 +417,7 @@ if (nOld != nNew) {
 
 void CEffectTool::OnSetStyle ()
 {
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 objP->rType.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
 //Refresh ();
 }
@@ -429,14 +429,14 @@ void CEffectTool::HiliteTarget (void)
 #if 0
 	int i, nTarget;
 
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 if ((objP->Type () != OBJ_EFFECT) || (objP->Id () != LIGHTNING_ID))
 	return;
-other.m_nObject = current.m_nObject;
+other->m_nObject = current->m_nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
 	for (i = 0, objP = objectManager.Object (0); i < objectManager.Count (); i++, objP++)
 		if ((objP->Type () == OBJ_EFFECT) && (objP->Id () == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
-			other.m_nObject = i;
+			other->m_nObject = i;
 			break;
 			return;
 			}

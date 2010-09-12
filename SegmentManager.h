@@ -94,7 +94,7 @@ class CSegmentManager {
 		inline void PutSegment (_const_ int i, _const_ CSegment& seg) { m_segments [i] = seg; }
 
 		inline CSide _const_ * Side (CSideKey key) {
-			current.Get (key);
+			current->Get (key);
 			return m_segments [key.m_nSegment].m_sides + key.m_nSide;
 			}
 
@@ -103,7 +103,7 @@ class CSegmentManager {
 		inline CSide _const_ & GetSide (CSideKey key) { return *Side (key); }
 
 		inline void PutSide (CSideKey key, CSide& side) { 
-			current.Get (key);
+			current->Get (key);
 			m_segments [key.m_nSegment].m_sides [key.m_nSide] = side;
 			}
 
@@ -114,13 +114,13 @@ class CSegmentManager {
 
 		//inline CWall* Wall (short nSegment = -1, short nSide = -1) {
 		inline CWall _const_ * Wall (CSideKey key) { 
-			current.Get (key);
+			current->Get (key);
 			CSide _const_ * sideP;
 			sideP = Side (key);
 			return sideP->Wall (); 
 			}
 
-		inline CWall _const_ * Wall (void) { return Wall (current); }
+		inline CWall _const_ * Wall (void) { return Wall (*current); }
 
 		int IsWall (CSideKey key = CSideKey ());
 

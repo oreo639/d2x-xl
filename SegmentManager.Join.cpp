@@ -131,7 +131,7 @@ if (selections [0].m_nSegment== selections [1].m_nSegment) {
 	return;
 	}
 
-if (current == selections [0]) {
+if (*current == selections [0]) {
 	cur1 = &selections [0]; 
 	cur2 = &selections [1]; 
 	}
@@ -194,7 +194,7 @@ if (selections [0].m_nSegment == selections [1].m_nSegment) {
 	return;
 	}
 
-if (current == selections [0]) {
+if (*current == selections [0]) {
 	cur1 = &selections [0]; 
 	cur2 = &selections [1]; 
 	} 
@@ -295,13 +295,13 @@ if (tunnelMaker.Active ())
 
 // figure out "other' cube
 if (solidify) {
-	if (Segment (current.m_nSegment)->Child (current.m_nSide) != -1) {
+	if (Segment (current->m_nSegment)->Child (current->m_nSide) != -1) {
 		if (!bExpertMode)
 			ErrorMsg ("The current side is already joined to another cube"); 
 		return; 
 		}
 
-	cur1 = &current; 
+	cur1 = current; 
 	cur2 = &mySeg; 
 	mySeg.m_nSegment = -1;
 	// find first cube (other than this cube) which shares all 4 points
@@ -367,7 +367,7 @@ if (solidify) {
 		}
 	}
 else
-	if (current== selections [0]) {
+	if (*current== selections [0]) {
 		cur1 = &selections [0]; 
 		cur2 = &selections [1]; 
 		}
@@ -548,8 +548,8 @@ DLE.MineView ()->Refresh ();
 
 void CSegmentManager::FixChildren (void)
 {
-short nNewSeg = current.m_nSegment; 
-short nNewSide = current.m_nSide; 
+short nNewSeg = current->m_nSegment; 
+short nNewSide = current->m_nSide; 
 
 CSegment*	newSegP = Segment (nNewSeg);
 CVertex*		vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);

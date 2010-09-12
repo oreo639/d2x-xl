@@ -628,40 +628,40 @@ void CDlcDoc::OnInsertObjectPlayerCopy ()
 void CDlcDoc::OnInsertObjectRobot ()
 {
 if (objectManager.Create (OBJ_ROBOT)) {
-	current.Object ()->Id () = 3; // class 1 drone
-	current.Object ()->Setup (current.Object ()->Type ());
+	current->Object ()->Id () = 3; // class 1 drone
+	current->Object ()->Setup (current->Object ()->Type ());
 	}
 }
 
 void CDlcDoc::OnInsertObjectWeapon ()
 {
 if (objectManager.Create (OBJ_WEAPON)) {
-	current.Object ()->Id () = 3; // laser
-	current.Object ()->Setup (current.Object ()->Type ());
+	current->Object ()->Id () = 3; // laser
+	current->Object ()->Setup (current->Object ()->Type ());
 	}
 }
 
 void CDlcDoc::OnInsertObjectPowerup ()
 {
 if (objectManager.Create (OBJ_POWERUP)) {
-	current.Object ()->Id () = 1; // energy boost
-	current.Object ()->Setup (current.Object ()->Type ());
+	current->Object ()->Id () = 1; // energy boost
+	current->Object ()->Setup (current->Object ()->Type ());
 	}
 }
 
 void CDlcDoc::OnInsertObjectGuideBot ()
 {
 if (objectManager.Create (OBJ_ROBOT)) {
-	current.Object ()->Id () = 33; // guide bot
-	current.Object ()->Setup (current.Object ()->Type ());
+	current->Object ()->Id () = 33; // guide bot
+	current->Object ()->Setup (current->Object ()->Type ());
 	}
 }
 
 void CDlcDoc::OnInsertObjectReactor ()
 {
 if (objectManager.Create (OBJ_CNTRLCEN)) {
-	current.Object ()->Id () = 2; // standard reactor
-	current.Object ()->Setup (current.Object ()->Type ());
+	current->Object ()->Id () = 2; // standard reactor
+	current->Object ()->Setup (current->Object ()->Type ());
 	}
 }
 

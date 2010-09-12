@@ -372,7 +372,7 @@ for (psz = pszBossTypes; *psz; psz++) {
 	int index = pcb->AddString (*psz);
 	pcb->SetItemData(index++, (int) (psz - pszBossTypes));
 	}
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 //CBInit (CBObjProps (), (char **) ROBOT_STRING_TABLE, null, null, ROBOT_IDS2, 1);
 //SelectItemData (CBObjProps (), (objP->Type () == OBJ_ROBOT) && (objP->Id () < N_ROBOT_TYPES_D2) ? objP->Id (): -1);
 CBInit (CBExplType (), (char **) "explosion", null, exp2VClipTable, MAX_EXP2_VCLIP_NUM_TABLE, 2);
@@ -564,11 +564,11 @@ for (i = 0; i < triggerManager.WallTriggerCount (); i++)
 		break;
 		}
 // select current object
-CBObjNo ()->SetCurSel (current.m_nObject);
+CBObjNo ()->SetCurSel (current->m_nObject);
 
 // if secret object, disable everything but the "move" button
 // and the object list, then return
-if (current.m_nObject == objectManager.Count ()) {
+if (current->m_nObject == objectManager.Count ()) {
 	CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDC_OBJ_SPAWN_QTY, FALSE);
 	CBObjNo ()->EnableWindow (TRUE);
 	BtnCtrl (IDC_OBJ_MOVE)->EnableWindow (TRUE);
@@ -596,7 +596,7 @@ if (current.m_nObject == objectManager.Count ()) {
 
 // otherwise (non-secret object), setup the rest of the
 // dialog.
-objP = current.Object ();
+objP = current->Object ();
 sprintf_s (m_szInfo, sizeof (m_szInfo), "cube %d", objP->Info ().nSegment);
 if (/*(objectSelection [objP->Type ()] == 0) &&*/ robotManager.RobotInfo (objP->Id ())->Info ().bCustom)
 	strcat_s (m_szInfo, sizeof (m_szInfo), "\r\nmodified");
@@ -638,8 +638,8 @@ type = (objP->m_info.contents.type == -1) ? MAX_CONTAINS_NUMBER : contentsSelect
 //	type = MAX_CONTAINS_NUMBER;
 
 CBSpawnType ()->SetCurSel (type + 1);
-BtnCtrl (IDC_OBJ_MULTIPLAYER)->SetCheck (current.Object ()->m_info.multiplayer);
-current.Object ()->m_info.multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck ();
+BtnCtrl (IDC_OBJ_MULTIPLAYER)->SetCheck (current->Object ()->m_info.multiplayer);
+current->Object ()->m_info.multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck ();
 //SelectItemData (CBSpawnType (), type);
 SetObjectId (CBSpawnId (), objP->m_info.contents.type, objP->m_info.contents.id, 1);
 m_nSpawnQty = objP->m_info.contents.count;
@@ -870,13 +870,13 @@ undoManager.End ();
 
 void CObjectTool::SetTextureOverride ()
 {
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 short tnum = 0, tnum2 = -1;
 
 if (objP->m_info.renderType != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
-	tnum = (short) current.Object ()->rType.polyModelInfo.nOverrideTexture;
+	tnum = (short) current->Object ()->rType.polyModelInfo.nOverrideTexture;
 	if ((tnum < 0) || (tnum >= ((DLE.IsD1File ()) ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2))) {
 		CBObjTexture ()->SetCurSel (0);
 		tnum = 0;	// -> force PaintTexture to clear the texture display window
@@ -894,7 +894,7 @@ PaintTexture (&m_showTextureWnd, IMG_BKCOLOR, -1, -1, tnum, tnum2);
 
 void CObjectTool::DrawObjectImages () 
 {
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 objP->Draw (&m_showObjWnd);
 objP->Draw (&m_showSpawnWnd);
 }
@@ -1072,7 +1072,7 @@ SetTextureOverride ();
 
 void CObjectTool::OnAdd () 
 {
-if (current.m_nObject == objectManager.Count ()) {
+if (current->m_nObject == objectManager.Count ()) {
 	ErrorMsg ("Cannot add another secret return.");
 	return;
  }
@@ -1091,7 +1091,7 @@ Refresh ();
 
 void CObjectTool::OnDelete ()
 {
-if (current.m_nObject == objectManager.Count ()) {
+if (current->m_nObject == objectManager.Count ()) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
@@ -1114,7 +1114,7 @@ void CObjectTool::OnDeleteAll ()
 {
 undoManager.Begin (udObjects);
 DLE.MineView ()->DelayRefresh (true);
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 int nType = objP->Type ();
 int nId = objP->Id ();
 objP = objectManager.Object (0);
@@ -1146,11 +1146,11 @@ void CObjectTool::OnReset ()
 CDoubleMatrix* orient;
 
 undoManager.Begin (udObjects);
-if (current.m_nObject == objectManager.Count ()) {
+if (current->m_nObject == objectManager.Count ()) {
 	orient = &objectManager.SecretOrient ();
 	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 } else {
-	orient = &current.Object ()->m_location.orient;
+	orient = &current->Object ()->m_location.orient;
 	orient->Set (1, 0, 0, 1, 0, 0, 0, 0, 1);
 	}
 undoManager.End ();
@@ -1179,20 +1179,20 @@ if (QueryMsg ("Are you sure you want to move the\n"
 	return;
 #endif
 undoManager.Begin (udObjects);
-if (current.m_nObject == objectManager.Count ())
-	objectManager.SecretSegment () = current.m_nSegment;
+if (current->m_nObject == objectManager.Count ())
+	objectManager.SecretSegment () = current->m_nSegment;
 else {
-	CGameObject *objP = current.Object ();
+	CGameObject *objP = current->Object ();
 	CVertex center;
-	objP->Position () = segmentManager.CalcCenter (center, current.m_nSegment);
+	objP->Position () = segmentManager.CalcCenter (center, current->m_nSegment);
 	// bump position over if this is not the first object in the cube
 	int i, count = 0;
 	for (i = 0; i < objectManager.Count (); i++)
-		if (objectManager.Object (i)->Info ().nSegment == current.m_nSegment)
+		if (objectManager.Object (i)->Info ().nSegment == current->m_nSegment)
 			count++;
 	objP->Position ().v.y += count * 2 * F1_0;
 	objP->m_location.lastPos.v.y += count * 2 * F1_0;
-	objP->Info ().nSegment = current.m_nSegment;
+	objP->Info ().nSegment = current->m_nSegment;
 	Refresh ();
 	DLE.MineView ()->Refresh (false);
 	}
@@ -1204,7 +1204,7 @@ else {
 
 void CObjectTool::OnSetObject ()
 {
-short old_object = current.m_nObject;
+short old_object = current->m_nObject;
 short new_object = CBObjNo ()->GetCurSel ();
 DLE.MineView ()->RefreshObject (old_object, new_object);
 //Refresh ();
@@ -1240,7 +1240,7 @@ return true;
 
 void CObjectTool::OnSetObjType () 
 {
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 int selection = objectTypeList [CBObjType ()->GetCurSel ()];
 if (DLE.IsD1File () && (selection == OBJ_WEAPON)) {
 	ErrorMsg ("You can not use this type of object in a Descent 1 level");
@@ -1338,7 +1338,7 @@ void CObjectTool::OnSetObjId ()
 {
 	int	id;
 
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 CComboBox *pcb = CBObjId ();
 int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
@@ -1437,7 +1437,7 @@ void CObjectTool::OnSetSpawnQty ()
 {
 UpdateData (TRUE);
 undoManager.Begin (udObjects);
-current.Object ()->m_info.contents.count = m_nSpawnQty;
+current->Object ()->m_info.contents.count = m_nSpawnQty;
 undoManager.End ();
 Refresh ();
 }
@@ -1448,7 +1448,7 @@ Refresh ();
 
 void CObjectTool::OnSetSpawnType () 
 {
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 int selection;
 undoManager.Begin (udObjects);
 int i = CBSpawnType ()->GetCurSel () - 1;
@@ -1478,7 +1478,7 @@ undoManager.End ();
 
 void CObjectTool::OnSetSpawnId () 
 {
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 
 undoManager.Begin (udObjects);
 if (objP->m_info.contents.count < -1)
@@ -1503,7 +1503,7 @@ undoManager.End ();
 void CObjectTool::OnSetObjAI ()
 {
 undoManager.Begin (udObjects);
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 if ((objP->Type () == OBJ_ROBOT) || (objP->Type () == OBJ_CAMBOT)) {
  	int index = CBObjAI ()->GetCurSel ();
 	if (index == 8) {
@@ -1528,7 +1528,7 @@ undoManager.End ();
 
 void CObjectTool::OnSetTexture ()
 {
-CGameObject *objP = current.Object ();
+CGameObject *objP = current->Object ();
 
 if (objP->m_info.renderType == RT_POLYOBJ) {
 	undoManager.Begin (udObjects);
@@ -1711,7 +1711,7 @@ UpdateRobot ();
 
 afx_msg void CObjectTool::OnMultiplayer ()
 {
-current.Object ()->m_info.multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck ();
+current->Object ()->m_info.multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck ();
 Refresh ();
 }
 
@@ -1730,9 +1730,9 @@ if ((objectManager.SortObjects () = BtnCtrl (IDC_OBJ_SORT)->GetCheck ())) {
 int CObjectTool::ObjOfAKindCount (int nType, int nId)
 {
 if (nType < 0)
-	nType = current.Object ()->m_info.type;
+	nType = current->Object ()->m_info.type;
 if (nId < 0)
-	nId =  current.Object ()->m_info.id;
+	nId =  current->Object ()->m_info.id;
 int nCount = 0;
 CGameObject *objP = objectManager.Object (0);
 int i;

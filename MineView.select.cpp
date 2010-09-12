@@ -93,7 +93,7 @@ for (i = 0; i < objectManager.Count (); i++) {
 	}
 
 // unhighlight current object and select next object
-i = current.m_nObject;
+i = current->m_nObject;
 RefreshObject(i, closest_object);
 }
 
@@ -140,7 +140,7 @@ bool CMineView::SelectCurrentSegment (short direction, long xMouse, long yMouse)
 
 /* find next segment which is within the cursor position */
 GetClientRect (rc);
-next_segment = cur_segment = current.m_nSegment;
+next_segment = cur_segment = current->m_nSegment;
 mousePos.x = (short) xMouse;
 mousePos.y = (short) yMouse;
 mousePos.z = 0;
@@ -205,7 +205,7 @@ foundSeg:
 
 if (!bFound)
 	return false;
-current.m_nSegment = next_segment;
+current->m_nSegment = next_segment;
 DLE.ToolView ()->Refresh ();
 Refresh ();
 return true;
@@ -219,8 +219,8 @@ void CMineView::NextPoint(int dir)
 //if (theMine->SplineActive ())
 //	DrawHighlight (1);
 //if (m_selectMode==POINT_MODE)
-wrap(&current.m_nPoint,dir,0,4-1);
-current.m_nLine = current.m_nPoint;
+wrap(&current->m_nPoint,dir,0,4-1);
+current->m_nLine = current->m_nPoint;
 Refresh ();
 //SetSelectMode (POINT_MODE);
 }
@@ -239,7 +239,7 @@ NextPoint (-1);
 //==========================================================================
 void CMineView::NextSide (int dir) 
 {
-wrap(&current.m_nSide,dir,0,6-1);
+wrap(&current->m_nSide,dir,0,6-1);
 Refresh (true);
 //SetSelectMode (SIDE_MODE);
 }
@@ -257,7 +257,7 @@ NextSide (-1);
 //==========================================================================
 void CMineView::NextSide2 (int dir)
 {
-wrap(&current.m_nSide,dir,0,6-1);
+wrap(&current->m_nSide,dir,0,6-1);
 Refresh ();
 }
 
@@ -272,8 +272,8 @@ NextSide2 (-1);
 
 void CMineView::NextLine (int dir) 
 {
-wrap (&current.m_nLine, dir, 0, 4-1);
-current.m_nPoint = current.m_nLine;
+wrap (&current->m_nLine, dir, 0, 4-1);
+current->m_nPoint = current->m_nLine;
 Refresh ();
 //SetSelectMode (LINE_MODE);
 }
@@ -299,14 +299,14 @@ if (segmentManager.Count () <= 0)
 if (0) {//!ViewOption (eViewPartialLines)) {
 	DrawHighlight (1);
 	//if (m_selectMode == SEGMENT_MODE)
-		wrap (&current.m_nSegment,dir,0, segmentManager.Count () - 1);
+		wrap (&current->m_nSegment,dir,0, segmentManager.Count () - 1);
 	Refresh (true);
 	//SetSelectMode (SEGMENT_MODE);
 	DrawHighlight (0);
 	}
 else {
 	//if (m_selectMode == SEGMENT_MODE)
-		wrap (&current.m_nSegment, dir, 0, segmentManager.Count () - 1);
+		wrap (&current->m_nSegment, dir, 0, segmentManager.Count () - 1);
 	Refresh (true);
 	//SetSelectMode (SEGMENT_MODE);
 	}
@@ -337,14 +337,14 @@ void CMineView::ForwardCube (int dir)
 	bool bFwd = (dir == 1);
 
 DrawHighlight (1);
-segP = segmentManager.Segment (current.m_nSegment);
-nChild = segP->Child (bFwd ? current.m_nSide: oppSideTable [current.m_nSide]);
+segP = segmentManager.Segment (current->m_nSegment);
+nChild = segP->Child (bFwd ? current->m_nSide: oppSideTable [current->m_nSide]);
 if (nChild <= -1) {
 	// first try to find a non backwards route
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (segP->Child (nSide) != m_lastSegment && segP->Child (nSide) > -1) {
 			nChild = segP->Child (nSide);
-			current.m_nSide =  bFwd ? nSide: oppSideTable [nSide];
+			current->m_nSide =  bFwd ? nSide: oppSideTable [nSide];
 			break;
 			}
 		}
@@ -353,7 +353,7 @@ if (nChild <= -1) {
 		for (nSide = 0; nSide < 6; nSide++) {
 			if (segP->Child (nSide) > -1) {
 				nChild = segP->Child (nSide);
-				current.m_nSide = bFwd ? nSide: oppSideTable [nSide];
+				current->m_nSide = bFwd ? nSide: oppSideTable [nSide];
 				break;
 				}
 			}			
@@ -363,19 +363,19 @@ if (nChild > -1) {
 	childSegP = segmentManager.Segment (nChild);
 // try to select side which is in same direction as current side
 	for (nSide=0;nSide<6;nSide++) {
-		if (childSegP->Child (nSide) == current.m_nSegment) {
-			current.m_nSide =  bFwd ? oppSideTable [nSide]: nSide;
+		if (childSegP->Child (nSide) == current->m_nSegment) {
+			current->m_nSide =  bFwd ? oppSideTable [nSide]: nSide;
 			break;
 			}
 		}
-	m_lastSegment = current.m_nSegment;
+	m_lastSegment = current->m_nSegment;
 	if (0) {//!ViewOption (eViewPartialLines)) {
 		// DrawHighlight (1);
-		current.m_nSegment = nChild;
+		current->m_nSegment = nChild;
 		// DrawHighlight (0);
 		} 
 	else {
-		current.m_nSegment = nChild;
+		current->m_nSegment = nChild;
 		Refresh (true);
 		}
 	}
@@ -397,8 +397,8 @@ ForwardCube (-1);
 
 void CMineView::SelectOtherSegment () 
 {
-current = selections [!current.Index ()];
-other = selections [!other.Index ()];
+current = &selections [!current->Index ()];
+other = &selections [!current->Index ()];
 Refresh (true);
 DLE.ToolView ()->SegmentTool ()->Refresh ();
 }
@@ -412,7 +412,7 @@ CSideKey opp;
 if (segmentManager.OppositeSide (opp) == null)
 	return false;
 
-(CSideKey) current = opp;
+(CSideKey) *current = opp;
 Refresh (true);
 DLE.ToolView ()->SegmentTool ()->Refresh ();
 return true;
@@ -424,8 +424,8 @@ return true;
 
 void CMineView::NextObject (int dir) 
 {
-  short old_object = current.m_nObject;
-  short new_object = current.m_nObject;
+  short old_object = current->m_nObject;
+  short new_object = current->m_nObject;
 
 //  DrawHighlight (1);
 if (objectManager.Count () > 1) {

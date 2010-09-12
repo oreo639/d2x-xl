@@ -26,8 +26,8 @@ if (theMine == null) return FALSE;
 if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
 
-	short nVert = sideVertTable [current.m_nSide] [current.m_nPoint];
-	short v = current.Segment ()->m_info.verts [nVert];
+	short nVert = sideVertTable [current->m_nSide] [current->m_nPoint];
+	short v = current->Segment ()->m_info.verts [nVert];
 	short x = m_viewPoints [v].x;
 	short y = m_viewPoints [v].y;
 
@@ -60,8 +60,8 @@ int i;
 for (i = 0; i < 3; i++) {
 	m_pDC->MoveTo (x, y);
 	short nVert2 = connectPointTable [nVert] [i];
-	short x2 = m_viewPoints [current.Segment ()->m_info.verts [nVert2]].x;
-	short y2 = m_viewPoints [current.Segment ()->m_info.verts [nVert2]].y;
+	short x2 = m_viewPoints [current->Segment ()->m_info.verts [nVert2]].x;
+	short y2 = m_viewPoints [current->Segment ()->m_info.verts [nVert2]].y;
    m_pDC->LineTo (x2, y2);
 	if (rc.left > x2)
 		rc.left = x2;
@@ -93,7 +93,7 @@ if (m_lastMousePos == m_lastDragPos)
 	short x, y;
 	int i;
 
-nVert = sideVertTable [current.m_nSide] [current.m_nPoint];
+nVert = sideVertTable [current->m_nSide] [current->m_nPoint];
 
 // unhighlight last point and lines drawing
 HighlightDrag (nVert, m_lastDragPos.x, m_lastDragPos.y);
@@ -147,8 +147,8 @@ CHECKMINE;
 undoManager.Begin (udVertices | udSegments);
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
-point1 = sideVertTable [current.m_nSide][current.m_nPoint];
-vert1 = segmentManager.Segment (0) [current.m_nSegment].m_info.verts [point1];
+point1 = sideVertTable [current->m_nSide][current->m_nPoint];
+vert1 = segmentManager.Segment (0) [current->m_nSegment].m_info.verts [point1];
 // find point to merge with
 for (i = 0; i < vertexManager.Count (); i++) {
 	xPoint = m_viewPoints [i].x;
@@ -167,7 +167,7 @@ if (count == 1) {
 // make sure new vert is not one of the current cube's verts
 	for (i = 0; i < 8; i++) {
 		if (i!=point1) {
-			vert2 = current.Segment ()->m_info.verts [i];
+			vert2 = current->Segment ()->m_info.verts [i];
 			if (new_vert == vert2) {
 				ErrorMsg ("Cannot drop point onto another corner of the current cube.");
 				break;
@@ -178,7 +178,7 @@ if (count == 1) {
 	// make sure the new line lengths are close enough
 		for (i = 0; i < 3; i++) {
 			point2 = connectPointTable [point1] [i];
-			vert2 = segmentManager.Segment (0) [current.m_nSegment].m_info.verts [point2];
+			vert2 = segmentManager.Segment (0) [current->m_nSegment].m_info.verts [point2];
 			if (Distance (*vertexManager.Vertex (new_vert), *vertexManager.Vertex (vert2)) >= 1000.0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
@@ -186,7 +186,7 @@ if (count == 1) {
 			}
 		if (i==3) { //
 			// replace origional vertex with new vertex
-			current.Segment ()->m_info.verts [point1] = new_vert;
+			current->Segment ()->m_info.verts [point1] = new_vert;
 			// all unused vertices
 			vertexManager.DeleteUnused ();
 			segmentManager.FixChildren ();
