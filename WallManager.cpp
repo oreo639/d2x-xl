@@ -444,7 +444,7 @@ if (m_info [0].offset >= 0) {
 #endif
 	for (short i = 0; i < WallCount (); i++) {
 		if (i < MAX_WALLS) {
-			CWall* wallP = Wall (Add ());
+			CWall* wallP = Wall (i);
 			wallP->Read (fp, nFileVersion);
 			wallP->Index () = i;
 			}

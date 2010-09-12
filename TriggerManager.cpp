@@ -483,7 +483,7 @@ for (short i = 0; i < Count (0); i++) {
 #if USE_FREELIST
 		CTrigger* trigP = WallTrigger (--m_free);
 #else
-		CTrigger* trigP = WallTrigger (WallTriggerCount ()++);
+		CTrigger* trigP = WallTrigger (i);
 #endif
 		trigP->Read (fp, nFileVersion, false);
 		trigP->Index () = i;

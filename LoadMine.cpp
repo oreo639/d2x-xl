@@ -30,6 +30,7 @@ else if (!CreateNewLevel ()) {
 
 m_disableDrawing = TRUE;
 
+undoManager.Enable (false);
 LoadMine (filename, bLoadFromHog, bNewMine);
 if (!bNewMine && IsD2XLevel () && LevelIsOutdated ()) {
 	if (LevelVersion () < 15) {
@@ -39,7 +40,7 @@ if (!bNewMine && IsD2XLevel () && LevelIsOutdated ()) {
 	UpdateLevelVersion ();
 	}
 //ComputeVariableLight ();
-int errFlags = FixIndexValues();
+int errFlags = FixIndexValues ();
 if (errFlags != 0) {
 	sprintf_s (message, sizeof (message),  "File contains corrupted data (error code %#04x). Would you like to load anyway? ", errFlags);
 	if (QueryMsg(message) != IDYES) {
@@ -52,10 +53,12 @@ if (errFlags != 0) {
 		m_disableDrawing = TRUE;
 		LoadMine (filename, bLoadFromHog, bNewMine);
 		m_disableDrawing = FALSE;
+		undoManager.Enable (true);
 		return 1;
 		}
 	}
 m_disableDrawing = FALSE;
+undoManager.Enable (true);
 return 0;
 }
 
