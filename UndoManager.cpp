@@ -165,8 +165,8 @@ m_robotMakers.Reset ();
 m_equipMakers.Reset ();
 m_walls.Reset ();
 m_triggers [0].Reset ();
-m_reactorData.Reset ();
 m_triggers [1].Reset ();
+m_reactorData.Reset ();
 m_objects.Reset ();
 m_secretExit.Reset ();
 m_robotInfo.Reset ();
@@ -184,7 +184,7 @@ m_bSelections = false;
 //------------------------------------------------------------------------------
 
 CUndoManager::CUndoManager (int maxSize)
-	: m_nHead (maxSize, -1), m_nTail (maxSize, -1), m_nCurrent (maxSize, -1)
+	: m_nHead (maxSize, -1), m_nTail (maxSize, -1), m_nCurrent (maxSize, 0)
 {
 m_size = 0;
 m_enabled = 1;
@@ -292,9 +292,9 @@ do {
 ++m_nCurrent;
 
 if (m_nCurrent == m_nHead) {
-	m_nHead = -1;
-	m_nTail = -1;
-	m_nCurrent = -1;
+	m_nHead = 0;
+	m_nTail = 0;
+	m_nCurrent = 1;
 	m_nId = 0;
 	}
 else {
@@ -308,7 +308,7 @@ else {
 void CUndoManager::Append (void)
 {
 if (m_nHead == -1) {
-	m_nHead = 0,
+	m_nHead = 0;
 	m_nTail = 0;
 	}
 else {
