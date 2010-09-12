@@ -45,7 +45,7 @@ class CVicinity {
 				return;
 			m_depth [nSegment] = nDepth;
 
-			if (nDepth > 0) {
+			if (nDepth > 1) {
 				// check each side of this segment for more children
 				CSegment* segP = segmentManager.Segment (nSegment);
 				for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
