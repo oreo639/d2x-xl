@@ -169,7 +169,7 @@ m_info.cloakValue = fp.ReadSByte ();
 
 void CWall::Write (CFileManager& fp, int version, bool bFlag)
 {
-fp.WriteInt32 (segmentManager.Segment (m_nSegment)->Index ());
+fp.WriteInt32 ((m_nSegment < 0) ? m_nSegment : segmentManager.Segment (m_nSegment)->Index ());
 fp.WriteInt32 ((int) m_nSide); 
 fp.Write (m_info.hps);
 fp.Write (m_info.linkedWall);

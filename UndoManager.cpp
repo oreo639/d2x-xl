@@ -283,11 +283,10 @@ if (m_nCurrent == m_nTail + 1)
 	return; // at end of undo list already
 
 //--m_nCurrent;
-while (m_nTail != m_nCurrent) {
+do {
 	m_buffer [*m_nTail].Destroy ();
-	m_nTail--;
-	} 
-++m_nCurrent;
+	--m_nTail;
+	} while (m_nTail != m_nCurrent - 1);
 
 if (m_nCurrent == m_nHead) {
 	m_nHead = 0;
