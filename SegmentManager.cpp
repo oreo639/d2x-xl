@@ -10,7 +10,7 @@ CSegmentManager segmentManager;
 CVertex& CSegmentManager::CalcCenter (CVertex& pos, short nSegment) 
 {
 pos.Clear ();
-CSegment* segP = Segment (nSegment);
+CSegment _const_ * segP = Segment (nSegment);
 for (int i = 0; i < 8; i++)
 	pos += *segP->Vertex (i);
 pos /= 8.0;
@@ -23,12 +23,12 @@ CDoubleVector CSegmentManager::CalcSideCenter (CSideKey key)
 {
 current.Get (key);
 
-	CSegment*	segP = Segment (key.m_nSegment);
-	byte*		sideVertP = &sideVertTable [key.m_nSide][0];
+	CSegment _const_ * segP = Segment (key.m_nSegment);
+	byte*	sideVertP = &sideVertTable [key.m_nSide][0];
 	CDoubleVector	v;
 
 for (int i = 0; i < 4; i++)
-	v += *segP->Vertex (sideVertP [i]);
+	v += *(segP->Vertex (sideVertP [i]));
 v /= 4.0;
 return v;
 }
@@ -38,9 +38,9 @@ return v;
 CDoubleVector CSegmentManager::CalcSideNormal (CSideKey key)
 {
 current.Get (key);
-CSegment* segP = Segment (key.m_nSegment);
+CSegment _const_ * segP = Segment (key.m_nSegment);
 byte*	sideVertP = &sideVertTable [key.m_nSide][0];
-return -Normal (*segP->Vertex (sideVertP [0]), *segP->Vertex (sideVertP [1]), *segP->Vertex (sideVertP [3]));
+return -Normal (*(segP->Vertex (sideVertP [0])), *(segP->Vertex (sideVertP [1])), *(segP->Vertex (sideVertP [3])));
 }
 
 // ------------------------------------------------------------------------------ 
@@ -50,7 +50,7 @@ return -Normal (*segP->Vertex (sideVertP [0]), *segP->Vertex (sideVertP [1]), *s
 // Returns - TRUE on success
 // ------------------------------------------------------------------------------ 
 
-CSide* CSegmentManager::OppositeSide (CSideKey key, CSideKey& opp)
+CSide _const_ * CSegmentManager::OppositeSide (CSideKey key, CSideKey& opp)
 {
 current.Get (key); 
 #ifdef _DEBUG
@@ -84,7 +84,7 @@ return (Segment (key.m_nSegment)->Child (key.m_nSide) == -1) || (Wall (key) != n
 
 void CSegmentManager::DeleteWalls (short nSegment)
 {
-	CSide *sideP = Segment (nSegment)->m_sides; 
+	CSide _const_ * sideP = Segment (nSegment)->m_sides; 
 
 for (int i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
 	wallManager.Delete (sideP->m_info.nWall);
@@ -94,7 +94,7 @@ for (int i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
 
 void CSegmentManager::UpdateVertices (short nOldVert, short nNewVert)
 {
-CSegment *segP = Segment (0);
+CSegment _const_ * segP = Segment (0);
 
 for (CSegmentIterator si; si; si++) {
 	ushort* vertP = si->m_info.verts;
@@ -109,9 +109,9 @@ for (CSegmentIterator si; si; si++) {
 
 void CSegmentManager::UpdateWalls (short nOldWall, short nNewWall)
 {
-CSegment *segP = Segment (0);
+CSegment _const_ * segP = Segment (0);
 for (int i = Count (); i; i--, segP++) {
-	CSide* sideP = segP->m_sides;
+	CSide* sideP = &segP->m_sides [0];
 	for (int j = 0; j < 6; j++, sideP++)
 		if (sideP->m_info.nWall >= nOldWall)
 			sideP->m_info.nWall = nNewWall;
@@ -129,7 +129,7 @@ void CSegmentManager::ResetSide (short nSegment, short nSide)
 if (nSegment < 0 || nSegment >= Count ()) 
 	return; 
 undoManager.Begin (udSegments);
-Segment (nSegment)->Reset (nSide); 
+const_cast<CSegment*>(Segment (nSegment))->Reset (nSide); 
 undoManager.End ();
 }
 

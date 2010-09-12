@@ -10,6 +10,8 @@ typedef unsigned char byte;
 typedef unsigned short ushort;
 typedef unsigned int uint;
 
+#define _const_
+
 // -----------------------------------------------------------------------------
 
 #define ErrorMsg(a) AfxMessageBox(a)

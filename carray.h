@@ -134,7 +134,7 @@ class CDynamicArray : public CQuickSort < _T > {
 #endif
 
 #if DBG_ARRAYS
-		inline _T* Pointer (uint i) { 
+		inline _T* Pointer (uint i) const { 
 			if (!m_data.buffer || (i >= m_data.length)) {
 				ArrayError ("invalid array handle or index\n");
 				return null;
@@ -142,7 +142,7 @@ class CDynamicArray : public CQuickSort < _T > {
 			return m_data.buffer + i; 
 			}
 #else
-		inline _T* Pointer (uint i) { return m_data.buffer + i; }
+		inline _T* Pointer (uint i) const { return m_data.buffer + i; }
 #endif
 
 		void Destroy (void) { 
@@ -214,11 +214,11 @@ class CDynamicArray : public CQuickSort < _T > {
 			return m_data.buffer = p;
 			}
 
-		inline uint Length (void) { return m_data.length; }
+		inline uint Length (void) const { return m_data.length; }
 
-		inline _T* Current (void) { return m_data.buffer ? m_data.buffer + m_data.pos : null; }
+		inline _T* Current (void) const { return m_data.buffer ? m_data.buffer + m_data.pos : null; }
 
-		inline size_t Size (void) { return m_data.length * sizeof (_T); }
+		inline size_t Size (void) const { return m_data.length * sizeof (_T); }
 #if DBG_ARRAYS
 		inline _T& operator[] (uint i) { 
 			if (m_data.buffer && (i < m_data.length))
@@ -258,17 +258,17 @@ class CDynamicArray : public CQuickSort < _T > {
 			return Copy (source, offset);
 			}
 
-		inline bool operator== (CDynamicArray<_T>& other) { 
+		inline bool operator== (CDynamicArray<_T>& other) const { 
 			return (m_data.length == other.m_data.length) && !(m_data.length && memcmp (m_data.buffer, other.m_data.buffer)); 
 			}
 
-		inline bool operator!= (CDynamicArray<_T>& other) { 
+		inline bool operator!= (CDynamicArray<_T>& other) const { 
 			return (m_data.length != other.m_data.length) || (m_data.length && memcmp (m_data.buffer, other.m_data.buffer)); 
 			}
 
-		inline _T* Start (void) { return m_data.buffer; }
+		inline _T* Start (void) const { return m_data.buffer; }
 
-		inline _T* End (void) { return (m_data.buffer && m_data.length) ? m_data.buffer + m_data.length - 1 : null; }
+		inline _T* End (void) const { return (m_data.buffer && m_data.length) ? m_data.buffer + m_data.length - 1 : null; }
 
 		inline _T* operator++ (void) { 
 			if (!m_data.buffer)
@@ -322,9 +322,9 @@ class CDynamicArray : public CQuickSort < _T > {
 			return child;
 			}
 
-		inline bool operator! () { return m_data.buffer == null; }
+		inline bool operator! () const { return m_data.buffer == null; }
 
-		inline uint Pos (void) { return m_data.pos; }
+		inline uint Pos (void) const { return m_data.pos; }
 
 		inline void Pos (uint pos) { m_data.pos = pos % m_data.length; }
 
@@ -364,7 +364,7 @@ class CDynamicArray : public CQuickSort < _T > {
 				CQuickSort<_T>::SortDescending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1);
 			}
 
-		inline size_t Find (_T key) {
+		inline size_t Find (_T key) const {
 			for (uint i = 0; i < m_data.length; i++)
 				if (key == m_data.buffer [i])
 					return 0;

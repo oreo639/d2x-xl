@@ -96,7 +96,7 @@ public:
 	
 	void LoadTextures (void);
 	
-	void GetTextures (short &nBaseTex, short &nOvlTex);
+	void GetTextures (short &nBaseTex, short &nOvlTex) _const_;
 	
 	bool SetTextures (short nBaseTex, short nOvlTex);
 	
@@ -104,15 +104,15 @@ public:
 	
 	inline void SetWall (short nWall) { m_info.nWall = nWall; }
 
-	inline short BaseTex (void) { return m_info.nBaseTex; }
+	inline short BaseTex (void) _const_ { return m_info.nBaseTex; }
 	
-	inline short OvlTex (void) { return m_info.nOvlTex; }
+	inline short OvlTex (void) _const_ { return m_info.nOvlTex; }
 
-	inline CUVL* Uvls (void) { return m_info.uvls; }
+	inline CUVL _const_ * Uvls (void) _const_ { return &m_info.uvls [0]; }
 	
-	CWall* Wall (void);
+	CWall _const_ * Wall (void) _const_;
 	
-	CTrigger* Trigger (void);
+	CTrigger _const_ * Trigger (void) _const_;
 	
 	bool CSide::IsVisible (void);
 
@@ -173,11 +173,11 @@ public:
 
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false) {}
 
-	inline CSide* Side (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
+	inline CSide _const_ * Side (short i) _const_ { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
 
-	CVertex* Vertex (short nVertex);
+	CVertex _const_ * Vertex (short nVertex) _const_;
 
-	inline short Child (short nSide) { return m_sides [nSide].m_info.nChild; }
+	inline short Child (short nSide) _const_ { return m_sides [nSide].m_info.nChild; }
 
 	short SetChild (short nSide, short nSegment);
 
@@ -195,7 +195,7 @@ public:
 
 	virtual void Undo (void);
 
-	inline CUVL* Uvls (short nSide) { return Side (nSide)->Uvls (); }
+	inline CUVL _const_ * Uvls (short nSide) _const_ { return Side (nSide)->Uvls (); }
 
 	inline void Mark (byte mask = MARKED_MASK) { m_info.wallFlags |= mask; }
 
@@ -203,7 +203,7 @@ public:
 
 	inline bool IsMarked (byte mask = MARKED_MASK) { return (m_info.wallFlags & mask) != 0; }
 
-	inline const CSide& operator[] (uint i) { return m_sides [i]; }
+	inline CSide _const_ & operator[] (uint i) _const_ { return m_sides [i]; }
 
 	CSegment () : CGameItem (itSegment) {}
 

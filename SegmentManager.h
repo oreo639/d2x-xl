@@ -75,7 +75,7 @@ class CSegmentManager {
 
 		inline int& FileOffset (void) { return m_segmentInfo.offset; }
 
-		inline int& MatCenCount (short nClass) { return m_matCenInfo [nClass].count; }
+		inline int& MatCenCount (_const_ short nClass) { return m_matCenInfo [nClass].count; }
 
 		inline int& RobotMakerCount (void) { return MatCenCount (0); }
 
@@ -83,52 +83,59 @@ class CSegmentManager {
 
 		int FuelCenterCount (void);
 
-		inline short Index (CSegment* segP) { return (short) (segP - &m_segments [0]); }
+		inline short Index (CSegment _const_ * segP) { return (short) (segP - &m_segments [0]); }
 
-		inline CSegment *Segment (int i) { return &m_segments [i]; }
+		inline CSegment _const_ * Segment (_const_ int i) { return &m_segments [i]; }
 
-		inline CSegment *Segment (CSideKey& key) { return Segment (key.m_nSegment); }
+		inline CSegment _const_ * Segment (CSideKey& key) { return Segment (key.m_nSegment); }
 
-		inline CSide* Side (CSideKey key) {
+		inline CSegment _const_ & GetSegment (_const_ int i) { return m_segments [i]; }
+
+		inline void PutSegment (_const_ int i, _const_ CSegment& seg) { m_segments [i] = seg; }
+
+		inline CSide _const_ * Side (CSideKey key) {
 			current.Get (key);
-			return &Segment (key.m_nSegment)->m_sides [key.m_nSide];
+			return m_segments [key.m_nSegment].m_sides + key.m_nSide;
 			}
 
-		inline CSide* Side (void) { return Side (CSideKey ()); }
-		//inline CSide* Side (short nSegment = -1, short nSide = -1) {
-		//	current.Get (nSegment, nSide);
-		//	return &Segment (nSegment)->m_sides [nSide];
-		//	}
+		inline CSide _const_ * Side (void) { return Side (CSideKey ()); }
 
-		//CSide* OppositeSide (short nSegment = -1, short nSide = -1);
+		inline CSide _const_ & GetSide (CSideKey key) { return *Side (key); }
 
-		CSide* OppositeSide (CSideKey key, CSideKey& opp);
+		inline void PutSide (CSideKey key, CSide& side) { 
+			current.Get (key);
+			m_segments [key.m_nSegment].m_sides [key.m_nSide] = side;
+			}
 
-		inline CSide* OppositeSide (CSideKey& opp) { return OppositeSide (CSideKey (), opp); }
+		CSide _const_ * OppositeSide (CSideKey key, CSideKey& opp);
+
+		inline CSide _const_ * OppositeSide (CSideKey& opp) { return OppositeSide (CSideKey (), opp); }
 		//CSide* OppositeSide (CSideKey opp, CSideKey& key, short nSegment = -1, short nSide = -1);
 
 		//inline CWall* Wall (short nSegment = -1, short nSide = -1) {
-		inline CWall* Wall (CSideKey key) { 
+		inline CWall _const_ * Wall (CSideKey key) { 
 			current.Get (key);
-			return Side (key)->Wall (); 
+			CSide _const_ * sideP;
+			sideP = Side (key);
+			return sideP->Wall (); 
 			}
 
-		inline CWall* Wall (void) { return Wall (CSideKey ()); }
+		inline CWall _const_ * Wall (void) { return Wall (current); }
 
 		int IsWall (CSideKey key = CSideKey ());
 
 		//inline CTrigger* Trigger (short nSegment = -1, short nSide = -1) {
-		inline CTrigger* Trigger (CSideKey key) { return Side (key)->Trigger (); }
+		inline CTrigger _const_ * Trigger (CSideKey key) { return Side (key)->Trigger (); }
 
-		inline CTrigger* Trigger (void) { return Trigger(CSideKey ()); }
+		inline CTrigger _const_ * Trigger (void) { return Trigger(CSideKey ()); }
 
 		//inline CWall* OppositeWall (short nSegment = -1, short nSide = -1) {
-		inline CWall* OppositeWall (CSideKey key) {
-			CSide* sideP = Side (key);
+		inline _const_ CWall* OppositeWall (CSideKey key) {
+			_const_ CSide* sideP = Side (key);
 			return (sideP == null) ? null : Side (key)->Wall ();
 			}
 
-		inline CWall* OppositeWall (void) { return OppositeWall (CSideKey ()); }
+		inline _const_ CWall* OppositeWall (void) { return OppositeWall (CSideKey ()); }
 
 		void Textures (CSideKey key, short& nBaseTex, short& nOvlTex);
 
@@ -345,7 +352,7 @@ extern CSegmentManager segmentManager;
 
 class CSegmentIterator : public CGameItemIterator<CSegment> {
 	public:
-		CSegmentIterator() : CGameItemIterator (segmentManager.Segment (0), segmentManager.Count ()) {}
+		CSegmentIterator() : CGameItemIterator (const_cast<CSegment*>(segmentManager.Segment (0)), segmentManager.Count ()) {}
 	};
 
 //------------------------------------------------------------------------

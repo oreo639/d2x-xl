@@ -183,7 +183,7 @@ return bChange;
 
 // -----------------------------------------------------------------------------
 
-void CSide::GetTextures (short &nBaseTex, short &nOvlTex)
+void CSide::GetTextures (short &nBaseTex, short &nOvlTex) _const_
 {
 nBaseTex = m_info.nBaseTex;
 nOvlTex = m_info.nOvlTex & 0x1FFF;
@@ -203,14 +203,14 @@ for (int i = 0; i < 4; i++) {
 
 // -----------------------------------------------------------------------------
 
-CWall* CSide::Wall (void)
+CWall _const_ * CSide::Wall (void) _const_
 { 
 return wallManager.Wall (m_info.nWall); 
 }
 
 // -----------------------------------------------------------------------------
 
-CTrigger* CSide::Trigger (void)
+CTrigger _const_ * CSide::Trigger (void) _const_
 { 
 CWall* wallP = wallManager.Wall (m_info.nWall); 
 return (wallP == null) ? null : wallP->Trigger ();
@@ -389,11 +389,11 @@ fp.Write (m_info.wallFlags);
 // write wall numbers
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (m_info.wallFlags & (1 << i)) {
-		CWall* wallP = m_sides [i].Wall ();
+		CWall _const_ * wallP = m_sides [i].Wall ();
 		if (nLevelVersion >= 13)
-			fp.WriteUInt16 ((ushort) wallP->Index ());
+			fp.WriteUInt16 ((ushort) const_cast<CWall*>(wallP)->Index ());
 		else
-			fp.WriteSByte ((sbyte) wallP->Index ());
+			fp.WriteSByte ((sbyte) const_cast<CWall*>(wallP)->Index ());
 		}
 	}
 return m_info.wallFlags;
@@ -604,7 +604,7 @@ return nSegment;
 
 // -----------------------------------------------------------------------------
 
-CVertex* CSegment::Vertex (short nVertex)
+CVertex _const_ * CSegment::Vertex (short nVertex) _const_
 {
 return vertexManager.Vertex (m_info.verts [nVertex]);
 }

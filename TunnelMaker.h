@@ -15,7 +15,7 @@ class CTunnelInfo : public CSideKey {
 public:
 	double	m_length;
 
-	CSegment* Segment (void) { return segmentManager.Segment (m_nSegment); }
+	CSegment _const_ * Segment (void) _const_ { return segmentManager.Segment (m_nSegment); }
 	};
 
 //------------------------------------------------------------------------
