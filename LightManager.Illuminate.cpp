@@ -51,7 +51,7 @@ class CVicinity {
 				for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 					// skip if there is a wall and its a door
 					CWall* wallP = segmentManager.Wall (CSideKey (nSegment, nSide));
-					if ((wallP == null) && (wallP->Type () != WALL_DOOR))
+					if ((wallP == null) || (wallP->Type () != WALL_DOOR))
 						Compute (segP->Child (nSide), nDepth - 1);
 					}
 				}
@@ -165,7 +165,6 @@ delete[] maxBrightness;
 void CLightManager::ComputeStaticLight (double fLightScale, bool bAll, bool bCopyTexLights) 
 {
 // clear all lighting on marked cubes
-m_fLightScale = fLightScale;
 undoManager.Begin (udSegments | udStaticLight);
 if (bAll)
 	CLEAR (VertexColors ());
@@ -208,7 +207,7 @@ for (CSegmentIterator si; si; si++) {
 		if ((nTexture > 0) && (nTexture < MAX_TEXTURES))
 			brightness = max (brightness, LightWeight (nTexture));
 		if (brightness > 0)
-			GatherLight (nSegment, nSide, (uint) (brightness * 2 * m_fLightScale), bAll, bCopyTexLights);
+			GatherLight (nSegment, nSide, (uint) (brightness * 2 * fLightScale), bAll, bCopyTexLights);
 		}
 	}
 undoManager.End ();
@@ -277,7 +276,7 @@ byte*	sideVerts = sideVertTable [nSide];
 for (int i = 0; i < 4; i++, uvlP++) {
 	CColor* vertColorP = VertexColor (segP->m_info.verts [sideVerts [i]]);
 	vertBrightness = (ushort) uvlP->l;
-	lightBrightness = (uint) (brightness * (m_cornerLights ? m_cornerLights [i] : m_fLightScale));
+	lightBrightness = (uint) (brightness * (m_cornerLights ? m_cornerLights [i] : 1.0));
 	BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
 	vertBrightness += lightBrightness;
 	vertBrightness = min (0x8000, vertBrightness);
@@ -292,7 +291,6 @@ for (int i = 0; i < 4; i++, uvlP++) {
 
 void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brightness, bool bAll, bool bCopyTexLights) 
 {
-	CSegment*	segP = segmentManager.Segment (0);
 	// find orthogonal angle of source segment
 	CVertex A = -segmentManager.CalcSideNormal (CSideKey (nSourceSeg, nSourceSide));
 	// remember to flip the sign since we want it to point inward
@@ -303,7 +301,7 @@ void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brigh
 // set child numbers
 //segmentManager.Segment ()[nSourceSeg].nIndex = m_staticRenderDepth;
 
-segP = segmentManager.Segment (nSourceSeg);
+CSegment* segP = segmentManager.Segment (nSourceSeg);
 CVicinity vicinity;
 vicinity.Compute (nSourceSeg, m_staticRenderDepth);	//mark all children that are at most lightRenderDepth segments away
 
@@ -399,7 +397,6 @@ bool bWall = false;
 
 void CLightManager::ComputeVariableLight (double fLightScale, int force) 
 {
-m_fLightScale = fLightScale;
 undoManager.Begin (udDynamicLight);
 for (int nDepth = m_deltaRenderDepth; nDepth; nDepth--)
 	if (CalcLightDeltas (force, nDepth))
@@ -440,7 +437,6 @@ DeltaIndexCount () = 0;
 
 bool bD2XLights = (DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 
-m_fLightScale = 1.0; ///= 100.0;
 //#pragma omp parallel
 	{
 //#pragma omp for private (m_cornerLights)
@@ -588,7 +584,7 @@ m_fLightScale = 1.0; ///= 100.0;
 						dl->m_info.vertLight [0] =
 						dl->m_info.vertLight [1] =
 						dl->m_info.vertLight [2] =
-						dl->m_info.vertLight [3] = (byte) min (32, 32 * m_fLightScale);
+						dl->m_info.vertLight [3] = (byte) 32;
 						dliP->m_info.count++;
 						continue;
 						}
@@ -658,7 +654,7 @@ for (int j = 0; j < 4; j++) {
 	for (int i = 0; i < 4; i++)
 		length = min (length, Distance (sourceCorners [i], *corner));
 	length /= 10.0 * m_staticRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
-	m_cornerLights [j] = m_fLightScale;
+	m_cornerLights [j] = 1.0;
 	if (length > 1.0) 
 		m_cornerLights [j] /= (length * length);
 	}
