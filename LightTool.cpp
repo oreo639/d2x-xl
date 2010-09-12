@@ -59,8 +59,7 @@ m_fDeltaLight = 50.0;
 m_fVertexLight = 50.0;
 m_nNoLightDeltas = 2;
 m_bCopyTexLights = 0;
-m_lightRenderDepth = MAX_LIGHT_DEPTH;
-m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
+lightManager.SetRenderDepth (DEFAULT_LIGHT_RENDER_DEPTH, DEFAULT_LIGHT_RENDER_DEPTH);
 m_deltaLightFrameRate = 100;
 m_bShowLightSource = 0;
 }
@@ -97,8 +96,8 @@ DDX_Double (pDX, IDC_LIGHT_EDIT_SCALE, m_fLightScale, 0, 200, null, "light scale
 DDX_Double (pDX, IDC_LIGHT_EDIT_CUBELIGHT, m_fSegmentLight, 0, 100, null, "robot brightness must be between 0 and 100%");
 DDX_Double (pDX, IDC_LIGHT_EDIT_DELTA, m_fDeltaLight, 0, 1000, null, "exploding/blinking light brightness must be between 0 and 1000");
 DDX_Radio (pDX, IDC_LIGHT_DELTA_ALL, m_nNoLightDeltas);
-DDX_Slider (pDX, IDC_LIGHT_RENDER_DEPTH, m_lightRenderDepth);
-DDX_Slider (pDX, IDC_LIGHT_DELTA_RENDER_DEPTH, m_deltaLightRenderDepth);
+DDX_Slider (pDX, IDC_LIGHT_RENDER_DEPTH, m_staticRenderDepth);
+DDX_Slider (pDX, IDC_LIGHT_DELTA_RENDER_DEPTH, m_deltaRenderDepth);
 DDX_Slider (pDX, IDC_LIGHT_DELTA_FRAMERATE, m_deltaLightFrameRate);
 DDX_Double (pDX, IDC_LIGHT_VERTEXLIGHT, m_fVertexLight);
 if (!pDX->m_bSaveAndValidate)
@@ -120,8 +119,7 @@ CHECKMINE;
 UpdateData (TRUE);
 // make sure there are marked blocks
 theMine->m_nNoLightDeltas = m_nNoLightDeltas;
-theMine->m_lightRenderDepth = m_lightRenderDepth;
-theMine->m_deltaLightRenderDepth = m_deltaLightRenderDepth;
+lightManager.SetRenderDepth (m_staticRenderDepth, m_deltaRenderDepth);
 if (bAll = !segmentManager.HaveMarkedSides ())
 	INFOMSG (" light processing entire mine");
 undoManager.Begin (udLight | udSegments);

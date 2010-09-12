@@ -1184,8 +1184,8 @@ class CLightTool : public CToolDlg
 		double	m_fDeltaLight;
 		double	m_fVertexLight;
 		int		m_nNoLightDeltas;
-		int		m_lightRenderDepth;
-		int		m_deltaLightRenderDepth;
+		int		m_staticRenderDepth;
+		int		m_deltaRenderDepth;
 		int		m_deltaLightFrameRate;
 		int		m_bShowLightSource;
 		int		m_bCopyTexLights;

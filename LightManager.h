@@ -10,7 +10,7 @@
 #include "FileManager.h"
 #include "carray.h"
 
-#define MAX_LIGHT_DEPTH 6
+#define DEFAULT_LIGHT_RENDER_DEPTH 6
 
 // -----------------------------------------------------------------------------
 
@@ -83,7 +83,7 @@ class CLightManager {
 
 		int						m_lightMap [MAX_TEXTURES_D2];
 
-		int						m_renderDepth;
+		int						m_staticRenderDepth;
 		int						m_deltaRenderDepth;
 		int						m_nNoLightDeltas;
 
@@ -203,6 +203,13 @@ class CLightManager {
 			}
 
 		void SortDeltaIndex (void);
+
+		inline void SetRenderDepth (int staticRenderDepth = DEFAULT_LIGHT_RENDER_DEPTH, int deltaRenderDepth = DEFAULT_LIGHT_RENDER_DEPTH) {
+			m_staticRenderDepth = staticRenderDepth;
+			m_deltaRenderDepth = deltaRenderDepth;
+			};
+
+		CLightManager () : m_nCount (0), m_staticRenderDepth (DEFAULT_LIGHT_RENDER_DEPTH), m_deltaRenderDepth (DEFAULT_LIGHT_RENDER_DEPTH), m_fLightScale (100.0) {}
 
 	private:
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);

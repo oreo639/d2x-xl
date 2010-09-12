@@ -61,8 +61,6 @@ class CVicinity {
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
-// light_weight()
-//---------------------------------------------------------------------------------
 
 byte CLightManager::LightWeight (short nBaseTex) 
 {
@@ -303,11 +301,11 @@ void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brigh
 	// mark those segmentManager.Segment () within N children of current cube
 
 // set child numbers
-//segmentManager.Segment ()[nSourceSeg].nIndex = m_renderDepth;
+//segmentManager.Segment ()[nSourceSeg].nIndex = m_staticRenderDepth;
 
 segP = segmentManager.Segment (nSourceSeg);
 CVicinity vicinity;
-vicinity.Compute (nSourceSeg, m_renderDepth);	//mark all children that are at most lightRenderDepth segments away
+vicinity.Compute (nSourceSeg, m_staticRenderDepth);	//mark all children that are at most lightRenderDepth segments away
 
 CColor *lightColorP = LightColor (CSideKey (nSourceSeg, nSourceSide));
 if (!lightColorP->m_info.index) {
@@ -656,10 +654,10 @@ if (!bIgnoreAngle) {
 	}
 for (int j = 0; j < 4; j++) {
 	CVertex* corner = vertexManager.Vertex (segP->m_info.verts [sideVertTable [nSide][j]]);
-	double length = 20.0 * m_renderDepth;
+	double length = 20.0 * m_staticRenderDepth;
 	for (int i = 0; i < 4; i++)
 		length = min (length, Distance (sourceCorners [i], *corner));
-	length /= 10.0 * m_renderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
+	length /= 10.0 * m_staticRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
 	m_cornerLights [j] = m_fLightScale;
 	if (length > 1.0) 
 		m_cornerLights [j] /= (length * length);

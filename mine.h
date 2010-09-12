@@ -61,8 +61,8 @@ class CMine {
 		int				m_disableDrawing;
 		int				m_changesMade;
 		int				m_nNoLightDeltas;
-		int				m_lightRenderDepth;
-		int				m_deltaLightRenderDepth;
+		int				m_staticRenderDepth;
+		int				m_deltaRenderDepth;
 		char				m_szBlockFile [256];
 		bool				m_bVertigo;
 		char*				m_pHxmExtraData;
