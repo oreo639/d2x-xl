@@ -25,6 +25,7 @@ public:
 	short m_nLine;
 	short m_nPoint;
 	short m_nObject;
+	short	m_nIndex;
 
 	void Get (CSideKey& key);
 	void Get (short& nSegment, short& nSide);
@@ -37,6 +38,7 @@ public:
 	CVertex* Vertex (void);
 	CColor* LightColor (void);
 	void Setup (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1);
+	inline short& Index (void) { return m_nIndex; }
 };
 
 extern CSelection selections [2];

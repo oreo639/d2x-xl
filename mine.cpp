@@ -87,6 +87,8 @@ Default ();
 
 void CMine::Reset (void)
 {
+selections [0].Index () = 0;
+selections [1].Index () = 1;
 current = selections [0];
 other = selections [1];
 selections [0].m_nSegment = DEFAULT_SEGMENT;

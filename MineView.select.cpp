@@ -397,7 +397,8 @@ ForwardCube (-1);
 
 void CMineView::SelectOtherSegment () 
 {
-current = selections [current == selections [0]];
+current = selections [!current.Index ()];
+other = selections [!other.Index ()];
 Refresh (true);
 DLE.ToolView ()->SegmentTool ()->Refresh ();
 }
