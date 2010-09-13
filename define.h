@@ -21,6 +21,8 @@ typedef unsigned int uint;
 #define INFOMSG(a) {if (DLE.MainFrame () && !DLE.MineView ()->DelayRefresh ()) DLE.MainFrame ()->InfoMsg(a);}
 #define DEBUGMSG(a) {}//{if (DLE.MainFrame ()) DLE.MainFrame ()->DebugMsg(a);}
 
+#define sizeofa(_a) (sizeof (_a) / sizeof (*(_a)))
+
 #define IN_RANGE(_value,_bounds) ((-(_bounds) <= (_value)) && ((_value) <= (_bounds)))
 
 #define M_PI	3.141592653589793240

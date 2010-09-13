@@ -285,11 +285,11 @@ if (!(dataP = res.Load (DLE.IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
 	return false;
 int i = res.Size () / (3 * sizeof (int) + sizeof (byte));
 #if _DEBUG
-if (i > (int)m_texColors.Length ())
-	i = (int)m_texColors.Length ();
+if (i > (int) m_texColors.Length ())
+	i = (int) m_texColors.Length ();
 #else
-if (i > sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]))
-	i = sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]);
+if (i > sizeofa (m_texColors))
+	i = sizeofa (m_texColors);
 #endif
 for (CColor* colorP = &m_texColors [0]; i; i--, colorP++) {
 	colorP->m_info.index = *dataP++;
