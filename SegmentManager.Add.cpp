@@ -22,7 +22,7 @@ return (short) nSegment;
 
 #else //USE_FREELIST
 
-if (Count () > MAX_SEGMENTS)
+if (Count () >= MAX_SEGMENTS)
 	return -1;
 return Count ()++;
 

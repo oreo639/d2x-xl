@@ -299,8 +299,6 @@ for (nSegment = 0; nSegment < h; nSegment++) {
 // DrawSegment()
 //--------------------------------------------------------------------------
 
-#define IN_RANGE(value,absolute_range) ((-absolute_range <= value) && (value <= absolute_range))
-
 bool CMineView::InRange (short *pv, short i)
 {
 	int	v;
@@ -1518,9 +1516,7 @@ if (ViewFlag (eViewMineWalls))
 if (ViewFlag (eViewMineLights))
 	  DrawLights ();
 
-// draw spline
-if (tunnelMaker.Active ())
-	DrawTunnel ();
+tunnelMaker.Draw (m_pDC, m_penRed, m_penBlue, m_view);
 
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {

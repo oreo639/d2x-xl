@@ -13,7 +13,7 @@ CTunnelMaker tunnelMaker;
 
 //------------------------------------------------------------------------------
 
-char szTunnelMakerError [] = "You must exit spline creation before preforming this function";
+char szTunnelMakerError [] = "You must exit tunnel creation before preforming this function";
 
 //------------------------------------------------------------------------------
 
@@ -303,8 +303,7 @@ if (!m_bActive) {
 	else if (m_nMaxSegments < 3) {
 //	if ((vertexManager.Count () + 3 /*MAX_TUNNEL_SEGMENTS*/ * 4 > MAX_VERTICES) ||
 //		 (segmentManager.Count () + 3 /*MAX_TUNNEL_SEGMENTS*/ > MAX_SEGMENTS)) {
-		ErrorMsg ("Insufficient number of free vertices and/or segments\n"
-					"to use the nSegment generator.");
+		ErrorMsg ("Insufficient number of free vertices and/or segments\nto use the nSegment generator.");
 		return;
 		}
 	// make sure there are no children on either segment/side
@@ -564,6 +563,48 @@ for (i = 0; i < m_nLength; i++) {
   // int twisted segments
 for (i = 0; i < m_nLength; i++)
 	UntwistSegment (m_nSegments [i], m_info [0].m_nSide);
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelMaker::Draw (CDC* pDC, CPen* redPen, CPen* bluePen, CViewMatrix& view) 
+{
+if (!m_bActive)
+	return;
+
+	int h, i;
+
+//  SelectObject(hdc, hrgnAll);
+pDC->SelectObject (redPen);
+pDC->SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
+tunnelMaker.ComputeTunnel ();
+APOINT point;
+view.Project (m_points [1], point);
+if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
+	view.Project (m_points [0], point);
+	if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
+		pDC->MoveTo (point.x, point.y);
+		view.Project (m_points [1], point);
+		pDC->LineTo (point.x, point.y);
+		pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y+4);
+		}
+	}
+view.Project (m_points [2], point);
+if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
+	view.Project (m_points [3], point);
+	if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
+		pDC->MoveTo (point.x, point.y);
+		view.Project (m_points [2], point);
+		pDC->LineTo (point.x, point.y);
+		pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y+4);
+		}
+	}
+pDC->SelectObject (bluePen);
+CMineView* viewP = DLE.MineView ();
+for (h = tunnelMaker.Length () * 4, i = 0; i < h; i++)
+	view.Project (*vertexManager.Vertex (m_nVertices [i]), viewP->m_viewPoints [i]);
+for (i = 0; i < tunnelMaker.Length (); i++)
+	viewP->DrawSegmentQuick (segmentManager.Segment (m_nSegments [i]));
 }
 
 //------------------------------------------------------------------------------

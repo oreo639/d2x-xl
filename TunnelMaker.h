@@ -54,6 +54,8 @@ class CTunnelMaker {
 
 		void ComputeTunnel (void); 
 
+		void Draw (CDC* pDC, CPen* redPen, CPen* bluePen, CViewMatrix& view);
+
 	private:
 		long Faculty (int n); 
 
