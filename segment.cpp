@@ -630,7 +630,8 @@ return vertexManager.Vertex (m_info.verts [nVertex]);
 void CSegment::UpdateChildren (short nOldChild, short nNewChild)
 {
 for (short nSide = 0; nSide < 6; nSide++)
-	m_sides [nSide].UpdateChild (nOldChild, nNewChild);
+	if (m_sides [nSide].UpdateChild (nOldChild, nNewChild))	// no two sides can have the same child
+		return;
 }
 
 // -----------------------------------------------------------------------------

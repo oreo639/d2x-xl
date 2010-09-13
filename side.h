@@ -56,7 +56,7 @@ public:
 	
 	CTrigger _const_ * Trigger (void) _const_;
 	
-	void UpdateChild (short nOldChild, short nNewChild);
+	bool UpdateChild (short nOldChild, short nNewChild);
 
 	bool IsVisible (void);
 

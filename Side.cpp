@@ -145,10 +145,12 @@ return (m_info.nChild == -1) || wallManager.IsVisible (m_info.nWall);
 
 // -----------------------------------------------------------------------------
 
-void CSide::UpdateChild (short nOldChild, short nNewChild)
+bool CSide::UpdateChild (short nOldChild, short nNewChild)
 {
-if (m_info.nChild == nOldChild)
-	m_info.nChild = nNewChild;
+if (m_info.nChild != nOldChild)
+	return false;
+m_info.nChild = nNewChild;
+return true;
 }
 
 // -----------------------------------------------------------------------------
