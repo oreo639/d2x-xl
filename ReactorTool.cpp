@@ -163,7 +163,7 @@ undoManager.End ();
 }
 
 //------------------------------------------------------------------------
-// CReactorTool - Add cube/side to trigger list
+// CReactorTool - Add segment/side to trigger list
 //------------------------------------------------------------------------
 
 void CReactorTool::AddTarget (short nSegment, short nSide) 
@@ -213,7 +213,7 @@ AddTarget (other->m_nSegment, other->m_nSide + 1);
 }
 
 //------------------------------------------------------------------------
-// CReactorTool - Delete cube/side
+// CReactorTool - Delete segment/side
 //------------------------------------------------------------------------
 
 void CReactorTool::OnDeleteTarget ()
@@ -245,7 +245,7 @@ void CReactorTool::OnDeleteWallTarget ()
 other = &selections [!current->Index ()];
 int i = FindTarget (other->m_nSegment, other->m_nSide);
 if (i < 0) {
-	DEBUGMSG (" Reactor tool: Trigger doesn't target other cube's current side.");
+	DEBUGMSG (" Reactor tool: Trigger doesn't target other segment's current side.");
 	return;
 	}
 LBTargets ()->SetCurSel (i);
@@ -255,14 +255,14 @@ OnDeleteTarget ();
 //------------------------------------------------------------------------
 // CReactorTool - Cube/Side list box message
 //
-// sets "other cube" to selected item
+// sets "other segment" to selected item
 //------------------------------------------------------------------------
 
 void CReactorTool::OnSetTarget () 
 {
-// get affected cube/side list box index
+// get affected segment/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
-// if selected and within range, then set "other" cube/side
+// if selected and within range, then set "other" segment/side
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_triggerP->m_count))
 	return;
 

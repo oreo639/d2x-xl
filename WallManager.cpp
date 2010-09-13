@@ -90,7 +90,7 @@ if (type == WALL_OVERLAY) {
 else {
 	// otherwise make sure there is a child
 	if (nChild == -1) {
-		ErrorMsg ("This side must be attached to an other cube before a wall can be added.");
+		ErrorMsg ("This side must be attached to an other segment before a wall can be added.");
 		return null;
 		}
 	}

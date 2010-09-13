@@ -164,12 +164,12 @@ if ((count > 1) &&
 				  "Do you want to attach these points anyway?") == IDYES))
 	count = 1;
 if (count == 1) {
-// make sure new vert is not one of the current cube's verts
+// make sure new vert is not one of the current segment's verts
 	for (i = 0; i < 8; i++) {
 		if (i!=point1) {
 			vert2 = current->Segment ()->m_info.verts [i];
 			if (new_vert == vert2) {
-				ErrorMsg ("Cannot drop point onto another corner of the current cube.");
+				ErrorMsg ("Cannot drop point onto another corner of the current segment.");
 				break;
 				}
 			}

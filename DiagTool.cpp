@@ -186,7 +186,7 @@ if (!(m_bInited && theMine))
 	int i;
 
 	static LPSTR szItems [] = {
-		"cubes", "vertices", "mat cens", "fuel centers", "walls", "triggers", "objects:", 
+		"segments", "vertices", "mat cens", "fuel centers", "walls", "triggers", "objects:", 
 		"robots", "hostages", "players", "coop players", "powerups", "weapons", "keys", "reactors", "textures",
 		null};
 

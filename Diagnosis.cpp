@@ -429,7 +429,7 @@ return false;
 //
 //  Checks for:
 //    out of range data
-//    valid cubes geometry
+//    valid segments geometry
 //--------------------------------------------------------------------------
 
 bool CDiagTool::CheckSegments (void) 
@@ -484,7 +484,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		a = CalcAngle (vert0, vert3, vert1, vert2);
 		angle = max (angle, a);
 		if (angle > M_PI_2) {
-			sprintf_s (message, sizeof (message), "WARNING: Illegal cube geometry (cube=%d,point=%d,angle=%d)",nSegment,nPoint, (int) ( (angle*180.0)/M_PI));
+			sprintf_s (message, sizeof (message), "WARNING: Illegal segment geometry (segment=%d, point=%d, angle=%d)",nSegment,nPoint, (int) ( (angle*180.0)/M_PI));
 			if (UpdateStats (message, 0, nSegment, -1, -1, nPoint))
 				return true;
 			break; // from for loop
@@ -495,7 +495,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		for (nSide = 0; nSide < 6; nSide++) {
 			double flatness = CalcFlatnessRatio (nSegment,nSide);
 			if (flatness < 0.80) {
-				sprintf_s (message, sizeof (message),"ERROR: Illegal cube geometry (cube=%d,side=%d,flatness=%d%%)",nSegment,nSide, (int) (flatness*100));
+				sprintf_s (message, sizeof (message),"ERROR: Illegal segment geometry (segment=%d, side=%d, flatness=%d%%)",nSegment,nSide, (int) (flatness*100));
 				if (UpdateStats (message, 1, nSegment, nSide))
 					return true;
 				break; // from for loop
@@ -509,7 +509,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		length = theMine->CalcLength (vertexManager.Vertex (segP->m_info.verts[lineVertTable[linenum][0]]),
 											  vertexManager.Vertex (segP->m_info.verts[lineVertTable[linenum][1]]));
 		if (length < (double)F1_0) {
-			sprintf_s (message, sizeof (message),"WARNING: Line length too short (cube=%d,line=%d)",nSegment,linenum);
+			sprintf_s (message, sizeof (message),"WARNING: Line length too short (segment=%d,line=%d)",nSegment,linenum);
 			if (UpdateStats (message, 0, nSegment, -1, linenum))
 				return true;
 			}
@@ -520,12 +520,12 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 // check nChild range 
 		if (nChild != -1 && nChild != -2) {
 			if (nChild < -2) {
-				sprintf_s (message, sizeof (message),"ERROR: Illegal nChild number %d (cube=%d,side=%d)",nChild,nSegment,nSide);
+				sprintf_s (message, sizeof (message),"ERROR: Illegal nChild number %d (segment=%d, side=%d)",nChild,nSegment,nSide);
 				if (UpdateStats (message, 1, nSegment, nSide))
 					return true;
 				}
 			else if (nChild >= segmentManager.Count ()) {
-				sprintf_s (message, sizeof (message),"ERROR: Child out of range %d (cube=%d,side=%d)",nChild,nSegment,nSide);
+				sprintf_s (message, sizeof (message),"ERROR: Child out of range %d (segment=%d, side=%d)",nChild,nSegment,nSide);
 				if (UpdateStats (message, 1, nSegment, nSide)) 
 					return true;
 				}
@@ -544,13 +544,13 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 								 segmentManager.Segment (nChild)->m_info.verts [sideVertTable [nSide2][j]])
 								match[i]++;
 					if (match[0]!=1 || match[1]!=1 || match[2]!=1 || match[3]!=1) {
-						sprintf_s (message, sizeof (message),"WARNING:Child cube does not share points of cube (cube=%d,side=%d,nChild=%d)",nSegment,nSide,nChild);
+						sprintf_s (message, sizeof (message),"WARNING:Child segment does not share points of segment (segment=%d, side=%d, child=%d)",nSegment,nSide,nChild);
 						if (UpdateStats (message, 0, nSegment, -1, -1, -1, nChild))
 							return true;
 						}
 					}
 				else {
-					sprintf_s (message, sizeof (message), "WARNING:Child cube does not connect to this cube (cube=%d,side=%d,nChild=%d)",nSegment,nSide,nChild);
+					sprintf_s (message, sizeof (message), "WARNING:Child segment does not connect to this segment (segment=%d, side=%d, child=%d)",nSegment,nSide,nChild);
 					if (UpdateStats (message, 1, nSegment, -1, -1, -1, nChild))
 						return false;
 					}
@@ -642,7 +642,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 		}
 
 	segP = segmentManager.Segment (nSegment);
-    // make sure object is within its cube
+    // make sure object is within its segment
     // find center of segment then find maximum distance
 	// of corner to center.  Calculate Objects () distance
     // from center and make sure it is less than max corner.
@@ -658,7 +658,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 		 }
 	object_radius = Distance (objP->Position (), center);
    if ((object_radius > max_radius) && (objP->Type () != OBJ_EFFECT)) {
-      sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",nObject,nSegment);
+      sprintf_s (message, sizeof (message),"ERROR: Object is outside of segment (object=%d, segment=%d)",nObject,nSegment);
       if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
     }
@@ -971,10 +971,10 @@ for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 				if (i >= triggerManager.ReactorTriggerCount ()) {
 					if (m_bAutoFixBugs) {
 						triggerManager.UpdateReactor ();
-						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 						}
 					else
-						sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (cube=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+						sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 					if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall))
 						return true;
 					}
@@ -1051,11 +1051,11 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						nTarget = MAX_TRIGGER_TARGETS;	// take care of the loops
 						trigP--;
 						}
-					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant %s (trigP=%d, cube=%d)", 
+					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant %s (trigP=%d, segment=%d)", 
 								  (nSide < 0) ? "object" : "segment", nTrigger, nSegment);
 					}
 				else
-					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant %s (trigP=%d, cube=%d)", 
+					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant %s (trigP=%d, segment=%d)", 
 								  (nSide < 0) ? "object" : "segment", nTrigger, nSegment);
 				if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 					return true;
@@ -1431,7 +1431,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 		if (w->m_nSegment != nSegment) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
-							"FIXED: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
+							"FIXED: Wall sits in wrong segment (segment=%d, wall=%d, parent=%d)",
 							nSegment, nWall, w->m_nSegment);
 				if (wallFixed [nWall])
 					sideP->m_info.nWall = NO_WALL;
@@ -1447,14 +1447,14 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 				}
 			else
 				sprintf_s (message, sizeof (message),
-							"ERROR: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
+							"ERROR: Wall sits in wrong segment (segment=%d, wall=%d, parent=%d)",
 							nSegment, nWall, w->m_nSegment);
 			if (UpdateStats (message,1, nSegment, nSide, -1, -1, -1, sideP->m_info.nWall)) return true;
 			} 
 		else if (w->m_nSide != nSide) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
-							"FIXED: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
+							"FIXED: Wall sits at wrong side (segment=%d, side=%d, wall=%d, parent=%d)",
 							nSegment, nSide, nWall, w->m_nSegment);
 				if (wallFixed [nWall])
 					sideP->m_info.nWall = NO_WALL;
@@ -1473,7 +1473,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 				}
 			else
 				sprintf_s (message, sizeof (message),
-							"ERROR: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
+							"ERROR: Wall sits at wrong side (segment=%d, side=%d, wall=%d, parent=%d)",
 							nSegment, nSide, nWall, w->m_nSegment);
 			if (UpdateStats (message,1, -1, -1, -1, -1, -1, sideP->m_info.nWall)) return true;
 			}
@@ -1491,7 +1491,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		// check range of segment number that the wall points to
 	if (wallP->m_nSegment >= segmentManager.Count ()) {
 		sprintf_s (message, sizeof (message),
-					"ERROR: Wall sits in non-existant cube (wall=%d, cube=%d)",
+					"ERROR: Wall sits in non-existant segment (wall=%d, segment=%d)",
 					nWall,wallP->m_nSegment);
 		if (UpdateStats (message,1,-1, -1, -1, -1, -1, nWall)) return true;
 		} 
@@ -1510,7 +1510,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			if ((nWall < wallCount) && (w->m_nSegment == wallP->m_nSegment) && (w->m_nSide == wallP->m_nSide)) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message),
-								"FIXED: Duplicate wall found (wall=%d, cube=%d)", nWall, wallP->m_nSegment);
+								"FIXED: Duplicate wall found (wall=%d, segment=%d)", nWall, wallP->m_nSegment);
 					wallManager.Delete (nWall);
 					nWall--;
 					wallP--;
@@ -1519,19 +1519,19 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 					}
 				else 
 					sprintf_s (message, sizeof (message),
-								"ERROR: Duplicate wall found (wall=%d, cube=%d)", nWall, wallP->m_nSegment);
+								"ERROR: Duplicate wall found (wall=%d, segment=%d)", nWall, wallP->m_nSegment);
 				if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
 				if (m_bAutoFixBugs) {
 					sideP->m_info.nWall = nWall;
 					sprintf_s (message, sizeof (message),
-								"FIXED: Cube does not reference wall which sits in it (wall=%d, cube=%d)",
+								"FIXED: Cube does not reference wall which sits in it (wall=%d, segment=%d)",
 								nWall,wallP->m_nSegment);
 					}
 				else 
 					sprintf_s (message, sizeof (message),
-								"ERROR: Cube does not reference wall which sits in it (wall=%d, cube=%d)",
+								"ERROR: Cube does not reference wall which sits in it (wall=%d, segment=%d)",
 								nWall,wallP->m_nSegment);
 				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
@@ -1639,7 +1639,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		if (wallP->Type () != WALL_OVERLAY) {
 			if (!(segmentManager.Segment (wallP->m_nSegment)->m_info.childFlags & (1<< wallP->m_nSide))) {
 				sprintf_s (message, sizeof (message),
-							"ERROR: No adjacent cube for this door (wall=%d, cube=%d)",
+							"ERROR: No adjacent segment for this door (wall=%d, segment=%d)",
 							nWall,wallP->m_nSegment);
 				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
@@ -1655,7 +1655,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 					if (nSide != 6) {  // if child's side found
 						if (segP->m_sides[nSide].m_info.nWall >= wallManager.WallCount ()) {
 							sprintf_s (message, sizeof (message),
-										"WARNING: No matching wall for this wall (wall=%d, cube=%d)", 
+										"WARNING: No matching wall for this wall (wall=%d, segment=%d)", 
 										nWall,nSegment);
 							if (UpdateStats (message,0,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 							} 
@@ -1665,7 +1665,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 								 ((wallP->Info ().nClip != wallManager.Wall (wallnum2)->Info ().nClip ||
 									wallP->Type () != wallManager.Wall (wallnum2)->Type ()))) {
 								sprintf_s (message, sizeof (message),
-											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, cube=%d)",
+											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, segment=%d)",
 											nWall,nSegment);
 								if (UpdateStats (message,0,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 								}
@@ -1688,19 +1688,19 @@ for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
 			if (nWall >= wallCount) {
 				if (m_bAutoFixBugs) {
 					sideP->m_info.nWall = wallCount;
-					sprintf_s (message, sizeof (message),"FIXED: Cube has an invalid wall number (wall=%d, cube=%d)",nWall,nSegment);
+					sprintf_s (message, sizeof (message),"FIXED: Cube has an invalid wall number (wall=%d, segment=%d)",nWall,nSegment);
 					}
 				else
-					sprintf_s (message, sizeof (message),"ERROR: Cube has an invalid wall number (wall=%d, cube=%d)",nWall,nSegment);
+					sprintf_s (message, sizeof (message),"ERROR: Cube has an invalid wall number (wall=%d, segment=%d)",nWall,nSegment);
 				if (UpdateStats (message,1, nSegment, nSide)) return true;
 			} else {
 				if (wallManager.Wall (nWall)->m_nSegment != nSegment) {
 					if (m_bAutoFixBugs) {
 						wallManager.Wall (nWall)->m_nSegment = nSegment;
-						sprintf_s (message, sizeof (message),"FIXED: Cube's wall does not sit in cube (wall=%d, cube=%d)",nWall,nSegment);
+						sprintf_s (message, sizeof (message),"FIXED: Cube's wall does not sit in segment (wall=%d, segment=%d)",nWall,nSegment);
 						}
 					else
-						sprintf_s (message, sizeof (message),"ERROR: Cube's wall does not sit in cube (wall=%d, cube=%d)",nWall,nSegment);
+						sprintf_s (message, sizeof (message),"ERROR: Cube's wall does not sit in segment (wall=%d, segment=%d)",nWall,nSegment);
 					if (UpdateStats (message,1,nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 					}
 				}

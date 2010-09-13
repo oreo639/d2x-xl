@@ -36,7 +36,7 @@ for (i = 0; i < 4; i++) {
 	match [i].i = -1; 
 }
 
-// check to see if all 4 vertices match exactly one of each of the 4 other cube's vertices
+// check to see if all 4 vertices match exactly one of each of the 4 other segment's vertices
 fail = 0;   // assume test will pass for now
 for (i = 0; i < 4; i++)
 	for (j = 0; j < 4; j++)
@@ -124,10 +124,10 @@ if (tunnelMaker.Active ())
 	return; 
 
 if (selections [0].m_nSegment== selections [1].m_nSegment) {
-	ErrorMsg ("You cannot joint two points on the same cube.\n\n"
+	ErrorMsg ("You cannot joint two points on the same segment.\n\n"
 				"Hint: The two golden circles represent the current point, \n"
-				"and the 'other' cube's current point.  Press 'P' to change the\n"
-				"current point or press the space bar to switch to the other cube."); 
+				"and the 'other' segment's current point.  Press 'P' to change the\n"
+				"current point or press the space bar to switch to the other segment."); 
 	return;
 	}
 
@@ -155,7 +155,7 @@ if (distance > JOIN_DISTANCE) {
 	return; 
 	}
 if (QueryMsg("Are you sure you want to join the current point\n"
-				 "with the 'other' cube's current point?") != IDYES)
+				 "with the 'other' segment's current point?") != IDYES)
 	return; 
 undoManager.Begin (udSegments);
 // define vert numbers
@@ -187,10 +187,10 @@ if (tunnelMaker.Active ())
 	return; 
 
 if (selections [0].m_nSegment == selections [1].m_nSegment) {
-	ErrorMsg ("You cannot joint two lines on the same cube.\n\n"
+	ErrorMsg ("You cannot joint two lines on the same segment.\n\n"
 				"Hint: The two green lines represent the current line, \n"
-				"and the 'other' cube's current line.  Press 'L' to change\n"
-				"the current line or press the space bar to switch to the other cube."); 
+				"and the 'other' segment's current line.  Press 'L' to change\n"
+				"the current line or press the space bar to switch to the other segment."); 
 	return;
 	}
 
@@ -247,7 +247,7 @@ if (minRadius == JOIN_DISTANCE) {
 	}
 
 if (QueryMsg("Are you sure you want to join the current line\n"
-				 "with the 'other' cube's current line?") != IDYES)
+				 "with the 'other' segment's current line?") != IDYES)
 	return; 
 fail = false; 
 // make sure there are matches for each and they are unique
@@ -273,10 +273,10 @@ DLE.MineView ()->Refresh ();
 //
 //  ACTION - Joins sides of current Segment ().  Finds closest corners.
 //	     If sides use vertices with the same coordinates, these vertices
-//	     are merged and the cube's are connected together.  Otherwise, a
-//           new cube is added added.
+//	     are merged and the segment's are connected together.  Otherwise, a
+//           new segment is added added.
 //
-//  Changes - Added option to solidifyally figure out "other cube"
+//  Changes - Added option to solidifyally figure out "other segment"
 // ----------------------------------------------------------------------------- 
 
 void CSegmentManager::Join (int solidify)
@@ -293,18 +293,18 @@ void CSegmentManager::Join (int solidify)
 if (tunnelMaker.Active ()) 
 	return; 
 
-// figure out "other' cube
+// figure out "other' segment
 if (solidify) {
 	if (Segment (current->m_nSegment)->Child (current->m_nSide) != -1) {
 		if (!bExpertMode)
-			ErrorMsg ("The current side is already joined to another cube"); 
+			ErrorMsg ("The current side is already joined to another segment"); 
 		return; 
 		}
 
 	cur1 = current; 
 	cur2 = &mySeg; 
 	mySeg.m_nSegment = -1;
-	// find first cube (other than this cube) which shares all 4 points
+	// find first segment (other than this segment) which shares all 4 points
 	// of the current side (points must be < 5.0 away)
 	seg1 = Segment (cur1->m_nSegment); 
 	for (i = 0; i < 4; i++) {
@@ -378,10 +378,10 @@ else
 
 if (cur1->m_nSegment == cur2->m_nSegment) {
 	if (!bExpertMode)
-		ErrorMsg ("You cannot joint two sides on the same cube.\n\n"
+		ErrorMsg ("You cannot joint two sides on the same segment.\n\n"
 					"Hint: The two red squares represent the current side, \n"
-					"and the 'other' cube's current side.  Press 'S' to change\n"
-					"the current side or press the space bar to switch to the other cube."); 
+					"and the 'other' segment's current side.  Press 'S' to change\n"
+					"the current side or press the space bar to switch to the other segment."); 
 	return; 
 	}
 
@@ -486,9 +486,9 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  /* no remaining children */
 	segP->SetChild (i, -1); 
 
 // now define two sides:
-// near side has opposite side number cube 1
+// near side has opposite side number segment 1
 segP->SetChild (oppSideTable [cur1->m_nSide], cur1->m_nSegment); 
-// far side has same side number as cube 1
+// far side has same side number as segment 1
 segP->SetChild (cur1->m_nSide, cur2->m_nSegment); 
 segP->m_info.owner = -1;
 segP->m_info.group = -1;

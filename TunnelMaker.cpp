@@ -63,7 +63,7 @@ return v;
 //------------------------------------------------------------------------------
 // UntwistSegment ()
 //
-// Action - swaps vertices of opposing side if cube is twisted
+// Action - swaps vertices of opposing side if segment is twisted
 //------------------------------------------------------------------------------
 
 void CTunnelMaker::UntwistSegment (short nSegment, short nSide) 
@@ -325,8 +325,8 @@ if (!m_bActive) {
 	if ((current->Segment ()->Child (current->m_nSide) != -1) ||
 		 (other->Segment ()->Child (other->m_nSide) != -1)) {
 		ErrorMsg ("Starting and/or ending point of nSegment\n"
-					"already have cube(s) attached.\n\n"
-					"Hint: Put the current cube and the alternate cube\n"
+					"already have segment(s) attached.\n\n"
+					"Hint: Put the current segment and the alternate segment\n"
 					"on sides which do not have cubes attached.");
 		return;
 		}
@@ -334,9 +334,9 @@ if (!m_bActive) {
 	dynamic_cast<CSideKey&> (m_info [0]) = dynamic_cast<CSideKey&> (selections [0]);
 	dynamic_cast<CSideKey&> (m_info [1]) = dynamic_cast<CSideKey&> (selections [1]);
 	// define 4 data m_points for nSegment to work from
-	// center of current cube
+	// center of current segment
 	m_points [0] = segmentManager.CalcSideCenter (m_info [0]);
-	// center of other cube
+	// center of other segment
 	m_points [3] = segmentManager.CalcSideCenter (m_info [1]);
 	// calculate length between cubes
 	length = Distance (m_points [0], m_points [3]);
@@ -356,7 +356,7 @@ if (!m_bActive) {
 			m_info [i].m_length = MAX_TUNNEL_LENGTH;
 		}
 	if (!bExpertMode)
-		ErrorMsg ("Place the current cube on one of the nSegment end m_points.\n\n"
+		ErrorMsg ("Place the current segment on one of the nSegment end m_points.\n\n"
 				  "Use the ']' and '[' keys to adjust the length of the red\n"
 				  "nSegment segment.\n\n"
 				  "Press 'P' to rotate the point connections.\n\n"
@@ -438,11 +438,11 @@ void CTunnelMaker::ComputeTunnel (void)
 // center of both cubes
 m_points [0] = segmentManager.CalcSideCenter (m_info [0]);
 m_points [3] = segmentManager.CalcSideCenter (m_info [1]);
-// point orthogonal to center of current cube
+// point orthogonal to center of current segment
 m_points [1] = segmentManager.CalcSideNormal (m_info [0]);
 m_points [1] *= m_info [0].m_length;
 m_points [1] += m_points [0];
-// point orthogonal to center of other cube
+// point orthogonal to center of other segment
 m_points [2] = segmentManager.CalcSideNormal (m_info [1]);
 m_points [2] *= m_info [1].m_length;
 m_points [2] += m_points [3];
@@ -502,7 +502,7 @@ for (i = 0; i < 4; i++) {
 
 // determine polar coordinates of the 2nd side by rotating to x-axis first
 for (i = 0; i < 4; i++) {
-	// flip orthoginal vector to point into cube
+	// flip orthoginal vector to point into segment
 	vertex = (relPoints [3] * 2) - relPoints [2];
 	//vertex.Set (relPoints [3].v.x - relPoints [2].v.x + relPoints [3].v.x,
 	//				relPoints [3].v.y - relPoints [2].v.y + relPoints [3].v.y,

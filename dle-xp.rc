@@ -67,8 +67,8 @@ BEGIN
     PUSHBUTTON      "&trigger details...",IDC_CUBE_TRIGGERDETAILS,412,110,60,10
     PUSHBUTTON      "&add",IDC_CUBE_ADD,488,4,60,12,WS_GROUP
     PUSHBUTTON      "&delete",IDC_CUBE_DEL,488,17,60,12
-    PUSHBUTTON      "&other cube",IDC_CUBE_OTHER,488,37,60,12
-    PUSHBUTTON      "spli&t cube",IDC_CUBE_SPLIT,488,56,60,12,WS_GROUP
+    PUSHBUTTON      "&other segment",IDC_CUBE_OTHER,488,37,60,12
+    PUSHBUTTON      "spli&t segment",IDC_CUBE_SPLIT,488,56,60,12,WS_GROUP
     PUSHBUTTON      "add &bot maker",IDC_CUBE_ADD_MATCEN,552,4,60,12,WS_GROUP
     PUSHBUTTON      "add e&quip maker",IDC_CUBE_ADD_EQUIPMAKER,552,17,60,12,WS_GROUP
     PUSHBUTTON      "add &fuel center",IDC_CUBE_ADD_FUELCEN,552,30,60,12,WS_GROUP
@@ -218,8 +218,8 @@ BEGIN
     PUSHBUTTON      "con&trol panel",IDC_TRIGGER_ADD_CONTROLPANEL,502,66,51,12
     RTEXT           "strength:",IDC_TRIGGER_STRENGTH_TEXT,6,52,34,8
     RTEXT           "trigger #",IDC_STATIC,10,36,26,8
-    CTEXT           "cube, side activated",IDC_STATIC,352,10,68,8
-    CTEXT           "enter cube,side",IDC_STATIC,293,10,52,8
+    CTEXT           "segment, side activated",IDC_STATIC,352,10,68,8
+    CTEXT           "enter segment,side",IDC_STATIC,293,10,52,8
     GROUPBOX        "Descent 1 types",IDC_STATIC,166,0,120,69,BS_RIGHT
     GROUPBOX        "Descent 2 types",IDC_STATIC,94,0,68,125,BS_RIGHT
     GROUPBOX        "trigger targets",IDC_STATIC,288,0,144,126,BS_RIGHT
@@ -376,10 +376,10 @@ BEGIN
     EDITTEXT        IDC_LIGHT_EDIT_SCALE,170,33,30,12,ES_CENTER | ES_AUTOHSCROLL
     CONTROL         "create side lights from textures",IDC_LIGHT_COPYTEXLIGHTS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,36,111,10
-    CONTROL         "set cube light (player/robot brightness)",IDC_LIGHT_CUBELIGHT,
+    CONTROL         "set segment light (player/robot brightness)",IDC_LIGHT_CUBELIGHT,
                     "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_GROUP | WS_TABSTOP,28,46,136,11
     EDITTEXT        IDC_LIGHT_EDIT_CUBELIGHT,170,45,30,12,ES_CENTER | ES_AUTOHSCROLL
-    CONTROL         "dynamic cube light calculation",IDC_LIGHT_DYNCUBELIGHTS,
+    CONTROL         "dynamic segment light calculation",IDC_LIGHT_DYNCUBELIGHTS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,47,111,10
     CONTROL         "calculate exploding/blinking lights, factor =",IDC_LIGHT_CALCDELTA,
                     "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_GROUP | WS_TABSTOP,16,67,148,11
@@ -836,14 +836,14 @@ BEGIN
     LISTBOX         IDC_REACTOR_TARGETLIST,64,18,76,58,WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_REACTOR_COUNTDOWN,204,28,24,12,ES_CENTER | ES_AUTOHSCROLL
     EDITTEXT        IDC_REACTOR_SECRETRETURN,265,62,24,12,ES_CENTER | ES_AUTOHSCROLL
-    CTEXT           "cube, side activated",IDC_STATIC,68,10,68,8
-    CTEXT           "enter cube,side",IDC_STATIC,9,10,52,8
+    CTEXT           "segment, side activated",IDC_STATIC,68,10,68,8
+    CTEXT           "enter segment,side",IDC_STATIC,9,10,52,8
     GROUPBOX        "triggered when reactor blows up",IDC_STATIC,4,0,144,80,BS_RIGHT
     GROUPBOX        "Descent 2 options",IDC_STATIC,152,0,144,80,BS_RIGHT
     RTEXT           "countdown:",IDC_STATIC,158,31,44,8
     LTEXT           "Insane..: x1 Ace......: x1.5 Hotshot: x2 Rookie.: x2.5 Trainee: x3",IDC_STATIC,246,13,44,42,SS_SUNKEN
     LTEXT           "sec",IDC_STATIC,228,30,11,8
-    RTEXT           "cube to return to after secret level:",IDC_STATIC,156,64,108,10
+    RTEXT           "segment to return to after secret level:",IDC_STATIC,156,64,108,10
 END
 
 IDD_DIAGDATA DIALOGEX 0, 0, 620, 130
@@ -966,8 +966,8 @@ BEGIN
     PUSHBUTTON      "<-- add",IDC_CUBE_ADDBOT,118,339,64,10
     PUSHBUTTON      "&add",IDC_CUBE_ADD,51,353,60,10,WS_GROUP
     PUSHBUTTON      "&delete",IDC_CUBE_DEL,51,363,60,10
-    PUSHBUTTON      "&other cube",IDC_CUBE_OTHER,51,377,60,10
-    PUSHBUTTON      "spli&t cube",IDC_CUBE_SPLIT,51,392,60,10,WS_GROUP
+    PUSHBUTTON      "&other segment",IDC_CUBE_OTHER,51,377,60,10
+    PUSHBUTTON      "spli&t segment",IDC_CUBE_SPLIT,51,392,60,10,WS_GROUP
     PUSHBUTTON      "add &bot maker",IDC_CUBE_ADD_MATCEN,118,353,60,10,WS_GROUP
     PUSHBUTTON      "add e&quip maker",IDC_CUBE_ADD_EQUIPMAKER,118,362,60,10,WS_GROUP
     PUSHBUTTON      "add &fuel center",IDC_CUBE_ADD_FUELCEN,118,372,60,10,WS_GROUP
@@ -981,7 +981,7 @@ BEGIN
     RTEXT           "light:",IDC_STATIC,55,52,18,8
     CTEXT           "used bots",IDC_STATIC,49,272,65,8
     CTEXT           "available bots",IDC_STATIC,119,272,61,8
-    RTEXT           "triggered by (cube,side)",IDC_STATIC,76,201,38,16
+    RTEXT           "triggered by (segment,side)",IDC_STATIC,76,201,38,16
     GROUPBOX        "robot maker data",IDC_STATIC,42,264,146,87,BS_CENTER
     GROUPBOX        "trigger data",IDC_STATIC,42,189,146,74,BS_CENTER
     GROUPBOX        "segment data",IDC_STATIC,42,1,146,84,BS_CENTER
@@ -1058,7 +1058,7 @@ BEGIN
     EDITTEXT        IDC_LIGHT_EDIT_SCALE,150,42,30,12,ES_CENTER | ES_AUTOHSCROLL
     CONTROL         "set player/robot brightness",IDC_LIGHT_CUBELIGHT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_GROUP | WS_TABSTOP,48,62,98,11
     EDITTEXT        IDC_LIGHT_EDIT_CUBELIGHT,150,61,30,12,ES_CENTER | ES_AUTOHSCROLL
-    CONTROL         "dynamic cube light calculation",IDC_LIGHT_DYNCUBELIGHTS,
+    CONTROL         "dynamic segment light calculation",IDC_LIGHT_DYNCUBELIGHTS,
                     "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,34,80,111,10
     CONTROL         "create side lights from textures",IDC_LIGHT_COPYTEXLIGHTS,
                     "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,34,90,111,10
@@ -1408,14 +1408,14 @@ BEGIN
     LISTBOX         IDC_REACTOR_TARGETLIST,100,20,76,34,WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_REACTOR_COUNTDOWN,92,115,24,12,ES_CENTER | ES_AUTOHSCROLL
     EDITTEXT        IDC_REACTOR_SECRETRETURN,153,148,24,12,ES_CENTER | ES_AUTOHSCROLL
-    CTEXT           "cube, side activated",IDC_STATIC,104,12,68,8
-    CTEXT           "enter cube,side",IDC_STATIC,45,12,52,8
+    CTEXT           "segment, side activated",IDC_STATIC,104,12,68,8
+    CTEXT           "enter segment,side",IDC_STATIC,45,12,52,8
     GROUPBOX        "triggered when reactor blows up",IDC_STATIC,40,2,144,80,BS_RIGHT
     GROUPBOX        "Descent 2 options",IDC_STATIC,40,86,144,80,BS_RIGHT
     RTEXT           "countdown:",IDC_STATIC,46,117,44,8
     LTEXT           "Insane..: x1 Ace......: x1.5 Hotshot: x2 Rookie.: x2.5 Trainee: x3",IDC_STATIC,134,99,44,42,SS_SUNKEN
     LTEXT           "sec",IDC_STATIC,116,116,11,8
-    RTEXT           "cube to return to after secret level:",IDC_STATIC,44,150,108,10
+    RTEXT           "segment to return to after secret level:",IDC_STATIC,44,150,108,10
 END
 
 IDD_TEXTUREDATA2 DIALOGEX 0, 0, 222, 437
@@ -1594,8 +1594,8 @@ BEGIN
     GROUPBOX        "trigger data",IDC_STATIC,9,2,192,58,BS_RIGHT
     RTEXT           "strength:",IDC_TRIGGER_STRENGTH_TEXT,61,30,37,8
     RTEXT           "trigger #",IDC_STATIC,70,15,26,8
-    CTEXT           "cube, side activated",IDC_STATIC,92,190,68,8
-    CTEXT           "enter cube,side",IDC_STATIC,33,190,52,8
+    CTEXT           "segment, side activated",IDC_STATIC,92,190,68,8
+    CTEXT           "enter segment,side",IDC_STATIC,33,190,52,8
     GROUPBOX        "Descent 1 types",IDC_STATIC,80,61,59,120,BS_RIGHT
     GROUPBOX        "Descent 2 types",IDC_STATIC,9,61,68,120,BS_RIGHT
     GROUPBOX        "trigger targets",IDC_STATIC,8,181,193,121,BS_RIGHT
@@ -1910,7 +1910,7 @@ BEGIN
     LISTBOX         IDC_CUBE_TRIGGERS,174,21,68,51,LBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LISTBOX         IDC_CUBE_USEDBOTS,92,83,72,45,LBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LISTBOX         IDC_CUBE_AVAILBOTS,168,83,72,45,LBS_SORT | WS_VSCROLL | WS_TABSTOP
-    RTEXT           "cube #",-1,6,9,23,8
+    RTEXT           "segment #",-1,6,9,23,8
     RTEXT           "type",-1,4,23,14,8
     RTEXT           "light:",-1,8,65,18,8
     CTEXT           "used bots",-1,93,74,34,8
@@ -1924,7 +1924,7 @@ BEGIN
     RTEXT           "Z:",-1,113,37,8,8
     RTEXT           "X:",-1,113,13,8,8
     RTEXT           "group:",-1,13,51,23,8
-    CTEXT           "(cube,side)",-1,176,12,56,8
+    CTEXT           "(segment,side)",-1,176,12,56,8
     PUSHBUTTON      "&other",IDC_CUBE_OTHER,124,126,40,12
     PUSHBUTTON      "spli&t",IDC_CUBE_SPLIT,84,126,40,12,WS_GROUP
 END
@@ -1964,8 +1964,8 @@ BEGIN
     PUSHBUTTON      "add wall",IDC_TRIGGER_ADDWALLTGT,8,147,43,10
     PUSHBUTTON      "delete wall",IDC_TRIGGER_ADDOBJTGT,8,157,43,10
     LISTBOX         IDC_TRIGGER_TARGETLIST,54,112,64,66,WS_VSCROLL | WS_TABSTOP
-    CTEXT           "cube, side activated",-1,57,104,68,8
-    CTEXT           "enter cube,side",-1,5,104,52,8
+    CTEXT           "segment, side activated",-1,57,104,68,8
+    CTEXT           "enter segment,side",-1,5,104,52,8
     GROUPBOX        "trigger targets",-1,4,96,168,80,BS_CENTER
     EDITTEXT        IDC_TRIGGER_SHOW,122,120,45,41,ES_CENTER | ES_READONLY | WS_DISABLED
     PUSHBUTTON      "&add",IDC_TRIGGER_ADD,178,100,46,12
@@ -2010,14 +2010,14 @@ BEGIN
     LISTBOX         IDC_CUBE_TRIGGERS,180,25,68,39,LBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LISTBOX         IDC_CUBE_USEDBOTS,98,87,72,45,LBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LISTBOX         IDC_CUBE_AVAILBOTS,174,87,72,45,LBS_SORT | WS_VSCROLL | WS_TABSTOP
-    RTEXT           "cube #",IDC_STATIC,10,13,23,8
+    RTEXT           "segment #",IDC_STATIC,10,13,23,8
     RTEXT           "type",IDC_STATIC,8,27,14,8
     RTEXT           "light",IDC_STATIC,12,69,18,8
     CTEXT           "used bots",IDC_STATIC,99,78,34,8
     CTEXT           "avail. bots",IDC_STATIC,210,78,36,8
     GROUPBOX        "robot maker data",IDC_STATIC,92,67,160,60,BS_CENTER
     GROUPBOX        "triggered by",IDC_STATIC,176,6,76,60,BS_CENTER
-    GROUPBOX        "cube data",IDC_STATIC,4,0,252,132,BS_LEFT
+    GROUPBOX        "segment data",IDC_STATIC,4,0,252,132,BS_LEFT
     GROUPBOX        "side",IDC_STATIC,7,103,80,24,BS_CENTER
     GROUPBOX        "point",IDC_STATIC,92,6,80,60,BS_CENTER
     RTEXT           "Owner:",IDC_STATIC,8,41,23,8
@@ -2025,7 +2025,7 @@ BEGIN
     RTEXT           "Z:",IDC_STATIC,119,41,8,8
     RTEXT           "X:",IDC_STATIC,119,17,8,8
     RTEXT           "Group:",IDC_STATIC,16,55,23,8
-    CTEXT           "(cube,side)",IDC_STATIC,182,16,56,8
+    CTEXT           "(segment,side)",IDC_STATIC,182,16,56,8
     COMBOBOX        IDC_WALL_WALLNO,296,14,60,61,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     COMBOBOX        IDC_WALL_TYPE,296,27,84,80,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_WALL_CLIPNO,296,40,60,84,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -2088,8 +2088,8 @@ BEGIN
     PUSHBUTTON      "add wall",IDC_TRIGGER_ADDWALLTGT,158,191,48,10
     PUSHBUTTON      "delete wall",IDC_TRIGGER_ADDOBJTGT,158,201,48,10
     LISTBOX         IDC_TRIGGER_TARGETLIST,210,156,64,72,WS_VSCROLL | WS_TABSTOP
-    CTEXT           "cube, side activated",IDC_STATIC,207,148,68,8
-    CTEXT           "enter cube,side",IDC_STATIC,155,148,52,8
+    CTEXT           "segment, side activated",IDC_STATIC,207,148,68,8
+    CTEXT           "enter segment,side",IDC_STATIC,155,148,52,8
     GROUPBOX        "trigger targets",IDC_STATIC,152,138,128,120,BS_CENTER
     EDITTEXT        IDC_TRIGGER_SHOW,160,213,45,41,ES_CENTER | ES_READONLY | WS_DISABLED
     PUSHBUTTON      "&add",IDC_WALL_ADD,320,209,48,12,WS_GROUP
@@ -2122,14 +2122,14 @@ BEGIN
     LISTBOX         IDC_REACTOR_TARGETLIST,64,18,76,58,WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_REACTOR_COUNTDOWN,56,106,24,12,ES_CENTER | ES_AUTOHSCROLL
     EDITTEXT        IDC_REACTOR_SECRETRETURN,117,140,24,12,ES_CENTER | ES_AUTOHSCROLL
-    CTEXT           "cube, side activated",IDC_STATIC,68,10,68,8
-    CTEXT           "enter cube,side",IDC_STATIC,9,10,52,8
+    CTEXT           "segment, side activated",IDC_STATIC,68,10,68,8
+    CTEXT           "enter segment,side",IDC_STATIC,9,10,52,8
     GROUPBOX        "triggered when reactor blows up",IDC_STATIC,4,0,144,76,BS_CENTER
     GROUPBOX        "Descent 2 options",IDC_STATIC,4,78,144,80,BS_CENTER
     RTEXT           "countdown:",IDC_STATIC,10,109,44,8
     LTEXT           "Insane..: x1 Ace......: x1.5 Hotshot: x2 Rookie.: x2.5 Trainee: x3",IDC_STATIC,98,91,44,42,SS_SUNKEN
     LTEXT           "sec",IDC_STATIC,80,108,11,8
-    RTEXT           "cube to return to after secret level:",IDC_STATIC,8,142,108,10
+    RTEXT           "segment to return to after secret level:",IDC_STATIC,8,142,108,10
 END
 
 IDD_OBJECTDATA_DMB2 DIALOG  0, 0, 204, 133
@@ -2340,12 +2340,12 @@ BEGIN
     CONTROL         "scale lighting (0%: no light, 200%: very bright)",IDC_LIGHT_SCALE,
                     "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_GROUP | WS_TABSTOP,6,28,152,11
     EDITTEXT        IDC_LIGHT_EDIT_SCALE,164,27,30,12,ES_CENTER | ES_AUTOHSCROLL
-    CONTROL         "set cube light (player/robot brightness)",IDC_LIGHT_CUBELIGHT,
+    CONTROL         "set segment light (player/robot brightness)",IDC_LIGHT_CUBELIGHT,
                     "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_GROUP | WS_TABSTOP,22,40,136,11
     EDITTEXT        IDC_LIGHT_EDIT_CUBELIGHT,164,39,30,12,ES_CENTER | ES_AUTOHSCROLL
     CONTROL         "create side lights from textures",IDC_LIGHT_COPYTEXLIGHTS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,207,30,111,10
-    CONTROL         "dynamic cube light calculation",IDC_LIGHT_DYNCUBELIGHTS,
+    CONTROL         "dynamic segment light calculation",IDC_LIGHT_DYNCUBELIGHTS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,207,41,111,10
     CONTROL         "calculate exploding/blinking lights, factor =",IDC_LIGHT_CALCDELTA,
                     "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_GROUP | WS_TABSTOP,10,61,148,11
@@ -4974,7 +4974,7 @@ BEGIN
     5000                    "Open a mission"
     5001                    "Save mission as"
     5002                    "Check Mine"
-    5003                    "Show cube window"
+    5003                    "Show segment window"
     5004                    "Show object window"
     5005                    "Show edit tool bar"
     5006                    "Show texture"
@@ -5814,7 +5814,7 @@ BEGIN
         MENUITEM "Quick Paste\tCtrl+Shift+Ins", ID_EDIT_QUICKPASTE
         MENUITEM "Delete Block\tCtrl+Shift+Del", ID_EDIT_DELETEBLOCK
         MENUITEM SEPARATOR
-        MENUITEM "Copy other cube's Textures",  ID_EDIT_COPYOTHERCUBESTEXTURES
+        MENUITEM "Copy other segment's Textures", ID_EDIT_COPYOTHERCUBESTEXTURES
         MENUITEM SEPARATOR
         MENUITEM "Mark/Unmark\tM",              ID_EDIT_MARK
         MENUITEM "Mark &All\tAlt+M",            ID_EDIT_MARKALL
@@ -5858,7 +5858,7 @@ BEGIN
         MENUITEM "&Hide lines",                 ID_VIEW_HIDELINES
         MENUITEM "Partial &Lines\tF7",          ID_VIEW_PARTIALLINES
         MENUITEM "&All Lines\tF8",              ID_VIEW_ALLLINES
-        MENUITEM "&Nearby cube lines",          ID_VIEW_NEARBYCUBELINES
+        MENUITEM "&Nearby segment lines",       ID_VIEW_NEARBYCUBELINES
         MENUITEM "&Texture Mapped\tF9",         ID_VIEW_TEXTUREMAPPED
         MENUITEM SEPARATOR
         MENUITEM "&Used textures\tF4",          ID_VIEW_ALLTEXTURES, CHECKED
@@ -5886,11 +5886,11 @@ BEGIN
         MENUITEM "Next object\tO or right mouse button", ID_SEL_NEXTOBJECT
         MENUITEM "Previous object\tShift+O",    ID_SEL_PREVOBJECT
         MENUITEM SEPARATOR
-        MENUITEM "Next cube\tC or left mouse button", ID_SEL_NEXTCUBE
-        MENUITEM "Previous cube\tShift+C",      ID_SEL_PREVCUBE
-        MENUITEM "Forward cube\tup arrow",      ID_SEL_FWDCUBE
-        MENUITEM "Backwards cube\tdown arrow",  ID_SEL_BACKCUBE
-        MENUITEM "Other cube\tSpace",           ID_SEL_OTHERCUBE
+        MENUITEM "Next segment\tC or left mouse button", ID_SEL_NEXTCUBE
+        MENUITEM "Previous segment\tShift+C",      ID_SEL_PREVCUBE
+        MENUITEM "Forward segment\tup arrow",      ID_SEL_FWDCUBE
+        MENUITEM "Backwards segment\tdown arrow",  ID_SEL_BACKCUBE
+        MENUITEM "Other segment\tSpace",           ID_SEL_OTHERCUBE
         MENUITEM SEPARATOR
         MENUITEM "Next side\tS or right arrow", ID_SEL_NEXTSIDE
         MENUITEM "Previous side\tShift+s or right arrow", ID_SEL_PREVSIDE
@@ -6298,7 +6298,7 @@ STRINGTABLE
 BEGIN
     ID_SEL_LINEMODE         "set line mode\nset line mode"
     ID_SEL_SIDEMODE         "set side mode\nset side mode"
-    ID_SEL_CUBEMODE         "set cube mode\nset cube mode"
+    ID_SEL_CUBEMODE         "set segment mode\nset segment mode"
     ID_SEL_OBJECTMODE       "set object mode\nset object mode"
     ID_SEL_BLOCKMODE        "set block mode\nset block mode"
     ID_INSMODE_NORMAL       "add normal cubes\nadd normal cubes"
@@ -6309,7 +6309,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_EDIT_TEXTURE         "open texture tool\nopen texture tool"
-    ID_EDIT_CUBE            "open cube tool\nopen cube tool"
+    ID_EDIT_CUBE            "open segment tool\nopen segment tool"
     ID_EDIT_WALL            "open wall tool\nopen wall tool"
     ID_EDIT_OBJECT          "open object tool\nopen object tool"
     ID_EDIT_LIGHT           "open light tool\nopen light tool"

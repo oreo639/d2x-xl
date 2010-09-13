@@ -289,7 +289,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 		}
 	}
 if (nLevelType == 0) {
-	if (m_info.function != 0) { // if this is a special cube
+	if (m_info.function != 0) { // if this is a special segment
 		m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		}
 	}

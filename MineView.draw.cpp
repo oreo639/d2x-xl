@@ -349,7 +349,7 @@ CHECKMINE;
 		else {
 			if (m_viewOption == eViewPartialLines) {
 				m_pDC->SelectObject (GetStockObject(BLACK_PEN));  // BLACK
-				DrawSegmentQuick (segP);   // clear all cube lines
+				DrawSegmentQuick (segP);   // clear all segment lines
 				m_pDC->SelectObject (m_penGray); // GRAY
 				DrawSegmentPartial (segP); // then redraw the ones we need
 				}
@@ -361,12 +361,12 @@ CHECKMINE;
 				}
 			if (m_viewOption == eViewHideLines) {
 				m_pDC->SelectObject (GetStockObject(BLACK_PEN));  // BLACK
-				DrawSegmentQuick (segP);   // clear all cube lines
+				DrawSegmentQuick (segP);   // clear all segment lines
 				}
 			}
 			if (m_viewOption == eViewNearbyCubeLines) {
 			m_pDC->SelectObject (GetStockObject(BLACK_PEN));  // BLACK
-			DrawSegmentQuick (segP);   // clear all cube lines
+			DrawSegmentQuick (segP);   // clear all segment lines
 			m_pDC->SelectObject (GetStockObject(WHITE_PEN)); // WHITE
 			DrawCubePoints (segP);  // then draw the points
 			}
@@ -549,21 +549,21 @@ if (bPartial) {
 		else
 			m_pDC->SelectObject(m_penGray);
 		// draw each line of the current side separately
-		// only draw if there is no childP cube of the current cube with a common side
+		// only draw if there is no childP segment of the current segment with a common side
 		for (i = 0; i < 4; i++) {
 			for (j = 0; j < 2; j++)
 				line [j] = side [(i+j)%4];
 
-			// check childP cubes
+			// check childP segments
 			commonVerts = 0;
 			for (chSegI = 0; (chSegI < 6) && (commonVerts < 2); chSegI++) {
 				if (segP->Child (chSegI) < 0)
 					continue;
 				childP = segmentManager.Segment (segP->Child (chSegI));
-				// walk through childP cube's sides
+				// walk through childP segment's sides
 				commonVerts = 0;
 				for (chSideI = 0; (chSideI < 6) && (commonVerts < 2); chSideI++) {
-					// check current childP cube side for common line
+					// check current childP segment side for common line
 					// i.e. check each line for common vertices with the parent line
 					for (commonVerts = 0, chVertI = 0; (chVertI < 4) && (commonVerts < 2); chVertI++) {
 						vert.x = m_viewPoints [childP->m_info.verts [sideVertTable [chSideI] [chVertI]]].x;
@@ -979,7 +979,7 @@ CHECKMINE;
 	else
 		m_pDC->SelectObject(m_penGreen);
 
-// Select this pen if this is the "other current" cube
+// Select this pen if this is the "other current" segment
 //	m_pDC->SelectObject(m_penDkGreen);
 
 	short x_max = m_viewWidth * 2;
@@ -1531,8 +1531,8 @@ if (preferences & PREFS_SHOW_POINT_COORDINATES) {
 	strcat_s (message, sizeof (message), szCoord);
 	}
 else {
-   // calculate cube size (length between center point of opposing sides)
-	strcat_s (message, sizeof (message), "  cube size: ");
+   // calculate segment size (length between center point of opposing sides)
+	strcat_s (message, sizeof (message), "  segment size: ");
 	CDoubleVector center1,center2;
    double length;
    center1 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 0));
@@ -1550,7 +1550,7 @@ else {
    length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}
-strcat_s (message, sizeof (message), ",  cube:");
+strcat_s (message, sizeof (message), ",  segment:");
 _itoa_s (current->m_nSegment, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " side:");
 _itoa_s ((currSide = current->m_nSide) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);

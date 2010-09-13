@@ -12,9 +12,9 @@ CBlockManager blockManager;
 //------------------------------------------------------------------------------
 
 char *BLOCKOP_HINT =
-	"The block of cubes will be saved relative to the current cube.\n"
+	"The block of cubes will be saved relative to the current segment.\n"
 	"Later, when you paste the block, it will be placed relative to\n"
-	"the current cube at that time.  You can change the current side\n"
+	"the current segment at that time.  You can change the current side\n"
 	"and the current point to affect the relative direction and\n"
 	"rotation of the block.\n"
 	"\n"

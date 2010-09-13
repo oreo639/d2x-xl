@@ -251,12 +251,12 @@ public:
 	afx_msg void OnViewAlignsiderotation();
 	afx_msg void OnViewAlllines();
 	afx_msg void OnViewUsedTextures();
-	afx_msg void OnViewCenterentiremine();
-	afx_msg void OnViewCenteroncurrentcube();
-	afx_msg void OnViewCenteroncurrentobject();
+	afx_msg void OnViewCenterEntireMine();
+	afx_msg void OnViewCenterOnCurrentSegment();
+	afx_msg void OnViewCenterOnCurrentObject();
 	afx_msg void OnViewHidelines();
 	afx_msg void OnViewLights();
-	afx_msg void OnViewNearbycubelines();
+	afx_msg void OnViewNearbySegmentLines();
 	afx_msg void OnViewObjectsAllobjects();
 	afx_msg void OnViewObjectsControlcenter();
 	afx_msg void OnViewObjectsHostages();
@@ -340,7 +340,7 @@ public:
 	afx_msg void OnUpdateViewObjectsHostages(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewObjectsControlcenter(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewObjectsAllobjects(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateViewNearbycubelines(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateViewNearbySegmentLines(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewLights(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewHidelines(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewAlllines(CCmdUI* pCmdUI);

@@ -230,7 +230,7 @@ CHECKMINE;
 CSegment *segP = current->Segment ();
 // enable/disable "end of exit tunnel" button
 EndOfExit ()->EnableWindow (segP->Child (m_nSide) < 0);
-// enable/disable add cube button
+// enable/disable add segment button
 GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((segmentManager.Count () < MAX_SEGMENTS) &&
 													  (vertexManager.Count () < MAX_VERTICES - 4) &&
 													  (segP->Child (m_nSide) < 0));
@@ -349,7 +349,7 @@ int h, i, j;
 // update automatic data
 segmentManager.RenumberRobotMakers ();
 segmentManager.RenumberEquipMakers ();
-// update cube number combo box if number of cubes has changed
+// update segment number combo box if number of segments has changed
 CSegment *segP = current->Segment ();
 m_bEndOfExit = (segP->Child (current->m_nSide) == -2);
 m_nSegment = current->m_nSegment;
@@ -364,7 +364,7 @@ m_nGroup = segP->m_info.group;
 //CBType ()->SetCurSel (m_nType);
 SelectItemData (CBType (), m_nType);
 OnResetCoord ();
-  // show Triggers () that point at this cube
+  // show Triggers () that point at this segment
 LBTriggers()->ResetContent();
 CTrigger *trigP = triggerManager.Trigger (0);
 int nTrigger;
@@ -386,7 +386,7 @@ for (nTrigger = 0; nTrigger < triggerManager.WallTriggerCount (); nTrigger++, tr
 			}
 		}
 	}
-// show if this is cube/side is trigPed by the control_center
+// show if this is segment/side is trigPed by the control_center
 CReactorTrigger* reactorTrigger = triggerManager.ReactorTrigger (0);
 for (short nTrigger = 0; nTrigger < MAX_REACTOR_TRIGGERS; nTrigger++, reactorTrigger++) {
 	if (-1 < (reactorTrigger->Find (CSideKey (m_nSegment, m_nSide)))) {
@@ -991,4 +991,4 @@ segmentManager.Split ();
 
 //------------------------------------------------------------------------------
 
-//eof cubedlg.cpp
+//eof segmenttool.cpp

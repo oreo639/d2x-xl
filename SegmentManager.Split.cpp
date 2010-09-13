@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------- 
 // unlink_child()
 //
-// Action - unlinks current cube's children which don't share all four points
+// Action - unlinks current segment's children which don't share all four points
 //
 // Note: 2nd parameter "nSide" is ignored
 // ----------------------------------------------------------------------------- 
@@ -85,7 +85,7 @@ return true;
 //                          Splitpoints()
 //
 // Action - Splits one point shared between two cubes into two points.
-//          New point is added to current cube, other cube is left alone.
+//          New point is added to current segment, other segment is left alone.
 //
 // ----------------------------------------------------------------------------- 
 
@@ -225,7 +225,7 @@ INFOMSG ("Two new points were made for the current line.");
 // ----------------------------------------------------------------------------- 
 //                       Splitsegments()
 //
-// ACTION - Splits a cube from all other points which share its coordinates
+// ACTION - Splits a segment from all other points which share its coordinates
 //
 //  Changes - Added option to make thin side
 // If solidify == 1, the side will keep any points it has in common with other
@@ -248,7 +248,7 @@ if (nSide < 0)
 	nSide = current->m_nSide;
 int nChildSeg = segP->Child (nSide); 
 if (nChildSeg == -1) {
-	ErrorMsg ("The current side is not connected to another cube"); 
+	ErrorMsg ("The current side is not connected to another segment"); 
 	return; 
 	}
 
@@ -336,7 +336,7 @@ bool CSegmentManager::Split (void)
 	bool			bVertDone [8];
 
 if (Count () >= MAX_SEGMENTS - 6) {
-	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
+	ErrorMsg ("Cannot split this segment because\nthe maximum number of cubes would be exceeded."); 
 	return false;
 	}
 undoManager.Begin (udSegments | udVertices);

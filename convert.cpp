@@ -331,7 +331,7 @@ lightManager.ScaleCornerLight (100.0, true);
 lightManager.SetSegmentLight (50.0, true);
 lightManager.ComputeVariableLight (50.0, 1);
 
-// d2 reactor and secret cube
+// d2 reactor and secret segment
 //----------------------------------------------
 triggerManager.ReactorTime () = 0x1e;
 theMine->ReactorStrength () = 0xffffffffL;

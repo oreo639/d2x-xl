@@ -277,7 +277,7 @@ return Create (nSegment, bCreate, SEGMENT_FUNC_SKYBOX, -1, "Skyboxes are not ava
 
 bool CSegmentManager::CreateSpeedBoost (short nSegment, bool bCreate) 
 {
-return Create (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost cubes are not available in Descent 1.");
+return Create (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost segments are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
@@ -344,7 +344,7 @@ void CSegmentManager::ComputeVertices (ushort newVerts [4])
 curSegP = Segment (current->m_nSegment); 
 for (i = 0; i < 4; i++)
 	points [i] = CURRENT_POINT(i);
-	// METHOD 1: orthogonal with right angle on new side and standard cube side
+	// METHOD 1: orthogonal with right angle on new side and standard segment side
 // TODO:
 //	int add_segment_mode = ORTHOGONAL; 
 switch (m_nAddMode) {
@@ -353,7 +353,7 @@ switch (m_nAddMode) {
 		center = CalcSideCenter (*current); 
 		oppCenter = CalcSideCenter (CSideKey (current->m_nSegment, oppSideTable [current->m_nSide])); 
 		vNormal = CalcSideNormal (*current); 
-		// set the length of the new cube to be one standard cube length
+		// set the length of the new segment to be one standard segment length
 		// scale the vector
 		vNormal *= 20; 
 		// figure out new center
@@ -402,7 +402,7 @@ switch (m_nAddMode) {
 		center = CalcSideCenter (*current); 
 		oppCenter = CalcSideCenter (CSideKey (current->m_nSegment, oppSideTable [current->m_nSide])); 
 		vNormal = CalcSideNormal (*current); 
-		// calculate the length of the new cube
+		// calculate the length of the new segment
 		vNormal *= Distance (center, oppCenter); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
@@ -655,7 +655,7 @@ for (short i = objectManager.Count (); i >= 0; i--) {
 for (short i = triggerManager.ReactorTriggerCount (); i > 0; )
 	triggerManager.ReactorTrigger (--i)->Delete (CSideKey (-nDelSeg - 1));
 
-	// update secret cube number if out of range now
+	// update secret segment number if out of range now
 	short nSegment = (short) objectManager.SecretSegment (); 
 	if (nSegment >= Count () || nSegment == nDelSeg)
 		objectManager.SecretSegment () = 0; 

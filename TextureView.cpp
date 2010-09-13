@@ -138,7 +138,7 @@ Refresh ();
 // Action - Sets texture 1 of current side to texture under mouse pointer
 //
 // Notes - If shift is held down and object is poly type, then object's
-//         texture is changed instead of cube's texture.
+//         texture is changed instead of segment's texture.
 //------------------------------------------------------------------------
 
 void CTextureView::OnLButtonDown(UINT nFlags, CPoint point)

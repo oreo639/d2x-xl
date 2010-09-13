@@ -207,7 +207,7 @@ return (int) ((double) n / (double) m * 65536.0);
 #define MAX_AI_OPTIONS_D1 6
 #define MAX_AI_OPTIONS_D2 9
 
-// cube insertion modes
+// segment insertion modes
 #define ORTHOGONAL 0
 #define EXTEND     1
 #define MIRROR     2

@@ -66,9 +66,9 @@ else if (IsD2File ()) {
 	fp.Write (ReactorStrength ());
 	// variable light new for version 7
 	lightManager.WriteVariableLights (fp);
-	// write secret cube number
+	// write secret segment number
 	fp.Write (SecretSegment ());
-	// write secret cube orientation?
+	// write secret return segment orientation
 	fp.Write (SecretOrient ());
 	}
 // save mine data

@@ -165,9 +165,9 @@ if (IsD2File ()) {
 	ReactorTime () = fp.ReadInt32 (); // base control center explosion time
 	ReactorStrength () = fp.ReadInt32 (); // reactor strength
 	lightManager.ReadVariableLights (fp);
-	// read secret cube number
+	// read secret segment number
 	SecretSegment () = fp.ReadInt32 ();
-	// read secret cube orientation?
+	// read secret segment orientation?
 	fp.Read (SecretOrient ());
 	}
 

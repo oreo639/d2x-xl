@@ -830,7 +830,7 @@ void CTriggerTool::OnD2Flag6 () { OnD2Flag (5); }
 void CTriggerTool::OnD2Flag7 () { OnD2Flag (6); }
 
 //------------------------------------------------------------------------
-// CTriggerTool - Add cube/side to trigger list
+// CTriggerTool - Add segment/side to trigger list
 //------------------------------------------------------------------------
 
 void CTriggerTool::AddTarget (short nSegment, short nSide) 
@@ -911,7 +911,7 @@ AddTarget (current->m_nObject, 0);
 }
 
 //------------------------------------------------------------------------
-// CTriggerTool - Delete cube/side
+// CTriggerTool - Delete segment/side
 //------------------------------------------------------------------------
 
 void CTriggerTool::OnDeleteTarget ()
@@ -943,7 +943,7 @@ return m_triggerP->Find (nSegment, nSide);
 //------------------------------------------------------------------------
 // CTriggerTool - Cube/Side list box message
 //
-// sets "other cube" to selected item
+// sets "other segment" to selected item
 //------------------------------------------------------------------------
 
 void CTriggerTool::OnSetTarget () 
@@ -952,9 +952,9 @@ short nTrigger;
 if (!FindTrigger (nTrigger))
 	return;
 SetTriggerPtr ();
-// get affected cube/side list box index
+// get affected segment/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
-// if selected and within range, then set "other" cube/side
+// if selected and within range, then set "other" segment/side
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_triggerP->m_count))
 	return;
 short nSegment = m_triggerP->Segment (m_iTarget);

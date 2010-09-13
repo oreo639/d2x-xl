@@ -164,7 +164,7 @@ delete[] maxBrightness;
 
 void CLightManager::ComputeStaticLight (double fLightScale, bool bAll, bool bCopyTexLights) 
 {
-// clear all lighting on marked cubes
+// clear all lighting on marked segments
 undoManager.Begin (udSegments | udStaticLight);
 if (bAll)
 	CLEAR (VertexColors ());
@@ -183,7 +183,7 @@ for (CSegmentIterator si; si; si++) {
 		}
 	}
 
-// Calculate cube side corner light values
+// Calculate segment side corner light values
 // for each marked side in the level
 // (range: 0 = min, 0x8000 = max)
 for (CSegmentIterator si; si; si++) {
@@ -296,7 +296,7 @@ void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brigh
 	// remember to flip the sign since we want it to point inward
 	// calculate the center of the source segment
 	CVertex sourceCenter = segmentManager.CalcSideCenter (CSideKey (nSourceSeg, nSourceSide));
-	// mark those segmentManager.Segment () within N children of current cube
+	// mark those segmentManager.Segment () within N children of current segment
 
 // set child numbers
 //segmentManager.Segment ()[nSourceSeg].nIndex = m_staticRenderDepth;
@@ -366,8 +366,8 @@ bool bWall = false;
 //	which matches one of the entries in the broken[] table.
 //
 //	For a given side, we calculate the distance and angle to all
-//	nearby sides.  A nearby side is a side which is on a cube
-//	which is a child or sub-child of the current cube.  Light does
+//	nearby sides.  A nearby side is a side which is on a segment
+//	which is a child or sub-child of the current segment.  Light does
 //	not shine through wallManager.Wall ().
 //
 //	We use the following equation to calculate
@@ -515,7 +515,7 @@ bool bD2XLights = (DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.vers
 			// calculate the center of the source segment
 			sourceCenter = segmentManager.CalcSideCenter (CSideKey (nSourceSeg, nSourceSide));
 
-			// mark those segmentManager.Segment () within N children of current cube
+			// mark those segmentManager.Segment () within N children of current segment
 			//(note: this is done once per light instead of once per segment
 			//       even though some segmentManager.Segment () have multiple lights.
 			//       This actually reduces the number of calls since most
@@ -653,7 +653,7 @@ for (int j = 0; j < 4; j++) {
 	double length = 20.0 * m_staticRenderDepth;
 	for (int i = 0; i < 4; i++)
 		length = min (length, Distance (sourceCorners [i], *corner));
-	length /= 10.0 * m_staticRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
+	length /= 10.0 * m_staticRenderDepth / 6.0; // divide by 1/2 a segments length so opposite side
 	m_cornerLights [j] = 1.0;
 	if (length > 1.0) 
 		m_cornerLights [j] /= (length * length);

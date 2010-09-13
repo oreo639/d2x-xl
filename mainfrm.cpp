@@ -65,12 +65,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_FILE_EDITMISSIONFILE, OnEditMission)
 	ON_COMMAND(ID_VIEW_ALIGNSIDEROTATION, OnViewAlignsiderotation)
 	ON_COMMAND(ID_VIEW_ALLLINES, OnViewAlllines)
-	ON_COMMAND(ID_VIEW_CENTERENTIREMINE, OnViewCenterentiremine)
-	ON_COMMAND(ID_VIEW_CENTERONCURRENTCUBE, OnViewCenteroncurrentcube)
-	ON_COMMAND(ID_VIEW_CENTERONCURRENTOBJECT, OnViewCenteroncurrentobject)
+	ON_COMMAND(ID_VIEW_CENTERENTIREMINE, OnViewCenterEntireMine)
+	ON_COMMAND(ID_VIEW_CENTERONCURRENTCUBE, OnViewCenterOnCurrentSegment)
+	ON_COMMAND(ID_VIEW_CENTERONCURRENTOBJECT, OnViewCenterOnCurrentObject)
 	ON_COMMAND(ID_VIEW_HIDELINES, OnViewHidelines)
 	ON_COMMAND(ID_VIEW_LIGHTS, OnViewLights)
-	ON_COMMAND(ID_VIEW_NEARBYCUBELINES, OnViewNearbycubelines)
+	ON_COMMAND(ID_VIEW_NEARBYCUBELINES, OnViewNearbySegmentLines)
 	ON_COMMAND(ID_VIEW_OBJECTS_ALLOBJECTS, OnViewObjectsAllobjects)
 	ON_COMMAND(ID_VIEW_OBJECTS_CONTROLCENTER, OnViewObjectsControlcenter)
 	ON_COMMAND(ID_VIEW_OBJECTS_HOSTAGES, OnViewObjectsHostages)
@@ -171,7 +171,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OBJECTS_HOSTAGES, OnUpdateViewObjectsHostages)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OBJECTS_CONTROLCENTER, OnUpdateViewObjectsControlcenter)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OBJECTS_ALLOBJECTS, OnUpdateViewObjectsAllobjects)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_NEARBYCUBELINES, OnUpdateViewNearbycubelines)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_NEARBYCUBELINES, OnUpdateViewNearbySegmentLines)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_LIGHTS, OnUpdateViewLights)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_HIDELINES, OnUpdateViewHidelines)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_ALLLINES, OnUpdateViewAlllines)
@@ -811,17 +811,17 @@ void CMainFrame::OnViewAlignsiderotation()
 	GetMineView()->AlignSide();	
 }
 
-void CMainFrame::OnViewCenterentiremine() 
+void CMainFrame::OnViewCenterEntireMine() 
 {
 	GetMineView()->CenterMine();	
 }
 
-void CMainFrame::OnViewCenteroncurrentcube() 
+void CMainFrame::OnViewCenterOnCurrentSegment() 
 {
 	GetMineView()->CenterSegment();	
 }
 
-void CMainFrame::OnViewCenteroncurrentobject() 
+void CMainFrame::OnViewCenterOnCurrentObject() 
 {
 	GetMineView()->CenterObject();
 }
@@ -836,7 +836,7 @@ void CMainFrame::OnViewHidelines()
 {
 	GetMineView()->SetViewOption(eViewHideLines);
 }
-void CMainFrame::OnViewNearbycubelines() 
+void CMainFrame::OnViewNearbySegmentLines() 
 {
 	GetMineView()->SetViewOption(eViewNearbyCubeLines);
 }
@@ -1042,7 +1042,7 @@ pCmdUI->SetCheck(segmentManager.AddMode () == MIRROR);
 
 void CMainFrame::UpdateSelectButtons (eSelectModes mode)
 {
-	static char *szSelMode [] = {" select: pos", " select: line", " select: side", " select: cube", " select: object", " select: block"};
+	static char *szSelMode [] = {" select: pos", " select: line", " select: side", " select: segment", " select: object", " select: block"};
 
 int i;
 for (i = 0; i <= ID_SEL_BLOCKMODE - ID_SEL_POINTMODE; i++)
@@ -1303,7 +1303,7 @@ void CMainFrame::OnUpdateViewHidelines(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(GetMineView()->m_viewOption == eViewHideLines ? 1 : 0);
 }
-void CMainFrame::OnUpdateViewNearbycubelines(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewNearbySegmentLines(CCmdUI* pCmdUI) 
 {
 	pCmdUI->SetCheck(GetMineView()->m_viewOption == eViewNearbyCubeLines ? 1 : 0);
 }

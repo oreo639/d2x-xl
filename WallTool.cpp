@@ -299,9 +299,9 @@ else {
 		}
 	// update wall data
 	if (m_wallP [0]->Info ().nTrigger == NO_TRIGGER)
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_wallP [0]->m_nSegment, m_wallP [0]->m_nSide);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "segment = %ld, side = %ld, no trigger", m_wallP [0]->m_nSegment, m_wallP [0]->m_nSide);
 	else
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_wallP [0]->m_nSegment, m_wallP [0]->m_nSide, (int)m_wallP [0]->Info ().nTrigger);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "segment = %ld, side = %ld, trigger= %d", m_wallP [0]->m_nSegment, m_wallP [0]->m_nSide, (int)m_wallP [0]->Info ().nTrigger);
 
 	m_nWall [0] = int (m_wallP [0] - wallManager.Wall (0));
 	GetOtherWall ();
@@ -375,7 +375,7 @@ if (sideP [1] != null)
 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (sideP [bSide]->Info ().nWall < wallManager.WallCount ())
-		ErrorMsg ("There is already a wall at that side of the current cube.");
+		ErrorMsg ("There is already a wall at that side of the current segment.");
 	else if (wallManager.WallCount () >= MAX_WALLS)
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
@@ -429,7 +429,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++) {
 		if (wallManager.WallCount () == 0)
 			ErrorMsg ("There are no walls in this mine.");
 		else
-			ErrorMsg ("There is no wall at this side of the current cube.");
+			ErrorMsg ("There is no wall at this side of the current segment.");
 	}
 if (bRefresh) {
 	DLE.MineView ()->Refresh ();

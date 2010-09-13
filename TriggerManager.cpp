@@ -322,7 +322,7 @@ return null;
 // UpdateReactor()
 //
 // Action - Updates control center Triggers () so that exit door opens
-//          when the reactor blows up.  Removes any invalid cube/sides
+//          when the reactor blows up.  Removes any invalid segment/sides
 //          from reactorTriggers if they exist.
 //------------------------------------------------------------------------------------
 
@@ -585,7 +585,7 @@ return true;
 //--------------------------------------------------------------------------
 // AddDoorTrigger
 //
-// Action - checks other cube's side to see if there is a door there,
+// Action - checks other segment's side to see if there is a door there,
 //          then adds a trigger for that door
 //--------------------------------------------------------------------------
 
@@ -613,9 +613,9 @@ return false;
 bool CTriggerManager::AddDoorTrigger (short wallType, ushort wallFlags, ushort triggerType) 
 {
 if (other->Wall () == null) {
-	ErrorMsg ("Other cube's side is not on a wall.\n\n"
-				"Hint: Select a wall using the 'other cube' and\n"
-				"select a trigger location using the 'current cube'.");
+	ErrorMsg ("Other segment's side is not on a wall.\n\n"
+				"Hint: Select a wall using the 'other segment' and\n"
+				"select a trigger location using the 'current segment'.");
 	return false;
 	}
 // automatically change the trigger type to open if not a door
@@ -636,9 +636,9 @@ return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
 bool CTriggerManager::AddRobotMaker (void) 
 {
 if (other->Segment ()->Info ().function != SEGMENT_FUNC_ROBOTMAKER) {
-	ErrorMsg ("There is no robot maker cube selected.\n\n"
-				"Hint: Select a robot maker cube using the 'other cube' and\n"
-				"select a trigger location using the 'current cube'.");
+	ErrorMsg ("There is no robot maker segment selected.\n\n"
+				"Hint: Select a robot maker segment using the 'other segment' and\n"
+				"select a trigger location using the 'current segment'.");
 	return false;
 	}
 return AutoAddTrigger (WALL_OPEN, 0, TT_MATCEN);

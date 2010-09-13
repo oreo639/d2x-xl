@@ -85,7 +85,7 @@ oppCenter /= 4.0;
 CDoubleVector v (center - oppCenter);
 
 // make sure distance is positive to prevent
-// cube from turning inside out
+// segment from turning inside out
 // defines line orthogonal to a side at a point
 	static byte sideNormalTable [6][4] = {
 		{8,6,1,3},
@@ -134,7 +134,7 @@ if (!okToMove) {
 double radius = v.Mag ();
 if (radius - moveRate < 0.25) {
 	if (m_selectMode == POINT_MODE || m_selectMode == LINE_MODE || m_selectMode == SIDE_MODE) {
-		ErrorMsg ("Cannot make cube any smaller\n"
+		ErrorMsg ("Cannot make segment any smaller\n"
 		"Cube must be greater or equal to 1.0 units wide.");
 		return false;
 		}
@@ -260,7 +260,7 @@ switch (m_selectMode){
 		break;
 	
 	case SEGMENT_MODE:
-		ErrorMsg ("Cannot bend a cube");
+		ErrorMsg ("Cannot bend a segment");
 		return false;
 	
 	case OBJECT_MODE:
@@ -355,7 +355,7 @@ return false;
 //--------------------------------------------------------------------------------
 // MovePoints()
 //
-// moves blocks, sides, cubes, lines, and points in the direction
+// moves blocks, sides, segments, lines, and points in the direction
 // of the current line.
 //--------------------------------------------------------------------------------
 
@@ -538,7 +538,7 @@ return true;
 /***************************************************************************
 			    SpinSelection()
 
-  ACTION - Spins a side, cube, or object the amount specified.
+  ACTION - Spins a side, segment, or object the amount specified.
 
 
 ***************************************************************************/
@@ -588,8 +588,8 @@ switch (m_selectMode) {
 		undoManager.End ();
 		break;
 
-	case SEGMENT_MODE:	// spin cube around the center of the cube using screen's perspective
-		// calculate center of current cube
+	case SEGMENT_MODE:	// spin segment around the center of the segment using screen's perspective
+		// calculate center of current segment
 		center.Clear ();
 		for (i = 0; i < 8; i++) 
 			center += *vertexManager.Vertex (segP->Info ().verts [i]);
@@ -633,7 +633,7 @@ switch (m_selectMode) {
 		break;
 
 	case BLOCK_MODE:
-		// calculate center of current cube
+		// calculate center of current segment
 		center.Clear ();
 		for (i = 0; i < 8; i++) {
 			center += *vertexManager.Vertex (segP->Info ().verts [i]);
@@ -650,7 +650,7 @@ switch (m_selectMode) {
 		for (i = 0; i < vertexManager.Count (); i++)
 			if (vertexManager.Status (i) & MARKED_MASK)
 				vertexManager.Vertex (i)->Rotate (center, oppCenter, angle);
-		// rotate Objects () within marked cubes
+		// rotate Objects () within marked segments
 		objP = objectManager.Object (0);
 		for (i = objectManager.Count (); i; i--, objP++)
 			if (objP->Segment ()->IsMarked ())

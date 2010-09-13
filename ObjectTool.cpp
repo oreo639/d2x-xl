@@ -597,7 +597,7 @@ if (current->m_nObject == objectManager.Count ()) {
 // otherwise (non-secret object), setup the rest of the
 // dialog.
 objP = current->Object ();
-sprintf_s (m_szInfo, sizeof (m_szInfo), "cube %d", objP->Info ().nSegment);
+sprintf_s (m_szInfo, sizeof (m_szInfo), "segment %d", objP->Info ().nSegment);
 if (/*(objectSelection [objP->Type ()] == 0) &&*/ robotManager.RobotInfo (objP->Id ())->Info ().bCustom)
 	strcat_s (m_szInfo, sizeof (m_szInfo), "\r\nmodified");
 
@@ -1175,7 +1175,7 @@ void CObjectTool::OnMove ()
 {
 #if 0
 if (QueryMsg ("Are you sure you want to move the\n"
-				 "current object to the current cube?\n") != IDYES)
+				 "current object to the current segment?\n") != IDYES)
 	return;
 #endif
 undoManager.Begin (udObjects);
@@ -1185,7 +1185,7 @@ else {
 	CGameObject *objP = current->Object ();
 	CVertex center;
 	objP->Position () = segmentManager.CalcCenter (center, current->m_nSegment);
-	// bump position over if this is not the first object in the cube
+	// bump position over if this is not the first object in the segment
 	int i, count = 0;
 	for (i = 0; i < objectManager.Count (); i++)
 		if (objectManager.Object (i)->Info ().nSegment == current->m_nSegment)
