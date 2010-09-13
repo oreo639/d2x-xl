@@ -630,7 +630,7 @@ return vertexManager.Vertex (m_info.verts [nVertex]);
 void CSegment::UpdateChildren (short nOldChild, short nNewChild)
 {
 for (short nSide = 0; nSide < 6; nSide++)
-	if (m_sides [nSide].UpdateChild (nOldChild, nNewChild);
+	m_sides [nSide].UpdateChild (nOldChild, nNewChild);
 }
 
 // -----------------------------------------------------------------------------
