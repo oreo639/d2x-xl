@@ -457,7 +457,7 @@ segP = m_info [1].Segment ();
 for (i = 0; i < 4; i++)
 	relSidePoints [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [1].m_nSide][i]]) - m_points [0];
 for (i = 0; i < m_nLength [0]; i++) {
-	relTunnelPoints [i] = m_points [i] - m_points [0];
+	relTunnelPoints [i] = m_tunnelPoints [i] - m_points [0];
 }
 
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
@@ -526,7 +526,9 @@ sprintf_s (message, sizeof (message), "theta [0] = %d,%d,%d,%d\n"
 DebugMsg(message);
 #endif
 
+undoManager.Lock ();
 Realize ();
+undoManager.Unlock ();
 }
 
 //------------------------------------------------------------------------------

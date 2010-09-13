@@ -185,7 +185,7 @@ m_bSelections = false;
 //------------------------------------------------------------------------------
 
 CUndoManager::CUndoManager (int maxSize)
-	: m_nHead (maxSize, -1), m_nTail (maxSize, -1), m_nCurrent (maxSize, 0), m_nMaxSize (maxSize), m_nModified (0), m_nMode (0), m_bEnabled (true)
+	: m_nHead (maxSize, -1), m_nTail (maxSize, -1), m_nCurrent (maxSize, 0), m_nMaxSize (maxSize), m_nModified (0), m_nMode (0), m_nLock (0)
 {
 m_size = 0;
 }
@@ -205,13 +205,7 @@ if (m_nHead != -1) {
 	m_nCurrent = m_nHead;
 	Truncate ();
 	}
-}
-
-//------------------------------------------------------------------------------
-
-void CUndoManager::Enable (bool bEnable)
-{
-m_bEnabled = bEnable;
+m_nLock = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -222,7 +216,6 @@ if (maxSize < 1)
 	maxSize = 0;
 else if (maxSize > DLE_MAX_UNDOS)
 	maxSize = DLE_MAX_UNDOS;
-Enable (maxSize > 0);
 int nExcess = Count () - maxSize;
 if (nExcess > 0) {
 	m_nCurrent -= nExcess;
@@ -238,7 +231,7 @@ return m_nMaxSize = maxSize;
 
 bool CUndoManager::Undo (void)
 {
-if (!m_bEnabled)
+if (Locked ())
 	return false;
 if (m_nCurrent == m_nHead)
 	return false;
@@ -258,7 +251,7 @@ return true;
 
 bool CUndoManager::Redo (void)
 {
-if (!m_bEnabled)
+if (Locked ())
 	return false;
 if (m_nCurrent == m_nTail + 1)
 	return false;
@@ -277,7 +270,7 @@ return true;
 
 void CUndoManager::Truncate (void)
 {
-if (!m_bEnabled)
+if (Locked ())
 	return;
 if (m_nCurrent == m_nTail + 1)
 	return; // at end of undo list already
@@ -303,7 +296,7 @@ else {
 
 void CUndoManager::Append (void)
 {
-if (!m_bEnabled)
+if (Locked ())
 	return;
 if (m_nHead == -1) {
 	m_nHead = 0;
@@ -356,7 +349,7 @@ return Id ();
 
 void CUndoManager::Backup (void)
 {
-if (m_bEnabled && !m_current.Cleanup ()) {
+if (!Locked () && !m_current.Cleanup ()) {
 	SetModified (true);
 	Append ();
 	*Tail () = m_current;
@@ -383,7 +376,7 @@ DLE.GetDocument ()->SetModifiedFlag (bModified);
 
 void CUndoManager::Begin (int dataFlags) 
 {
-if (m_bEnabled) {
+if (!Locked ()) {
 	++m_nModified;
 	if (m_nMode != 0) {
 		m_nMode = 0;
@@ -397,7 +390,7 @@ if (m_bEnabled) {
 
 void CUndoManager::End (void) 
 {
-if (m_bEnabled && (m_nModified > 0) && (--m_nModified == 0))
+if (!Locked () && (m_nModified > 0) && (--m_nModified == 0))
 	Backup ();
 }
 
@@ -405,7 +398,7 @@ if (m_bEnabled && (m_nModified > 0) && (--m_nModified == 0))
 
 bool CUndoManager::Revert (void)
 {
-if (!m_bEnabled || (m_nHead == -1))
+if (!!Locked () || (m_nHead == -1))
 	return false;
 Undo ();
 Truncate ();

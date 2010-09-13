@@ -301,7 +301,7 @@ class CUndoManager
 		//CUndoItem*	m_current;
 		int			m_nMaxSize;
 		int			m_size;
-		bool			m_bEnabled;
+		int			m_nLock;
 		int			m_nMode;
 		int			m_nModified;
 		uint			m_nId;
@@ -331,7 +331,11 @@ class CUndoManager
 
 		int Count (void);
 
-		void Enable (bool bEnable);
+		inline void Lock (void) { ++m_nLock; }
+
+		inline bool Locked (void) { return (m_nLock > 0); }
+
+		inline void Unlock (void) { if (Locked ()) m_nLock--; }
 
 		int SetMaxSize (int maxSize);
 

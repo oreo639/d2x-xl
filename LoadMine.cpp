@@ -30,7 +30,7 @@ else if (!CreateNewLevel ()) {
 
 m_disableDrawing = TRUE;
 
-undoManager.Enable (false);
+undoManager.Lock ();
 LoadMine (filename, bLoadFromHog, bNewMine);
 if (!bNewMine && IsD2XLevel () && LevelIsOutdated ()) {
 	if (LevelVersion () < 15) {
@@ -53,12 +53,12 @@ if (errFlags != 0) {
 		m_disableDrawing = TRUE;
 		LoadMine (filename, bLoadFromHog, bNewMine);
 		m_disableDrawing = FALSE;
-		undoManager.Enable (true);
+		undoManager.Lock ();
 		return 1;
 		}
 	}
 m_disableDrawing = FALSE;
-undoManager.Enable (true);
+undoManager.Unlock ();
 return 0;
 }
 
