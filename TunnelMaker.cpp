@@ -602,7 +602,7 @@ CMineView* viewP = DLE.MineView ();
 int h = tunnelMaker.Length () * 4;
 for (int i = 0; i < h; i++)
 	view.Project (*vertexManager.Vertex (m_nVertices [i]), viewP->m_viewPoints [i]);
-int h = tunnelMaker.Length ();
+h = tunnelMaker.Length ();
 for (int i = 0; i < h; i++)
 	viewP->DrawSegmentQuick (segmentManager.Segment (m_nSegments [i]));
 }
