@@ -110,11 +110,13 @@ public:
 
 	inline CUVL _const_ * Uvls (void) _const_ { return &m_info.uvls [0]; }
 	
+	CSegment _const_ * CSide::Segment (void) _const_;
+
 	CWall _const_ * Wall (void) _const_;
 	
 	CTrigger _const_ * Trigger (void) _const_;
 	
-	bool CSide::IsVisible (void);
+	bool IsVisible (void);
 
 	void Reset (void);
 };

@@ -203,6 +203,13 @@ for (int i = 0; i < 4; i++) {
 
 // -----------------------------------------------------------------------------
 
+CSegment _const_ * CSide::Segment (void) _const_
+{ 
+return (m_info.nChild < 0) ? null: segmentManager.Segment (m_info.nChild); 
+}
+
+// -----------------------------------------------------------------------------
+
 CWall _const_ * CSide::Wall (void) _const_
 { 
 return wallManager.Wall (m_info.nWall); 

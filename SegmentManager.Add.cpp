@@ -50,6 +50,12 @@ if (nDelSeg < --Count ()) {
 	// update all walls inside the moved segment
 	CSide* sideP = Segment (nDelSeg)->Side (0);
 	for (int i = 0; i < 6; i++, sideP++) {
+		CSegment* segP = sideP->Child ();
+		if (segP != null) {
+			for (j = 0; j < 6; j++) {
+				if (segP->Child (j) == Count ())
+					segP->SetChild (j, nDelSeg);
+			}
 		CWall* wallP = sideP->Wall ();
 		if (wallP != null)
 			wallP->m_nSegment = nDelSeg;
