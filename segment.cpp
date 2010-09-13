@@ -622,7 +622,12 @@ m_info.nMatCen = -1;
 m_info.wallFlags = 0;
 SetChild (nSide, -1); 
 m_info.childFlags &= ~(1 << nSide); 
-m_sides [nSide].Reset ();
+if (nSide < 0) {
+	for (nSide = 0; nSide < 6; nSide++)
+		m_sides [nSide].Reset ();
+	}	
+else
+	m_sides [nSide].Reset ();
 }
 
 // -----------------------------------------------------------------------------

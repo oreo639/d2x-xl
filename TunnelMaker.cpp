@@ -576,20 +576,12 @@ for (i = 0; i < m_nLength [0]; i++) {
 	else if (i == m_nLength [0] - 1) {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [i - 1]);
 		segP->SetChild (m_info [0].m_nSide, m_info [1].m_nSegment);
-		m_info [1].Segment ()->SetChild (m_nSegments [i]);
+		m_info [1].Segment ()->SetChild (m_info [1].m_nSide, m_nSegments [i]);
 		}
 	else {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [i - 1]);
 		segP->SetChild (m_info [0].m_nSide, m_nSegments [i + 1]);
 		}
-	// define child bitmask, special, matcen, value, and wall bitmask
-	segP->child_bitmask = (1<<m_info [0].m_nSide) | (1<<oppSideTable [m_info [0].m_nSide]);
-	segP->owner = -1;
-	segP->group = -1;
-	segP->function = 0;
-	segP->matcen_num = -1;
-	segP->value = -1;
-	segP->wall_bitmask = 0; // make sure segment is not marked
 	}
 }
 

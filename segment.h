@@ -183,7 +183,7 @@ public:
 
 	bool HasChild (short nChild) { return (m_info.childFlags & (1 << nChild)) != 0; }
 
-	void Reset (short nSide);
+	void Reset (short nSide = -1);
 
 	virtual CGameItem* Clone (void);
 
