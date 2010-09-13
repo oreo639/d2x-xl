@@ -261,12 +261,12 @@ for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 	if (nSegment == 0) {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
 		segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
-		m_info [0].Segment ()->SetChild (m_info [0].m_nSide, segmentManager.Count ());
+		m_info [0].Segment ()->SetChild (m_info [0].m_nSide, m_nSegments [nSegment]);
 		} 
 	else if (nSegment == m_nLength [0] - 1) {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
 		segP->SetChild (m_info [0].m_nSide, m_info [1].m_nSegment);
-		m_info [1].Segment ()->SetChild (m_info [1].m_nSide, segmentManager.Count ());
+		m_info [1].Segment ()->SetChild (m_info [1].m_nSide, m_nSegments [nSegment]);
 		}
 	else  {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
