@@ -1245,8 +1245,10 @@ if (!*szSubFile || psz) {
 		*psz = '\0';
 	psz = strstr (szHogFile, "new.");
 	if (psz) {
-		strcpy_s (psz, 256 - (psz - szHogFile), szSubFile);
-		strcat_s (szHogFile, sizeof (szHogFile), ".hog");
+		int l = psz - szHogFile;
+		strcpy_s (psz, 256 - l, szSubFile);
+		l += strlen (szSubFile);
+		strcat_s (psz, 256 - l, ".hog");
 		}
 	strcat_s (szSubFile, 256, (DLE.IsD1File ()) ? ".rdl" : ".rl2");
 	}

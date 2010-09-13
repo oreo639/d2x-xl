@@ -141,11 +141,11 @@ class CMine {
 		short CreateNewLevel (void);
 		int FixIndexValues (void) { return segmentManager.Fix () | wallManager.Fix (); }
 
-		short LoadMineDataCompiled (CFileManager& fp, bool bNewMine);
+		short LoadMineGeometry (CFileManager& fp, bool bNewMine);
 		short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
-		short LoadGameData (CFileManager& fp, bool bNewMine);
-		short SaveMineDataCompiled (CFileManager& fp);
-		short SaveGameData (CFileManager& fp);
+		short LoadGameItems (CFileManager& fp, bool bNewMine);
+		short SaveMineGeometry (CFileManager& fp);
+		short SaveGameItems (CFileManager& fp);
 		void ClearMineData (void);
 	};
 

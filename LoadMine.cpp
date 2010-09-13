@@ -145,7 +145,7 @@ short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 
 	CFileManager fp;
 	int	sig = 0;
-	int	minedataOffset = 0, gamedataOffset = 0;
+	int	mineDataOffset = 0, gameDataOffset = 0;
 	int	mineErr, gameErr = 0;
 	int	return_code = 0;
 	char*	ps;
@@ -162,9 +162,9 @@ if (LoadMineSigAndType (fp))
 	return -1;
 ClearMineData ();
 // read mine data offset
-minedataOffset = fp.ReadInt32 ();
+mineDataOffset = fp.ReadInt32 ();
 // read game data offset
-gamedataOffset = fp.ReadInt32 ();
+gameDataOffset = fp.ReadInt32 ();
 LoadPaletteName (fp, bNewMine);
 
 // read descent 2 reactor information
@@ -180,8 +180,8 @@ if (IsD2File ()) {
 
 m_disableDrawing = TRUE;
 
-fp.Seek (minedataOffset, SEEK_SET);
-mineErr = LoadMineDataCompiled (fp, bNewMine);
+fp.Seek (mineDataOffset, SEEK_SET);
+mineErr = LoadMineGeometry (fp, bNewMine);
 int fPos = fp.Tell ();
 
 if (mineErr != 0) {
@@ -190,8 +190,8 @@ if (mineErr != 0) {
 	return(2);
 }
 
-fp.Seek (gamedataOffset, SEEK_SET);
-gameErr = LoadGameData (fp, bNewMine);
+fp.Seek (gameDataOffset, SEEK_SET);
+gameErr = LoadGameItems (fp, bNewMine);
 
 if (gameErr != 0) {
 	ErrorMsg ("Error loading game data");
@@ -261,12 +261,12 @@ return return_code;
 }
 
 // -----------------------------------------------------------------------------
-// LoadMineDataCompiled()
+// LoadMineGeometry()
 //
 // ACTION - Reads a mine data portion of RDL file.
 // -----------------------------------------------------------------------------
 
-short CMine::LoadMineDataCompiled (CFileManager& fp, bool bNewMine)
+short CMine::LoadMineGeometry (CFileManager& fp, bool bNewMine)
 {
 
 // read version (1 byte)
@@ -317,13 +317,13 @@ return 0;
 }
 
 // -----------------------------------------------------------------------------
-// LoadGameData()
+// LoadGameItems()
 //
 // ACTION - Loads the player, object, wall, door, trigger, and
 //          materialogrifizationator data from an RDL file.
 // -----------------------------------------------------------------------------
 
-short CMine::LoadGameData (CFileManager& fp, bool bNewMine) 
+short CMine::LoadGameItems (CFileManager& fp, bool bNewMine) 
 {
 int startOffset = fp.Tell ();
 

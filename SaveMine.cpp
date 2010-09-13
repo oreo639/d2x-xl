@@ -9,7 +9,7 @@ short CMine::Save (const char * szFile, bool bSaveToHog)
 {
 	CFileManager	fp;
 	char				filename [256];
-	int				minedataOffset, gamedataOffset, hostageTextOffset;
+	int				mineDataOffset, gameDataOffset, hostageTextOffset;
 	int				mineErr, gameErr;
 
 strcpy_s (filename, sizeof (filename), szFile);
@@ -32,8 +32,8 @@ if ((IsD2XLevel ()) && (LevelIsOutdated ())) {
 
 // write version
 fp.WriteInt32 (LevelVersion ());
-fp.WriteInt32 (0); // minedataOffset (temporary)
-fp.WriteInt32 (0); // gamedataOffset (temporary)
+fp.WriteInt32 (0); // mineDataOffset (temporary)
+fp.WriteInt32 (0); // gameDataOffset (temporary)
 
 if (IsD1File ())
 	fp.WriteInt32 (0); // hostageTextOffset (temporary)
@@ -72,16 +72,16 @@ else if (IsD2File ()) {
 	fp.Write (SecretOrient ());
 	}
 // save mine data
-minedataOffset = fp.Tell ();
-if (0 > (mineErr = SaveMineDataCompiled (fp))) {
+mineDataOffset = fp.Tell ();
+if (0 > (mineErr = SaveMineGeometry (fp))) {
 	fp.Close ();
 	ErrorMsg ("Error saving mine data");
 	return(2);
 	}
 
 // save game data
-gamedataOffset = fp.Tell ();
-if (0 > (gameErr = SaveGameData (fp))) {
+gameDataOffset = fp.Tell ();
+if (0 > (gameErr = SaveGameItems (fp))) {
 	fp.Close ();
 	ErrorMsg ("Error saving game data");
 	return(3);
@@ -93,8 +93,8 @@ hostageTextOffset = fp.Tell ();
 
 // now and go back to beginning of file and save offsets
 fp.Seek (2 * sizeof (int), SEEK_SET);
-fp.Write (minedataOffset);    // gamedataOffset
-fp.Write (gamedataOffset);    // gamedataOffset
+fp.Write (mineDataOffset);    // mineDataOffset
+fp.Write (gameDataOffset);    // gameDataOffset
 if (m_fileType == RDL_FILE) 
 	fp.Write (hostageTextOffset); // hostageTextOffset
 fp.Close ();
@@ -124,12 +124,12 @@ return 0;
 }
 
 // ------------------------------------------------------------------------
-// SaveMineDataCompiled()
+// SaveMineGeometry()
 //
 // ACTION - Writes a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 
-short CMine::SaveMineDataCompiled (CFileManager& fp)
+short CMine::SaveMineGeometry (CFileManager& fp)
 {
 // write version (1 byte)
 fp.WriteByte (COMPILED_MINE_VERSION);
@@ -148,21 +148,16 @@ return 0;
 }
 
 // ------------------------------------------------------------------------
-// SaveGameData()
+// SaveGameItems()
 //
 //  ACTION - Saves the player, object, wall, door, trigger, and
 //           materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
 
-short CMine::SaveGameData(CFileManager& fp)
+short CMine::SaveGameItems(CFileManager& fp)
 {
 int startOffset = fp.Tell ();
 
-//==================== = WRITE FILE INFO========================
-
-// Do not assume the "sizeof" values are the same as what was read when level was loaded.
-// Also be careful no to use sizeof () because the editor's internal size may not match
-// the size which is used by the game engine.
 if (IsD1File ()) {
 	Info ().fileInfo.signature = 0x6705;
 	Info ().fileInfo.version = 25;
@@ -190,7 +185,7 @@ short	nSavePofNames;
 
 if (IsD2File ()) {
 	nSavePofNames = 166;
-	fp.Write (&nSavePofNames, 2, 1);   // write # of POF names
+	fp.WriteUInt16 (166);   // write # of POF names
 	}
 else {
 	nSavePofNames = 78;
@@ -201,7 +196,6 @@ CResource res;
 byte* savePofNames = res.Load (IsD1File () ? IDR_POF_NAMES1 : IDR_POF_NAMES2);
 if (savePofNames == null)
 	return 1;
-
 fp.Write (savePofNames, nSavePofNames, 13); // 13 characters each
 
 Info ().player.offset = fp.Tell ();
