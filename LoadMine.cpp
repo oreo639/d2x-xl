@@ -205,7 +205,7 @@ if (!bLoadFromHog) {
 		else
 			strcat_s (filename, 256, ".pog");
 		if (!fp.Open (filename, "rb")) {
-			ReadPog (fp);
+			ReadPog (fp, fp.Size ());
 			fp.Close ();
 			}
 		robotManager.ReadHAM ();

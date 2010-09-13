@@ -233,12 +233,16 @@ bool CUndoManager::Undo (void)
 {
 if (Locked ())
 	return false;
-if (m_nCurrent == m_nHead)
-	return false;
 // need a backup of the current state when starting to undo
-if ((m_nMode == 0) && (m_nCurrent == m_nTail + 1)) {
-	m_current.Destroy ();
-	m_current.Backup (udAll);
+if (m_nMode == 0) {
+	if (m_nCurrent == m_nTail + 1) {
+		m_current.Destroy ();
+		m_current.Backup (udAll);
+		}
+	}
+else {
+	if (m_nCurrent == m_nHead)
+		return false;
 	}
 
 m_nMode = 1;
@@ -377,10 +381,11 @@ DLE.GetDocument ()->SetModifiedFlag (bModified);
 void CUndoManager::Begin (int dataFlags) 
 {
 if (!Locked ()) {
-	++m_nModified;
-	if (m_nMode != 0) {
-		m_nMode = 0;
-		m_current.Destroy ();
+	if (0 == m_nModified++) {
+		if (m_nMode != 0) {
+			m_nMode = 0;
+			m_current.Destroy ();
+			}
 		}
 	m_current.Backup (dataFlags);
 	}
