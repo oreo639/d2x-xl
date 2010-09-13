@@ -1321,7 +1321,7 @@ void CMainFrame::OnUpdateViewTexturemapped(CCmdUI* pCmdUI)
 
 bool CMainFrame::EditGeoFwd (void)
 {
-if (theMine->EditGeoFwd ())
+if (!theMine->EditGeoFwd ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1329,7 +1329,7 @@ return true;
 
 bool CMainFrame::EditGeoUp (void)
 {
-if (theMine->EditGeoUp ())
+if (!theMine->EditGeoUp ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1337,7 +1337,7 @@ return true;
 
 bool CMainFrame::EditGeoBack (void)
 {
-if (theMine->EditGeoBack ())
+if (!theMine->EditGeoBack ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1345,7 +1345,7 @@ return true;
 
 bool CMainFrame::EditGeoRotLeft (void)
 {
-if (theMine->EditGeoRotLeft ())
+if (!theMine->EditGeoRotLeft ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1353,7 +1353,7 @@ return true;
 
 bool CMainFrame::EditGeoGrow (void)
 {
-if (theMine->EditGeoGrow ())
+if (!theMine->EditGeoGrow ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1361,7 +1361,7 @@ return true;
 
 bool CMainFrame::EditGeoRotRight (void)
 {
-if (theMine->EditGeoRotRight ())
+if (!theMine->EditGeoRotRight ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1369,7 +1369,7 @@ return true;
 
 bool CMainFrame::EditGeoLeft (void)
 {
-if (theMine->EditGeoLeft ())
+if (!theMine->EditGeoLeft ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1377,7 +1377,7 @@ return true;
 
 bool CMainFrame::EditGeoDown (void)
 {
-if (theMine->EditGeoDown ())
+if (!theMine->EditGeoDown ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1385,7 +1385,7 @@ return true;
 
 bool CMainFrame::EditGeoRight (void)
 {
-if (theMine->EditGeoRight ())
+if (!theMine->EditGeoRight ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1393,7 +1393,7 @@ return true;
 
 bool CMainFrame::EditGeoShrink (void)
 {
-if (theMine->EditGeoShrink ())
+if (!theMine->EditGeoShrink ())
 	return false;
 MineView ()->Refresh ();
 return true;

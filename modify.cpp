@@ -87,7 +87,7 @@ CDoubleVector v (center - oppCenter);
 // make sure distance is positive to prevent
 // cube from turning inside out
 // defines line orthogonal to a side at a point
-	byte sideNormalTable [6][4] = {
+	static byte sideNormalTable [6][4] = {
 		{8,6,1,3},
 		{0,5,7,2},
 		{3,1,6,8},
@@ -170,7 +170,7 @@ return SpinSelection (-angleRate);
 
 bool CMine::EditGeoUp (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (angleRate,false) : MovePoints (1,0);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (angleRate, false) : MovePoints (1,0);
 }
 
 //------------------------------------------------------------------------------
