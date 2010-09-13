@@ -356,12 +356,14 @@ if (!m_bActive) {
 	m_bActive = true;
 	}
 else {
-	m_bActive = false;
 	// ask if user wants to keep the new nSegment
+	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES) 
 	Destroy ();
-	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) == IDYES) {
+	else {
+		Destroy ();
 		undoManager.Begin (udSegments | udVertices);
 		ComputeTunnel ();
+		Realize ();
 		undoManager.End ();
 		}
 	}
@@ -568,13 +570,13 @@ pDC->SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 tunnelMaker.ComputeTunnel ();
 APOINT point;
 view.Project (m_points [1], point);
-if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
+if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)) {
 	view.Project (m_points [0], point);
-	if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
+	if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)) {
 		pDC->MoveTo (point.x, point.y);
 		view.Project (m_points [1], point);
 		pDC->LineTo (point.x, point.y);
-		pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y+4);
+		pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y + 4);
 		}
 	}
 view.Project (m_points [2], point);
@@ -584,7 +586,7 @@ if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
 		pDC->MoveTo (point.x, point.y);
 		view.Project (m_points [2], point);
 		pDC->LineTo (point.x, point.y);
-		pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y+4);
+		pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y + 4);
 		}
 	}
 pDC->SelectObject (bluePen);
