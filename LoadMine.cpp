@@ -141,14 +141,7 @@ if (IsD2File ()) {
 
 short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 {
-	byte* palette = 0;
-
 	CFileManager fp;
-	int	sig = 0;
-	int	mineDataOffset = 0, gameDataOffset = 0;
-	int	mineErr, gameErr = 0;
-	int	return_code = 0;
-	char*	ps;
 
 m_changesMade = 0;
 
@@ -162,9 +155,9 @@ if (LoadMineSigAndType (fp))
 	return -1;
 ClearMineData ();
 // read mine data offset
-mineDataOffset = fp.ReadInt32 ();
+int mineDataOffset = fp.ReadInt32 ();
 // read game data offset
-gameDataOffset = fp.ReadInt32 ();
+int gameDataOffset = fp.ReadInt32 ();
 LoadPaletteName (fp, bNewMine);
 
 // read descent 2 reactor information
@@ -181,18 +174,14 @@ if (IsD2File ()) {
 m_disableDrawing = TRUE;
 
 fp.Seek (mineDataOffset, SEEK_SET);
-mineErr = LoadMineGeometry (fp, bNewMine);
-
-if (mineErr != 0) {
+if (LoadMineGeometry (fp, bNewMine) != 0) {
 	ErrorMsg ("Error loading mine data");
 	fp.Close ();
 	return(2);
-}
+	}
 
 fp.Seek (gameDataOffset, SEEK_SET);
-gameErr = LoadGameItems (fp, bNewMine);
-
-if (gameErr != 0) {
+if (LoadGameItems (fp, bNewMine) != 0) {
 	ErrorMsg ("Error loading game data");
 	// reset "howmany"
 	objectManager.ResetInfo ();
@@ -204,18 +193,13 @@ if (gameErr != 0) {
 	return 3;
 	}
 
-goto load_pog;
-
-return_code = 0;
-
-load_pog:
-
 fp.Close ();
+
 if (!bLoadFromHog) {
 	paletteManager.Reload ();
 	textureManager.LoadTextures ();
 	if (IsD2File ()) {
-		ps = strstr (filename, ".");
+		char* ps = strstr (filename, ".");
 		if (ps)
 			strcpy_s (ps, 256 - (ps - filename), ".pog");
 		else
@@ -256,7 +240,7 @@ if (!bLoadFromHog) {
 		}
 	}
 objectManager.Sort ();
-return return_code;
+return 0;
 }
 
 // -----------------------------------------------------------------------------
