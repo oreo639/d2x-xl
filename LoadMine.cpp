@@ -327,7 +327,7 @@ short CMine::LoadGameItems (CFileManager& fp, bool bNewMine)
 int startOffset = fp.Tell ();
 
 // Read in FileInfo () to get size of saved fileinfo.
-if (fp.Seek (startOffset, SEEK_SET)) {
+if (0 >= fp.Seek (startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking in mine.cpp");
 	return -1;
 	}
