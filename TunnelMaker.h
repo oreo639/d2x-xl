@@ -24,7 +24,8 @@ class CTunnelMaker {
 	private:
 		bool		m_bActive;
 		int		m_nMaxSegments;
-		CVertex	m_points [MAX_TUNNEL_SEGMENTS];
+		CVertex	m_points [4];
+		CVertex	m_tunnelPoints [MAX_TUNNEL_SEGMENTS];
 		short		m_nSegments [MAX_TUNNEL_SEGMENTS];
 		ushort	m_nVertices [MAX_TUNNEL_SEGMENTS * 4];
 		short		m_nLength [2];

@@ -445,7 +445,7 @@ if (m_nLength [1] < m_nLength [0]) {
 
 // calculate nSegment m_points
 for (i = 0; i <= m_nLength [0]; i++) 
-	m_points [i] = BezierFcn ((double) i / (double) m_nLength [0], 4, m_points);
+	m_tunnelPoints [i] = BezierFcn ((double) i / (double) m_nLength [0], 4, m_points);
 
 // make all m_points reletave to first face (translation)
 for (i = 0; i < 4; i++) 
