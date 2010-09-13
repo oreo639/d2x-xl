@@ -16,9 +16,7 @@ for (CSegmentIterator si; si; si++)
 
 void CSegmentManager::ReadSegments (CFileManager& fp, int nFileVersion)
 {
-if (m_segmentInfo.offset >= 0) {
-	fp.Seek (m_segmentInfo.offset);
-
+if (m_segmentInfo.Restore (fp)) {
 	int nLevelType = DLE.IsD2XLevel () ? 2 : DLE.IsD2File () ? 1 : 0;
 	int nLevelVersion = DLE.LevelVersion ();
 	int i;
@@ -44,9 +42,7 @@ if (m_segmentInfo.offset >= 0) {
 
 void CSegmentManager::WriteSegments (CFileManager& fp, int nFileVersion)
 {
-if (Count () == 0)
-	m_segmentInfo.offset = -1;
-else {
+if (m_segmentInfo.Setup (fp)) {
 	m_segmentInfo.offset = fp.Tell ();
 
 	int nLevelType = DLE.IsD2XLevel () ? 2 : DLE.IsD2File () ? 1 : 0;

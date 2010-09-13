@@ -139,6 +139,8 @@ fp.WriteUInt16 (vertexManager.Count ());
 // write number of Segments () (2 bytes)
 fp.WriteInt16 (segmentManager.Count ());
 // write all vertices
+vertexManager.SetIndex ();
+segmentManager.SetIndex ();
 vertexManager.Write (fp, FileInfo ().version);
 // write segment information
 segmentManager.WriteSegments (fp, FileInfo ().version);
@@ -201,10 +203,8 @@ Info ().player.offset = fp.Tell ();
 char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
 fp.Write (str, strlen (str) + 1, 1);
 
-vertexManager.SetIndex ();
 triggerManager.SetIndex ();
 wallManager.SetIndex ();
-segmentManager.SetIndex ();
 
 objectManager.Write (fp, FileInfo ().version);
 wallManager.Write (fp, FileInfo ().version);
