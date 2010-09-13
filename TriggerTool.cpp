@@ -455,7 +455,7 @@ else {
 		return false;
 		}
 	else {
-		m_nTrigger (current->Trigger () == null) ? -1 : triggerManager.Index (current->Trigger ());
+		m_nTrigger = (current->Trigger () == null) ? -1 : triggerManager.Index (current->Trigger ());
 		}
 	}
 return true;
