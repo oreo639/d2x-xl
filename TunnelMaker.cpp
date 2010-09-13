@@ -550,7 +550,7 @@ for (i = 0; i < m_nLength [0]; i++) {
 		}
 	}
 
-  // int twisted segments
+// int twisted segments
 for (i = 0; i < m_nLength [0]; i++)
 	UntwistSegment (m_nSegments [i], m_info [0].m_nSide);
 }
@@ -591,7 +591,7 @@ pDC->SelectObject (bluePen);
 CMineView* viewP = DLE.MineView ();
 int h = tunnelMaker.Length () * 4;
 for (int i = 0; i < h; i++)
-	view.Project (*vertexManager.Vertex (m_nVertices [i]), viewP->m_viewPoints [i]);
+	view.Project (*vertexManager.Vertex (m_nVertices [i]), viewP->m_viewPoints [m_nVertices [i]]);
 h = tunnelMaker.Length ();
 for (int i = 0; i < h; i++)
 	viewP->DrawSegmentQuick (segmentManager.Segment (m_nSegments [i]));
