@@ -1,5 +1,5 @@
-#ifndef __cfile_h
-#define __cfile_h
+#ifndef __fileman_h
+#define __fileman_h
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -44,8 +44,8 @@ class CFilename {
 typedef struct tFileInfo {
 	FILE		*file;
 	char		*filename;
-	int		size;
-	int		rawPosition;
+	long		size;
+	long		rawPosition;
 } tFileInfo;
 
 class CFileManager {
@@ -148,8 +148,16 @@ class CFileManager {
 		static void SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt);
 		static void ChangeFilenameExtension (char *dest, const char *src, const char *new_ext);
 
-		inline FILE*& File () { return m_info.file; }
-		inline char* Name () { return m_info.filename; }
+		inline FILE*& File (void) { return m_info.file; }
+		inline char* Name (void) { return m_info.filename; }
+
+	private:
+		inline long SetPos (long pos) {
+			m_info.rawPosition = pos;
+			if (m_info.size < pos)
+				m_info.size = pos;
+			return pos;
+			}
 	};
 
 

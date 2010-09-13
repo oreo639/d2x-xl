@@ -243,7 +243,7 @@ if (!m_info.file)
 if (!(nElemSize * nElemCount))
 	return 0;
 nWritten = (int) fwrite (buffer, nElemSize, nElemCount, m_info.file);
-m_info.rawPosition = ftell (m_info.file);
+Tell ();
 if (Error ())
 	return 0;
 return nWritten;
@@ -260,7 +260,7 @@ int CFileManager::PutC (int c)
 	int char_written;
 
 char_written = fputc (c, m_info.file);
-m_info.rawPosition = ftell (m_info.file);
+Tell ();
 return char_written;
 }
 
@@ -274,7 +274,7 @@ if (m_info.rawPosition >= m_info.size)
 	return EOF;
 c = getc (m_info.file);
 if (c != EOF)
-	m_info.rawPosition = ftell (m_info.file);
+	Tell ();
 return c;
 }
 
@@ -289,7 +289,7 @@ int CFileManager::PutS (const char *str)
 	int ret;
 
 ret = fputs (str, m_info.file);
-m_info.rawPosition = ftell (m_info.file);
+Tell ();
 return ret;
 }
 
@@ -312,7 +312,7 @@ for (i = 0; i < n - 1; i++) {
 			break;
 		if (c == 13) {      // Mac or DOS line ending
 			int c1 = GetC ();
-			Seek ( -1, SEEK_CUR);
+			Seek (-1, SEEK_CUR);
 			if (c1 == 10) // DOS line ending
 				continue;
 			else            // Mac line ending
@@ -346,7 +346,7 @@ return i / elSize;
 
 int CFileManager::Tell (void) 
 {
-return m_info.rawPosition;
+return SetPos (ftell (m_info.file));
 }
 
 // ----------------------------------------------------------------------------
@@ -355,9 +355,9 @@ int CFileManager::Seek (size_t offset, int whence)
 {
 if (!m_info.file)
 	return -1;
-int c = fseek (m_info.file, offset, whence);
-m_info.rawPosition = ftell (m_info.file);
-return c;
+if (fseek (m_info.file, offset, whence) != 0)
+	return -1;
+return Tell ();
 }
 
 // ----------------------------------------------------------------------------

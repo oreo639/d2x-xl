@@ -13,7 +13,7 @@ short CMine::Save (const char * szFile, bool bSaveToHog)
 	int				mineErr, gameErr;
 
 strcpy_s (filename, sizeof (filename), szFile);
-if (fp.Open (filename, "wb"))
+if (fp.Open (filename, "w+b"))
 	return 1;
 
 m_changesMade = 0;
@@ -157,8 +157,6 @@ return 0;
 
 short CMine::SaveGameItems (CFileManager& fp)
 {
-int startOffset = fp.Tell ();
-
 if (IsD1File ()) {
 	Info ().fileInfo.signature = 0x6705;
 	Info ().fileInfo.version = 25;
@@ -172,6 +170,7 @@ else {
 	Info ().level = 0;
 }
 
+int startOffset = fp.Tell ();
 Info ().Write (fp);
 if (Info ().fileInfo.version >= 14) // save mine file name
 	fp.Write (m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
@@ -219,6 +218,8 @@ if (IsD2File ()) {
 
 fp.Seek (startOffset, SEEK_SET);
 Info ().Write (fp);
+fp.Seek (startOffset, SEEK_SET);
+Info ().Read (fp);
 fp.Seek (0, SEEK_END);
 return 0;
 }
