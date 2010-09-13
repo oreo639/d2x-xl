@@ -437,8 +437,7 @@ for (CWallIterator wi; wi; wi++)
 
 void CWallManager::ReadWalls (CFileManager& fp, int nFileVersion)
 {
-if (m_info [0].offset >= 0) {
-	fp.Seek (m_info [0].offset);
+if (m_info [0].Restore (fp)) {
 #if USE_FREELIST
 	m_free.Reset ();
 #endif
@@ -462,9 +461,7 @@ if (m_info [0].offset >= 0) {
 
 void CWallManager::WriteWalls (CFileManager& fp, int nFileVersion)
 {
-if (WallCount () == 0)
-	m_info [0].offset = -1;
-else {
+if (m_info [0].Setup (fp)) {
 	m_info [0].size = 24;
 	m_info [0].offset = fp.Tell ();
 	for (CWallIterator wi; wi; wi++)

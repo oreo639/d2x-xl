@@ -218,7 +218,7 @@ if (IsD2File ()) {
 	}
 
 fp.Seek (startOffset, SEEK_SET);
-fp.Write (&Info (), Info ().fileInfo.size, 1);
+Info ().Write (fp);
 fp.Seek (0, SEEK_END);
 return 0;
 }

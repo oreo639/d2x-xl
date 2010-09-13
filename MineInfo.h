@@ -41,6 +41,8 @@ public:
 	CMineItemInfo () { Reset (); }
 
 	void Reset (void) { offset = -1, count = size = 0; } 
+	bool Setup (CFileManager& fp);
+	bool Restore (CFileManager& fp);
 	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
 };

@@ -65,7 +65,7 @@ else {
 
 void CSegmentManager::ReadMatCens (CFileManager& fp, int nFileVersion, int nClass)
 {
-if (m_matCenInfo [nClass].offset >= 0) {
+if (m_matCenInfo [nClass].Restore (fp)) {
 	for (int i = 0; i < MatCenCount (nClass); i++) {
 		if (i < MAX_MATCENS)
 			m_matCens [nClass][i].Read (fp, nFileVersion);
@@ -83,9 +83,7 @@ if (m_matCenInfo [nClass].offset >= 0) {
 
 void CSegmentManager::WriteMatCens (CFileManager& fp, int nFileVersion, int nClass)
 {
-if (m_matCenInfo [nClass].count == 0)
-	m_matCenInfo [nClass].offset = -1;
-else {
+if (m_matCenInfo [nClass].Setup (fp)) {
 	m_matCenInfo [nClass].size = (DLE.IsD1File () || (nClass == 0)) ? 16 : 20; 
 	m_matCenInfo [nClass].offset = fp.Tell ();
 	for (int i = 0; i < MatCenCount (nClass); i++)

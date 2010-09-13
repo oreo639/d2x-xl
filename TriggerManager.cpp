@@ -451,7 +451,7 @@ for (CWallTriggerIterator ti; ti; ti++)
 
 void CTriggerManager::ReadReactor (CFileManager& fp, int nFileVersion)
 {
-if (m_reactorInfo.offset >= 0) {
+if (m_reactorInfo.Restore (fp)) {
 	for (short i = 0; i < ReactorTriggerCount (); i++)
 		m_reactorTriggers [i].Read (fp, nFileVersion);
 	}
@@ -461,11 +461,8 @@ if (m_reactorInfo.offset >= 0) {
 
 void CTriggerManager::WriteReactor (CFileManager& fp, int nFileVersion)
 {
-if (m_reactorInfo.count == 0) 
-	m_reactorInfo.offset = -1;
-else {
+if (m_reactorInfo.Setup (fp)) {
 	m_reactorInfo.size = 42;
-	m_reactorInfo.offset = fp.Tell ();
 	for (short i = 0; i < ReactorTriggerCount (); i++)
 		m_reactorTriggers [i].Read (fp, nFileVersion);
 	}
@@ -475,9 +472,9 @@ else {
 
 void CTriggerManager::Read (CFileManager& fp, int nFileVersion)
 {
-if (m_info [0].offset < 0)
+if (!m_info [0].Restore (fp))
 	return;
-fp.Seek (m_info [0].offset);
+
 for (short i = 0; i < Count (0); i++) {
 	if (Count (0) < MAX_TRIGGERS) {
 #if USE_FREELIST
