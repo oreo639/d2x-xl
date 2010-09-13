@@ -232,6 +232,14 @@ return (m_info.nChild == -1) || wallManager.IsVisible (m_info.nWall);
 
 // -----------------------------------------------------------------------------
 
+void CSide::UpdateChild (short nOldChild, short nNewChild)
+{
+if (m_info.nChild == nOldChild)
+	m_info.nChild = nNewChild;
+}
+
+// -----------------------------------------------------------------------------
+
 void CSide::Reset (void)
 {
 m_info.nBaseTex = 0; 
@@ -615,6 +623,14 @@ return nSegment;
 CVertex _const_ * CSegment::Vertex (short nVertex) _const_
 {
 return vertexManager.Vertex (m_info.verts [nVertex]);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::UpdateChildren (short nOldChild, short nNewChild)
+{
+for (short nSide = 0; nSide < 6; nSide++)
+	if (m_sides [nSide].UpdateChild (nOldChild, nNewChild);
 }
 
 // -----------------------------------------------------------------------------

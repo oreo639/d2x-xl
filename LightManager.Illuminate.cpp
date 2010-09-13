@@ -170,7 +170,7 @@ if (bAll)
 	CLEAR (VertexColors ());
 for (CSegmentIterator si; si; si++) {
 	CSegment *segP = &(*si);
-	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
+	if (bAll || (segP->IsMarked ())) {
 		segP->Backup ();
 		CSide* sideP = segP->m_sides;
 		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
