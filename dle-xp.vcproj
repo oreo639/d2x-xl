@@ -241,7 +241,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				EnableFiberSafeOptimizations="true"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;DEMO=0"
+				PreprocessorDefinitions="WIN32;NDEBUG;RELEASE;_WINDOWS;DEMO=0"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				StructMemberAlignment="1"

@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "winuser.h"
+//#include "winuser.h"
 #include "dle-xp.h"
 
 #include "dlcDoc.h"
@@ -420,9 +420,6 @@ for (i = lightManager.Count (); i; i--, flP++, ltP++) {
 }
 
 //------------------------------------------------------------------------------
-#ifdef _DEBUG
-static int qqq1 = -1, qqq2 = 0;
-#endif
 
 bool CMineView::SetLightStatus (void)
 {

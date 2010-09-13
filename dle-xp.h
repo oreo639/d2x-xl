@@ -13,9 +13,8 @@
 #endif
 
 #include <windows.h>
-
 #include "dle-xp-res.h"       // main symbols
-#include "dlc_i.h"
+//#include "dlc_i.h"
 #include "mainfrm.h"
 #include "mine.h"
 

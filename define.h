@@ -1,5 +1,5 @@
-#ifndef _DEFINE_H
-#define _DEFINE_H
+#ifndef __define_h
+#define __define_h
 
 // Copyright (C) 1997 Bryan Aamot
 
@@ -21,7 +21,7 @@ typedef unsigned int uint;
 #define INFOMSG(a) {if (DLE.MainFrame () && !DLE.MineView ()->DelayRefresh ()) DLE.MainFrame ()->InfoMsg(a);}
 #define DEBUGMSG(a) {}//{if (DLE.MainFrame ()) DLE.MainFrame ()->DebugMsg(a);}
 
-#define sizeofa(_a) (sizeof (_a) / sizeof (*(_a)))
+#define sizeofa(_a) (sizeof (_a) / sizeof ((_a) [0]))
 
 #define IN_RANGE(_value,_bounds) ((-(_bounds) <= (_value)) && ((_value) <= (_bounds)))
 
@@ -549,11 +549,11 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define IMG_BKCOLOR	RGB (196,196,196)
 
 #ifdef _DEBUG
-#	define _DEBUG 1
+#	define _DBG 1
 #else
-#	define _DEBUG 0
+#	define _DBG 0
 #endif
 
 #define null NULL
 
-#endif // _DEFINE_H
+#endif // __define_h

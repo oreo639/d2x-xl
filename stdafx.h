@@ -19,9 +19,9 @@
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-#include "types.h"
+//#include "types.h"
 
-	#define _ATL_APARTMENT_THREADED
+#define _ATL_APARTMENT_THREADED
 #include <atlbase.h>
 //You may derive a class from CComModule and use it if you want to override
 //something, but do not change the name of _Module
