@@ -199,8 +199,7 @@ return size;
 
 int CFileManager::Open (const char *filename, const char *mode) 
 {
-	int	length = -1;
-	FILE	*fp = null;
+	FILE* fp = null;
 
 m_info.file = null;
 if (!(filename && *filename))
@@ -208,7 +207,7 @@ if (!(filename && *filename))
 if (fopen_s (&m_info.file, filename, mode))
 	return 1;
 m_info.rawPosition = 0;
-m_info.size = (length < 0) ? ffilelength (m_info.file) : length;
+m_info.size = ffilelength (m_info.file);
 m_info.filename = const_cast<char*> (filename);
 return 0;
 }

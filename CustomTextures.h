@@ -5,7 +5,7 @@
 
 //------------------------------------------------------------------------
 
-int ReadPog (CFileManager& fp, uint nFileSize = 0xFFFFFFFF);
+int ReadPog (CFileManager& fp);
 int CreatePog (CFileManager& fp);
 
 //------------------------------------------------------------------------

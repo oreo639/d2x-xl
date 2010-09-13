@@ -410,7 +410,7 @@ if (FindSubFile (fSrc, pszFile, pszSubFile, ".clr"))
 paletteManager.Reload ();
 textureManager.LoadTextures ();
 if (FindSubFile (fSrc, pszFile, pszSubFile, ".pog"))
-	ReadPog (fSrc, size);
+	ReadPog (fSrc);
 if (FindSubFile (fSrc, pszFile, pszSubFile, ".hxm")) {
 	robotManager.ReadHXM (fSrc, size);
 	int nCustom = 0;
