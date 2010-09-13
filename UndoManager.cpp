@@ -309,15 +309,16 @@ if (m_nHead == -1) {
 else {
 	Truncate ();
 	if (++m_nTail == *m_nHead) {	// buffer full
+#if DETAIL_BACKUP
 		int nId = Head ()->Id ();
 		do { // remove all items with same backup id from buffer start
-			m_nHead = ++m_nHead % m_nMaxSize;
-#if DETAIL_BACKUP
 			delete Head ()->m_item;
-#else
-			Head ()->Destroy ();
-#endif
+			m_nHead = ++m_nHead % m_nMaxSize;
 			} while (Head ()->Id () == nId);
+#else
+		m_nHead.Destroy ();
+		++m_nHead;
+#endif
 		}
 	}
 m_nCurrent = m_nTail + 1;
