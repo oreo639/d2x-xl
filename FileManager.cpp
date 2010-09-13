@@ -355,7 +355,7 @@ int CFileManager::Seek (size_t offset, int whence)
 {
 if (!m_info.file)
 	return -1;
-int c = fseek (m_info.file, destPos, SEEK_SET);
+int c = fseek (m_info.file, offset, whence);
 m_info.rawPosition = ftell (m_info.file);
 return c;
 }
