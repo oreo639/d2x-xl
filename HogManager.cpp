@@ -327,12 +327,12 @@ return true;
 
 //------------------------------------------------------------------------------
 
-bool CHogManager::FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt)
+long CHogManager::FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt)
 {
 strcpy_s (message, sizeof (message), m_pszSubFile);
 char* p = strrchr (message, '.');
 if (p == null) 
-	return false;
+	return 0;
 
 long size, offset;
 
@@ -347,9 +347,9 @@ else {
 		GetFileData (index, &size, &offset);
 	}
 if ((size <= 0) && (offset < 0)) 
-	return false;
+	return 0;
 fp.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-return true;
+return size;
 }
 
 //------------------------------------------------------------------------------
@@ -401,17 +401,17 @@ while (size > 0) {
 	size -= chunk;
 	}
 
-if (FindSubFile (fSrc, pszFile, pszSubFile, ".pal"))
+if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".pal")))
 	paletteManager.LoadCustom (fSrc, size);
-if (FindSubFile (fSrc, pszFile, pszSubFile, ".lgt"))
+if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".lgt")))
 	lightManager.ReadLightMap (fSrc, size);
-if (FindSubFile (fSrc, pszFile, pszSubFile, ".clr"))
+if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".clr")))
 	lightManager.ReadColorMap (fSrc);
 paletteManager.Reload ();
 textureManager.LoadTextures ();
-if (FindSubFile (fSrc, pszFile, pszSubFile, ".pog"))
-	ReadPog (fSrc);
-if (FindSubFile (fSrc, pszFile, pszSubFile, ".hxm")) {
+if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".pog")))
+	ReadPog (fSrc, size);
+if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".hxm"))) {
 	robotManager.ReadHXM (fSrc, size);
 	int nCustom = 0;
 	for (int i = 0; i < (int) robotManager.Count (); i++)

@@ -125,7 +125,7 @@ return l;
 // ReadPog ()
 //-----------------------------------------------------------------------------------
 
-int ReadPog (CFileManager& fp) 
+int ReadPog (CFileManager& fp, long nFileSize) 
 {
 	CPigHeader		pigFileInfo (1);
 	CPigTexture		pigTexInfo (1);
@@ -140,7 +140,6 @@ int ReadPog (CFileManager& fp)
 	bool				bExtraTexture;
 	CTexture*		texP;
 	int				fileType = DLE.FileType ();
-	long				nFileSize = fp.Size ();
 
 // make sure this is descent 2 fp
 if (DLE.IsD1File ()) {
