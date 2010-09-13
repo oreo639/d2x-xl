@@ -450,15 +450,15 @@ for (i = 0; i <= m_nLength [0]; i++)
 // make all m_points reletave to first face (translation)
 for (i = 0; i < 4; i++) 
 	relPoints [i] = m_points [i] - m_points [0];
-segP = m_info [0].Segment ();
-for (i = 0; i < 4; i++) 
-	relSidePoints [0][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [0].m_nSide][i]]) - m_points [0];
-segP = m_info [1].Segment ();
-for (i = 0; i < 4; i++)
-	relSidePoints [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [1].m_nSide][i]]) - m_points [0];
-for (i = 0; i < m_nLength [0]; i++) {
+
+for (i = 0; i < 2; i++) {
+	segP = m_info [i].Segment ();
+	for (j = 0; j < 4; j++) 
+		relSidePoints [i][j] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [i].m_nSide][j]]) - m_points [0];
+	}
+
+for (i = 0; i < m_nLength [0]; i++)
 	relTunnelPoints [i] = m_tunnelPoints [i] - m_points [0];
-}
 
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
 ySpin = -atan3 (relPoints [1].v.z, relPoints [1].v.x); // to y-z plane
@@ -485,9 +485,10 @@ for (i = 0; i < 4; i++) {
 // determine polar coordinates of the 2nd side by rotating to x-axis first
 for (i = 0; i < 4; i++) {
 	// flip orthoginal vector to point into cube
-	vertex.Set (relPoints [3].v.x - relPoints [2].v.x + relPoints [3].v.x,
-					relPoints [3].v.y - relPoints [2].v.y + relPoints [3].v.y,
-					relPoints [3].v.z - relPoints [2].v.z + relPoints [3].v.z);
+	vertex = (relPoints [3] * 2) - relPoints [2];
+	//vertex.Set (relPoints [3].v.x - relPoints [2].v.x + relPoints [3].v.x,
+	//				relPoints [3].v.y - relPoints [2].v.y + relPoints [3].v.y,
+	//				relPoints [3].v.z - relPoints [2].v.z + relPoints [3].v.z);
 	PolarPoints (&theta [1][i], &radius [1][i], &relSidePoints [1][i], &relPoints [3], &vertex);
 	}
 
@@ -508,27 +509,49 @@ for (i = 1; i < 4; i++) {
 		delta_angle [i] += 2 * M_PI;
 	}
 
-#if 0
-sprintf_s (message, sizeof (message), "theta [0] = %d,%d,%d,%d\n"
-"theta [1] = %d,%d,%d,%d\n"
-"radius [0] = %d,%d,%d,%d\n"
-"radius [1] = %d,%d,%d,%d\n"
-"delta_angles = %d,%d,%d,%d\n"
-"ySpin = %d\n"
-"zSpin = %d",
-(int)(theta [0][0]*180/M_PI),(int)(theta [0][1]*180/M_PI),(int)(theta [0][2]*180/M_PI),(int)(theta [0][3]*180/M_PI),
-(int)(theta [1][0]*180/M_PI),(int)(theta [1][1]*180/M_PI),(int)(theta [1][2]*180/M_PI),(int)(theta [1][3]*180/M_PI),
-(int)(radius [0][0]*180/M_PI),(int)(radius [0][1]*180/M_PI),(int)(radius [0][2]*180/M_PI),(int)(radius [0][3]*180/M_PI),
-(int)(radius [1][0]*180/M_PI),(int)(radius [1][1]*180/M_PI),(int)(radius [1][2]*180/M_PI),(int)(radius [1][3]*180/M_PI),
-(int)(delta_angle [0]*180/M_PI),(int)(delta_angle [1]*180/M_PI),(int)(delta_angle [2]*180/M_PI),(int)(delta_angle [3]*180/M_PI),
-(int)(ySpin*180/M_PI),(int)(zSpin*180/M_PI)
-);
-DebugMsg(message);
-#endif
+// calculate segment vertices as weighted average between the two sides
+// then spin vertices in the direction of the segment vector
+ushort nVertex = 0;
+for (i = 0; i < m_nLength [0]; i++) {
+	for (j = 0; j < 4; j++) {
+		CVertex* vertP = vertexManager.Vertex (m_nVertices [nVertex++]);
+		double h = (double) i / (double) m_nLength [0];
+		double angle  = h * delta_angle [j] + theta [0][j];
+		double length = h * radius [1][MatchingSide (j)] + (((double) m_nLength [0] - (double) i) / (double) m_nLength [0]) * radius [0][j];
+		*vertP = RectPoints (angle, length, &relTunnelPoints [i], &relTunnelPoints [i+1]);
+		// spin vertices
+		SpinBackPoint (vertP, ySpin, zSpin);
+		// translate point back
+		*vertP += m_points [0];
+		}
+	}
 
-undoManager.Lock ();
-Realize ();
-undoManager.Unlock ();
+  // define segment vert numbers
+for (i = 0; i < m_nLength [0]; i++) {
+	// use last "n_tunnel" segments
+	segP = segmentManager.Segment (m_nSegments [i]);
+	nVertex = i * 4;
+	for (j = 0; j < 4; j++) {
+		if (i == 0) {         // 1st segment
+			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
+			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
+			}
+		else {
+			if(i < m_nLength [0] - 1) { // center segments
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
+				} 
+			else {          // last segment
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
+				}
+			}
+		}
+	}
+
+  // int twisted segments
+for (i = 0; i < m_nLength [0]; i++)
+	UntwistSegment (m_nSegments [i], m_info [0].m_nSide);
 }
 
 //------------------------------------------------------------------------------
