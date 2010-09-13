@@ -97,6 +97,7 @@ fp.Write (mineDataOffset);    // mineDataOffset
 fp.Write (gameDataOffset);    // gameDataOffset
 if (m_fileType == RDL_FILE) 
 	fp.Write (hostageTextOffset); // hostageTextOffset
+fp.Seek (0, SEEK_END);
 fp.Close ();
 
 if (textureManager.HasCustomTextures () && !bSaveToHog) {

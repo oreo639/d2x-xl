@@ -115,7 +115,7 @@ if (IsD2File ()) {
 	// replace extension with .pig
 	if (i >= 4) {
 		paletteName [strlen ((char *)paletteName) - 4] = 0;
-		strcat_s (paletteName, sizeof (paletteName), ".PIG");
+		strcat_s (paletteName, sizeof (paletteName), ".pig");
 		}
 	// try to find new pig file in same directory as Current () pig file
 	// 1) cut off old name

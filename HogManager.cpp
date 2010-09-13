@@ -326,16 +326,42 @@ return true;
 }
 
 //------------------------------------------------------------------------------
+
+bool CHogManager::FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt)
+{
+strcpy_s (message, sizeof (message), m_pszSubFile);
+char* p = strrchr (message, '.');
+if (p == null) 
+	return false;
+
+long size, offset;
+
+sprintf_s (p, 5, pszExt);
+if (pszSubFile)
+	FindFileData (pszFile, message, &size, &offset);
+else {
+	int index = FindFilename (message);
+	if (index < 0)
+		size = offset = -1;
+	else
+		GetFileData (index, &size, &offset);
+	}
+if ((size <= 0) && (offset < 0)) 
+	return false;
+fp.Seek (sizeof (struct level_header) + offset, SEEK_SET);
+return true;
+}
+
+//------------------------------------------------------------------------------
 // CHogManager - load level
 //------------------------------------------------------------------------------
 
 bool CHogManager::LoadLevel (LPSTR pszFile, LPSTR pszSubFile) 
 {
 	CFileManager	fTmp, fSrc;
-	long				size,offset;
+	long				size, offset;
 	char				szTmp[256];
 	int				chunk;
-	char*				pszExt;
 	int				index = -1;
 	bool				funcRes = false;
 
@@ -375,115 +401,24 @@ while (size > 0) {
 	size -= chunk;
 	}
 
-// read custom palette if one exists
-strcpy_s (message, sizeof (message), m_pszSubFile);
-pszExt = strrchr (message, '.');
-if (pszExt) {
-	sprintf_s (pszExt, 5, ".pal");
-	if (pszSubFile)
-		FindFileData (pszFile, message, &size, &offset);
-	else {
-		index = FindFilename (message);
-		if (index < 0)
-			size = offset = -1;
-		else
-			GetFileData (index, &size, &offset);
-		}
-	if ((size > 0) || (offset >= 0)) {
-		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-		int h = fSrc.Tell ();
-		paletteManager.LoadCustom (fSrc, size);
-		h = fSrc.Tell () - h;
-		}
-	}
-// read custom light values if a lightmap fp exists
-strcpy_s (message, sizeof (message), m_pszSubFile);
-pszExt = strrchr (message, '.');
-if (pszExt) {
-	sprintf_s (pszExt, 5, ".lgt");
-	if (pszSubFile)
-		FindFileData (pszFile, message, &size, &offset);
-	else {
-		index = FindFilename (message);
-		if (index < 0)
-			size = offset = -1;
-		else
-			GetFileData (index, &size, &offset);
-		}
-	if ((size < 0) || (offset < 0))
-		lightManager.CreateLightMap ();
-	else {
-		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-		int h = fSrc.Tell ();
-		lightManager.ReadLightMap (fSrc, size);
-		h = fSrc.Tell () - h;
-		}
-	}
-
-//memset (theMine->TexColors (), 0, sizeof (theMine->Data ().texColors));
-sprintf_s (pszExt, 5, ".clr");
-if (pszSubFile)
-	FindFileData (pszFile, message, &size, &offset);
-else {
-	index = FindFilename (message);
-	if (index < 0)
-		size = offset = -1;
-	else
-		GetFileData (index, &size, &offset);
-	}
-if ((size >= 0) && (offset >= 0)) {
-	fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-	int h = fSrc.Tell ();
+if (FindSubFile (fSrc, pszFile, pszSubFile, ".pal"))
+	paletteManager.LoadCustom (fSrc, size);
+if (FindSubFile (fSrc, pszFile, pszSubFile, ".lgt"))
+	lightManager.ReadLightMap (fSrc, size);
+if (FindSubFile (fSrc, pszFile, pszSubFile, ".clr"))
 	lightManager.ReadColorMap (fSrc);
-	h = fSrc.Tell () - h;
-	}
 paletteManager.Reload ();
 textureManager.LoadTextures ();
-// read custom textures if a pog fp exists
-strcpy_s (message, sizeof (message), m_pszSubFile);
-pszExt = strrchr (message, '.');
-if (pszExt) {
-	sprintf_s (pszExt, 5, ".pog");
-	if (pszSubFile)
-		FindFileData (pszFile, message, &size, &offset);
-	else {
-		index = FindFilename (message);
-		if (index < 0)
-			size = offset = -1;
-		else
-			GetFileData (index, &size, &offset);
-		}
-	if ((size > 0) && (offset >= 0)) {
-		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-		int h = fSrc.Tell ();
-		ReadPog (fSrc, size);
-		h = fSrc.Tell () - h;
-		}
-	}
-// read custom robot info if hxm fTmp exists
-strcpy_s (message, sizeof (message), m_pszSubFile);
-pszExt = strrchr (message, '.');
-if (pszExt) {
-	sprintf_s (pszExt, 5, ".hxm");
-	if (pszSubFile)
-		FindFileData (pszFile, message, &size, &offset);
-	else {
-		index = FindFilename (message);
-		if (index < 0)
-			size = offset = -1;
-		else
-			GetFileData (index, &size, &offset);
-		}
-	if ((size >= 0) && (offset >= 0)) {
-		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-		robotManager.ReadHXM (fSrc, size);
-		int i, count;
-		for (i = 0, count = 0; i < (int) robotManager.Count (); i++)
-			if (robotManager.RobotInfo (i)->Info ().bCustom)
-				count++;
-		sprintf_s (message, sizeof (message)," Hog manager: %d custom robots read", count);
-		DEBUGMSG (message);
-		}
+if (FindSubFile (fSrc, pszFile, pszSubFile, ".pog"))
+	ReadPog (fSrc, size);
+if (FindSubFile (fSrc, pszFile, pszSubFile, ".hxm")) {
+	robotManager.ReadHXM (fSrc, size);
+	int nCustom = 0;
+	for (int i = 0; i < (int) robotManager.Count (); i++)
+		if (robotManager.RobotInfo (i)->Info ().bCustom)
+			nCustom++;
+	sprintf_s (message, sizeof (message)," Hog manager: %d custom robots read", nCustom);
+	DEBUGMSG (message);
 	}
 funcRes = true;
 

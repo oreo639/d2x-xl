@@ -63,6 +63,9 @@ class CHogManager : public CDialog {
 		inline CListBox *LBFiles ()
 			{ return (CListBox *) GetDlgItem (IDC_HOG_FILES); }
 
+	private:
+		bool FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt);
+
 	DECLARE_MESSAGE_MAP ()
 	};
 
