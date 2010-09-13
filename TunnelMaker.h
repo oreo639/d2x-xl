@@ -77,6 +77,8 @@ class CTunnelMaker {
 		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal); 
 
 		void PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* origin, CVertex* normal); 
+
+		void SetupVertices (void);
 	};
 
 extern CTunnelMaker tunnelMaker;

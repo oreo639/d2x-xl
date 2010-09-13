@@ -222,33 +222,42 @@ z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 }
 
 //------------------------------------------------------------------------------
+// define segment vert numbers
 
-void CTunnelMaker::Realize (void)
+void CTunnelMaker::SetupVertices (void)
 {
-for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
-	CSegment* segP = segmentManager.Segment (m_nSegments [nSegment]);
-#if 0
-	// copy current segment
-	//*segP = *segmentManager.Segment (current->m_nSegment);
-	for (short j = 0; j < 4; j++) {
-		ushort nVertex = 4 * nSegment + j;
-		if (nSegment == 0) {         // 1st segment
+ushort nVertex = 0;
+for (short i = 0; i < m_nLength [0]; i++) {
+	CSegment* segP = segmentManager.Segment (m_nSegments [i]);
+	for (short j = 0; j < 4; j++, nVertex++) {
+		if (i == 0) { // 1st segment
 			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
 			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
 			}
-		else if (nSegment == m_nLength [0] - 1) { // last segment
+		else if (i == m_nLength [0] - 1) { // last segment
 			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
-			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
+			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4];
 			}
-		else { // intermediate segments
+		else {
 			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
 			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4];
 			}
 		}
-	// int twisted segments
-	UntwistSegment (m_nSegments [nSegment], m_info [0].m_nSide);
-	// define children and sides (textures and nWall)
-#endif
+	}
+// int twisted segments
+for (short i = 0; i < m_nLength [0]; i++)
+	UntwistSegment (m_nSegments [i], m_info [0].m_nSide);
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelMaker::Realize (void)
+{
+ushort nVertex = 0;
+for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
+	CSegment* segP = segmentManager.Segment (m_nSegments [nSegment]);
+	// copy current segment
+	*segP = *segmentManager.Segment (current->m_nSegment);
 	if (nSegment == 0) {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
 		segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
@@ -265,6 +274,7 @@ for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 		}
 	// define child bitmask, special, matcen, value, and wall bitmask
 	}
+SetupVertices ();
 }
 
 //------------------------------------------------------------------------------
@@ -446,7 +456,7 @@ m_nLength [0] = min (m_nLength [0], m_nMaxSegments - 1);
 if (m_nLength [1] < m_nLength [0]) {
 	for (i = m_nLength [1]; i < m_nLength [0]; i++) {
 		m_nSegments [i] = segmentManager.Add ();
-		segmentManager.Segment (m_nSegments [i])->Setup ();
+		//segmentManager.Segment (m_nSegments [i])->Setup ();
 		}
 	vertexManager.Add (&m_nVertices [m_nLength [1]], (m_nLength [0] - m_nLength [1]) * 4);
 	}
@@ -533,31 +543,7 @@ for (i = 0; i < m_nLength [0]; i++) {
 		*vertP += m_points [0];
 		}
 	}
-
-// define segment vert numbers
-nVertex = 0;
-for (i = 0; i < m_nLength [0]; i++) {
-	// use last "n_tunnel" segments
-	segP = segmentManager.Segment (m_nSegments [i]);
-	for (j = 0; j < 4; j++, nVertex++) {
-		if (i == 0) {         // 1st segment
-			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
-			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
-			}
-		else if (i == m_nLength [0] - 1) {          // last segment
-			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
-			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4];
-			}
-		else {
-			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
-			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4];
-			}
-		}
-	}
-
-// int twisted segments
-for (i = 0; i < m_nLength [0]; i++)
-	UntwistSegment (m_nSegments [i], m_info [0].m_nSide);
+SetupVertices ();
 }
 
 //------------------------------------------------------------------------------
