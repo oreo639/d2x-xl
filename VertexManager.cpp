@@ -123,7 +123,7 @@ for (CVertexIterator vi; vi; vi++)
 void CVertexManager::MarkAll (byte mask)
 {
 for (CVertexIterator vi; vi; vi++)
-	vi->Status () |= MARKED_MASK; 
+	vi->Status () |= mask; 
 }
 
 // ----------------------------------------------------------------------------- 
@@ -131,7 +131,7 @@ for (CVertexIterator vi; vi; vi++)
 void CVertexManager::UnmarkAll (byte mask)
 {
 for (CVertexIterator vi; vi; vi++)
-	vi->Status () &= ~MARKED_MASK; 
+	vi->Status () &= ~mask; 
 }
 
 // ----------------------------------------------------------------------------- 

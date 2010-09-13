@@ -271,10 +271,12 @@ for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 void CTunnelMaker::Destroy (void)
 {
 if (m_bActive) {
+	undoManager.Lock ();
 	for (int i = m_nLength [0]; i > 0; )
-		segmentManager.Delete (m_nSegments [--i]);
+		segmentManager.Remove (m_nSegments [--i]);
 	for (int i = m_nLength [0] * 4; i > 0; )
 		vertexManager.Delete (m_nVertices [--i]);
+	undoManager.Unlock ();
 	m_nLength [0] = 0;
 	m_bActive = false;
 	}
@@ -308,8 +310,9 @@ if (!m_bActive) {
 		return;
 		}
 	// make sure there are no children on either segment/side
-	if ((selections [0].Segment ()->Child (selections [0].m_nSide) != -1) ||
-		 (selections [1].Segment ()->Child (selections [1].m_nSide) != -1)) {
+	other = &selections [!current->Index ()];
+	if ((current->Segment ()->Child (current->m_nSide) != -1) ||
+		 (other->Segment ()->Child (other->m_nSide) != -1)) {
 		ErrorMsg ("Starting and/or ending point of nSegment\n"
 					"already have cube(s) attached.\n\n"
 					"Hint: Put the current cube and the alternate cube\n"
@@ -412,7 +415,7 @@ void CTunnelMaker::ComputeTunnel (void)
   CSegment *segP;
   CVertex vertex;
   double theta [2][4],radius [2][4]; // polor coordinates of sides
-  double delta_angle [4];
+  double deltaAngle [4];
   CVertex relSidePoints [2][4]; // side m_points reletave to center of side 1
   CVertex relPoints [4]; // 4 m_points of nSegment reletave to 1st point
   CVertex relTunnelPoints [MAX_TUNNEL_SEGMENTS];
@@ -494,19 +497,19 @@ for (i = 0; i < 4; i++) {
 
 // figure out the angle differences to be in range (-pi to pi)
 for (j = 0; j < 4; j++) {
-	delta_angle [j] = theta [1][MatchingSide (j)] - theta [0][j];
-	if (delta_angle [j] < M_PI) 
-		delta_angle [j] += 2 * M_PI;
-	if (delta_angle [j] > M_PI) 
-		delta_angle [j] -= 2 * M_PI;
+	deltaAngle [j] = theta [1][MatchingSide (j)] - theta [0][j];
+	if (deltaAngle [j] < M_PI) 
+		deltaAngle [j] += 2 * M_PI;
+	if (deltaAngle [j] > M_PI) 
+		deltaAngle [j] -= 2 * M_PI;
 	}
 
 // make sure delta angles do not cross PI & -PI
 for (i = 1; i < 4; i++) {
-	if (delta_angle [i] > delta_angle [0] + M_PI) 
-		delta_angle [i] -= 2 * M_PI;
-	if (delta_angle [i] < delta_angle [0] - M_PI) 
-		delta_angle [i] += 2 * M_PI;
+	if (deltaAngle [i] > deltaAngle [0] + M_PI) 
+		deltaAngle [i] -= 2 * M_PI;
+	if (deltaAngle [i] < deltaAngle [0] - M_PI) 
+		deltaAngle [i] += 2 * M_PI;
 	}
 
 // calculate segment vertices as weighted average between the two sides
@@ -516,7 +519,7 @@ for (i = 0; i < m_nLength [0]; i++) {
 	for (j = 0; j < 4; j++) {
 		CVertex* vertP = vertexManager.Vertex (m_nVertices [nVertex++]);
 		double h = (double) i / (double) m_nLength [0];
-		double angle  = h * delta_angle [j] + theta [0][j];
+		double angle  = h * deltaAngle [j] + theta [0][j];
 		double length = h * radius [1][MatchingSide (j)] + (((double) m_nLength [0] - (double) i) / (double) m_nLength [0]) * radius [0][j];
 		*vertP = RectPoints (angle, length, &relTunnelPoints [i], &relTunnelPoints [i+1]);
 		// spin vertices
@@ -526,25 +529,23 @@ for (i = 0; i < m_nLength [0]; i++) {
 		}
 	}
 
-  // define segment vert numbers
+// define segment vert numbers
+nVertex = 0;
 for (i = 0; i < m_nLength [0]; i++) {
 	// use last "n_tunnel" segments
 	segP = segmentManager.Segment (m_nSegments [i]);
-	nVertex = i * 4;
-	for (j = 0; j < 4; j++) {
+	for (j = 0; j < 4; j++, nVertex++) {
 		if (i == 0) {         // 1st segment
-			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
+			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
 			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
 			}
+		else if (i == m_nLength [0] - 1) {          // last segment
+			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
+			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4];
+			}
 		else {
-			if(i < m_nLength [0] - 1) { // center segments
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
-				} 
-			else {          // last segment
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
-				}
+			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
+			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4];
 			}
 		}
 	}

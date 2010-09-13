@@ -75,10 +75,8 @@ short CSegmentManager::Create (void)
 	ushort	newVerts [4]; 
 	short		nSide; 
 
-if (tunnelMaker.Active ()) {
-	ErrorMsg (szTunnelMakerError); 
+if (tunnelMaker.Active ())
 	return -1; 
-	}
 
 if (Full ()) {
 	ErrorMsg ("Cannot add a new segment because\nthe maximum number of segments has been reached."); 
@@ -622,6 +620,8 @@ if (nDelSeg < 0)
 	nDelSeg = current->m_nSegment; 
 if (nDelSeg < 0 || nDelSeg >= Count ()) 
 	return; 
+if (tunnelMaker.Active ())
+	return;
 
 undoManager.Begin (udSegments);
 CSegment* delSegP = Segment (nDelSeg); 
