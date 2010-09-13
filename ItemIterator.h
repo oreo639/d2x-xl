@@ -105,7 +105,7 @@ class CGameItemIterator {
 
 		inline _T& operator* () { return end () ? m_null : m_buffer [m_index]; }
 
-		inline const int Index (void) { return (int) (m_value - m_buffer); }
+		inline const int Index (void) { return m_index; }
 	};
 
 // -----------------------------------------------------------------------------
