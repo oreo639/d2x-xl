@@ -316,7 +316,7 @@ else {
 			m_nHead = ++m_nHead % m_nMaxSize;
 			} while (Head ()->Id () == nId);
 #else
-		m_nHead.Destroy ();
+		Head ()->Destroy ();
 		++m_nHead;
 #endif
 		}
