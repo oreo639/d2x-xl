@@ -39,6 +39,10 @@ Count ()--;
 #else
 if (nDelSeg < --Count ()) {
 	// move the last segment in the segment list to the deleted segment's position
+	if (current->m_nSegment == Count ())
+		current->m_nSegment = nDelSeg;
+	if (other->m_nSegment == Count ())
+		other->m_nSegment = nDelSeg;
 	*Segment (nDelSeg) = *Segment (Count ());
 	// update all trigger targets pointing at the moved segment
 	triggerManager.UpdateTargets (Count (), nDelSeg);
@@ -614,8 +618,8 @@ if (nDelSeg < 0 || nDelSeg >= Count ())
 
 undoManager.Begin (udSegments);
 CSegment* delSegP = Segment (nDelSeg); 
-current.Fix (nDelSeg);
-other.Fix (nDelSeg);
+current->Fix (nDelSeg);
+other->Fix (nDelSeg);
 delSegP->Backup (opDelete);
 Undefine (nDelSeg);
 
