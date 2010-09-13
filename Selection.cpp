@@ -87,6 +87,14 @@ return segmentManager.Wall (*this);
 
 // -----------------------------------------------------------------------------
 
+CTrigger* CSelection::Trigger (void)
+{
+CWall* wallP = Wall ();
+return (wallP == null) ? null : wallP->Trigger ();
+}
+
+// -----------------------------------------------------------------------------
+
 CGameObject* CSelection::Object (void)
 {
 return objectManager.Object (m_nObject);

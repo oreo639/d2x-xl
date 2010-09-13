@@ -455,11 +455,7 @@ else {
 		return false;
 		}
 	else {
-		// use current side's trigger
-		m_nTrigger = (nTrigger == NO_TRIGGER) ? -1 : nTrigger;
-		// if found, proceed
-		if ((m_nTrigger == -1) || (wallManager.FindByTrigger (m_nTrigger) == null))
-			return false;
+		m_nTrigger (current->Trigger () == null) ? -1 : triggerManager.Index (current->Trigger ());
 		}
 	}
 return true;
@@ -475,7 +471,7 @@ if (!(m_bInited && theMine))
 	return;
 
 	int			i;
-	short			nTrigger;
+	short			nTrigger = -1;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
 	CSide		*sideP;
@@ -948,7 +944,7 @@ return m_triggerP->Find (nSegment, nSide);
 
 void CTriggerTool::OnSetTarget () 
 {
-short nTrigger;
+short nTrigger = -1;
 if (!FindTrigger (nTrigger))
 	return;
 SetTriggerPtr ();
