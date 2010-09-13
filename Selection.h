@@ -38,6 +38,7 @@ public:
 	CVertex* Vertex (void);
 	CColor* LightColor (void);
 	void Setup (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1);
+	void Fix (short nSegment);
 	inline short& Index (void) { return m_nIndex; }
 };
 

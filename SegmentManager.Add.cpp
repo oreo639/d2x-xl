@@ -614,6 +614,8 @@ if (nDelSeg < 0 || nDelSeg >= Count ())
 
 undoManager.Begin (udSegments);
 CSegment* delSegP = Segment (nDelSeg); 
+current.Fix (nDelSeg);
+other.Fix (nDelSeg);
 delSegP->Backup (opDelete);
 Undefine (nDelSeg);
 
@@ -682,14 +684,6 @@ Remove (nDelSeg);
 vertexManager.DeleteUnused (); 
 
 // make sure current segment numbers are valid
-if (selections [0].m_nSegment >= Count ()) 
-  selections [0].m_nSegment--; 
-if (selections [1].m_nSegment >= Count ()) 
-  selections [1].m_nSegment--; 
-if (selections [0].m_nSegment < 0) 
-  selections [0].m_nSegment = 0; 
-if (selections [1].m_nSegment < 0) 
-  selections [1].m_nSegment = 0; 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
 undoManager.End ();

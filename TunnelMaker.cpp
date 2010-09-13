@@ -66,7 +66,7 @@ return v;
 // Action - swaps vertices of opposing side if cube is twisted
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::UntwistSegment (short nSegment,short nSide) 
+void CTunnelMaker::UntwistSegment (short nSegment, short nSide) 
 {
   double		len, minLen = 1e10;
   short		index,j;
@@ -225,7 +225,6 @@ z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 
 void CTunnelMaker::Realize (void)
 {
-undoManager.Begin (udSegments | udVertices);
 for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 	CSegment* segP = segmentManager.Segment (m_nSegments [nSegment]);
 	// copy current segment
@@ -265,7 +264,6 @@ for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 		}
 	// define child bitmask, special, matcen, value, and wall bitmask
 	}
-undoManager.End ();
 }
 
 //------------------------------------------------------------------------------
@@ -310,8 +308,8 @@ if (!m_bActive) {
 		return;
 		}
 	// make sure there are no children on either segment/side
-	if ((segmentManager.Segment (selections [0].m_nSegment)->Child (selections [0].m_nSide) != -1) ||
-		 (segmentManager.Segment (selections [1].m_nSegment)->Child (selections [1].m_nSide) != -1)) {
+	if ((selections [0].Segment ()->Child (selections [0].m_nSide) != -1) ||
+		 (selections [1].Segment ()->Child (selections [1].m_nSide) != -1)) {
 		ErrorMsg ("Starting and/or ending point of nSegment\n"
 					"already have cube(s) attached.\n\n"
 					"Hint: Put the current cube and the alternate cube\n"
@@ -357,10 +355,12 @@ if (!m_bActive) {
 else {
 	m_bActive = false;
 	// ask if user wants to keep the new nSegment
-	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES)
-		Destroy ();
-	else
-		Realize ();
+	Destroy ();
+	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) == IDYES) {
+		undoManager.Begin (udSegments | udVertices);
+		ComputeTunnel ();
+		undoManager.End ();
+		}
 	}
 segmentManager.SetLinesToDraw ();
 DLE.MineView ()->Refresh ();
@@ -408,10 +408,8 @@ DLE.MineView ()->Refresh ();
 void CTunnelMaker::ComputeTunnel (void) 
 {
   double length;
-  double angle;
   int i,j;
   CSegment *segP;
-  ushort nVertex;
   CVertex vertex;
   double theta [2][4],radius [2][4]; // polor coordinates of sides
   double delta_angle [4];
@@ -528,61 +526,7 @@ sprintf_s (message, sizeof (message), "theta [0] = %d,%d,%d,%d\n"
 DebugMsg(message);
 #endif
 
-// calculate segment vertices as weighted average between the two sides
-// then spin vertices in the direction of the segment vector
-nVertex = 0;
-for (i = 0; i < m_nLength [0]; i++) {
-	for (j = 0; j < 4; j++) {
-		CVertex* vertP = vertexManager.Vertex (m_nVertices [nVertex++]);
-		angle  = ((double) i / (double) m_nLength [0]) * delta_angle [j] + theta [0][j];
-		length = ((double) i / (double) m_nLength [0]) * radius [1][MatchingSide (j)] + (((double) m_nLength [0] - (double) i) / (double) m_nLength [0]) * radius [0][j];
-		*vertP = RectPoints (angle, length, &relTunnelPoints [i], &relTunnelPoints [i+1]);
-		// spin vertices
-		SpinBackPoint (vertP, ySpin, zSpin);
-		// translate point back
-		*vertP += m_points [0];
-		}
-	}
-
-  // define segment vert numbers
-for (i = 0; i < m_nLength [0]; i++) {
-	// use last "n_tunnel" segments
-	segP = segmentManager.Segment (m_nSegments [i]);
-	segP->Reset ();
-	nVertex = i * 4;
-	for (j = 0; j < 4; j++) {
-		if (i == 0) {         // 1st segment
-			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex + j];
-			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
-			}
-		else {
-			if(i < m_nLength [0] - 1) { // center segments
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex + j];
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
-				} 
-			else {          // last segment
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
-				}
-			}
-		}
-// int twisted segments
-	UntwistSegment (segP, m_info [0].m_nSide);
-	if (i == 0) {
-		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
-		segP->SetChild (m_info [0].m_nSide, m_nSegments [1]);
-		m_info [0].Segment ()->SetChild (m_info [0].m_nSide, m_nSegments [0]);
-		} 
-	else if (i == m_nLength [0] - 1) {
-		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [i - 1]);
-		segP->SetChild (m_info [0].m_nSide, m_info [1].m_nSegment);
-		m_info [1].Segment ()->SetChild (m_info [1].m_nSide, m_nSegments [i]);
-		}
-	else {
-		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [i - 1]);
-		segP->SetChild (m_info [0].m_nSide, m_nSegments [i + 1]);
-		}
-	}
+Realize ();
 }
 
 //------------------------------------------------------------------------------

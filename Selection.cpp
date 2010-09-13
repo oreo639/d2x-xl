@@ -107,6 +107,34 @@ return lightManager.LightColor (*this);
 }
 
 // -----------------------------------------------------------------------------
+
+void CSelection::Fix (short nSegment)
+{
+if (m_nSegment != nSegment)
+	return;
+short nChild;
+if ((nChild = Child ()) > -1) {
+	m_nSegment = nChild;
+	return;
+	}
+if ((nChild = Segment ()->Child (oppSideTable [m_nSide])) > -1) {
+	m_nSegment = nChild;
+	return;
+	}
+for (short nSide = 0; nSide < 6; nSide++)
+	if ((nChild = Segment ()->Child (nSide) >= 0)) {
+		m_nSegment = nChild;
+		return;
+		}
+if (segmentManager.Count () == 1)
+	return;
+if (m_nSegment >= segmentManager.Count () - 1)
+	m_nSegment--;
+else
+	m_nSegment++;
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
