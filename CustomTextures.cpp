@@ -185,7 +185,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	fp.Seek (hdrOffset + i * sizeof (PIG_TEXTURE_D2), SEEK_SET);
 	pigTexInfo.Read (fp);
 	nSize = (uint) pigTexInfo.width * (uint) pigTexInfo.height;
-	if (hdrSize + pigTexInfo.offset + nSize >= nFileSize) {
+	if ((long) (hdrSize + pigTexInfo.offset + nSize) >= nFileSize) {
 		nMissingTextures++;
 		continue;
 		}
