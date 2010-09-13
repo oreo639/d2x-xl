@@ -11,51 +11,45 @@ template < class _T >
 class CGameItemIterator {
 	protected:
 		_T*	m_buffer;
-		_T*	m_value;
 		int	m_count;
 		int	m_index;
 		_T		m_null;
 
 	public:
-		CGameItemIterator (_T* buffer, int count) : m_index (0), m_buffer (buffer), m_value (buffer), m_count (count) {}
+		CGameItemIterator (_T* buffer, int count) : m_index (0), m_buffer (buffer), m_count (count) {}
 
 #if USE_FREELIST
 
 		//prefix increment
 		inline _T& operator++ () { 
-			do {
-				m_value = &m_buffer [m_index++];
-				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).Index () < 0));
+			while (!end () && (m_buffer [++m_index].Index () < 0))
+				;
 			--m_count;
-			return *m_value; 
+			return &m_buffer [m_index]; 
 			}
 
 		// postfix increment
 		inline _T& operator++ (int) { 
-			_T* m_value;
-			do {
-				m_value = &m_buffer [m_index++];
-				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).Index () < 0));
+			while (!end () && (m_buffer [m_index++].Index () < 0))
+				;
 			--m_count;
-			return *m_value; 
+			return &m_buffer [m_index - 1]; 
 			}
 
 		// prefix decrement
 		inline _T& operator-- () { 
-			do {
-				m_value = m_buffer [--m_index];
-				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).Index () < 0));
+			while (!end () && (m_buffer [--m_index].Index () < 0))
+				;
 			--m_count;
-			return *m_value; 
+			return m_buffer [m_index]; 
 			}
 
 		// postfix decrement
 		inline _T& operator-- (int) { 
-			do {
-				m_value = &m_buffer [m_index--];
-				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).Index () < 0));
+			while (!end () && (m_buffer [m_index--].Index () < 0))
+				;
 			--m_count;
-			return *m_value; 
+			return m_buffer [m_index - 1]; 
 			}
 
 #else //USE_FREELIST
@@ -65,7 +59,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return *(m_value = &m_buffer [++m_index]);
+			return m_buffer [++m_index];
 			}
 
 		// postfix increment
@@ -73,7 +67,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return *(m_value = &m_buffer [m_index++]);
+			return m_buffer [m_index++];
 			}
 
 		// prefix decrement
@@ -81,7 +75,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return *(m_value = &m_buffer [--m_index]);
+			return &m_buffer [--m_index];
 			}
 
 		// postfix decrement
@@ -89,7 +83,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return *(m_value = &m_buffer [m_index--]);
+			return &m_buffer [m_index--];
 			}
 
 #endif // USE_FREELIST
@@ -107,9 +101,9 @@ class CGameItemIterator {
 
 		inline const bool operator!= (int i) { return m_index != i; }
 
-		inline _T* operator-> () { return end () ? null : m_value; }
+		inline _T* operator-> () { return end () ? null : &m_buffer [m_index]; }
 
-		inline _T& operator* () { return end () ? m_null : *m_value; }
+		inline _T& operator* () { return end () ? m_null : m_buffer [m_index]; }
 
 		inline const int Index (void) { return (int) (m_value - m_buffer); }
 	};
