@@ -182,7 +182,6 @@ m_disableDrawing = TRUE;
 
 fp.Seek (mineDataOffset, SEEK_SET);
 mineErr = LoadMineGeometry (fp, bNewMine);
-int fPos = fp.Tell ();
 
 if (mineErr != 0) {
 	ErrorMsg ("Error loading mine data");

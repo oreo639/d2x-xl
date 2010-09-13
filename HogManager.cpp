@@ -369,8 +369,8 @@ fSrc.Seek (long (fPos), SEEK_SET);
 while (size > 0) {
 	chunk = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;
 	fSrc.Read (dataBuf, 1, chunk);
-	if (!chunk)
-		break;
+	//if (!chunk)
+	//	break;
 	fTmp.Write (dataBuf, 1, chunk);
 	size -= chunk;
 	}

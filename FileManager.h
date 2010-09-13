@@ -50,7 +50,7 @@ typedef struct tFileInfo {
 
 class CFileManager {
 	private:
-		tFileInfo	m_cf;
+		tFileInfo	m_info;
 
 	public:
 		CFileManager () { Init (); }
@@ -71,7 +71,7 @@ class CFileManager {
 		int PutC (int c);
 		int PutS (const char *str);
 
-		inline int Size (void) { return m_cf.size; }
+		inline int Size (void) { return m_info.size; }
 
 		// prototypes for reading basic types from fp
 		int ReadInt32 (void);
@@ -148,8 +148,8 @@ class CFileManager {
 		static void SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt);
 		static void ChangeFilenameExtension (char *dest, const char *src, const char *new_ext);
 
-		inline FILE*& File () { return m_cf.file; }
-		inline char* Name () { return m_cf.filename; }
+		inline FILE*& File () { return m_info.file; }
+		inline char* Name () { return m_info.filename; }
 	};
 
 

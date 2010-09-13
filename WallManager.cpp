@@ -494,9 +494,7 @@ if (m_info [1].offset >= 0) {
 
 void CWallManager::WriteDoors (CFileManager& fp, int nFileVersion)
 {
-if (DoorCount () == 0)
-	m_info [1].offset = -1;
-else {
+if (m_info [1].Setup (fp)) {
 	m_info [1].size = 16;
 	m_info [1].offset = fp.Tell ();
 	for (short i = 0; i < WallCount (); i++)

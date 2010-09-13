@@ -118,10 +118,10 @@ return fp;
 int CFileManager::EoF (void)
 {
 #if DBG
-if (!m_cf.file)
+if (!m_info.file)
 	return 1;
 #endif
-return (m_cf.rawPosition >= m_cf.size);
+return (m_info.rawPosition >= m_info.size);
 }
 
 // ----------------------------------------------------------------------------
@@ -202,14 +202,14 @@ int CFileManager::Open (const char *filename, const char *mode)
 	int	length = -1;
 	FILE	*fp = null;
 
-m_cf.file = null;
+m_info.file = null;
 if (!(filename && *filename))
 	return 1;
-if (fopen_s (&m_cf.file, filename, mode))
+if (fopen_s (&m_info.file, filename, mode))
 	return 1;
-m_cf.rawPosition = 0;
-m_cf.size = (length < 0) ? ffilelength (m_cf.file) : length;
-m_cf.filename = const_cast<char*> (filename);
+m_info.rawPosition = 0;
+m_info.size = (length < 0) ? ffilelength (m_info.file) : length;
+m_info.filename = const_cast<char*> (filename);
 return 0;
 }
 
@@ -217,15 +217,15 @@ return 0;
 
 void CFileManager::Init (void) 
 {
-memset (&m_cf, 0, sizeof (m_cf)); 
-m_cf.rawPosition = -1; 
+memset (&m_info, 0, sizeof (m_info)); 
+m_info.rawPosition = -1; 
 }
 
 // ----------------------------------------------------------------------------
 
 int CFileManager::Length (void) 
 {
-return m_cf.size;
+return m_info.size;
 }
 
 // ----------------------------------------------------------------------------
@@ -238,12 +238,12 @@ int CFileManager::Write (const void *buffer, int nElemSize, int nElemCount)
 {
 	int nWritten;
 
-if (!m_cf.file)
+if (!m_info.file)
 	return 0;
 if (!(nElemSize * nElemCount))
 	return 0;
-nWritten = (int) fwrite (buffer, nElemSize, nElemCount, m_cf.file);
-m_cf.rawPosition = ftell (m_cf.file);
+nWritten = (int) fwrite (buffer, nElemSize, nElemCount, m_info.file);
+m_info.rawPosition = ftell (m_info.file);
 if (Error ())
 	return 0;
 return nWritten;
@@ -259,8 +259,8 @@ int CFileManager::PutC (int c)
 {
 	int char_written;
 
-char_written = fputc (c, m_cf.file);
-m_cf.rawPosition = ftell (m_cf.file);
+char_written = fputc (c, m_info.file);
+m_info.rawPosition = ftell (m_info.file);
 return char_written;
 }
 
@@ -270,11 +270,11 @@ int CFileManager::GetC (void)
 {
 	int c;
 
-if (m_cf.rawPosition >= m_cf.size) 
+if (m_info.rawPosition >= m_info.size) 
 	return EOF;
-c = getc (m_cf.file);
+c = getc (m_info.file);
 if (c != EOF)
-	m_cf.rawPosition = ftell (m_cf.file);
+	m_info.rawPosition = ftell (m_info.file);
 return c;
 }
 
@@ -288,8 +288,8 @@ int CFileManager::PutS (const char *str)
 {
 	int ret;
 
-ret = fputs (str, m_cf.file);
-m_cf.rawPosition = ftell (m_cf.file);
+ret = fputs (str, m_info.file);
+m_info.rawPosition = ftell (m_info.file);
 return ret;
 }
 
@@ -303,7 +303,7 @@ char * CFileManager::GetS (char * buffer, size_t n)
 
 for (i = 0; i < n - 1; i++) {
 	do {
-		if (m_cf.rawPosition >= m_cf.size) {
+		if (m_info.rawPosition >= m_info.size) {
 			*buffer = 0;
 			return (buffer == t) ? null : t;
 			}
@@ -335,10 +335,10 @@ size_t CFileManager::Read (void *buffer, size_t elSize, size_t nElems)
 {
 uint i, size = (int) (elSize * nElems);
 
-if (!m_cf.file || (m_cf.size < 1) || !size) 
+if (!m_info.file || (m_info.size < 1) || !size) 
 	return 0;
-i = (int) fread (buffer, 1, size, m_cf.file);
-m_cf.rawPosition += i;
+i = (int) fread (buffer, 1, size, m_info.file);
+m_info.rawPosition += i;
 return i / elSize;
 }
 
@@ -346,33 +346,17 @@ return i / elSize;
 
 int CFileManager::Tell (void) 
 {
-return m_cf.rawPosition;
+return m_info.rawPosition;
 }
 
 // ----------------------------------------------------------------------------
 
 int CFileManager::Seek (size_t offset, int whence) 
 {
-if (!m_cf.file)
+if (!m_info.file)
 	return -1;
-
-	int destPos;
-
-switch (whence) {
-	case SEEK_SET:
-		destPos = offset;
-		break;
-	case SEEK_CUR:
-		destPos = m_cf.rawPosition + offset;
-		break;
-	case SEEK_END:
-		destPos = m_cf.size + offset;
-		break;
-	default:
-		return 1;
-	}
-int c = fseek (m_cf.file, destPos, SEEK_SET);
-m_cf.rawPosition = ftell (m_cf.file);
+int c = fseek (m_info.file, destPos, SEEK_SET);
+m_info.rawPosition = ftell (m_info.file);
 return c;
 }
 
@@ -382,12 +366,12 @@ int CFileManager::Close (void)
 {
 	int result;
 
-if (!m_cf.file)
+if (!m_info.file)
 	return 0;
-result = fclose (m_cf.file);
-m_cf.file = null;
-m_cf.size = 0;
-m_cf.rawPosition = -1;
+result = fclose (m_info.file);
+m_info.file = null;
+m_info.size = 0;
+m_info.rawPosition = -1;
 return result;
 }
 
@@ -651,9 +635,9 @@ time_t CFileManager::Date (const char* filename)
 if (!Open (filename, "rb"))
 	return -1;
 #ifdef _WIN32
-fstat (_fileno (m_cf.file), &statbuf);
+fstat (_fileno (m_info.file), &statbuf);
 #else
-fstat (fileno (m_cf.file), &statbuf);
+fstat (fileno (m_info.file), &statbuf);
 #endif
 Close ();
 return statbuf.st_mtime;

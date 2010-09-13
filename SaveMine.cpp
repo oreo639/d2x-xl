@@ -154,7 +154,7 @@ return 0;
 //           materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
 
-short CMine::SaveGameItems(CFileManager& fp)
+short CMine::SaveGameItems (CFileManager& fp)
 {
 int startOffset = fp.Tell ();
 
@@ -172,9 +172,8 @@ else {
 }
 
 Info ().Write (fp);
-if (Info ().fileInfo.version >= 14) {  /*save mine filename */
+if (Info ().fileInfo.version >= 14) // save mine file name
 	fp.Write (m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
-}
 if (IsD2File ())
 	fp.Write ("\n", 1, 1); // write an end - of - line
 else

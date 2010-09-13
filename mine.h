@@ -74,8 +74,7 @@ class CMine {
 		void Default (void);
 		
 	public:
-		inline CMineData& Data (void)
-			{ return m_data; }
+		inline CMineData& Data (void) { return m_data; }
 
 		inline int LevelVersion (void) { return m_levelVersion; }
 		inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
