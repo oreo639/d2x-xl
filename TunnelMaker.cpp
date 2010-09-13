@@ -415,8 +415,8 @@ void CTunnelMaker::ComputeTunnel (void)
   CVertex vertex;
   double theta [2][4],radius [2][4]; // polor coordinates of sides
   double delta_angle [4];
-  CVertex rel_side_pts [2][4]; // side m_points reletave to center of side 1
-  CVertex rel_pts [4]; // 4 m_points of nSegment reletave to 1st point
+  CVertex relSidePoints [2][4]; // side m_points reletave to center of side 1
+  CVertex relPoints [4]; // 4 m_points of nSegment reletave to 1st point
   CVertex relTunnelPoints [MAX_TUNNEL_SEGMENTS];
   double y,z;
   double ySpin,zSpin;
@@ -442,8 +442,7 @@ m_nLength [0] = min (m_nLength [0], m_nMaxSegments - 1);
 if (m_nLength [1] < m_nLength [0]) {
 	for (i = m_nLength [1]; i < m_nLength [0]; i++)
 		m_nSegments [i] = segmentManager.Add ();
-	for (i = 4 * m_nLength [1]; i < 4 * m_nLength [0]; i++)
-		m_nVertices [i] = segmentManager.Add ();
+	vertexManager.Add (&m_nVertices [m_nLength [1]], (m_nLength [0] - m_nLength [1]) * 4);
 	}
 
 // calculate nSegment m_points
@@ -452,46 +451,46 @@ for (i = 0; i <= m_nLength [0]; i++)
 
 // make all m_points reletave to first face (translation)
 for (i = 0; i < 4; i++) 
-	rel_pts [i] = m_points [i] - m_points [0];
+	relPoints [i] = m_points [i] - m_points [0];
 segP = m_info [0].Segment ();
 for (i = 0; i < 4; i++) 
-	rel_side_pts [0][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [0].m_nSide][i]]) - m_points [0];
+	relSidePoints [0][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [0].m_nSide][i]]) - m_points [0];
 segP = m_info [1].Segment ();
 for (i = 0; i < 4; i++)
-	rel_side_pts [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [1].m_nSide][i]]) - m_points [0];
+	relSidePoints [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [1].m_nSide][i]]) - m_points [0];
 for (i = 0; i < m_nLength [0]; i++) {
 	relTunnelPoints [i] = m_points [i] - m_points [0];
 }
 
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
-ySpin = -atan3 (rel_pts [1].v.z, rel_pts [1].v.x); // to y-z plane
-zSpin = atan3 (rel_pts [1].v.y, rel_pts [1].v.x * cos (ySpin)-rel_pts [1].v.z * sin (ySpin)); // to x axis
+ySpin = -atan3 (relPoints [1].v.z, relPoints [1].v.x); // to y-z plane
+zSpin = atan3 (relPoints [1].v.y, relPoints [1].v.x * cos (ySpin) - relPoints [1].v.z * sin (ySpin)); // to x axis
 
 // spin all m_points reletave to first face (rotation)
 for (i = 0; i < 4; i++) {
-	SpinPoint (rel_pts + i, ySpin, zSpin);
+	SpinPoint (relPoints + i, ySpin, zSpin);
 	for (j = 0; j < 2; j++) 
-		SpinPoint (rel_side_pts [j] + i, ySpin, zSpin);
+		SpinPoint (relSidePoints [j] + i, ySpin, zSpin);
 	}
 
 for (i = 0; i < m_nLength [0]; i++) 
-	SpinPoint (relTunnelPoints + i,ySpin,zSpin);
+	SpinPoint (relTunnelPoints + i, ySpin, zSpin);
 
 // determine polar coordinates of the 1st side (simply y,z coords)
 for (i = 0; i < 4; i++) {
-	theta [0][i] = atan3 (rel_side_pts [0][i].v.z,rel_side_pts [0][i].v.y);
-	y = (float) rel_side_pts [0][i].v.y;
-	z = (float) rel_side_pts [0][i].v.z;
-	radius [0][i] = sqrt(y*y + z*z);
+	theta [0][i] = atan3 (relSidePoints [0][i].v.z,relSidePoints [0][i].v.y);
+	y = relSidePoints [0][i].v.y;
+	z = relSidePoints [0][i].v.z;
+	radius [0][i] =_hypot (y, z);
 	}
 
 // determine polar coordinates of the 2nd side by rotating to x-axis first
 for (i = 0; i < 4; i++) {
 	// flip orthoginal vector to point into cube
-	vertex.Set (rel_pts [3].v.x - rel_pts [2].v.x + rel_pts [3].v.x,
-					rel_pts [3].v.y - rel_pts [2].v.y + rel_pts [3].v.y,
-					rel_pts [3].v.z - rel_pts [2].v.z + rel_pts [3].v.z);
-	PolarPoints (&theta [1][i], &radius [1][i], &rel_side_pts [1][i], &rel_pts [3], &vertex);
+	vertex.Set (relPoints [3].v.x - relPoints [2].v.x + relPoints [3].v.x,
+					relPoints [3].v.y - relPoints [2].v.y + relPoints [3].v.y,
+					relPoints [3].v.z - relPoints [2].v.z + relPoints [3].v.z);
+	PolarPoints (&theta [1][i], &radius [1][i], &relSidePoints [1][i], &relPoints [3], &vertex);
 	}
 
 // figure out the angle differences to be in range (-pi to pi)
@@ -552,17 +551,17 @@ for (i = 0; i < m_nLength [0]; i++) {
 	nVertex = i * 4;
 	for (j = 0; j < 4; j++) {
 		if (i == 0) {         // 1st segment
-			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
+			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex + j];
 			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
 			}
 		else {
 			if(i < m_nLength [0] - 1) { // center segments
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex + j];
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
 				} 
 			else {          // last segment
 				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
 				}
 			}
 		}
