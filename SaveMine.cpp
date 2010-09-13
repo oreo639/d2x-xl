@@ -218,8 +218,6 @@ if (IsD2File ()) {
 
 fp.Seek (startOffset, SEEK_SET);
 Info ().Write (fp);
-fp.Seek (startOffset, SEEK_SET);
-Info ().Read (fp);
 fp.Seek (0, SEEK_END);
 return 0;
 }

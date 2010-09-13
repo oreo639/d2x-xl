@@ -112,10 +112,7 @@ fp.Write (mineFilename, 1, sizeof (mineFilename));
 fp.Write (level);
 player.Write (fp);
 objectManager.WriteInfo (fp);
-long fPos = fp.Tell ();
 wallManager.WriteInfo (fp);
-fp.Seek (fPos, SEEK_SET);
-wallManager.ReadInfo (fp);
 triggerManager.WriteInfo (fp);
 CMineItemInfo links; // unused
 links.Write (fp);
