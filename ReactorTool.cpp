@@ -11,7 +11,7 @@
 #include "dle-xp.h"
 #include "toolview.h"
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CReactorTool, CToolDlg)
 	ON_BN_CLICKED (IDC_REACTOR_ADDTGT, OnAddTarget)
@@ -49,7 +49,7 @@ m_iTarget = -1;
 *m_szTarget = '\0';
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CReactorTool::OnInitDialog ()
 {
@@ -188,7 +188,7 @@ Refresh ();
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CReactorTool::OnAddTarget () 
 {
@@ -200,7 +200,7 @@ if ((nSegment < 0) || (nSegment >= segmentManager.Count ()) || (nSide < 1) || (n
 AddTarget (nSegment, nSide);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CReactorTool::OnAddWallTarget ()
 {
@@ -231,14 +231,14 @@ LBTargets ()->SetCurSel (m_iTarget);
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CReactorTool::FindTarget (short nSegment, short nSide)
 {
 return m_triggerP->Find (nSegment, nSide);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CReactorTool::OnDeleteWallTarget ()
 {
@@ -278,6 +278,6 @@ if ((current->m_nSegment == nSegment) && (current->m_nSide == nSide))
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 //eof reactordlg.cpp

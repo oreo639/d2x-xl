@@ -12,7 +12,7 @@
 #include "toolview.h"
 #include "TextureManager.h"
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CTriggerTool, CTexToolDlg)
 	ON_WM_PAINT ()
@@ -103,7 +103,7 @@ if (m_bInited) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::LoadTextureListBoxes () 
 {
@@ -159,7 +159,7 @@ memset (m_bD2Flags, 0, sizeof (m_bD2Flags));
 *m_szTarget = '\0';
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 typedef struct tTriggerData {
 	char	*pszName;
@@ -785,7 +785,7 @@ undoManager.End ();
 return m_bD1Flags [i] != 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::OnD2Flag (int i, int j)
 {
@@ -859,7 +859,7 @@ Refresh ();
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::OnAddTarget () 
 {
@@ -877,7 +877,7 @@ if (nSegment > ((nSide == 0) ? objectManager.Count () : segmentManager.Count ())
 AddTarget (nSegment, nSide);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::OnAddWallTarget ()
 {
@@ -899,7 +899,7 @@ if (i > -1)
 AddTarget (other->m_nSegment, other->m_nSide + 1);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::OnAddObjTarget ()
 {
@@ -933,7 +933,7 @@ LBTargets ()->SetCurSel (m_iTarget);
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CTriggerTool::FindTarget (short nSegment, short nSide)
 {
@@ -970,7 +970,7 @@ if ((current->m_nSegment == nSegment) && (current->m_nSide == nSide))
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::OnCopyTrigger ()
 {
@@ -980,7 +980,7 @@ if (m_nTrigger == -1)
 m_defTrigger = *triggerManager.Trigger (m_nTrigger);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::OnPasteTrigger ()
 {
@@ -994,49 +994,49 @@ Refresh ();
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CTriggerTool::OnAddOpenDoor ()
 {
 triggerManager.AddOpenDoor ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CTriggerTool::OnAddRobotMaker ()
 {
 triggerManager.AddRobotMaker ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CTriggerTool::OnAddShieldDrain ()
 {
 triggerManager.AddShieldDrain ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CTriggerTool::OnAddEnergyDrain ()
 {
 triggerManager.AddEnergyDrain ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CTriggerTool::OnAddControlPanel ()
 {
 triggerManager.AddUnlock ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTriggerTool::TextureIsVisible ()
 {
 return !m_nClass && (m_triggerP != null) && (m_iTarget >= 0) && (m_iTarget < m_triggerP->m_count);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::SelectTexture (int nIdC, bool bFirst)
 {
@@ -1056,21 +1056,21 @@ else {
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::OnSelect1st () 
 {
 SelectTexture (IDC_TRIGGER_TEXTURE1, true);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::OnSelect2nd () 
 {
 SelectTexture (IDC_TRIGGER_TEXTURE2, false);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTriggerTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
@@ -1118,7 +1118,7 @@ if (pScrollBar == SpeedBoostSlider ()) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 
 //eof triggerdlg.cpp

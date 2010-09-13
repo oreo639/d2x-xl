@@ -306,7 +306,7 @@ for (i = 0, h = GetToolBarCtrl ().GetButtonCount (); i < h; i++) {
 return dx;// - 4;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CExtToolBar::OnTimer (UINT_PTR nIdEvent)
 {
@@ -566,7 +566,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 return CFrameWnd::PreCreateWindow(cs);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 #define CX_TOOLS		354
 #define CY_TOOLS		150
@@ -1317,7 +1317,7 @@ void CMainFrame::OnUpdateViewTexturemapped(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(GetMineView()->m_viewOption == eViewTextureMapped ? 1 : 0);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CMainFrame::EditGeoFwd (void)
 {
@@ -1399,7 +1399,7 @@ MineView ()->Refresh ();
 return true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMainFrame::OnEditGeoFwd ()
 {
@@ -1451,7 +1451,7 @@ void CMainFrame::OnEditGeoShrink ()
 EditGeoShrink ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMainFrame::OnSelNextCubeElem ()
 {
@@ -1626,7 +1626,7 @@ else {
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMainFrame::RecalcLayout (int nToolMode, int nTextureMode)
 {
@@ -1676,7 +1676,7 @@ else {
 CFrameWnd::RecalcLayout ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDlcSplitterWnd::RecalcLayout (int nToolMode, int nTextureMode)
 {
@@ -1711,7 +1711,7 @@ if (DLE.MainFrame () && DLE.ToolView ()) {
 CSplitterWnd::RecalcLayout ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMainFrame::DebugMsg (const char *pszMsg)
 {
@@ -1728,7 +1728,7 @@ if (!DLE.ToolView ()->DiagTool ()->Inited ())
 DLE.ToolView ()->DiagTool ()->AddMessage (pszMsg, 100);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CMainFrame::InitProgress (int nMax)
 {
@@ -1741,7 +1741,7 @@ m_progress.SetStep (1);
 return true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 #if EDITBAR == 0
 
@@ -1763,7 +1763,7 @@ BEGIN_MESSAGE_MAP(CEditTool, CDialog)
 	ON_BN_CLICKED (IDC_EDITGEO9, OnEditGeo9)
 END_MESSAGE_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CEditTool::CEditTool ()
 {
@@ -1771,7 +1771,7 @@ m_nTimer = -1;
 m_nEditFunc = -1;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CEditTool::OnInitDialog ()
 {
@@ -1783,7 +1783,7 @@ for (int i = 0; i < 10; i++)
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CEditTool::EditGeo0 (void) { return DLE.MainFrame ()->EditGeoShrink (); }
 bool CEditTool::EditGeo1 (void) { return DLE.MainFrame ()->EditGeoRotLeft (); }
@@ -1852,7 +1852,7 @@ QuitEditFunc ();
 CDialog::OnMouseMove (nFlags, pos);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CEditTool::OnTimer (UINT_PTR nIdEvent)
 {
@@ -1924,7 +1924,7 @@ if ((m_nEditFunc == UINT (-1)) || (i >= 25)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CEditTool::OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
@@ -1953,6 +1953,6 @@ return TRUE;
 		
 #endif
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 //eof mainfrm.cpp

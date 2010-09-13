@@ -16,7 +16,7 @@
 #include "PolyModel.h"
 #include "texturefilter.h"
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CTextureView : public CWnd {
 	public:

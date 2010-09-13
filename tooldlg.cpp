@@ -96,7 +96,7 @@ DDX_Check (pDX, nIDC, i);
 return i;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolDlg::InitSlider (int nIdC, int nMin, int nMax) 
 {
@@ -108,7 +108,7 @@ if (ps = (CSliderCtrl *) GetDlgItem (nIdC)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolDlg::DDX_Slider (CDataExchange * pDX, int nIdC, int& nTic) 
 {
@@ -123,7 +123,7 @@ if (nTic != ps->GetPos ())
 	nTic = 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CToolDlg::GetCheck (int nIdC)
 {
@@ -143,7 +143,7 @@ for (i = nIdFirst; i <= nIdLast; i++)
 		pWnd->EnableWindow (bEnable);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolDlg::CreateImgWnd (CWnd * pImgWnd, int nIdC)
 {
@@ -153,7 +153,7 @@ pParentWnd->GetClientRect (rc);
 pImgWnd->Create (null, null, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolDlg::OnSelectPrevTab ()
 {
@@ -161,7 +161,7 @@ DLE.MainFrame ()->ShowTools ();
 DLE.ToolView ()->PrevTab ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolDlg::OnSelectNextTab ()
 {
@@ -169,7 +169,7 @@ DLE.MainFrame ()->ShowTools ();
 DLE.ToolView ()->NextTab ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CToolDlg::CBAddString (CComboBox *pcb, char *str)
 {
@@ -194,7 +194,7 @@ if (i > 0)
 return pcb->InsertString (m, str);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolDlg::SelectItemData (CComboBox *pcb, int nItemData)
 {
@@ -210,7 +210,7 @@ void CToolDlg::SelectItemData (CComboBox *pcb, int nItemData)
 pcb->SetCurSel (-1);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 #if 0
 int CToolDlg::OnToolHitTest (CPoint point, TOOLINFO* pTI)
@@ -224,7 +224,7 @@ return 1;
 }
 #endif
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CToolDlg::OnToolTipNotify (UINT id, NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -253,7 +253,7 @@ else
 return TRUE;    // message was handled
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 IMPLEMENT_DYNCREATE(CTexToolDlg, CToolDlg)
 
@@ -276,7 +276,7 @@ m_nTimer = -1;
 m_bOtherSegment = bOtherSegment;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CTexToolDlg::~CTexToolDlg ()
 {
@@ -286,7 +286,7 @@ if (m_bInited) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTexToolDlg::OnInitDialog ()
 {
@@ -297,14 +297,14 @@ m_bInited = true;
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTexToolDlg::TextureIsVisible ()
 {
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CTexToolDlg::Refresh (short nBaseTex, short nOvlTex, short nVisible)
 {
@@ -328,7 +328,7 @@ if (nVisible > 0)
 return PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTexToolDlg::OnPaint ()
 {
@@ -343,7 +343,7 @@ m_textureWnd.InvalidateRect (null);
 m_textureWnd.UpdateWindow ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTexToolDlg::OnSetActive ()
 {
@@ -352,7 +352,7 @@ if (m_nTimerId >= 0)
 return CToolDlg::OnSetActive ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTexToolDlg::OnKillActive ()
 {
@@ -363,7 +363,7 @@ if (m_nTimer >= 0) {
 return CToolDlg::OnKillActive ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 	static int scroll_offset_x = 0;
 	static int scroll_offset_y = 0;
@@ -477,7 +477,7 @@ if (anim [index [0]] || anim [index [1]]) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTexToolDlg::OnTimer (UINT_PTR nIdEvent)
 {
@@ -487,7 +487,7 @@ else
 	CToolDlg::OnTimer (nIdEvent);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolDlg::GetCtrlClientRect (CWnd *pWnd, CRect& rc)
 {

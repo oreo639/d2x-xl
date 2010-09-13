@@ -11,7 +11,7 @@
 #include "dle-xp.h"
 #include "toolview.h"
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CEffectTool, CToolDlg)
 	ON_WM_HSCROLL ()
@@ -82,7 +82,7 @@ void CEffectTool::Reset ()
 m_nBufferId = -1;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CEffectTool::LoadEffectList () 
 {
@@ -115,7 +115,7 @@ for (i = 0; i < objectManager.Count (); i++, objP++) {
 SelectItemData (cbEffects, curSel);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CEffectTool::OnInitDialog ()
 {

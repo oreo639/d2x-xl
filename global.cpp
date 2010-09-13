@@ -110,7 +110,7 @@ double angleRate = (double)PI / 16.f;
 double moveRate = 1.0;
 double depthPerception = 1000.0;
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int renderXOffs = 0;
 int renderYOffs = 0;

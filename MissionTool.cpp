@@ -44,7 +44,7 @@ BEGIN_MESSAGE_MAP(CMissionTool, CToolDlg)
 */
 END_MESSAGE_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CMissionTool::CMissionTool (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_MISSIONDATA2 : IDD_MISSIONDATA, pParent)
@@ -54,7 +54,7 @@ m_missionData.numLevels =
 m_missionData.numSecrets = 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CMissionTool::OnInitDialog ()
 {
@@ -66,7 +66,7 @@ Refresh ();
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 
 void CMissionTool::Refresh (void)
@@ -85,7 +85,7 @@ Refresh ();
 return CToolDlg::OnSetActive ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::BuildLevelList (void)
 {
@@ -100,7 +100,7 @@ for (j = 0; j < m_missionData.numSecrets; i++, j++)
 	plb->AddString (m_missionData.levelList [i]);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::DoDataExchange (CDataExchange * pDX)
 {
@@ -163,7 +163,7 @@ DDX_Text (pDX, IDC_MISSION_LEVELEDIT, m_szLevel, sizeof (m_szLevel));
 DDX_Text (pDX, IDC_MISSION_COMMENT, m_missionData.comment, sizeof (m_missionData.comment));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnOK (void)
 {
@@ -172,7 +172,7 @@ memcpy (&missionData, &m_missionData, sizeof (missionData));
 WriteMissionFile (DLE.GetDocument ()->File (), DLE.LevelVersion ());
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnCancel (void)
 {
@@ -180,7 +180,7 @@ memcpy (&m_missionData, &missionData, sizeof (missionData));
 UpdateData (FALSE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 LPSTR CMissionTool::CopyLevelName (LPSTR pszDest, LPSTR pszSrc)
 {
@@ -190,7 +190,7 @@ _strlwr_s (pszDest, 13);
 return pszDest;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 LPSTR CMissionTool::FixLevelName (LPSTR pszName)
 {
@@ -205,14 +205,14 @@ strcat_s (pszName, 256, DLE.IsD1File () ? ".rdl" : ".rl2");
 return pszName;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnSetLevelName ()
 {
 UpdateData (TRUE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnAdd ()
 {
@@ -243,7 +243,7 @@ if (*m_szLevel) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnDelete ()
 {
@@ -253,7 +253,7 @@ if ((i >= 0) && (i < LBLevels ()->GetCount ()))
 	LBLevels ()->DeleteString (i);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnRename ()
 {
@@ -273,7 +273,7 @@ if ((i >= 0) && (i < LBLevels ()->GetCount ())) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnUp ()
 {
@@ -288,7 +288,7 @@ if (i > 0) {
 	}	
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnDown ()
 {
@@ -304,7 +304,7 @@ if ((i >= 0) && (i < h - 1)) {
 	}	
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnFromHog ()
 {
@@ -312,7 +312,7 @@ if (!ReadHogData (DLE.GetDocument ()->File (), LBLevels (), false, true, false))
 	UpdateData (TRUE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMissionTool::OnLoadLevel (void)
 {
@@ -328,6 +328,6 @@ if (psz)
 DLE.GetDocument ()->OpenFile (false, null, szNewFile);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 //eof prefsdlg.cpp

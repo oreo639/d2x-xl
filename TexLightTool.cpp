@@ -28,7 +28,7 @@ static char THIS_FILE [] = __FILE__;
 // CToolView
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::AnimateLight (void)
 {
@@ -65,7 +65,7 @@ UpdateColorCtrl (
 		RGB (0,0,0));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::ToggleLight (int i)
 {
@@ -74,7 +74,7 @@ pb->SetCheck (!pb->GetCheck ());
 SetLightString ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::UpdateLight (void)
 {
@@ -101,7 +101,7 @@ if ((vlP->m_info.mask != nLightMask) || (vlP->m_info.delay != nDelay)) {
 //m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CTextureTool::SetLightDelay (int nSpeed)
 {
@@ -124,7 +124,7 @@ UpdateData (FALSE);
 return true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::SetLightString (void)
 {
@@ -142,7 +142,7 @@ if (strcmp (szLight, m_szLight)) {
 	}
 }
 		
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::SetLightButtons (LPSTR szLight, int nSpeed)
 {
@@ -169,7 +169,7 @@ if (!SetLightDelay (nSpeed)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::EnableLightControls (BOOL bEnable)
 {
@@ -178,7 +178,7 @@ for (i = IDC_TEXLIGHT_OFF; i <= IDC_TEXLIGHT_TIMER; i++)
 	GetDlgItem (i)->EnableWindow (bEnable);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::UpdateLightWnd (void)
 {
@@ -218,7 +218,7 @@ m_szLight [32] = '\0';
 SetLightButtons (m_szLight, (int) (((1000 * lightManager.VariableLight (m_iLight)->m_info.delay + F0_5) / F1_0)));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnLightEdit ()
 {
@@ -230,7 +230,7 @@ else {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnLightTimerEdit ()
 {
@@ -242,7 +242,7 @@ else {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnAddLight ()
 {
@@ -254,7 +254,7 @@ else if (0 <= (m_iLight = lightManager.AddVariableLight (*current, 0xAAAAAAAAL, 
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnDeleteLight ()
 {
@@ -267,7 +267,7 @@ else if (lightManager.DeleteVariableLight ()) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnLightOff () { SetLightButtons ("", 1000); }
 void CTextureTool::OnLightOn () { SetLightButtons ("11111111111111111111111111111111", 1000); }
@@ -276,7 +276,7 @@ void CTextureTool::OnLightStrobe8 () { SetLightButtons ("10001000100010001000100
 void CTextureTool::OnLightFlicker () { SetLightButtons ("11111111000000111100010011011110", 100); }
 void CTextureTool::OnLightDefault () { SetLightButtons ("10101010101010101010101010101010", 250); }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnLight1 () { ToggleLight (1); }
 void CTextureTool::OnLight2 () { ToggleLight (2); }
@@ -311,7 +311,7 @@ void CTextureTool::OnLight30 () { ToggleLight (30); }
 void CTextureTool::OnLight31 () { ToggleLight (31); }
 void CTextureTool::OnLight32 () { ToggleLight (32); }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::SetWallColor (void)
 {
@@ -340,7 +340,7 @@ if (lightManager.UseTexColors ()) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnLButtonDown (UINT nFlags, CPoint point)
 {
@@ -380,7 +380,7 @@ if (/*(DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 		
 void CTextureTool::ChooseRGBColor (void)
 {
@@ -407,6 +407,6 @@ if (ChooseColor (&cc)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 		
 		//eof texturedlg.cpp

@@ -18,7 +18,7 @@
 #include <time.h>
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::SetViewPoints (CRect *pRC, bool bSetViewInfo)
 {
@@ -128,7 +128,7 @@ for (short nDist = 1; (j < segCount) && (h < i); nDist++) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::DrawMineCenter (CDC *pViewDC)
 {
@@ -1572,7 +1572,7 @@ sprintf_s (message + strlen (message), sizeof (message) - strlen (message),  "%1
 STATUSMSG (message);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 
 //eof

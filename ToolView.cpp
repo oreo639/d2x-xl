@@ -39,7 +39,7 @@ BEGIN_MESSAGE_MAP(CToolView, CWnd)
 	ON_COMMAND(ID_SEL_NEXTTAB, OnSelectNextTab)
 END_MESSAGE_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CToolView::CToolView ()
 	: CWnd ()
@@ -67,7 +67,7 @@ m_bVScroll = FALSE;
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CToolView::~CToolView ()
 {
@@ -180,7 +180,7 @@ CalcToolSize ();
 return 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CToolView::OnCreate (LPCREATESTRUCT lpCreateStruct) 
 {
@@ -190,7 +190,7 @@ return 0;
 //return Setup ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::CalcToolSize (void) 
 {
@@ -201,7 +201,7 @@ m_toolSize.cy = rc.Height () + 6/*+ 12*/;
 RecalcLayout ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::OnDestroy (void) 
 {
@@ -268,7 +268,7 @@ void CToolView::MoveWindow (LPCRECT lpRect, BOOL bRepaint)
 MoveWindow (lpRect->left, lpRect->top, lpRect->right - lpRect->left, lpRect->bottom - lpRect->top, bRepaint);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::OnHScroll (UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
@@ -310,7 +310,7 @@ SetScrollPos (SB_HORZ, m_scrollOffs [0], TRUE);
 RecalcLayout ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::OnVScroll (UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
@@ -352,7 +352,7 @@ SetScrollPos (SB_VERT, m_scrollOffs [1], TRUE);
 RecalcLayout ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::RecalcLayout (int nToolMode, int nTextureMode)
 {
@@ -412,7 +412,7 @@ m_bRecalcLayout = FALSE;
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::SetActive (int nPage)
 {
@@ -422,7 +422,7 @@ if (m_pTools) {
 	}
 }	
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::CycleTab (int nDir)
 {
@@ -435,21 +435,21 @@ else if (i >= h)
 m_pTools->SetActivePage (i);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::NextTab ()
 {
 CycleTab (1);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::PrevTab ()
 {
 CycleTab (-1);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::OnSelectPrevTab ()
 {
@@ -457,7 +457,7 @@ DLE.MainFrame ()->ShowTools ();
 PrevTab ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CToolView::OnSelectNextTab ()
 {
@@ -465,7 +465,7 @@ DLE.MainFrame ()->ShowTools ();
 NextTab ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 #if 0
 int CDlcBitmapButton::OnToolHitTest (CPoint point, TOOLINFO* pTI)
@@ -478,6 +478,6 @@ if (!rc.PtInRect (point))
 return m_nId;
 }
 #endif
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 //eof toolview.cpp

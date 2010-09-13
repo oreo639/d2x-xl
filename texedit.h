@@ -2,7 +2,7 @@
 #ifndef __texedit_h
 #define __texedit_h
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CPaletteWnd : public CWnd
 {
@@ -37,7 +37,7 @@ class CPaletteWnd : public CWnd
 	DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CTextureEdit : public CDialog 
 {
@@ -108,6 +108,6 @@ class CTextureEdit : public CDialog
 	DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 #endif __texedit_h

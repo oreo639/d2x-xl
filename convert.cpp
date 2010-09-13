@@ -38,7 +38,7 @@ if (m_bInited) {
 CDialog::EndDialog (nResult);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CConvertDlg::CreateImgWnd (CWnd *pImgWnd, int nIdC)
 {

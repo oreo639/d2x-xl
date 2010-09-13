@@ -10,7 +10,7 @@
 #include "mine.h"
 #include "dle-xp.h"
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_SETCOORD, OnSetCoord)
@@ -55,7 +55,7 @@ BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_LBN_DBLCLK (IDC_CUBE_TRIGGERS, OnTriggerDetails)
 END_MESSAGE_MAP ()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CSegmentTool::CSegmentTool (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_CUBEDATA2 : IDD_CUBEDATA, pParent)
@@ -63,7 +63,7 @@ CSegmentTool::CSegmentTool (CPropertySheet *pParent)
 Reset ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::Reset ()
 {
@@ -87,7 +87,7 @@ m_nGroup = segmentManager.Segment (0)->m_info.group;
 memset (m_nCoord, 0, sizeof (m_nCoord));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::InitCBSegmentNo (void)
 {
@@ -103,7 +103,7 @@ if (segmentManager.Count () != pcb->GetCount ()) {
 pcb->SetCurSel (m_nSegment);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CSegmentTool::OnInitDialog ()
 {
@@ -144,7 +144,7 @@ m_bInited = true;
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::DoDataExchange (CDataExchange *pDX)
 {
@@ -194,7 +194,7 @@ for (i = 0; i < 2; i++)
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CSegmentTool::OnSetActive ()
 {
@@ -202,7 +202,7 @@ Refresh ();
 return CToolDlg::OnSetActive ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CSegmentTool::IsRobotMaker (CSegment *segP)
 {
@@ -212,7 +212,7 @@ return
 	(segP->m_info.nMatCen < segmentManager.RobotMakerCount ());
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CSegmentTool::IsEquipMaker (CSegment *segP)
 {
@@ -222,7 +222,7 @@ return
 	(segP->m_info.nMatCen < segmentManager.EquipMakerCount ());
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::EnableControls (BOOL bEnable)
 {
@@ -245,7 +245,7 @@ GetDlgItem (IDC_CUBE_OWNER)->EnableWindow (DLE.IsD2XLevel ());
 GetDlgItem (IDC_CUBE_GROUP)->EnableWindow (DLE.IsD2XLevel ());
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnSetCoord (void)
 {
@@ -257,7 +257,7 @@ undoManager.End ();
 DLE.MineView ()->Refresh (false);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnResetCoord (void)
 {
@@ -270,7 +270,7 @@ UpdateData (FALSE);
 DLE.MineView ()->Refresh (false);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnProp (int nProp)
 {
@@ -290,7 +290,7 @@ void CSegmentTool::OnProp3 () { OnProp (2); }
 void CSegmentTool::OnProp4 () { OnProp (3); }
 void CSegmentTool::OnProp5 () { OnProp (4); }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnSide (int nSide)
 {
@@ -306,7 +306,7 @@ void CSegmentTool::OnSide4 () { OnSide (3); }
 void CSegmentTool::OnSide5 () { OnSide (4); }
 void CSegmentTool::OnSide6 () { OnSide (5); }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnPoint (int nPoint)
 {
@@ -320,7 +320,7 @@ void CSegmentTool::OnPoint2 () { OnPoint (1); }
 void CSegmentTool::OnPoint3 () { OnPoint (2); }
 void CSegmentTool::OnPoint4 () { OnPoint (3); }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::SetDefTexture (short nTexture)
 {
@@ -724,7 +724,7 @@ current->Segment ()->m_info.staticLight = (int) (m_nLight * 24 * 327.68);
 undoManager.End ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnDamage (int i) 
 {
@@ -738,7 +738,7 @@ undoManager.End ();
 void CSegmentTool::OnDamage0 () { OnDamage (0); }
 void CSegmentTool::OnDamage1 () { OnDamage (1); }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CSegmentTool::FindRobotMaker (CListBox *plb, LPSTR pszObj)
 {
@@ -753,7 +753,7 @@ if (pszObj)
 return j;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CSegmentTool::FindEquipMaker (CListBox *plb, LPSTR pszObj)
 {
@@ -937,7 +937,7 @@ DLE.ToolView ()->EditTrigger ();
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnAddRobotMaker ()
 {
@@ -947,7 +947,7 @@ m_nLastSegment = -1;
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnAddEquipMaker ()
 {
@@ -957,7 +957,7 @@ m_nLastSegment = -1;
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnAddFuelCenter ()
 {
@@ -965,7 +965,7 @@ CHECKMINE;
 segmentManager.CreateFuelCenter ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnAddRepairCenter ()
 {
@@ -973,7 +973,7 @@ CHECKMINE;
 segmentManager.CreateFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnAddReactor ()
 {
@@ -981,7 +981,7 @@ CHECKMINE;
 segmentManager.CreateReactor ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CSegmentTool::OnSplitSegment ()
 {
@@ -989,6 +989,6 @@ CHECKMINE;
 segmentManager.Split ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 //eof cubedlg.cpp

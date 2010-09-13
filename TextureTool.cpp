@@ -128,7 +128,7 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 //	ON_EN_UPDATE (IDC_TEXLIGHT_EDIT, OnLightEdit)
 END_MESSAGE_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CTextureTool::CTextureTool (CPropertySheet *pParent)
 	: CTexToolDlg (nLayout ? IDD_TEXTUREDATA2 : IDD_TEXTUREDATA, pParent, 1, IDC_TEXTURE_SHOW, RGB (0,0,0))
@@ -166,7 +166,7 @@ m_nEditFunc = -1;
 m_bInitTextureListBoxes = true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CTextureTool::~CTextureTool ()
 {
@@ -187,7 +187,7 @@ if (m_bInited) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::CreateColorCtrl (CWnd *pWnd, int nIdC)
 {
@@ -197,7 +197,7 @@ pParentWnd->GetClientRect (rc);
 pWnd->Create (null, null, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::UpdateColorCtrl (CWnd *pWnd, COLORREF color)
 {
@@ -210,7 +210,7 @@ pWnd->Invalidate ();
 pWnd->UpdateWindow ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTextureTool::OnInitDialog ()
 {
@@ -293,7 +293,7 @@ m_bInited = true;
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::DoDataExchange (CDataExchange *pDX)
 {
@@ -331,7 +331,7 @@ if (pDX->m_bSaveAndValidate && *szBrightness) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::LoadTextureListBoxes (void) 
 {
@@ -371,7 +371,7 @@ for (i = 0; i < nTextures; i++) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CTextureTool::SideHasLight (void)
 {
@@ -387,7 +387,7 @@ return (wallP != null) && (wallP->Type () == WALL_TRANSPARENT);
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::UpdatePaletteWnd (void)
 {
@@ -407,7 +407,7 @@ else {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnPaint ()
 {
@@ -421,7 +421,7 @@ UpdateAlignWnd ();
 UpdatePaletteWnd ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::UpdateTextureWnd (void)
 {
@@ -432,7 +432,7 @@ m_textureWnd.UpdateWindow ();
 #endif
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int lightIdxFromMode [4] = {0, 3, 2, 1};
 
@@ -548,7 +548,7 @@ UpdateLightWnd ();
 UpdatePaletteWnd ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::RefreshTextureWnd ()
 {
@@ -563,7 +563,7 @@ if (!PaintTexture (&m_textureWnd))
 	last_texture2 = -1;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 #if TEXTOOLDLG == 0
 void CTextureTool::DrawTexture (short texture1, short texture2, int x0, int y0) 
 {
@@ -591,7 +591,7 @@ pDC->SelectPalette(oldPalette, FALSE);
 m_textureWnd.ReleaseDC (pDC);
 }
 #endif
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTextureTool::OnSetActive ()
 {
@@ -606,7 +606,7 @@ Refresh ();
 return TRUE; //CTexToolDlg::OnSetActive ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTextureTool::OnKillActive ()
 {
@@ -629,7 +629,7 @@ if (m_nEditTimer >= 0) {
 return CToolDlg::OnKillActive ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 #if TEXTOOLDLG == 0
 
@@ -740,7 +740,7 @@ if (anim [index [0]] || anim [index [1]]) {
 	}
 }
 #endif
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnTimer (UINT_PTR nIdEvent)
 {
@@ -763,7 +763,7 @@ else
 #endif
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::SelectTexture (int nIdC, bool bFirst)
 {
@@ -786,7 +786,7 @@ Refresh ();
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnSetLight () 
 {
@@ -803,21 +803,21 @@ for (i = 0; i < 4; i++) {
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnSelect1st () 
 {
 SelectTexture (IDC_TEXTURE_1ST, true);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnSelect2nd () 
 {
 SelectTexture (IDC_TEXTURE_2ND, false);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnEditTexture () 
 {
@@ -828,7 +828,7 @@ DLE.MineView ()->Refresh (false);
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnSaveTexture () 
 {
@@ -858,7 +858,7 @@ UpdateData (FALSE);
 //SaveTextureStatic->SetText(message);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnPaste1st () 
 {
@@ -866,7 +866,7 @@ m_bUse1st = !m_bUse1st;
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnPaste2nd () 
 {
@@ -874,7 +874,7 @@ m_bUse2nd = !m_bUse2nd;
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnCleanup () 
 {
@@ -882,7 +882,7 @@ textureManager.RemoveUnusedTextures ();
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnPasteSide () 
 {
@@ -905,7 +905,7 @@ DLE.MineView ()->Refresh ();
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnPasteTouching ()
 {
@@ -928,7 +928,7 @@ Refresh ();
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnPasteMarked () 
 {
@@ -966,7 +966,7 @@ Refresh ();
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnReplace () 
 {
@@ -1003,7 +1003,7 @@ Refresh ();
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::PasteTexture (short nSegment, short nSide, short nDepth) 
 {
@@ -1048,7 +1048,7 @@ for (i = 0; i < 4; i++) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CTextureTool::GetAdjacentSide (short nStartSeg, short nStartSide, short nLine, short *nAdjSeg, short *nAdjSide) 
 {
@@ -1102,7 +1102,7 @@ for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 	}
 return false;
 }
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::GetBrightness (int nTexture)
 {
@@ -1121,7 +1121,7 @@ else {
 m_nBrightness = nBrightness;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::SetBrightness (int nBrightness)
 {
@@ -1142,14 +1142,14 @@ if (!bSemaphore) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnBrightnessEdit ()
 {
 UpdateData (TRUE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnHScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
@@ -1213,7 +1213,7 @@ pScrollBar->SetScrollPos (nPos, TRUE);
 UpdateAlignWnd ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
@@ -1306,7 +1306,7 @@ else {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTextureTool::OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
@@ -1351,7 +1351,7 @@ switch (wParam) {
 return TRUE;
 }
 		
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureTool::OnEditTimer (void)
 {		
@@ -1402,6 +1402,6 @@ if (i >= 25) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 		
 		//eof texturedlg.cpp

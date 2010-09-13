@@ -12,7 +12,7 @@
 #include "PaletteManager.h"
 #include "TextureManager.h"
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CPaletteWnd, CWnd)
 #if 0
@@ -23,7 +23,7 @@ BEGIN_MESSAGE_MAP (CPaletteWnd, CWnd)
 #endif
 END_MESSAGE_MAP ()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CTextureEdit, CDialog)
 	ON_WM_PAINT ()
@@ -38,7 +38,7 @@ BEGIN_MESSAGE_MAP (CTextureEdit, CDialog)
 	ON_BN_CLICKED (IDC_TEXEDIT_SAVE, OnSave)
 END_MESSAGE_MAP ()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CPaletteWnd::CPaletteWnd ()
 {
@@ -48,13 +48,13 @@ m_pDC = null;
 m_pOldPal = null;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CPaletteWnd::~CPaletteWnd ()
 {
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 #define	MINRGB(rgb)	(((rgb)->peRed < (rgb)->peGreen) ? ((rgb)->peRed < (rgb)->peBlue) ? (rgb)->peRed : (rgb)->peBlue : ((rgb)->peGreen < (rgb)->peBlue) ? (rgb)->peGreen : (rgb)->peBlue)
 #define	MAXRGB(rgb)	(((rgb)->peRed > (rgb)->peGreen) ? ((rgb)->peRed > (rgb)->peBlue) ? (rgb)->peRed : (rgb)->peBlue : ((rgb)->peGreen > (rgb)->peBlue) ? (rgb)->peGreen : (rgb)->peBlue)
@@ -84,7 +84,7 @@ if (c->peBlue > m->peBlue)
 return 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPaletteWnd::SortPalette (int left, int right)
 {
@@ -117,7 +117,7 @@ if (l < right)
 	SortPalette (l, right);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPaletteWnd::CreatePalette ()
 {
@@ -126,7 +126,7 @@ for (int i = 0; i < 256; i++) {
 	RgbFromIndex (i, m_palColors [i]);
 	}
 }
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPaletteWnd::Update ()
 {
@@ -134,7 +134,7 @@ InvalidateRect (null);
 UpdateWindow ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CPaletteWnd::Create (CWnd *pParentWnd, int nWidth, int nHeight)
 {
@@ -154,7 +154,7 @@ if (m_nHeight < 0) {
 return CWnd::Create (null, null, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CPaletteWnd::SelectColor (CPoint& point, int& color, PALETTEENTRY *pRGB)
 {
@@ -181,7 +181,7 @@ if (PtInRect (rcPal, point)) {
 return false;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPaletteWnd::SetPalettePixel (int x, int y) 
 {
@@ -195,7 +195,7 @@ for (dy = 0; dy < 8; dy++)
 							  PALETTEINDEX (y * m_nWidth + x));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPaletteWnd::DrawPalette (void) 
 {
@@ -231,7 +231,7 @@ free (pal_bitmap);
 EndPaint ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CPaletteWnd::BeginPaint ()
 {
@@ -246,7 +246,7 @@ m_pDC->RealizePalette ();
 return true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPaletteWnd::EndPaint ()
 {
@@ -261,28 +261,28 @@ if (m_pDC) {
 Update ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 #if 0
 void CPaletteWnd::OnLButtonDown (UINT nFlags, CPoint point)
 {
 m_pParentWnd->SendMessage (WM_LBUTTONDOWN, (WPARAM) nFlags, (LPARAM) point.x + (((LPARAM) point.y) << 16));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPaletteWnd::OnRButtonDown (UINT nFlags, CPoint point)
 {
 m_pParentWnd->SendMessage (WM_RBUTTONDOWN, (WPARAM) nFlags, (LPARAM) point.x + (((LPARAM) point.y) << 16));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPaletteWnd::OnLButtonUp (UINT nFlags, CPoint point)
 {
 m_pParentWnd->SendMessage (WM_LBUTTONUP, (WPARAM) nFlags, (LPARAM) point.x + (((LPARAM) point.y) << 16));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPaletteWnd::OnRButtonUp (UINT nFlags, CPoint point)
 {
@@ -310,7 +310,7 @@ if (!*m_szDefExt)
 	strcpy_s (m_szDefExt, sizeof (m_szDefExt), "bmp");
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CTextureEdit::~CTextureEdit ()
 {
@@ -332,7 +332,7 @@ if (m_backupTGA) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTextureEdit::OnInitDialog ()
 {
@@ -390,14 +390,14 @@ Refresh ();
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::DoDataExchange (CDataExchange *pDX)
 {
 DDX_Text (pDX, IDC_TEXEDIT_COLORS, m_szColors, sizeof (m_szColors));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::Backup (void)
 {
@@ -412,7 +412,7 @@ if (m_backupBM) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CTextureEdit::PtInRect (CRect& rc, CPoint& pt)
 {
@@ -420,7 +420,7 @@ return (pt.x >= rc.left) && (pt.x < rc.right) &&
  		 (pt.y >= rc.top) && (pt.y < rc.bottom);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnButtonDown (UINT nFlags, CPoint point, int& color)
 {
@@ -440,7 +440,7 @@ else if (PtInRect (rcPal, point)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnOK ()
 {
@@ -469,7 +469,7 @@ m_texP->m_info.bCustom = m_bModified;
 CDialog::OnOK ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnLButtonDown (UINT nFlags, CPoint point)
 {
@@ -477,7 +477,7 @@ m_lBtnDown = TRUE;
 OnButtonDown (nFlags, point, m_fgColor);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnRButtonDown (UINT nFlags, CPoint point)
 {
@@ -485,21 +485,21 @@ m_rBtnDown = TRUE;
 OnButtonDown (nFlags, point, m_bgColor);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnLButtonUp (UINT nFlags, CPoint point)
 {
 m_lBtnDown = FALSE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnRButtonUp (UINT nFlags, CPoint point)
 {
 m_rBtnDown = FALSE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnMouseMove (UINT nFlags, CPoint point)
 {
@@ -510,7 +510,7 @@ else if (m_rBtnDown)
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CTextureEdit::BeginPaint (CWnd *pWnd)
 {
@@ -524,7 +524,7 @@ m_pDC->RealizePalette ();
 return true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::EndPaint ()
 {
@@ -542,7 +542,7 @@ if (m_pPaintWnd) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTextureEdit::GetClientRect (CWnd *pWnd, CRect& rc)
 {

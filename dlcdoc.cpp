@@ -120,7 +120,7 @@ BEGIN_INTERFACE_MAP(CDlcDoc, CDocument)
 	INTERFACE_PART(CDlcDoc, IID_Idlc, Dispatch)
 END_INTERFACE_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CNewFileDlg : public CDialog {
 	public:
@@ -223,7 +223,7 @@ if (theMine) {
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDlcDoc::CreateNewLevel ()
 {
@@ -280,7 +280,7 @@ if (d.DoModal () == IDOK) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CDlcDoc::BrowseForFile (LPSTR pszFile, BOOL bOpen)
 {
@@ -292,14 +292,14 @@ return ::BrowseForFile (bOpen, "hog;rl2;rdl", pszFile,
 								0, DLE.MainFrame ());
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDlcDoc::UpdateCaption ()
 {
 SetPathName (m_szFile);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CDlcDoc::SaveIfModified (void)
 {
@@ -320,7 +320,7 @@ if (nAction == IDNO)
 return true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CDlcDoc::OpenFile (bool bBrowseForFile, LPSTR pszFile, LPSTR pszSubFile) 
 {
@@ -390,7 +390,7 @@ DLE.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
 return (err == 0);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 //BOOL CDlcDoc::OnSaveDocument (LPCTSTR lpszPathName) 
 bool CDlcDoc::SaveFile (bool bSaveAs) 
@@ -421,7 +421,7 @@ if (!err) {
 return (err == 0);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CDlcDoc::OnOpenDocument (LPCTSTR lpszPathName) 
 {
@@ -429,7 +429,7 @@ strcpy_s (m_szFile, sizeof (m_szFile), lpszPathName);
 return OpenFile (false);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CDlcDoc::OnSaveDocument (LPCTSTR lpszPathName) 
 {
@@ -437,28 +437,28 @@ strcpy_s (m_szFile, sizeof (m_szFile), lpszPathName);
 return SaveFile (false);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDlcDoc::OnOpenFile () 
 {
 OpenFile ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDlcDoc::OnSaveFile () 
 {
 SaveFile (false);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDlcDoc::OnSaveFileAs () 
 {
 SaveFile (true);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDlcDoc::OnRunLevel () 
 {
@@ -492,7 +492,7 @@ if (p) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDlcDoc::OnInsertSegment() 
 {

@@ -26,7 +26,7 @@ typedef struct tBugPos {
 	int	nObject;
 } tBugPos;
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDiagTool::ClearBugList ()
 {
@@ -53,7 +53,7 @@ m_nErrors [1] = 0;
 m_statsWidth = 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CDiagTool::MarkSegment (short nSegment) 
 {
@@ -64,7 +64,7 @@ segmentManager.Segment (nSegment)->Mark (MARKED_MASK);
 return true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDiagTool::OnShowBug (void)
 {

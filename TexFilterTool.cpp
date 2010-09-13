@@ -80,20 +80,20 @@ BEGIN_MESSAGE_MAP(CTxtFilterTool, CToolDlg)
 	ON_BN_CLICKED (IDC_TXT_INVERT, OnTxtInvert)
 END_MESSAGE_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CTxtFilterTool::CTxtFilterTool (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_TXTFILTERS2 : IDD_TXTFILTERS, pParent)
 {
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CTxtFilterTool::~CTxtFilterTool ()
 {
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTxtFilterTool::OnInitDialog ()
 {
@@ -103,7 +103,7 @@ m_bInited = true;
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 typedef struct tCtrlMap {
 	int	nFlag, nIdC;
@@ -159,7 +159,7 @@ for (i = 0; i < sizeof (ctrlMap) / sizeof (tCtrlMap); i++) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTxtFilterTool::SetFilter (int i)
 {
@@ -171,7 +171,7 @@ UpdateData (FALSE);
 DLE.TextureView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTxtFilterTool::SetFilterRange (uint nFlags, int nValue)
 {
@@ -185,7 +185,7 @@ UpdateData (FALSE);
 DLE.TextureView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CTxtFilterTool::OnGrayRock () { SetFilter (0); }
 void CTxtFilterTool::OnBrownRock () { SetFilter (1); }
@@ -234,7 +234,7 @@ void CTxtFilterTool::OnTxtAll () { SetFilterRange (0xFFFFFFFF, 1); }
 void CTxtFilterTool::OnTxtNone () { SetFilterRange (0xFFFFFFFF, 0); }
 void CTxtFilterTool::OnTxtInvert () { SetFilterRange (0xFFFFFFFF, -1); }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CTxtFilterTool::OnKillActive ()
 {
@@ -244,6 +244,6 @@ return CToolDlg::OnKillActive ();
 }
 
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 		
 		//eof texturedlg.cpp

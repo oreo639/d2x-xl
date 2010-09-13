@@ -146,7 +146,7 @@ m_depthPerception = 10000.0f;
 Reset ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::Reset (void)
 {
@@ -172,7 +172,7 @@ m_bShowLightSource = 0;
 m_xRenderOffs = m_yRenderOffs = 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CMineView::~CMineView()
 {
@@ -202,7 +202,7 @@ delete m_penHiOrange;
 delete m_penHiMagenta;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnDestroy ()
 {
@@ -284,7 +284,7 @@ else {
 return (bHScroll != m_bHScroll) || (bVScroll != m_bVScroll);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnDraw (CDC* pViewDC)
 {
@@ -396,7 +396,7 @@ DrawRubberBox ();
 EndPaint (&ps);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::AdvanceLightTick (void)
 {
@@ -419,7 +419,7 @@ for (i = lightManager.Count (); i; i--, flP++, ltP++) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 #ifdef _DEBUG
 static int qqq1 = -1, qqq2 = 0;
 #endif
@@ -473,7 +473,7 @@ for (h = 0; h < lightManager.DeltaIndexCount (); h++, ldiP++) {
 return bChange;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnTimer (UINT_PTR nIdEvent)
 {
@@ -794,7 +794,7 @@ BOOL CMineView::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnSize(UINT nType, int cx, int cy)
 {
@@ -818,7 +818,7 @@ CView::OnSize (nType, cx, cy);
 m_bUpdate = true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::SetViewOption(eViewOptions option)
 {
@@ -826,7 +826,7 @@ m_viewOption = option;
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::ToggleViewMine (eMineViewFlags flag)
 {
@@ -835,7 +835,7 @@ void CMineView::ToggleViewMine (eMineViewFlags flag)
 	Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::ToggleViewObjects(eObjectViewFlags mask)
 {
@@ -843,7 +843,7 @@ void CMineView::ToggleViewObjects(eObjectViewFlags mask)
 	Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::SetViewMineFlags(uint mask)
 {
@@ -851,7 +851,7 @@ void CMineView::SetViewMineFlags(uint mask)
 	Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::SetViewObjectFlags(uint mask)
 {
@@ -859,7 +859,7 @@ void CMineView::SetViewObjectFlags(uint mask)
 	Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::SetSelectMode (uint mode)
 {
@@ -869,7 +869,7 @@ m_selectMode = mode;
 Refresh (false);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CMineView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 {
@@ -880,7 +880,7 @@ BOOL CMineView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 return CView::OnSetCursor (pWnd, nHitTest, message);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CMineView::SetCursor (HCURSOR hCursor)
 {
@@ -890,7 +890,7 @@ if (!hCursor) // || (hCursor == m_hCursor))
 return TRUE;
 }
                         
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::SetMouseState (int newMouseState)
 {
@@ -906,7 +906,7 @@ if (newMouseState != m_mouseState) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnMouseMove (UINT nFlags, CPoint point)
 {
@@ -993,7 +993,7 @@ if (change.x || change.y) {
 //CView::OnMouseMove(nFlags, point);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnLButtonDown (UINT nFlags, CPoint point)
 {
@@ -1004,7 +1004,7 @@ m_selectTimer = SetTimer (4, 500U, null);
 CView::OnLButtonDown (nFlags, point);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnLButtonUp (UINT nFlags, CPoint point)
 {
@@ -1031,7 +1031,7 @@ SetMouseState (eMouseStateIdle);
 CView::OnLButtonUp (nFlags, point);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnRButtonDown (UINT nFlags, CPoint point)
 {
@@ -1041,7 +1041,7 @@ m_clickState = nFlags;
 CView::OnRButtonDown(nFlags, point);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnRButtonUp (UINT nFlags, CPoint point)
 {
@@ -1060,21 +1060,21 @@ SetMouseState (eMouseStateIdle);
 CView::OnRButtonUp(nFlags, point);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::Invalidate (BOOL bErase)
 {
 CWnd::Invalidate (bErase);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::InvalidateRect (LPCRECT lpRect, BOOL bErase)
 {
 CWnd::InvalidateRect (lpRect, bErase);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::Refresh (bool bAll)
 {
@@ -1096,7 +1096,7 @@ if (!(bRefreshing || m_nDelayRefresh)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnUpdate (CView* pSender, LPARAM lHint, CGameObject* pHint)
 {
@@ -1105,7 +1105,7 @@ void CMineView::OnUpdate (CView* pSender, LPARAM lHint, CGameObject* pHint)
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CMineView::VertexVisible (int v)
 {
@@ -1122,7 +1122,7 @@ for (CSegmentIterator si; si; si++) {
 return false;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::MarkRubberBandedVertices (void)
 {
@@ -1181,7 +1181,7 @@ pos  =
 pos /= 8.0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
                         
 BOOL CMineView::DrawRubberBox ()
 {
@@ -1214,7 +1214,7 @@ if ((m_rubberRect.Width () || m_rubberRect.Height ())) {
 return TRUE;
 }                        
                         
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
                         
 void CMineView::UpdateRubberRect (CPoint pt)
 {
@@ -1257,7 +1257,7 @@ if (rc != m_rubberRect) {
 	}
 }                        
                         
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
                         
 void CMineView::ResetRubberRect ()
 {
@@ -1286,7 +1286,7 @@ else
 return 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnSelectPrevTab ()
 {
@@ -1294,7 +1294,7 @@ DLE.MainFrame ()->ShowTools ();
 DLE.ToolView ()->PrevTab ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnSelectNextTab ()
 {
@@ -1302,7 +1302,7 @@ DLE.MainFrame ()->ShowTools ();
 DLE.ToolView ()->NextTab ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
@@ -1337,7 +1337,7 @@ SetScrollPos (SB_HORZ, nPos, TRUE);
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CMineView::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
@@ -1377,7 +1377,7 @@ m_yRenderOffs = nPos - m_yScrollCenter;
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 
 //eof

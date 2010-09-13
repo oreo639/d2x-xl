@@ -34,7 +34,7 @@ BEGIN_MESSAGE_MAP(CLightTool, CToolDlg)
 	ON_BN_CLICKED (IDC_DEFAULT_LIGHT_AND_COLOR, OnDefaultLightAndColor)
 END_MESSAGE_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CLightTool::CLightTool (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_LIGHTDATA2 : IDD_LIGHTDATA, pParent)
@@ -42,7 +42,7 @@ CLightTool::CLightTool (CPropertySheet *pParent)
 SetDefaults ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CLightTool::SetDefaults (void)
 {
@@ -66,7 +66,7 @@ m_deltaLightFrameRate = 100;
 m_bShowLightSource = 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CLightTool::OnInitDialog ()
 {
@@ -81,7 +81,7 @@ m_bInited = true;
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CLightTool::DoDataExchange (CDataExchange * pDX)
 {
@@ -110,7 +110,7 @@ if (!pDX->m_bSaveAndValidate)
 DDX_Check (pDX, IDC_LIGHT_COPYTEXLIGHTS, m_bCopyTexLights);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CLightTool::OnOK ()
 {
@@ -139,7 +139,7 @@ undoManager.End ();
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CLightTool::OnCancel ()
 {
@@ -147,7 +147,7 @@ SetDefaults ();
 UpdateData (FALSE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CLightTool::OnShowLightSource ()
 {
@@ -155,7 +155,7 @@ m_bShowLightSource = BtnCtrl (IDC_LIGHT_DELTA_SHOWSOURCE)->GetCheck ();
 DLE.MineView ()->EnableDeltaShading (bEnableDeltaShading, m_deltaLightFrameRate, m_bShowLightSource);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CLightTool::OnShowDelta ()
 {
@@ -175,7 +175,7 @@ else {
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CLightTool::OnSetVertexLight ()
 {
@@ -210,14 +210,14 @@ undoManager.End ();
 DLE.MineView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CLightTool::OnDefaultLightAndColor ()
 {
 lightManager.LoadDefaults ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CLightTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
@@ -254,7 +254,7 @@ if (pScrollBar == (CScrollBar *) GetDlgItem (IDC_LIGHT_DELTA_FRAMERATE)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 
 //eof lightdlg.cpp

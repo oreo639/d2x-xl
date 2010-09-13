@@ -13,7 +13,7 @@
 #include "toolview.h"
 #include "textures.h"
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CAdvObjTool, CToolDlg)
 	ON_EN_KILLFOCUS (IDC_ADVOBJ_SIZE, OnAccept)
@@ -40,14 +40,14 @@ BEGIN_MESSAGE_MAP (CAdvObjTool, CToolDlg)
 	ON_EN_KILLFOCUS (IDC_ADVOBJ_FRAMENO, OnAccept)
 END_MESSAGE_MAP ()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CAdvObjTool::CAdvObjTool (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_ADVOBJDATA2 : IDD_ADVOBJDATA, pParent)
 {
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CAdvObjTool::OnInitDialog ()
 {
@@ -58,7 +58,7 @@ m_bInited = true;
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CAdvObjTool::DoDataExchange (CDataExchange * pDX)
 {
@@ -217,6 +217,6 @@ switch (objP->m_info.renderType) {
 UpdateData (FALSE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 //eof advObjTool.cpp

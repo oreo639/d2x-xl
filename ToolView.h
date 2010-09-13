@@ -24,7 +24,7 @@
 #include "texedit.h"
 #include "resourcemanager.h"
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 #if 1
 class CExtBitmapButton : public CBitmapButton
 {
@@ -53,7 +53,7 @@ class CExtBitmapButton : public CBitmapButton
 		DECLARE_MESSAGE_MAP ()
 };
 #endif
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CConvertDlg : public CDialog
 {
@@ -84,7 +84,7 @@ class CConvertDlg : public CDialog
 		DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CToolDlg : public CPropertyPage
 {
@@ -150,7 +150,7 @@ class CToolDlg : public CPropertyPage
 		DECLARE_MESSAGE_MAP()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CTexToolDlg : public CToolDlg
 {
@@ -182,7 +182,7 @@ class CTexToolDlg : public CToolDlg
 	DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CAdvObjTool : public CToolDlg
 {
@@ -221,7 +221,7 @@ class CAdvObjTool : public CToolDlg
 		DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CDiagTool : public CToolDlg
 {
@@ -293,7 +293,7 @@ class CDiagTool : public CToolDlg
 		DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CReactorTool : public CToolDlg
 {
@@ -331,7 +331,7 @@ class CReactorTool : public CToolDlg
 		DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CMissionTool : public CToolDlg
 {
@@ -362,7 +362,7 @@ class CMissionTool : public CToolDlg
 		DECLARE_MESSAGE_MAP()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CObjectTool : public CToolDlg
 {
@@ -483,7 +483,7 @@ class CObjectTool : public CToolDlg
 		DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CEffectTool : public CToolDlg
 {
@@ -543,7 +543,7 @@ class CEffectTool : public CToolDlg
 		DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CSegmentTool : public CToolDlg
 {
@@ -650,7 +650,7 @@ class CSegmentTool : public CToolDlg
 		DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CWallTool : public CTexToolDlg
 {
@@ -749,7 +749,7 @@ class CWallTool : public CTexToolDlg
 		DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CTriggerTool : public CTexToolDlg
 {
@@ -875,7 +875,7 @@ class CTriggerTool : public CTexToolDlg
 		DECLARE_MESSAGE_MAP ()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CTxtFilterTool : public CToolDlg
 {
@@ -940,7 +940,7 @@ class CTxtFilterTool : public CToolDlg
 		DECLARE_MESSAGE_MAP()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CTextureTool : public CTexToolDlg
 {
@@ -1167,7 +1167,7 @@ class CTextureTool : public CTexToolDlg
 		DECLARE_MESSAGE_MAP()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CLightTool : public CToolDlg
 {
@@ -1205,7 +1205,7 @@ class CLightTool : public CToolDlg
 		DECLARE_MESSAGE_MAP()
 	};
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CPrefsDlg : public CToolDlg
 {
@@ -1269,7 +1269,7 @@ class CPrefsDlg : public CToolDlg
 		DECLARE_MESSAGE_MAP()
 };
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 class CToolView : public CWnd {
 	private:

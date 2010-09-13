@@ -298,7 +298,7 @@ BEGIN_OBJECT_MAP(ObjectMap)
 #endif
 END_OBJECT_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 LONG CDLCModule::Unlock()
 {
@@ -306,7 +306,7 @@ LONG CDLCModule::Unlock()
 	return 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 LONG CDLCModule::Lock()
 {
@@ -314,7 +314,7 @@ LONG CDLCModule::Lock()
 	return 1;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CDLE::ExitInstance()
 {
@@ -325,7 +325,7 @@ if (m_bATLInited) {
 return CWinApp::ExitInstance();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CDocument* CDLE::OpenDocumentFile (LPCTSTR lpszFileName)
 {
@@ -336,7 +336,7 @@ ASSERT(m_pDocManager != null);
 return CWinApp::OpenDocumentFile (lpszFileName);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CDLE::InitATL()
 {
@@ -346,7 +346,7 @@ _Module.dwThreadID = GetCurrentThreadId();
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDLE::WritePrivateProfileInt (LPSTR szKey, int nValue)
 {
@@ -356,7 +356,7 @@ sprintf_s (szValue, sizeof (szValue), "%d", nValue);
 WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDLE::SaveLayout ()
 {
@@ -392,7 +392,7 @@ WritePrivateProfileInt ("AutoFixBugs", ToolView ()->DiagTool ()->m_bAutoFixBugs)
 WritePrivateProfileInt ("SplashScreen", m_bSplashScreen);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDLE::LoadLayout ()
 {

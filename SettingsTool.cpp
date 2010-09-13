@@ -76,7 +76,7 @@ BEGIN_MESSAGE_MAP(CPrefsDlg, CToolDlg)
 //	ON_EN_UPDATE (IDC_PREFS_MOVERATE, OnOK)
 END_MESSAGE_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::CompletePath (LPSTR pszPath, LPSTR pszFile, LPSTR pszExt)
 {
@@ -88,7 +88,7 @@ if (*pszPath && !strstr (pszPath, pszExt)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CPrefsDlg::CPrefsDlg (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_PREFSDATA2 : IDD_PREFSDATA, pParent)
@@ -132,14 +132,14 @@ m_bNoRefresh = false;
 m_bInvalid = false;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CPrefsDlg::~CPrefsDlg ()
 {
 SaveAppSettings ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CPrefsDlg::OnInitDialog ()
 {
@@ -173,7 +173,7 @@ m_bInited = true;
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 
 void CPrefsDlg::Refresh (void)
@@ -189,7 +189,7 @@ if (::IsWindow (m_hWnd) && !m_bNoRefresh) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::DoDataExchange (CDataExchange * pDX)
 {
@@ -271,7 +271,7 @@ Refresh ();
 return CToolDlg::OnSetActive ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool CPrefsDlg::BrowseFile (LPSTR fileType, LPSTR fileName, LPSTR fileExt, BOOL bOpen)
 {
@@ -290,7 +290,7 @@ strcpy_s (fileName, 256, d.m_ofn.lpstrFile);
 return true;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::WritePrivateProfileInt (LPSTR szKey, int nValue)
 {
@@ -300,7 +300,7 @@ sprintf_s (szValue, sizeof (szValue), "%d", nValue);
 WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::WritePrivateProfileDouble (LPSTR szKey, double nValue)
 {
@@ -310,7 +310,7 @@ sprintf_s (szValue, sizeof (szValue), "%1.3f", nValue);
 WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::GetAppSettings ()
 {
@@ -338,7 +338,7 @@ m_bUseTexColors = lightManager.UseTexColors ();
 m_bSplashScreen = DLE.m_bSplashScreen;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::SaveAppSettings (bool bSaveFolders)
 {
@@ -365,7 +365,7 @@ WritePrivateProfileInt ("MineCenter", *DLE.MineView ()->MineCenter ());
 WritePrivateProfileInt ("MaxUndo", m_nMaxUndo);
 WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
 }
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::SetAppSettings (bool bInitApp)
 {
@@ -425,7 +425,7 @@ DLE.m_bSplashScreen = m_bSplashScreen;
 undoManager.SetMaxSize (m_nMaxUndo);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnOK (void)
 {
@@ -436,7 +436,7 @@ m_bNoRefresh = false;
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::FreeTextureHandles (bool bDeleteAll)
 {
@@ -444,7 +444,7 @@ void CPrefsDlg::FreeTextureHandles (bool bDeleteAll)
 DLE.TextureView ()->Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnCancel (void)
 {
@@ -452,7 +452,7 @@ GetAppSettings ();
 UpdateData (FALSE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnOpenD1PIG (void)
 {
@@ -462,7 +462,7 @@ if (BrowseFile ("Descent 1 PIG", m_d1Path, "*.pig", TRUE)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnOpenD2PIG (void)
 {
@@ -472,7 +472,7 @@ if (BrowseFile ("Descent 2 PIG", m_d2Path, "*.pig", TRUE)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnOpenMissions (void)
 {
@@ -482,7 +482,7 @@ if (BrowseFile ("Descent mission file", m_missionsPath, "*.hog", TRUE)) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnViewObjectsNone (void)
 {
@@ -492,7 +492,7 @@ UpdateData (FALSE);
 OnOK ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnViewObjectsAll (void)
 {
@@ -502,7 +502,7 @@ UpdateData (FALSE);
 OnOK ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnViewMineNone (void)
 {
@@ -512,7 +512,7 @@ UpdateData (FALSE);
 OnOK ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnViewMineAll (void)
 {
@@ -522,28 +522,28 @@ UpdateData (FALSE);
 OnOK ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::SetLayout (int nLayout)
 {
 WritePrivateProfileInt ("Layout", nLayout);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnLayout0 (void)
 {
 SetLayout (0);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnLayout1 (void)
 {
 SetLayout (1);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CPrefsDlg::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
@@ -582,6 +582,6 @@ if (pScrollBar == ViewDistSlider ()) {
 pScrollBar->SetScrollPos (nPos, TRUE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 //eof prefsdlg.cpp

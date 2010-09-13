@@ -35,7 +35,7 @@ BEGIN_MESSAGE_MAP(CDiagTool, CToolDlg)
 	ON_LBN_SELCHANGE (IDC_DIAG_BUGLIST, OnShowBug)
 END_MESSAGE_MAP()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CDiagTool::CDiagTool (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_DIAGDATA2 : IDD_DIAGDATA, pParent)
@@ -46,14 +46,14 @@ m_bCheckMsgs = false;
 m_statsWidth = 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CDiagTool::~CDiagTool ()
 {
 ClearBugList ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CDiagTool::OnInitDialog ()
 {
@@ -74,7 +74,7 @@ Refresh ();
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 LPSTR CDiagTool::ItemText (int nValue, LPSTR pszPrefix)
 {
@@ -87,7 +87,7 @@ else
 return szText;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDiagTool::CountObjects (void)
 {
@@ -135,7 +135,7 @@ for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
 		}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CDiagTool::CountTextures (void)
 {
@@ -165,7 +165,7 @@ for (i = segmentManager.Count (); i; i--, segP++)
 return nUsed;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDiagTool::Reset (void)
 {
@@ -175,7 +175,7 @@ if (!Inited ())
 ClearBugList ();
 segmentManager.UnmarkAll ();
 }
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDiagTool::Refresh (void)
 {
@@ -220,7 +220,7 @@ plc.SetItemText (14, 2, ItemText (1));
 plc.SetItemText (15, 2, ItemText (MAX_TEXTURES));
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CDiagTool::DoDataExchange (CDataExchange * pDX)
 {
@@ -259,7 +259,7 @@ void CDiagTool::OnShowWarnings ()
 UpdateData (TRUE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CDiagTool::AddMessage (const char *pszMsg, int nMaxMsgs, bool bCheckMsg)
 {
@@ -282,6 +282,6 @@ if (nMaxMsgs >= 0)
 return plb->AddString (pszMsg);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 //eof diagdlg.cpp
