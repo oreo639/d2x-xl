@@ -227,8 +227,9 @@ void CTunnelMaker::Realize (void)
 {
 for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 	CSegment* segP = segmentManager.Segment (m_nSegments [nSegment]);
+#if 0
 	// copy current segment
-	*segP = *segmentManager.Segment (current->m_nSegment);
+	//*segP = *segmentManager.Segment (current->m_nSegment);
 	for (short j = 0; j < 4; j++) {
 		ushort nVertex = 4 * nSegment + j;
 		if (nSegment == 0) {         // 1st segment
@@ -247,7 +248,7 @@ for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 	// int twisted segments
 	UntwistSegment (m_nSegments [nSegment], m_info [0].m_nSide);
 	// define children and sides (textures and nWall)
-	segP->Setup ();
+#endif
 	if (nSegment == 0) {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
 		segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
@@ -443,8 +444,10 @@ m_nLength [0] = (int) ((fabs (m_info [0].m_length) + fabs (m_info [1].m_length))
 m_nLength [0] = min (m_nLength [0], m_nMaxSegments - 1);
 
 if (m_nLength [1] < m_nLength [0]) {
-	for (i = m_nLength [1]; i < m_nLength [0]; i++)
+	for (i = m_nLength [1]; i < m_nLength [0]; i++) {
 		m_nSegments [i] = segmentManager.Add ();
+		segmentManager.Segment (m_nSegments [i])->Setup ();
+		}
 	vertexManager.Add (&m_nVertices [m_nLength [1]], (m_nLength [0] - m_nLength [1]) * 4);
 	}
 
