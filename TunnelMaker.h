@@ -27,7 +27,7 @@ class CTunnelMaker {
 		CVertex	m_points [MAX_TUNNEL_SEGMENTS];
 		short		m_nSegments [MAX_TUNNEL_SEGMENTS];
 		ushort	m_nVertices [MAX_TUNNEL_SEGMENTS * 4];
-		short		m_nLength;
+		short		m_nLength [2];
 
 		CTunnelInfo	m_info [2];
 
@@ -50,7 +50,7 @@ class CTunnelMaker {
 
 		void Destroy (void);
 
-		inline int Length (void) { return m_nLength; }
+		inline int Length (void) { return m_nLength [0]; }
 
 		void ComputeTunnel (void); 
 

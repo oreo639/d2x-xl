@@ -226,7 +226,7 @@ z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 void CTunnelMaker::Realize (void)
 {
 undoManager.Begin (udSegments | udVertices);
-for (short nSegment = 0; nSegment < m_nLength; nSegment++) {
+for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 	CSegment* segP = segmentManager.Segment (m_nSegments [nSegment]);
 	// copy current segment
 	*segP = *segmentManager.Segment (current->m_nSegment);
@@ -236,7 +236,7 @@ for (short nSegment = 0; nSegment < m_nLength; nSegment++) {
 			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
 			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
 			}
-		else if (nSegment == m_nLength - 1) { // last segment
+		else if (nSegment == m_nLength [0] - 1) { // last segment
 			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
 			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
 			}
@@ -254,7 +254,7 @@ for (short nSegment = 0; nSegment < m_nLength; nSegment++) {
 		segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
 		m_info [0].Segment ()->SetChild (m_info [0].m_nSide, segmentManager.Count ());
 		} 
-	else if (nSegment == m_nLength - 1) {
+	else if (nSegment == m_nLength [0] - 1) {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
 		segP->SetChild (m_info [0].m_nSide, m_info [1].m_nSegment);
 		m_info [1].Segment ()->SetChild (m_info [1].m_nSide, segmentManager.Count ());
@@ -272,11 +272,14 @@ undoManager.End ();
 
 void CTunnelMaker::Destroy (void)
 {
-for (int i = m_nLength; i > 0; )
-	segmentManager.Delete (m_nSegments [--i]);
-for (int i = m_nLength * 4; i > 0; )
-	vertexManager.Delete (m_nVertices [--i]);
-m_bActive = false;
+if (m_bActive) {
+	for (int i = m_nLength [0]; i > 0; )
+		segmentManager.Delete (m_nSegments [--i]);
+	for (int i = m_nLength [0] * 4; i > 0; )
+		vertexManager.Delete (m_nVertices [--i]);
+	m_nLength [0] = 0;
+	m_bActive = false;
+	}
 DLE.MineView ()->Refresh (false);
 }
 
@@ -347,10 +350,7 @@ if (!m_bActive) {
 				  "Press 'P' to rotate the point connections.\n\n"
 				  "Press 'G' or select Tools/Tunnel Generator when you are finished.");
 
-	for (i = 0; i < m_nLength; i++)
-		m_nSegments [i] = segmentManager.Add ();
-	for (i = 0; i < 4 * m_nLength; i++)
-		m_nVertices [i] = segmentManager.Add ();
+	m_nLength [0] = m_nLength [1] = 0;
 
 	m_bActive = true;
 	}
@@ -435,12 +435,20 @@ m_points [2] += m_points [3];
 
 // calculate number of segments (min=1)
 length = Distance (*m_points, m_points [3]);
-m_nLength = (int) ((fabs (m_info [0].m_length) + fabs (m_info [1].m_length)) / 20 + length / 40.0);
-m_nLength = min (m_nLength, m_nMaxSegments - 1);
+m_nLength [1] = m_nLength [0];
+m_nLength [0] = (int) ((fabs (m_info [0].m_length) + fabs (m_info [1].m_length)) / 20 + length / 40.0);
+m_nLength [0] = min (m_nLength [0], m_nMaxSegments - 1);
+
+if (m_nLength [1] < m_nLength [0]) {
+	for (i = m_nLength [1]; i < m_nLength [0]; i++)
+		m_nSegments [i] = segmentManager.Add ();
+	for (i = 4 * m_nLength [1]; i < 4 * m_nLength [0]; i++)
+		m_nVertices [i] = segmentManager.Add ();
+	}
 
 // calculate nSegment m_points
-for (i = 0; i <= m_nLength; i++) 
-	m_points [i] = BezierFcn ((double) i / (double) m_nLength, 4, m_points);
+for (i = 0; i <= m_nLength [0]; i++) 
+	m_points [i] = BezierFcn ((double) i / (double) m_nLength [0], 4, m_points);
 
 // make all m_points reletave to first face (translation)
 for (i = 0; i < 4; i++) 
@@ -451,7 +459,7 @@ for (i = 0; i < 4; i++)
 segP = m_info [1].Segment ();
 for (i = 0; i < 4; i++)
 	rel_side_pts [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [1].m_nSide][i]]) - m_points [0];
-for (i = 0; i < m_nLength; i++) {
+for (i = 0; i < m_nLength [0]; i++) {
 	relTunnelPoints [i] = m_points [i] - m_points [0];
 }
 
@@ -466,7 +474,7 @@ for (i = 0; i < 4; i++) {
 		SpinPoint (rel_side_pts [j] + i, ySpin, zSpin);
 	}
 
-for (i = 0; i < m_nLength; i++) 
+for (i = 0; i < m_nLength [0]; i++) 
 	SpinPoint (relTunnelPoints + i,ySpin,zSpin);
 
 // determine polar coordinates of the 1st side (simply y,z coords)
@@ -524,11 +532,11 @@ DebugMsg(message);
 // calculate segment vertices as weighted average between the two sides
 // then spin vertices in the direction of the segment vector
 nVertex = 0;
-for (i = 0; i < m_nLength; i++) {
+for (i = 0; i < m_nLength [0]; i++) {
 	for (j = 0; j < 4; j++) {
 		CVertex* vertP = vertexManager.Vertex (m_nVertices [nVertex++]);
-		angle  = ((double) i / (double) m_nLength) * delta_angle [j] + theta [0][j];
-		length = ((double) i / (double) m_nLength) * radius [1][MatchingSide (j)] + (((double) m_nLength - (double) i) / (double) m_nLength) * radius [0][j];
+		angle  = ((double) i / (double) m_nLength [0]) * delta_angle [j] + theta [0][j];
+		length = ((double) i / (double) m_nLength [0]) * radius [1][MatchingSide (j)] + (((double) m_nLength [0] - (double) i) / (double) m_nLength [0]) * radius [0][j];
 		*vertP = RectPoints (angle, length, &relTunnelPoints [i], &relTunnelPoints [i+1]);
 		// spin vertices
 		SpinBackPoint (vertP, ySpin, zSpin);
@@ -538,7 +546,7 @@ for (i = 0; i < m_nLength; i++) {
 	}
 
   // define segment vert numbers
-for (i = 0; i < m_nLength; i++) {
+for (i = 0; i < m_nLength [0]; i++) {
 	// use last "n_tunnel" segments
 	segP = segmentManager.Segment (m_nSegments [i]);
 	nVertex = i * 4;
@@ -548,7 +556,7 @@ for (i = 0; i < m_nLength; i++) {
 			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
 			}
 		else {
-			if(i < m_nLength - 1) { // center segments
+			if(i < m_nLength [0] - 1) { // center segments
 				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
 				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
 				} 
@@ -561,7 +569,7 @@ for (i = 0; i < m_nLength; i++) {
 	}
 
   // int twisted segments
-for (i = 0; i < m_nLength; i++)
+for (i = 0; i < m_nLength [0]; i++)
 	UntwistSegment (m_nSegments [i], m_info [0].m_nSide);
 }
 
