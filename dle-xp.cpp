@@ -9,9 +9,9 @@
 #include "mineview.h"
 #include <initguid.h>
 #include "Dlc_i.c"
-#include "ComMine.h"
-#include "ComCube.h"
-#include "ComObj.h"
+//#include "ComMine.h"
+//#include "ComCube.h"
+//#include "ComObj.h"
 #include "global.h"
 #include "TextureManager.h"
 #include "FileManager.h"
