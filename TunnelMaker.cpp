@@ -572,8 +572,6 @@ void CTunnelMaker::Draw (CDC* pDC, CPen* redPen, CPen* bluePen, CViewMatrix& vie
 if (!m_bActive)
 	return;
 
-	int h, i;
-
 //  SelectObject(hdc, hrgnAll);
 pDC->SelectObject (redPen);
 pDC->SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
@@ -601,9 +599,11 @@ if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
 	}
 pDC->SelectObject (bluePen);
 CMineView* viewP = DLE.MineView ();
-for (h = tunnelMaker.Length () * 4, i = 0; i < h; i++)
+int h = tunnelMaker.Length () * 4;
+for (int i = 0; i < h; i++)
 	view.Project (*vertexManager.Vertex (m_nVertices [i]), viewP->m_viewPoints [i]);
-for (i = 0; i < tunnelMaker.Length (); i++)
+int h = tunnelMaker.Length ();
+for (int i = 0; i < h; i++)
 	viewP->DrawSegmentQuick (segmentManager.Segment (m_nSegments [i]));
 }
 
