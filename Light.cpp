@@ -215,7 +215,7 @@ m_nSegment = fp.ReadInt16 ();
 if (bD2X) {
 	ushort h = fp.ReadInt16 ();
 	m_nSide = h & 7;
-	m_info.count = h >> 3;
+	m_info.count = (h >> 3) & 0x1FFF;
 	}
 else {
 	m_nSide = fp.ReadSByte ();

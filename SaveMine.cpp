@@ -145,7 +145,7 @@ vertexManager.Write (fp, FileInfo ().version);
 // write segment information
 segmentManager.WriteSegments (fp, FileInfo ().version);
 // for Descent 2, save special info here
-if (IsD2XLevel ())
+if (LevelVersion () >= 9)
 	lightManager.WriteColors (fp);
 return 0;
 }

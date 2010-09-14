@@ -329,6 +329,7 @@ else {  /*load mine filename */
 objectManager.Read (fp, FileInfo ().version);
 wallManager.Read (fp, FileInfo ().version);
 triggerManager.Read (fp, FileInfo ().version);
+triggerManager.ReadReactor (fp, FileInfo ().version);
 segmentManager.ReadRobotMakers (fp, FileInfo ().version);
 lightManager.ReadLightDeltas (fp, FileInfo ().version);
 segmentManager.ReadEquipMakers (fp, FileInfo ().version);

@@ -103,7 +103,7 @@ if (DLE.LevelVersion () > 6) {
 void CLightManager::WriteVariableLights (CFileManager& fp)
 {
 if (DLE.LevelVersion () > 6) {
-	 fp.Write (lightManager.Count ());
+	fp.Write (lightManager.Count ());
 	for (int i = 0; i < lightManager.Count (); i++) {
 		VariableLight (i)->Write (fp);
 		}

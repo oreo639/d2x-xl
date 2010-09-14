@@ -89,8 +89,8 @@ class CLightDeltaIndex : public CSideKey, public CGameItem {
 
 typedef struct tVariableLight {
 	ushort mask;    // bits with 1 = on, 0 = off
-	short timer;		 // always set to 0
-	short delay;      // time for each bit in mask (short seconds)
+	int timer;		 // always set to 0
+	int delay;      // time for each bit in mask (short seconds)
 } tVariableLight;
 
 // -----------------------------------------------------------------------------
