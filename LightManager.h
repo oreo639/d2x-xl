@@ -218,6 +218,8 @@ class CLightManager {
 
 		bool CalcCornerLights (int nSegment, int nSide, CVertex& sourceCenter, CVertex* sourceCorner, CVertex& A, bool bIgnoreAngle);
 
+		bool FaceHasVariableLight (CSideKey key, CSide* sideP, CWall* wallP);
+
 		bool CalcLightDeltas (int force, int nDepth);
 
 		int FindLightDelta (short nSegment, short nSide, short *pi);

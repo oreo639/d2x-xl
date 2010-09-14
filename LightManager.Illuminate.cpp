@@ -37,12 +37,11 @@ class CVicinity {
 		void Compute (short nSegment, short nDepth) {
 			if (nSegment < 0)
 				return;
-
 			if (m_depth == null)
 				return;
-
 			if (nDepth <= m_depth [nSegment])
 				return;
+
 			m_depth [nSegment] = nDepth;
 
 			if (nDepth > 1) {
@@ -427,7 +426,31 @@ return -1;
 
 //---------------------------------------------------------------------------------
 
-bool CLightManager::CalcLightDeltas (int force, int nDepth) 
+bool CLightManager::FaceHasVariableLight (CSideKey key, CSide* sideP, CWall* wallP) 
+{
+short nBaseTex, nOvlTex;
+sideP->GetTextures (nBaseTex, nOvlTex);
+if ((IsLight (nBaseTex) == -1) && ((nOvlTex == 0) || (IsLight (nOvlTex) == -1)))
+	return false;
+if (wallP != null) {
+	if (!wallP->IsVisible ())
+		return false;
+	if (wallP->IsVariable ())
+		return true;
+	}
+if (IsVariableLight (key))
+	return true;
+if (IsBlastableLight (nBaseTex) || ((nOvlTex > 0) && IsBlastableLight (nOvlTex)))
+	return true;
+CTrigger* trigP = triggerManager.FindByTarget (key);
+if ((trigP != null) && (trigP->Type () >= TT_LIGHT_OFF))
+	return true;
+return false;
+}
+
+//---------------------------------------------------------------------------------
+
+bool CLightManager::CalcLightDeltas (int bForce, int nDepth) 
 {
 	// initialize totals
 	int nErrors = 0;
@@ -445,44 +468,16 @@ bool bD2XLights = (DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.vers
 			continue;
 		CSegment* srcSegP = &(*si);
 		// skip if not marked unless we are automatically saving
-		if  (!(srcSegP->m_info.wallFlags & MARKED_MASK) && !force) 
+		if  (!(srcSegP->IsMarked () || bForce)) 
 			continue;
 		// loop on all sides
 		short nSourceSeg = (short) si.Index ();
 		CSide* sideP = srcSegP->m_sides;
 		for (int nSourceSide = 0; nSourceSide < 6; nSourceSide++, sideP++) {
-			short nBaseTex, nOvlTex;
-			sideP->GetTextures (nBaseTex, nOvlTex);
-			bool bl1 = (IsLight (nBaseTex) != -1);
-			bool bl2 = (IsLight (nOvlTex) != -1);
-			if (!(bl1 || bl2))
-				continue;	// no lights on this side
-			bool bCalcDeltas = false;
-			// if the current side is a wall and has a light and is the target of a trigger
-			// than can make the wall appear/disappear, calculate delta lights for it
 			CSideKey key (nSourceSeg, nSourceSide);
 			CWall* wallP = segmentManager.Wall (key);
-			bCalcDeltas = (wallP != null) && wallP->IsVariable ();
-			if (!bCalcDeltas)
-				bCalcDeltas = IsVariableLight (key);
-			if (!bCalcDeltas) {
-				bool bb1 = IsBlastableLight (nBaseTex);
-				bool bb2 = IsBlastableLight (nOvlTex);
-				if (bb1 == bb2)
-					bCalcDeltas = bb1;	// both lights blastable or not
-				else if (!(bb1 ? bl2 : bl1))	// i.e. one light blastable and the other texture not a non-blastable light 
-					bCalcDeltas = true;
-				}
-			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
-				CTrigger* trigP = triggerManager.FindByTarget (key);
-				if ((trigP != null) && (trigP->Type () >= TT_LIGHT_OFF))
-					bCalcDeltas = true;
-				}
-			if (!bCalcDeltas)
+			if (!FaceHasVariableLight (key, sideP, wallP))
 				continue;
-			if ((wallP != null) && !wallP->IsVisible ())
-				continue;
-
 			if (DeltaIndexCount () >= MAX_LIGHT_DELTA_INDICES) {
 //#pragma omp critical
 				{
