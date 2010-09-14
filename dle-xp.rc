@@ -856,7 +856,7 @@ BEGIN
     PUSHBUTTON      "&check mine",IDC_DIAG_CHECK,556,8,60,12,WS_GROUP
     PUSHBUTTON      "&show problem",IDC_DIAG_SHOW,556,24,60,12,WS_GROUP
     PUSHBUTTON      "c&lear list",IDC_DIAG_CLEAR,556,38,60,12,WS_GROUP
-    CONTROL         "auto int bugs",IDC_DIAG_FIXBUGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,559,58,54,10
+    CONTROL         "auto fix bugs",IDC_DIAG_FIXBUGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,559,58,54,10
     CONTROL         "show warnings",IDC_DIAG_WARNINGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,559,69,59,10
     GROUPBOX        "problem report",IDC_STATIC,144,0,406,128,BS_CENTER
     GROUPBOX        "statistics",IDC_STATIC,4,0,136,128,BS_CENTER
@@ -1311,7 +1311,7 @@ BEGIN
     PUSHBUTTON      "&check mine",IDC_DIAG_CHECK,152,7,60,12,WS_GROUP
     PUSHBUTTON      "&show problem",IDC_DIAG_SHOW,152,20,60,12,WS_GROUP
     PUSHBUTTON      "c&lear list",IDC_DIAG_CLEAR,152,34,60,12,WS_GROUP
-    CONTROL         "auto int bugs",IDC_DIAG_FIXBUGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,54,54,10
+    CONTROL         "auto fix bugs",IDC_DIAG_FIXBUGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,54,54,10
     CONTROL         "show warnings",IDC_DIAG_WARNINGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,66,59,10
     GROUPBOX        "problem report",IDC_STATIC,4,132,214,303,BS_CENTER
     GROUPBOX        "statistics",IDC_STATIC,4,0,136,128,BS_CENTER
@@ -2455,7 +2455,7 @@ BEGIN
     PUSHBUTTON      "&show problem",IDC_DIAG_SHOW,172,130,60,12,WS_GROUP
     GROUPBOX        "problem report",-1,4,0,406,128,BS_CENTER
     PUSHBUTTON      "c&lear list",IDC_DIAG_CLEAR,236,130,60,12,WS_GROUP
-    CONTROL         "auto int bugs",IDC_DIAG_FIXBUGS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,352,132,54,10
+    CONTROL         "auto fix bugs",IDC_DIAG_FIXBUGS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,352,132,54,10
 END
 
 IDD_MINESTATS_DMB2 DIALOGEX 0, 0, 132, 122
@@ -5887,10 +5887,10 @@ BEGIN
         MENUITEM "Previous object\tShift+O",    ID_SEL_PREVOBJECT
         MENUITEM SEPARATOR
         MENUITEM "Next segment\tC or left mouse button", ID_SEL_NEXTCUBE
-        MENUITEM "Previous segment\tShift+C",      ID_SEL_PREVCUBE
-        MENUITEM "Forward segment\tup arrow",      ID_SEL_FWDCUBE
-        MENUITEM "Backwards segment\tdown arrow",  ID_SEL_BACKCUBE
-        MENUITEM "Other segment\tSpace",           ID_SEL_OTHERCUBE
+        MENUITEM "Previous segment\tShift+C",   ID_SEL_PREVCUBE
+        MENUITEM "Forward segment\tup arrow",   ID_SEL_FWDCUBE
+        MENUITEM "Backwards segment\tdown arrow", ID_SEL_BACKCUBE
+        MENUITEM "Other segment\tSpace",        ID_SEL_OTHERCUBE
         MENUITEM SEPARATOR
         MENUITEM "Next side\tS or right arrow", ID_SEL_NEXTSIDE
         MENUITEM "Previous side\tShift+s or right arrow", ID_SEL_PREVSIDE
@@ -6102,8 +6102,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,0,0
- PRODUCTVERSION 1,8,0,0
+ FILEVERSION 1,8,2,0
+ PRODUCTVERSION 1,8,2,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6119,13 +6119,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor XP [11 sep 2010]"
-            VALUE "FileVersion", "1, 8, 0, 0"
+            VALUE "FileDescription", "Descent Level Editor XP [15 sep 2010]"
+            VALUE "FileVersion", "1, 8, 2, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2010 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 8, 0, 0"
+            VALUE "ProductVersion", "1, 8, 2, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6152,7 +6152,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.8.0\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.8.2\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

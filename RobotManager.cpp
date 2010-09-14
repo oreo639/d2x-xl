@@ -245,7 +245,7 @@ fp.ReadInt32 (); // version (0x00000001)
 t = fp.ReadInt32 ();
 for (j = 0; j < t; j++) {
 	i = fp.ReadInt32 ();
-	if (i >= (int) m_nRobotTypes) {
+	if ((i < 0) || (i >= (int) m_nRobotTypes)) {
 		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].", i, m_nRobotTypes - 1);
 		ErrorMsg (message);
 		return 1;
@@ -277,7 +277,7 @@ return 0;
 
 int CRobotManager::WriteHXM (CFileManager& fp) 
 {
-	short i, t;
+	int i, t;
 
 for (i = 0, t = 0; i < m_nRobotTypes; i++)
 	if (IsCustomRobot (i))
