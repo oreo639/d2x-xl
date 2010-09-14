@@ -59,7 +59,7 @@ Id () = undoManager.Backup (this, editType);
 void CVariableLight::Read (CFileManager& fp) 
 {
 CSideKey::Read (fp);
-m_info.mask = fp.ReadInt32 ();
+m_info.mask = fp.ReadUInt32 ();
 m_info.timer = fp.ReadInt32 ();
 m_info.delay = fp.ReadInt32 ();
 }
