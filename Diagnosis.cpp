@@ -1021,7 +1021,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
 			   (tt != TT_SPEEDBOOST) && (tt != TT_SHIELD_DAMAGE_D2) && (tt != TT_ENERGY_DRAIN_D2)
 			) {
-			sprintf_s (message, sizeof (message),"WARNING: Trigger has no targets (trigP=%d)",nTrigger);
+			sprintf_s (message, sizeof (message),"WARNING: Trigger has no targets (triger=%d)",nTrigger);
 			if (UpdateStats (message,0, -1, -1, -1, -1, -1, -1, nTrigger))
 				return true;
 			}
@@ -1172,7 +1172,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	trigP = triggerManager.ObjTrigger (nTrigger);
 	if ((trigP->Type () != TT_MESSAGE) && (trigP->Type () != TT_SOUND) && (trigP->Type () != TT_COUNTDOWN) && !trigP->m_count) {
-		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigP=%d, object=%d))", nTrigger, trigP->Info ().nObject);
+		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigger=%d, object=%d))", nTrigger, trigP->Info ().nObject);
 		if (UpdateStats (message,0, nTrigger, trigP->Info ().nObject, -1, -1, -1, -1, nTrigger)) return true;
 		}
 	}

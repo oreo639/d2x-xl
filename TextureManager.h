@@ -39,7 +39,7 @@ class CTextureManager {
 
 		int MaxTextures (int nVersion = -1);
 		
-		void LoadTextures (int nVersion = -1, bool bForce = false);
+		void LoadTextures (int nVersion = -1, bool bCleanup = false);
 		
 		bool Check (int nTexture);
 		
