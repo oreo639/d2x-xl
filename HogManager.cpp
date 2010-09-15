@@ -358,10 +358,10 @@ return size;
 
 bool CHogManager::LoadLevel (LPSTR pszFile, LPSTR pszSubFile) 
 {
-	CFileManager	fTmp, fSrc;
+	CFileManager	fSrc;
+	CMemoryFile		fTmp;
 	long				size, offset;
 	char				szTmp[256];
-	int				chunk;
 	int				index = -1;
 	bool				funcRes = false;
 
@@ -375,11 +375,8 @@ if (pszSubFile) {
 else if (0 > (index = GetFileData (-1, &size, &offset)))
 	goto errorExit;
 
-CFileManager::SplitPath (pszFile, szTmp, null, null);
-strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
-
-if (fTmp.Open (szTmp, "wb") || fSrc.Open (pszFile, "rb")) {
-	ErrorMsg ("Unable to create temporary DLE work file.");
+if (fSrc.Open (pszFile, "rb")) {
+	ErrorMsg ("Unable to load level.");
 	goto errorExit;
 	}
 // set subfile name
@@ -392,14 +389,14 @@ fSrc.ReadInt32 ();
 fSrc.ReadInt32 ();
 theMine->LoadPaletteName (fSrc);
 fSrc.Seek (long (fPos), SEEK_SET);
-while (size > 0) {
-	chunk = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;
-	fSrc.Read (dataBuf, 1, chunk);
-	//if (!chunk)
-	//	break;
-	fTmp.Write (dataBuf, 1, chunk);
-	size -= chunk;
-	}
+//while (size > 0) {
+//	int chunk = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;
+//	fSrc.Read (dataBuf, 1, chunk);
+//	//if (!chunk)
+//	//	break;
+//	fTmp.Write (dataBuf, 1, chunk);
+//	size -= chunk;
+//	}
 
 if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".pal")))
 	paletteManager.LoadCustom (fSrc, size);

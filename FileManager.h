@@ -190,6 +190,10 @@ class CMemoryFile : public CFileManager {
 		virtual int PutC (int c);
 		virtual int PutS (const char *str);
 
+		int Attach (CFileManager& fp, size_t size);
+
+		bool Create (size_t size);
+
 		void Destroy (void);
 
 		CMemoryFile () : CFileManager (), m_buffer (null) {}

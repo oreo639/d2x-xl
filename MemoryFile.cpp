@@ -29,21 +29,33 @@ COPYRIGHT 1993-1999 PARALLAX SOFTWARE CORPORATION.  ALL RIGHTS RESERVED.
 
 // ----------------------------------------------------------------------------
 
+bool CMemoryFile::Create (size_t size)
+{
+m_buffer = new byte [size];
+if (m_buffer == null)
+	return false;
+m_info.size = (long) size;
+m_info.position = 0;
+return true;
+}
+
+// ----------------------------------------------------------------------------
+
 int CMemoryFile::Open (const char *filename, const char *mode) 
 {
 if (!CFileManager::Open (filename, mode))
-	return 0;
+	return 1;
 
-m_buffer = new byte [m_info.size];
-if (m_buffer == null) {
+if (!Create (m_info.size)) {
 	Close ();
-	return 0;
+	return 1;
 	}
+
 if (CFileManager::Read (m_buffer, 1, m_info.size) != m_info.size)
 	Close ();
 
 CFileManager::Close ();
-return (m_buffer != null);
+return (m_buffer == null);
 }
 
 // ----------------------------------------------------------------------------
@@ -179,6 +191,19 @@ if (m_buffer != null) {
 	}
 m_info.size = 0;
 m_info.position = -1;
+return 0;
+}
+
+// ----------------------------------------------------------------------------
+
+int CMemoryFile::Attach (CFileManager& fp, size_t size)
+{
+if (!Create (size))
+	return 1;
+if (fp.Read (m_buffer, 1, size) != size) {
+	Destroy ();
+	return 1;
+	}
 return 0;
 }
 
