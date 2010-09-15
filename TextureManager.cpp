@@ -251,16 +251,17 @@ delete fp;
 
 //------------------------------------------------------------------------------
 
-void CTextureManager::LoadTextures (int nVersion, bool bForce)
+void CTextureManager::LoadTextures (int nVersion, bool bCleanup)
 {
 if (nVersion < 0) {
 	nVersion = Version ();
-	if (strcmp (m_pigFiles [nVersion], descentPath [nVersion]) == 0)
+	if (!bCleanup && strcmp (m_pigFiles [nVersion], descentPath [nVersion]) == 0)
 		return;
 	strcpy_s (m_pigFiles [nVersion], sizeof (m_pigFiles [nVersion]), descentPath [nVersion]);
 	LoadInfo (nVersion);
 	}
-Release (nVersion, true, false);
+if (!bCleanup)
+	Release (nVersion, true, false);
 CFileManager* fp = OpenPigFile (nVersion);
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
 	m_textures [nVersion][i].Load (*fp, i, nVersion);
