@@ -412,7 +412,7 @@ CSideKey opp;
 if (segmentManager.OppositeSide (opp) == null)
 	return false;
 
-(CSideKey) *current = opp;
+*((CSideKey *) current) = opp;
 Refresh (true);
 DLE.ToolView ()->SegmentTool ()->Refresh ();
 return true;

@@ -502,7 +502,7 @@ if (m_nWall [0] < 0) {
 	return false;
 	}
 m_wallP [0] = wallManager.Wall (m_nWall [0]);
-(CSideKey) *current = (CSideKey) *m_wallP [0];
+*((CSideKey *) current) = *((CSideKey *) m_wallP [0]);
 m_nTrigger = m_wallP [0]->Info ().nTrigger;
 GetOtherWall ();
 return true;

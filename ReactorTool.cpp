@@ -274,7 +274,7 @@ if ((nSide < 0) || (nSide > 5))
 	return;
 if ((current->m_nSegment == nSegment) && (current->m_nSide == nSide))
 	return;
-(CSideKey) *other = m_triggerP->Target (m_iTarget);
+*((CSideKey *) other) = m_triggerP->Target (m_iTarget);
 DLE.MineView ()->Refresh ();
 }
 

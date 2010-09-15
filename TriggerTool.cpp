@@ -687,7 +687,7 @@ else {
 		}
 	if ((current->m_nSegment != wallP->m_nSegment) ||
 		 (current->m_nSide != wallP->m_nSide)) {
-		(CSideKey) *current = (CSideKey) *wallP;
+		*((CSideKey *) current) = *((CSideKey *) wallP);
 		}
 	}
 SetTriggerPtr ();
@@ -962,7 +962,7 @@ if ((nSide < 0) || (nSide > 5))
 
 if ((current->m_nSegment == nSegment) && (current->m_nSide == nSide))
 	return;
-(CSideKey) *other = m_triggerP->Target (m_iTarget);
+*((CSideKey *) other) = m_triggerP->Target (m_iTarget);
 DLE.MineView ()->Refresh ();
 }
 
