@@ -386,7 +386,7 @@ fSrc.ReadInt32 ();
 fSrc.ReadInt32 ();
 theMine->LoadPaletteName (fSrc);
 fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-m_level.Attach (fSrc, size);
+m_level.Load (fSrc, size);
 //while (size > 0) {
 //	int chunk = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;
 //	fSrc.Read (dataBuf, 1, chunk);
@@ -433,10 +433,10 @@ void CHogManager::OnOK ()
 LBFiles ()->GetText (LBFiles ()->GetCurSel (), m_pszSubFile);
 char *pszExt = strrchr ((char *) m_pszSubFile, '.');
 if (pszExt && _strcmpi (pszExt,".rdl") && _strcmpi (pszExt,".rl2")) {
-	ErrorMsg ("DLE-XP cannot process this fp. To change the fp,\n\n"
+	ErrorMsg ("DLE-XP cannot process this file. To change the file,\n\n"
 				 "export it and process it with the appropriate application.\n"
-				 "To incorporate the changes in the HOG fp,\n"
-				 "import the modified fp back into the HOG fp.");
+				 "To incorporate the changes in the HOG file,\n"
+				 "import the modified file back into the HOG file.");
 	return;
 	}
 

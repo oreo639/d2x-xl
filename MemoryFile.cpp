@@ -43,7 +43,7 @@ return true;
 
 int CMemoryFile::Open (const char *filename, const char *mode) 
 {
-if (!CFileManager::Open (filename, mode))
+if (CFileManager::Open (filename, mode))
 	return 1;
 
 if (!Create (m_info.size)) {
@@ -150,7 +150,7 @@ if (size > available)
 	size = (available / elSize) * elSize;
 if (size == 0)
 	return 0;
-memcpy (buffer, m_buffer, size);
+memcpy (buffer, m_buffer + m_info.position, size);
 m_info.position += size;
 return size / elSize;
 }
@@ -212,7 +212,7 @@ return 0;
 
 int CMemoryFile::Load (const byte* buffer, size_t size)
 {
-if ((buffer == null) || !Create (size))
+if ((buffer == null) || (size == 0) || !Create (size))
 	return 1;
 memcpy (m_buffer, buffer, size);
 return 0;

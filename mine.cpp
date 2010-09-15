@@ -114,7 +114,8 @@ short CMine::CreateNewLevel (CMemoryFile& fp)
 CResource res;
 // copy data to a file
 triggerManager.ObjTriggerCount () = 0;
-return fp.Load (res.Load (IsD1File () ? IDR_NEW_RDL : IDR_NEW_RL2), res.Size ());
+byte* dataP = res.Load (IsD1File () ? IDR_NEW_RDL : IDR_NEW_RL2);
+return !fp.Load (dataP, res.Size ());
 }
 
 

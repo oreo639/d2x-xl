@@ -79,7 +79,7 @@ class CFileManager {
 		int EoF (void);
 		int Error (void);
 		inline int Size (void) { return m_info.size; }
-		inline char* const Name (void) { return m_info.name; }
+		inline char* const Name (void) { return (m_info.name == null) ? "" : m_info.name; }
 
 		// prototypes for reading basic types from fp
 		int ReadInt32 (void);

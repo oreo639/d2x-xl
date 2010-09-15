@@ -192,9 +192,7 @@ if (LoadGameItems (fp, bCreate) != 0) {
 	return 3;
 	}
 
-fp.Close ();
-
-if (!bLoadFromHog) {
+if (!(bLoadFromHog || bCreate)) {
 	paletteManager.Reload ();
 	textureManager.LoadTextures ();
 	if (IsD2File ()) {
