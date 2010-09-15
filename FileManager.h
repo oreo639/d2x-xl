@@ -67,7 +67,6 @@ class CFileManager {
 		virtual int Open (const char *filename, const char *mode);
 		virtual size_t Read (void *buf, size_t elsize, size_t nelem);
 		virtual int Close (void);
-		virtual int Size (const char *hogname, const char *folder);
 		virtual int Seek (size_t offset, int whence = SEEK_SET);
 		virtual int Tell (void);
 		virtual char *GetS (char *buf, size_t n);
@@ -166,39 +165,6 @@ class CFileManager {
 				m_info.size = pos;
 			return pos;
 			}
-	};
-
-
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
-
-class CMemoryFile : public CFileManager {
-	private:
-		byte* m_buffer;
-
-	public:
-		virtual int Open (const char *filename, const char *mode);
-		virtual size_t Read (void *buf, size_t elsize, size_t nelem);
-		virtual int Close (void);
-		virtual int Size (const char *hogname, const char *folder);
-		virtual int Seek (size_t offset, int whence = SEEK_SET);
-		virtual int Tell (void);
-		virtual char *GetS (char *buf, size_t n);
-		virtual int Write (const void *buf, int elsize, int nelem);
-		virtual int GetC (void);
-		virtual int PutC (int c);
-		virtual int PutS (const char *str);
-
-		int Attach (CFileManager& fp, size_t size);
-
-		bool Create (size_t size);
-
-		void Destroy (void);
-
-		CMemoryFile () : CFileManager (), m_buffer (null) {}
-
-		~CMemoryFile () { Destroy (); }
 	};
 
 // ----------------------------------------------------------------------------

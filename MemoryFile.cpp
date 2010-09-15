@@ -24,7 +24,7 @@ COPYRIGHT 1993-1999 PARALLAX SOFTWARE CORPORATION.  ALL RIGHTS RESERVED.
 #	include <errno.h>
 #endif
 
-#include "FileManager.h"
+#include "MemoryFile.h"
 //#include "findfile.h"
 
 // ----------------------------------------------------------------------------
@@ -201,7 +201,7 @@ int CMemoryFile::Attach (CFileManager& fp, size_t size)
 if (!Create (size))
 	return 1;
 if (fp.Read (m_buffer, 1, size) != size) {
-	Destroy ();
+	Close ();
 	return 1;
 	}
 return 0;
