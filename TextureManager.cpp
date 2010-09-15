@@ -11,6 +11,7 @@ CTextureManager textureManager;
 void CTextureManager::Setup (void)
 {
 m_extra = null;
+m_paletteName [0] = 0;
 Create (0);
 Create (1);
 }
@@ -255,9 +256,12 @@ void CTextureManager::LoadTextures (int nVersion, bool bCleanup)
 {
 if (nVersion < 0) {
 	nVersion = Version ();
-	if (!bCleanup && strcmp (m_pigFiles [nVersion], descentPath [nVersion]) == 0)
+	if (!bCleanup 
+		 && (strcmp (m_pigFiles [nVersion], descentPath [nVersion]) == 0)
+		 && (strcmp (m_paletteName, paletteManager.Name ()) == 0))
 		return;
 	strcpy_s (m_pigFiles [nVersion], sizeof (m_pigFiles [nVersion]), descentPath [nVersion]);
+	strcpy_s (m_paletteName, sizeof (m_paletteName), paletteManager.Name ());
 	LoadInfo (nVersion);
 	}
 if (!bCleanup)

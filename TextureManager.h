@@ -24,6 +24,7 @@ class CTextureManager {
 	public:
 		uint m_nTextures [2];
 		char** m_names [2];
+		char m_paletteName [15];
 		textureList m_textures [2];
 		ushort* m_index [2];
 		uint m_nOffsets [2];

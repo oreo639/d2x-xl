@@ -95,8 +95,6 @@ return 0;
 void CMine::LoadPaletteName (CFileManager& fp, bool bNewMine)
 {
 if (IsD2File ()) {
-	char	paletteName [256];
-
 	if (LevelVersion () >= 8) {
 		fp.ReadInt16 ();
 		fp.ReadInt16 ();
@@ -104,19 +102,7 @@ if (IsD2File ()) {
 		fp.ReadSByte ();
 		}
 	// read palette file name
-	int i;
-	for (i = 0; i < 15; i++) {
-		paletteName [i] = fp.ReadChar ();
-		if (paletteName [i]== 0x0a) {
-			paletteName [i] = 0;
-			break;
-			}
-		}
-	// replace extension with .pig
-	if (i >= 4) {
-		paletteName [strlen ((char *)paletteName) - 4] = 0;
-		strcat_s (paletteName, sizeof (paletteName), ".pig");
-		}
+	paletteManager.LoadName (fp);
 	// try to find new pig file in same directory as Current () pig file
 	// 1) cut off old name
 	if (!bNewMine) {
@@ -130,7 +116,7 @@ if (IsD2File ()) {
 				*path = null;
 				}
 			// paste on new *.pig name
-			strcat_s (descentPath [1], sizeof (descentPath [1]), paletteName);
+			strcat_s (descentPath [1], sizeof (descentPath [1]), paletteManager.Name ());
 			_strlwr_s (descentPath [1], sizeof (descentPath [1]));
 			}
 		}

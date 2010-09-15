@@ -247,3 +247,24 @@ return MAKEINTRESOURCE (IDR_GROUPA_256);
 }
 
 //------------------------------------------------------------------------
+
+void CPaletteManager::LoadName (CFileManager& fp)
+{
+int i;
+for (i = 0; i < 15; i++) {
+	m_name [i] = fp.ReadChar ();
+	if (m_name [i] == 0x0a) {
+		m_name [i] = 0;
+		break;
+		}
+	}
+// replace extension with .pig
+if (i < 4) 
+	strcpy_s (m_name, sizeof (m_name), "groupa.pig");
+else {
+	int l = (int) strlen (m_name) - 4;
+	strcpy_s (m_name + l, sizeof (m_name) - l, ".pig");
+	}
+}
+
+//------------------------------------------------------------------------
