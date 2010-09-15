@@ -109,26 +109,12 @@ undoManager.Reset ();
 // Action: makes a new level from the resource file
 // -----------------------------------------------------------------------------
 
-short CMine::CreateNewLevel (void)
+short CMine::CreateNewLevel (CMemoryFile& fp)
 {
 CResource res;
-byte *dataP = res.Load (IsD1File () ? IDR_NEW_RDL : IDR_NEW_RL2);
-if (!dataP)
-	return 0;
-// copy dataP to a file
-
-CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
-sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
-ASSIGN (robotManager.RobotInfoList (), robotManager.DefRobotInfoList ());
-CFileManager fp;
-if (fp.Open (message, "wb")) 
-	return 2;
-size_t nBytes = fp.Write (dataP, sizeof (byte), (ushort) res.Size ());
-fp.Close ();
-if (nBytes != res.Size ())
-	return 1;
+// copy data to a file
 triggerManager.ObjTriggerCount () = 0;
-return 0;
+return fp.Load (res.Load (IsD1File () ? IDR_NEW_RDL : IDR_NEW_RL2), res.Size ());
 }
 
 

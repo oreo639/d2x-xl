@@ -345,21 +345,18 @@ strcpy_s (szSubFile, sizeof (szSubFile), pszSubFile);
 lightManager.CreateLightMap ();
 if (strstr (pszFile, ".hog")) {
 	CHogManager	hm (DLE.MainFrame (), szFile, szSubFile);
-	if (pszSubFile != m_szSubFile) {
+//	if (pszSubFile != m_szSubFile) {
 		if (!hm.LoadLevel (szFile, szSubFile))
 			return FALSE;
 		}
-	else {
-		if (hm.DoModal () != IDOK)
-			return FALSE;
-		}
+	//else {
+	//	if (hm.DoModal () != IDOK)
+	//		return FALSE;
+	//	}
 	if (pszFile != m_szFile)
 		strcpy_s (m_szFile, sizeof (m_szFile), szFile);
 	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);
-	CFileManager::SplitPath (pszFile, m_startFolder , null, null);
-	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", m_startFolder);
-	err = theMine->Load (m_szTmpFile, true);
-	CFileManager::Delete (m_szTmpFile);
+	err = theMine->Load (m_level, true);
 	memset (&missionData, 0, sizeof (missionData));
 	ReadMissionFile (m_szFile);
 	}

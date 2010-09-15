@@ -2,6 +2,7 @@
 #define __hogman_h
 
 #include "dle-xp-res.h"
+#include "MemoryFile.h"
 
 #define MAX_HOGFILES	1000
 
@@ -37,6 +38,7 @@ class CHogManager : public CDialog {
 		int				m_type;
 		int				*m_pType;
 		int				m_bShowAll;
+		CMemoryFile		m_level;
 //		tHogFileData	m_fileData;
 
 		CHogManager (CWnd *pParentWnd = null, LPSTR pszFile = null, LPSTR pszSubFile = null);

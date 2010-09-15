@@ -23,9 +23,13 @@ class CMemoryFile : public CFileManager {
 		virtual int PutC (int c);
 		virtual int PutS (const char *str);
 
-		int Attach (CFileManager& fp, size_t size);
+		int Load (CFileManager& fp, size_t size);
+
+		int Load (const byte* buffer, size_t size);
 
 		bool Create (size_t size);
+
+		inline bool Empty (void) { return m_info.size == 0; }
 
 		CMemoryFile () : CFileManager (), m_buffer (null) {}
 

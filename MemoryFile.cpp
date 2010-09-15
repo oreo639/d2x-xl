@@ -196,7 +196,7 @@ return 0;
 
 // ----------------------------------------------------------------------------
 
-int CMemoryFile::Attach (CFileManager& fp, size_t size)
+int CMemoryFile::Load (CFileManager& fp, size_t size)
 {
 if (!Create (size))
 	return 1;
@@ -204,6 +204,17 @@ if (fp.Read (m_buffer, 1, size) != size) {
 	Close ();
 	return 1;
 	}
+m_info.name = fp.Name ();
+return 0;
+}
+
+// ----------------------------------------------------------------------------
+
+int CMemoryFile::Load (const byte* buffer, size_t size)
+{
+if ((buffer == null) || !Create (size))
+	return 1;
+memcpy (m_buffer, buffer, size);
 return 0;
 }
 

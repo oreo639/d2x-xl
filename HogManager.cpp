@@ -359,9 +359,7 @@ return size;
 bool CHogManager::LoadLevel (LPSTR pszFile, LPSTR pszSubFile) 
 {
 	CFileManager	fSrc;
-	CMemoryFile		fTmp;
 	long				size, offset;
-	char				szTmp[256];
 	int				index = -1;
 	bool				funcRes = false;
 
@@ -381,14 +379,14 @@ if (fSrc.Open (pszFile, "rb")) {
 	}
 // set subfile name
 fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-size_t fPos = fSrc.Tell ();
 // skip mineDataOffset and gameDataOffset
 if (theMine->LoadMineSigAndType (fSrc))
 	goto errorExit;
 fSrc.ReadInt32 ();
 fSrc.ReadInt32 ();
 theMine->LoadPaletteName (fSrc);
-fSrc.Seek (long (fPos), SEEK_SET);
+fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
+m_level.Attach (fSrc, size);
 //while (size > 0) {
 //	int chunk = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;
 //	fSrc.Read (dataBuf, 1, chunk);
@@ -435,52 +433,12 @@ void CHogManager::OnOK ()
 LBFiles ()->GetText (LBFiles ()->GetCurSel (), m_pszSubFile);
 char *pszExt = strrchr ((char *) m_pszSubFile, '.');
 if (pszExt && _strcmpi (pszExt,".rdl") && _strcmpi (pszExt,".rl2")) {
-#if 1
 	ErrorMsg ("DLE-XP cannot process this fp. To change the fp,\n\n"
 				 "export it and process it with the appropriate application.\n"
 				 "To incorporate the changes in the HOG fp,\n"
 				 "import the modified fp back into the HOG fp.");
 	return;
 	}
-#else //0
-	if (QueryMsg ("Would you like to view this fp\n"
-					  "from an associated windows program?\n\n"
-					  "Note: Any changes to this fp will affect\n"
-					  "the exported fp and will have to be imported\n"
-					  "back into the HOG fp when finished.") == IDOK) {
-		SizeListBox->GetString (message, index);
-		long size = atol(message);
-		OffsetListBox->GetString(message,index);
-		long offset = atol(message) + sizeof (level_header);
-
-		// Set all structure members to zero.
-		OPENFILENAME ofn;
-		memset(&ofn, 0, sizeof (OPENFILENAME));
-		ofn.lStructSize = sizeof (OPENFILENAME);
-		ofn.hwndOwner = HWindow;
-		ofn.lpstrFilter = "All Files\0*.*\0";
-		ofn.nFilterIndex = 1;
-		ofn.lpstrDefExt = pszExt;
-		strcpy(szTmp, m_pszSubFile);
-		ofn.lpstrFile= szTmp;
-		ofn.nMaxFile = sizeof (szTmp);
-		ofn.Flags =   OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
-		if (GetSaveFileName(&ofn)) {
-		Export (m_pszName, szTmp, offset, size);
-		HINSTANCE hinst = FindExecutable(szTmp, m_startFolder , message);
-		if (hinst > (HINSTANCE)32)
-			ShellExecute(HWindow, 0, message, szTmp, m_startFolder , SW_SHOWNORMAL);
-		else {
-			ErrorMsg ("No application is \"associated\" with this extention.\n\n"
-						 "Hint: You can use File Manager to associate this fTmp's\n"
-						 "extension with an application. File Manager can be found\n"
-						 "in your windows directory under the szName WINFILE.EXE");
-				}
-			}
-		}
-	return;
-	}
-#endif //1
 
 LoadLevel ();
 CDialog::OnOK ();
@@ -528,13 +486,6 @@ else {
 		// update list box
 		DeleteFile ();
 		AddFile (lh.name, size, offset, fileno);
-/*
-		index = LBFiles ()->GetCurSel ();
-		LBFiles ()->DeleteString (index);
-		int i = LBFiles ()->AddString (lh.name);
-		LBFiles ()->SetItemData (i, index);
-		LBFiles ()->SetCurSel (index);
-*/
 		}
 	}
 fp.Close ();
@@ -552,29 +503,8 @@ void CHogManager::OnImport (void)
 
 	char szFile[256] = "\0"; // buffer for fp name
 	level_header lh;
-//  DWORD index;
-
-//  // make sure there is an item selected
-//  index = LBFiles ()->GetCurSel ();
-//  if (index < 0) {
-//    ErrorMsg ("You must select an item first.");
-//  } else {
-	// Set all structure members to zero.
-#if 0
-if (!BrowseForFile (TRUE, (IsD1File ()) ? "rdl" : "rl2", szFile, 
-						  "Descent Level|*.rdl|"
-						  "Descent 2 Level|*.rl2|"
-						  "Texture fp|*.pog|"
-						  "Robot fp|*.hxm|"
-						  "Lightmap fp|*.lgt|"
-						  "Color fp|*.clr|"
-						  "Palette fp|*.pal|"
-						  "All Files|*.*||",
-						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST,
-						  DLE.MainFrame ())
-	return;
-#else
 	OPENFILENAME ofn;
+
 memset(&ofn, 0, sizeof (OPENFILENAME));
 ofn.lStructSize = sizeof (OPENFILENAME);
 ofn.hwndOwner = GetSafeHwnd ();
@@ -601,7 +531,6 @@ ofn.nMaxFileTitle = sizeof (lh.name);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 if (!GetOpenFileName (&ofn))
 	return;
-#endif
 
 CFileManager fDest;
 if (fDest.Open (m_pszFile, "ab")) {

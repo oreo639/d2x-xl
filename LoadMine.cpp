@@ -6,60 +6,76 @@
 
 // -----------------------------------------------------------------------------
 
-short CMine::Load (const char *szFile, bool bLoadFromHog)
+short CMine::LoadLevel (CFileManager* fp, bool bLoadFromHog)
 {
-if (theMine == null)
-	return 0;
+	CMemoryFile mf;
+	CFileManager df;
+	bool bCreate = false;
 
-	char filename [256];
-	bool bNewMine = false;
-	CFileManager fp;
+if (fp == null) {
+	if (CreateNewLevel (mf)) 
+		fp = &mf;
+	else {
+		lightManager.CreateLightMap ();
+		CFileManager::SplitPath (IsD1File () ? descentPath [0] : missionPath, m_startFolder, null, null);
+		char filename [256];
+		sprintf_s (filename, sizeof (filename), IsD1File () ? "%new.rdl" : "%snew.rl2", m_startFolder);
+		if (df.Open (filename, "rb")) {
+			sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
+			ErrorMsg (message);
+			return -1;
+			}
+		fp = &df;
+		bLoadFromHog = false;
+		bCreate = true;
+		}
+	}
+undoManager.Lock ();
+LoadMine (*fp, bLoadFromHog, bCreate);
+undoManager.Unlock ();
+return bCreate ? 1 : 0;
+}
+
+// -----------------------------------------------------------------------------
+
+short CMine::Load (const char* filename)
+{
+CMemoryFile	fp;
+return fp.Open (filename, "rb") ? Load (null, false) : Load (&fp, false);
+}
+
+// -----------------------------------------------------------------------------
+
+short CMine::Load (CFileManager* fp, bool bLoadFromHog)
+{
+	bool bCreate = false;
 
 undoManager.Reset ();
 tunnelMaker.Destroy ();
 // if no file passed, define a new level w/ 1 object
-if (szFile && *szFile)
-	strcpy_s (filename, sizeof (filename), szFile);
-else if (!CreateNewLevel ()) {
-	lightManager.CreateLightMap ();
-	CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
-	sprintf_s (filename, sizeof (filename), (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
-	bLoadFromHog = false;
-	bNewMine = true;
-	}
+short i = LoadLevel (fp, bLoadFromHog);
+if (i != 0)
+	return i < 1;
 
-m_disableDrawing = TRUE;
-
-undoManager.Lock ();
-LoadMine (filename, bLoadFromHog, bNewMine);
-if (!bNewMine && IsD2XLevel () && LevelIsOutdated ()) {
+if (LevelIsOutdated ()) {
+	undoManager.Lock ();
 	if (LevelVersion () < 15) {
 		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
 		triggerManager.ObjTriggerCount () = 0;
 		}
 	UpdateLevelVersion ();
+	undoManager.Unlock ();
 	}
-//ComputeVariableLight ();
+
 int errFlags = FixIndexValues ();
-if (errFlags != 0) {
-	sprintf_s (message, sizeof (message),  "File contains corrupted data (error code %#04x). Would you like to load anyway? ", errFlags);
-	if (QueryMsg(message) != IDYES) {
-		if (!CreateNewLevel ()) {
-			CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
-			sprintf_s (filename, sizeof (filename), (IsD1File ()) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
-			bLoadFromHog = false;
-			bNewMine = true;
-			}
-		m_disableDrawing = TRUE;
-		LoadMine (filename, bLoadFromHog, bNewMine);
-		m_disableDrawing = FALSE;
-		undoManager.Lock ();
-		return 1;
-		}
+if (errFlags == 0)
+	return 1;
+sprintf_s (message, sizeof (message),  "File contains corrupted data (error code %#04x). Would you like to load anyway? ", errFlags);
+if (QueryMsg (message) != IDYES) {
+	return LoadLevel (null, false) < 1;
 	}
-m_disableDrawing = FALSE;
-undoManager.Unlock ();
-return 0;
+
+return 0; // failed
 }
 
 // -----------------------------------------------------------------------------
@@ -92,7 +108,7 @@ return 0;
 
 // -----------------------------------------------------------------------------
 
-void CMine::LoadPaletteName (CFileManager& fp, bool bNewMine)
+void CMine::LoadPaletteName (CFileManager& fp, bool bCreate)
 {
 if (IsD2File ()) {
 	if (LevelVersion () >= 8) {
@@ -105,7 +121,7 @@ if (IsD2File ()) {
 	paletteManager.LoadName (fp);
 	// try to find new pig file in same directory as Current () pig file
 	// 1) cut off old name
-	if (!bNewMine) {
+	if (!bCreate) {
 		if (descentPath [1][0] != 0) {
 			char *path = strrchr (descentPath [1], '\\');
 			if (!path) {
@@ -125,18 +141,17 @@ if (IsD2File ()) {
 
 // -----------------------------------------------------------------------------
 
-short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
+short CMine::LoadMine (CFileManager& fp, bool bLoadFromHog, bool bCreate)
 {
-	CFileManager fp;
-
 m_changesMade = 0;
 
-if (fp.Open (filename, "rb")) {
-	sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
-	ErrorMsg (message);
-	return -1;
-	}
-	//  strcpy(gamesave_current_filename, filename);
+//	CFileManager fp;
+//if (fp.Open (filename, "rb")) {
+//	sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
+//	ErrorMsg (message);
+//	return -1;
+//	}
+
 if (LoadMineSigAndType (fp))
 	return -1;
 ClearMineData ();
@@ -144,7 +159,7 @@ ClearMineData ();
 int mineDataOffset = fp.ReadInt32 ();
 // read game data offset
 int gameDataOffset = fp.ReadInt32 ();
-LoadPaletteName (fp, bNewMine);
+LoadPaletteName (fp, bCreate);
 
 // read descent 2 reactor information
 if (IsD2File ()) {
@@ -157,17 +172,15 @@ if (IsD2File ()) {
 	fp.Read (SecretOrient ());
 	}
 
-m_disableDrawing = TRUE;
-
 fp.Seek (mineDataOffset, SEEK_SET);
-if (LoadMineGeometry (fp, bNewMine) != 0) {
+if (LoadMineGeometry (fp, bCreate) != 0) {
 	ErrorMsg ("Error loading mine data");
 	fp.Close ();
 	return(2);
 	}
 
 fp.Seek (gameDataOffset, SEEK_SET);
-if (LoadGameItems (fp, bNewMine) != 0) {
+if (LoadGameItems (fp, bCreate) != 0) {
 	ErrorMsg ("Error loading game data");
 	// reset "howmany"
 	objectManager.ResetInfo ();
@@ -185,6 +198,8 @@ if (!bLoadFromHog) {
 	paletteManager.Reload ();
 	textureManager.LoadTextures ();
 	if (IsD2File ()) {
+		char filename [256];
+		strcpy_s (filename, sizeof (filename), fp.Name ());
 		char* ps = strstr (filename, ".");
 		if (ps)
 			strcpy_s (ps, 256 - (ps - filename), ".pog");
@@ -235,7 +250,7 @@ return 0;
 // ACTION - Reads a mine data portion of RDL file.
 // -----------------------------------------------------------------------------
 
-short CMine::LoadMineGeometry (CFileManager& fp, bool bNewMine)
+short CMine::LoadMineGeometry (CFileManager& fp, bool bCreate)
 {
 
 // read version (1 byte)
@@ -292,7 +307,7 @@ return 0;
 //          materialogrifizationator data from an RDL file.
 // -----------------------------------------------------------------------------
 
-short CMine::LoadGameItems (CFileManager& fp, bool bNewMine) 
+short CMine::LoadGameItems (CFileManager& fp, bool bCreate) 
 {
 // Check signature
 Info ().Read (fp);

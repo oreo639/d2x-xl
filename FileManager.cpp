@@ -208,7 +208,7 @@ if (fopen_s (&m_info.file, filename, mode))
 	return 1;
 m_info.position = 0;
 m_info.size = ffilelength (m_info.file);
-m_info.filename = const_cast<char*> (filename);
+m_info.name = const_cast<char*> (filename);
 return 0;
 }
 

@@ -47,10 +47,10 @@ class CFilename {
 // ----------------------------------------------------------------------------
 
 typedef struct tFileInfo {
-	FILE		*file;
-	char		*filename;
-	long		size;
-	long		position;
+	FILE*	file;
+	char*	name;
+	long	size;
+	long	position;
 } tFileInfo;
 
 // ----------------------------------------------------------------------------
@@ -79,6 +79,7 @@ class CFileManager {
 		int EoF (void);
 		int Error (void);
 		inline int Size (void) { return m_info.size; }
+		inline char* const Name (void) { return m_info.name; }
 
 		// prototypes for reading basic types from fp
 		int ReadInt32 (void);
@@ -156,7 +157,6 @@ class CFileManager {
 		static void ChangeFilenameExtension (char *dest, const char *src, const char *new_ext);
 
 		inline FILE*& File (void) { return m_info.file; }
-		inline char* Name (void) { return m_info.filename; }
 
 	private:
 		inline long SetPos (long pos) {

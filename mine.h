@@ -3,7 +3,7 @@
 
 #include "define.h"
 #include "global.h"
-#include "FileManager.h"
+#include "MemoryFile.h"
 #include "carray.h"
 #include "Types.h"
 #include "GameItem.h"
@@ -58,7 +58,6 @@ class CMine {
 		char				message [256];
 		char				m_startFolder [256];
 		short				m_selectMode;
-		int				m_disableDrawing;
 		int				m_changesMade;
 		int				m_nNoLightDeltas;
 		char				m_szBlockFile [256];
@@ -80,7 +79,7 @@ class CMine {
 		inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
 		inline bool IsD2XLevel (void) { return LevelVersion () >= 9; }
 		inline bool IsStdLevel (void) { return LevelVersion () < 9; }
-		inline bool LevelIsOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
+		inline bool LevelIsOutdated (void) { return IsD2XLevel () && (LevelVersion () < LEVEL_VERSION); }
 		inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
 			
 		inline int FileType (void) { return m_fileType; }
@@ -103,7 +102,9 @@ class CMine {
 
 		inline CDoubleMatrix& SecretOrient (void) { return objectManager.SecretOrient (); }
 
-		short Load (const char *filename = null, bool bLoadFromHog = false);
+		short Load (const char *filename = "");
+
+		short Load (CFileManager* fp, bool bLoadFromHog);
 
 		short Save (const char *filename, bool bSaveToHog = false);
 
@@ -137,11 +138,12 @@ class CMine {
 		void LoadPaletteName (CFileManager& fp, bool bNewMine = false);
 
 	private:
-		short CreateNewLevel (void);
+		short CreateNewLevel (CMemoryFile& fp);
 		int FixIndexValues (void) { return segmentManager.Fix () | wallManager.Fix (); }
 
+		short LoadLevel (CFileManager* fp, bool bLoadFromHog);
+		short LoadMine (CFileManager& fp, bool bLoadFromHog, bool bCreate);
 		short LoadMineGeometry (CFileManager& fp, bool bNewMine);
-		short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
 		short LoadGameItems (CFileManager& fp, bool bNewMine);
 		short SaveMineGeometry (CFileManager& fp);
 		short SaveGameItems (CFileManager& fp);
