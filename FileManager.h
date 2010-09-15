@@ -14,6 +14,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 
+// ----------------------------------------------------------------------------
 // the maximum length of a filename
 #define FILENAME_LEN			256
 
@@ -41,36 +42,43 @@ class CFilename {
 	};
 
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
 typedef struct tFileInfo {
 	FILE		*file;
 	char		*filename;
 	long		size;
-	long		rawPosition;
+	long		position;
 } tFileInfo;
 
+// ----------------------------------------------------------------------------
+
 class CFileManager {
-	private:
+	protected:
 		tFileInfo	m_info;
 
 	public:
 		CFileManager () { Init (); }
 		~CFileManager () { Close (); };
 		void Init (void);
-		int Open (const char *filename, const char *mode);
+
+		virtual int Open (const char *filename, const char *mode);
+		virtual size_t Read (void *buf, size_t elsize, size_t nelem);
+		virtual int Close (void);
+		virtual int Size (const char *hogname, const char *folder);
+		virtual int Seek (size_t offset, int whence = SEEK_SET);
+		virtual int Tell (void);
+		virtual char *GetS (char *buf, size_t n);
+		virtual int Write (const void *buf, int elsize, int nelem);
+		virtual int GetC (void);
+		virtual int PutC (int c);
+		virtual int PutS (const char *str);
+
 		int Length (void);							// Returns actual size of file...
-		size_t Read (void *buf, size_t elsize, size_t nelem);
-		int Close (void);
-		int Size (const char *hogname, const char *folder);
-		int Seek (size_t offset, int whence = SEEK_SET);
-		int Tell (void);
-		char *GetS (char *buf, size_t n);
 		int EoF (void);
 		int Error (void);
-		int Write (const void *buf, int elsize, int nelem);
-		int GetC (void);
-		int PutC (int c);
-		int PutS (const char *str);
-
 		inline int Size (void) { return m_info.size; }
 
 		// prototypes for reading basic types from fp
@@ -153,13 +161,45 @@ class CFileManager {
 
 	private:
 		inline long SetPos (long pos) {
-			m_info.rawPosition = pos;
+			m_info.position = pos;
 			if (m_info.size < pos)
 				m_info.size = pos;
 			return pos;
 			}
 	};
 
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+class CMemoryFile : public CFileManager {
+	private:
+		byte* m_buffer;
+
+	public:
+		virtual int Open (const char *filename, const char *mode);
+		virtual size_t Read (void *buf, size_t elsize, size_t nelem);
+		virtual int Close (void);
+		virtual int Size (const char *hogname, const char *folder);
+		virtual int Seek (size_t offset, int whence = SEEK_SET);
+		virtual int Tell (void);
+		virtual char *GetS (char *buf, size_t n);
+		virtual int Write (const void *buf, int elsize, int nelem);
+		virtual int GetC (void);
+		virtual int PutC (int c);
+		virtual int PutS (const char *str);
+
+		void Destroy (void);
+
+		CMemoryFile () : CFileManager (), m_buffer (null) {}
+
+		~CMemoryFile () { Destroy (); }
+	};
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 #ifdef _WIN32
 char *UnicodeToAsc (char *str, const wchar_t *w_str);
@@ -170,5 +210,9 @@ wchar_t *AscToUnicode (wchar_t *w_str, const char *str);
 # define errno -1
 # define strerror (x) "Unknown Error"
 #endif
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 #endif

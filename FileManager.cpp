@@ -121,7 +121,7 @@ int CFileManager::EoF (void)
 if (!m_info.file)
 	return 1;
 #endif
-return (m_info.rawPosition >= m_info.size);
+return (m_info.position >= m_info.size);
 }
 
 // ----------------------------------------------------------------------------
@@ -206,7 +206,7 @@ if (!(filename && *filename))
 	return 1;
 if (fopen_s (&m_info.file, filename, mode))
 	return 1;
-m_info.rawPosition = 0;
+m_info.position = 0;
 m_info.size = ffilelength (m_info.file);
 m_info.filename = const_cast<char*> (filename);
 return 0;
@@ -217,7 +217,7 @@ return 0;
 void CFileManager::Init (void) 
 {
 memset (&m_info, 0, sizeof (m_info)); 
-m_info.rawPosition = -1; 
+m_info.position = -1; 
 }
 
 // ----------------------------------------------------------------------------
@@ -269,7 +269,7 @@ int CFileManager::GetC (void)
 {
 	int c;
 
-if (m_info.rawPosition >= m_info.size) 
+if (m_info.position >= m_info.size) 
 	return EOF;
 c = getc (m_info.file);
 if (c != EOF)
@@ -302,7 +302,7 @@ char * CFileManager::GetS (char * buffer, size_t n)
 
 for (i = 0; i < n - 1; i++) {
 	do {
-		if (m_info.rawPosition >= m_info.size) {
+		if (m_info.position >= m_info.size) {
 			*buffer = 0;
 			return (buffer == t) ? null : t;
 			}
@@ -337,7 +337,7 @@ uint i, size = (int) (elSize * nElems);
 if (!m_info.file || (m_info.size < 1) || !size) 
 	return 0;
 i = (int) fread (buffer, 1, size, m_info.file);
-m_info.rawPosition += i;
+m_info.position += i;
 return i / elSize;
 }
 
@@ -370,7 +370,7 @@ if (!m_info.file)
 result = fclose (m_info.file);
 m_info.file = null;
 m_info.size = 0;
-m_info.rawPosition = -1;
+m_info.position = -1;
 return result;
 }
 
