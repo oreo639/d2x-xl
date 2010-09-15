@@ -251,7 +251,7 @@ delete fp;
 
 //------------------------------------------------------------------------------
 
-void CTextureManager::LoadTextures (int nVersion)
+void CTextureManager::LoadTextures (int nVersion, bool bForce)
 {
 if (nVersion < 0) {
 	nVersion = Version ();
@@ -494,6 +494,7 @@ void CTextureManager::RemoveUnusedTextures (void)
 if (nCustom) {
 	MarkUsedTextures ();
 	Release (Version (), false, true);
+	LoadTextures (-1, true);
 	int nRemoved = nCustom - CountCustomTextures ();
 	sprintf_s (message, sizeof (message), "%d custom textures %s removed", nRemoved, (nRemoved == 1) ? "was" : "were");
 	if (nRemoved)
