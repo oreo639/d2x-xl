@@ -107,6 +107,8 @@ if (fileInfo.size > 143)
 
 void CMineInfo::Write (CFileManager& fp) 
 {
+	long startPos = fp.Tell ();
+
 fileInfo.Write (fp);
 fp.Write (mineFilename, 1, sizeof (mineFilename));
 fp.Write (level);
@@ -119,8 +121,14 @@ links.Write (fp);
 triggerManager.WriteReactorInfo (fp);
 segmentManager.WriteRobotMakerInfo (fp);
 lightManager.WriteLightDeltaInfo (fp);
-if (fileInfo.size > 143)
+if (fileInfo.size < 0) {
 	segmentManager.WriteEquipMakerInfo (fp);
+	fileInfo.size = fp.Tell () - startPos;
+	long endPos = fp.Tell ();
+	fp.Seek (startPos);
+	fileInfo.Write (fp);
+	fp.Seek (endPos);
+	}
 }
 
 // -----------------------------------------------------------------------------

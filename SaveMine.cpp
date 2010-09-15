@@ -168,9 +168,9 @@ if (IsD1File ()) {
 else {
 	Info ().fileInfo.signature = 0x6705;
 	Info ().fileInfo.version = (LevelVersion () < 13) ? 31 : 40;
-	Info ().fileInfo.size = (LevelVersion () < 13) ? 143 : sizeof (Info ()); // same as sizeof (Info ())
+	Info ().fileInfo.size = (LevelVersion () < 13) ? 143 : -1; // same as sizeof (Info ())
 	Info ().level = 0;
-}
+	}
 
 int startOffset = fp.Tell ();
 Info ().Write (fp);
