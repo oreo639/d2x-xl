@@ -207,23 +207,27 @@ if (!(bLoadFromHog || bCreate)) {
 			ReadPog (fp, fp.Size ());
 			fp.Close ();
 			}
-		robotManager.ReadHAM ();
+		CFileManager fp;
+		robotManager.ReadHAM (fp);
 		if (IsD2File ()) {
 			char szHogFile [256], szHamFile [256], *p;
-			long nSize, nPos;
+			long nSize, nOffset;
 
 			CFileManager::SplitPath (descentPath [1], szHogFile, null, null);
 			if (p = strstr (szHogFile, "data"))
 				*p = '\0';
 			strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
-			if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
+			if (FindFileData (szHogFile, "d2x.ham", &nSize, &nOffset, FALSE)) {
 				CFileManager::SplitPath (descentPath [1], szHamFile, null, null);
 				if (p = strstr (szHamFile, "data"))
 					*p = '\0';
 				strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
-				if (ExportSubFile (szHogFile, szHamFile, nPos + sizeof (struct level_header), nSize)) {
-					m_bVertigo = robotManager.ReadHAM (szHamFile, EXTENDED_HAM) == 0;
-					_unlink (szHamFile);
+				if (fp.Open (szHogFile, "rb"))
+					ErrorMsg ("Could not open HOG file.");
+				else {
+					if (0 < fp.Seek (nOffset + sizeof (struct level_header), SEEK_SET))
+						m_bVertigo = robotManager.ReadHAM (fp, EXTENDED_HAM) == 0;
+					fp.Close ();
 					}
 				}
 			}

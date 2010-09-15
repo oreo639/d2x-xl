@@ -158,6 +158,8 @@ class CFileManager {
 
 		inline FILE*& File (void) { return m_info.file; }
 
+		inline bool IsOpen (void) { return File () != null; }
+
 	private:
 		inline long SetPos (long pos) {
 			m_info.position = pos;

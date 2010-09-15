@@ -780,17 +780,17 @@ bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long s
 {
 CFileManager fSrc;
 if (fSrc.Open (pszSrc, "rb")) {
-	ErrorMsg ("Could not open HOG fp.");
+	ErrorMsg ("Could not open HOG file.");
 	return false;
 	}
 CFileManager fDest;
 if (fDest.Open (pszDest, "wb")) {
-	ErrorMsg ("Could not create export fp.");
+	ErrorMsg ("Could not create export file.");
 	return false;
 	}
-// seek to item's offset in HOG fp
+// seek to item's offset in HOG file
 fSrc.Seek (offset, SEEK_SET);
-// create fp (from HOG to fp)
+// create file (from HOG to file)
 while (size > 0) {
 	size_t nBytes, n;
 	n = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size_t (size);

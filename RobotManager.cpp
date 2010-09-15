@@ -18,9 +18,8 @@ CRobotManager robotManager;
 
 #define MAKESIG(_sig)	(uint) *((int *) &(_sig))
 
-int CRobotManager::ReadHAM (char *pszFile, int type) 
+int CRobotManager::ReadHAM (CFileManager& fp, int type) 
 {
-  CFileManager	fp;
   int				t, t0;
   uint			id;
   CPolyModel	pm;
@@ -29,7 +28,7 @@ int CRobotManager::ReadHAM (char *pszFile, int type)
   static char d2HamSig [4] = {'H','A','M','!'};
   static char d2xHamSig [4] = {'M','A','H','X'};
 
-if (!pszFile) {
+if (!fp.IsOpen ()) {
 	if (DLE.IsD2File ()) {
 		CFileManager::SplitPath (descentPath [1], szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent2.ham");
@@ -38,15 +37,14 @@ if (!pszFile) {
 		CFileManager::SplitPath (descentPath [0], szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent.ham");
 		}
-	pszFile = szFile;
+	if (fp.Open (szFile, "rb")) {
+		sprintf_s (message, sizeof (message), " Ham manager: Cannot open robot file <%s>.", szFile);
+		DEBUGMSG (message);
+		return 1;
+		}
 	}
 
 pm.m_info.nModels = 0;
-if (fp.Open (pszFile, "rb")) {
-	sprintf_s (message, sizeof (message), " Ham manager: Cannot open robot file <%s>.", pszFile);
-	DEBUGMSG (message);
-	return 1;
-	}
 
 // The extended HAM only contains part of the normal HAM file.
 // Therefore, we have to skip some items if we are reading
@@ -56,7 +54,7 @@ if (fp.Open (pszFile, "rb")) {
 if (type == NORMAL_HAM)  {
 	id = fp.ReadInt32 (); // "HAM!"
 	if (id != MAKESIG (d2HamSig)) {//0x214d4148L) {
-		sprintf_s (message, sizeof (message), "Not a D2 HAM file (%s)", pszFile);
+		sprintf_s (message, sizeof (message), "Not a D2 HAM file (%s)", fp.Name ());
 		ErrorMsg (message);
 	    return 1;
 		}
@@ -77,7 +75,7 @@ if (type == NORMAL_HAM)  {
 else if (type == EXTENDED_HAM)  {
 	id = fp.ReadInt32 (); // "HAM!"
 	if (id != MAKESIG (d2xHamSig)) {//0x214d4148L) {
-		sprintf_s (message, sizeof (message), "Not a D2X HAM file (%s)", pszFile);
+		sprintf_s (message, sizeof (message), "Not a D2X HAM file (%s)", fp.Name ());
 		ErrorMsg (message);
 	    return 1;
 		}
@@ -91,7 +89,8 @@ else if (type == EXTENDED_HAM)  {
 	t0 = (type == NORMAL_HAM) ? 0: N_ROBOT_TYPES_D2;
 	m_nRobotTypes = t0 + t;
 	if (m_nRobotTypes > MAX_ROBOT_TYPES) {
-		sprintf_s (message, sizeof (message), "Too many robots (%d) in <%s>.  Max is %d.",t,pszFile,MAX_ROBOT_TYPES-N_ROBOT_TYPES_D2);
+		sprintf_s (message, sizeof (message), "Too many robots (%d) in <%s>.  Max is %d.", 
+					  t, fp.Name (), MAX_ROBOT_TYPES - N_ROBOT_TYPES_D2);
 		ErrorMsg (message);
 		m_nRobotTypes = MAX_ROBOT_TYPES;
 		t = m_nRobotTypes - t0;
@@ -114,7 +113,8 @@ else if (type == EXTENDED_HAM)  {
   // read poly model data and write it to a file
   t = fp.ReadInt32 ();
   if (t > MAX_POLYGON_MODELS) {
-    sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",t,pszFile,MAX_POLYGON_MODELS-N_POLYGON_MODELS_D2);
+    sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",
+					t, fp.Name (), MAX_POLYGON_MODELS - N_POLYGON_MODELS_D2);
     ErrorMsg (message);
     return 1;
   }
@@ -124,7 +124,8 @@ else if (type == EXTENDED_HAM)  {
   t0 = (type == NORMAL_HAM) ? 0: N_ROBOT_JOINTS_D2;
   N_robot_joints = t0 + t;
   if (N_robot_joints > MAX_ROBOT_JOINTS) {
-    sprintf_s (message, sizeof (message), "Too many robot joints (%d) in <%s>.  Max is %d.",t,pszFile,MAX_ROBOT_JOINTS-N_ROBOT_JOINTS_D2);
+    sprintf_s (message, sizeof (message), "Too many robot joints (%d) in <%s>.  Max is %d.",
+					t, fp.Name (), MAX_ROBOT_JOINTS - N_ROBOT_JOINTS_D2);
     ErrorMsg (message);
     goto abort;
   }
@@ -143,7 +144,8 @@ else if (type == EXTENDED_HAM)  {
   t0 = (type == NORMAL_HAM) ? 0: N_POLYGON_MODELS_D2;
   N_polygon_models = t0 + t;
   if (N_polygon_models > MAX_POLYGON_MODELS) {
-    sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",t,pszFile,MAX_POLYGON_MODELS-N_POLYGON_MODELS_D2);
+    sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",
+					t, fp.Name (), MAX_POLYGON_MODELS - N_POLYGON_MODELS_D2);
     ErrorMsg (message);
     goto abort;
   }
@@ -189,7 +191,8 @@ else if (type == EXTENDED_HAM)  {
     N_object_bitmaps  = t0 + t;  // only update this if we are reading Descent2.ham file
   }
   if (t+t0 > MAX_OBJ_BITMAPS) {
-    sprintf_s (message, sizeof (message), "Too many object bitmaps (%d) in <%s>.  Max is %d.",t,pszFile,MAX_OBJ_BITMAPS-N_OBJBITMAPS_D2);
+    sprintf_s (message, sizeof (message), "Too many object bitmaps (%d) in <%s>.  Max is %d.",
+					t, fp.Name (), MAX_OBJ_BITMAPS - N_OBJBITMAPS_D2);
     ErrorMsg (message);
     goto abort;
   }
@@ -199,7 +202,8 @@ else if (type == EXTENDED_HAM)  {
     t = fp.ReadInt32 ();
     t0 = (type == NORMAL_HAM) ? 0: N_OBJBITMAPPTRS_D2;
     if (t+t0 > MAX_OBJ_BITMAPS) {
-      sprintf_s (message, sizeof (message), "Too many object bitmaps pointer (%d) in <%s>.  Max is %d.",t,pszFile,MAX_OBJ_BITMAPS-N_OBJBITMAPPTRS_D2);
+      sprintf_s (message, sizeof (message), "Too many object bitmaps pointer (%d) in <%s>.  Max is %d.",
+					  t, fp.Name (), MAX_OBJ_BITMAPS - N_OBJBITMAPPTRS_D2);
       ErrorMsg (message);
       goto abort;
     }
