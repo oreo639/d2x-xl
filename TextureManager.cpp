@@ -376,7 +376,7 @@ w = texP [1]->m_info.width / scale.c * scale.d;
 h = w;//texP [1]->m_info.height / scale.c * scale.d;
 s = (texP [1]->m_info.width * texP [1]->m_info.width)/*texP [1]->m_info.size*/ / scale2.c * scale2.d;
 if (!(x0 || y0)) {
-	byte *dest, *dest2;
+	COLORREF * dest, * dest2;
 	if (mode == 0x0000) {
 		dest = bmBufP;
 		for (y = 0; y < h; y++)
