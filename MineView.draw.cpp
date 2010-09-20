@@ -268,9 +268,9 @@ CHECKMINE;
 	int		h, z, zMax;
 
 	// Get shading table data
-byte* light_index = 0;
-if (m_viewMineFlags & eViewMineShading && (light_index = paletteManager.Current ()))
-	light_index += 256*5; // skip 3-byte palette + 1st 2 light tables
+COLORREF* lightIndex = 0;
+if (m_viewMineFlags & eViewMineShading && (lightIndex = paletteManager.Current ()))
+	lightIndex += 256*5; // skip 3-byte palette + 1st 2 light tables
 
 // Draw Segments ()
 h = segmentManager.Count ();
@@ -291,7 +291,7 @@ CalcSegDist ();
 for (nSegment = 0; nSegment < h; nSegment++) {
 	CSegment* segP = segmentManager.Segment (szo [nSegment].iSeg);
 	if (Visible (segP))
-	 	DrawSegmentTextured (segP, light_index);
+	 	DrawSegmentTextured (segP, lightIndex);
 	}
 }
 
@@ -775,7 +775,7 @@ DrawLine (pTx, pt [0], pt [3], 1);
 // DrawSegmentTextured()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentTextured(CSegment *segP, byte* light_index) 
+void CMineView::DrawSegmentTextured(CSegment *segP, byte* lightIndex) 
 {
 CHECKMINE;
 
@@ -830,7 +830,7 @@ CHECKMINE;
 				if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 					DrawAnimDirArrows (sideP->BaseTex (), &tex);
 					RenderFace (segP, nSide, tex.m_info.bmData, tex.m_info.width, tex.m_info.height, 
-								   light_index, screenP, m_viewPoints, width, height, rowOffset);
+								   lightIndex, screenP, m_viewPoints, width, height, rowOffset);
 				}
 			}
 		}

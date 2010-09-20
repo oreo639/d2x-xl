@@ -87,8 +87,8 @@ if (bShowTexture) {
 		CTexture	tex (textureManager.m_bmBuf);
 		if (textureManager.Define (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
-		CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
-		pDC->RealizePalette ();
+		//CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
+		//pDC->RealizePalette ();
 #if 0
 		if (pDC->GetDeviceCaps (RASTERCAPS) & RC_DIBTODEV) {
 			BITMAPINFO* bmi = paletteManager.BMI ();
@@ -105,9 +105,9 @@ if (bShowTexture) {
 			uint x, y;
 			for (x = 0; x < tex.m_info.width; x = (int) (x + scale))
 				for (y = 0; y < tex.m_info.width; y = (int) (y + scale))
-					pDC->SetPixel ((short) (x / scale), (short) (y / scale), PALETTEINDEX (textureManager.m_bmBuf [y * tex.m_info.width + x]));
+					pDC->SetPixel ((short) (x / scale), (short) (y / scale), /*PALETTEINDEX*/ (textureManager.m_bmBuf [y * tex.m_info.width + x]));
 			}
-		pDC->SelectPalette (pOldPalette, FALSE);
+		//pDC->SelectPalette (pOldPalette, FALSE);
 		}
 	else {
 		HGDIOBJ hgdiobj1;

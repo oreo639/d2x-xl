@@ -223,10 +223,10 @@ if (texP->m_info.nFormat) {
 	tRGBA rgba = {0, 0, 0, 255};
 	COLORREF* bufP = texP->m_info.bmData;
 	for (int i = texP->m_info.size; i; i--, bufP++) {
-		rgba.red = GetRValue (*bufP);
-		rgba.red = GetGValue (*bufP);
-		rgba.red = GetBValue (*bufP);
-		fp.Write (color, sizeof (color), 1);
+		rgba.r = GetRValue (*bufP);
+		rgba.g = GetGValue (*bufP);
+		rgba.b = GetBValue (*bufP);
+		fp.Write (&rgba, sizeof (rgba), 1);
 		}
 	}
 else {

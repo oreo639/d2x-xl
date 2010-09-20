@@ -36,7 +36,7 @@ return (minColor + maxColor) / 2;
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::SetupBMI (byte* palette) 
+void CPaletteManager::SetupBMI (COLORREF* palette) 
 {
 m_bmi.header.biSize          = sizeof (BITMAPINFOHEADER);
 m_bmi.header.biWidth         = 64;
@@ -51,7 +51,7 @@ m_bmi.header.biClrUsed       = 0;
 m_bmi.header.biClrImportant  = 0;
 uint* rgb = (uint*) &m_bmi.colors [0];
 for (int i = 0; i < 256; i++, palette += 3)
-	rgb [i] = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
+	rgb [i] = ((uint) *palette);
 }
 
 //------------------------------------------------------------------------
@@ -101,10 +101,10 @@ if (m_colorMap) {
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::Decode (COLORREF* dest, byte* src, int len)
+void CPaletteManager::Decode (COLORREF* dest, byte* src)
 {
 for (int i = 0, j = 0; i < 256; i++, j += 3)
-	dest [i] = RGB (palette [j] * 4, palette [j + 1] * 4, palette [j + 2] * 4);
+	dest [i] = RGB (src [j] * 4, src [j + 1] * 4, src [j + 2] * 4);
 }
 
 //------------------------------------------------------------------------
@@ -161,7 +161,7 @@ Decode (m_custom);
 
 //------------------------------------------------------------------------
 
-short CPaletteManager::SetupRender (byte* palette)
+short CPaletteManager::SetupRender (COLORREF* palette)
 {
 //FreeRender ();
 //if (!(m_dlcLog = (LPLOGPALETTE) new byte [sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256]))

@@ -77,13 +77,13 @@ class CPaletteManager {
 
 		byte FadeValue (byte c, int f);
 
-		void SetupBMI (byte* palette);
+		void SetupBMI (COLORREF* palette);
 
-		short SetupRender (byte* palette);
+		short SetupRender (COLORREF* palette);
 
-		byte* LoadDefault (void);
+		COLORREF* LoadDefault (void);
 
-		void Decode (COLORREF* dest, byte* src, int len);
+		void Decode (COLORREF* dest, byte* src);
 
 		void Encode (byte* dest, COLORREF* src);
 

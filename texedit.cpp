@@ -445,26 +445,30 @@ else if (PtInRect (rcPal, point)) {
 void CTextureEdit::OnOK ()
 {
 if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) || (m_texP->m_info.nFormat != m_nFormat)) {
-	byte *pDataBM = new byte [m_nWidth * m_nHeight];
-	tRGBA  *pDataTGA = m_nFormat ? new tRGBA [m_nWidth * m_nHeight] : null;
+	byte* bmIndexP = m_nFormat ? new byte [m_nWidth * m_nHeight] : null;
+	COLORREF* bmDataP = new COLORREF [m_nWidth * m_nHeight];
 
-	if (!pDataBM) {
+	if (!bmIndexP) {
 		DEBUGMSG (" Texture tool: Not enough memory for the new texture");
 		EndDialog (IDCANCEL);
 		}
 	delete m_texP->m_info.bmData;
 	if (m_texP->m_info.bmData)
 		delete m_texP->m_info.bmData;
-	m_texP->m_info.bmData = pDataTGA;
-	m_texP->m_info.bmData = pDataBM;
+	m_texP->m_info.bmData = bmDataP;
+	m_texP->m_info.bmIndex = bmIndexP;
 	m_texP->m_info.width = m_nWidth;
 	m_texP->m_info.height = m_nHeight;
 	m_texP->m_info.size = m_nSize;
 	m_texP->m_info.nFormat = (unsigned char) m_nFormat;
 	}
-memcpy (m_texP->m_info.bmData, m_bitmap, m_texP->m_info.size);
 if (m_texP->m_info.nFormat)
 	memcpy (m_texP->m_info.bmData, m_tga, m_texP->m_info.size * sizeof (tRGBA));
+else {
+	memcpy (m_texP->m_info.bmIndex, m_bitmap, m_texP->m_info.size);
+	for (int i = 0; i < m_texP->m_info.size; i++)
+		m_texP->m_info.bmData [i] = *paletteManager.Current (i);
+	}	
 m_texP->m_info.bCustom = m_bModified;
 CDialog::OnOK ();
 }
