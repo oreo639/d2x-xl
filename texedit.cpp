@@ -380,7 +380,7 @@ if (!m_tga) {
 	DEBUGMSG (" Texture tool: Not enough memory for TGA texture editing");
 	}
 else if (m_nFormat = m_texP->m_info.nFormat)
-	memcpy (m_tga, m_texP->m_info.tgaData, m_nSize * sizeof (tRGBA));
+	memcpy (m_tga, m_texP->m_info.bmData, m_nSize * sizeof (tRGBA));
 m_backupBM = new byte [2048 * 2048];
 m_backupTGA = new tRGBA [2048 * 2048];
 if (!(m_backupBM && m_backupTGA))
@@ -453,9 +453,9 @@ if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) |
 		EndDialog (IDCANCEL);
 		}
 	delete m_texP->m_info.bmData;
-	if (m_texP->m_info.tgaData)
-		delete m_texP->m_info.tgaData;
-	m_texP->m_info.tgaData = pDataTGA;
+	if (m_texP->m_info.bmData)
+		delete m_texP->m_info.bmData;
+	m_texP->m_info.bmData = pDataTGA;
 	m_texP->m_info.bmData = pDataBM;
 	m_texP->m_info.width = m_nWidth;
 	m_texP->m_info.height = m_nHeight;
@@ -464,7 +464,7 @@ if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) |
 	}
 memcpy (m_texP->m_info.bmData, m_bitmap, m_texP->m_info.size);
 if (m_texP->m_info.nFormat)
-	memcpy (m_texP->m_info.tgaData, m_tga, m_texP->m_info.size * sizeof (tRGBA));
+	memcpy (m_texP->m_info.bmData, m_tga, m_texP->m_info.size * sizeof (tRGBA));
 m_texP->m_info.bCustom = m_bModified;
 CDialog::OnOK ();
 }

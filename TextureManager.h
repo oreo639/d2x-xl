@@ -30,7 +30,7 @@ class CTextureManager {
 		uint m_nOffsets [2];
 		CPigTexture* m_info [2];
 		CPigHeader m_header [2];
-		byte m_bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
+		COLORREF m_bmBuf [512 * 512 * 32];	// max texture size: 512x512, RGBA, 32 frames
 		char m_pigFiles [2][256];
 		CExtraTexture*	m_extra;
 

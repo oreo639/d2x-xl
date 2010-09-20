@@ -49,18 +49,9 @@ m_bmi.header.biXPelsPerMeter = 0;
 m_bmi.header.biYPelsPerMeter = 0;
 m_bmi.header.biClrUsed       = 0;
 m_bmi.header.biClrImportant  = 0;
-#if 0
-for (int i = 0; i < 256; i++) {
-	m_bmi.colors [i].rgbRed = m_colorMap [i].peRed; 
-	m_bmi.colors [i].rgbGreen = m_colorMap [i].peGreen; 
-	m_bmi.colors [i].rgbBlue = m_colorMap [i].peBlue; 
-	m_bmi.colors [i].rgbReserved = 0;
-	}
-#else
 uint* rgb = (uint*) &m_bmi.colors [0];
 for (int i = 0; i < 256; i++, palette += 3)
 	rgb [i] = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
-#endif
 }
 
 //------------------------------------------------------------------------
@@ -110,18 +101,21 @@ if (m_colorMap) {
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::Decode (byte* palette)
+void CPaletteManager::Decode (COLORREF* dest, byte* src, int len)
 {
-//for (int i = 0; i < 3 * 256; i++)
-//	palette [i] <<= 2;
+for (int i = 0, j = 0; i < 256; i++, j += 3)
+	dest [i] = RGB (palette [j] * 4, palette [j + 1] * 4, palette [j + 2] * 4);
 }
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::Encode (byte* palette)
+void CPaletteManager::Encode (byte* dest, COLORREF* src)
 {
-//for (int i = 0; i < 3 * 256; i++)
-//	palette [i] >>= 2;
+for (int i = 0, j = 0; i < 256; i++) {
+	dest [j++] = GetRValue (src [i]);
+	dest [j++] = GetGValue (src [i]);
+	dest [j++] = GetBValue (src [i]);
+	}
 }
 
 //------------------------------------------------------------------------
@@ -129,10 +123,12 @@ void CPaletteManager::Encode (byte* palette)
 int CPaletteManager::LoadCustom (CFileManager& fp, long size)
 {
 FreeCustom ();
-if (!(m_custom = new byte [37 * 256]))
+
+byte* buffer = new byte [37 * 256];
+if (buffer == null)
 	return null;
 
-int h = (int) fp.Read (m_custom, 37 * 256, 1);
+int h = (int) fp.Read (buffer, 37 * 256, 1);
 if (h == 37 * 256)
 	return 1;
 
@@ -140,15 +136,17 @@ if (h != 3 * 256) {
 	paletteManager.FreeCustom ();
 	return 0;
 	}
-byte *fadeP = m_custom + 3 * 256;
-for (int i = 0; i < 256; i++) {
-	byte c = m_custom [i];
-	for (int j = 0; j < 34; j++)
-		fadeP [j * 256 + i] = FadeValue (c, j + 1);
-	}
-Decode (m_custom);
-SetupRender (m_custom);
-SetupBMI (m_custom);
+
+//byte *fadeP = buffer + 3 * 256;
+//for (int i = 0; i < 256; i++) {
+//	byte c = buffer [i];
+//	for (int j = 0; j < 34; j++)
+//		fadeP [j * 256 + i] = FadeValue (c, j + 1);
+//	}
+
+Decode (m_custom, buffer);
+//SetupRender (m_custom);
+//SetupBMI (m_custom);
 return 1;
 }
 
@@ -165,20 +163,21 @@ Decode (m_custom);
 
 short CPaletteManager::SetupRender (byte* palette)
 {
-FreeRender ();
-if (!(m_dlcLog = (LPLOGPALETTE) new byte [sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256]))
-	return 1;
-m_dlcLog->palVersion = 0x300;
-m_dlcLog->palNumEntries = 256;
-uint* rgb = (uint*) &m_dlcLog->palPalEntry [0];
-for (int i = 0; i < 256; i++, palette += 3)
-	rgb [i] = ((uint) (palette [0]) << 2) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 18);
-if (!(m_render = new CPalette ()))
-	return 1;
-m_render->CreatePalette (m_dlcLog);
-m_colorMap = new PALETTEENTRY [256];
-m_render->GetPaletteEntries (0, 256, m_colorMap);
-return m_render == null;
+//FreeRender ();
+//if (!(m_dlcLog = (LPLOGPALETTE) new byte [sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256]))
+//	return 1;
+//m_dlcLog->palVersion = 0x300;
+//m_dlcLog->palNumEntries = 256;
+//uint* rgb = (uint*) &m_dlcLog->palPalEntry [0];
+//for (int i = 0; i < 256; i++, palette += 3)
+//	rgb [i] = ((uint) (palette [0]) << 2) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 18);
+//if (!(m_render = new CPalette ()))
+//	return 1;
+//m_render->CreatePalette (m_dlcLog);
+//m_colorMap = new PALETTEENTRY [256];
+//m_render->GetPaletteEntries (0, 256, m_colorMap);
+//return m_render == null;
+return 1;
 }
 
 //------------------------------------------------------------------------
@@ -188,9 +187,8 @@ byte* CPaletteManager::LoadDefault (void)
 CResource res;
 if (!res.Load (Resource ()))
 	return null;
-m_default = new byte [res.Size()];
-memcpy (m_default, res.Data (), res.Size ());
-Decode (m_default);
+m_default = new COLORREF [res.Size()];
+Decode (m_default, res.Data (), res.Size ());
 SetupRender (m_default);
 SetupBMI (m_default);
 return m_default;
@@ -198,13 +196,14 @@ return m_default;
 
 //------------------------------------------------------------------------
 
-byte* CPaletteManager::Current (void)
+COLORREF* CPaletteManager::Current (int i)
 {
 if (m_custom)
-	return m_custom;
+	return m_custom + i;
 if (m_default)
-	return m_default;
-return LoadDefault ();
+	return m_default + i;
+LoadDefault ();
+return (m_default == null) ? null : m_default + i;
 }
 
 //------------------------------------------------------------------------

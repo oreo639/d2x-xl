@@ -16,12 +16,11 @@
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb)
 {
 CResource res;
-byte* palette = paletteManager.Current ();
-if (palette) {
-	palette += 3 * nIndex;
-	rgb.peRed = palette [0] << 2;
-	rgb.peGreen = palette [1] << 2;
-	rgb.peBlue = palette [2] << 2;
+COLORREF* color = paletteManager.Current (nIndex);
+if (color != null) {
+	rgb.peRed = GetRValue (*color);
+	rgb.peGreen = GetGValue (*color);
+	rgb.peBlue = GetBValue (*color);
 	rgb.peFlags = 0;
 	}
 }
@@ -148,10 +147,10 @@ return bShowTexture;
 
 bool CTexture::Allocate (int nSize, int nTexture)
 {
-if (m_info.bmData && ((m_info.width * m_info.height != nSize)))
+if ((m_info.bmData != null) && ((m_info.width * m_info.height != nSize)))
 	Release ();
 if (m_info.bmData == null)
-	m_info.bmData = new byte [nSize];
+	m_info.bmData = new COLORREF [nSize];
 return (m_info.bmData != null);
 }
 
@@ -164,10 +163,6 @@ if (!m_info.bExtData) {
 		delete m_info.bmData;
 		m_info.bmData = null;
 		}
-	if (m_info.tgaData) {
-		delete m_info.tgaData;
-		m_info.tgaData = null;
-		}
 	}
 bool bFrame = m_info.bFrame;
 Clear ();
@@ -176,14 +171,30 @@ m_info.bFrame = bFrame;
 
 //------------------------------------------------------------------------
 
+#define RLE_CODE			0xE0
+#define NOT_RLE_CODE		31
+#define IS_RLE_CODE(x)	(((x) & RLE_CODE) == RLE_CODE)
+
 void CTexture::Load (CFileManager& fp, CPigTexture& info) 
 {
-	byte	rowSize [4096];
-	byte	rowBuf [4096], *rowPtr;
-	byte	byteVal, runLength, runValue;
+	byte			rowSize [4096];
+	byte			rowBuf [4096], *rowPtr;
+	byte			palIndex, runLength;
+	COLORREF*	palette = paletteManager.Current ();
 
-m_info.nFormat = 0;
-if (info.flags & 0x08) {
+m_info.width = info.width;
+m_info.height = info.height;
+m_info.size = info.BufSize ();
+m_info.bValid = 1;
+if (m_info.nFormat) {
+	tRGBA color;
+	for (uint i = 0; i < m_info.size; i++) {
+		fp.Read (&color, sizeof (color), 1);
+		m_info.bmData [i] = RGB (color.r, color.g, color.b);
+		}
+	//texP->m_info.bValid = TGA2Bitmap (texP->m_info.bmData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
+	}
+else if (info.flags & 0x08) {
 	int nSize = fp.ReadInt32 ();
 	fp.ReadBytes (rowSize, info.height);
 	int nRow = 0;
@@ -191,33 +202,31 @@ if (info.flags & 0x08) {
 		fp.ReadBytes (rowBuf, rowSize [nRow++]);
 		rowPtr = rowBuf;
 			for (int x = 0; x < info.width; ) {
-			byteVal = *rowPtr++;
-			if ((byteVal & 0xe0) == 0xe0) {
-				runLength = byteVal & 0x1f;
-				runValue = *rowPtr++;
+			palIndex = *rowPtr++;
+			if (IS_RLE_CODE (palIndex)) {
+				runLength = palIndex & ~RLE_CODE;
+				palIndex = *rowPtr++;
+				COLORREF color = palette [palIndex];
 				for (int j = 0; j < runLength; j++) {
 					if (x < info.width) {
-						m_info.bmData [y * info.width + x] = runValue;
-						x++;
+						m_info.bmData [y * info.width + x++] = color;
 						}
 					}
 				}
 			else {
-				m_info.bmData [y * info.width + x] = byteVal;
-				x++;
+				m_info.bmData [y * info.width + x++] = palette [palIndex];
 				}
 			}
 		}
 	}
 else {
 	for (int y = info.height - 1; y >= 0; y--) {
-		fp.Read (m_info.bmData + y * info.width, info.width, 1);
+		for (int x = 0; x < info.width; x++) {
+			palIndex = fp.ReadByte ();
+			m_info.bmData [y * info.width + x] = palette [palIndex];
+			}
 		}
 	}
-m_info.width = info.width;
-m_info.height = info.height;
-m_info.size = info.BufSize ();
-m_info.bValid = 1;
 }
 
 //------------------------------------------------------------------------
@@ -238,6 +247,7 @@ if (!Allocate (nSize, nTexture)) {
 	return 1;
 	}
 fp.Seek (textureManager.m_nOffsets [nVersion] + info.offset, SEEK_SET);
+m_info.nFormat = 0;
 Load (fp, info);
 m_info.bFrame = (strstr (textureManager.m_names [nVersion][nTexture], "frame") != null);
 return 0;

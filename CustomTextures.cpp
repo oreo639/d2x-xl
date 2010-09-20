@@ -12,6 +12,8 @@
 
 //------------------------------------------------------------------------------
 
+#if 0
+
 inline int Sqr (int i)
 {
 return i * i;
@@ -62,64 +64,7 @@ for (int y = 0; y < nHeight; y++) {
 return true;
 }
 
-//------------------------------------------------------------------------------------
-
-int RLEExpand (CPigTexture& pigTexInfo, byte *texBuf)
-{
-#	define RLE_CODE			0xE0
-#	define NOT_RLE_CODE		31
-#	define IS_RLE_CODE(x)	(((x) & RLE_CODE) == RLE_CODE)
-
-
-	byte	*expandBuf, *pSrc, *pDest;
-	byte	c, h;
-	int	i, j, l, bBigRLE;
-	ushort nLineSize;
-
-int bufSize = pigTexInfo.BufSize ();
-if (!(pigTexInfo.flags & BM_FLAG_RLE))
-	return (int) bufSize;
-if (!(expandBuf = (byte *) malloc (bufSize)))
-	return -1;
-
-bBigRLE = (pigTexInfo.flags & BM_FLAG_RLE_BIG) != 0;
-if (bBigRLE)
-	pSrc = texBuf + 4 + 2 * pigTexInfo.height;
-else
-	pSrc = texBuf + 4 + pigTexInfo.height;
-pDest = expandBuf;
-for (i = 0; i < pigTexInfo.height; i++, pSrc += nLineSize) {
-	if (bBigRLE)
-		nLineSize = *((ushort *) (texBuf + 4 + 2 * i));
-	else
-		nLineSize = texBuf [4 + i];
-	for (j = 0; j < nLineSize; j++) {
-		h = pSrc [j];
-		if (!IS_RLE_CODE (h)) {
-			c = h; // translate
-			if (pDest - expandBuf >= bufSize) {
-				free (expandBuf);
-				return -1;
-				}	
-			*pDest++ = c;
-			}
-		else if (l = (h & NOT_RLE_CODE)) {
-			c = pSrc [++j];
-			if ((pDest - expandBuf) + l > bufSize) {
-				free (expandBuf);
-				return -1;
-				}	
-			memset (pDest, c, l);
-			pDest += l;
-			}
-		}
-	}
-l = (int) (pDest - expandBuf);
-memcpy (texBuf, expandBuf, l);
-pigTexInfo.flags &= ~(BM_FLAG_RLE | BM_FLAG_RLE_BIG);
-free (expandBuf);
-return l;
-}
+#endif
 
 //-----------------------------------------------------------------------------------
 // ReadPog ()
@@ -201,42 +146,17 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 		texP->Release ();
 		}
 // allocate memory for texture if not already
-	if (!(texP->m_info.bmData = new byte [nSize]))
+	if (!(texP->m_info.bmData = new COLORREF [nSize]))
 		continue;
-	if (pigTexInfo.flags & 0x80) {
-		if (!(texP->m_info.tgaData = new tRGBA [nSize])) {
-			texP->Release ();
-			continue;
-			}
-		texP->m_info.nFormat = 1;
-		}
-	else
-		texP->m_info.nFormat = 0;
-	texP->m_info.width = pigTexInfo.width;
-	texP->m_info.height = pigTexInfo.height;
-	texP->m_info.size = nSize;
-	texP->m_info.bValid = 1;
-	// read texture into memory (assume non-compressed)
+	texP->m_info.nFormat = (pigTexInfo.flags & 0x80) != 0;
+	//texP->m_info.width = pigTexInfo.width;
+	//texP->m_info.height = pigTexInfo.height;
+	//texP->m_info.size = nSize;
+	//texP->m_info.bValid = 1;
 	fp.Seek (bmpOffset + pigTexInfo.offset, SEEK_SET);
-	if (texP->m_info.nFormat) {
-		fp.Read (texP->m_info.tgaData, sizeof (tRGBA), texP->m_info.size);
-		texP->m_info.bValid = TGA2Bitmap (texP->m_info.tgaData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
-		}
-	else {
-		if (pigTexInfo.flags & BM_FLAG_RLE) {
-			fp.Read (texP->m_info.bmData, nSize, 1);
-			RLEExpand (pigTexInfo, texP->m_info.bmData);
-			}
-		else {
-			byte *bufP = texP->m_info.bmData + pigTexInfo.width * (pigTexInfo.height - 1); // point to last row of bitmap
-			for (row = 0; row < pigTexInfo.height; row++) {
-				fp.Read (bufP, pigTexInfo.width, 1);
-				bufP -= pigTexInfo.width;
-				}
-			}
-		}
+	texP->Load (fp, pigTexInfo);
 	if (!bExtraTexture)
-		texP->m_info.bCustom = TRUE;
+		texP->m_info.bCustom = true;
 	}
 if (nUnknownTextures) {
 	sprintf_s (message, sizeof (message), " Pog manager: %d unknown textures found.", nUnknownTextures);
@@ -259,7 +179,7 @@ return 0;
 uint WritePogTextureHeader (CFileManager& fp, CTexture *texP, int nTexture, uint nOffset)
 {
 	CPigTexture pigTexInfo (1);
-	byte *pSrc;
+	byte *srcP;
 
 sprintf_s (pigTexInfo.name, sizeof (pigTexInfo.name), "POG%04d", nTexture);
 #if 1
@@ -284,11 +204,11 @@ nOffset += texP->m_info.nFormat ? texP->m_info.size * 4 : texP->m_info.size;
 
 // check for transparency and super transparency
 if (!texP->m_info.nFormat)
-	if (pSrc = (byte *) texP->m_info.bmData) {
-		for (uint j = 0; j < texP->m_info.size; j++, pSrc++) {
-			if (*pSrc == 255) 
+	if (srcP = (byte *) texP->m_info.bmData) {
+		for (uint j = 0; j < texP->m_info.size; j++, srcP++) {
+			if (*srcP == 255) 
 				pigTexInfo.flags |= BM_FLAG_TRANSPARENT;
-			if (*pSrc == 254) 
+			if (*srcP == 254) 
 				pigTexInfo.flags |= BM_FLAG_SUPER_TRANSPARENT;
 			}
 	}
@@ -300,7 +220,7 @@ return nOffset;
 
 bool WritePogTexture (CFileManager& fp, CTexture *texP)
 {
-	byte	*bufP = texP->m_info.nFormat ? (byte*) texP->m_info.tgaData : texP->m_info.bmData;
+	byte	*bufP = texP->m_info.nFormat ? (byte*) texP->m_info.bmData : texP->m_info.bmData;
 
 if (texP->m_info.nFormat) {
 	fp.Write (bufP, sizeof (tRGBA), texP->m_info.size);

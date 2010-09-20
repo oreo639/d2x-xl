@@ -296,20 +296,19 @@ return extraTexP;
 //          The next time that texture is used, the handle will be defined.
 //------------------------------------------------------------------------------
 
-int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, int x0, int y0) 
+int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture* destTexP, int x0, int y0) 
 {
 	typedef struct tFrac {
 		int	c, d;
 	} tFrac;
 
-	byte			*src;
 	short			nTextures [2], mode, w, h;
 	int			i, x, y, y1, offs, s;
 	tFrac			scale, scale2;
 	//int			rc; // return code
 	CTexture*	texP [2];
-	byte			*bmBufP = destTexP->m_info.bmData;
-	byte			c;
+	COLORREF*	bmBufP = destTexP->m_info.bmData;
+	COLORREF		c;
 	int			fileType = DLE.FileType ();
 
 nTextures [0] = nBaseTex;
@@ -333,7 +332,7 @@ destTexP->m_info.width = texP [0]->m_info.width;
 destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.size = texP [0]->m_info.size;
 destTexP->m_info.bValid = 1;
-src = texP [0]->m_info.bmData;
+COLORREF* src = texP [0]->m_info.bmData;
 if (src) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) 
@@ -341,11 +340,11 @@ if (src) {
 	else {
 		// otherwise, copy bit by bit
 		w = texP [0]->m_info.width;
-		int	l1 = y0 * w + x0;
-		int	l2 = texP [0]->m_info.size - l1;
-		memcpy (bmBufP, src + l1, l2);
-		memcpy (bmBufP + l2, src, l1);
-		byte		*dest = bmBufP;
+		int l1 = y0 * w + x0;
+		int l2 = texP [0]->m_info.size - l1 * sizeof (COLORREF);
+		memcpy (bmBufP, src + l1, l2 * sizeof (COLORREF));
+		memcpy (bmBufP + l2, src, l1 * sizeof (COLORREF));
+		COLORREF* dest = bmBufP;
 		h = w;//texP [0]->m_info.height;
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++)

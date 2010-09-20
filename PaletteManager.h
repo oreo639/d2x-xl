@@ -22,8 +22,8 @@ typedef struct tBMIInfo {
 class CPaletteManager {
 	private:
 		char				m_name [15];
-		byte*				m_custom;
-		byte*				m_default;	
+		COLORREF*		m_custom;
+		COLORREF*		m_default;	
 		tBMIInfo			m_bmi;
 		CPalette*		m_render;
 		LPLOGPALETTE	m_dlcLog;
@@ -56,15 +56,15 @@ class CPaletteManager {
 
 		inline char* Name (void) { return m_name; }
 
-		inline byte* Custom (void) { return m_custom; }
+		inline COLORREF* Custom (void) { return m_custom; }
 
-		inline byte* Default (void) { return m_default; }
+		inline COLORREF* Default (void) { return m_default; }
 
 		inline CPalette* Render (void) { return m_render; }
 
 		inline PALETTEENTRY* ColorMap (void) { return m_colorMap; }
 
-		byte* Current (void);
+		COLORREF* Current (int i = 0);
 
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
