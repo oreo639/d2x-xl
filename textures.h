@@ -230,6 +230,7 @@ typedef struct tBGR {
 //------------------------------------------------------------------------
 
 typedef struct tTexture {
+	byte*			bmIndex;
 	COLORREF*	bmData;
 	uint			width, height, size;
 	bool			bCustom, bExtData, bFrame, bUsed, bValid;

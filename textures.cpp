@@ -151,7 +151,9 @@ if ((m_info.bmData != null) && ((m_info.width * m_info.height != nSize)))
 	Release ();
 if (m_info.bmData == null)
 	m_info.bmData = new COLORREF [nSize];
-return (m_info.bmData != null);
+if ((m_info.nFormat == 0) && (m_info.bmIndex == null))
+	m_info.bmIndex = new byte [nSize];
+return (m_info.bmData != null) && ((m_info.nFormat == 0) || (m_info.bmIndex != null));
 }
 
 //------------------------------------------------------------------------
@@ -162,6 +164,10 @@ if (!m_info.bExtData) {
 	if (m_info.bmData) {
 		delete m_info.bmData;
 		m_info.bmData = null;
+		}
+	if (m_info.bmIndex) {
+		delete m_info.bmIndex;
+		m_info.bmIndex = null;
 		}
 	}
 bool bFrame = m_info.bFrame;
@@ -209,12 +215,16 @@ else if (info.flags & 0x08) {
 				COLORREF color = palette [palIndex];
 				for (int j = 0; j < runLength; j++) {
 					if (x < info.width) {
-						m_info.bmData [y * info.width + x++] = color;
+						int h = y * info.width + x++;
+						m_info.bmIndex [h] = palIndex;
+						m_info.bmData [h] = color;
 						}
 					}
 				}
 			else {
-				m_info.bmData [y * info.width + x++] = palette [palIndex];
+				int h = y * info.width + x++;
+				m_info.bmIndex [h] = palIndex;
+				m_info.bmData [h] = palette [palIndex];
 				}
 			}
 		}
@@ -222,8 +232,10 @@ else if (info.flags & 0x08) {
 else {
 	for (int y = info.height - 1; y >= 0; y--) {
 		for (int x = 0; x < info.width; x++) {
+			int h = y * info.width + x;
 			palIndex = fp.ReadByte ();
-			m_info.bmData [y * info.width + x] = palette [palIndex];
+			m_info.bmIndex [h] = palIndex;
+			m_info.bmData [h] = palette [palIndex];
 			}
 		}
 	}
@@ -243,11 +255,10 @@ CPigTexture& info = textureManager.Info (nVersion, nTexture);
 int nSize = info.BufSize ();
 if (m_info.bmData && ((m_info.width * m_info.height == nSize)))
 	return 0; // already loaded
-if (!Allocate (nSize, nTexture)) {
-	return 1;
-	}
-fp.Seek (textureManager.m_nOffsets [nVersion] + info.offset, SEEK_SET);
 m_info.nFormat = 0;
+if (!Allocate (nSize, nTexture)) 
+	return 1;
+fp.Seek (textureManager.m_nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (fp, info);
 m_info.bFrame = (strstr (textureManager.m_names [nVersion][nTexture], "frame") != null);
 return 0;

@@ -182,7 +182,7 @@ return 1;
 
 //------------------------------------------------------------------------
 
-byte* CPaletteManager::LoadDefault (void)
+COLORREF* CPaletteManager::LoadDefault (void)
 {
 CResource res;
 if (!res.Load (Resource ()))

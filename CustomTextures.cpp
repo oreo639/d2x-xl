@@ -80,7 +80,6 @@ int ReadPog (CFileManager& fp, long nFileSize)
 	uint				nSize;
 	uint				offset, hdrOffset, bmpOffset, hdrSize, xlatSize;
 	short				nTexture;
-	int				row;
 	ushort			nUnknownTextures, nMissingTextures;
 	bool				bExtraTexture;
 	CTexture*		texP;
@@ -220,14 +219,20 @@ return nOffset;
 
 bool WritePogTexture (CFileManager& fp, CTexture *texP)
 {
-	byte	*bufP = texP->m_info.nFormat ? (byte*) texP->m_info.bmData : texP->m_info.bmData;
-
 if (texP->m_info.nFormat) {
-	fp.Write (bufP, sizeof (tRGBA), texP->m_info.size);
+	tRGBA rgba = {0, 0, 0, 255};
+	COLORREF* bufP = texP->m_info.bmData;
+	for (int i = texP->m_info.size; i; i--, bufP++) {
+		rgba.red = GetRValue (*bufP);
+		rgba.red = GetGValue (*bufP);
+		rgba.red = GetBValue (*bufP);
+		fp.Write (color, sizeof (color), 1);
+		}
 	}
 else {
 	ushort w = texP->m_info.width;
 	ushort h = texP->m_info.height;
+	byte* bufP = texP->m_info.bmIndex;
 	bufP += w * (h - 1); // point to last row of bitmap
 	for (int row = 0; row < h; row++) {
 		fp.Write (bufP, 1, w);

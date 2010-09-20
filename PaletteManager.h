@@ -83,9 +83,9 @@ class CPaletteManager {
 
 		byte* LoadDefault (void);
 
-		void Encode (byte* palette);
+		void Decode (COLORREF* dest, byte* src, int len);
 
-		void Decode (byte* palette);
+		void Encode (byte* dest, COLORREF* src);
 
 };
 
