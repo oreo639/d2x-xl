@@ -1187,6 +1187,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\MineView.select.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\MineView.transform.cpp"
 					>
 				</File>
@@ -5236,10 +5240,6 @@
 				</File>
 				<File
 					RelativePath=".\MemoryFile.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\MineView.select.cpp"
 					>
 				</File>
 				<File

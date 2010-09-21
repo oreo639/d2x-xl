@@ -192,7 +192,7 @@ else {
 // If a match is found, nBaseTex is defined and 0 is returned
 //------------------------------------------------------------------------
 
-int CTextureView::PickTexture(CPoint &point,short &nBaseTex) 
+int CTextureView::PickTexture (CPoint &point,short &nBaseTex) 
 {
 if (theMine == null)
 	return 1;
