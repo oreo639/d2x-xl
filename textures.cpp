@@ -156,7 +156,7 @@ bool CTexture::Allocate (int nSize, int nTexture)
 if ((m_info.bmData != null) && ((m_info.width * m_info.height != nSize)))
 	Release ();
 if (m_info.bmData == null)
-	m_info.bmData = new CBGR [nSize];
+	m_info.bmData = new CBGRA [nSize];
 if (m_info.bmIndex == null)
 	m_info.bmIndex = new byte [nSize];
 return (m_info.bmData != null) && (m_info.bmIndex != null);
