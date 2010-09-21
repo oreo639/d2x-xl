@@ -282,10 +282,9 @@ if (!pDC) {
 	}
 BITMAPINFO* bmi = paletteManager.BMI ();
 
-   // realize pallette for 256 color displays
 CPalette *oldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 pDC->RealizePalette();
-pDC->SetStretchBltMode(STRETCH_DELETESCANS);
+pDC->SetStretchBltMode (STRETCH_DELETESCANS);
 int x = 0;
 int y = 0;
 for (int i = 0; i < m_filter.Count (1); i++) {
@@ -296,11 +295,24 @@ for (int i = 0; i < m_filter.Count (1); i++) {
 	if (nOffset &&	--nOffset)
 		continue;
 	if (!textureManager.Define (m_filter.MapViewToTex (i), 0, &tex, 0, 0)) {
+#if 0
 		bmi->bmiHeader.biWidth = tex.m_info.width;
 		bmi->bmiHeader.biHeight = tex.m_info.width;
 		StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
 							m_iconSize.cx, m_iconSize.cy, 0, 0, tex.m_info.width, tex.m_info.width, 
-							(void *)tex.m_info.bmData, bmi, DIB_RGB_COLORS, SRCCOPY);
+							(void *)tex.m_info.bmIndex, bmi, DIB_RGB_COLORS, SRCCOPY);
+#else
+		double scale = 1.0 / tex.Scale ();
+		double xStep = scale * (double) tex.m_info.width / (double) m_iconSize.cx;
+		double yStep = scale * (double) tex.m_info.height / (double) m_iconSize.cy;
+		int left = 3 + x * m_iconSpace.cx;
+		for (double hx = 0; hx < tex.m_info.width; hx += xStep) {
+			int top = 3 + y * m_iconSpace.cy;
+			for (double hy = 0; hy < tex.m_info.width; hy += yStep) 
+				pDC->SetPixel (left, top++, /*PALETTEINDEX*/ (tex.m_info.bmData [(int) hy * tex.m_info.width + (int) hx]));
+			left++;
+			}
+#endif
 		}
 // pick color for box drawn around texture
 	if (m_filter.MapViewToTex (i) == nBaseTex)

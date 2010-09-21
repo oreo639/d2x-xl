@@ -101,11 +101,17 @@ if (bShowTexture) {
 		else 
 #endif
 			{
-			double scale = tex.Scale ();
-			uint x, y;
-			for (x = 0; x < tex.m_info.width; x = (int) (x + scale))
-				for (y = 0; y < tex.m_info.width; y = (int) (y + scale))
-					pDC->SetPixel ((short) (x / scale), (short) (y / scale), /*PALETTEINDEX*/ (textureManager.m_bmBuf [y * tex.m_info.width + x]));
+			double scale = 1.0 / tex.Scale ();
+			if (scale == 1.0) {
+				for (uint i = 0, x = 0; x < tex.m_info.width; x++)
+					for (uint y = 0; y < tex.m_info.width; y++)
+						pDC->SetPixel ((int) x, (int) y, (textureManager.m_bmBuf [i++]));
+				}
+			else {
+				for (uint x = 0; x < tex.m_info.width; x = (int) (x + scale))
+					for (uint y = 0; y < tex.m_info.width; y = (int) (y + scale))
+						pDC->SetPixel ((int) (x * scale), (int) (y * scale), /*PALETTEINDEX*/ (textureManager.m_bmBuf [y * tex.m_info.width + x]));
+				}
 			}
 		//pDC->SelectPalette (pOldPalette, FALSE);
 		}
@@ -151,9 +157,9 @@ if ((m_info.bmData != null) && ((m_info.width * m_info.height != nSize)))
 	Release ();
 if (m_info.bmData == null)
 	m_info.bmData = new COLORREF [nSize];
-if ((m_info.nFormat == 0) && (m_info.bmIndex == null))
+if (m_info.bmIndex == null)
 	m_info.bmIndex = new byte [nSize];
-return (m_info.bmData != null) && ((m_info.nFormat == 0) || (m_info.bmIndex != null));
+return (m_info.bmData != null) && (m_info.bmIndex != null);
 }
 
 //------------------------------------------------------------------------
@@ -197,6 +203,7 @@ if (m_info.nFormat) {
 	for (uint i = 0; i < m_info.size; i++) {
 		fp.Read (&color, sizeof (color), 1);
 		m_info.bmData [i] = RGB (color.r, color.g, color.b);
+		m_info.bmIndex [i] = (color.a == 0) ? 255 : 0; // transparency
 		}
 	//texP->m_info.bValid = TGA2Bitmap (texP->m_info.bmData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
 	}

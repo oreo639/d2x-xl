@@ -775,7 +775,7 @@ DrawLine (pTx, pt [0], pt [3], 1);
 // DrawSegmentTextured()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentTextured(CSegment *segP, COLORREF* lightIndex) 
+void CMineView::DrawSegmentTextured (CSegment *segP, COLORREF* lightIndex) 
 {
 CHECKMINE;
 
@@ -826,7 +826,7 @@ CHECKMINE;
 			if (a.v.x * b.v.y > a.v.y * b.v.x) {
 				if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 					DrawAnimDirArrows (sideP->BaseTex (), &tex);
-					RenderFace (segP, nSide, tex.m_info.bmData, tex.m_info.width, tex.m_info.height, 
+					RenderFace (segP, nSide, tex, 
 								   lightIndex, screenP, m_viewPoints, width, height, rowOffset);
 				}
 			}
@@ -850,16 +850,6 @@ for (i = 0; i < 8; i++, pv++) {
 	h = *pv;
 	m_pDC->SetPixel (m_viewPoints [h].x, m_viewPoints [h].y, color);
 	}
-#if 0
-pDC->SetPixel (m_viewPoints [segP.verts [0]].x, m_viewPoints [segP.verts [0]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [segP.verts [1]].x, m_viewPoints [segP.verts [1]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [segP.verts [2]].x, m_viewPoints [segP.verts [2]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [segP.verts [3]].x, m_viewPoints [segP.verts [3]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [segP.verts [4]].x, m_viewPoints [segP.verts [4]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [segP.verts [5]].x, m_viewPoints [segP.verts [5]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [segP.verts [6]].x, m_viewPoints [segP.verts [6]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [segP.verts [7]].x, m_viewPoints [segP.verts [7]].y,RGB(128,128,128));
-#endif
 }
 
 //--------------------------------------------------------------------------

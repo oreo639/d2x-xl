@@ -24,6 +24,7 @@ public:
 		}
 
 	inline size_t Size (void) { return m_size; }
+
 	inline byte* Data (void) { return m_data; }
 
 	CResource () : m_handle (0), m_data(null), m_size(0) {}

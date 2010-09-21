@@ -191,8 +191,7 @@ GetClientRect (&rc);
 int dx, dy;
 for (dy = 0; dy < 8; dy++)
 	for (dx = 0; dx < 8; dx++)
-		m_pDC->SetPixel ((x << 3) + dx + rc.left, (y << 3) + dy + rc.top, 
-							  PALETTEINDEX (y * m_nWidth + x));
+		m_pDC->SetPixel ((x << 3) + dx + rc.left, (y << 3) + dy + rc.top, /*PALETTEINDEX*/ (y * m_nWidth + x));
 }
 
 //------------------------------------------------------------------------------
@@ -1180,11 +1179,7 @@ xs /= 4.0;
 ys /= 4.0;
 for (dy = 0; dy < 4; dy++)
 	for (dx = 0; dx < 4; dx++)
-		m_pDC->SetPixel (x + (int) ((double) dx * xs), 
-							  y + (int) ((double) dy * ys), 
-							  color);
-//		m_pDC->SetPixel((x<<2)+dx+rc.left, (y<<2)+dy+rc.top, 
-//							 PALETTEINDEX(m_bitmap [(63-y)*64+x]));
+		m_pDC->SetPixel (x + (int) ((double) dx * xs), y + (int) ((double) dy * ys), color);
 }
 
 //************************************************************************
@@ -1198,8 +1193,7 @@ m_paletteWnd.GetClientRect (&rc);
 int dx, dy;
 for (dy=0;dy<8;dy++)
 	for (dx=0;dx<8;dx++)
-		m_pDC->SetPixel((x<<3)+dx+rc.left, (y<<3)+dy+rc.top, 
-							 PALETTEINDEX(y*32+x));
+		m_pDC->SetPixel ((x << 3) + dx + rc.left, (y << 3) + dy + rc.top, PALETTEINDEX (y * 32 + x));
 }
 
 //************************************************************************

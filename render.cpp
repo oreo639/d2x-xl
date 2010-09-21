@@ -22,7 +22,7 @@ int bEnableDeltaShading = 0;
 //------------------------------------------------------------------------
 
 void RenderFace (CSegment* segP, short nSide,
-					  COLORREF* bmData, ushort bmWidth, ushort bmHeight,
+					  CTexture& tex,
 					  COLORREF* lightIndex,
 					  COLORREF* screenBuffer, APOINT* scrn,
 					  ushort width, ushort height, ushort rowOffset)
@@ -45,8 +45,8 @@ void RenderFace (CSegment* segP, short nSide,
 	ushort bmWidth2;
 	bool bEnableShading = (lightIndex != null);
 
-bmHeight = bmWidth;
-bmWidth2 = bmWidth / 2;
+tex.m_info.bmHeight = tex.m_info.bmWidth;
+bmWidth2 = tex.m_info.bmWidth / 2;
 
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
@@ -194,7 +194,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 			else
 				x1 = end_x;
 
-			scale = (double) max (bmWidth, bmHeight);
+			scale = (double) max (tex.m_info.bmWidth, tex.m_info.bmHeight);
 			//h = B.uVec[2]*(double) y + B.fVec[2];
 			h = B.uVec.v.z * (double) y + B.fVec.v.z;
 			x0d = (double) x0;
@@ -211,9 +211,9 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 				
 				// use 22.10 integer math
 				// the 22 allows for large texture bitmap sizes
-				// the 10 gives more then enough accuracy for the delta values
+				// the 10 gives more than enough accuracy for the delta values
 
-				m = min (bmWidth, bmHeight);
+				m = min (tex.m_info.bmWidth, tex.m_info.bmHeight);
 				if (!m)
 					m = 64;
 				m *= 1024;
@@ -221,17 +221,17 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 				if (!dx)
 					dx = 1;
 				du = ((uint) (((u1 - u0) * 1024.0) / dx) % m);
-				// v0 & v1 swapped since bmData is flipped
+				// v0 & v1 swapped since tex.m_info.bmData is flipped
 				dv = ((uint) (((v0 - v1) * 1024.0) / dx) % m);
 				u = ((uint) (u0 * 1024.0)) % m;
 				v = ((uint) (-v0 * 1024.0)) % m;
-				vd = 1024 / bmHeight;
-				vm = bmWidth * (bmHeight - 1);
+				vd = 1024 / tex.m_info.bmHeight;
+				vm = tex.m_info.bmWidth * (tex.m_info.bmHeight - 1);
 				
-				COLORREF* screenBufP = screenBuffer + (uint)(height - y - 1) * (uint) rowOffset + x0;
+				COLORREF* screenBufP = screenBuffer + (uint) (height - y - 1) * (uint) rowOffset + x0;
 				
 				int k = (x1 - x0);
-				if (y < (height-1) && k > 0) {
+				if ((y < height - 1) && (k > 0)) {
 					COLORREF* pixelP = screenBufP;
 					if (bEnableShading) {
 						do {
@@ -239,7 +239,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							COLORREF temp = bmData [(u / 1024) + ((v / vd) & vm)];
+							byte palIndex = tex.m_info.bmIndex [(u / 1024) + ((v / vd) & vm)];
 							if (temp < 254) {
 								*pixelP = lightIndex [temp + ((scanLight / 4) & 0x1f00)];
 								//*pixelP = temp;
@@ -254,9 +254,9 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							COLORREF temp = bmData [(u / 1024) + ((v / vd) & vm)];
-							if (temp < 254)
-								*pixelP = temp;
+							i = (u / 1024) + ((v / vd) & vm);
+							if (tex.m_info.bmIndex [i] < 254)
+								*pixelP = tex.m_info.bmData [i];
 							pixelP++;
 							} while (--k);
 						}

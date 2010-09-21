@@ -336,7 +336,7 @@ COLORREF* src = texP [0]->m_info.bmData;
 if (src) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) 
-		memcpy (bmBufP, src, texP [0]->m_info.size);
+		memcpy (bmBufP, src, texP [0]->m_info.size * sizeof (COLORREF));
 	else {
 		// otherwise, copy bit by bit
 		w = texP [0]->m_info.width;

@@ -582,28 +582,14 @@ void CMineView::InitView (CDC *pViewDC)
 	m_pDC = pViewDC;
 #endif
 
-//	int depth = m_pDC->GetDeviceCaps(BITSPIXEL) / 8;
-	int depth = 1; // force 8-bit DIB
-#if 0
-	// if view size is new, then reset dib and delete the current device context
-	CRect Rect;
-	GetClientRect(Rect);
-	int width = Rect.Width (); //(Rect.Width() + 3) & ~3; // long word align
-	int height = Rect.Height();
-
-	if (width != m_viewWidth || height != m_viewHeight || depth != m_viewDepth) {
-#else
+	//int depth = m_pDC->GetDeviceCaps(BITSPIXEL) / 8;
+	int depth = 3; // force 24-bit DIB
 	if (InitViewDimensions() || (depth != m_viewDepth)) {
-#endif
 		m_bUpdate = true;
 #if OGL_RENDERING == 0
 		ResetView ();
 #endif
 	}
-#if 0
-	m_viewWidth = width;
-	m_viewHeight = height;
-#endif
 	m_viewDepth = depth;
 #if OGL_RENDERING == 0
 	if (UpdateScrollBars ()) {
@@ -612,41 +598,24 @@ void CMineView::InitView (CDC *pViewDC)
 		}
 	if (!m_DIB) {
 		if (!m_DC.m_hDC)
-			m_DC.CreateCompatibleDC(pViewDC);
+			m_DC.CreateCompatibleDC (pViewDC);
 		if (m_DC.m_hDC) {
-			typedef struct {
-				BITMAPINFOHEADER    bmiHeader;
-				RGBQUAD             bmiColors [256];
-			} MYBITMAPINFO;
-
-			// define the bitmap parameters
-			MYBITMAPINFO mybmi;
-			mybmi.bmiHeader.biSize = sizeof (BITMAPINFOHEADER);
-			mybmi.bmiHeader.biWidth = m_viewWidth;
-			mybmi.bmiHeader.biHeight = m_viewHeight;
-			mybmi.bmiHeader.biPlanes = 1;
-			mybmi.bmiHeader.biBitCount = m_viewDepth * 8;
-			mybmi.bmiHeader.biCompression = BI_RGB;
-			mybmi.bmiHeader.biSizeImage = 0;
-			mybmi.bmiHeader.biXPelsPerMeter = 1000;
-			mybmi.bmiHeader.biYPelsPerMeter = 1000;
-			mybmi.bmiHeader.biClrUsed = 256;
-			mybmi.bmiHeader.biClrImportant = 256;
+			BITMAPINFO bmi = {sizeof (BITMAPINFOHEADER), m_viewWidth, m_viewHeight, 1, m_viewDepth * 8, BI_RGB, 0, 1000, 1000, 0, 0, {0,0,0,0}};
 
 			// copy the bitmap palette
-			COLORREF* palette = paletteManager.Current ();
-			if (palette) {
-				int i, j;
-				for (i = j = 0; i < 256; i++) {
-					mybmi.bmiColors [i].rgbRed = GetRValue (palette [j]);
-					mybmi.bmiColors [i].rgbGreen = GetGValue (palette [j]);
-					mybmi.bmiColors [i].rgbBlue = GetBValue (palette [j]);
-					mybmi.bmiColors [i].rgbReserved = 0;
-					}
-				}
-			m_DIB =::CreateDIBSection (m_DC.m_hDC, (BITMAPINFO *) &mybmi, DIB_RGB_COLORS, &m_pvBits, null, 0);
+			//COLORREF* palette = paletteManager.Current ();
+			//if (palette) {
+			//	int i, j;
+			//	for (i = j = 0; i < 256; i++) {
+			//		bmi.colors [i].rgbRed = GetRValue (palette [j]);
+			//		bmi.colors [i].rgbGreen = GetGValue (palette [j]);
+			//		bmi.colors [i].rgbBlue = GetBValue (palette [j]);
+			//		bmi.colors [i].rgbReserved = 0;
+			//		}
+			//	}
+			m_DIB = ::CreateDIBSection (m_DC.m_hDC, (BITMAPINFO *) &bmi, DIB_RGB_COLORS, &m_pvBits, null, 0);
 			if (m_DIB) {
-				m_DC.SelectObject(m_DIB);
+				m_DC.SelectObject (m_DIB);
 			}
 		}
 	}
@@ -671,11 +640,11 @@ glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 glLoadIdentity ();
 #else
 if (m_DIB)
-	memset(m_pvBits, 0, m_viewWidth * m_viewHeight * m_viewDepth);
+	memset (m_pvBits, 0, m_viewWidth * m_viewHeight * m_viewDepth);
 else {
 	CRect rect;
-	GetClientRect(rect);
-	FillRect(m_pDC->m_hDC, rect, (HBRUSH)GetStockObject(BLACK_BRUSH));
+	GetClientRect (rect);
+	FillRect (m_pDC->m_hDC, rect, (HBRUSH) GetStockObject (BLACK_BRUSH));
 	}
 #endif
 }
