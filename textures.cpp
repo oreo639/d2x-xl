@@ -101,7 +101,7 @@ if (bShowTexture) {
 		else 
 #endif
 			{
-			double scale = 1.0 / tex.Scale ();
+			double scale = tex.Scale ();
 			if (scale == 1.0) {
 				for (uint i = 0, x = 0; x < tex.m_info.width; x++)
 					for (uint y = 0; y < tex.m_info.width; y++)
@@ -110,7 +110,7 @@ if (bShowTexture) {
 			else {
 				for (uint x = 0; x < tex.m_info.width; x = (int) (x + scale))
 					for (uint y = 0; y < tex.m_info.width; y = (int) (y + scale))
-						pDC->SetPixel ((int) (x * scale), (int) (y * scale), textureManager.m_bmBuf [y * tex.m_info.width + x].ColorRef ());
+						pDC->SetPixel ((int) (x / scale), (int) (y / scale), textureManager.m_bmBuf [y * tex.m_info.width + x].ColorRef ());
 				}
 			}
 		//pDC->SelectPalette (pOldPalette, FALSE);

@@ -144,12 +144,13 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 		texP = textureManager.Textures (1, nTexture);
 		texP->Release ();
 		}
-// allocate memory for texture if not already
-	if (!(texP->m_info.bmData = new CBGRA [nSize]))
-		continue;
+	//if (!(texP->m_info.bmData = new CBGRA [nSize]))
+	//	continue;
 	texP->m_info.nFormat = (pigTexInfo.flags & 0x80) != 0;
 	//texP->m_info.width = pigTexInfo.width;
 	//texP->m_info.height = pigTexInfo.height;
+	if (!texP->Allocate (nSize, nTexture)) 
+		continue;
 	//texP->m_info.size = nSize;
 	//texP->m_info.bValid = 1;
 	fp.Seek (bmpOffset + pigTexInfo.offset, SEEK_SET);

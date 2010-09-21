@@ -307,7 +307,7 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture* destTexP, 
 	tFrac			scale, scale2;
 	//int			rc; // return code
 	CTexture*	texP [2];
-	CBGR*			bmDataP = destTexP->m_info.bmData;
+	CBGRA*		bmDataP = destTexP->m_info.bmData;
 	byte*			bmIndexP = destTexP->m_info.bmIndex;
 	byte			c;
 	int			fileType = DLE.FileType ();
@@ -334,7 +334,7 @@ destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.size = texP [0]->m_info.size;
 destTexP->m_info.bValid = 1;
 
-CBGR* srcDataP = texP [0]->m_info.bmData;
+CBGRA* srcDataP = texP [0]->m_info.bmData;
 byte* srcIndexP = texP [0]->m_info.bmIndex;
 if (bmIndexP == null)
 	bmIndexP = bmIndexP;
@@ -352,7 +352,7 @@ if (srcDataP != null) {
 		int l2 = texP [0]->m_info.size - l1 * sizeof (CBGRA);
 		memcpy (bmDataP, srcDataP + l1, l2 * sizeof (CBGRA));
 		memcpy (bmDataP + l2, srcDataP, l1 * sizeof (CBGRA));
-		CBGR* destDataP = bmDataP;
+		CBGRA* destDataP = bmDataP;
 		byte* destIndexP = bmIndexP;
 		h = w;//texP [0]->m_info.height;
 		for (y = 0; y < h; y++) {
@@ -391,7 +391,7 @@ w = texP [1]->m_info.width / scale.c * scale.d;
 h = w;//texP [1]->m_info.height / scale.c * scale.d;
 s = (texP [1]->m_info.width * texP [1]->m_info.width)/*texP [1]->m_info.size*/ / scale2.c * scale2.d;
 if (!(x0 || y0)) {
-	CBGR * destDataP, * destData2;
+	CBGRA * destDataP, * destData2;
 	byte* destIndexP, * destIndex2;
 	if (mode == 0x0000) {
 		destDataP = bmDataP;
@@ -451,11 +451,12 @@ else {
 		for (y = 0; y < h; y++) {
 			y1 = ((y + y0) % h) * w;
 			for (x = 0; x < w; x++) {
-				c = srcIndexP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
+				c = srcIndexP [i];
 				if (c != 255) {
-					int i = y1 + (x + x0) % w;
-					bmIndexP [i] = c;
-					bmDataP [i] = srcDataP [i];
+					int j = y1 + (x + x0) % w;
+					bmIndexP [j] = c;
+					bmDataP [j] = srcDataP [i];
 					}
 				}
 			}
@@ -463,23 +464,25 @@ else {
 	else if (mode == (short) 0x4000) {
 		for (y = h - 1; y >= 0; y--)
 			for (x = 0; x < w; x++) {
-				c = srcIndexP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
+				c = srcIndexP [i];
 				if (c != 255) {
-					int i = ((x + y0) % h) * w + (y + x0) % w;
-					bmIndexP [i] = c;
-					bmDataP [i] = srcDataP [i];
+					int j = ((x + y0) % h) * w + (y + x0) % w;
+					bmIndexP [j] = c;
+					bmDataP [j] = srcDataP [i];
 					}
 				}
 		}
 	else if (mode == (short) 0x8000) {
 		for (y = h - 1; y >= 0; y--) {
 			y1 = ((y + y0) % h) * w;
+			int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
 			for (x = w - 1; x >= 0; x--) {
-				c = srcIndexP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				c = srcIndexP [i];
 				if (c != 255) {
-					int i = y1 + (x + x0) % w;
-					bmIndexP [i] = c;
-					bmDataP [i] = srcDataP [i];
+					int j = y1 + (x + x0) % w;
+					bmIndexP [j] = c;
+					bmDataP [j] = srcDataP [i];
 					}
 				}
 			}
@@ -487,11 +490,12 @@ else {
 	else if (mode == (short) 0xC000) {
 		for (y = 0; y < h; y++)
 			for (x = w - 1; x >= 0; x--) {
-				c = srcIndexP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
+				c = srcIndexP [i];
 				if (c != 255) {
-					int i = ((x + y0) % h) * w + (y + x0) % w;
-					bmIndexP [i] = c;
-					bmDataP [i] = srcDataP [i];
+					int j = ((x + y0) % h) * w + (y + x0) % w;
+					bmIndexP [j] = c;
+					bmDataP [j] = srcDataP [i];
 					}
 				}
 			}
