@@ -621,30 +621,30 @@ void CMineView::InitView (CDC *pViewDC)
 
 			// define the bitmap parameters
 			MYBITMAPINFO mybmi;
-			mybmi.bmiHeader.biSize              = sizeof (BITMAPINFOHEADER);
-			mybmi.bmiHeader.biWidth             = m_viewWidth;
-			mybmi.bmiHeader.biHeight            = m_viewHeight;
-			mybmi.bmiHeader.biPlanes            = 1;
-			mybmi.bmiHeader.biBitCount          = m_viewDepth*8;
-			mybmi.bmiHeader.biCompression       = BI_RGB;
-			mybmi.bmiHeader.biSizeImage         = 0;
-			mybmi.bmiHeader.biXPelsPerMeter     = 1000;
-			mybmi.bmiHeader.biYPelsPerMeter     = 1000;
-			mybmi.bmiHeader.biClrUsed           = 256;
-			mybmi.bmiHeader.biClrImportant      = 256;
+			mybmi.bmiHeader.biSize = sizeof (BITMAPINFOHEADER);
+			mybmi.bmiHeader.biWidth = m_viewWidth;
+			mybmi.bmiHeader.biHeight = m_viewHeight;
+			mybmi.bmiHeader.biPlanes = 1;
+			mybmi.bmiHeader.biBitCount = m_viewDepth * 8;
+			mybmi.bmiHeader.biCompression = BI_RGB;
+			mybmi.bmiHeader.biSizeImage = 0;
+			mybmi.bmiHeader.biXPelsPerMeter = 1000;
+			mybmi.bmiHeader.biYPelsPerMeter = 1000;
+			mybmi.bmiHeader.biClrUsed = 256;
+			mybmi.bmiHeader.biClrImportant = 256;
 
 			// copy the bitmap palette
-			byte *palette = paletteManager.Current ();
+			COLORREF* palette = paletteManager.Current ();
 			if (palette) {
 				int i, j;
 				for (i = j = 0; i < 256; i++) {
-					mybmi.bmiColors [i].rgbRed   = palette [j++]<<2;
-					mybmi.bmiColors [i].rgbGreen = palette [j++]<<2;
-					mybmi.bmiColors [i].rgbBlue  = palette [j++]<<2;
+					mybmi.bmiColors [i].rgbRed = GetRValue (palette [j]);
+					mybmi.bmiColors [i].rgbGreen = GetGValue (palette [j]);
+					mybmi.bmiColors [i].rgbBlue = GetBValue (palette [j]);
 					mybmi.bmiColors [i].rgbReserved = 0;
 					}
 				}
-			m_DIB =::CreateDIBSection(m_DC.m_hDC, (BITMAPINFO *) &mybmi, DIB_RGB_COLORS, &m_pvBits, null, 0);
+			m_DIB =::CreateDIBSection (m_DC.m_hDC, (BITMAPINFO *) &mybmi, DIB_RGB_COLORS, &m_pvBits, null, 0);
 			if (m_DIB) {
 				m_DC.SelectObject(m_DIB);
 			}

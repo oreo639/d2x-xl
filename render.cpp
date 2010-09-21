@@ -21,10 +21,10 @@ int bEnableDeltaShading = 0;
 // RenderFace()
 //------------------------------------------------------------------------
 
-void RenderFace (CSegment *segP, short nSide,
-					  byte *bmData, ushort bmWidth, ushort bmHeight,
-					  byte *lightIndex,
-					  byte *screenBuffer, APOINT* scrn,
+void RenderFace (CSegment* segP, short nSide,
+					  COLORREF* bmData, ushort bmWidth, ushort bmHeight,
+					  COLORREF* lightIndex,
+					  COLORREF* screenBuffer, APOINT* scrn,
 					  ushort width, ushort height, ushort rowOffset)
 {
 	
@@ -228,21 +228,21 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 				vd = 1024 / bmHeight;
 				vm = bmWidth * (bmHeight - 1);
 				
-				byte* screenBufP = screenBuffer + (uint)(height - y - 1) * (uint) rowOffset + x0;
+				COLORREF* screenBufP = screenBuffer + (uint)(height - y - 1) * (uint) rowOffset + x0;
 				
 				int k = (x1 - x0);
-				if (y < (height-1) && k > 0)  {
-					byte* pixelP = screenBufP;
+				if (y < (height-1) && k > 0) {
+					COLORREF* pixelP = screenBufP;
 					if (bEnableShading) {
 						do {
 							u += du;
 							u %= m;
 							v += dv;
 							v %= m;
-							byte temp = bmData [(u / 1024) + ((v / vd) & vm)];
+							COLORREF temp = bmData [(u / 1024) + ((v / vd) & vm)];
 							if (temp < 254) {
-								temp = lightIndex [temp + ((scanLight / 4) & 0x1f00)];
-								*pixelP = temp;
+								*pixelP = lightIndex [temp + ((scanLight / 4) & 0x1f00)];
+								//*pixelP = temp;
 								}
 							pixelP++;
 							scanLight += deltaLight;
@@ -254,7 +254,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							byte temp = bmData [(u / 1024) + ((v / vd) & vm)];
+							COLORREF temp = bmData [(u / 1024) + ((v / vd) & vm)];
 							if (temp < 254)
 								*pixelP = temp;
 							pixelP++;

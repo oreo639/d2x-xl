@@ -261,7 +261,7 @@ public:
 	void	DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short clear_it = 0);
 	void	DrawSegmentPartial (CSegment *segP);
 	void	DrawSegmentQuick (CSegment *segP, bool bPartial = false);
-	void	DrawSegmentTextured (CSegment *segP, byte* light_index);
+	void	DrawSegmentTextured (CSegment *segP, COLORREF* lightIndex);
 	void	DrawCubePoints (CSegment *segP);
 
 	void	DrawCurrentSegment (CSegment *segP, bool bPartial);

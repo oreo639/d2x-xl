@@ -270,7 +270,7 @@ CHECKMINE;
 	// Get shading table data
 COLORREF* lightIndex = 0;
 if (m_viewMineFlags & eViewMineShading && (lightIndex = paletteManager.Current ()))
-	lightIndex += 256*5; // skip 3-byte palette + 1st 2 light tables
+	lightIndex += 256 * 5; // skip 3-byte palette + 1st 2 light tables
 
 // Draw Segments ()
 h = segmentManager.Count ();
@@ -775,7 +775,7 @@ DrawLine (pTx, pt [0], pt [3], 1);
 // DrawSegmentTextured()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentTextured(CSegment *segP, byte* lightIndex) 
+void CMineView::DrawSegmentTextured(CSegment *segP, COLORREF* lightIndex) 
 {
 CHECKMINE;
 
@@ -783,31 +783,28 @@ CHECKMINE;
 	short y_max = m_viewHeight * 2;
 
 	if (IN_RANGE (m_viewPoints [segP->m_info.verts [0]].x,x_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [0]].y,y_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [1]].x,x_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [1]].y,y_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [2]].x,x_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [2]].y,y_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [3]].x,x_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [3]].y,y_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [4]].x,x_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [4]].y,y_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [5]].x,x_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [5]].y,y_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [6]].x,x_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [6]].y,y_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [7]].x,x_max) &&
-		IN_RANGE (m_viewPoints [segP->m_info.verts [7]].y,y_max)   )
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [0]].y,y_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].x,x_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].y,y_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].x,x_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].y,y_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].x,x_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].y,y_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].x,x_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].y,y_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].x,x_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].y,y_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].x,x_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].y,y_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].x,x_max) &&
+		 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].y,y_max)   )
 	{
 
 		CTexture tex (textureManager.m_bmBuf);
-		byte* screenP = (byte *)m_pvBits;
+		COLORREF* screenP = (COLORREF *) m_pvBits;
 		ushort width = m_viewWidth;
 		ushort height = m_viewHeight;
 		ushort rowOffset = (m_viewWidth + 3) & ~3;
-
-		if (segmentManager.Index (segP) == 244)
-			segP = segP;
 
 		CSide* sideP = segP->m_sides;
 		for (short nSide = 0; nSide < 6; nSide++, sideP++) {

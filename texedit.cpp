@@ -466,7 +466,7 @@ if (m_texP->m_info.nFormat)
 	memcpy (m_texP->m_info.bmData, m_tga, m_texP->m_info.size * sizeof (tRGBA));
 else {
 	memcpy (m_texP->m_info.bmIndex, m_bitmap, m_texP->m_info.size);
-	for (int i = 0; i < m_texP->m_info.size; i++)
+	for (uint i = 0; i < m_texP->m_info.size; i++)
 		m_texP->m_info.bmData [i] = *paletteManager.Current (i);
 	}	
 m_texP->m_info.bCustom = m_bModified;
@@ -676,10 +676,10 @@ for (i = m_nHeight; i; i--) {
 fp.Read (m_tga, m_nSize * sizeof (tRGBA), 1);
 #endif
 m_bModified = TRUE;
-if (TGA2Bitmap (m_tga, m_bitmap, (int) tgaHeader.width, (int) tgaHeader.height)) {
+//if (TGA2Bitmap (m_tga, m_bitmap, (int) tgaHeader.width, (int) tgaHeader.height)) {
 	m_nFormat = 1;
-	return true;
-	}
+//	return true;
+//	}
 return false;
 }
 

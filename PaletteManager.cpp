@@ -154,9 +154,7 @@ return 1;
 
 int CPaletteManager::SaveCustom (CFileManager& fp)
 {
-Encode (m_custom);
 return fp.Write (m_custom, 37 * 256, 1) == 1;
-Decode (m_custom);
 }
 
 //------------------------------------------------------------------------
@@ -188,7 +186,7 @@ CResource res;
 if (!res.Load (Resource ()))
 	return null;
 m_default = new COLORREF [res.Size()];
-Decode (m_default, res.Data (), res.Size ());
+Decode (m_default, res.Data ());
 SetupRender (m_default);
 SetupBMI (m_default);
 return m_default;
