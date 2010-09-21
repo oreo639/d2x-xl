@@ -78,8 +78,6 @@ class CTextureManager {
 
 		int ScrollSpeed (UINT16 texture, int *x, int *y);
 
-		CTextureManager() {}
-	
 		void Setup (void);
 
 		void Destroy (void);
@@ -90,6 +88,10 @@ class CTextureManager {
 			LoadTextures (nVersion);
 			}
 
+		CTextureManager() : m_extra (null) { 
+			m_paletteName [0] = 0; 
+			}
+	
 		~CTextureManager() { Destroy (); }
 
 	private:
