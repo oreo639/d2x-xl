@@ -349,7 +349,7 @@ if (srcDataP != null) {
 		// otherwise, copy bit by bit
 		w = texP [0]->m_info.width;
 		int l1 = y0 * w + x0;
-		int l2 = texP [0]->m_info.size - l1 * sizeof (CBGRA);
+		int l2 = (texP [0]->m_info.size - l1) * sizeof (CBGRA);
 		memcpy (bmDataP, srcDataP + l1, l2 * sizeof (CBGRA));
 		memcpy (bmDataP + l2, srcDataP, l1 * sizeof (CBGRA));
 		CBGRA* destDataP = bmDataP;

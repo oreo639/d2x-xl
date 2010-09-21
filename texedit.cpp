@@ -204,29 +204,34 @@ CreatePalette ();
 //SortPalette (0, 255);
 CRect rc;
 GetClientRect (&rc);
-byte *pal_bitmap  = (byte *) malloc (m_nWidth * m_nHeight);
+byte *bmPalette = new byte [m_nWidth * m_nHeight];
 int h, i, c, w, x, y;
 for (c = 0, y = m_nHeight - 1; (y >= 0); y--) {
 	for (x = 0, h = y * m_nWidth; x < m_nWidth; x++, h++) {
 		if (!y)
 			y = 0;
-		pal_bitmap [h] = (c < 256) ? m_nSortedPalIdx [c++] : 0;
+		bmPalette [h] = (c < 256) ? m_nSortedPalIdx [c++] : 0;
 		}
 	}
 BITMAPINFO* bmi = paletteManager.BMI ();
 bmi->bmiHeader.biWidth = m_nWidth;
 bmi->bmiHeader.biHeight = m_nHeight;
+bmi->bmiHeader.biBitCount = 8;
+bmi->bmiHeader.biClrUsed = 0;
+//CPalette *pOldPalette = m_pDC->SelectPalette (paletteManager.Render (), FALSE);
+//m_pDC->RealizePalette ();
 if (m_nWidth & 1)
 	for (i = 0; i < m_nHeight; i++) {
 		w = (i == m_nHeight - 1) ? 256 % m_nWidth : m_nWidth;
 		StretchDIBits (m_pDC->m_hDC, 0, i * 8, w * 8, 8, 0, 0, w, 1, 
-						   (void *) (pal_bitmap + (m_nHeight - i - 1) * m_nWidth), bmi, 
+						   (void *) (bmPalette + (m_nHeight - i - 1) * m_nWidth), bmi, 
 							DIB_RGB_COLORS, SRCCOPY);
 		}
 else
 	StretchDIBits (m_pDC->m_hDC, 0, 0, m_nWidth * 8, m_nHeight * 8, 0, 0, m_nWidth, m_nHeight, 
-					   (void *) pal_bitmap, bmi, DIB_RGB_COLORS, SRCCOPY);
-free (pal_bitmap);
+					   (void *) bmPalette, bmi, DIB_RGB_COLORS, SRCCOPY);
+//m_pDC->SelectPalette (pOldPalette, FALSE);
+free (bmPalette);
 EndPaint ();
 }
 

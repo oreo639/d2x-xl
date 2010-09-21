@@ -38,20 +38,23 @@ return (minColor + maxColor) / 2;
 
 void CPaletteManager::SetupBMI (CBGR* palette) 
 {
-m_bmi.header.biSize          = sizeof (BITMAPINFOHEADER);
-m_bmi.header.biWidth         = 64;
-m_bmi.header.biHeight        = 64;
-m_bmi.header.biPlanes        = 1;
-m_bmi.header.biBitCount      = 8;
-m_bmi.header.biCompression   = BI_RGB;
-m_bmi.header.biSizeImage     = 0;
+m_bmi.header.biSize = sizeof (BITMAPINFOHEADER);
+m_bmi.header.biWidth = 64;
+m_bmi.header.biHeight = 64;
+m_bmi.header.biPlanes = 1;
+m_bmi.header.biBitCount = 8;
+m_bmi.header.biCompression = BI_RGB;
+m_bmi.header.biSizeImage = 0;
 m_bmi.header.biXPelsPerMeter = 0;
 m_bmi.header.biYPelsPerMeter = 0;
-m_bmi.header.biClrUsed       = 0;
-m_bmi.header.biClrImportant  = 0;
+m_bmi.header.biClrUsed = 256;
+m_bmi.header.biClrImportant = 0;
 uint* rgb = (uint*) &m_bmi.colors [0];
-for (int i = 0; i < 256; i++, palette += 3)
-	rgb [i] = *((uint*) palette);
+for (int i = 0; i < 256; i++) {
+	m_bmi.colors [i].rgbRed = palette [i].r;
+	m_bmi.colors [i].rgbGreen = palette [i].g;
+	m_bmi.colors [i].rgbBlue = palette [i].b;
+	}
 }
 
 //------------------------------------------------------------------------
@@ -137,20 +140,23 @@ return fp.Write (m_rawData, 1, sizeof (m_rawData)) == sizeof (m_rawData);
 
 short CPaletteManager::SetupRender (CBGR* palette)
 {
-//FreeRender ();
-//if (!(m_dlcLog = (LPLOGPALETTE) new byte [sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256]))
-//	return 1;
-//m_dlcLog->palVersion = 0x300;
-//m_dlcLog->palNumEntries = 256;
-//uint* rgb = (uint*) &m_dlcLog->palPalEntry [0];
-//for (int i = 0; i < 256; i++, palette += 3)
-//	rgb [i] = ((uint) (palette [0]) << 2) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 18);
-//if (!(m_render = new CPalette ()))
-//	return 1;
-//m_render->CreatePalette (m_dlcLog);
-//m_colorMap = new PALETTEENTRY [256];
-//m_render->GetPaletteEntries (0, 256, m_colorMap);
-//return m_render == null;
+FreeRender ();
+if (!(m_dlcLog = (LPLOGPALETTE) new byte [sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256]))
+	return 1;
+m_dlcLog->palVersion = 0x300;
+m_dlcLog->palNumEntries = 256;
+PALETTEENTRY* rgb = &m_dlcLog->palPalEntry [0];
+for (int i = 0; i < 256; i++) {
+	rgb [i].peRed = palette [i].r;
+	rgb [i].peGreen = palette [i].g;
+	rgb [i].peBlue = palette [i].b;
+	}
+if (!(m_render = new CPalette ()))
+	return 1;
+m_render->CreatePalette (m_dlcLog);
+m_colorMap = new PALETTEENTRY [256];
+m_render->GetPaletteEntries (0, 256, m_colorMap);
+return m_render == null;
 return 1;
 }
 

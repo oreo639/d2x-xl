@@ -15,7 +15,6 @@
 
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb)
 {
-CResource res;
 CBGR* color = paletteManager.Current (nIndex);
 if (color != null) {
 	rgb.peRed = color->r;
