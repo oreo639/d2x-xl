@@ -30,6 +30,7 @@ class CPaletteManager {
 		CPalette*		m_render;
 		LPLOGPALETTE	m_dlcLog;
 		PALETTEENTRY*	m_colorMap;
+		bool				m_bHaveDefault;
 		bool				m_bHaveCustom;
 
 	public:
@@ -45,6 +46,7 @@ class CPaletteManager {
 
 		inline void Release (void) {
 			FreeRender ();
+			m_bHaveDefault = false;
 			m_bHaveCustom = false;
 			}
 		inline void Reload (void) {
@@ -58,7 +60,7 @@ class CPaletteManager {
 
 		inline COLORREF* Custom (void) { return m_bHaveCustom ? m_custom : null; }
 
-		inline COLORREF* Default (void) { return m_default; }
+		inline COLORREF* Default (void) { return m_bHaveDefault ? m_default : null; }
 
 		inline CPalette* Render (void) { return m_render; }
 
@@ -68,7 +70,7 @@ class CPaletteManager {
 
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
-		CPaletteManager () : m_bHaveCustom (false) { *m_name = '\0'; }
+		CPaletteManager () : m_bHaveDefault (false), m_bHaveCustom (false) { *m_name = '\0'; }
 
 		~CPaletteManager () { Release (); }
 

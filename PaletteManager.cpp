@@ -163,6 +163,7 @@ Decode (m_default);
 CreateFadeTable ();
 SetupRender (m_default);
 SetupBMI (m_default);
+m_bHaveDefault = true;
 return m_default;
 }
 
@@ -170,7 +171,7 @@ return m_default;
 
 COLORREF* CPaletteManager::Current (int i)
 {
-if (m_custom)
+if (m_bHaveCustom)
 	return m_custom + i;
 if (m_default)
 	return m_default + i;
