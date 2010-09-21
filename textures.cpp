@@ -89,11 +89,12 @@ if (bShowTexture) {
 			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
 		//CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 		//pDC->RealizePalette ();
-#if 0
+#if 1
 		if (pDC->GetDeviceCaps (RASTERCAPS) & RC_DIBTODEV) {
 			BITMAPINFO* bmi = paletteManager.BMI ();
 			bmi->bmiHeader.biWidth = 
 			bmi->bmiHeader.biHeight = tex.m_info.width;
+			bmi->bmiHeader.biBitCount = 32;
 			bmi->bmiHeader.biSizeImage = ((((bmi->bmiHeader.biWidth * bmi->bmiHeader.biBitCount) + 31) & ~31) >> 3) * bmi->bmiHeader.biHeight;
 			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tex.m_info.width, tex.m_info.width,
 					        	(void *) textureManager.m_bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
