@@ -44,7 +44,7 @@ void RenderFace (CSegment* segP, short nSide,
 	short light [4];
 	ushort bmWidth2;
 	byte* fadeTable = paletteManager.FadeTable ();
-	bool bEnableShading = (lightIndex != null);
+	bool bEnableShading = (fadeTable != null) && (lightIndex != null);
 
 tex.m_info.height = tex.m_info.width;
 bmWidth2 = tex.m_info.width / 2;

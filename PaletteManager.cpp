@@ -63,30 +63,6 @@ return (byte) (((int) c * f) / 34);
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::FreeCustom (void)
-{
-if (m_custom) {
-	delete m_custom;
-	m_custom = null;
-	}
-if (m_fadeTable) {
-	delete m_fadeTable;
-	m_fadeTable = null;
-	}
-}
-
-//------------------------------------------------------------------------
-
-void CPaletteManager::FreeDefault (void)
-{
-if (m_default) {
-	delete m_default;
-	m_default = null;
-	}
-}
-
-//------------------------------------------------------------------------
-
 void CPaletteManager::FreeRender (void)
 {
 if (m_render) {
@@ -105,20 +81,31 @@ if (m_colorMap) {
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::Decode (COLORREF* dest, byte* src)
+void CPaletteManager::Decode (COLORREF* dest)
 {
 for (int i = 0, j = 0; i < 256; i++, j += 3)
-	dest [i] = RGB (src [j] * 4, src [j + 1] * 4, src [j + 2] * 4);
+	dest [i] = RGB (m_rawData [j] * 4, m_rawData [j + 1] * 4, m_rawData [j + 2] * 4);
 }
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::Encode (byte* dest, COLORREF* src)
+void CPaletteManager::Encode (COLORREF* src)
 {
 for (int i = 0, j = 0; i < 256; i++) {
-	dest [j++] = GetRValue (src [i]);
-	dest [j++] = GetGValue (src [i]);
-	dest [j++] = GetBValue (src [i]);
+	m_rawData [j++] = GetRValue (src [i]);
+	m_rawData [j++] = GetGValue (src [i]);
+	m_rawData [j++] = GetBValue (src [i]);
+	}
+}
+
+//------------------------------------------------------------------------
+
+void CPaletteManager::CreateFadeTable (void)
+{
+for (int i = 0; i < 256; i++) {
+	byte c = m_rawData [i];
+	for (int j = 0; j < 34; j++)
+		m_fadeTable [j * 256 + i] = FadeValue (c, j + 1);
 	}
 }
 
@@ -126,35 +113,12 @@ for (int i = 0, j = 0; i < 256; i++) {
 
 int CPaletteManager::LoadCustom (CFileManager& fp, long size)
 {
-FreeCustom ();
-
-m_custom = new COLORREF [256];
-m_fadeTable = new byte [34 * 256];
-byte* buffer = new byte [37 * 256];
-if ((m_custom == null) || (m_fadeTable == null) || (buffer == null)) {
-	FreeCustom ();
+if (fp.Read (m_rawData, 1, sizeof (m_rawData)) != sizeof (m_rawData))
 	return 0;
-	}
-
-int h = (int) fp.Read (buffer, 37 * 256, 1);
-if (h == 37 * 256)
-	return 1;
-
-if (h != 3 * 256) {
-	paletteManager.FreeCustom ();
-	return 0;
-	}
-
-for (int i = 0; i < 256; i++) {
-	byte c = buffer [i];
-	for (int j = 0; j < 34; j++)
-		m_fadeTable [j * 256 + i] = FadeValue (c, j + 1);
-	}
-
-Decode (m_custom, buffer);
+CreateFadeTable ();
+Decode (m_custom);
 //SetupRender (m_custom);
 //SetupBMI (m_custom);
-delete[] buffer;
 return 1;
 }
 
@@ -162,7 +126,7 @@ return 1;
 
 int CPaletteManager::SaveCustom (CFileManager& fp)
 {
-return fp.Write (m_custom, 37 * 256, 1) == 1;
+return fp.Write (m_rawData, 1, sizeof (m_rawData)) == sizeof (m_rawData);
 }
 
 //------------------------------------------------------------------------
@@ -193,8 +157,9 @@ COLORREF* CPaletteManager::LoadDefault (void)
 CResource res;
 if (!res.Load (Resource ()))
 	return null;
-m_default = new COLORREF [res.Size ()];
-Decode (m_default, res.Data ());
+memcpy (m_rawData, res.Data (), sizeof (m_rawData));
+Decode (m_default);
+CreateFadeTable ();
 SetupRender (m_default);
 SetupBMI (m_default);
 return m_default;
