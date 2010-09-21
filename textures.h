@@ -230,6 +230,8 @@ class CBGR {
 		CBGR (byte red = 0, byte green = 0, byte blue = 0)
 			: r (red), g (green), b (blue)
 			{}
+
+		inline COLORREF ColorRef (void) { return RGB (r, g, b); }
 };
 
 class CBGRA : public CBGR {
