@@ -226,6 +226,10 @@ typedef struct tABGR {
 class CBGR {
 	public:
 		byte r, g, b;
+
+		CBGR (byte red = 0, byte green = 0, byte blue = 0)
+			: r (red), g (green), b (blue)
+			{}
 };
 
 class CBGRA : public CBGR {
@@ -249,7 +253,7 @@ class CBGRA : public CBGR {
 			}
 
 		CBGRA (byte red = 0, byte green = 0, byte blue = 0, byte alpha = 255)
-			: r (red), g (green), b (blue), a (alpha) 
+			: CBGR (red, green, blue), a (alpha) 
 			{}
 };
 
