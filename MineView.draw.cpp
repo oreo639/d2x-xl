@@ -269,7 +269,7 @@ CHECKMINE;
 
 	// Get shading table data
 COLORREF* lightIndex = 0;
-if (m_viewMineFlags & eViewMineShading && (lightIndex = paletteManager.Current ()))
+if ((m_viewMineFlags & eViewMineShading) && (lightIndex = paletteManager.Current ()))
 	lightIndex += 256 * 5; // skip 3-byte palette + 1st 2 light tables
 
 // Draw Segments ()

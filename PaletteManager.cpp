@@ -69,6 +69,10 @@ if (m_custom) {
 	delete m_custom;
 	m_custom = null;
 	}
+if (m_fadeTable) {
+	delete m_fadeTable;
+	m_fadeTable = null;
+	}
 }
 
 //------------------------------------------------------------------------
@@ -124,9 +128,13 @@ int CPaletteManager::LoadCustom (CFileManager& fp, long size)
 {
 FreeCustom ();
 
+m_custom = new COLORREF [256];
+m_fadeTable = new byte [34 * 256];
 byte* buffer = new byte [37 * 256];
-if (buffer == null)
-	return null;
+if ((m_custom == null) || (m_fadeTable == null) || (buffer == null)) {
+	FreeCustom ();
+	return 0;
+	}
 
 int h = (int) fp.Read (buffer, 37 * 256, 1);
 if (h == 37 * 256)
@@ -137,16 +145,17 @@ if (h != 3 * 256) {
 	return 0;
 	}
 
-//byte *fadeP = buffer + 3 * 256;
-//for (int i = 0; i < 256; i++) {
-//	byte c = buffer [i];
-//	for (int j = 0; j < 34; j++)
-//		fadeP [j * 256 + i] = FadeValue (c, j + 1);
-//	}
+byte *fadeP = m_fadeTable;
+for (int i = 0; i < 256; i++) {
+	byte c = buffer [i];
+	for (int j = 0; j < 34; j++)
+		fadeP [j * 256 + i] = FadeValue (c, j + 1);
+	}
 
 Decode (m_custom, buffer);
 //SetupRender (m_custom);
 //SetupBMI (m_custom);
+delete[] buffer;
 return 1;
 }
 

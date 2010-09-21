@@ -45,8 +45,8 @@ void RenderFace (CSegment* segP, short nSide,
 	ushort bmWidth2;
 	bool bEnableShading = (lightIndex != null);
 
-tex.m_info.bmHeight = tex.m_info.bmWidth;
-bmWidth2 = tex.m_info.bmWidth / 2;
+tex.m_info.height = tex.m_info.width;
+bmWidth2 = tex.m_info.width / 2;
 
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
@@ -194,7 +194,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 			else
 				x1 = end_x;
 
-			scale = (double) max (tex.m_info.bmWidth, tex.m_info.bmHeight);
+			scale = (double) max (tex.m_info.width, tex.m_info.height);
 			//h = B.uVec[2]*(double) y + B.fVec[2];
 			h = B.uVec.v.z * (double) y + B.fVec.v.z;
 			x0d = (double) x0;
@@ -213,7 +213,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 				// the 22 allows for large texture bitmap sizes
 				// the 10 gives more than enough accuracy for the delta values
 
-				m = min (tex.m_info.bmWidth, tex.m_info.bmHeight);
+				m = min (tex.m_info.width, tex.m_info.height);
 				if (!m)
 					m = 64;
 				m *= 1024;
@@ -225,8 +225,8 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 				dv = ((uint) (((v0 - v1) * 1024.0) / dx) % m);
 				u = ((uint) (u0 * 1024.0)) % m;
 				v = ((uint) (-v0 * 1024.0)) % m;
-				vd = 1024 / tex.m_info.bmHeight;
-				vm = tex.m_info.bmWidth * (tex.m_info.bmHeight - 1);
+				vd = 1024 / tex.m_info.height;
+				vm = tex.m_info.width * (tex.m_info.height - 1);
 				
 				COLORREF* screenBufP = screenBuffer + (uint) (height - y - 1) * (uint) rowOffset + x0;
 				
@@ -239,11 +239,9 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							byte palIndex = tex.m_info.bmIndex [(u / 1024) + ((v / vd) & vm)];
-							if (temp < 254) {
+							i = (u / 1024) + ((v / vd) & vm);
+							if (tex.m_info.bmIndex [i] < 254) 
 								*pixelP = lightIndex [temp + ((scanLight / 4) & 0x1f00)];
-								//*pixelP = temp;
-								}
 							pixelP++;
 							scanLight += deltaLight;
 							} while (--k);

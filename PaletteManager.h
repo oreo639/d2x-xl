@@ -24,6 +24,7 @@ class CPaletteManager {
 		char				m_name [15];
 		COLORREF*		m_custom;
 		COLORREF*		m_default;	
+		byte*				m_fadeTable;
 		tBMIInfo			m_bmi;
 		CPalette*		m_render;
 		LPLOGPALETTE	m_dlcLog;
