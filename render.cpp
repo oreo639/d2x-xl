@@ -243,8 +243,8 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							i = (u / 1024) + ((v / vd) & vm);
 							if (tex.m_info.bmIndex [i] < 254) {
 								byte fade = fadeTable [tex.m_info.bmIndex [i] + ((scanLight / 4) & 0x1f00)];
-								COLORREF c = tex.m_info.bmIndex [i];
-								*pixelP = RGB (GetRValue (c) * fade, GetGValue (c) * fade, GetBValue (c) * fade);
+								COLORREF c = tex.m_info.bmData [i];
+								*pixelP = RGB ((int) (GetRValue (c) * fade) / 255, (int) (GetGValue (c) * fade) / 255, (int) (GetBValue (c) * fade) / 255);
 								}
 							pixelP++;
 							scanLight += deltaLight;

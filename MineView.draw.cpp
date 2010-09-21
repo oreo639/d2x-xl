@@ -801,7 +801,6 @@ CHECKMINE;
 	{
 
 		CTexture tex (textureManager.m_bmBuf, textureManager.m_bmIndex);
-		COLORREF* screenP = (COLORREF *) m_pvBits;
 		ushort width = m_viewWidth;
 		ushort height = m_viewHeight;
 		ushort rowOffset = (m_viewWidth + 3) & ~3;
@@ -826,8 +825,7 @@ CHECKMINE;
 			if (a.v.x * b.v.y > a.v.y * b.v.x) {
 				if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 					DrawAnimDirArrows (sideP->BaseTex (), &tex);
-					RenderFace (segP, nSide, tex, 
-								   lightIndex, screenP, m_viewPoints, width, height, rowOffset);
+					RenderFace (segP, nSide, tex, lightIndex, (COLORREF*) m_renderBuffer, m_viewPoints, width, height, rowOffset);
 				}
 			}
 		}

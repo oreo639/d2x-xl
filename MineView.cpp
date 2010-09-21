@@ -596,8 +596,8 @@ void CMineView::InitView (CDC *pViewDC)
 		ResetView (!m_bUpdate);
 		m_bUpdate = true;
 		}
-	if (!m_DIB) {
-		if (!m_DC.m_hDC)
+	if (m_DIB == 0) {
+		if (m_DC.m_hDC == 0)
 			m_DC.CreateCompatibleDC (pViewDC);
 		if (m_DC.m_hDC) {
 			tBMIInfo bmi = {{sizeof (BITMAPINFOHEADER), m_viewWidth, m_viewHeight, 1, m_viewDepth * 8, BI_RGB, 0, 1000, 1000, 256, 256}, {0,0,0,0}};
@@ -614,15 +614,13 @@ void CMineView::InitView (CDC *pViewDC)
 					}
 				}
 #endif
-			m_DIB = ::CreateDIBSection (m_DC.m_hDC, (BITMAPINFO *) &bmi, DIB_RGB_COLORS, &m_pvBits, null, 0);
-			if (m_DIB) {
-				m_DC.SelectObject (m_DIB);
-			}
+			m_DIB = ::CreateDIBSection (m_DC.m_hDC, (BITMAPINFO *) &bmi, DIB_RGB_COLORS, (void**) &m_renderBuffer, null, 0);
 		}
 	}
 	// if DIB exists, then use our own DC instead of the View DC
-	if (m_DIB) {
-		m_pDC = &m_DC;
+if (m_DIB != 0) {
+	m_pDC = &m_DC;
+	m_DC.SelectObject (m_DIB);
 	}
 #endif
 }
@@ -633,7 +631,7 @@ void CMineView::InitView (CDC *pViewDC)
 // TODO: only clear the dirty area defined by the clip region
 //----------------------------------------------------------------------------
 
-void CMineView::ClearView()
+void CMineView::ClearView (void)
 {
 // clear the dib or the view
 #if OGL_RENDERING
@@ -641,7 +639,7 @@ glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 glLoadIdentity ();
 #else
 if (m_DIB)
-	memset (m_pvBits, 0, m_viewWidth * m_viewHeight * m_viewDepth);
+	memset (m_renderBuffer, 0, m_viewWidth * m_viewHeight * m_viewDepth);
 else {
 	CRect rect;
 	GetClientRect (rect);

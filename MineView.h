@@ -107,7 +107,7 @@ protected: // create from serialization only
 	int			m_viewWidth;	// in pixels
 	int			m_viewDepth;	// in bytes
 	HBITMAP		m_DIB;
-	void			*m_pvBits;
+	COLORREF		*m_renderBuffer;
 	CDC			m_DC;
 	CDC			*m_pDC; // if all goes well, this is set to &m_DC
 	bool			m_bUpdate;
