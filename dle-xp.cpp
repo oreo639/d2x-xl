@@ -267,8 +267,8 @@ BOOL CDLE::InitInstance()
 	MainFrame ()->FixToolBars ();
 	LoadLayout ();
 	MainFrame ()->ToolView ()->RecalcLayout (MainFrame ()->m_toolMode, MainFrame ()->m_textureMode);
-	if (ToolView ()->PrefsDlg ())
-		MainFrame ()->ToolView ()->PrefsDlg ()->SetAppSettings ();
+	//if (ToolView ()->PrefsDlg ())
+	//	MainFrame ()->ToolView ()->PrefsDlg ()->SetAppSettings ();
 	MainFrame ()->UpdateWindow ();
 	if (m_bSplashScreen || DEMO) {
 		CAboutDlg aboutDlg (100);
