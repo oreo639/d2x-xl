@@ -257,6 +257,7 @@ BOOL CDLE::InitInstance()
 	textureManager.Setup ();
 	theMine->Load ();
 	//memset (textureManager.Textures (), 0, sizeof (textureManager.Textures ()));
+	MineView ()->DelayRefresh (true);
 	TextureView ()->Setup ();
 //	ToolView ()->Setup ();
 	// The one and only window has been initialized, so show and update it.
@@ -277,6 +278,8 @@ BOOL CDLE::InitInstance()
 		GetDocument ()->OpenFile (false, cmdInfo.m_strFileName.GetBuffer (256), null /*"*"*/);
 	if (ToolView ()->PrefsDlg ())
 		ToolView ()->PrefsDlg ()->SetAppSettings (true);
+	MineView ()->DelayRefresh (false);
+	//MineView ()->Refresh ();
 	return TRUE;
 }
 

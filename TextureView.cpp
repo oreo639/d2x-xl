@@ -132,7 +132,7 @@ Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CTextureView::EvLButtonDown()
+// CTextureView::EvLButtonDown ()
 //
 // Action - Sets texture 1 of current side to texture under mouse pointer
 //
@@ -140,7 +140,7 @@ Refresh ();
 //         texture is changed instead of segment's texture.
 //------------------------------------------------------------------------
 
-void CTextureView::OnLButtonDown(UINT nFlags, CPoint point)
+void CTextureView::OnLButtonDown (UINT nFlags, CPoint point)
 {
 CHECKMINE;
 
@@ -166,7 +166,7 @@ else {
 
 //------------------------------------------------------------------------
 
-void CTextureView::OnRButtonDown(UINT nFlags, CPoint point)
+void CTextureView::OnRButtonDown (UINT nFlags, CPoint point)
 {
 CHECKMINE;
 
@@ -321,22 +321,22 @@ for (int i = 0; i < m_filter.Count (1); i++) {
 	else
 		pDC->SelectObject (GetStockObject (BLACK_PEN));
 	pDC->MoveTo (1 + x * m_iconSpace.cx, 1 + y * m_iconSpace.cy);
-	pDC->LineTo (4 + x * m_iconSpace.cx+m_iconSize.cx,1 + y * m_iconSpace.cy);
-	pDC->LineTo (4 + x * m_iconSpace.cx+m_iconSize.cx,4 + y * m_iconSpace.cy+m_iconSize.cy);
-	pDC->LineTo (1 + x * m_iconSpace.cx, 4 + y * m_iconSpace.cy+m_iconSize.cy);
+	pDC->LineTo (4 + x * m_iconSpace.cx + m_iconSize.cx,1 + y * m_iconSpace.cy);
+	pDC->LineTo (4 + x * m_iconSpace.cx + m_iconSize.cx,4 + y * m_iconSpace.cy + m_iconSize.cy);
+	pDC->LineTo (1 + x * m_iconSpace.cx, 4 + y * m_iconSpace.cy + m_iconSize.cy);
 	pDC->LineTo (1 + x * m_iconSpace.cx, 1 + y * m_iconSpace.cy);
 
 // draw black boxes around and inside this box
 //	  SelectObject(hdc, GetStockObject(BLACK_PEN));
 	pDC->MoveTo (0 + x * m_iconSpace.cx, 0 + y * m_iconSpace.cy);
-	pDC->LineTo (5 + x * m_iconSpace.cx+m_iconSize.cx,0 + y * m_iconSpace.cy);
-	pDC->LineTo (5 + x * m_iconSpace.cx+m_iconSize.cx,5 + y * m_iconSpace.cy+m_iconSize.cy);
-	pDC->LineTo (0 + x * m_iconSpace.cx, 5 + y * m_iconSpace.cy+m_iconSize.cy);
+	pDC->LineTo (5 + x * m_iconSpace.cx + m_iconSize.cx,0 + y * m_iconSpace.cy);
+	pDC->LineTo (5 + x * m_iconSpace.cx + m_iconSize.cx,5 + y * m_iconSpace.cy + m_iconSize.cy);
+	pDC->LineTo (0 + x * m_iconSpace.cx, 5 + y * m_iconSpace.cy + m_iconSize.cy);
 	pDC->LineTo (0 + x * m_iconSpace.cx, 0 + y * m_iconSpace.cy);
 	pDC->MoveTo (2 + x * m_iconSpace.cx, 2 + y * m_iconSpace.cy);
-	pDC->LineTo (3 + x * m_iconSpace.cx+m_iconSize.cx,2 + y * m_iconSpace.cy);
-	pDC->LineTo (3 + x * m_iconSpace.cx+m_iconSize.cx,3 + y * m_iconSpace.cy+m_iconSize.cy);
-	pDC->LineTo (2 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy+m_iconSize.cy);
+	pDC->LineTo (3 + x * m_iconSpace.cx + m_iconSize.cx, 2 + y * m_iconSpace.cy);
+	pDC->LineTo (3 + x * m_iconSpace.cx + m_iconSize.cx, 3 + y * m_iconSpace.cy + m_iconSize.cy);
+	pDC->LineTo (2 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy + m_iconSize.cy);
 	pDC->LineTo (2 + x * m_iconSpace.cx, 2 + y * m_iconSpace.cy);
 	if (++x >= m_viewSpace.cx) {
 		x = 0;
@@ -344,8 +344,8 @@ for (int i = 0; i < m_filter.Count (1); i++) {
 			break;
 			}
 		} 
-pDC->SelectPalette(oldPalette, FALSE);
-ReleaseDC(pDC);
+pDC->SelectPalette (oldPalette, FALSE);
+ReleaseDC (pDC);
 }
 
 								/*---------------------------*/
