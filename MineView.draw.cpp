@@ -803,7 +803,7 @@ CHECKMINE;
 		CTexture tex (textureManager.m_bmBuf, textureManager.m_bmIndex);
 		ushort width = m_viewWidth;
 		ushort height = m_viewHeight;
-		ushort rowOffset = (m_viewWidth + 3) & ~3;
+		ushort rowOffset = (m_viewWidth + 3) % 4;
 
 		CSide* sideP = segP->m_sides;
 		for (short nSide = 0; nSide < 6; nSide++, sideP++) {

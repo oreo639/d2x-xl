@@ -600,21 +600,20 @@ void CMineView::InitView (CDC *pViewDC)
 		if (m_DC.m_hDC == 0)
 			m_DC.CreateCompatibleDC (pViewDC);
 		if (m_DC.m_hDC) {
-			tBMIInfo bmi = {{sizeof (BITMAPINFOHEADER), m_viewWidth, m_viewHeight, 1, m_viewDepth * 8, BI_RGB, 0, 1000, 1000, 256, 256}, {0,0,0,0}};
-
+			BITMAPINFO bmi = {{sizeof (BITMAPINFOHEADER), m_viewWidth, -m_viewHeight, 1, m_viewDepth * 8, BI_RGB, 0, 0, 0, 0, 0}, {255,255,255,0}};
 #if 1
-			// copy the bitmap palette
-			COLORREF* palette = paletteManager.Current ();
-			if (palette) {
-				for (int i = 0; i < 256; i++) {
-					bmi.colors [i].rgbRed = GetRValue (palette [i]);
-					bmi.colors [i].rgbGreen = GetGValue (palette [i]);
-					bmi.colors [i].rgbBlue = GetBValue (palette [i]);
-					bmi.colors [i].rgbReserved = 0;
-					}
-				}
+			//// copy the bitmap palette
+			//COLORREF* palette = paletteManager.Current ();
+			//if (palette) {
+			//	for (int i = 0; i < 256; i++) {
+			//		bmi.colors [i].rgbRed = GetRValue (palette [i]);
+			//		bmi.colors [i].rgbGreen = GetGValue (palette [i]);
+			//		bmi.colors [i].rgbBlue = GetBValue (palette [i]);
+			//		bmi.colors [i].rgbReserved = 0;
+			//		}
+			//	}
 #endif
-			m_DIB = ::CreateDIBSection (m_DC.m_hDC, (BITMAPINFO *) &bmi, DIB_RGB_COLORS, (void**) &m_renderBuffer, null, 0);
+			m_DIB = ::CreateDIBSection (/*m_DC.m_hDC*/NULL, (BITMAPINFO *) &bmi, DIB_RGB_COLORS, (void**) &m_renderBuffer, null, 0);
 		}
 	}
 	// if DIB exists, then use our own DC instead of the View DC

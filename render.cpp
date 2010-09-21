@@ -27,7 +27,6 @@ void RenderFace (CSegment* segP, short nSide,
 					  COLORREF* screenBuffer, APOINT* scrn,
 					  ushort width, ushort height, ushort rowOffset)
 {
-	
 	int h, i, j, k;
 	long yi, yj;
 	POINT a [4];
@@ -258,7 +257,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							v %= m;
 							i = (u / 1024) + ((v / vd) & vm);
 							if (tex.m_info.bmIndex [i] < 254)
-								*pixelP = tex.m_info.bmData [i];
+								*pixelP = RGB (3,2,1); //tex.m_info.bmData [i];
 							pixelP++;
 							} while (--k);
 						}
