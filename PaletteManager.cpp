@@ -117,6 +117,7 @@ if (fp.Read (m_rawData, 1, sizeof (m_rawData)) != sizeof (m_rawData))
 	return 0;
 CreateFadeTable ();
 Decode (m_custom);
+m_bHaveCustom = true;
 //SetupRender (m_custom);
 //SetupBMI (m_custom);
 return 1;
