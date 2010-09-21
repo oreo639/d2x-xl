@@ -36,7 +36,7 @@ return (minColor + maxColor) / 2;
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::SetupBMI (COLORREF* palette) 
+void CPaletteManager::SetupBMI (tBGR* palette) 
 {
 m_bmi.header.biSize          = sizeof (BITMAPINFOHEADER);
 m_bmi.header.biWidth         = 64;
@@ -81,20 +81,23 @@ if (m_colorMap) {
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::Decode (COLORREF* dest)
+void CPaletteManager::Decode (tBGR* dest)
 {
-for (int i = 0, j = 0; i < 256; i++, j += 3)
-	dest [i] = RGB (m_rawData [j] * 4, m_rawData [j + 1] * 4, m_rawData [j + 2] * 4);
+for (int i = 0, j = 0; i < 256; i++) {
+	dest [i].r = m_rawData [j++] * 4;
+	dest [i].g = m_rawData [j++] * 4;
+	dest [i].b = m_rawData [j++] * 4;
+	}
 }
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::Encode (COLORREF* src)
+void CPaletteManager::Encode (tBGR* src)
 {
 for (int i = 0, j = 0; i < 256; i++) {
-	m_rawData [j++] = GetRValue (src [i]);
-	m_rawData [j++] = GetGValue (src [i]);
-	m_rawData [j++] = GetBValue (src [i]);
+	m_rawData [j++] = src [i].r;
+	m_rawData [j++] = src [i].g;
+	m_rawData [j++] = src [i].b;
 	}
 }
 
@@ -132,7 +135,7 @@ return fp.Write (m_rawData, 1, sizeof (m_rawData)) == sizeof (m_rawData);
 
 //------------------------------------------------------------------------
 
-short CPaletteManager::SetupRender (COLORREF* palette)
+short CPaletteManager::SetupRender (tBGR* palette)
 {
 //FreeRender ();
 //if (!(m_dlcLog = (LPLOGPALETTE) new byte [sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256]))
@@ -153,7 +156,7 @@ return 1;
 
 //------------------------------------------------------------------------
 
-COLORREF* CPaletteManager::LoadDefault (void)
+tBGR* CPaletteManager::LoadDefault (void)
 {
 CResource res;
 if (!res.Load (Resource ()))
@@ -169,7 +172,7 @@ return m_default;
 
 //------------------------------------------------------------------------
 
-COLORREF* CPaletteManager::Current (int i)
+tBGR* CPaletteManager::Current (int i)
 {
 if (m_bHaveCustom)
 	return m_custom + i;

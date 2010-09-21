@@ -230,18 +230,18 @@ typedef struct tBGR {
 //------------------------------------------------------------------------
 
 typedef struct tTexture {
-	byte*			bmIndex;
-	COLORREF*	bmData;
-	uint			width, height, size;
-	bool			bCustom, bExtData, bFrame, bUsed, bValid;
-	byte			nFormat;	// 0: Bitmap, 1: TGA (RGB)
+	byte*	bmIndex;
+	tBGR*	bmData;
+	uint	width, height, size;
+	bool	bCustom, bExtData, bFrame, bUsed, bValid;
+	byte	nFormat;	// 0: Bitmap, 1: TGA (RGB)
 } tTexture;
 
 class CTexture {
 	public:
 		tTexture	m_info;
 
-		CTexture (COLORREF* dataP = null, byte* indexP = null) {
+		CTexture (tBGR* dataP = null, byte* indexP = null) {
 			Clear ();
 			m_info.bmData = dataP;
 			m_info.bmIndex = indexP;

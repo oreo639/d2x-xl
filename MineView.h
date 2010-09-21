@@ -107,7 +107,7 @@ protected: // create from serialization only
 	int			m_viewWidth;	// in pixels
 	int			m_viewDepth;	// in bytes
 	HBITMAP		m_DIB;
-	COLORREF		*m_renderBuffer;
+	tBGR*			m_renderBuffer;
 	CDC			m_DC;
 	CDC			*m_pDC; // if all goes well, this is set to &m_DC
 	bool			m_bUpdate;
@@ -261,11 +261,11 @@ public:
 	void	DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short clear_it = 0);
 	void	DrawSegmentPartial (CSegment *segP);
 	void	DrawSegmentQuick (CSegment *segP, bool bPartial = false);
-	void	DrawSegmentTextured (CSegment *segP, COLORREF* lightIndex);
+	void	DrawSegmentTextured (CSegment *segP);
 	void	DrawCubePoints (CSegment *segP);
 
 	void	DrawCurrentSegment (CSegment *segP, bool bPartial);
-	void	DrawLine(CSegment *segP,short vert1,short vert2);
+	void	DrawLine (CSegment *segP,short vert1,short vert2);
 	void	DrawLine (CTexture *pTx, POINT pt0, POINT pt1, byte color);
 	void	DrawAnimDirArrows (short texture1, CTexture *pTx);
 
@@ -280,24 +280,24 @@ public:
 	//void	ReadPolyModel (tPolyModel& polyModel, CFileManager& file);
 
 	// view control functions
-	void	Zoom(int nSteps, double zoom);
+	void	Zoom (int nSteps, double zoom);
 	int	ZoomFactor (int nSteps, double min, double max);
-	int	ZoomIn(int nSteps = 1, bool bSlow = false);
-	int	ZoomOut(int nSteps = 1, bool bSlow = false);
+	int	ZoomIn (int nSteps = 1, bool bSlow = false);
+	int	ZoomOut (int nSteps = 1, bool bSlow = false);
 	int	FitToView (void);
-	void	Rotate(char direction, double angle);
-	void	Pan(char direction, int amount);
-	void	AlignSide();
+	void	Rotate (char direction, double angle);
+	void	Pan (char direction, int amount);
+	void	AlignSide ();
 	void MarkVisibleVerts (bool bReset = false);
-	void	CenterMine();
-	void	CenterSegment();
-	void	CenterObject();
-	void	SetViewOption(eViewOptions option);
-	void	ToggleViewMine(eMineViewFlags flag);
-	void	ToggleViewObjects(eObjectViewFlags mask);
-	void	SetViewMineFlags(uint mask);
-	void	SetViewObjectFlags(uint mask);
-	void	SetSelectMode(uint mode);
+	void	CenterMine ();
+	void	CenterSegment ();
+	void	CenterObject ();
+	void	SetViewOption (eViewOptions option);
+	void	ToggleViewMine (eMineViewFlags flag);
+	void	ToggleViewObjects (eObjectViewFlags mask);
+	void	SetViewMineFlags (uint mask);
+	void	SetViewObjectFlags (uint mask);
+	void	SetSelectMode (uint mode);
 	void CalcSegDist (void);
 	bool	InRange (short *pv, short i);
 
@@ -383,6 +383,9 @@ public:
 	void FinishDrag (void);
 
 	BOOL SetWindowPos(const CWnd *pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags);
+
+	void RenderFace (CSegment* segP, short nSide, CTexture& tex, APOINT* projectedVerts, ushort width, ushort height, ushort rowOffset);
+
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);

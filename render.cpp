@@ -21,12 +21,15 @@ int bEnableDeltaShading = 0;
 // RenderFace()
 //------------------------------------------------------------------------
 
-void RenderFace (CSegment* segP, short nSide,
-					  CTexture& tex,
-					  COLORREF* lightIndex,
-					  COLORREF* screenBuffer, APOINT* scrn,
-					  ushort width, ushort height, ushort rowOffset)
+void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, APOINT* projectedVerts, ushort width, ushort height, ushort rowOffset)
 {
+tBGR* p = m_renderBuffer + (int) width * (int) (height - 1) * 3;
+for (uint i = 0; i < tex.m_info.height; i++) {
+	int h = i * 3;
+	memcpy (p - h * width, tex.m_info.bmData + h * tex.m_info.width, tex.m_info.width * 3);
+	}
+return;
+
 	int h, i, j, k;
 	long yi, yj;
 	POINT a [4];
@@ -43,7 +46,7 @@ void RenderFace (CSegment* segP, short nSide,
 	short light [4];
 	ushort bmWidth2;
 	byte* fadeTable = paletteManager.FadeTable ();
-	bool bEnableShading = (fadeTable != null) && (lightIndex != null);
+	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
 
 tex.m_info.height = tex.m_info.width;
 bmWidth2 = tex.m_info.width / 2;
@@ -51,8 +54,8 @@ bmWidth2 = tex.m_info.width / 2;
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
 	ushort nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
-	a [i].x = scrn [nVertex].x;
-	a [i].y = scrn [nVertex].y;
+	a [i].x = projectedVerts [nVertex].x;
+	a [i].y = projectedVerts [nVertex].y;
 	}
 	
 	// determin min/max points
@@ -228,11 +231,11 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 				vd = 1024 / tex.m_info.height;
 				vm = tex.m_info.width * (tex.m_info.height - 1);
 				
-				COLORREF* screenBufP = screenBuffer + (uint) (height - y - 1) * (uint) rowOffset + x0;
+				tBGR* screenBufP = m_renderBuffer + (uint) (height - y - 1) * (uint) rowOffset + x0;
 				
 				int k = (x1 - x0);
 				if ((y < height - 1) && (k > 0)) {
-					COLORREF* pixelP = screenBufP;
+					tBGR* pixelP = screenBufP;
 					if (bEnableShading) {
 						do {
 							u += du;
@@ -242,8 +245,10 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							i = (u / 1024) + ((v / vd) & vm);
 							if (tex.m_info.bmIndex [i] < 254) {
 								byte fade = fadeTable [tex.m_info.bmIndex [i] + ((scanLight / 4) & 0x1f00)];
-								COLORREF c = tex.m_info.bmData [i];
-								*pixelP = RGB ((int) (GetRValue (c) * fade) / 255, (int) (GetGValue (c) * fade) / 255, (int) (GetBValue (c) * fade) / 255);
+								tBGR c = tex.m_info.bmData [i];
+								pixelP->r = (int) (c.r * fade) / 255;
+								pixelP->g = (int) (c.g * fade) / 255;
+								pixelP->b = (int) (c.b * fade) / 255;
 								}
 							pixelP++;
 							scanLight += deltaLight;
@@ -257,7 +262,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							v %= m;
 							i = (u / 1024) + ((v / vd) & vm);
 							if (tex.m_info.bmIndex [i] < 254)
-								*pixelP = RGB (3,2,1); //tex.m_info.bmData [i];
+								*pixelP = tex.m_info.bmData [i];
 							pixelP++;
 							} while (--k);
 						}

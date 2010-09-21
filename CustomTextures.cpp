@@ -145,7 +145,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 		texP->Release ();
 		}
 // allocate memory for texture if not already
-	if (!(texP->m_info.bmData = new COLORREF [nSize]))
+	if (!(texP->m_info.bmData = new tBGR [nSize]))
 		continue;
 	texP->m_info.nFormat = (pigTexInfo.flags & 0x80) != 0;
 	//texP->m_info.width = pigTexInfo.width;
@@ -221,11 +221,11 @@ bool WritePogTexture (CFileManager& fp, CTexture *texP)
 {
 if (texP->m_info.nFormat) {
 	tRGBA rgba = {0, 0, 0, 255};
-	COLORREF* bufP = texP->m_info.bmData;
+	tBGR* bufP = texP->m_info.bmData;
 	for (int i = texP->m_info.size; i; i--, bufP++) {
-		rgba.r = GetRValue (*bufP);
-		rgba.g = GetGValue (*bufP);
-		rgba.b = GetBValue (*bufP);
+		rgba.r = bufP->r;
+		rgba.g = bufP->g;
+		rgba.b = bufP->b;
 		fp.Write (&rgba, sizeof (rgba), 1);
 		}
 	}

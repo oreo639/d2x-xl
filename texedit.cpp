@@ -445,7 +445,7 @@ void CTextureEdit::OnOK ()
 {
 if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) || (m_texP->m_info.nFormat != m_nFormat)) {
 	byte* bmIndexP = m_nFormat ? new byte [m_nWidth * m_nHeight] : null;
-	COLORREF* bmDataP = new COLORREF [m_nWidth * m_nHeight];
+	tRGBA* bmDataP = new tRGBA [m_nWidth * m_nHeight];
 
 	if (!bmIndexP) {
 		DEBUGMSG (" Texture tool: Not enough memory for the new texture");

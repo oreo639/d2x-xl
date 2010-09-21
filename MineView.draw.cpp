@@ -267,11 +267,6 @@ CHECKMINE;
 	short		iVertex;
 	int		h, z, zMax;
 
-	// Get shading table data
-COLORREF* lightIndex = 0;
-if ((m_viewMineFlags & eViewMineShading) && (lightIndex = paletteManager.Current ()))
-	lightIndex += 256 * 5; // skip 3-byte palette + 1st 2 light tables
-
 // Draw Segments ()
 h = segmentManager.Count ();
 #pragma omp parallel
@@ -291,7 +286,7 @@ CalcSegDist ();
 for (nSegment = 0; nSegment < h; nSegment++) {
 	CSegment* segP = segmentManager.Segment (szo [nSegment].iSeg);
 	if (Visible (segP))
-	 	DrawSegmentTextured (segP, lightIndex);
+	 	DrawSegmentTextured (segP);
 	}
 }
 
@@ -775,7 +770,7 @@ DrawLine (pTx, pt [0], pt [3], 1);
 // DrawSegmentTextured()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentTextured (CSegment *segP, COLORREF* lightIndex) 
+void CMineView::DrawSegmentTextured (CSegment *segP) 
 {
 CHECKMINE;
 
@@ -803,7 +798,7 @@ CHECKMINE;
 		CTexture tex (textureManager.m_bmBuf, textureManager.m_bmIndex);
 		ushort width = m_viewWidth;
 		ushort height = m_viewHeight;
-		ushort rowOffset = (m_viewWidth + 3) % 4;
+		ushort rowOffset = (m_viewWidth + 3) & ~3;
 
 		CSide* sideP = segP->m_sides;
 		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
@@ -825,7 +820,7 @@ CHECKMINE;
 			if (a.v.x * b.v.y > a.v.y * b.v.x) {
 				if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 					DrawAnimDirArrows (sideP->BaseTex (), &tex);
-					RenderFace (segP, nSide, tex, lightIndex, (COLORREF*) m_renderBuffer, m_viewPoints, width, height, rowOffset);
+					RenderFace (segP, nSide, tex, (tBGR*) m_renderBuffer, m_viewPoints, width, height, rowOffset);
 				}
 			}
 		}

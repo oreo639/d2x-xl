@@ -16,11 +16,11 @@
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb)
 {
 CResource res;
-COLORREF* color = paletteManager.Current (nIndex);
+tBGR* color = paletteManager.Current (nIndex);
 if (color != null) {
-	rgb.peRed = GetRValue (*color);
-	rgb.peGreen = GetGValue (*color);
-	rgb.peBlue = GetBValue (*color);
+	rgb.peRed = color.r;
+	rgb.peGreen = color.g;
+	rgb.peBlue = color.b;
 	rgb.peFlags = 0;
 	}
 }
@@ -156,7 +156,7 @@ bool CTexture::Allocate (int nSize, int nTexture)
 if ((m_info.bmData != null) && ((m_info.width * m_info.height != nSize)))
 	Release ();
 if (m_info.bmData == null)
-	m_info.bmData = new COLORREF [nSize];
+	m_info.bmData = new tBGR [nSize];
 if (m_info.bmIndex == null)
 	m_info.bmIndex = new byte [nSize];
 return (m_info.bmData != null) && (m_info.bmIndex != null);
@@ -189,10 +189,10 @@ m_info.bFrame = bFrame;
 
 void CTexture::Load (CFileManager& fp, CPigTexture& info) 
 {
-	byte			rowSize [4096];
-	byte			rowBuf [4096], *rowPtr;
-	byte			palIndex, runLength;
-	COLORREF*	palette = paletteManager.Current ();
+	byte	rowSize [4096];
+	byte	rowBuf [4096], *rowPtr;
+	byte	palIndex, runLength;
+	tBGR*	palette = paletteManager.Current ();
 
 m_info.width = info.width;
 m_info.height = info.height;
@@ -219,7 +219,7 @@ else if (info.flags & 0x08) {
 			if (IS_RLE_CODE (palIndex)) {
 				runLength = palIndex & ~RLE_CODE;
 				palIndex = *rowPtr++;
-				COLORREF color = palette [palIndex];
+				tBGR color = palette [palIndex];
 				for (int j = 0; j < runLength; j++) {
 					if (x < info.width) {
 						int h = y * info.width + x++;
