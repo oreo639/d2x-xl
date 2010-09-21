@@ -219,7 +219,7 @@ int CTextureManager::LoadIndex (int nVersion)
 
 ushort* indexP = (ushort *) res.Load (nVersion ? IDR_TEXTURE2_DAT : IDR_TEXTURE_DAT);
 if (!indexP) {
-	DEBUGMSG (" Reading texture: Could not load texture m_index.");
+	DEBUGMSG (" Reading texture: Could not load texture index.");
 	return 1;
 	}
 // first long is number of m_textures
@@ -227,7 +227,7 @@ m_nTextures [nVersion] = *((uint*) indexP);
 indexP += 2;
 m_index [nVersion] = new ushort [m_nTextures [nVersion]];
 if (m_index [nVersion] == null) {
-	DEBUGMSG (" Reading texture: Could not allocate texture m_index.");
+	DEBUGMSG (" Reading texture: Could not allocate texture index.");
 	return 3;
 	}
 for (uint i = 0; i < m_nTextures [nVersion]; i++)

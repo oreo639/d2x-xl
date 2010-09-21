@@ -83,8 +83,7 @@ class CTextureManager {
 		void Destroy (void);
 
 		inline void Reload (int nVersion) {
-			Destroy (nVersion);
-			Create (nVersion);
+			LoadInfo (nVersion);
 			LoadTextures (nVersion);
 			}
 

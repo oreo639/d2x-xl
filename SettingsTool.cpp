@@ -376,7 +376,7 @@ if (strcmp (descentPath [0], m_d1Path)) {
 	strcpy_s (descentPath [0], sizeof (descentPath [0]), m_d1Path);
 	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descentPath [0], INIFILE);
 	paletteManager.Reload ();
-	textureManager.Reload (0);
+	textureManager.LoadTextures (0);
 	}
 _strlwr_s (m_d2Path, sizeof (m_d2Path));
 if (strcmp (descentPath [1], m_d2Path)) {
