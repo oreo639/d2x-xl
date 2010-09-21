@@ -237,6 +237,7 @@ class CBGRA : public CBGR {
 			g = other.g;
 			b = other.b;
 			a = other.a;
+			return *this;
 			}
 
 		CBGRA& operator= (const CBGR& other) {
@@ -244,7 +245,12 @@ class CBGRA : public CBGR {
 			g = other.g;
 			b = other.b;
 			a = 255;
+			return *this;
 			}
+
+		CBGRA (byte red = 0, byte green = 0, byte blue = 0, byte alpha = 255)
+			: r (red), g (green), b (blue), a (alpha) 
+			{}
 };
 
 //------------------------------------------------------------------------

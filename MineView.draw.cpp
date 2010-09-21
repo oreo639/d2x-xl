@@ -11,7 +11,6 @@
 #include "PaletteManager.h"
 #include "TextureManager.h"
 #include "global.h"
-#include "render.h"
 #include "FileManager.h"
 
 #include <math.h>
@@ -620,7 +619,7 @@ else {	//!bPartial
 // works for all glAngle
 //--------------------------------------------------------------------------
 
-void CMineView::DrawLine (CTexture *texP, POINT pt0, POINT pt1, byte color) 
+void CMineView::DrawLine (CTexture *texP, POINT pt0, POINT pt1, CBGRA color) 
 {
 CHECKMINE;
 
@@ -681,7 +680,7 @@ if (dx >= dy) {
 	}
 else {
 	for (i = dy + 1; i; i--, y += yInc) {
-		texP->m_info.bmData [y*texP->m_info.width+x] = color;
+		texP->m_info.bmData [y * texP->m_info.width + x] = color;
 		nStep += dx;
 		if (nStep >= dy) {
 			x += xInc;
@@ -761,9 +760,11 @@ else if (sx <0 && sy <0) pt = ptnn;
 else if (sx==0 && sy <0) pt = pt0n;
 else if (sx >0 && sy <0) pt = ptpn;
 
-DrawLine (texP, pt [0], pt [1], 1);
-DrawLine (texP, pt [0], pt [2], 1);
-DrawLine (texP, pt [0], pt [3], 1);
+CBGRA color (255, 255, 255, 255);
+
+DrawLine (texP, pt [0], pt [1], color);
+DrawLine (texP, pt [0], pt [2], color);
+DrawLine (texP, pt [0], pt [3], color);
 }
 
 //--------------------------------------------------------------------------

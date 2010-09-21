@@ -265,8 +265,8 @@ public:
 	void	DrawCubePoints (CSegment *segP);
 
 	void	DrawCurrentSegment (CSegment *segP, bool bPartial);
-	void	DrawLine (CSegment *segP,short vert1,short vert2);
-	void	DrawLine (CTexture *pTx, POINT pt0, POINT pt1, byte color);
+	void	DrawLine (CSegment *segP, short vert1, short vert2);
+	void	DrawLine (CTexture *pTx, POINT pt0, POINT pt1, CBGRA color);
 	void	DrawAnimDirArrows (short texture1, CTexture *pTx);
 
 	void	DrawWalls (void);
