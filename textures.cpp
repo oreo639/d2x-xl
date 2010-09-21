@@ -89,7 +89,7 @@ if (bShowTexture) {
 			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
 		//CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 		//pDC->RealizePalette ();
-#if 1
+#if 0
 		if (pDC->GetDeviceCaps (RASTERCAPS) & RC_DIBTODEV) {
 			BITMAPINFO* bmi = paletteManager.BMI ();
 			bmi->bmiHeader.biWidth = 
