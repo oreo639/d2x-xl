@@ -241,9 +241,10 @@ class CTexture {
 	public:
 		tTexture	m_info;
 
-		CTexture (COLORREF* dataP = null) {
+		CTexture (COLORREF* dataP = null, byte* indexP = null) {
 			Clear ();
 			m_info.bmData = dataP;
+			m_info.bmIndex = indexP;
 			m_info.bExtData = (dataP != null);
 			}
 

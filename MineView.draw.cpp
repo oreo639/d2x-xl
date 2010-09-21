@@ -800,7 +800,7 @@ CHECKMINE;
 		 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].y,y_max)   )
 	{
 
-		CTexture tex (textureManager.m_bmBuf);
+		CTexture tex (textureManager.m_bmBuf, textureManager.m_bmIndex);
 		COLORREF* screenP = (COLORREF *) m_pvBits;
 		ushort width = m_viewWidth;
 		ushort height = m_viewHeight;

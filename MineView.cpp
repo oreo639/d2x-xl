@@ -340,23 +340,23 @@ if (m_bUpdate) {
 		// draw the level
 		switch(m_viewOption)	{
 			case eViewAllLines:
-				DrawWireFrame(false);
+				DrawWireFrame (false);
 				break;
 
 			case eViewHideLines:
-				DrawWireFrame(false); // temporary
+				DrawWireFrame (false); 
 				break;
 
 			case eViewNearbyCubeLines:
-				DrawWireFrame(false); // temporary
+				DrawWireFrame (false);
 				break;
 
 			case eViewPartialLines:
-				DrawWireFrame(bPartial = true);
+				DrawWireFrame (bPartial = true);
 				break;
 
 			case eViewTextureMapped:
-				DrawSegmentsTextured();
+				DrawSegmentsTextured ();
 				break;
 			}
 /*
@@ -600,19 +600,20 @@ void CMineView::InitView (CDC *pViewDC)
 		if (!m_DC.m_hDC)
 			m_DC.CreateCompatibleDC (pViewDC);
 		if (m_DC.m_hDC) {
-			BITMAPINFO bmi = {sizeof (BITMAPINFOHEADER), m_viewWidth, m_viewHeight, 1, m_viewDepth * 8, BI_RGB, 0, 1000, 1000, 0, 0, {0,0,0,0}};
+			tBMIInfo bmi = {{sizeof (BITMAPINFOHEADER), m_viewWidth, m_viewHeight, 1, m_viewDepth * 8, BI_RGB, 0, 1000, 1000, 256, 256}, {0,0,0,0}};
 
+#if 1
 			// copy the bitmap palette
-			//COLORREF* palette = paletteManager.Current ();
-			//if (palette) {
-			//	int i, j;
-			//	for (i = j = 0; i < 256; i++) {
-			//		bmi.colors [i].rgbRed = GetRValue (palette [j]);
-			//		bmi.colors [i].rgbGreen = GetGValue (palette [j]);
-			//		bmi.colors [i].rgbBlue = GetBValue (palette [j]);
-			//		bmi.colors [i].rgbReserved = 0;
-			//		}
-			//	}
+			COLORREF* palette = paletteManager.Current ();
+			if (palette) {
+				for (int i = 0; i < 256; i++) {
+					bmi.colors [i].rgbRed = GetRValue (palette [i]);
+					bmi.colors [i].rgbGreen = GetGValue (palette [i]);
+					bmi.colors [i].rgbBlue = GetBValue (palette [i]);
+					bmi.colors [i].rgbReserved = 0;
+					}
+				}
+#endif
 			m_DIB = ::CreateDIBSection (m_DC.m_hDC, (BITMAPINFO *) &bmi, DIB_RGB_COLORS, &m_pvBits, null, 0);
 			if (m_DIB) {
 				m_DC.SelectObject (m_DIB);

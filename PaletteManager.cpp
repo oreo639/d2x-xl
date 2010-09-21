@@ -173,7 +173,7 @@ COLORREF* CPaletteManager::Current (int i)
 {
 if (m_bHaveCustom)
 	return m_custom + i;
-if (m_default)
+if (m_bHaveDefault)
 	return m_default + i;
 LoadDefault ();
 return (m_default == null) ? null : m_default + i;
