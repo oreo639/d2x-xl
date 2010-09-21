@@ -43,6 +43,7 @@ void RenderFace (CSegment* segP, short nSide,
 	short deltaLight, scanLight;
 	short light [4];
 	ushort bmWidth2;
+	byte* fadeTable = paletteManager.FadeTable ();
 	bool bEnableShading = (lightIndex != null);
 
 tex.m_info.height = tex.m_info.width;
@@ -239,9 +240,12 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							i = (u / 1024) + ((v / vd) & vm);
-							if (tex.m_info.bmIndex [i] < 254) 
-								*pixelP = lightIndex [temp + ((scanLight / 4) & 0x1f00)];
+							h = (u / 1024) + ((v / vd) & vm);
+							if (tex.m_info.bmIndex [h] < 254) {
+								byte fade = fadeTable [tex.m_info.bmIndex [h] + ((scanLight / 4) & 0x1f00)];
+								COLORREF c = tex.m_info.bmIndex [h];
+								*pixelP = RGB (GetRValue (c) * fade, GetGValue (c) * fade, GetBValue (c) * fade);
+								}
 							pixelP++;
 							scanLight += deltaLight;
 							} while (--k);
@@ -252,9 +256,9 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							i = (u / 1024) + ((v / vd) & vm);
-							if (tex.m_info.bmIndex [i] < 254)
-								*pixelP = tex.m_info.bmData [i];
+							h = (u / 1024) + ((v / vd) & vm);
+							if (tex.m_info.bmIndex [h] < 254)
+								*pixelP = tex.m_info.bmData [h];
 							pixelP++;
 							} while (--k);
 						}

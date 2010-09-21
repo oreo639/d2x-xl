@@ -145,11 +145,10 @@ if (h != 3 * 256) {
 	return 0;
 	}
 
-byte *fadeP = m_fadeTable;
 for (int i = 0; i < 256; i++) {
 	byte c = buffer [i];
 	for (int j = 0; j < 34; j++)
-		fadeP [j * 256 + i] = FadeValue (c, j + 1);
+		m_fadeTable [j * 256 + i] = FadeValue (c, j + 1);
 	}
 
 Decode (m_custom, buffer);
@@ -194,7 +193,7 @@ COLORREF* CPaletteManager::LoadDefault (void)
 CResource res;
 if (!res.Load (Resource ()))
 	return null;
-m_default = new COLORREF [res.Size()];
+m_default = new COLORREF [res.Size ()];
 Decode (m_default, res.Data ());
 SetupRender (m_default);
 SetupBMI (m_default);

@@ -55,6 +55,8 @@ class CPaletteManager {
 			Current ();
 			}
 
+		inline byte* FadeTable (void) { return m_fadeTable; }
+
 		inline char* Name (void) { return m_name; }
 
 		inline COLORREF* Custom (void) { return m_custom; }
