@@ -12,7 +12,6 @@
 #include "PaletteManager.h"
 #include "TextureManager.h"
 #include "global.h"
-#include "render.h"
 #include "FileManager.h"
 
 #include <math.h>

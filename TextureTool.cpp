@@ -13,7 +13,6 @@
 #include "PaletteManager.h"
 #include "textures.h"
 #include "global.h"
-#include "render.h"
 #include "texedit.h"
 #include "FileManager.h"
 #include "TextureManager.h"

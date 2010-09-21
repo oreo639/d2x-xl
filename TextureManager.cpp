@@ -342,16 +342,16 @@ if (bmIndexP == null)
 if (srcDataP != null) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) {
-		memcpy (bmDataP, srcDataP, texP [0]->m_info.size * 3);
+		memcpy (bmDataP, srcDataP, texP [0]->m_info.size * sizeof (CBGRA));
 		memcpy (bmIndexP, srcIndexP, texP [0]->m_info.size * sizeof (byte));
 		}
 	else {
 		// otherwise, copy bit by bit
 		w = texP [0]->m_info.width;
 		int l1 = y0 * w + x0;
-		int l2 = texP [0]->m_info.size - l1 * 3;
-		memcpy (bmDataP, srcDataP + l1, l2 * 3);
-		memcpy (bmDataP + l2, srcDataP, l1 * 3);
+		int l2 = texP [0]->m_info.size - l1 * sizeof (CBGRA);
+		memcpy (bmDataP, srcDataP + l1, l2 * sizeof (CBGRA));
+		memcpy (bmDataP + l2, srcDataP, l1 * sizeof (CBGRA));
 		CBGR* destDataP = bmDataP;
 		byte* destIndexP = bmIndexP;
 		h = w;//texP [0]->m_info.height;

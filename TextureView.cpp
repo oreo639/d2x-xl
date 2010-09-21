@@ -10,7 +10,6 @@
 #include "PaletteManager.h"
 #include "TextureManager.h"
 #include "global.h"
-#include "render.h"
 #include "FileManager.h"
 #include "light.h"
 #include "toolview.h"
