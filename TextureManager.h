@@ -80,21 +80,30 @@ class CTextureManager {
 
 		CTextureManager() {}
 	
-		void Create (int nVersion);
-
 		void Setup (void);
 
-		void Destroy (int nVersion);
-
 		void Destroy (void);
+
+		inline void Reload (int nVersion) {
+			Destroy (nVersion);
+			Create (nVersion);
+			LoadTextures (nVersion);
+			}
 
 		~CTextureManager() { Destroy (); }
 
 	private:
 		int LoadIndex (int nVersion);
+
 		void LoadNames (int nVersion);
+
 		void LoadInfo (int nVersion);
+
 		void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused);
+
+		void Create (int nVersion);
+
+		void Destroy (int nVersion);
 	};
 
 extern CTextureManager textureManager;

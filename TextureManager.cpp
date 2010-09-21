@@ -242,7 +242,7 @@ void CTextureManager::LoadInfo (int nVersion)
 if (m_info [nVersion] != null)
 	delete m_info [nVersion];
 CFileManager* fp = OpenPigFile (nVersion);
-//if (fp == null)
+if (fp == null)
 	return;
 m_header [nVersion].Read (*fp);
 m_info [nVersion] = new CPigTexture [m_header [nVersion].nTextures];
@@ -270,7 +270,7 @@ if (nVersion < 0) {
 if (!bCleanup)
 	Release (nVersion, true, false);
 CFileManager* fp = OpenPigFile (nVersion);
-//if (fp == null)
+if (fp == null)
 	return;
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
 	m_textures [nVersion][i].Load (*fp, i, nVersion);
