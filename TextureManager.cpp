@@ -225,7 +225,8 @@ if (!indexP) {
 // first long is number of m_textures
 m_nTextures [nVersion] = *((uint*) indexP);
 indexP += 2;
-if (!(m_index [nVersion] = new ushort [m_nTextures [nVersion]])) {
+m_index [nVersion] = new ushort [m_nTextures [nVersion]];
+if (m_index [nVersion] == null) {
 	DEBUGMSG (" Reading texture: Could not allocate texture m_index.");
 	return 3;
 	}
@@ -241,6 +242,8 @@ void CTextureManager::LoadInfo (int nVersion)
 if (m_info [nVersion] != null)
 	delete m_info [nVersion];
 CFileManager* fp = OpenPigFile (nVersion);
+//if (fp == null)
+	return;
 m_header [nVersion].Read (*fp);
 m_info [nVersion] = new CPigTexture [m_header [nVersion].nTextures];
 for (int i = 0; i < m_header [nVersion].nTextures; i++)
@@ -267,6 +270,8 @@ if (nVersion < 0) {
 if (!bCleanup)
 	Release (nVersion, true, false);
 CFileManager* fp = OpenPigFile (nVersion);
+//if (fp == null)
+	return;
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
 	m_textures [nVersion][i].Load (*fp, i, nVersion);
 fp->Close ();

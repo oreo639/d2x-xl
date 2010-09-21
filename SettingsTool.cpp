@@ -375,8 +375,8 @@ _strlwr_s (m_d1Path, sizeof (m_d1Path));
 if (strcmp (descentPath [0], m_d1Path)) {
 	strcpy_s (descentPath [0], sizeof (descentPath [0]), m_d1Path);
 	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descentPath [0], INIFILE);
-	if (DLE.IsD1File ())
-		FreeTextureHandles();
+	textureManager.Destroy (0);
+	textureManager.Create (0);
 	}
 _strlwr_s (m_d2Path, sizeof (m_d2Path));
 if (strcmp (descentPath [1], m_d2Path)) {
@@ -388,6 +388,8 @@ if (strcmp (descentPath [1], m_d2Path)) {
 						"Are you sure you want to do this?") != IDOK))
 		bChangePig = false;
 	if (bChangePig) {
+		textureManager.Destroy (1);
+		textureManager.Create (1);
 		strcpy_s (descentPath [1], sizeof (descentPath [1]), m_d2Path);
 		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descentPath [1], INIFILE);
 		if (DLE.IsD2File ())
