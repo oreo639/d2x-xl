@@ -154,7 +154,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 	// to figure out the min and max x
 	x0 = maxpt.x; // start out w/ min point all the way to the right
 	x1 = minpt.x; // and max point to the left
-	for (int i = 0; i < 4; i++) {
+	for (i = 0; i < 4; i++) {
 		// if line intersects this y then update x0 & x1
 		int j = (i + 1) % 4; // j = other point of line
 		yi = a [i].y;
@@ -240,10 +240,10 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							h = (u / 1024) + ((v / vd) & vm);
-							if (tex.m_info.bmIndex [h] < 254) {
-								byte fade = fadeTable [tex.m_info.bmIndex [h] + ((scanLight / 4) & 0x1f00)];
-								COLORREF c = tex.m_info.bmIndex [h];
+							i = (u / 1024) + ((v / vd) & vm);
+							if (tex.m_info.bmIndex [i] < 254) {
+								byte fade = fadeTable [tex.m_info.bmIndex [i] + ((scanLight / 4) & 0x1f00)];
+								COLORREF c = tex.m_info.bmIndex [i];
 								*pixelP = RGB (GetRValue (c) * fade, GetGValue (c) * fade, GetBValue (c) * fade);
 								}
 							pixelP++;
@@ -256,9 +256,9 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							h = (u / 1024) + ((v / vd) & vm);
-							if (tex.m_info.bmIndex [h] < 254)
-								*pixelP = tex.m_info.bmData [h];
+							i = (u / 1024) + ((v / vd) & vm);
+							if (tex.m_info.bmIndex [i] < 254)
+								*pixelP = tex.m_info.bmData [i];
 							pixelP++;
 							} while (--k);
 						}
