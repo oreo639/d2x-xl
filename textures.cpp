@@ -202,7 +202,7 @@ if (m_info.nFormat) {
 	tRGBA color;
 	for (uint i = 0; i < m_info.size; i++) {
 		fp.Read (&color, sizeof (color), 1);
-		m_info.bmData [i] = RGB (color.r, color.g, color.b);
+		m_info.bmData [i] = color;
 		m_info.bmIndex [i] = (color.a == 0) ? 255 : 0; // transparency
 		}
 	//texP->m_info.bValid = TGA2Bitmap (texP->m_info.bmData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);

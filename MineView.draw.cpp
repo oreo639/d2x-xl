@@ -821,7 +821,7 @@ CHECKMINE;
 			if (a.v.x * b.v.y > a.v.y * b.v.x) {
 				if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 					DrawAnimDirArrows (sideP->BaseTex (), &tex);
-					RenderFace (segP, nSide, tex, (CBGR*) m_renderBuffer, m_viewPoints, width, height, rowOffset);
+					RenderFace (segP, nSide, tex, m_viewPoints, width, height, rowOffset);
 				}
 			}
 		}
