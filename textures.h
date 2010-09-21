@@ -209,39 +209,61 @@ typedef struct {
 //------------------------------------------------------------------------
 
 typedef struct tRGBA {
-	unsigned char	r, g, b, a;
+	byte r, g, b, a;
 } tRGBA;
 
 
 typedef struct tBGRA {
-	unsigned char	b, g, r, a;
+	byte b, g, r, a;
 } tBGRA;
 
+
 typedef struct tABGR {
-	unsigned char	a, b, g, r;
+	byte a, b, g, r;
 } tABGR;
 
-typedef struct tBGR {
-	unsigned char	r, g, b;
-} tBGR;
+
+class CBGR {
+	public:
+		byte r, g, b;
+};
+
+class CBGRA : public CBGR {
+	public:
+		byte a;
+
+		CBGRA& operator= (const tRGBA& other) {
+			r = other.r;
+			g = other.g;
+			b = other.b;
+			a = other.a;
+			}
+
+		CBGRA& operator= (const CBGR& other) {
+			r = other.r;
+			g = other.g;
+			b = other.b;
+			a = 255;
+			}
+};
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
 typedef struct tTexture {
-	byte*	bmIndex;
-	tBGR*	bmData;
-	uint	width, height, size;
-	bool	bCustom, bExtData, bFrame, bUsed, bValid;
-	byte	nFormat;	// 0: Bitmap, 1: TGA (RGB)
+	byte*		bmIndex;
+	CBGRA*	bmData;
+	uint		width, height, size;
+	bool		bCustom, bExtData, bFrame, bUsed, bValid;
+	byte		nFormat;	// 0: Bitmap, 1: TGA (RGB)
 } tTexture;
 
 class CTexture {
 	public:
 		tTexture	m_info;
 
-		CTexture (tBGR* dataP = null, byte* indexP = null) {
+		CTexture (CBGRA* dataP = null, byte* indexP = null) {
 			Clear ();
 			m_info.bmData = dataP;
 			m_info.bmIndex = indexP;

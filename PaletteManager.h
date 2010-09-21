@@ -23,8 +23,8 @@ class CPaletteManager {
 	private:
 		char				m_name [15];
 		byte				m_rawData [37 * 256];
-		tBGR				m_custom [256];
-		tBGR				m_default [256];	
+		CBGR				m_custom [256];
+		CBGR				m_default [256];	
 		byte				m_fadeTable [34 * 256];
 		tBMIInfo			m_bmi;
 		CPalette*		m_render;
@@ -58,15 +58,15 @@ class CPaletteManager {
 
 		inline char* Name (void) { return m_name; }
 
-		inline tBGR* Custom (void) { return m_bHaveCustom ? m_custom : null; }
+		inline CBGR* Custom (void) { return m_bHaveCustom ? m_custom : null; }
 
-		inline tBGR* Default (void) { return m_bHaveDefault ? m_default : null; }
+		inline CBGR* Default (void) { return m_bHaveDefault ? m_default : null; }
 
 		inline CPalette* Render (void) { return m_render; }
 
 		inline PALETTEENTRY* ColorMap (void) { return m_colorMap; }
 
-		tBGR* Current (int i = 0);
+		CBGR* Current (int i = 0);
 
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
@@ -79,15 +79,15 @@ class CPaletteManager {
 
 		byte FadeValue (byte c, int f);
 
-		void SetupBMI (tBGR* palette);
+		void SetupBMI (CBGR* palette);
 
-		short SetupRender (tBGR* palette);
+		short SetupRender (CBGR* palette);
 
-		tBGR* LoadDefault (void);
+		CBGR* LoadDefault (void);
 
-		void Decode (tBGR* dest);
+		void Decode (CBGR* dest);
 
-		void Encode (tBGR* src);
+		void Encode (CBGR* src);
 
 		void CreateFadeTable (void);
 };

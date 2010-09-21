@@ -309,7 +309,7 @@ for (int i = 0; i < m_filter.Count (1); i++) {
 		for (double hx = 0; hx < tex.m_info.width; hx += xStep) {
 			int top = 3 + y * m_iconSpace.cy;
 			for (double hy = 0; hy < tex.m_info.width; hy += yStep) 
-				pDC->SetPixel (left, top++, /*PALETTEINDEX*/ (tex.m_info.bmData [(int) hy * tex.m_info.width + (int) hx]));
+				pDC->SetPixel (left, top++, *((COLORREF*) (tex.m_info.bmData + (int) hy * tex.m_info.width + (int) hx)));
 			left++;
 			}
 #endif

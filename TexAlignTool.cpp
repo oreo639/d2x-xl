@@ -309,7 +309,7 @@ for (x = m_minPt.x; x < m_maxPt.x; x++) {
 	for (y = m_minPt.y; y < m_maxPt.y; y++) {
 		i = ((int) ((((x - offset.x) * 2) / m_zoom)) & 63) * scale;
 		j = ((int) ((((y - offset.y) * 2) / m_zoom)) & 63) * scale;
-		pDC->SetPixel (x, y, h = /*PALETTEINDEX*/ (tex.m_info.bmData [(tex.m_info.width - j) * tex.m_info.width + i]));
+		pDC->SetPixel (x, y, h = *((COLORREF*) (tex.m_info.bmData + (tex.m_info.width - j) * tex.m_info.width + i)));
 		}
 	}
 DeleteObject(hRgn);

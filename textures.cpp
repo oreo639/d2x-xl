@@ -16,11 +16,11 @@
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb)
 {
 CResource res;
-tBGR* color = paletteManager.Current (nIndex);
+CBGR* color = paletteManager.Current (nIndex);
 if (color != null) {
-	rgb.peRed = color.r;
-	rgb.peGreen = color.g;
-	rgb.peBlue = color.b;
+	rgb.peRed = color->r;
+	rgb.peGreen = color->g;
+	rgb.peBlue = color->b;
 	rgb.peFlags = 0;
 	}
 }
@@ -105,12 +105,12 @@ if (bShowTexture) {
 			if (scale == 1.0) {
 				for (uint i = 0, x = 0; x < tex.m_info.width; x++)
 					for (uint y = 0; y < tex.m_info.width; y++)
-						pDC->SetPixel ((int) x, (int) y, (textureManager.m_bmBuf [i++]));
+						pDC->SetPixel ((int) x, (int) y, *((COLORREF*) (textureManager.m_bmBuf + i++)));
 				}
 			else {
 				for (uint x = 0; x < tex.m_info.width; x = (int) (x + scale))
 					for (uint y = 0; y < tex.m_info.width; y = (int) (y + scale))
-						pDC->SetPixel ((int) (x * scale), (int) (y * scale), /*PALETTEINDEX*/ (textureManager.m_bmBuf [y * tex.m_info.width + x]));
+						pDC->SetPixel ((int) (x * scale), (int) (y * scale), *((COLORREF*) (textureManager.m_bmBuf + y * tex.m_info.width + x)));
 				}
 			}
 		//pDC->SelectPalette (pOldPalette, FALSE);
@@ -156,7 +156,7 @@ bool CTexture::Allocate (int nSize, int nTexture)
 if ((m_info.bmData != null) && ((m_info.width * m_info.height != nSize)))
 	Release ();
 if (m_info.bmData == null)
-	m_info.bmData = new tBGR [nSize];
+	m_info.bmData = new CBGR [nSize];
 if (m_info.bmIndex == null)
 	m_info.bmIndex = new byte [nSize];
 return (m_info.bmData != null) && (m_info.bmIndex != null);
@@ -192,7 +192,7 @@ void CTexture::Load (CFileManager& fp, CPigTexture& info)
 	byte	rowSize [4096];
 	byte	rowBuf [4096], *rowPtr;
 	byte	palIndex, runLength;
-	tBGR*	palette = paletteManager.Current ();
+	CBGR*	palette = paletteManager.Current ();
 
 m_info.width = info.width;
 m_info.height = info.height;
@@ -219,7 +219,7 @@ else if (info.flags & 0x08) {
 			if (IS_RLE_CODE (palIndex)) {
 				runLength = palIndex & ~RLE_CODE;
 				palIndex = *rowPtr++;
-				tBGR color = palette [palIndex];
+				CBGR color = palette [palIndex];
 				for (int j = 0; j < runLength; j++) {
 					if (x < info.width) {
 						int h = y * info.width + x++;

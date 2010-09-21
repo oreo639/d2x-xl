@@ -603,7 +603,7 @@ void CMineView::InitView (CDC *pViewDC)
 			BITMAPINFO bmi = {{sizeof (BITMAPINFOHEADER), m_viewWidth, m_viewHeight, 1, m_viewDepth * 8, BI_RGB, 0, 0, 0, 0, 0}, {255,255,255,0}};
 #if 1
 			//// copy the bitmap palette
-			//tBGR* palette = paletteManager.Current ();
+			//CBGR* palette = paletteManager.Current ();
 			//if (palette) {
 			//	for (int i = 0; i < 256; i++) {
 			//		bmi.colors [i].rgbRed = GetRValue (palette [i]);

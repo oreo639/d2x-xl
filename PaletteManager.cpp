@@ -36,7 +36,7 @@ return (minColor + maxColor) / 2;
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::SetupBMI (tBGR* palette) 
+void CPaletteManager::SetupBMI (CBGR* palette) 
 {
 m_bmi.header.biSize          = sizeof (BITMAPINFOHEADER);
 m_bmi.header.biWidth         = 64;
@@ -51,7 +51,7 @@ m_bmi.header.biClrUsed       = 0;
 m_bmi.header.biClrImportant  = 0;
 uint* rgb = (uint*) &m_bmi.colors [0];
 for (int i = 0; i < 256; i++, palette += 3)
-	rgb [i] = ((uint) *palette);
+	rgb [i] = *((uint*) palette);
 }
 
 //------------------------------------------------------------------------
@@ -81,7 +81,7 @@ if (m_colorMap) {
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::Decode (tBGR* dest)
+void CPaletteManager::Decode (CBGR* dest)
 {
 for (int i = 0, j = 0; i < 256; i++) {
 	dest [i].r = m_rawData [j++] * 4;
@@ -92,7 +92,7 @@ for (int i = 0, j = 0; i < 256; i++) {
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::Encode (tBGR* src)
+void CPaletteManager::Encode (CBGR* src)
 {
 for (int i = 0, j = 0; i < 256; i++) {
 	m_rawData [j++] = src [i].r;
@@ -135,7 +135,7 @@ return fp.Write (m_rawData, 1, sizeof (m_rawData)) == sizeof (m_rawData);
 
 //------------------------------------------------------------------------
 
-short CPaletteManager::SetupRender (tBGR* palette)
+short CPaletteManager::SetupRender (CBGR* palette)
 {
 //FreeRender ();
 //if (!(m_dlcLog = (LPLOGPALETTE) new byte [sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256]))
@@ -156,7 +156,7 @@ return 1;
 
 //------------------------------------------------------------------------
 
-tBGR* CPaletteManager::LoadDefault (void)
+CBGR* CPaletteManager::LoadDefault (void)
 {
 CResource res;
 if (!res.Load (Resource ()))
@@ -172,7 +172,7 @@ return m_default;
 
 //------------------------------------------------------------------------
 
-tBGR* CPaletteManager::Current (int i)
+CBGR* CPaletteManager::Current (int i)
 {
 if (m_bHaveCustom)
 	return m_custom + i;

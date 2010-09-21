@@ -307,7 +307,7 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture* destTexP, 
 	tFrac			scale, scale2;
 	//int			rc; // return code
 	CTexture*	texP [2];
-	tBGR*			bmDataP = destTexP->m_info.bmData;
+	CBGR*			bmDataP = destTexP->m_info.bmData;
 	byte*			bmIndexP = destTexP->m_info.bmIndex;
 	byte			c;
 	int			fileType = DLE.FileType ();
@@ -334,7 +334,7 @@ destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.size = texP [0]->m_info.size;
 destTexP->m_info.bValid = 1;
 
-tBGR* srcDataP = texP [0]->m_info.bmData;
+CBGR* srcDataP = texP [0]->m_info.bmData;
 byte* srcIndexP = texP [0]->m_info.bmIndex;
 if (bmIndexP == null)
 	bmIndexP = bmIndexP;
@@ -352,7 +352,7 @@ if (srcDataP != null) {
 		int l2 = texP [0]->m_info.size - l1 * 3;
 		memcpy (bmDataP, srcDataP + l1, l2 * 3);
 		memcpy (bmDataP + l2, srcDataP, l1 * 3);
-		tBGR* destDataP = bmDataP;
+		CBGR* destDataP = bmDataP;
 		byte* destIndexP = bmIndexP;
 		h = w;//texP [0]->m_info.height;
 		for (y = 0; y < h; y++) {
@@ -391,7 +391,7 @@ w = texP [1]->m_info.width / scale.c * scale.d;
 h = w;//texP [1]->m_info.height / scale.c * scale.d;
 s = (texP [1]->m_info.width * texP [1]->m_info.width)/*texP [1]->m_info.size*/ / scale2.c * scale2.d;
 if (!(x0 || y0)) {
-	tBGR * destDataP, * destData2;
+	CBGR * destDataP, * destData2;
 	byte* destIndexP, * destIndex2;
 	if (mode == 0x0000) {
 		destDataP = bmDataP;

@@ -620,7 +620,7 @@ else {	//!bPartial
 // works for all glAngle
 //--------------------------------------------------------------------------
 
-void CMineView::DrawLine (CTexture *pTx, POINT pt0, POINT pt1, byte color) 
+void CMineView::DrawLine (CTexture *texP, POINT pt0, POINT pt1, byte color) 
 {
 CHECKMINE;
 
@@ -645,7 +645,7 @@ else {
 	yInc = -1;
 	dy = -dy;
 	}
-scale = pTx->Scale ();
+scale = texP->Scale ();
 xInc = (int) ((double) xInc * scale);
 yInc = (int) ((double) yInc * scale);
 
@@ -656,7 +656,7 @@ y = pt0.y;
 int xStep = 0, yStep = 0;
 int dd = (dx >= dy) ? dx: dy;
 for (i = dd + 1; i; i--) {
-	pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
+	texP->m_info.bmData [y*texP->m_info.width+x] = color;
 	yStep += dy;
 	if (yStep >= dx) {
 		y += yInc;
@@ -671,7 +671,7 @@ for (i = dd + 1; i; i--) {
 #else //0; faster
 if (dx >= dy) {
 	for (i = dx + 1; i; i--, x += xInc) {
-		pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
+		texP->m_info.bmData [y * texP->m_info.width + x] = color;
 		nStep += dy;
 		if (nStep >= dx) {
 			y += yInc;
@@ -681,7 +681,7 @@ if (dx >= dy) {
 	}
 else {
 	for (i = dy + 1; i; i--, y += yInc) {
-		pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
+		texP->m_info.bmData [y*texP->m_info.width+x] = color;
 		nStep += dx;
 		if (nStep >= dy) {
 			x += xInc;
@@ -695,10 +695,10 @@ if (dx == 0) {
 	x = pt0.x;
 	if (dy>0)
 		for (y=pt0.y;y<=pt1.y;y++)
-			pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
+			texP->m_info.bmData [y*texP->m_info.width+x] = color;
 	else
 		for (y=pt0.y;y>=pt1.y;y--)
-			pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
+			texP->m_info.bmData [y*texP->m_info.width+x] = color;
 	return;
 	}
 
@@ -734,7 +734,7 @@ else
 // DrawAnimDirArrows()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawAnimDirArrows (short texture1, CTexture *pTx)
+void CMineView::DrawAnimDirArrows (short texture1, CTexture *texP)
 {
 	int sx,sy;
 	int bScroll = textureManager.ScrollSpeed (texture1, &sx, &sy);
@@ -761,9 +761,9 @@ else if (sx <0 && sy <0) pt = ptnn;
 else if (sx==0 && sy <0) pt = pt0n;
 else if (sx >0 && sy <0) pt = ptpn;
 
-DrawLine (pTx, pt [0], pt [1], 1);
-DrawLine (pTx, pt [0], pt [2], 1);
-DrawLine (pTx, pt [0], pt [3], 1);
+DrawLine (texP, pt [0], pt [1], 1);
+DrawLine (texP, pt [0], pt [2], 1);
+DrawLine (texP, pt [0], pt [3], 1);
 }
 
 //--------------------------------------------------------------------------
@@ -820,7 +820,7 @@ CHECKMINE;
 			if (a.v.x * b.v.y > a.v.y * b.v.x) {
 				if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 					DrawAnimDirArrows (sideP->BaseTex (), &tex);
-					RenderFace (segP, nSide, tex, (tBGR*) m_renderBuffer, m_viewPoints, width, height, rowOffset);
+					RenderFace (segP, nSide, tex, (CBGR*) m_renderBuffer, m_viewPoints, width, height, rowOffset);
 				}
 			}
 		}
