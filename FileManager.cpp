@@ -199,8 +199,6 @@ return size;
 
 int CFileManager::Open (const char *filename, const char *mode) 
 {
-	FILE* fp = null;
-
 m_info.file = null;
 if (!(filename && *filename))
 	return 1;

@@ -597,7 +597,7 @@ bool CTextureManager::Reload (int nVersion)
 if (LoadInfo (nVersion) && LoadTextures (nVersion))
 	return true;
 sprintf_s (message, sizeof (message), "Couldn't find texture data file (%s).\n\nPlease select the proper folder in the settings dialog.\n", descentPath [nVersion]);
-ErrorMsg (message);
+//ErrorMsg (message);
 return false;
 }
 

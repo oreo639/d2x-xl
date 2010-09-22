@@ -11,8 +11,8 @@
 // -----------------------------------------------------------------------------
 
 typedef struct tSide {
-	short		nChild;
-	short		nWall;		// (was short) Index into Walls array, which wall (probably door) is on this side 
+	ushort	nChild;
+	ushort	nWall;		// (was short) Index into Walls array, which wall (probably door) is on this side 
 	short		nBaseTex;	// Index into array of textures specified in bitmaps.bin 
 	short		nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
 	CUVL		uvls [4];   // CUVL coordinates at each point 

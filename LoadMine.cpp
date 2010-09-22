@@ -254,7 +254,6 @@ return 0;
 
 short CMine::LoadMineGeometry (CFileManager& fp, bool bCreate)
 {
-
 // read version (1 byte)
 byte version = fp.ReadByte ();
 
@@ -275,7 +274,7 @@ if (nSegments > SEGMENT_LIMIT) {
 	ErrorMsg (message);
 	return 2;
 	}
-if (IsD1File () ? nVertices > MAX_SEGMENTS_D1 : IsStdLevel () && (nVertices > MAX_SEGMENTS_D2))
+if (IsD1File () ? nSegments > MAX_SEGMENTS_D1 : IsStdLevel () && (nSegments > MAX_SEGMENTS_D2))
 	ErrorMsg ("Warning: Too many Segments for this level version");
 
 objectManager.ResetInfo ();

@@ -152,7 +152,7 @@ byte CSegment::ReadWalls (CFileManager& fp, int nLevelVersion)
 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	if (m_info.wallFlags & (1 << i)) 
-		m_sides [i].m_info.nWall = (nLevelVersion >= 13) ? fp.ReadInt16 () : short (fp.ReadSByte ());
+		m_sides [i].m_info.nWall = (nLevelVersion >= 13) ? fp.ReadUInt16 () : (ushort) fp.ReadByte ();
 return wallFlags;
 }
 

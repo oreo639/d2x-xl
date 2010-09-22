@@ -190,7 +190,7 @@ for (CSegmentIterator si; si; si++) {
 	CSegment *segP = &(*si);
 	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		CSide& side = segP->m_sides [nSide];
-		if ((side.m_info.nWall >= wallManager.Count ()) || !side.Wall ()->Used ()) {
+		if ((side.m_info.nWall != NO_WALL) && ((side.m_info.nWall >= wallManager.Count () || !side.Wall ()->Used ()))) {
 			side.m_info.nWall = NO_WALL;
 			errFlags |= 1;
 			}
