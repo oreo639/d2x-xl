@@ -236,8 +236,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							v += dv;
 							v %= m;
 							i = (u / 1024) + ((v / vd) & vm);
-							j = tex.m_info.bmIndex [i];
-							if (j < 254) {
+							if (tex.m_info.bmIndex [i] < 254) {
 								// a fade value denotes the brightness of a color
 								// scanLight / 4 is the index in the fadeTables which consists of 34 tables with 256 entries each
 								// so for each color there are 34 fade (brightness) values ranges from 1/34 to 34/34
