@@ -225,6 +225,8 @@ BOOL CDLE::InitInstance()
 		theMine = new CMine;
 	textureManager.Setup ();
 	theMine->Load ();
+	if (!textureManager.Available ())
+		ToolView ()->SetActive (12); // invoke preferences dialog
 	MineView ()->DelayRefresh (true);
 	TextureView ()->Setup ();
 	MainFrame ()->SetSelectMode (eSelectSide);

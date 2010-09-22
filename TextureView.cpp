@@ -196,6 +196,8 @@ int CTextureView::PickTexture (CPoint &point,short &nBaseTex)
 {
 if (theMine == null)
 	return 1;
+if (!textureManager.Available ())
+	return 1;
 
 //if (!m_pTextures)
 //	return 0;
@@ -232,6 +234,9 @@ return 1; // return failure
 void CTextureView::RecalcLayout (void) 
 {
 CHECKMINE;
+
+if (!textureManager.Available ())
+	return;
 
 	CRect rect;
 	GetClientRect(rect);

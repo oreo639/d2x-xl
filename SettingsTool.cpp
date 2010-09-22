@@ -376,7 +376,8 @@ if (strcmp (descentPath [0], m_d1Path)) {
 	strcpy_s (descentPath [0], sizeof (descentPath [0]), m_d1Path);
 	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descentPath [0], INIFILE);
 	paletteManager.Reload ();
-	textureManager.Reload (0);
+	if (!textureManager.Reload (0))
+		DLE.ToolView ()->SetActive (12);
 	}
 _strlwr_s (m_d2Path, sizeof (m_d2Path));
 if (strcmp (descentPath [1], m_d2Path)) {
@@ -391,7 +392,8 @@ if (strcmp (descentPath [1], m_d2Path)) {
 		strcpy_s (descentPath [1], sizeof (descentPath [1]), m_d2Path);
 		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descentPath [1], INIFILE);
 		paletteManager.Reload ();
-		textureManager.Reload (1);
+		if (!textureManager.Reload (1))
+			DLE.ToolView ()->SetActive (12);
 		DLE.MineView ()->ResetView (true);
 		}
 	}
