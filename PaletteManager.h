@@ -25,7 +25,7 @@ class CPaletteManager {
 		byte				m_rawData [37 * 256];
 		CBGR				m_custom [256];
 		CBGR				m_default [256];	
-		byte				m_fadeTable [34 * 256];
+		byte				m_fadeTables [34 * 256];
 		tBMIInfo			m_bmi;
 		CPalette*		m_render;
 		LPLOGPALETTE	m_dlcLog;
@@ -54,7 +54,7 @@ class CPaletteManager {
 			Current ();
 			}
 
-		inline byte* FadeTable (void) { return m_fadeTable; }
+		inline byte* FadeTable (void) { return m_fadeTables; }
 
 		inline char* Name (void) { return m_name; }
 
@@ -77,7 +77,7 @@ class CPaletteManager {
 	private:
 		const char* Resource (void);
 
-		byte FadeValue (byte c, int f);
+		inline byte FadeValue (byte c, int f);
 
 		void SetupBMI (CBGR* palette);
 

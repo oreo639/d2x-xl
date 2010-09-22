@@ -59,7 +59,7 @@ for (int i = 0; i < 256; i++) {
 
 //------------------------------------------------------------------------
 
-byte CPaletteManager::FadeValue (byte c, int f)
+inline byte CPaletteManager::FadeValue (byte c, int f)
 {
 return (byte) (((int) c * f) / 34);
 }
@@ -111,7 +111,7 @@ void CPaletteManager::CreateFadeTable (void)
 for (int i = 0; i < 256; i++) {
 	byte c = m_rawData [i];
 	for (int j = 0; j < 34; j++)
-		m_fadeTable [j * 256 + i] = FadeValue (c, j + 1);
+		m_fadeTables [j * 256 + i] = FadeValue (c, j + 1);
 	}
 }
 

@@ -38,7 +38,7 @@ void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, APOINT* 
 	short deltaLight, scanLight;
 	short light [4];
 	ushort bmWidth2;
-	byte* fadeTable = paletteManager.FadeTable ();
+	byte* fadeTables = paletteManager.FadeTable ();
 	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
 
 tex.m_info.height = tex.m_info.width;
@@ -162,7 +162,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 					scanLight = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x0 = x;
 					}
-				if (x>x1) {
+				if (x > x1) {
 					deltaLight = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x1 = x;
 					}
@@ -236,12 +236,21 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							v += dv;
 							v %= m;
 							i = (u / 1024) + ((v / vd) & vm);
-							if (tex.m_info.bmIndex [i] < 254) {
-								byte fade = fadeTable [tex.m_info.bmIndex [i] + ((scanLight / 4) & 0x1f00)];
+							j = tex.m_info.bmIndex [i];
+							if (j < 254) {
+								// a fade value denotes the brightness of a color
+								// scanLight / 4 is the index in the fadeTables which consists of 34 tables with 256 entries each
+								// so for each color there are 34 fade (brightness) values ranges from 1/34 to 34/34
+								// actually the fade tables contain palette indices denoting the dimmed color corresponding to the 
+								// fade value
+								// We don't need this anymore here since we're rendering RGB and can compute the brightness directly
+								// from scanLight, the maximum of which is 8191
+								// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
+								short fade = scanLight / 4;
 								CBGR c = tex.m_info.bmData [i];
-								pixelP->r = (int) (c.r * fade) / 255;
-								pixelP->g = (int) (c.g * fade) / 255;
-								pixelP->b = (int) (c.b * fade) / 255;
+								pixelP->r = (byte) ((int) (c.r) * fade / 8191);
+								pixelP->g = (byte) ((int) (c.g) * fade / 8191);
+								pixelP->b = (byte) ((int) (c.b) * fade / 8191);
 								}
 							pixelP++;
 							scanLight += deltaLight;
