@@ -582,7 +582,7 @@ if (!m_splitter1.CreateStatic (this, 1, 2, WS_CHILD | WS_VISIBLE | WS_BORDER))
 	return FALSE;
 GetClientRect (rc);
 rc.InflateRect (-2, -2);
-if (nLayout) {
+if (nLayout != 0) {
 	context.m_pNewViewClass = RUNTIME_CLASS (CToolView);
 	m_splitter1.CreateView (0, 0, RUNTIME_CLASS (CToolView), CSize (CX_TOOLS, rc.Height ()), &context);
 	m_splitter1.SetRowInfo (0, rc.Height (), 16);
@@ -620,6 +620,7 @@ else {
 	m_textureView = (CTextureView *) m_splitter1.GetPane (0,0);
 	m_mineView = (CMineView *) m_splitter2.GetPane (0,0);
 	m_toolView = (CToolView *) m_splitter2.GetPane (1,0);
+	m_toolView->Setup ();
 	}
 return TRUE;
 }
@@ -1635,7 +1636,7 @@ void CMainFrame::RecalcLayout (int nToolMode, int nTextureMode)
 if (!(IsWindow (m_splitter1) && IsWindow (m_splitter2)))
 	return;
 m_splitter2.RecalcLayout (nToolMode, nTextureMode);
-if (nLayout) {
+if (nLayout != 0) {
 	if (nTextureMode)
 		m_textureMode = nTextureMode;
 	if (nToolMode) {
@@ -1685,7 +1686,7 @@ if (DLE.MainFrame () && DLE.ToolView ()) {
 	GetClientRect (rc);
 	GetPane (0,0)->GetWindowRect (rc0);
 	GetPane (1,0)->GetWindowRect (rc1);
-	if (nLayout) {
+	if (nLayout != 0) {
 		if (nTextureMode) {
 				int	nHeight = (nTextureMode == 1) ? (m_texPaneHeight < 0) ? CY_TEXTURES : m_texPaneHeight : 0;
 

@@ -519,37 +519,37 @@ for (i = 0; i < objectManager.Count (); i++, objP++) {
 			res.Load (ROBOT_STRING_TABLE + objP->Id ());
 			break;
 		case OBJ_HOSTAGE: // a hostage you need to rescue
-			sprintf_s (res.Value (), sizeof (res.Value ()), "Hostage");
+			sprintf_s (res.Value (), res.Size (), "Hostage");
 			break;
 		case OBJ_PLAYER: // the player on the console
-			sprintf_s (res.Value (), sizeof (res.Value ()), "Player #%d", objP->Id () + 1);
+			sprintf_s (res.Value (), res.Size (), "Player #%d", objP->Id () + 1);
 			break;
 		case OBJ_WEAPON: //
-			strcpy_s (res.Value (), sizeof (res.Value ()), "Red Mine");
+			strcpy_s (res.Value (), res.Size (), "Red Mine");
 			break;
 		case OBJ_POWERUP: // a powerup you can pick up
 			res.Load (POWERUP_STRING_TABLE + powerupIdStrXlat [objP->Id ()]);
 			break;
 		case OBJ_CNTRLCEN: // a control center */
-			sprintf_s (res.Value (), sizeof (res.Value ()), "Reactor");
+			sprintf_s (res.Value (), res.Size (), "Reactor");
 			break;
 		case OBJ_COOP: // a cooperative player object
-			sprintf_s (res.Value (), sizeof (res.Value ()), "Coop Player #%d", objP->Id () + 1);
+			sprintf_s (res.Value (), res.Size (), "Coop Player #%d", objP->Id () + 1);
 			break;
 		case OBJ_CAMBOT: // a camera */
-			sprintf_s (res.Value (), sizeof (res.Value ()), "Camera");
+			sprintf_s (res.Value (), res.Size (), "Camera");
 			break;
 		case OBJ_MONSTERBALL: // a camera */
-			sprintf_s (res.Value (), sizeof (res.Value ()), "Monsterball");
+			sprintf_s (res.Value (), res.Size (), "Monsterball");
 			break;
 		case OBJ_EXPLOSION:
-			sprintf_s (res.Value (), sizeof (res.Value ()), "Explosion");
+			sprintf_s (res.Value (), res.Size (), "Explosion");
 			break;
 		case OBJ_SMOKE: 
-			sprintf_s (res.Value (), sizeof (res.Value ()), "Smoke");
+			sprintf_s (res.Value (), res.Size (), "Smoke");
 			break;
 		case OBJ_EFFECT:
-			sprintf_s (res.Value (), sizeof (res.Value ()), "Effect");
+			sprintf_s (res.Value (), res.Size (), "Effect");
 			break;
 		default:
 			*res.Value () = '\0';
@@ -923,7 +923,7 @@ CStringResource res;
 switch(type) {
 	case OBJ_ROBOT: /* an evil enemy */
 		for (i = 0; i < maxRobotIds; i++) {
-			sprintf_s (res.Value (), sizeof (res.Value ()), (i < 10) ? "%3d: ": "%d: ", i);
+			sprintf_s (res.Value (), res.Size (), (i < 10) ? "%3d: ": "%d: ", i);
 			res.Load (ROBOT_STRING_TABLE + i);
 			if (!strcmp (res.Value (), "(not used)"))
 				continue;
@@ -939,7 +939,7 @@ switch(type) {
 
 	case OBJ_HOSTAGE: // a hostage you need to rescue
 		for (i = 0; i <= 1; i++) {
-			sprintf_s (res.Value (), sizeof (res.Value ()), "%d", i);
+			sprintf_s (res.Value (), res.Size (), "%d", i);
 			h = pcb->AddString (res.Value ());
 			pcb->SetItemData (h, i);
 			}
@@ -948,7 +948,7 @@ switch(type) {
 
 	case OBJ_PLAYER: // the player on the console
 		for (i = 0; i < MAX_PLAYERS; i++) {
-			sprintf_s (res.Value (), sizeof (res.Value ()), (i < 9) ? "%3d" : "%d", i + 1);
+			sprintf_s (res.Value (), res.Size (), (i < 9) ? "%3d" : "%d", i + 1);
 			h = pcb->AddString (res.Value ());
 			pcb->SetItemData (h, i);
 			}
@@ -1023,14 +1023,14 @@ switch(type) {
 	case OBJ_CNTRLCEN: // a control center */
 		if (DLE.IsD1File ()) {
 			for ( i = 0; i <= 25; i++) { //??? not sure of max
-				sprintf_s (res.Value (), sizeof (res.Value ()), "%d", i);
+				sprintf_s (res.Value (), res.Size (), "%d", i);
 				h = pcb->AddString (res.Value ());
 				pcb->SetItemData (h, i);
 				}
 			}
 		else {
 			for (i = 1; i <= 6; i++) {
-				sprintf_s (res.Value (), sizeof (res.Value ()), "%d", i);
+				sprintf_s (res.Value (), res.Size (), "%d", i);
 				h = pcb->AddString (res.Value ());
 				pcb->SetItemData (h, i);
 				}
@@ -1040,7 +1040,7 @@ switch(type) {
 
 	case OBJ_COOP: // a cooperative player object
 		for (i = MAX_PLAYERS; i < MAX_PLAYERS + MAX_COOP_PLAYERS; i++) {
-			sprintf_s (res.Value (), sizeof (res.Value ()), "%d", i);
+			sprintf_s (res.Value (), res.Size (), "%d", i);
 			h = pcb->AddString (res.Value ());
 			pcb->SetItemData (h, i - MAX_PLAYERS);
 			}

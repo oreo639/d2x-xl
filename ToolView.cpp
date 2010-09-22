@@ -58,6 +58,7 @@ m_diagTool = null;
 m_prefsDlg = null;
 m_txtFilterTool = null;
 m_pTools = null;
+m_toolSize = 0;
 m_scrollOffs [0] = 0;
 m_scrollPage [0] = 0;
 m_scrollRange [0] = 0;
