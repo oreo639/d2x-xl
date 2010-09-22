@@ -276,8 +276,8 @@ BOOL CDLE::InitInstance()
 		}
 	if (*cmdInfo.m_strFileName)
 		GetDocument ()->OpenFile (false, cmdInfo.m_strFileName.GetBuffer (256), null /*"*"*/);
-	if (ToolView ()->PrefsDlg ())
-		ToolView ()->PrefsDlg ()->SetAppSettings (true);
+	//if (ToolView ()->PrefsDlg ())
+	//	ToolView ()->PrefsDlg ()->SetAppSettings (true);
 	MineView ()->DelayRefresh (false);
 	//MineView ()->Refresh ();
 	return TRUE;

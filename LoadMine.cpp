@@ -194,7 +194,7 @@ if (LoadGameItems (fp, bCreate) != 0) {
 
 if (!(bLoadFromHog || bCreate)) {
 	paletteManager.Reload ();
-	textureManager.LoadTextures ();
+	textureManager.Reload (textureManager.Version ());
 	if (IsD2File ()) {
 		char filename [256];
 		strcpy_s (filename, sizeof (filename), fp.Name ());

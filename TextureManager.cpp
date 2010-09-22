@@ -125,7 +125,8 @@ strcpy_s (filename, sizeof (filename), nVersion ? descentPath [1] : descentPath 
 if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fp->Open (filename, "rb")) {
-	DEBUGMSG (" Reading texture: Texture file not found.");
+	sprintf_s (message, sizeof (message), "Couldn't find texture data file (%s).\n\nPlease select the proper folder in the settings dialog.\n", descentPath [nVersion]);
+	ErrorMsg (message);
 	return null;
 	}
 uint nOffset = fp->ReadUInt32 ();
@@ -237,13 +238,15 @@ return 0;
 
 //------------------------------------------------------------------------------
 
-void CTextureManager::LoadInfo (int nVersion)
+bool CTextureManager::LoadInfo (int nVersion)
 {
-if (m_info [nVersion] != null)
+if (m_info [nVersion] != null) {
 	delete m_info [nVersion];
+	m_info [nVersion] = null;
+	}
 CFileManager* fp = OpenPigFile (nVersion);
 if (fp == null)
-	return;
+	return false;
 m_header [nVersion].Read (*fp);
 m_info [nVersion] = new CPigTexture [m_header [nVersion].nTextures];
 for (int i = 0; i < m_header [nVersion].nTextures; i++)
@@ -251,11 +254,12 @@ for (int i = 0; i < m_header [nVersion].nTextures; i++)
 m_nOffsets [nVersion] = fp->Tell ();
 fp->Close ();
 delete fp;
+return true;
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureManager::LoadTextures (int nVersion, bool bCleanup)
+bool CTextureManager::LoadTextures (int nVersion, bool bCleanup)
 {
 if (nVersion < 0) {
 	nVersion = Version ();
@@ -271,11 +275,12 @@ if (!bCleanup)
 	Release (nVersion, true, false);
 CFileManager* fp = OpenPigFile (nVersion);
 if (fp == null)
-	return;
+	return false;
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
 	m_textures [nVersion][i].Load (*fp, i, nVersion);
 fp->Close ();
 delete fp;
+return true;
 }
 
 //------------------------------------------------------------------------------

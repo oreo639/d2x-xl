@@ -41,7 +41,7 @@ class CTextureManager {
 
 		int MaxTextures (int nVersion = -1);
 		
-		void LoadTextures (int nVersion = -1, bool bCleanup = false);
+		bool LoadTextures (int nVersion = -1, bool bCleanup = false);
 		
 		bool Check (int nTexture);
 		
@@ -82,14 +82,9 @@ class CTextureManager {
 
 		void Destroy (void);
 
-		inline void Reload (int nVersion) {
-			LoadInfo (nVersion);
-			LoadTextures (nVersion);
-			}
+		inline bool Reload (int nVersion) { return LoadInfo (nVersion) && LoadTextures (nVersion); }
 
-		CTextureManager() : m_extra (null) { 
-			m_paletteName [0] = 0; 
-			}
+		CTextureManager() : m_extra (null) { m_paletteName [0] = 0; }
 	
 		~CTextureManager() { Destroy (); }
 
@@ -98,7 +93,7 @@ class CTextureManager {
 
 		void LoadNames (int nVersion);
 
-		void LoadInfo (int nVersion);
+		bool LoadInfo (int nVersion);
 
 		void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused);
 
