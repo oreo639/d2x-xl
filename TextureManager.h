@@ -84,6 +84,8 @@ class CTextureManager {
 
 		bool Reload (int nVersion);
 
+		bool Available (void);
+
 		CTextureManager() : m_extra (null) { m_paletteName [0] = 0; }
 	
 		~CTextureManager() { Destroy (); }

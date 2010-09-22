@@ -338,6 +338,12 @@ if (m_bUpdate) {
 		// make a local copy the mine's selection
 		// draw the level
 		switch(m_viewOption)	{
+			case eViewTextureMapped:
+				if (textureManager.Available ()) {
+					DrawSegmentsTextured ();
+					break;
+					}
+				// otherwise fall through
 			case eViewAllLines:
 				DrawWireFrame (false);
 				break;
@@ -352,10 +358,6 @@ if (m_bUpdate) {
 
 			case eViewPartialLines:
 				DrawWireFrame (bPartial = true);
-				break;
-
-			case eViewTextureMapped:
-				DrawSegmentsTextured ();
 				break;
 			}
 /*

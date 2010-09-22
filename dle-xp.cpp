@@ -213,41 +213,10 @@ BOOL CDLE::InitInstance()
 		RUNTIME_CLASS(CMineView));
 	AddDocTemplate(m_pDlcDoc);
 
-	// Connect the COleTemplateServer to the document template.
-	//  The COleTemplateServer creates new documents on behalf
-	//  of requesting OLE containers by using information
-	//  specified in the document template.
-	//m_server.ConnectTemplate(clsid, m_pDlcDoc, TRUE);
-	// Note: SDI applications register server Objects () only if /Embedding
-	//   or /Automation is present on the command line.
-
 	// Parse command line for standard shell commands, DDE, file open
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
- //   _Module.UpdateRegistryFromResource(IDR_DLE_XP, TRUE);
-	//_Module.RegisterServer(TRUE);
-
-	//// Check to see if launched as OLE server
-	//if (cmdInfo.m_bRunEmbedded || cmdInfo.m_bRunAutomated)
-	//{
-	//	// Register all OLE server (factories) as running.  This enables the
-	//	//  OLE libraries to create Objects () from other applications.
-	//	COleTemplateServer::RegisterAll();
-	//	_Module.RegisterClassObjects(CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE);
-
-
-	//	// Application was run with /Embedding or /Automation.  Don't show the
-	//	//  main window in this case.
-	//	return TRUE;
-	//}
-	// When a server application is launched stand-alone, it is a good idea
-	//  to update the system registry in case it has been damaged.
-	//m_server.UpdateRegistry(OAT_DISPATCH_OBJECT);
-	//COleObjectFactory::UpdateRegistryAll();
-
-	//theMine->Initialize ();
-	//theMine->Default ();
 	// Dispatch commands specified on the command line
 	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNew;
 	if (!ProcessShellCommand (cmdInfo))
@@ -256,19 +225,14 @@ BOOL CDLE::InitInstance()
 		theMine = new CMine;
 	textureManager.Setup ();
 	theMine->Load ();
-	//memset (textureManager.Textures (), 0, sizeof (textureManager.Textures ()));
 	MineView ()->DelayRefresh (true);
 	TextureView ()->Setup ();
-//	ToolView ()->Setup ();
-	// The one and only window has been initialized, so show and update it.
 	MainFrame ()->SetSelectMode (eSelectSide);
 	MainFrame ()->ShowWindow (SW_SHOW);
 	MainFrame ()->GetWindowText (m_szCaption, sizeof (m_szCaption));
 	MainFrame ()->FixToolBars ();
 	LoadLayout ();
 	MainFrame ()->ToolView ()->RecalcLayout (MainFrame ()->m_toolMode, MainFrame ()->m_textureMode);
-	//if (ToolView ()->PrefsDlg ())
-	//	MainFrame ()->ToolView ()->PrefsDlg ()->SetAppSettings ();
 	MainFrame ()->UpdateWindow ();
 	if (m_bSplashScreen || DEMO) {
 		CAboutDlg aboutDlg (100);
