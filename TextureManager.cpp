@@ -126,6 +126,7 @@ if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fp->Open (filename, "rb")) {
 	delete fp;
+	m_bAvailable [nVersion] = false;
 	return null;
 	}
 uint nOffset = fp->ReadUInt32 ();
@@ -279,6 +280,7 @@ for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
 	m_textures [nVersion][i].Load (*fp, i, nVersion);
 fp->Close ();
 delete fp;
+m_bAvailable [nVersion] = true;
 return true;
 }
 
@@ -605,11 +607,7 @@ return false;
 
 bool CTextureManager::Available (void)
 {
-#ifdef _DEBUG
-return m_textures [Version ()].Buffer () != null;
-#else
-return m_textures [Version ()] != null;
-#endif
+return m_bAvailable [Version ()];
 }
 
 //------------------------------------------------------------------------

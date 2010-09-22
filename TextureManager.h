@@ -33,6 +33,7 @@ class CTextureManager {
 		CBGRA m_bmBuf [512 * 512 * 32];	// max texture size: 512x512, RGBA, 32 frames
 		byte m_bmIndex [512 * 512 * 32];
 		char m_pigFiles [2][256];
+		bool m_bAvailable [2];
 		CExtraTexture*	m_extra;
 
 		inline CTexture* Textures (int nVersion, int nTexture = 0) { return &m_textures [nVersion][nTexture]; }
@@ -84,9 +85,12 @@ class CTextureManager {
 
 		bool Reload (int nVersion);
 
-		bool Available (void);
+		inline bool Available (void);
 
-		CTextureManager() : m_extra (null) { m_paletteName [0] = 0; }
+		CTextureManager() : m_extra (null) { 
+			m_paletteName [0] = 0; 
+			m_bAvailable [0] = m_bAvailable [1] = false;
+			}
 	
 		~CTextureManager() { Destroy (); }
 
