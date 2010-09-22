@@ -82,7 +82,7 @@ class CTextureManager {
 
 		void Destroy (void);
 
-		inline bool Reload (int nVersion) { return LoadInfo (nVersion) && LoadTextures (nVersion); }
+		bool Reload (int nVersion);
 
 		CTextureManager() : m_extra (null) { m_paletteName [0] = 0; }
 	

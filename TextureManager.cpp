@@ -125,8 +125,7 @@ strcpy_s (filename, sizeof (filename), nVersion ? descentPath [1] : descentPath 
 if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fp->Open (filename, "rb")) {
-	sprintf_s (message, sizeof (message), "Couldn't find texture data file (%s).\n\nPlease select the proper folder in the settings dialog.\n", descentPath [nVersion]);
-	ErrorMsg (message);
+	delete fp;
 	return null;
 	}
 uint nOffset = fp->ReadUInt32 ();
@@ -589,6 +588,17 @@ switch (texture) {
 		return 0; 
 	}
 return 1; 
+}
+
+//------------------------------------------------------------------------
+
+bool CTextureManager::Reload (int nVersion) 
+{ 
+if (LoadInfo (nVersion) && LoadTextures (nVersion))
+	return true;
+sprintf_s (message, sizeof (message), "Couldn't find texture data file (%s).\n\nPlease select the proper folder in the settings dialog.\n", descentPath [nVersion]);
+ErrorMsg (message);
+return false;
 }
 
 //------------------------------------------------------------------------

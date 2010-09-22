@@ -84,7 +84,7 @@ extern int splash;
 //extern short serial_number;
 //extern int grid;
 //extern short nTrigger;
-extern char message[256];
+extern char message [4096];
 extern char m_startFolder [256];
 extern char descentPath [2][256];
 extern char missionPath [256];

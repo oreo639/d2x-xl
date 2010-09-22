@@ -55,7 +55,7 @@ class CMine {
 		HPALETTE			m_paletteHandle;
 		
 		// strings
-		char				message [256];
+		char				message [4096];
 		char				m_startFolder [256];
 		short				m_selectMode;
 		int				m_changesMade;

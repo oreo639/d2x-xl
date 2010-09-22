@@ -82,7 +82,7 @@ short d2_switches [] = {414, 416, 418, -1};
 short add_segment_mode = ORTHOGONAL;
 char dlc_version[10] = "2.7a";
 short serial_number   = 27;
-char message [256];
+char message [4096];
 char m_startFolder [256];
 //int grid = 0x2000L;   // 0.125
 char descentPath [2][256] = {"\\programs\\d2\\data", "\\programs\\d2\\data"};
