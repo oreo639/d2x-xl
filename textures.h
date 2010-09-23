@@ -232,6 +232,8 @@ class CBGR {
 			{}
 
 		inline COLORREF ColorRef (void) { return RGB (r, g, b); }
+
+		inline const bool operator== (const CBGR& other) const { return (r == other.r) && (g == other.g) && (b == other.b); }
 };
 
 class CBGRA : public CBGR {

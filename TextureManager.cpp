@@ -301,7 +301,9 @@ return extraTexP;
 
 inline CBGRA& CTextureManager::Blend (CBGRA& dest, CBGRA& src)
 {
-if (src.a > 0) {
+if (paletteManager.SuperTransp (src))
+	dest.a = 0;
+else if (src.a > 0) {
 	if (src.a == 255)
 		dest = src;
 	else {

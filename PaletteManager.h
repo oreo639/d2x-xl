@@ -25,6 +25,7 @@ class CPaletteManager {
 		byte				m_rawData [37 * 256];
 		CBGR				m_custom [256];
 		CBGR				m_default [256];	
+		CBGR				m_superTransp;
 		byte				m_fadeTables [34 * 256];
 		tBMIInfo			m_bmi;
 		CPalette*		m_render;
@@ -71,6 +72,8 @@ class CPaletteManager {
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
 		byte ClosestColor (CBGR& color);
+
+		inline bool SuperTransp (CBGR& color) { return color == m_superTransp; }
 
 		CPaletteManager () : m_bHaveDefault (false), m_bHaveCustom (false) { *m_name = '\0'; }
 
