@@ -5791,7 +5791,12 @@ BEGIN
         MENUITEM "Save &As...",                 ID_SAVEFILE_AS
         MENUITEM "Edit Mission File",           ID_FILE_EDITMISSIONFILE
         MENUITEM SEPARATOR
-        MENUITEM "Convert Mine",                ID_FILE_CONVERT
+        POPUP "Convert Mine to ..."
+        BEGIN
+            MENUITEM "&Descent 2",                  ID_CONVERTMINE_STANDARD
+            MENUITEM "&Vertigo",                    ID_CONVERTMINE_VERTIGO
+            MENUITEM "D2&X-XL",                     ID_CONVERTMINE_D2X
+        END
         MENUITEM "Check Mine",                  ID_FILE_CHECKMINE
         MENUITEM "R&un Level",                  ID_RUN_LEVEL
         MENUITEM SEPARATOR
@@ -6382,6 +6387,13 @@ BEGIN
     IDC_PREFS_BROWSE_MISSIONS "browse\nbrowse"
     IDC_TEXLIGHT_ADD        "add variable light\nadd variable light"
     IDC_TEXLIGHT_DELETE     "delete variable light\ndelete variable light"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CONVERTMINE_D2X      "convert level\nconvert level to D2X-XL format"
+    ID_CONVERTMINE_STANDARD "convert level\nconvert level to standard format"
+    ID_CONVERTMINE_VERTIGO  "convert level\nconvert level to Vertigo format"
 END
 
 #endif    // English (U.S.) resources

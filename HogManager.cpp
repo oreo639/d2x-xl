@@ -7,7 +7,6 @@
 #include "mine.h"
 #include "dle-xp.h"
 #include "TimeDate.h"
-#include "CustomTextures.h"
 
 //------------------------------------------------------------------------------
 // local globals

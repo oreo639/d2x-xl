@@ -188,6 +188,7 @@ public:
 	int CreateStatusBar ();
 	void DockToolBars (bool bToolBar, bool bEditBar);
 
+	void ConvertMine (int nVersion);
 
 	bool EditGeoFwd (void);
 	bool EditGeoUp (void);
@@ -208,7 +209,9 @@ public:
 	afx_msg BOOL OnCreateClient (LPCREATESTRUCT lpcs, CCreateContext * pContext);
 	afx_msg void OnExtBlkFmt ();
 	afx_msg void OnUpdateExtBlkFmt ();
-	afx_msg void OnConvert ();
+	afx_msg void OnConvertToStandard ();
+	afx_msg void OnConvertToVertigo ();
+	afx_msg void OnConvertToD2X ();
 	afx_msg void OnEditorToolbar ();
 	afx_msg void OnCheckMine ();
 	afx_msg void OnUndo ();

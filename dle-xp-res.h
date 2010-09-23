@@ -736,7 +736,7 @@
 #define ID_VIEW_ROTATE_DOWN             30789
 #define ID_VIEW_REDRAW                  30792
 #define ID_FILE_EDITMISSIONFILE         30793
-#define ID_FILE_CONVERT                 30794
+
 #define ID_FILE_INFORMATION             30795
 #define ID_FILE_PREFERENCES             30796
 #define ID_FILE_CHECKMINE               30797
@@ -899,6 +899,10 @@
 #define ID_TOOLS_TXTFILTERS				 32930
 #define ID_RUN_LEVEL							 32931
 #define ID_TOOLS_EFFECTEDIT             32932
+
+#define ID_CONVERTMINE_D2X              32933
+#define ID_CONVERTMINE_STANDARD         32934
+#define ID_CONVERTMINE_VERTIGO          32935
 
 #define ID_SEL_POINT                    61447
 #define ID_SEL_LINE                     61448

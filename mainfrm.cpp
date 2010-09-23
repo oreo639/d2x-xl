@@ -33,7 +33,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_FILE_INFORMATION, OnCheckMine)
 	ON_COMMAND(ID_FILE_EXTBLKFMT, OnExtBlkFmt)
 	ON_COMMAND(ID_FILE_CHECKMINE, OnCheckMine)
-	ON_COMMAND(ID_FILE_CONVERT, OnConvert)
+	ON_COMMAND(ID_CONVERTMINE_STANDARD, OnConvertToStandard)
+	ON_COMMAND(ID_CONVERTMINE_VERTIGO, OnConvertToVertigo)
+	ON_COMMAND(ID_CONVERTMINE_D2X, OnConvertToD2X)
 	ON_COMMAND(ID_EDIT_UNDO, OnUndo)
 	ON_COMMAND(ID_EDIT_REDO, OnRedo)
 	ON_COMMAND(ID_EDITGEO_FWD, OnEditGeoFwd)
@@ -1584,7 +1586,7 @@ ToolView ()->DiagTool ()->OnCheckMine ();
 }
 
 
-void CMainFrame::OnConvert () 
+void CMainFrame::ConvertMine (int nVersion) 
 {
 	CConvertDlg	d;
 
@@ -1596,17 +1598,38 @@ if (DLE.IsD1File ()) {
 		else
 			ErrorMsg ("Mine converted to a Descent 2 level.");
 		segmentManager.UpdateWalls (MAX_WALLS_D1 + 1, MAX_WALLS_D2 + 1);
+		triggerManager.ObjTriggerCount () = 0;
 		}
+	return;
 	}
-else {
+
+if (nVersion == 1) {
+	if (DLE.LevelVersion () != 7) {	theMine->SetLevelVersion (7);
+		if (bExpertMode)
+			INFOMSG (" Mine converted to a Standard level")
+		else
+			ErrorMsg ("Mine converted to a Standard level.\n\nWarning - You should now remove all Vertigo and D2X-XL objects.");
+		segmentManager.UpdateWalls (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
+		triggerManager.ObjTriggerCount () = 0;
+		}
+	return;
+	}
+
+if (nVersion == 2) {
 	if (DLE.LevelVersion () < 8) {
 		theMine->SetLevelVersion (8);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Vertigo level")
 		else
 			ErrorMsg ("Mine converted to a Vertigo level.");
+		segmentManager.UpdateWalls (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
+		triggerManager.ObjTriggerCount () = 0;
 		}
-	else if (DLE.LevelVersion () < LEVEL_VERSION) {
+	return;
+	}
+
+if (nVersion == 3) {
+	if (DLE.LevelVersion () < LEVEL_VERSION) {
 		theMine->SetLevelVersion (LEVEL_VERSION);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a D2X-XL level")
@@ -1615,15 +1638,25 @@ else {
 		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
 		triggerManager.ObjTriggerCount () = 0;
 		}
-	else {
-		theMine->SetLevelVersion (7);
-		if (bExpertMode)
-			INFOMSG (" Mine converted to a non-Vertigo level")
-		else
-			ErrorMsg ("Mine converted to a non-Vertigo level.\n\nWarning - You should now remove all Vertigo and D2X-XL objects.");
-		segmentManager.UpdateWalls (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
-		}
 	}
+}
+
+
+void CMainFrame::OnConvertToStandard () 
+{
+ConvertMine (1);
+}
+
+
+void CMainFrame::OnConvertToVertigo () 
+{
+ConvertMine (2);
+}
+
+
+void CMainFrame::OnConvertToD2X () 
+{
+ConvertMine (3);
 }
 
 
