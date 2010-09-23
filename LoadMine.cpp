@@ -1,7 +1,6 @@
 // Copyright (c) 1998 Bryan Aamot, Brainware
 
 #include "mine.h"
-#include "CustomTextures.h"
 #include "dle-xp.h"
 
 // -----------------------------------------------------------------------------

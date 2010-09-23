@@ -1,6 +1,5 @@
 // Copyright (c) 1998 Bryan Aamot, Brainware
 #include "mine.h"
-#include "CustomTextures.h"
 #include "dle-xp.h"
 
 // -----------------------------------------------------------------------------
@@ -107,7 +106,7 @@ if (textureManager.HasCustomTextures () && !bSaveToHog) {
 	else
 		strcat_s (filename, sizeof (filename), ".pog");
 	if (!fp.Open (filename, "wb")) {
-		CreatePog (fp);
+		textureManager.CreatePog (fp);
 		fp.Close ();
 		}
 	}
