@@ -16,7 +16,7 @@ class CGameItemIterator {
 		_T		m_null;
 
 	public:
-		CGameItemIterator (_T* buffer, int count, int start = 0) : m_index (start), m_buffer (buffer), m_count (count) {}
+		CGameItemIterator (_T* buffer, int count, int start = 0) : m_index (start), m_buffer (buffer), m_count (count - start) {}
 
 #if USE_FREELIST
 

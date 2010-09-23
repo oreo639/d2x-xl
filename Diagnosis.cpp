@@ -957,8 +957,7 @@ for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	count = 0;
 	CWall* wallP = null;
-	nWall = 0;
-	for (nWall = 0; wallManager.FindByTrigger (nTrigger, nWall); nWall++) {
+	for (nWall = 0; wallP = wallManager.FindByTrigger (nTrigger, nWall); nWall++) {
 		nWall = wallManager.Index (wallP);
 		if (++count > 1) {
 			sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wall (trigger=%d, wall=%d)", nTrigger, nWall);
