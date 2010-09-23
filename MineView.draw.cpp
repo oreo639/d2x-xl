@@ -796,7 +796,7 @@ CHECKMINE;
 		 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].y, y_max)   )
 	{
 
-		CTexture tex (textureManager.m_bmBuf, textureManager.m_bmIndex);
+		CTexture tex (textureManager.m_bmBuf);
 		ushort width = m_viewWidth;
 		ushort height = m_viewHeight;
 		ushort rowOffset = (m_viewWidth + 3) & ~3;

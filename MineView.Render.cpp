@@ -17,6 +17,42 @@
 extern byte sideVertTable [6][4];
 int bEnableDeltaShading = 0;
 
+//------------------------------------------------------------------------------
+
+inline void CMineView::Blend (CBGR& dest, CBGRA& src, short brightness)
+{
+if (brightness == 0)
+	return;
+if (src.a == 0)
+	return;
+
+if (brightness == 32767) {
+	if (src.a == 255) {
+		dest = src;
+		return;
+		}
+
+	int b = 255 - src.a;
+	dest.r = (byte) (((int) dest.r * b + (int) src.r * src.a) / 255);
+	dest.g = (byte) (((int) dest.g * b + (int) src.g * src.a) / 255);
+	dest.b = (byte) (((int) dest.b * b + (int) src.b * src.a) / 255);
+	return;
+	}
+
+if (src.a == 255) {
+	dest.r = (byte) ((int) src.r * brightness / 32767);
+	dest.g = (byte) ((int) src.g * brightness / 32767);
+	dest.b = (byte) ((int) src.b * brightness / 32767);
+	return;
+	}
+
+int b = 255 - src.a;
+int a = src.a * brightness;
+dest.r = (byte) (((int) dest.r * b + (int) src.r * a / 32767) / 255);
+dest.g = (byte) (((int) dest.g * b + (int) src.g * a / 32767) / 255);
+dest.b = (byte) (((int) dest.b * b + (int) src.b * a / 32767) / 255);
+}
+
 //------------------------------------------------------------------------
 // RenderFace()
 //------------------------------------------------------------------------
@@ -236,7 +272,6 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							v += dv;
 							v %= m;
 							i = (u / 1024) + ((v / vd) & vm);
-							if (tex.m_info.bmIndex [i] < 254) {
 								// a fade value denotes the brightness of a color
 								// scanLight / 4 is the index in the fadeTables which consists of 34 tables with 256 entries each
 								// so for each color there are 34 fade (brightness) values ranges from 1/34 to 34/34
@@ -245,12 +280,16 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 								// We don't need this anymore here since we're rendering RGB and can compute the brightness directly
 								// from scanLight, the maximum of which is 8191
 								// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
-								short fade = scanLight / 4;
+#if 1
+							Blend (*pixelP, tex.m_info.bmData [i], scanLight);
+#else
+							if (tex.m_info.bmData [i].a > 0) {
 								CBGR c = tex.m_info.bmData [i];
 								pixelP->r = (byte) ((int) (c.r) * fade / 8191);
 								pixelP->g = (byte) ((int) (c.g) * fade / 8191);
 								pixelP->b = (byte) ((int) (c.b) * fade / 8191);
 								}
+#endif
 							pixelP++;
 							scanLight += deltaLight;
 							} while (--k);
@@ -262,8 +301,12 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							v += dv;
 							v %= m;
 							i = (u / 1024) + ((v / vd) & vm);
-							if (tex.m_info.bmIndex [i] < 254)
+#if 1
+								Blend (*pixelP, tex.m_info.bmData [i]);
+#else
+							if (tex.m_info.bmData [i].a > 0)
 								*pixelP = tex.m_info.bmData [i];
+#endif
 							pixelP++;
 							} while (--k);
 						}

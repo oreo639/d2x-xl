@@ -386,6 +386,7 @@ public:
 
 	void RenderFace (CSegment* segP, short nSide, CTexture& tex, APOINT* projectedVerts, ushort width, ushort height, ushort rowOffset);
 
+	inline void Blend (CBGR& dest, CBGRA& src, short brightness = 32767);
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);
