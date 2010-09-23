@@ -957,14 +957,16 @@ for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	count = 0;
 	CWall* wallP = null;
-	while (wallManager.FindByTrigger (nTrigger, (wallP == null) ? 0 : wallManager.Index (wallP) + 1)) {
+	nWall = 0;
+	for (nWall = 0; wallManager.FindByTrigger (nTrigger, nWall); nWall++) {
+		nWall = wallManager.Index (wallP);
 		if (++count > 1) {
-			sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wall (trigger=%d, wall=%d)", nTrigger, wallManager.Index (wallP));
+			sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wall (trigger=%d, wall=%d)", nTrigger, nWall);
 			if (UpdateStats (message,0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 		// if exit, make sure it is linked to CReactorTrigger
 		bool bExit = trigP->IsExit (false);
-		bool bFound = (reactorTrigger.Find (*wallP) >= 0);
+		bool bFound = (reactorTrigger->Find (*wallP) >= 0);
 		if (bExit != bFound) {
 			if (m_bAutoFixBugs) {
 				if (bExit) {
