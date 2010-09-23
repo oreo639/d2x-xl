@@ -10,62 +10,6 @@
 #include "TextureManager.h"
 #include "dle-xp.h"
 
-//------------------------------------------------------------------------------
-
-#if 0
-
-inline int Sqr (int i)
-{
-return i * i;
-}
-
-
-inline uint ColorDelta (int r, int g, int b, PALETTEENTRY* palette)
-{
-return (uint) (Sqr (r - (int) palette->peRed) + Sqr (g - (int) palette->peGreen) + Sqr (b - (int) palette->peBlue));
-}
-
-//------------------------------------------------------------------------------
-
-inline byte ClosestColor (int r, int g, int b, PALETTEENTRY* palette)
-{
-	uint	i, delta, closestDelta = 0x7fffffff, closestIndex = 0;
-
-for (i = 0; (i < 256) && closestDelta; i++) {
-	delta = ColorDelta (r, g, b, palette++);
-	if (delta < closestDelta) {
-		closestIndex = i;
-		closestDelta = delta;
-		}
-	}
-return (byte) closestIndex;
-}
-
-//------------------------------------------------------------------------------
-
-bool TGA2Bitmap (tRGBA *pTGA, byte *bmP, int nWidth, int nHeight)
-{
-	byte			*bConverted = null;
-
-int nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
-
-#pragma omp parallel 
-{
-#	pragma omp for
-for (int y = 0; y < nHeight; y++) {
-	int i = y * nWidth;
-	int k = nSize - nWidth - i;
-	for (int x = 0; x < nWidth; x++) {
-		tRGBA& rgba = pTGA [i + x];
-		bmP [k + x] = ClosestColor ((int) rgba.r, (int) rgba.g, (int) rgba.b, paletteManager.ColorMap ()); //paletteManager.Current ());
-		}
-	}
-}
-return true;
-}
-
-#endif
-
 //-----------------------------------------------------------------------------------
 // ReadPog ()
 //-----------------------------------------------------------------------------------
@@ -222,23 +166,30 @@ bool WritePogTexture (CFileManager& fp, CTexture *texP)
 {
 if (texP->m_info.nFormat) {
 	tRGBA rgba = {0, 0, 0, 255};
-	CBGR* bufP = texP->m_info.bmData;
+	CBGRA* bufP = texP->m_info.bmData;
 	for (int i = texP->m_info.size; i; i--, bufP++) {
 		rgba.r = bufP->r;
 		rgba.g = bufP->g;
 		rgba.b = bufP->b;
+		rgba.a = bufP->a;
 		fp.Write (&rgba, sizeof (rgba), 1);
 		}
 	}
 else {
 	ushort w = texP->m_info.width;
 	ushort h = texP->m_info.height;
-	byte* bufP = texP->m_info.bmIndex;
-	bufP += w * (h - 1); // point to last row of bitmap
-	for (int row = 0; row < h; row++) {
-		fp.Write (bufP, 1, w);
-		bufP -= w;
+	byte* bmIndex = new byte [w * h];
+	if (bmIndex == null) { // write as TGA
+		texP->m_info.nFormat = 1;
+		return WritePogTexture (fp, texP);
 		}
+	texP->ComputeIndex (bmIndex);
+	bmIndex += w * (h - 1); // point to last row of bitmap
+	for (int row = 0; row < h; row++) {
+		fp.Write (bmIndex, 1, w);
+		bmIndex -= w;
+		}
+	delete bmIndex;
 	}
 return true;
 }

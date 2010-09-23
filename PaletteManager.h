@@ -70,6 +70,8 @@ class CPaletteManager {
 
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
+		byte ClosestColor (CBGR& color);
+
 		CPaletteManager () : m_bHaveDefault (false), m_bHaveCustom (false) { *m_name = '\0'; }
 
 		~CPaletteManager () { Release (); }

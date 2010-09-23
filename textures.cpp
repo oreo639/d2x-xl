@@ -9,9 +9,28 @@
 #include "TextureManager.h"
 #include "dle-xp.h"
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+void CTexture::ComputeIndex (byte* bmIndex)
+{
+	CBGR* palette = paletteManager.Current ();
+
+#pragma omp parallel 
+	{
+#	pragma omp for
+	for (int y = 0; y < (int) m_info.height; y++) {
+		int i = y * m_info.width;
+		int k = m_info.size - m_info.width - i;
+		for (int x = 0; x < (int) m_info.width; x++) {
+			bmIndex [k + x] = paletteManager.ClosestColor (m_info.bmData [i + x]);
+			}
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
 
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb)
 {
@@ -83,7 +102,7 @@ if (bShowTexture) {
 			}
 		}
 	if (nOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
-		CTexture tex (textureManager.m_bmBuf, textureManager.m_bmIndex);
+		CTexture tex (textureManager.m_bmBuf);
 		if (textureManager.Define (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
 		//CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
@@ -157,9 +176,7 @@ if ((m_info.bmData != null) && ((m_info.width * m_info.height != nSize)))
 	Release ();
 if (m_info.bmData == null)
 	m_info.bmData = new CBGRA [nSize];
-if (m_info.bmIndex == null)
-	m_info.bmIndex = new byte [nSize];
-return (m_info.bmData != null) && (m_info.bmIndex != null);
+return (m_info.bmData != null);
 }
 
 //------------------------------------------------------------------------
@@ -170,10 +187,6 @@ if (!m_info.bExtData) {
 	if (m_info.bmData) {
 		delete m_info.bmData;
 		m_info.bmData = null;
-		}
-	if (m_info.bmIndex) {
-		delete m_info.bmIndex;
-		m_info.bmIndex = null;
 		}
 	}
 bool bFrame = m_info.bFrame;
@@ -203,7 +216,6 @@ if (m_info.nFormat) {
 	for (uint i = 0; i < m_info.size; i++) {
 		fp.Read (&color, sizeof (color), 1);
 		m_info.bmData [i] = color;
-		m_info.bmIndex [i] = (color.a == 0) ? 255 : 0; // transparency
 		}
 	//texP->m_info.bValid = TGA2Bitmap (texP->m_info.bmData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
 	}
@@ -220,18 +232,20 @@ else if (info.flags & 0x08) {
 				runLength = palIndex & ~RLE_CODE;
 				palIndex = *rowPtr++;
 				CBGR color = palette [palIndex];
+				byte alpha = (palIndex < 254) ? 255 : 0;
 				for (int j = 0; j < runLength; j++) {
 					if (x < info.width) {
 						int h = y * info.width + x++;
-						m_info.bmIndex [h] = palIndex;
 						m_info.bmData [h] = color;
+						m_info.bmData [h].a = alpha;
 						}
 					}
 				}
 			else {
 				int h = y * info.width + x++;
-				m_info.bmIndex [h] = palIndex;
 				m_info.bmData [h] = palette [palIndex];
+				if (palIndex >= 254)
+					m_info.bmData [h].a = 0;
 				}
 			}
 		}
@@ -241,8 +255,9 @@ else {
 		for (int x = 0; x < info.width; x++) {
 			int h = y * info.width + x;
 			palIndex = fp.ReadByte ();
-			m_info.bmIndex [h] = palIndex;
 			m_info.bmData [h] = palette [palIndex];
+			if (palIndex >= 254)
+				m_info.bmData [h].a = 0;
 			}
 		}
 	}

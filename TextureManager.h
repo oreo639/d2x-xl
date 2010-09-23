@@ -31,7 +31,6 @@ class CTextureManager {
 		CPigTexture* m_info [2];
 		CPigHeader m_header [2];
 		CBGRA m_bmBuf [512 * 512 * 32];	// max texture size: 512x512, RGBA, 32 frames
-		byte m_bmIndex [512 * 512 * 32];
 		char m_pigFiles [2][256];
 		bool m_bAvailable [2];
 		CExtraTexture*	m_extra;
@@ -106,6 +105,8 @@ class CTextureManager {
 		void Create (int nVersion);
 
 		void Destroy (int nVersion);
+
+		inline CBGRA& Blend (CBGRA& dest, CBGRA& src);
 	};
 
 extern CTextureManager textureManager;

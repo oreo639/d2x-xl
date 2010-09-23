@@ -298,6 +298,23 @@ return extraTexP;
 }
 
 //------------------------------------------------------------------------------
+
+inline CBGRA& CTextureManager::Blend (CBGRA& dest, CBGRA& src)
+{
+if (src.a > 0) {
+	if (src.a == 255)
+		dest = src;
+	else {
+		byte b = 255 - src.a;
+		dest.r = (byte) (((int) dest.r * b + (int) src.r * src.a) / 255);
+		dest.g = (byte) (((int) dest.g * b + (int) src.g * src.a) / 255);
+		dest.b = (byte) (((int) dest.b * b + (int) src.b * src.a) / 255);
+		}
+	}
+return dest;
+}
+
+//------------------------------------------------------------------------------
 // textureManager.Define ()
 //
 // ACTION - Defines data with texture.  If bitmap_handle != 0,
@@ -319,8 +336,6 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture* destTexP, 
 	//int			rc; // return code
 	CTexture*	texP [2];
 	CBGRA*		bmDataP = destTexP->m_info.bmData;
-	byte*			bmIndexP = destTexP->m_info.bmIndex;
-	byte			c;
 	int			fileType = DLE.FileType ();
 
 nTextures [0] = nBaseTex;
@@ -346,15 +361,10 @@ destTexP->m_info.size = texP [0]->m_info.size;
 destTexP->m_info.bValid = 1;
 
 CBGRA* srcDataP = texP [0]->m_info.bmData;
-byte* srcIndexP = texP [0]->m_info.bmIndex;
-if (bmIndexP == null)
-	bmIndexP = bmIndexP;
-
 if (srcDataP != null) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) {
 		memcpy (bmDataP, srcDataP, texP [0]->m_info.size * sizeof (CBGRA));
-		memcpy (bmIndexP, srcIndexP, texP [0]->m_info.size * sizeof (byte));
 		}
 	else {
 		// otherwise, copy bit by bit
@@ -364,7 +374,6 @@ if (srcDataP != null) {
 		memcpy (bmDataP, srcDataP + l1, l2 * sizeof (CBGRA));
 		memcpy (bmDataP + l2, srcDataP, l1 * sizeof (CBGRA));
 		CBGRA* destDataP = bmDataP;
-		byte* destIndexP = bmIndexP;
 		h = w;//texP [0]->m_info.height;
 		for (y = 0; y < h; y++) {
 			for (x = 0; x < w; x++) {
@@ -383,7 +392,6 @@ if (nTextures [1] == 0)
 srcDataP = texP [1]->m_info.bmData;
 if (srcDataP == null)
 	return 0;
-srcIndexP = texP [1]->m_info.bmIndex;
 
 if (texP [0]->m_info.width == texP [1]->m_info.width)
 	scale.c = scale.d = 1;
@@ -406,55 +414,35 @@ if (!(x0 || y0)) {
 	byte* destIndexP, * destIndex2;
 	if (mode == 0x0000) {
 		destDataP = bmDataP;
-		destIndexP = bmIndexP;
-		for (y = 0; y < h; y++)
+		for (y = 0; y < h; y++) {
 			for (x = 0; x < w; x++, destDataP++, destIndexP++) {
-				int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
-				c = srcIndexP [i];
-				if (c != 255) {
-					*destIndexP = c;
-					*destDataP = srcDataP [i];
-					}
+				Blend (*destDataP, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
+			}
 		}
 	else if (mode == (short) 0x4000) {
 		destDataP = bmDataP + h - 1;
-		destIndexP = bmIndexP + h - 1;
-		for (y = 0; y < h; y++, destDataP--, destIndexP--)
+		for (y = 0; y < h; y++, destDataP--, destIndexP--) {
 			for (x = 0, destData2 = destDataP, destIndex2 = destIndexP; x < w; x++, destData2 += w, destIndex2 += w) {
-				int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
-				c = srcIndexP [i];
-				if (c != 255) {
-					*destIndex2 = c;
-					*destData2 = srcDataP [i];
-					}
+				Blend (*destData2, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
+			}
 		}
 	else if (mode == (short) 0x8000) {
 		destDataP = bmDataP + s - 1;
-		destIndexP = bmIndexP + s - 1;
-		for (y = 0; y < h; y++)
+		for (y = 0; y < h; y++) {
 			for (x = 0; x < w; x++, destDataP--, destIndexP--) {
-				int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
-				c = srcIndexP [i];
-				if (c != 255) {
-					*destIndexP = c;
-					*destDataP = srcDataP [i];
-					}
+				Blend (*destDataP, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
+			}
 		}
 	else if (mode == (short) 0xC000) {
 		destDataP = bmDataP + (h - 1) * w;
-		destIndexP = bmIndexP + (h - 1) * w;
-		for (y = 0; y < h; y++, destDataP++)
+		for (y = 0; y < h; y++, destDataP++) {
 			for (x = 0, destData2 = destDataP, destIndex2 = destIndexP; x < w; x++, destData2 -= w, destIndex2 -= w) {
-				i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
-				c = srcIndexP [i];
-				if (c != 255) {
-					*destIndex2 = c;
-					*destData2 = srcDataP [i];
-					}
+				Blend (*destData2, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
+			}
 		}
 	} 
 else {
@@ -462,54 +450,33 @@ else {
 		for (y = 0; y < h; y++) {
 			y1 = ((y + y0) % h) * w;
 			for (x = 0; x < w; x++) {
-				int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
-				c = srcIndexP [i];
-				if (c != 255) {
-					int j = y1 + (x + x0) % w;
-					bmIndexP [j] = c;
-					bmDataP [j] = srcDataP [i];
-					}
+				Blend (bmDataP [y1 + (x + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
 			}
 		}
 	else if (mode == (short) 0x4000) {
-		for (y = h - 1; y >= 0; y--)
+		for (y = h - 1; y >= 0; y--) {
 			for (x = 0; x < w; x++) {
-				int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
-				c = srcIndexP [i];
-				if (c != 255) {
-					int j = ((x + y0) % h) * w + (y + x0) % w;
-					bmIndexP [j] = c;
-					bmDataP [j] = srcDataP [i];
-					}
+				Blend (bmDataP [((x + y0) % h) * w + (y + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
+			}
 		}
 	else if (mode == (short) 0x8000) {
 		for (y = h - 1; y >= 0; y--) {
 			y1 = ((y + y0) % h) * w;
 			int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
 			for (x = w - 1; x >= 0; x--) {
-				c = srcIndexP [i];
-				if (c != 255) {
-					int j = y1 + (x + x0) % w;
-					bmIndexP [j] = c;
-					bmDataP [j] = srcDataP [i];
-					}
+				Blend (bmDataP [y1 + (x + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
 			}
 		}
 	else if (mode == (short) 0xC000) {
-		for (y = 0; y < h; y++)
+		for (y = 0; y < h; y++) {
 			for (x = w - 1; x >= 0; x--) {
-				int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
-				c = srcIndexP [i];
-				if (c != 255) {
-					int j = ((x + y0) % h) * w + (y + x0) % w;
-					bmIndexP [j] = c;
-					bmDataP [j] = srcDataP [i];
-					}
+				Blend (bmDataP [((x + y0) % h) * w + (y + x0) % w], srcDataP [i]);
 				}
 			}
+		}
 	}
 return 0;
 }

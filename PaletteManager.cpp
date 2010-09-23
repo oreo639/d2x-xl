@@ -249,3 +249,37 @@ else {
 }
 
 //------------------------------------------------------------------------
+
+inline int Sqr (int i)
+{
+return i * i;
+}
+
+
+inline uint ColorDelta (int r, int g, int b, CBGR* palEntry)
+{
+return (uint) (Sqr (r - (int) palEntry->r) + Sqr (g - (int) palEntry->g) + Sqr (b - (int) palEntry->b));
+}
+
+//------------------------------------------------------------------------------
+
+byte CPaletteManager::ClosestColor (CBGR& color)
+{
+	CBGR* palette = Current ();
+	uint delta, closestDelta = 0x7fffffff;
+	byte i, closestIndex = 0;
+
+for (i = 0; i < 256; i++) {
+	delta = ColorDelta (color.r, color.g, color.b, palette++);
+	if (delta < closestDelta) {
+		if (delta == 0)
+			return i;
+		closestIndex = i;
+		closestDelta = delta;
+		}
+	}
+return closestIndex;
+}
+
+//------------------------------------------------------------------------------
+

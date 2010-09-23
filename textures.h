@@ -264,7 +264,6 @@ class CBGRA : public CBGR {
 //------------------------------------------------------------------------
 
 typedef struct tTexture {
-	byte*		bmIndex;
 	CBGRA*	bmData;
 	uint		width, height, size;
 	bool		bCustom, bExtData, bFrame, bUsed, bValid;
@@ -275,10 +274,9 @@ class CTexture {
 	public:
 		tTexture	m_info;
 
-		CTexture (CBGRA* dataP = null, byte* indexP = null) {
+		CTexture (CBGRA* dataP = null) {
 			Clear ();
 			m_info.bmData = dataP;
-			m_info.bmIndex = indexP;
 			m_info.bExtData = (dataP != null);
 			}
 
@@ -299,6 +297,8 @@ class CTexture {
 		void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 
 		virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+
+		void ComputeIndex (byte* bmIndex);
 };
 
 //------------------------------------------------------------------------
