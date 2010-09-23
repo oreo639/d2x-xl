@@ -379,7 +379,6 @@ if (srcDataP != null) {
 			for (x = 0; x < w; x++) {
 				int i = (((y - y0 + h) % h) * w) + ((x - x0 + w) % w);
 				*destDataP++ = srcDataP [i];
-				*destIndexP++ = srcIndexP [i];
 				}
 			}
 		}
@@ -411,19 +410,18 @@ h = w;//texP [1]->m_info.height / scale.c * scale.d;
 s = (texP [1]->m_info.width * texP [1]->m_info.width)/*texP [1]->m_info.size*/ / scale2.c * scale2.d;
 if (!(x0 || y0)) {
 	CBGRA * destDataP, * destData2;
-	byte* destIndexP, * destIndex2;
 	if (mode == 0x0000) {
 		destDataP = bmDataP;
 		for (y = 0; y < h; y++) {
-			for (x = 0; x < w; x++, destDataP++, destIndexP++) {
+			for (x = 0; x < w; x++, destDataP++) {
 				Blend (*destDataP, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
 			}
 		}
 	else if (mode == (short) 0x4000) {
 		destDataP = bmDataP + h - 1;
-		for (y = 0; y < h; y++, destDataP--, destIndexP--) {
-			for (x = 0, destData2 = destDataP, destIndex2 = destIndexP; x < w; x++, destData2 += w, destIndex2 += w) {
+		for (y = 0; y < h; y++, destDataP--) {
+			for (x = 0, destData2 = destDataP; x < w; x++, destData2 += w) {
 				Blend (*destData2, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
 			}
@@ -431,7 +429,7 @@ if (!(x0 || y0)) {
 	else if (mode == (short) 0x8000) {
 		destDataP = bmDataP + s - 1;
 		for (y = 0; y < h; y++) {
-			for (x = 0; x < w; x++, destDataP--, destIndexP--) {
+			for (x = 0; x < w; x++, destDataP--) {
 				Blend (*destDataP, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
 			}
@@ -439,7 +437,7 @@ if (!(x0 || y0)) {
 	else if (mode == (short) 0xC000) {
 		destDataP = bmDataP + (h - 1) * w;
 		for (y = 0; y < h; y++, destDataP++) {
-			for (x = 0, destData2 = destDataP, destIndex2 = destIndexP; x < w; x++, destData2 -= w, destIndex2 -= w) {
+			for (x = 0, destData2 = destDataP; x < w; x++, destData2 -= w) {
 				Blend (*destData2, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
 			}

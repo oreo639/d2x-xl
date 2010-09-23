@@ -288,7 +288,7 @@ if (!m_bShowTexture)
 	int			h, i, j, x, y;
 	POINT			offset;
 	CSide*		sideP = current->Side ();
-	CTexture		tex (textureManager.m_bmBuf, textureManager.m_bmIndex);
+	CTexture		tex (textureManager.m_bmBuf);
 	ushort		scale;
 
 offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_centerPt.x - 128;
