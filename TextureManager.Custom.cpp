@@ -6,7 +6,6 @@
 #include "dle-xp-res.h"
 #include "global.h"
 #include "PaletteManager.h"
-#include "customtextures.h"
 #include "TextureManager.h"
 #include "dle-xp.h"
 
@@ -14,7 +13,7 @@
 // ReadPog ()
 //-----------------------------------------------------------------------------------
 
-int ReadPog (CFileManager& fp, long nFileSize) 
+int CTextureManager::ReadPog (CFileManager& fp, long nFileSize) 
 {
 	CPigHeader		pigFileInfo (1);
 	CPigTexture		pigTexInfo (1);
@@ -42,7 +41,7 @@ if (pigFileInfo.nId != 0x474f5044L) {  // 'DPOG'
 	ErrorMsg ("Invalid pog file - reading from hog file");
 	return 1;
 	}
-//textureManager.Release ();
+//Release ();
 sprintf_s (message, sizeof (message), " Pog manager: Reading %d custom textures", pigFileInfo.nTextures);
 DEBUGMSG (message);
 if (!(xlatTbl = new ushort [pigFileInfo.nTextures]))
@@ -65,7 +64,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	ushort nIndex = xlatTbl [i];
 	// look it up in the list of textures
 	for (nTexture = 0; nTexture < MAX_TEXTURES_D2; nTexture++)
-		if (textureManager.m_index [1][nTexture] == nIndex)
+		if (m_index [1][nTexture] == nIndex)
 			break;
 	bExtraTexture = (nTexture >= MAX_TEXTURES_D2);
 	// get texture data offset from texture header
@@ -77,7 +76,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 		continue;
 		}
 	if (bExtraTexture) {
-			texP = textureManager.AddExtra (nIndex);
+			texP = AddExtra (nIndex);
 		if (!texP) {
 			nUnknownTextures++;
 			continue;
@@ -85,7 +84,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 		nTexture = 0;
 		}
 	else {
-		texP = textureManager.Textures (1, nTexture);
+		texP = Textures (1, nTexture);
 		texP->Release ();
 		}
 	//if (!(texP->m_info.bmData = new CBGRA [nSize]))
@@ -120,7 +119,7 @@ return 0;
 
 //-----------------------------------------------------------------------------------
 
-uint WritePogTextureHeader (CFileManager& fp, CTexture *texP, int nTexture, uint nOffset)
+uint CTextureManager::WritePogTextureHeader (CFileManager& fp, CTexture *texP, int nTexture, uint nOffset)
 {
 	CPigTexture pigTexInfo (1);
 	byte *srcP;
@@ -162,7 +161,7 @@ return nOffset;
 
 //-----------------------------------------------------------------------------------
 
-bool WritePogTexture (CFileManager& fp, CTexture *texP)
+bool CTextureManager::WritePogTexture (CFileManager& fp, CTexture *texP)
 {
 if (texP->m_info.nFormat) {
 	tRGBA rgba = {0, 0, 0, 255};
@@ -228,12 +227,12 @@ return true;
 //
 //-----------------------------------------------------------------------------------
 
-int CreatePog (CFileManager& fp) 
+int CTextureManager::CreatePog (CFileManager& fp) 
 {
 	CPigHeader		pigFileInfo (1);
 	uint				textureCount = 0, nOffset = 0;
 	int				nVersion = DLE.FileType ();
-	int				nExtra, i, h = textureManager.MaxTextures (nVersion);
+	int				nExtra, i, h = MaxTextures (nVersion);
 	CExtraTexture*	extraTexP;
 	CTexture*		texP;
 
@@ -242,7 +241,7 @@ if (DLE.IsD1File ()) {
 	return 1;
 	}
 
-textureCount = textureManager.m_nTextures [1];
+textureCount = m_nTextures [1];
 
 sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",m_startFolder );
 
@@ -250,36 +249,36 @@ sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",m_startFolder );
 pigFileInfo.nId = 0x474f5044L; /* 'DPOG' */
 pigFileInfo.nVersion = 1;
 pigFileInfo.nTextures = 0;
-for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
+for (i = 0, texP = Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
 		pigFileInfo.nTextures++;
-for (extraTexP = textureManager.m_extra; extraTexP; extraTexP = extraTexP->m_next)
+for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	pigFileInfo.nTextures++;
 pigFileInfo.Write (fp);
 
 // write list of textures
-for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
+for (i = 0, texP = Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
-		fp.Write (textureManager.m_index [1][i]);
+		fp.Write (m_index [1][i]);
 
-for (extraTexP = textureManager.m_extra; extraTexP; extraTexP = extraTexP->m_next)
+for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	fp.Write (extraTexP->m_index);
 
 // write texture headers
 nExtra = 0;
-for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
+for (i = 0, texP = Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
 		nOffset = WritePogTextureHeader (fp, texP, nExtra++, nOffset);
-for (extraTexP = textureManager.m_extra; extraTexP; extraTexP = extraTexP->m_next)
+for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	nOffset = WritePogTextureHeader (fp, extraTexP, nExtra++, nOffset);
 
 sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures", pigFileInfo.nTextures);
 DEBUGMSG (message);
 
-for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
+for (i = 0, texP = Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
 		WritePogTexture (fp, texP);
-for (extraTexP = textureManager.m_extra; extraTexP; extraTexP = extraTexP->m_next)
+for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	WritePogTexture (fp, extraTexP);
 
 return 0;
@@ -287,4 +286,4 @@ return 0;
 
 //------------------------------------------------------------------------------
 
-//eof textures.cpp
+//eof texturemanager.custom.cpp

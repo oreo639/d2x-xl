@@ -204,7 +204,7 @@ if (!(bLoadFromHog || bCreate)) {
 		else
 			strcat_s (filename, 256, ".pog");
 		if (!fp.Open (filename, "rb")) {
-			ReadPog (fp, fp.Size ());
+			textureManager.ReadPog (fp, fp.Size ());
 			fp.Close ();
 			}
 		CFileManager fp;

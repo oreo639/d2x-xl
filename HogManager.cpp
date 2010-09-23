@@ -405,7 +405,7 @@ if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".clr")))
 paletteManager.Reload ();
 textureManager.LoadTextures ();
 if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".pog")))
-	ReadPog (fSrc, size);
+	textureManager.ReadPog (fSrc, size);
 if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".hxm"))) {
 	robotManager.ReadHXM (fSrc, size);
 	int nCustom = 0;
@@ -992,7 +992,7 @@ switch (nType) {
 		i = paletteManager.SaveCustom (fTmp);
 		break;
 	case 3:
-		i = CreatePog (fTmp);
+		i = textureManager.CreatePog (fTmp);
 		break;
 	case 4:
 		i = robotManager.WriteHXM (fTmp);

@@ -40,8 +40,6 @@ class CTextureView : public CWnd {
 		void QSortTexMap (short left, short right);
 		void CreateTexMap (void);
 		int QCmpTexFilters (int nTxt, int mTxt, uint mf, uint mf2);
-//		CTreeView	m_treeView;
-//		afx_msg int CTextureView::OnCreate(LPCREATESTRUCT lpCreateStruct);
 		afx_msg BOOL OnEraseBkgnd (CDC* pDC);
 		afx_msg void OnPaint ();
 		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -51,8 +49,6 @@ class CTextureView : public CWnd {
 		void Setup ();
 		void RecalcLayout ();
 		int PickTexture(CPoint &point,short &nBaseTex);
-//		int ReadTextureFromFile(short texture_number,byte *bitmap_array);
-//		int ReadPog(CFileManager& file);
 		void Refresh (bool bRepaint = true);
 		void ToggleViewFlag(eMineViewFlags flag) {
 			m_viewFlags ^= flag;

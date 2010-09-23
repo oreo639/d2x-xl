@@ -78,6 +78,10 @@ class CTextureManager {
 
 		int ScrollSpeed (UINT16 texture, int *x, int *y);
 
+		int ReadPog (CFileManager& fp, long nFileSize);
+
+		int CreatePog (CFileManager& fp);
+
 		void Setup (void);
 
 		void Destroy (void);
@@ -107,6 +111,12 @@ class CTextureManager {
 		void Destroy (int nVersion);
 
 		inline CBGRA& Blend (CBGRA& dest, CBGRA& src);
+
+		uint WritePogTextureHeader (CFileManager& fp, CTexture *texP, int nTexture, uint nOffset);
+
+		bool WritePogTexture (CFileManager& fp, CTexture *texP);
+
+
 	};
 
 extern CTextureManager textureManager;
