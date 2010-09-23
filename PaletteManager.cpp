@@ -98,9 +98,9 @@ for (int i = 0, j = 0; i < 256; i++) {
 void CPaletteManager::Encode (CBGR* src)
 {
 for (int i = 0, j = 0; i < 256; i++) {
-	m_rawData [j++] = src [i].r;
-	m_rawData [j++] = src [i].g;
-	m_rawData [j++] = src [i].b;
+	m_rawData [j++] = src [i].r / 4;
+	m_rawData [j++] = src [i].g / 4;
+	m_rawData [j++] = src [i].b / 4;
 	}
 }
 
@@ -165,7 +165,7 @@ return 1;
 CBGR* CPaletteManager::LoadDefault (void)
 {
 CResource res;
-if (!res.Load (Resource ()))
+if (!res.Load (SelectResource ()))
 	return null;
 memcpy (m_rawData, res.Data (), sizeof (m_rawData));
 Decode (m_default);
@@ -197,7 +197,7 @@ return (m_default == null) ? null : m_default + i;
 //
 //------------------------------------------------------------------------
 
-const char* CPaletteManager::Resource (void) 
+const char* CPaletteManager::SelectResource (void) 
 {
 	typedef struct tPalExt {
 		char	szFile [256];

@@ -75,7 +75,7 @@ class CPaletteManager {
 		~CPaletteManager () { Release (); }
 
 	private:
-		const char* Resource (void);
+		const char* SelectResource (void);
 
 		inline byte FadeValue (byte c, int f);
 
