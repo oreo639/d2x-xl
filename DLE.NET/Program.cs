@@ -10,10 +10,12 @@ namespace DLE.NET
         public static GameMine Mine { get { return theMine; } }
         public static Settings Settings { get { return settings; } }
         public static TextureManager TextureManager { get { return textureManager; } }
+        public static PaletteManager PaletteManager { get { return paletteManager; } }
 
         static GameMine theMine = new GameMine ();
         static Settings settings = new Settings ();
         public static TextureManager textureManager = new TextureManager ();
+        public static PaletteManager paletteManager = new PaletteManager ();
 
         static public bool Modified { get; set; }
 

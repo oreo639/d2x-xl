@@ -14,30 +14,18 @@ namespace DLE.NET
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
 
-    public struct tRGBA
+    [StructLayout (LayoutKind.Sequential, Pack = 1)]
+    public struct RGBA
     {
-        byte r, g, b, a;
+        public byte r, g, b, a;
     }
 
+    //------------------------------------------------------------------------------
 
-    public struct tBGRA
+    [StructLayout (LayoutKind.Sequential, Pack = 1)]
+    public struct BGR 
     {
-        byte b, g, r, a;
-    }
-
-    public struct tABGR
-    {
-        byte a, b, g, r;
-    }
-
-    public struct tBGR
-    {
-        byte r, g, b;
-    }
-
-    class BGR 
-    {
-	    public byte b , g, r;
+	    public byte b, g, r;
 
 	    public BGR (byte red = 0, byte green = 0, byte blue = 0)
 		{
@@ -47,13 +35,16 @@ namespace DLE.NET
         }
 
         public uint ColorRef () { return (uint) r * 65536 + (uint) g * 256 + (uint) b; }
-    };
+    }
 
-    public class BGRA : BGR 
+    //------------------------------------------------------------------------------
+
+    [StructLayout (LayoutKind.Sequential, Pack = 1)]
+    public struct BGRA 
     {
-	    byte a;
+	    public byte b, g, r, a;
 
-	    public BGRA (tRGBA other) 
+	    public void Assign (RGBA other) 
         {
 		    r = other.r;
 		    g = other.g;
@@ -61,7 +52,7 @@ namespace DLE.NET
 		    a = other.a;
 		}
 
-	    public BGRA (BGR other) 
+        public void Assign (BGR other) 
         {
 		    r = other.r;
 		    g = other.g;
@@ -70,11 +61,13 @@ namespace DLE.NET
 		}
 
 	    public BGRA (byte red = 0, byte green = 0, byte blue = 0, byte alpha = 255)
-		    : base (red, green, blue)
 		{
+            r = red;
+            g = green;
+            b = blue;
             a = alpha;
         }
-    };
+    }
 
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
@@ -120,7 +113,8 @@ namespace DLE.NET
         String m_name = "groupa.pig";
         String [] m_palResNames = new String [6] { "groupa.256", "alien1.256", "alien2.256", "fire.256", "water.256", "ice.256" };
 
-
+        const int paletteSize = 37 * 256;
+        
         //------------------------------------------------------------------------
 
         int Luminance (int r, int g, int b)
@@ -215,7 +209,7 @@ namespace DLE.NET
         public int LoadCustom (BinaryReader fp, long size)
         {
         FreeCustom ();
-        if (fp.Read (m_rawData, 0, 37 * 256) != 37 * 256)
+        if (fp.Read (m_rawData, 0, paletteSize) != paletteSize)
 	        return 0;
         Decode (m_custom);
         m_bHaveCustom = true;
@@ -247,16 +241,10 @@ namespace DLE.NET
 
         BGR[] LoadDefault ()
         {
-        m_rawData = Properties.Resources.
-            .GetObject (
-        CResource res;
-        if (!res.Load (Resource ()))
-	        return null;
-        m_default = new byte [res.Size()];
-        memcpy (m_default, res.Data (), res.Size ());
-        Decode (m_default);
-        SetupRender (m_default);
-        SetupBMI (m_default);
+        Buffer.BlockCopy (m_rawData, 0, SelectResource (), 0, paletteSize);
+         Decode (m_default);
+        //SetupRender (m_default);
+        //SetupBMI (m_default);
         return m_default;
         }
 

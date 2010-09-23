@@ -156,8 +156,8 @@ namespace DLE.NET
 
     public class Texture
     {
-        public byte [] m_bmData;
-        public tRGBA [] m_tgaData;
+        public BGRA [] m_bmData;
+        public byte [] m_bmIndex;
         public uint m_width = 0, m_height = 0, m_size = 0;
         public bool m_bCustom = false, m_bExtData = false, m_bFrame = false, m_bUsed = false, m_bValid = false;
         public byte m_nFormat = 0;	// 0: Bitmap, 1: TGA (RGB)
@@ -165,19 +165,36 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public Texture (byte [] dataP = null)
+        public Texture (BGRA[] dataP = null, byte[] indexP = null)
         {
             Clear ();
             m_bmData = dataP;
+            m_bmIndex = indexP;
             m_bExtData = (dataP != null);
+        }
+
+        //------------------------------------------------------------------------
+
+        bool Allocate (int nSize, int nTexture)
+        {
+            if ((m_bmData != null) && ((m_width * m_height != nSize)))
+                Release ();
+            if (m_bmData == null)
+                m_bmData = new BGRA [nSize];
+            if (m_bmIndex == null)
+                m_bmIndex = new byte [nSize];
+            return (m_bmData != null);
         }
 
         //------------------------------------------------------------------------------
 
         public void Release ()
         {
-            m_bmData = null;
-            m_tgaData = null;
+            if (!m_bExtData)
+            {
+                m_bmData = null;
+                m_bmIndex = null;
+            }
         }
 
         //------------------------------------------------------------------------------
@@ -207,7 +224,8 @@ namespace DLE.NET
             {
                 try
                 {
-                    m_bmData = new byte [m_size];
+                    m_bmData = new BGRA [m_size];
+                    m_bmIndex = new byte [m_size];
                 }
                 catch (InsufficientMemoryException)
                 {
@@ -223,13 +241,21 @@ namespace DLE.NET
         {
             byte [] rowSize = new byte [4096];
             byte [] rowData = new byte [4096];
+            BGR [] palette = DLE.paletteManager.Current ();
+            byte palIndex;
 
-            if (((int)info.flags & 0x08) == 0)
+            if (m_nFormat != 0)
             {
-                for (int y = info.height - 1; y >= 0; y--)
-                    Array.Copy (fp.ReadBytes (info.width), 0, m_bmData, (long)(y * info.width), info.width);
+                for (uint i = 0; i < m_size; i++)
+                {
+                    m_bmData [i].r = fp.ReadByte ();
+                    m_bmData [i].g = fp.ReadByte ();
+                    m_bmData [i].b = fp.ReadByte ();
+                    m_bmIndex [i] = (byte) ((fp.ReadByte () == 0) ? 255 : 0); // transparency
+                }
+                //texP->m_info.bValid = TGA2Bitmap (texP->m_info.bmData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
             }
-            else
+            else if (((int)info.flags & 0x08) != 0)
             {
                 uint nSize = fp.ReadUInt32 ();
                 rowSize = fp.ReadBytes (info.height);
@@ -240,7 +266,7 @@ namespace DLE.NET
                     rowData = fp.ReadBytes (rowSize [nLine++]);
                     for (int x = 0, i = 0; x < info.width; )
                     {
-                        byteVal = rowData [i];
+                        palIndex = rowData [i];
                         if ((byteVal & 0xe0) == 0xe0)
                         {
                             runLength = (byte)(byteVal & 0x1f);
@@ -249,30 +275,36 @@ namespace DLE.NET
                             {
                                 if (x < info.width)
                                 {
-                                    m_bmData [y * info.width + x] = runValue;
+                                    int h = y * info.width + x;
+                                    m_bmIndex [h] = palIndex;
+                                    m_bmData [h].Assign (palette [palIndex]);
                                     x++;
                                 }
                             }
                         }
                         else
                         {
-                            m_bmData [y * info.width + x] = byteVal;
+                            int h = y * info.width + x;
+                            m_bmIndex [h] = palIndex;
+                            m_bmData [h].Assign (palette [palIndex]);
                             x++;
                         }
                     }
                 }
             }
-        }
-
-        //------------------------------------------------------------------------
-
-        bool Allocate (int nSize, int nTexture)
-        {
-            if ((m_bmData != null) && ((m_width * m_height != nSize)))
-	            Release ();
-            if (m_bmData == null)
-	            m_bmData = new byte [nSize];
-            return (m_bmData != null);
+            else
+            {
+	            for (int y = info.height - 1; y >= 0; y--) 
+                    {
+		            for (int x = 0; x < info.width; x++) 
+                    {
+			            int h = y * info.width + x;
+			            palIndex = fp.ReadByte ();
+			            m_bmIndex [h] = palIndex;
+			            m_bmData [h].Assign (palette [palIndex]);
+			        }
+                }
+            }
         }
 
         //------------------------------------------------------------------------

@@ -244,7 +244,7 @@ namespace DLE.NET
             int w, h, i, j, x, y, y1, s;
             tFrac scale, scale2;
             Texture [] texP = new Texture [2];
-            byte [] bmBufP = destTexP.m_bmData;
+            byte [] bmBufP = destTexP.m_bmIndex;
             byte c;
 
             nTextures [0] = nBaseTex;
