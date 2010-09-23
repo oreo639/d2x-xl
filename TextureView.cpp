@@ -277,7 +277,7 @@ SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
 // figure out position of current texture
 int nBaseTex = current->Side ()->m_info.nBaseTex;
 int nOvlTex = current->Side ()->m_info.nOvlTex & 0x3fff; // strip rotation info
-CTexture tex (textureManager.m_bmBuf, textureManager.m_bmIndex);
+CTexture tex (textureManager.m_bmBuf);
 
 CDC *pDC = GetDC();
 if (!pDC) {

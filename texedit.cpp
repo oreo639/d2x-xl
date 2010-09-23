@@ -460,7 +460,6 @@ if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) |
 	if (m_texP->m_info.bmData)
 		delete m_texP->m_info.bmData;
 	m_texP->m_info.bmData = bmDataP;
-	m_texP->m_info.bmIndex = bmIndexP;
 	m_texP->m_info.width = m_nWidth;
 	m_texP->m_info.height = m_nHeight;
 	m_texP->m_info.size = m_nSize;
@@ -469,7 +468,6 @@ if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) |
 if (m_texP->m_info.nFormat)
 	memcpy (m_texP->m_info.bmData, m_tga, m_texP->m_info.size * sizeof (tRGBA));
 else {
-	memcpy (m_texP->m_info.bmIndex, m_bitmap, m_texP->m_info.size);
 	for (uint i = 0; i < m_texP->m_info.size; i++)
 		m_texP->m_info.bmData [i] = *paletteManager.Current (i);
 	}	
