@@ -369,7 +369,7 @@ LBTriggers()->ResetContent();
 CTrigger *trigP = triggerManager.Trigger (0);
 int nTrigger;
 for (nTrigger = 0; nTrigger < triggerManager.WallTriggerCount (); nTrigger++, trigP++) {
-	for (i = 0; i < trigP->m_count; i++) {
+	for (i = 0; i < trigP->Count (); i++) {
 		if (trigP->m_targets [i] == CSideKey (m_nSegment, m_nSide)) {
 			// find the wallP with this trigP
 			CWall *wallP = wallManager.Wall (0);

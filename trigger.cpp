@@ -195,11 +195,11 @@ this->CTriggerTargets::Write (fp);
 
 //------------------------------------------------------------------------------
 
-bool CTrigger::IsExit (void)
+bool CTrigger::IsExit (bool bSecret)
 {
 return DLE.IsD1File () 
 		 ? (m_info.flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT)) != 0
-		 : (m_info.type == TT_EXIT) || (m_info.type == TT_SECRET_EXIT);
+		 : (m_info.type == TT_EXIT) || (bSecret && (m_info.type == TT_SECRET_EXIT));
 }
 
 // -----------------------------------------------------------------------------

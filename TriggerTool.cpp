@@ -367,7 +367,7 @@ CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_triggerP) {
-	m_targets = m_triggerP->m_count;
+	m_targets = m_triggerP->Count ();
 	int i;
 	for (i = 0; i < m_targets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_triggerP->Segment (i), m_triggerP->Side (i) + 1);
@@ -512,7 +512,7 @@ if (m_nTrigger != -1) {
 	if (!m_nClass)
 		GetDlgItem (IDC_TRIGGER_ADD)->EnableWindow (FALSE);
 	m_nTime = m_triggerP->Info ().time;
-	m_targets = m_triggerP->m_count;
+	m_targets = m_triggerP->Count ();
 	InitLBTargets ();
 	//TriggerCubeSideList ();
 	// if D2 file, use trigger.type
@@ -835,7 +835,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-m_targets = m_triggerP->m_count;
+m_targets = m_triggerP->Count ();
 if (m_targets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Trigger tool: No more targets possible for this trigger.");
 	return;
@@ -951,7 +951,7 @@ SetTriggerPtr ();
 // get affected segment/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" segment/side
-if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_triggerP->m_count))
+if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_triggerP->Count ()))
 	return;
 short nSegment = m_triggerP->Segment (m_iTarget);
 if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
@@ -962,7 +962,7 @@ if ((nSide < 0) || (nSide > 5))
 
 if ((current->m_nSegment == nSegment) && (current->m_nSide == nSide))
 	return;
-*((CSideKey *) other) = m_triggerP->Target (m_iTarget);
+*((CSideKey *) other) = *(m_triggerP->Target (m_iTarget));
 DLE.MineView ()->Refresh ();
 }
 
@@ -1029,7 +1029,7 @@ triggerManager.AddUnlock ();
 
 BOOL CTriggerTool::TextureIsVisible ()
 {
-return !m_nClass && (m_triggerP != null) && (m_iTarget >= 0) && (m_iTarget < m_triggerP->m_count);
+return !m_nClass && (m_triggerP != null) && (m_iTarget >= 0) && (m_iTarget < m_triggerP->Count ());
 }
 
 //------------------------------------------------------------------------------

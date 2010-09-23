@@ -92,20 +92,20 @@ undoManager.End ();
 
 void CTriggerManager::RenumberTargetObjs (void)
 {
-	CTrigger* trigP = Trigger (0);
+	CTrigger* trigP = ObjTrigger (0);
 
 undoManager.Begin (udTriggers);
 for (int i = ObjTriggerCount (); i; i--, trigP++) {
-	CSideKey* targetP = trigP->m_targets;
-	for (int j = 0; j < trigP->m_count; ) {
-		if (targetP->m_nSide >= 0) 
+	CSideKey* targetP = trigP->Target ();
+	for (int j = 0; j < trigP->Count (); j++) {
+		if (targetP->m_nSide >= 0) // trigger target is geometry
 			targetP++;
 		else {
 			CGameObject* objP = objectManager.FindBySig (targetP->m_nSegment);
-			if (objP != null)
+			if (objP == null)
+				trigP->Delete (j--);
+			else
 				(targetP++)->m_nSegment = objectManager.Index (objP);
-			else 
-				trigP->Delete (j);
 			}
 		}
 	}
@@ -332,8 +332,8 @@ void CTriggerManager::UpdateReactor (void)
 
 undoManager.Begin (udTriggers);
 // remove items from list that do not point to a wall
-for (short nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
-	if (!wallManager.FindBySide (reactorTrigger->m_targets [nTarget]))
+for (short nTarget = 0; nTarget < reactorTrigger->Count (); nTarget++) {
+	if (!wallManager.FindBySide ((*reactorTrigger) [nTarget]))
 		reactorTrigger->Delete (nTarget);
 	}
 // add any exits to target list that are not already in it
@@ -342,11 +342,14 @@ for (CWallIterator wi; wi; wi++) {
 	CTrigger* trigP = wallP->Trigger ();
 	if (trigP == null)
 		continue;
-	if (!trigP->IsExit ())
+	bool bExit = trigP->IsExit (false);
+	bool bFound = (reactorTrigger->Find (*wallP) >= 0);
+	if (bFound == bExit)
 		continue;
-	if (reactorTrigger->Find (*wallP))
-		continue;
-	reactorTrigger->Add (*wallP);
+	if (bExit)
+		reactorTrigger->Add (*wallP);
+	else 
+		reactorTrigger->Delete (*wallP);
 	}
 undoManager.End ();
 }

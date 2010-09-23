@@ -356,14 +356,14 @@ if (strstr (pszFile, ".hog")) {
 	if (pszFile != m_szFile)
 		strcpy_s (m_szFile, sizeof (m_szFile), szFile);
 	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);
-	err = theMine->Load (&hm.m_level, true);
+	err = !theMine->Load (&hm.m_level, true);
 	memset (&missionData, 0, sizeof (missionData));
 	ReadMissionFile (m_szFile);
 	}
 else {
 		char szExt [256];
 
-	err = theMine->Load (pszFile);
+	err = !theMine->Load (pszFile);
 	CFileManager::SplitPath (pszFile, null, pszSubFile, szExt);
 	strcat_s (pszSubFile, 256, szExt);
 	}

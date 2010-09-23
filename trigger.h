@@ -16,42 +16,47 @@
 #define MAX_TRIGGER_TARGETS	10
 
 class CTriggerTargets {
-public:
-	short		m_count;
-	CSideKey	m_targets [MAX_TRIGGER_TARGETS];
+	protected:
+		short		m_count;
+		CSideKey	m_targets [MAX_TRIGGER_TARGETS];
 
-	CTriggerTargets () { m_count = 0; }
+	public:
+		CTriggerTargets () { m_count = 0; }
 
-	void Clear (void);
+		void Clear (void);
 
-	void Read (CFileManager& fp);
+		void Read (CFileManager& fp);
 
-	void Write (CFileManager& fp);
+		void Write (CFileManager& fp);
 
-	short Add (CSideKey key);
+		short Add (CSideKey key);
 
-	short Delete (short i = -1);
+		short Delete (short i = -1);
 
-	int Delete (CSideKey key);
+		int Delete (CSideKey key);
 
-	void Update (short nOldSeg, short nNewSeg);
+		void Update (short nOldSeg, short nNewSeg);
 
-	int Find (CSideKey key);
+		int Find (CSideKey key);
 
-	inline short Add (short nSegment, short nSide) { return Add (CSideKey (nSegment, nSide)); }
+		inline short Add (short nSegment, short nSide) { return Add (CSideKey (nSegment, nSide)); }
 
-	inline short Pop (void) { return Delete (m_count - 1); }
+		inline short Pop (void) { return Delete (m_count - 1); }
 
-	inline int Find (short nSegment, short nSide) { return Find (CSideKey (nSegment, nSide)); }
+		inline int Find (short nSegment, short nSide) { return Find (CSideKey (nSegment, nSide)); }
 
-	inline CSideKey Target (uint i) { return m_targets [i]; }
+		inline CSideKey Target (uint i) { return m_targets [i]; }
 
-	inline short& Segment (uint i) { return m_targets [i].m_nSegment; }
+		inline short& Segment (uint i) { return m_targets [i].m_nSegment; }
 
-	inline short& Side (uint i) { return m_targets [i].m_nSide; }
+		inline short& Side (uint i) { return m_targets [i].m_nSide; }
 
-	inline CSideKey& operator[](uint i) { return m_targets [i]; }
-};
+		inline CSideKey& operator[](uint i) { return m_targets [i]; }
+
+		inline CSideKey* Target (int i = 0) { return &m_targets [i]; }
+
+		inline short& Count (void) { return m_count; }
+	};
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
@@ -91,7 +96,7 @@ class CTrigger : public CTriggerTargets, public CGameItem {
 
 		void Setup (short type, short flags);
 
-		bool IsExit (void);
+		bool IsExit (bool bSecret = true);
 
 		inline const bool operator< (const CTrigger& other) {
 			return (m_info.nObject < other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type < other.m_info.type)); 

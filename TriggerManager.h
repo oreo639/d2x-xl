@@ -108,7 +108,7 @@ class CTriggerManager {
 
 		inline reactorTriggerList& ReactorTriggers (void) { return m_reactorTriggers; }
 
-		inline CReactorTrigger* ReactorTrigger (int i) { return &m_reactorTriggers [i]; }
+		inline CReactorTrigger* ReactorTrigger (int i = 0) { return &m_reactorTriggers [i]; }
 
 		void SortObjTriggers (void);
 

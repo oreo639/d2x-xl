@@ -915,7 +915,7 @@ return false;
 //  o key exists for all locked doors
 //  o exit (normal and special)
 //  o center exists
-//  o non-keyed doors have trigers
+//  o non-keyed doors have triggers
 //  o Triggers () point to something
 //--------------------------------------------------------------------------
 
@@ -938,17 +938,17 @@ if (theMine == null)
 	CReactorTrigger *reactorTrigger = triggerManager.ReactorTrigger (0);
 
 	// make sure trigP is linked to exactly one wallP
-for (i = 0; i < reactorTrigger->m_count; i++)
+for (i = 0; i < reactorTrigger->Count (); i++)
 	if ((reactorTrigger->Segment (i) >= segCount) ||
 		(segmentManager.Segment (reactorTrigger->Segment (i))->m_sides [reactorTrigger->Side (i)].m_info.nWall >= wallCount)) {
 		if (m_bAutoFixBugs) {
 			reactorTrigger->Delete (i);
-			strcpy_s (message, sizeof (message), "FIXED: Reactor has invalid trigP target.");
+			strcpy_s (message, sizeof (message), "FIXED: Reactor has invalid trigger target.");
 			if (UpdateStats (message, 0))
 				return true;
 			}
 		else {
-			strcpy_s (message, sizeof (message), "WARNING: Reactor has invalid trigP target.");
+			strcpy_s (message, sizeof (message), "WARNING: Reactor has invalid trigger target.");
 			if (UpdateStats (message, 0))
 				return true;
 			}
@@ -956,35 +956,37 @@ for (i = 0; i < reactorTrigger->m_count; i++)
 for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	count = 0;
-	wallP = wallManager.Wall (0);
-	for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
-		if (wallP->Info ().nTrigger == nTrigger) {
-			// if exit, make sure it is linked to CReactorTrigger
-			int tt = trigP->Type ();
-			int tf = trigP->Info ().flags;
-			if (DLE.IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
-				for (i = 0; i < reactorTrigger->m_count; i++)
-					if (*((CSideKey*) (reactorTrigger)) == *((CSideKey*) (wallP)))
-						break; // found it
-				// if did not find it
-				if (i >= triggerManager.ReactorTriggerCount ()) {
-					if (m_bAutoFixBugs) {
-						triggerManager.UpdateReactor ();
-						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
-						}
-					else
-						sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
-					if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall))
-						return true;
+	CWall* wallP = null;
+	while (wallManager.FindByTrigger (nTrigger, (wallP == null) ? 0 : wallManager.Index (wallP) + 1)) {
+		if (++count > 1) {
+			sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wall (trigger=%d, wall=%d)", nTrigger, wallManager.Index (wallP));
+			if (UpdateStats (message,0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+			}
+		// if exit, make sure it is linked to CReactorTrigger
+		bool bExit = trigP->IsExit (false);
+		bool bFound = (reactorTrigger.Find (*wallP) >= 0);
+		if (bExit != bFound) {
+			if (m_bAutoFixBugs) {
+				if (bExit) {
+					triggerManager.ReactorTrigger ()->Add (*wallP);
+					sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					}
+				else {
+					triggerManager.ReactorTrigger ()->Delete (*wallP);
+					sprintf_s (message, sizeof (message),"FIXED: Reactor linked to non-exit (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 					}
 				}
-			count++;
-			if (count >1) {
-				sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wall (trig=%d, wallP=%d)",nTrigger,nWall);
-				if (UpdateStats (message,0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+			else {
+				if (bExit)
+					sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+				else
+					sprintf_s (message, sizeof (message),"WARNING: Reactor linked to non-exit (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+				}
+			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall))
+				return true;
 			}
 		}
-	}
+
 	if (count < 1) {
 		if (m_bAutoFixBugs) {
 			triggerManager.Delete (nTrigger);
@@ -1014,23 +1016,23 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	// check number of links of trigP (only for
 	int tt = trigP->Type ();
 	int tf = trigP->Info ().flags;
-	if (trigP->m_count == 0) {
+	if (trigP->Count () == 0) {
 		if (DLE.IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
 			   (tt != TT_SPEEDBOOST) && (tt != TT_SHIELD_DAMAGE_D2) && (tt != TT_ENERGY_DRAIN_D2)
 			) {
-			sprintf_s (message, sizeof (message),"WARNING: Trigger has no targets (triger=%d)",nTrigger);
+			sprintf_s (message, sizeof (message),"WARNING: Trigger has no targets (trigger=%d)",nTrigger);
 			if (UpdateStats (message,0, -1, -1, -1, -1, -1, -1, nTrigger))
 				return true;
 			}
 		}
 	else {
 		// check range of links
-		for (nTarget = 0; nTarget < trigP->m_count; nTarget++) {
+		for (nTarget = 0; nTarget < trigP->Count (); nTarget++) {
 			if (nTarget >= MAX_TRIGGER_TARGETS) {
 				if (m_bAutoFixBugs) {
-					trigP->m_count = MAX_TRIGGER_TARGETS;
+					trigP->Count () = MAX_TRIGGER_TARGETS;
 					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigP=%d, number of links=%d)",nTrigger,nTarget);
 					}
 				else
@@ -1160,7 +1162,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	if (DLE.IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
-			sprintf_s (message, sizeof (message),"WARNING: More than one exit found (trig=%d)",nTrigger);
+			sprintf_s (message, sizeof (message),"WARNING: More than one exit found (trigger=%d)",nTrigger);
 			if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 			}
 		}
@@ -1170,7 +1172,7 @@ trigCount = triggerManager.ObjTriggerCount ();
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	trigP = triggerManager.ObjTrigger (nTrigger);
-	if ((trigP->Type () != TT_MESSAGE) && (trigP->Type () != TT_SOUND) && (trigP->Type () != TT_COUNTDOWN) && !trigP->m_count) {
+	if ((trigP->Type () != TT_MESSAGE) && (trigP->Type () != TT_SOUND) && (trigP->Type () != TT_COUNTDOWN) && !trigP->Count ()) {
 		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigger=%d, object=%d))", nTrigger, trigP->Info ().nObject);
 		if (UpdateStats (message,0, nTrigger, trigP->Info ().nObject, -1, -1, -1, -1, nTrigger)) return true;
 		}

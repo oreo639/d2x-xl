@@ -138,10 +138,10 @@ while (!fp.EoF ()) {
 					fscanf_s (fp.File (), "			    flags %hd\n", &t.Info ().flags);
 					fscanf_s (fp.File (), "			    value %ld\n", &t.Info ().value);
 					fscanf_s (fp.File (), "			    timer %d\n", &t.Info ().time);
-					fscanf_s (fp.File (), "			    count %hd\n", &t.m_count);
-					for (i = 0; i < t.m_count; i++) {
-						fscanf_s (fp.File (), "			        segP %hd\n", &t.m_targets [i].m_nSegment);
-						fscanf_s (fp.File (), "			        side %hd\n", &t.m_targets [i].m_nSide);
+					fscanf_s (fp.File (), "			    count %hd\n", &t.Count ());
+					for (i = 0; i < t.Count (); i++) {
+						fscanf_s (fp.File (), "			        segP %hd\n", &t [i].m_nSegment);
+						fscanf_s (fp.File (), "			        side %hd\n", &t [i].m_nSide);
 						}
 					}
 				if (wallManager.HaveResources ()) {
@@ -252,10 +252,10 @@ while (!fp.EoF ()) {
 
 for (CWallTriggerIterator ti; ti; ti++) {
 	CTrigger *trigP = &(*ti);
-	for (j = 0; j < trigP->m_count; j++) {
+	for (j = 0; j < trigP->Count (); j++) {
 		if (trigP->Segment (j) >= 0)
 			trigP->Segment (j) = xlatSegNum [trigP->Segment (j)];
-		else if (trigP->m_count == 1) {
+		else if (trigP->Count () == 1) {
 			triggerManager.Delete (ti.Index ());
 			i--;
 			}
@@ -334,17 +334,17 @@ for (CSegmentIterator si; si; si++) {
 					else {
 						CTrigger *trigP = wallP->Trigger ();
 						int iTarget, count = 0;
-						// count trigP targets in marked area
-						for (iTarget = 0; iTarget < trigP->m_count; iTarget++)
+						// count trigger targets in marked area
+						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
 							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
 								count++;
-						fprintf (fp.File (), "        trigP %d\n", wallP->Info ().nTrigger);
+						fprintf (fp.File (), "        trigger %d\n", wallP->Info ().nTrigger);
 						fprintf (fp.File (), "			    type %d\n", trigP->Type ());
 						fprintf (fp.File (), "			    flags %ld\n", trigP->Info ().flags);
 						fprintf (fp.File (), "			    value %ld\n", trigP->Info ().value);
 						fprintf (fp.File (), "			    timer %d\n", trigP->Info ().time);
 						fprintf (fp.File (), "			    count %d\n", count);
-						for (iTarget = 0; iTarget < trigP->m_count; iTarget++)
+						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
 							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
 								fprintf (fp.File (), "			        segP %d\n", trigP->Segment (iTarget));
 								fprintf (fp.File (), "			        side %d\n", trigP->Side (iTarget));

@@ -197,7 +197,7 @@ extern CWallManager wallManager;
 
 class CWallIterator : public CGameItemIterator<CWall> {
 	public:
-		CWallIterator(int length = 0) : CGameItemIterator (wallManager.Wall (0), (length == 0) ? wallManager.WallCount () : length) {}
+		CWallIterator(int length = 0, int start = 0) : CGameItemIterator (wallManager.Wall (0), (length == 0) ? wallManager.WallCount () : length, start) {}
 	};
 
 class CDoorIterator : public CGameItemIterator<CDoor> {

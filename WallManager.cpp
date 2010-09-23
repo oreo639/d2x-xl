@@ -192,7 +192,7 @@ return null;
 
 CWall* CWallManager::FindByTrigger (short nTrigger, int i)
 {
-for (CWallIterator wi; wi; wi++)
+for (CWallIterator wi (0, i); wi; wi++)
 	if (wi->Info ().nTrigger == nTrigger)
 		return &(*wi);
 return null;

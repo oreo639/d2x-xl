@@ -97,7 +97,7 @@ CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_triggerP) {
-	m_targets = m_triggerP->m_count;
+	m_targets = m_triggerP->Count ();
 	int i;
 	for (i = 0; i < m_targets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_triggerP->Segment (i), m_triggerP->Side (i) + 1);
@@ -168,7 +168,7 @@ undoManager.End ();
 
 void CReactorTool::AddTarget (short nSegment, short nSide) 
 {
-m_targets = m_triggerP->m_count;
+m_targets = m_triggerP->Count ();
 if (m_targets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Reactor tool: No more targets possible for this trigger.");
 	return;
@@ -263,7 +263,7 @@ void CReactorTool::OnSetTarget ()
 // get affected segment/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" segment/side
-if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_triggerP->m_count))
+if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_triggerP->Count ()))
 	return;
 
 short nSegment = m_triggerP->Segment (m_iTarget);
