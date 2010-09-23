@@ -97,6 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitmapInfoHeader.cs" />
     <Compile Include="Customization\DockHelper.cs" />
     <Compile Include="DiagnosisTool.cs">
       <SubType>Form</SubType>
@@ -128,6 +129,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="MineInfo.cs" />
+    <Compile Include="PaletteManager.cs" />
     <Compile Include="SideKey.cs" />
     <Compile Include="Vertex.cs" />
     <Compile Include="MissionTool.cs">

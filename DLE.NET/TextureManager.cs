@@ -10,148 +10,6 @@ namespace DLE.NET
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
 
-    public class PigHeader
-    {
-        public uint nId;
-        public uint nVersion;
-        public uint nTextures;
-        public uint nSounds;
-
-        public int Version { get; private set; }
-        public uint Size { get { return (uint) ((Version == 1) ? 2 : 3) * sizeof (uint); } }
-
-        public PigHeader(int version = 1)
-        {
-            Version = version;
-        }
-
-        public void Read (BinaryReader fp)
-        {
-            if (Version == 1)
-            {
-                nId = fp.ReadUInt32 ();
-                nVersion = fp.ReadUInt32 ();
-                nTextures = fp.ReadUInt32 ();
-            }
-            else
-            {
-                nTextures = fp.ReadUInt32 ();
-                nSounds = fp.ReadUInt32 ();
-            }
-        }
-    }
-
-    //------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------
-
-    public class PigTexture
-    {
-        public ushort whExtra;     // bits 0-3 width, bits 4-7 height
-
-        public byte [] name;
-        public byte dflags;      // this is only important for large bitmaps like the cockpit
-        public ushort width;
-        public ushort height;
-        public byte flags;
-        public byte avgColor;
-        public uint offset;
-
-        public int Version { get; private set; }
-        public uint Size { get { return (uint) ((Version == 1) ? 18 : 17); } }
-
-        public PigTexture (int version = 1)
-        {
-            Version = version;
-        }
-
-	    void Setup (int nVersion, ushort w = 0, ushort h = 0, byte f = 0, uint o = 0) 
-        {
-		    Version = nVersion;
-		    width = w;
-		    height = h;
-		    flags = f;
-		    offset = o;
-		    dflags = 0;
-		    avgColor = 0;
-		}
-
-	    void Decode () 
-        {
-		    width += (ushort) ((whExtra % 16) * 256);
-		    if (((flags & 0x80) != 0) && (width > 256))
-			    height *= width;
-		    else
-			    height += (ushort) ((whExtra / 16) * 256);
-		    }
-
-	    void Encode () 
-        {
-		    if (((flags & 0x80) != 0) && (width > 256)) {
-			    whExtra = (ushort) (width / 256);
-			    height /= width;
-			    }
-		    else {
-			    whExtra = (ushort) ((width / 256) + ((height / 256) * 16));
-			    height %= 256;
-			    }
-            width %= 256;
-        }
-
-        public void Read (BinaryReader fp, int nVersion = -1)
-        {
-            if (nVersion >= 0)
-                Version = nVersion;
-            name = fp.ReadBytes (name.Length);
-            dflags = fp.ReadByte ();
-            width = (ushort)fp.ReadByte ();
-            height = (ushort)fp.ReadByte ();
-            if (Version == 1)
-                whExtra = (ushort)fp.ReadByte ();     // bits 0-3 width, bits 4-7 height
-            else
-            {
-                name [7] = 0;
-                whExtra = 0;
-            }
-            flags = fp.ReadByte ();
-            avgColor = fp.ReadByte ();
-            offset = fp.ReadUInt32 ();
-            Decode ();
-        }
-
-        public void Write (BinaryWriter fp)
-        {
-            Encode ();
-            fp.Write (name);
-            fp.Write (dflags);
-            fp.Write ((byte)width);
-            fp.Write ((byte)height);
-            if (Version == 1)
-                fp.Write ((byte) whExtra);
-            fp.Write (flags);
-            fp.Write (avgColor);
-            fp.Write (offset);
-        }
-
-        public int BufSize ()
-        {
-            return (int)width * (int)height;
-        }
-    }
-
-    //------------------------------------------------------------------------------
-
-    unsafe struct PigSoundD1
-    {
-        fixed byte unknown [20];
-
-        public const uint Size = 20;
-    }
-
-    //------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------
-
     public class TextureManager
     {
         public const int MAX_TEXTURES_D1 = 584;
@@ -176,6 +34,7 @@ namespace DLE.NET
         long [] m_nOffsets = new long [2] { 0, 0 };
         byte [] m_bmBuffer = new byte [512 * 512 * 4 * 32];
         List<Texture> m_extra = new List<Texture> ();
+        String m_paletteName = "";
 
         //------------------------------------------------------------------------------
 
@@ -183,6 +42,26 @@ namespace DLE.NET
         {
             LoadIndex (0);
             LoadIndex (1);
+        }
+
+        //------------------------------------------------------------------------------
+
+        public void Setup ()
+        {
+            Create (0);
+            Create (1);
+        }
+
+        //------------------------------------------------------------------------------
+
+        public void Create (int nVersion)
+        {
+            m_pigFiles [nVersion] = "";
+            m_names [nVersion] = null;
+            LoadNames (nVersion);
+            m_header [nVersion] = new PigHeader (nVersion);
+            LoadIndex (nVersion);
+            m_textures [nVersion] = new Texture [MaxTextures];
         }
 
         //------------------------------------------------------------------------------
@@ -291,9 +170,8 @@ namespace DLE.NET
         {
         if (nVersion < 0) {
 	        nVersion = Version;
-	        if (m_pigFiles [nVersion] != DLE.descentPath [nVersion])
-		        return;
 	        m_pigFiles [nVersion] = DLE.descentPath [nVersion];
+            m_paletteName = paletteManager.Name;
 	        m_info [nVersion] = null;
 	        }
         Release (nVersion, true, false);
