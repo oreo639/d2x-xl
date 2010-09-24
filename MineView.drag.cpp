@@ -27,8 +27,8 @@ if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 
 	short nVert = sideVertTable [current->m_nSide] [current->m_nPoint];
 	short v = current->Segment ()->m_info.verts [nVert];
-	short x = m_viewPoints [v].x;
-	short y = m_viewPoints [v].y;
+	long x = m_viewPoints [v].x;
+	long y = m_viewPoints [v].y;
 
 if (m_mouseState == eMouseStateInitDrag) {
 	SetMouseState (eMouseStateDrag);
@@ -59,8 +59,8 @@ int i;
 for (i = 0; i < 3; i++) {
 	m_pDC->MoveTo (x, y);
 	short nVert2 = connectPointTable [nVert] [i];
-	short x2 = m_viewPoints [current->Segment ()->m_info.verts [nVert2]].x;
-	short y2 = m_viewPoints [current->Segment ()->m_info.verts [nVert2]].y;
+	long x2 = m_viewPoints [current->Segment ()->m_info.verts [nVert2]].x;
+	long y2 = m_viewPoints [current->Segment ()->m_info.verts [nVert2]].y;
    m_pDC->LineTo (x2, y2);
 	if (rc.left > x2)
 		rc.left = x2;
@@ -89,7 +89,6 @@ if (m_lastMousePos == m_lastDragPos)
 	return FALSE;
 
 	short nVert;
-	short x, y;
 	int i;
 
 nVert = sideVertTable [current->m_nSide] [current->m_nPoint];
@@ -103,8 +102,8 @@ m_lastDragPos = m_lastMousePos;
 
 m_pDC->SetROP2 (R2_NOT);
 for (i = 0; i < vertexManager.Count (); i++) {
-	x = m_viewPoints [i].x;
-	y = m_viewPoints [i].y;
+	long x = m_viewPoints [i].x;
+	long y = m_viewPoints [i].y;
 	if ((abs (x - m_lastMousePos.x) < 5) && (abs (y - m_lastMousePos.y) < 5)) {
 		if ((x != m_highlightPos.x) || (y != m_highlightPos.y)) {
 			if (m_highlightPos.x != -1)
@@ -139,7 +138,6 @@ CHECKMINE;
 	int		m_changesMade = 1;
 	int		i, new_vert, count = 0;
 	long		xPos,yPos;
-	short		xPoint,yPoint;
 	short		point1,vert1;
 	short		point2,vert2;
 
@@ -150,8 +148,8 @@ point1 = sideVertTable [current->m_nSide][current->m_nPoint];
 vert1 = segmentManager.Segment (0) [current->m_nSegment].m_info.verts [point1];
 // find point to merge with
 for (i = 0; i < vertexManager.Count (); i++) {
-	xPoint = m_viewPoints [i].x;
-	yPoint = m_viewPoints [i].y;
+	long xPoint = m_viewPoints [i].x;
+	long yPoint = m_viewPoints [i].y;
 	if (abs(xPos - xPoint) < 5 && abs(yPos - yPoint)<5) {
 		count++;
 		new_vert = i;

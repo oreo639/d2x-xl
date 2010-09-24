@@ -268,7 +268,7 @@ class CBGRA : public CBGR {
 typedef struct tTexture {
 	CBGRA*	bmData;
 	uint		width, height, size;
-	bool		bCustom, bExtData, bFrame, bUsed, bValid;
+	bool		bCustom, bExtData, bFrame, bUsed, bValid, bTransparent;
 	byte		nFormat;	// 0: Bitmap, 1: TGA (RGB)
 } tTexture;
 
@@ -301,6 +301,8 @@ class CTexture {
 		virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 
 		void ComputeIndex (byte* bmIndex);
+
+		inline bool Transparent (void) { return m_info.bTransparent; }
 };
 
 //------------------------------------------------------------------------

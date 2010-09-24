@@ -211,11 +211,14 @@ m_info.width = info.width;
 m_info.height = info.height;
 m_info.size = info.BufSize ();
 m_info.bValid = 1;
+m_info.bTransparent = false;
 if (m_info.nFormat) {
 	tRGBA color;
 	for (uint i = 0; i < m_info.size; i++) {
 		fp.Read (&color, sizeof (color), 1);
 		m_info.bmData [i] = color;
+		if (color.a < 255)
+			m_info.bTransparent = true;
 		}
 	//texP->m_info.bValid = TGA2Bitmap (texP->m_info.bmData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
 	}

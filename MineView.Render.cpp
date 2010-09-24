@@ -19,15 +19,15 @@ int bEnableDeltaShading = 0;
 
 //------------------------------------------------------------------------
 
-int Z (CTexture& tex, APOINT* a, int i)
+inline int CMineView::Z (CTexture& tex, APOINT* a, int i)
 {
 	int x = i % tex.m_info.width;
 	int y = i / tex.m_info.height;
 	double scale = (double) y / (double) tex.m_info.height;
-	double dz1 = (double) (a [0].z - a [1].z) * scale;
-	double dz2 = (double) (a [3].z - a [2].z) * scale;
+	double z1 = (double) a [0].z + (double) (a [1].z - a [0].z) * scale;
+	double z2 = (double) a [2].z + (double) (a [3].z - a [2].z) * scale;
 
-return (int) ((dz2 - dz1) * (double) x / (double) tex.m_info.width);
+return (int) (z1 + (z2 - z1) * (double) x / (double) tex.m_info.width);
 }
 
 //------------------------------------------------------------------------------
@@ -39,9 +39,11 @@ if (brightness == 0)
 if (src.a == 0)
 	return;
 
-if (depth >= z)
-	return;
-depth = z;
+if (!m_bIgnoreDepth) {
+	if (depth < z)
+		return;
+	depth = z;
+	}
 
 if (brightness == 32767) {
 	if (src.a == 255) {
@@ -305,6 +307,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 								}
 #endif
 							pixelP++;
+							depthBufP++;
 							scanLight += deltaLight;
 							} while (--k);
 						} 

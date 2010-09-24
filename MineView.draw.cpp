@@ -278,8 +278,15 @@ for (nSegment = 0; nSegment < h; nSegment++) {
 } // omp parallel
 QSortCubes (0, segmentManager.Count () - 1);
 CalcSegDist ();
+m_bIgnoreDepth = false;
 for (nSegment = 0; nSegment < h; nSegment++) {
 	CSegment* segP = segmentManager.Segment (szo [nSegment].iSeg);
+	if (Visible (segP))
+	 	DrawSegmentTextured (segP);
+	}
+m_bIgnoreDepth = true;
+for (nSegment = h; nSegment > 0; ) {
+	CSegment* segP = segmentManager.Segment (szo [--nSegment].iSeg);
 	if (Visible (segP))
 	 	DrawSegmentTextured (segP);
 	}
@@ -309,7 +316,7 @@ void CMineView::DrawSegment (CSegment *segP, bool bPartial)
 DrawSegmentQuick (segP, bPartial);
 }
 
-void CMineView::DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short clear_it) 
+void CMineView::DrawSegment (short nSegment,short nSide, short nLine, short nPoint, short bClearIt) 
 {
 CHECKMINE;
 
@@ -321,10 +328,10 @@ CHECKMINE;
 		return;
 
 	// clear segment and point
-	if (clear_it) {
+	if (bClearIt) {
 		m_pDC->SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
 		m_pDC->SelectObject (GetStockObject (BLACK_PEN)); // BLACK
-		int nVert = segP->m_info.verts [sideVertTable [nSide][pointnum]];
+		int nVert = segP->m_info.verts [sideVertTable [nSide][nPoint]];
 		if (IN_RANGE (m_viewPoints [nVert].x, x_max) &&
 			 IN_RANGE (m_viewPoints [nVert].y, y_max)) {
 			m_pDC->Ellipse(m_viewPoints [nVert].x - 4,
@@ -379,7 +386,7 @@ CHECKMINE;
 
 	// draw current side
 	// must draw in same order as segment to avoid leftover pixels on screen
-	if (!clear_it) {
+	if (!bClearIt) {
 		if (nSegment == current->m_nSegment)
 			if (SelectMode (eSelectSide)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);        // RED
@@ -409,17 +416,17 @@ CHECKMINE;
 				m_pDC->SelectObject (m_penHiCyan);  // BLUE/CYAN
 		else
 			m_pDC->SelectObject (m_penDkCyan);  // BLUE/CYAN
-		if (IN_RANGE (m_viewPoints [segP->m_info.verts [lineVertTable [sideLineTable [nSide][linenum]][0]]].x, x_max) &&
-			 IN_RANGE (m_viewPoints [segP->m_info.verts [lineVertTable [sideLineTable [nSide][linenum]][0]]].y, y_max) &&
-			 IN_RANGE (m_viewPoints [segP->m_info.verts [lineVertTable [sideLineTable [nSide][linenum]][1]]].x, x_max) &&
-			 IN_RANGE (m_viewPoints [segP->m_info.verts [lineVertTable [sideLineTable [nSide][linenum]][1]]].y, y_max))
+		if (IN_RANGE (m_viewPoints [segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]]].x, x_max) &&
+			 IN_RANGE (m_viewPoints [segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]]].y, y_max) &&
+			 IN_RANGE (m_viewPoints [segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]]].x, x_max) &&
+			 IN_RANGE (m_viewPoints [segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]]].y, y_max))
 			DrawLine (segP,
-						 lineVertTable [sideLineTable [nSide][linenum]][0],
-						 lineVertTable [sideLineTable [nSide][linenum]][1]);
+						 lineVertTable [sideLineTable [nSide][nLine]][0],
+						 lineVertTable [sideLineTable [nSide][nLine]][1]);
 		}
 
 	// draw a circle around the current point
-	if (!clear_it) {
+	if (!bClearIt) {
 		m_pDC->SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 		if (nSegment == current->m_nSegment)
 			if (SelectMode (eSelectPoint)) //  && edit_mode != EDIT_OFF) {
@@ -428,12 +435,12 @@ CHECKMINE;
 				m_pDC->SelectObject (m_penHiCyan); // CYAN
 		else
 			m_pDC->SelectObject (m_penHiDkCyan); // CYAN
-		if (IN_RANGE (m_viewPoints [segP->m_info.verts [sideVertTable [nSide][pointnum]]].x, x_max) &&
-			 IN_RANGE (m_viewPoints [segP->m_info.verts [sideVertTable [nSide][pointnum]]].y, y_max))
-			m_pDC->Ellipse(m_viewPoints [segP->m_info.verts [sideVertTable [nSide][pointnum]]].x - 4,
-								m_viewPoints [segP->m_info.verts [sideVertTable [nSide][pointnum]]].y - 4,
-								m_viewPoints [segP->m_info.verts [sideVertTable [nSide][pointnum]]].x + 4,
-								m_viewPoints [segP->m_info.verts [sideVertTable [nSide][pointnum]]].y + 4);
+		if (IN_RANGE (m_viewPoints [segP->m_info.verts [sideVertTable [nSide][nPoint]]].x, x_max) &&
+			 IN_RANGE (m_viewPoints [segP->m_info.verts [sideVertTable [nSide][nPoint]]].y, y_max))
+			m_pDC->Ellipse(m_viewPoints [segP->m_info.verts [sideVertTable [nSide][nPoint]]].x - 4,
+								m_viewPoints [segP->m_info.verts [sideVertTable [nSide][nPoint]]].y - 4,
+								m_viewPoints [segP->m_info.verts [sideVertTable [nSide][nPoint]]].x + 4,
+								m_viewPoints [segP->m_info.verts [sideVertTable [nSide][nPoint]]].y + 4);
 		}
 }
 
@@ -767,29 +774,27 @@ DrawLine (texP, pt [0], pt [3], color);
 // DrawSegmentTextured()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentTextured (CSegment *segP) 
+void CMineView::DrawSegmentTextured (CSegment* segP) 
 {
-CHECKMINE;
-
 	short x_max = m_viewWidth * 2;
 	short y_max = m_viewHeight * 2;
 
-	if (IN_RANGE (m_viewPoints [segP->m_info.verts [0]].x, x_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [0]].y, y_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].x, x_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].y, y_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].x, x_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].y, y_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].x, x_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].y, y_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].x, x_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].y, y_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].x, x_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].y, y_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].x, x_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].y, y_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].x, x_max) &&
-		 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].y, y_max)   )
+if (IN_RANGE (m_viewPoints [segP->m_info.verts [0]].x, x_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [0]].y, y_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].x, x_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].y, y_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].x, x_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].y, y_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].x, x_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].y, y_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].x, x_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].y, y_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].x, x_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].y, y_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].x, x_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].y, y_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].x, x_max) &&
+	 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].y, y_max))
 	{
 
 		CTexture tex (textureManager.m_bmBuf);
@@ -799,6 +804,8 @@ CHECKMINE;
 
 		CSide* sideP = segP->m_sides;
 		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+			if (textureManager.Texture (sideP->BaseTex ())->Transparent () != m_bIgnoreDepth)
+				continue;
 			if (segP->Child (nSide) != -1) { // not a solid side
 				CWall* wallP = sideP->Wall ();
 				if (wallP == null) // no wall either

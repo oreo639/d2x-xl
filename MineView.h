@@ -193,6 +193,7 @@ protected: // create from serialization only
 	int			m_nViewDist;
 	int			m_nMineCenter;
 
+	bool			m_bIgnoreDepth;
 
 #if OGL_RENDERING
 	HGLRC           m_glRC; // Permanent Rendering Context
@@ -388,6 +389,8 @@ public:
 	void RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort width, ushort height, ushort rowOffset);
 
 	inline void Blend (CBGR& dest, CBGRA& src, long& depth, int z, short brightness = 32767);
+
+	inline int Z (CTexture& tex, APOINT* a, int i);
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);

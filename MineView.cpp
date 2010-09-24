@@ -615,7 +615,7 @@ if (m_DIB != 0) {
 	m_DC.SelectObject (m_DIB);
 	if (m_depthBuffer != null) {
 		for (int i = m_viewWidth * m_viewHeight; i > 0; )
-		m_depthBuffer [--i] = -0x7FFFFFFF;
+		m_depthBuffer [--i] = 0x7FFFFFFF;
 		}
 	}
 #endif
