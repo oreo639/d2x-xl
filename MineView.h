@@ -112,7 +112,7 @@ protected: // create from serialization only
 	int			m_viewDepth;	// in bytes
 	HBITMAP		m_DIB;
 	CBGR*			m_renderBuffer;
-	float*		m_depthBuffer;
+	depthType*	m_depthBuffer;
 	CDC			m_DC;
 	CDC			*m_pDC; // if all goes well, this is set to &m_DC
 	bool			m_bUpdate;
