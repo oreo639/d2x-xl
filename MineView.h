@@ -95,9 +95,21 @@ enum eMouseStates
 
 // -----------------------------------------------------------------------------
 
-typedef long depthType;
+class CFaceListEntry : public CSideKey {
+	public:
+		long	m_z;
+		bool	m_bTransparent;
+	};
 
+// -----------------------------------------------------------------------------
+
+#if 1
+typedef float depthType;
+#define MAX_DEPTH 1e30f
+#else
+typedef long depthType;
 #define MAX_DEPTH 0x7FFFFFFF
+#endif
 
 class CMineView : public CView
 {
@@ -267,7 +279,7 @@ public:
 	void	DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short clear_it = 0);
 	void	DrawSegmentPartial (CSegment *segP);
 	void	DrawSegmentQuick (CSegment *segP, bool bPartial = false);
-	void	DrawSegmentTextured (CSegment *segP);
+	void	DrawFaceTextured (CFaceListEntry& fle);
 	void	DrawCubePoints (CSegment *segP);
 
 	void	DrawCurrentSegment (CSegment *segP, bool bPartial);

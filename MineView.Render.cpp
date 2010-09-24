@@ -24,8 +24,8 @@ inline depthType CMineView::Z (CTexture& tex, APOINT* a, int i)
 	int x = i % tex.m_info.width;
 	int y = i / tex.m_info.width;
 	double scale = (double) y / (double) tex.m_info.height;
-	double z1 = (double) a [0].z + (double) (a [1].z - a [0].z) * scale;
-	double z2 = (double) a [2].z + (double) (a [3].z - a [2].z) * scale;
+	double z1 = (double) a [1].z + (double) (a [0].z - a [1].z) * scale;
+	double z2 = (double) a [3].z + (double) (a [2].z - a [3].z) * scale;
 
 return (depthType) (z1 + (z2 - z1) * (double) x / (double) tex.m_info.width);
 }
@@ -273,13 +273,11 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				vm = tex.m_info.width * (tex.m_info.height - 1);
 				
 				i = (uint) (height - y - 1) * (uint) rowOffset + x0;
-				CBGR* screenBufP = m_renderBuffer + i;
-				depthType* depthBufP = m_depthBuffer + i;
+				CBGR* pixelP = m_renderBuffer + i;
+				depthType* zBufP = m_depthBuffer + i;
 				
 				int k = (x1 - x0);
 				if (k > 0) {
-					CBGR* pixelP = screenBufP;
-					depthType* zBufP = depthBufP;
 					if (bEnableShading) {
 						do {
 							u += du;
@@ -296,7 +294,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
 							i = (u / 1024) + ((v / vd) & vm);
 #if 1
-							Blend (*pixelP, tex.m_info.bmData [i], *zBufP, Z (tex, a, i), scanLight);
+							Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, Z (tex, a, i), scanLight);
 #else
 							if (tex.m_info.bmData [i].a > 0) {
 								CBGR c = tex.m_info.bmData [i];
@@ -304,9 +302,8 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 								pixelP->g = (byte) ((int) (c.g) * fade / 8191);
 								pixelP->b = (byte) ((int) (c.b) * fade / 8191);
 								}
-#endif
 							pixelP++;
-							zBufP++;
+#endif
 							scanLight += deltaLight;
 							} while (--k);
 						} 
@@ -318,13 +315,11 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							v %= m;
 							i = (u / 1024) + ((v / vd) & vm);
 #if 1
-								Blend (*pixelP, tex.m_info.bmData [i], *zBufP, Z (tex, a, i));
+								Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, Z (tex, a, i));
 #else
 							if (tex.m_info.bmData [i].a > 0)
-								*pixelP = tex.m_info.bmData [i];
+								*pixelP++ = tex.m_info.bmData [i];
 #endif
-							pixelP++;
-							zBufP++;
 							} while (--k);
 						}
 					}

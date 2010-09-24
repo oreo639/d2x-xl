@@ -262,7 +262,7 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord (void)
 {
 CHECKMINE;
-CVertex* vertP = current->Segment ()->Vertex (current->Segment ()->m_info.verts [sideVertTable[current->m_nSide][current->m_nPoint]]);
+CVertex* vertP = current->Segment ()->Vertex (sideVertTable [current->m_nSide][current->m_nPoint]);
 m_nCoord [0] = vertP->v.x;
 m_nCoord [1] = vertP->v.y;
 m_nCoord [2] = vertP->v.z;

@@ -219,37 +219,30 @@ for (CSegmentIterator si; si; si++) {
 // DrawSegmentsTextured
 //----------------------------------------------------------------------------
 
-typedef struct tSegZOrder {
-	int		zMax;
-	short		iSeg;
-} tSegZOrder;
+static CFaceListEntry faceRenderList [SEGMENT_LIMIT * 6];
 
-typedef tSegZOrder *pSegZOrder;
-
-static tSegZOrder szo [SEGMENT_LIMIT];
-
-void QSortCubes (short left, short right)
+void SortFaces (short left, short right)
 {
-	int m = szo [(left + right) / 2].zMax;
+	int m = faceRenderList [(left + right) / 2].m_z;
 	short	l = left, r = right;
 
 do {
-	while (szo [l].zMax > m)
+	while (faceRenderList [l].m_z > m)
 		l++;
-	while (szo [r].zMax < m)
+	while (faceRenderList [r].m_z < m)
 		r--;
 	if (l <= r) {
 		if (l < r)
-			Swap (szo [l], szo [r]);
+			Swap (faceRenderList [l], faceRenderList [r]);
 		l++;
 		r--;
 		}
 	}
 while (l < r);
 if (l < right)
-	QSortCubes (l, right);
+	SortFaces (l, right);
 if (left < r)
-	QSortCubes (left, r);
+	SortFaces (left, r);
 }
 
 //----------------------------------------------------------------------------
@@ -258,38 +251,60 @@ void CMineView::DrawSegmentsTextured (void)
 {
 CHECKMINE;
 
-	short		nSegment;
-	short		iVertex;
-	int		h, z, zMax;
 
 // Draw Segments ()
-h = segmentManager.Count ();
-#pragma omp parallel
-{
-#	pragma omp for
-for (nSegment = 0; nSegment < h; nSegment++) {
-	CSegment* segP = segmentManager.Segment (nSegment);
-	for (iVertex = 0, zMax = LONG_MIN; iVertex < MAX_VERTICES_PER_SEGMENT; iVertex++)
-		if (zMax < (z = m_viewPoints [segP->m_info.verts [iVertex]].z))
-			zMax = z;
-	szo [nSegment].iSeg = nSegment;
-	szo [nSegment].zMax = zMax;
+short segCount = segmentManager.Count ();
+int faceCount = 0;
+CSegment* segP = segmentManager.Segment (0);
+for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
+	if (!Visible (segP))
+		continue;
+
+	CSide* sideP = segP->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+		if (segP->Child (nSide) != -1) { // not a solid side
+			CWall* wallP = sideP->Wall ();
+			if (wallP == null) // no wall either
+				continue;
+			if (wallP->Type () == WALL_OPEN) // invisible wall
+				continue;
+			if ((wallP->Type () == WALL_CLOAKED) && (wallP->Info ().cloakValue == 0)) // invisible cloaked wall
+				continue;
+			}
+
+		APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][0]]];
+		APOINT& p1 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][1]]];
+		APOINT& p3 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][3]]];
+
+		CDoubleVector	a ((double) (p1.x - p0.x), (double) (p1.y - p0.y), 0.0), 
+							b ((double) (p3.x - p0.x), (double) (p3.y - p0.y), 0.0);
+		if (a.v.x * b.v.y <= a.v.y * b.v.x)
+			continue;
+
+		long zMax = LONG_MIN;
+		for (short nVertex = 0; nVertex < 4; nVertex++) {
+			long z = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][nVertex]]].z;
+			if (zMax < z)
+				zMax = z;
+			}
+
+		faceRenderList [faceCount].m_nSegment = nSegment;
+		faceRenderList [faceCount].m_nSide = nSide;
+		faceRenderList [faceCount].m_z = zMax;
+		faceRenderList [faceCount].m_bTransparent = textureManager.Texture (sideP->BaseTex ())->Transparent ();
+		++faceCount;
+		}
 	}
-} // omp parallel
-QSortCubes (0, segmentManager.Count () - 1);
+SortFaces (0, faceCount - 1);
 CalcSegDist ();
 m_bIgnoreDepth = false;
-for (nSegment = 0; nSegment < h; nSegment++) {
-	CSegment* segP = segmentManager.Segment (szo [nSegment].iSeg);
-	if (Visible (segP))
-	 	DrawSegmentTextured (segP);
-	}
+for (int nFace = 0; nFace < segCount; nFace++)
+	if (!faceRenderList [nFace].m_bTransparent)
+	 	DrawFaceTextured (faceRenderList [nFace]);
 m_bIgnoreDepth = true;
-for (nSegment = h; nSegment > 0; ) {
-	CSegment* segP = segmentManager.Segment (szo [--nSegment].iSeg);
-	if (Visible (segP))
-	 	DrawSegmentTextured (segP);
-	}
+for (int nFace = faceCount; nFace > 0; )
+	if (faceRenderList [nFace].m_bTransparent)
+	 	DrawFaceTextured (faceRenderList [nFace]);
 }
 
 //--------------------------------------------------------------------------
@@ -771,62 +786,38 @@ DrawLine (texP, pt [0], pt [3], color);
 }
 
 //--------------------------------------------------------------------------
-// DrawSegmentTextured()
+// DrawFaceTextured()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentTextured (CSegment* segP) 
+void CMineView::DrawFaceTextured (CFaceListEntry& fle) 
 {
-	short x_max = m_viewWidth * 2;
-	short y_max = m_viewHeight * 2;
+	//short x_max = m_viewWidth * 2;
+	//short y_max = m_viewHeight * 2;
 
-if (IN_RANGE (m_viewPoints [segP->m_info.verts [0]].x, x_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [0]].y, y_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].x, x_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].y, y_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].x, x_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].y, y_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].x, x_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].y, y_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].x, x_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].y, y_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].x, x_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].y, y_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].x, x_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].y, y_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].x, x_max) &&
-	 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].y, y_max))
+//if (IN_RANGE (m_viewPoints [segP->m_info.verts [0]].x, x_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [0]].y, y_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].x, x_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [1]].y, y_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].x, x_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [2]].y, y_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].x, x_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [3]].y, y_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].x, x_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [4]].y, y_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].x, x_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [5]].y, y_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].x, x_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [6]].y, y_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].x, x_max) &&
+//	 IN_RANGE (m_viewPoints [segP->m_info.verts [7]].y, y_max))
 	{
-
 		CTexture tex (textureManager.m_bmBuf);
-		ushort width = m_viewWidth;
-		ushort height = m_viewHeight;
-		ushort rowOffset = (m_viewWidth + 3) & ~3;
+		CSegment* segP = segmentManager.Segment (fle);
+		CSide* sideP = segmentManager.Side (fle);
 
-		CSide* sideP = segP->m_sides;
-		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-			if (textureManager.Texture (sideP->BaseTex ())->Transparent () != m_bIgnoreDepth)
-				continue;
-			if (segP->Child (nSide) != -1) { // not a solid side
-				CWall* wallP = sideP->Wall ();
-				if (wallP == null) // no wall either
-					continue;
-				if (wallP->Type () == WALL_OPEN) // invisible wall
-					continue;
-				if ((wallP->Type () == WALL_CLOAKED) && (wallP->Info ().cloakValue == 0)) // invisible cloaked wall
-					continue;
-				}
-			APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][0]]];
-			APOINT& p1 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][1]]];
-			APOINT& p3 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][3]]];
-
-			CDoubleVector	a ((double) (p1.x - p0.x), (double) (p1.y - p0.y), 0.0), 
-								b ((double) (p3.x - p0.x), (double) (p3.y - p0.y), 0.0);
-			if (a.v.x * b.v.y > a.v.y * b.v.x) {
-				if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
-					DrawAnimDirArrows (sideP->BaseTex (), &tex);
-					RenderFace (segP, nSide, tex, width, height, rowOffset);
-				}
-			}
+	if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
+		DrawAnimDirArrows (sideP->BaseTex (), &tex);
+		RenderFace (segP, fle.m_nSide, tex, m_viewWidth, m_viewHeight, (m_viewWidth + 3) & ~3);
 		}
 	}
 }

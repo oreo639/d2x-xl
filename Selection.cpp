@@ -104,7 +104,7 @@ return objectManager.Object (m_nObject);
 
 CVertex* CSelection::Vertex (void)
 {
-return vertexManager.Vertex (Segment ()->m_info.verts [sideVertTable [m_nSide][m_nPoint]]); 
+return vertexManager.Vertex (Segment ()->Vertex (sideVertTable [m_nSide][m_nPoint])); 
 }
 
 // -----------------------------------------------------------------------------
