@@ -95,6 +95,10 @@ enum eMouseStates
 
 // -----------------------------------------------------------------------------
 
+typedef long depthType;
+
+#define MAX_DEPTH 0x7FFFFFFF
+
 class CMineView : public CView
 {
 protected: // create from serialization only
@@ -388,9 +392,9 @@ public:
 
 	void RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort width, ushort height, ushort rowOffset);
 
-	inline void Blend (CBGR& dest, CBGRA& src, float& depth, float z, short brightness = 32767);
+	inline void Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness = 32767);
 
-	inline float Z (CTexture& tex, APOINT* a, int i);
+	inline depthType Z (CTexture& tex, APOINT* a, int i);
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);

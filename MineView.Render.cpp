@@ -19,20 +19,20 @@ int bEnableDeltaShading = 0;
 
 //------------------------------------------------------------------------
 
-inline float CMineView::Z (CTexture& tex, APOINT* a, int i)
+inline depthType CMineView::Z (CTexture& tex, APOINT* a, int i)
 {
 	int x = i % tex.m_info.width;
-	int y = i / tex.m_info.height;
-	float scale = (float) y / (float) tex.m_info.height;
-	float z1 = (float) a [0].z + (float) (a [1].z - a [0].z) * scale;
-	float z2 = (float) a [2].z + (float) (a [3].z - a [2].z) * scale;
+	int y = i / tex.m_info.width;
+	double scale = (double) y / (double) tex.m_info.height;
+	double z1 = (double) a [0].z + (double) (a [1].z - a [0].z) * scale;
+	double z2 = (double) a [2].z + (double) (a [3].z - a [2].z) * scale;
 
-return z1 + (z2 - z1) * (float) x / (float) tex.m_info.width;
+return (depthType) (z1 + (z2 - z1) * (double) x / (double) tex.m_info.width);
 }
 
 //------------------------------------------------------------------------------
 
-inline void CMineView::Blend (CBGR& dest, CBGRA& src, float& depth, float z, short brightness)
+inline void CMineView::Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness)
 {
 if (brightness == 0)
 	return;
@@ -274,12 +274,12 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				
 				i = (uint) (height - y - 1) * (uint) rowOffset + x0;
 				CBGR* screenBufP = m_renderBuffer + i;
-				float* depthBufP = m_depthBuffer + i;
+				depthType* depthBufP = m_depthBuffer + i;
 				
 				int k = (x1 - x0);
 				if (k > 0) {
 					CBGR* pixelP = screenBufP;
-					float* zBufP = depthBufP;
+					depthType* zBufP = depthBufP;
 					if (bEnableShading) {
 						do {
 							u += du;
