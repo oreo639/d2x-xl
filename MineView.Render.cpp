@@ -19,20 +19,20 @@ int bEnableDeltaShading = 0;
 
 //------------------------------------------------------------------------
 
-inline int CMineView::Z (CTexture& tex, APOINT* a, int i)
+inline float CMineView::Z (CTexture& tex, APOINT* a, int i)
 {
 	int x = i % tex.m_info.width;
 	int y = i / tex.m_info.height;
-	double scale = (double) y / (double) tex.m_info.height;
-	double z1 = (double) a [0].z + (double) (a [1].z - a [0].z) * scale;
-	double z2 = (double) a [2].z + (double) (a [3].z - a [2].z) * scale;
+	float scale = (float) y / (float) tex.m_info.height;
+	float z1 = (float) a [0].z + (float) (a [1].z - a [0].z) * scale;
+	float z2 = (float) a [2].z + (float) (a [3].z - a [2].z) * scale;
 
-return (int) (z1 + (z2 - z1) * (double) x / (double) tex.m_info.width);
+return z1 + (z2 - z1) * (float) x / (float) tex.m_info.width;
 }
 
 //------------------------------------------------------------------------------
 
-inline void CMineView::Blend (CBGR& dest, CBGRA& src, long& depth, int z, short brightness)
+inline void CMineView::Blend (CBGR& dest, CBGRA& src, long& depth, float z, short brightness)
 {
 if (brightness == 0)
 	return;
