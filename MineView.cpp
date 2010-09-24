@@ -606,7 +606,7 @@ void CMineView::InitView (CDC *pViewDC)
 		m_DIB = ::CreateDIBSection (NULL, (BITMAPINFO *) &bmi, DIB_RGB_COLORS, (void**) &m_renderBuffer, null, 0);
 		if (m_depthBuffer != null) 
 			delete m_depthBuffer;
-		m_depthBuffer = new float [m_viewWidth * m_viewHeight];
+		m_depthBuffer = new depthType [m_viewWidth * m_viewHeight];
 		}
 	}
 	// if DIB exists, then use our own DC instead of the View DC
@@ -615,7 +615,7 @@ if (m_DIB != 0) {
 	m_DC.SelectObject (m_DIB);
 	if (m_depthBuffer != null) {
 		for (int i = m_viewWidth * m_viewHeight; i > 0; )
-		m_depthBuffer [--i] = 1e30f;
+		m_depthBuffer [--i] = MAX_DEPTH;
 		}
 	}
 #endif
