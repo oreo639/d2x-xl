@@ -39,11 +39,10 @@ if (brightness == 0)
 if (src.a == 0)
 	return;
 
-if (!m_bIgnoreDepth) {
-	if (depth < z)
-		return;
+if (depth < z)
+	return;
+if (!m_bIgnoreDepth)
 	depth = z;
-	}
 
 if (brightness == 32767) {
 	if (src.a == 255) {
