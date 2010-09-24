@@ -221,10 +221,10 @@ for (CSegmentIterator si; si; si++) {
 
 static CFaceListEntry faceRenderList [SEGMENT_LIMIT * 6];
 
-void SortFaces (short left, short right)
+void SortFaces (int left, int right)
 {
-	int m = faceRenderList [(left + right) / 2].m_z;
-	short	l = left, r = right;
+	long m = faceRenderList [(left + right) / 2].m_z;
+	int l = left, r = right;
 
 do {
 	while (faceRenderList [l].m_z > m)
@@ -262,6 +262,12 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 
 	CSide* sideP = segP->Side (0);
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+#ifdef _DEBUG
+		if ((nSegment == 40) && (nSide == 3))
+			nSegment = nSegment;
+		if ((nSegment == 193) && (nSide == 2))
+			nSegment = nSegment;
+#endif
 		if (segP->Child (nSide) != -1) { // not a solid side
 			CWall* wallP = sideP->Wall ();
 			if (wallP == null) // no wall either
@@ -272,9 +278,10 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 				continue;
 			}
 
-		APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][0]]];
-		APOINT& p1 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][1]]];
-		APOINT& p3 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][3]]];
+		byte* sideVertP = &sideVertTable [nSide][0];
+		APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertP [0]]];
+		APOINT& p1 = m_viewPoints [segP->m_info.verts [sideVertP [1]]];
+		APOINT& p3 = m_viewPoints [segP->m_info.verts [sideVertP [3]]];
 
 		CDoubleVector	a ((double) (p1.x - p0.x), (double) (p1.y - p0.y), 0.0), 
 							b ((double) (p3.x - p0.x), (double) (p3.y - p0.y), 0.0);
@@ -283,7 +290,7 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 
 		long zMax = LONG_MIN;
 		for (short nVertex = 0; nVertex < 4; nVertex++) {
-			long z = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][nVertex]]].z;
+			long z = m_viewPoints [segP->m_info.verts [sideVertP [nVertex]]].z;
 			if (zMax < z)
 				zMax = z;
 			}
@@ -298,11 +305,11 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 SortFaces (0, faceCount - 1);
 CalcSegDist ();
 m_bIgnoreDepth = false;
-for (int nFace = 0; nFace < faceCount; nFace++)
+for (int nFace = faceCount - 1; nFace >= 0; nFace--)
 	if (!faceRenderList [nFace].m_bTransparent)
 	 	DrawFaceTextured (faceRenderList [nFace]);
 m_bIgnoreDepth = true;
-for (int nFace = faceCount - 1; nFace >= 0; nFace--)
+for (int nFace = 0; nFace < faceCount; nFace++)
 	if (faceRenderList [nFace].m_bTransparent)
 	 	DrawFaceTextured (faceRenderList [nFace]);
 }

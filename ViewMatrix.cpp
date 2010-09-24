@@ -221,9 +221,9 @@ double scale = 5.0;
 if ((m_depthPerception < 10000) && (r.v.z > - m_depthPerception)) 
 	scale *= m_depthPerception / (r.v.z + m_depthPerception);
 r *= CDoubleVector (scale, scale, 1.0);
-apoint.x = (short) ((int) (r.v.x + m_viewWidth) % 32767);
-apoint.y = (short) ((int) (m_viewHeight - r.v.y) % 32767);
-apoint.z = (short) r.v.z;
+apoint.x = ((long) (Round (r.v.x) + m_viewWidth) % 32767);
+apoint.y = ((long) (m_viewHeight - Round (r.v.y)) % 32767);
+apoint.z = (long) Round (r.v.z * 10000); // 5 digits precision
 }
 
 //--------------------------------------------------------------------------

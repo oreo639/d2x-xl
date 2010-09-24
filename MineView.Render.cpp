@@ -39,7 +39,7 @@ if (brightness == 0)
 if (src.a == 0)
 	return;
 
-if (depth < z)
+if (depth <= z)
 	return;
 if (!m_bIgnoreDepth)
 	depth = z;
