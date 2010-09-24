@@ -148,7 +148,7 @@ public:
 	inline const CDoubleMatrix Transpose (void);
 	void Rotate (double angle, char axis);
 	void Scale (double scale);
-	void Square2Quad (POINT a [4]);
+	void Square2Quad (APOINT a [4]);
 };
 
 // -----------------------------------------------------------------------------

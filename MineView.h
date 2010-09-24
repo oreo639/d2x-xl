@@ -108,6 +108,7 @@ protected: // create from serialization only
 	int			m_viewDepth;	// in bytes
 	HBITMAP		m_DIB;
 	CBGR*			m_renderBuffer;
+	long*			m_depthBuffer;
 	CDC			m_DC;
 	CDC			*m_pDC; // if all goes well, this is set to &m_DC
 	bool			m_bUpdate;
@@ -386,7 +387,7 @@ public:
 
 	void RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort width, ushort height, ushort rowOffset);
 
-	inline void Blend (CBGR& dest, CBGRA& src, short brightness = 32767);
+	inline void Blend (CBGR& dest, CBGRA& src, long& depth, int z, short brightness = 32767);
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);

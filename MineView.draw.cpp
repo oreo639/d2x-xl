@@ -230,8 +230,7 @@ static tSegZOrder szo [SEGMENT_LIMIT];
 
 void QSortCubes (short left, short right)
 {
-	int		m = szo [(left + right) / 2].zMax;
-	tSegZOrder	h;
+	int m = szo [(left + right) / 2].zMax;
 	short	l = left, r = right;
 
 do {
@@ -240,11 +239,8 @@ do {
 	while (szo [r].zMax < m)
 		r--;
 	if (l <= r) {
-		if (l < r) {
-			h = szo [l];
-			szo [l] = szo [r];
-			szo [r] = h;
-			}
+		if (l < r)
+			Swap (szo [l], szo [r]);
 		l++;
 		r--;
 		}
