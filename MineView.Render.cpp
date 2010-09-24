@@ -32,7 +32,7 @@ return z1 + (z2 - z1) * (float) x / (float) tex.m_info.width;
 
 //------------------------------------------------------------------------------
 
-inline void CMineView::Blend (CBGR& dest, CBGRA& src, long& depth, float z, short brightness)
+inline void CMineView::Blend (CBGR& dest, CBGRA& src, float& depth, float z, short brightness)
 {
 if (brightness == 0)
 	return;
@@ -274,12 +274,12 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				
 				i = (uint) (height - y - 1) * (uint) rowOffset + x0;
 				CBGR* screenBufP = m_renderBuffer + i;
-				long* depthBufP = m_depthBuffer + i;
+				float* depthBufP = m_depthBuffer + i;
 				
 				int k = (x1 - x0);
 				if (k > 0) {
 					CBGR* pixelP = screenBufP;
-					long* zBufP = depthBufP;
+					float* zBufP = depthBufP;
 					if (bEnableShading) {
 						do {
 							u += du;
@@ -296,7 +296,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
 							i = (u / 1024) + ((v / vd) & vm);
 #if 1
-							Blend (*pixelP, tex.m_info.bmData [i], *depthBufP, Z (tex, a, i), scanLight);
+							Blend (*pixelP, tex.m_info.bmData [i], *zBufP, Z (tex, a, i), scanLight);
 #else
 							if (tex.m_info.bmData [i].a > 0) {
 								CBGR c = tex.m_info.bmData [i];
@@ -306,7 +306,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 								}
 #endif
 							pixelP++;
-							depthBufP++;
+							zBufP++;
 							scanLight += deltaLight;
 							} while (--k);
 						} 
@@ -318,13 +318,13 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							v %= m;
 							i = (u / 1024) + ((v / vd) & vm);
 #if 1
-								Blend (*pixelP, tex.m_info.bmData [i], *depthBufP, Z (tex, a, i));
+								Blend (*pixelP, tex.m_info.bmData [i], *zBufP, Z (tex, a, i));
 #else
 							if (tex.m_info.bmData [i].a > 0)
 								*pixelP = tex.m_info.bmData [i];
 #endif
 							pixelP++;
-							depthBufP++;
+							zBufP++;
 							} while (--k);
 						}
 					}
