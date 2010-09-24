@@ -57,12 +57,11 @@ dest.b = (byte) (((int) dest.b * b + (int) src.b * a / 32767) / 255);
 // RenderFace()
 //------------------------------------------------------------------------
 
-void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, APOINT* projectedVerts, ushort width, ushort height, ushort rowOffset)
+void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort width, ushort height, ushort rowOffset)
 {
 	int h, i, j, k;
-	long yi, yj;
 	POINT a [4];
-	POINT minpt, maxpt;
+	POINT minPt, maxPt;
 	CDoubleMatrix A, IA, B, UV;
 	//double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
 	CUVL *uvls;
@@ -83,25 +82,27 @@ bmWidth2 = tex.m_info.width / 2;
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
 	ushort nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
-	a [i].x = projectedVerts [nVertex].x;
-	a [i].y = projectedVerts [nVertex].y;
+	a [i].x = m_viewPoints [nVertex].x;
+	a [i].y = m_viewPoints [nVertex].y;
 	}
 	
 	// determin min/max points
-minpt.x = minpt.y = 10000; // some number > any screen resolution
-maxpt.x = maxpt.y = 0;
+minPt.x = minPt.y = 32767; // some number > any screen resolution
+maxPt.x = maxPt.y = -32767;
 for (i = 0; i < 4; i++) {
-	minpt.x = min (minpt.x, a [i].x);
-	maxpt.x = max (maxpt.x, a [i].x);
-	minpt.y = min (minpt.y, a [i].y);
-	maxpt.y = max (maxpt.y, a [i].y);
+	long h = a [i].x;
+	minPt.x = min (minPt.x, h);
+	maxPt.x = max (maxPt.x, h);
+	h = a [i].y;
+	minPt.y = min (minPt.y, h);
+	maxPt.y = max (maxPt.y, h);
 	}
 
 	// clip min/max with screen min/max
-minpt.x = max (minpt.x, 0);
-maxpt.x = min (maxpt.x, width);
-minpt.y = max (minpt.y, 0);
-maxpt.y = min (maxpt.y, height);
+minPt.x = max (minPt.x, 0);
+maxPt.x = min (maxPt.x, width);
+minPt.y = max (minPt.y, 0);
+maxPt.y = min (maxPt.y, height);
 
 // fill in texture
 POINT b [4];  // Descent's (u,v) coordinates for textures
@@ -177,29 +178,29 @@ B = IA * UV;
 //#pragma omp parallel
 {
 //#	pragma omp for private (scanLight, deltaLight)
-for (int y = minpt.y; y < maxpt.y; y++) {
-	int x, x0, x1;
-	double w;
+for (int y = minPt.y; y < maxPt.y; y++) {
 	// Determine min and max x for this y.
 	// Check each of the four lines of the quadrilaterial
 	// to figure out the min and max x
-	x0 = maxpt.x; // start out w/ min point all the way to the right
-	x1 = minpt.x; // and max point to the left
+	int x0 = maxPt.x; // start out w/ min point all the way to the right
+	int x1 = minPt.x; // and max point to the left
 	for (i = 0; i < 4; i++) {
 		// if line intersects this y then update x0 & x1
 		int j = (i + 1) % 4; // j = other point of line
-		yi = a [i].y;
-		yj = a [j].y;
+		long yi = a [i].y;
+		long yj = a [j].y;
 		if ((y >= yi && y <= yj) || (y >= yj && y <= yi)) {
-			w = yi - yj;
+			double w = yi - yj;
 			if (w != 0.0) { // avoid divide by zero
-				x = (int)(((double) a [i].x * ((double) y - (double) yj) - (double) a [j].x * ((double)  y - (double)  yi)) / w);
+				double di = (double) (y - yi);
+				double dj = (double) (y - yj);
+				int x = (int) (((double) a [i].x * dj - (double) a [j].x * di) / w);
 				if (x < x0) {
-					scanLight = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
+					scanLight = (int) (((double) light [i] * dj - (double) light [j] * di) / w);
 					x0 = x;
 					}
 				if (x > x1) {
-					deltaLight = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
+					deltaLight = (int) (((double) light [i] * dj - (double) light [j] * di) / w);
 					x1 = x;
 					}
 				}
@@ -207,8 +208,8 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 		} // end for
 	
 	// clip
-	x0 = max (x0, minpt.x);
-	x1 = min (x1, maxpt.x);
+	x0 = max (x0, minPt.x);
+	x1 = min (x1, maxPt.x);
 	
 	// Instead of finding every point using the matrix transformation,
 	// just define the end points and delta values then simply
@@ -219,12 +220,11 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 		deltaLight = (deltaLight - scanLight) / (x1 - x0);
 		
 		// loop for every 32 bytes
-		int end_x = x1;
-		for (; x0 < end_x ; x0 += bmWidth2) {
-			if (end_x - x0 > bmWidth2)
+		for (int xEnd = x1; x0 < xEnd ; x0 += bmWidth2) {
+			if (xEnd - x0 > bmWidth2)
 				x1 = bmWidth2 + x0;
 			else
-				x1 = end_x;
+				x1 = xEnd;
 
 			scale = (double) max (tex.m_info.width, tex.m_info.height);
 			//h = B.uVec[2]*(double) y + B.fVec[2];
@@ -271,7 +271,6 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							i = (u / 1024) + ((v / vd) & vm);
 								// a fade value denotes the brightness of a color
 								// scanLight / 4 is the index in the fadeTables which consists of 34 tables with 256 entries each
 								// so for each color there are 34 fade (brightness) values ranges from 1/34 to 34/34
@@ -281,8 +280,9 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 								// from scanLight, the maximum of which is 8191
 								// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
 #if 1
-							Blend (*pixelP, tex.m_info.bmData [i], scanLight);
+							Blend (*pixelP, tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)], scanLight);
 #else
+							i = (u / 1024) + ((v / vd) & vm);
 							if (tex.m_info.bmData [i].a > 0) {
 								CBGR c = tex.m_info.bmData [i];
 								pixelP->r = (byte) ((int) (c.r) * fade / 8191);
@@ -300,10 +300,10 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							i = (u / 1024) + ((v / vd) & vm);
 #if 1
-								Blend (*pixelP, tex.m_info.bmData [i]);
+								Blend (*pixelP, tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)]);
 #else
+							i = (u / 1024) + ((v / vd) & vm);
 							if (tex.m_info.bmData [i].a > 0)
 								*pixelP = tex.m_info.bmData [i];
 #endif

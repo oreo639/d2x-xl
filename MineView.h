@@ -384,7 +384,7 @@ public:
 
 	BOOL SetWindowPos(const CWnd *pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags);
 
-	void RenderFace (CSegment* segP, short nSide, CTexture& tex, APOINT* projectedVerts, ushort width, ushort height, ushort rowOffset);
+	void RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort width, ushort height, ushort rowOffset);
 
 	inline void Blend (CBGR& dest, CBGRA& src, short brightness = 32767);
 
