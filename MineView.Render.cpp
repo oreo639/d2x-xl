@@ -162,54 +162,65 @@ return InterpolateZ (v0, a [0], a [2], a [PointInTriangle (a [0], a [1], a [2], 
 
 inline double CMineView::ZRange (int depth)
 {
-	APOINT p0 = {m_x0, m_y}, p1 = {m_x1, m_y}, v;
+	APOINT p0 = {m_x0, m_y}, p1 = {m_x1, m_y}, vi [4];
 	int h = -1, j = 0;
-	double z [4];
+	double zi [4];
 
 for (int i = 0; i < 4; i++) {
-	APOINT& v0 = m_screenCoord [i];
-	APOINT& v1 = m_screenCoord [(i + 1) % 4];
+	APOINT v0 = m_screenCoord [i];
+	APOINT v1 = m_screenCoord [(i + 1) % 4];
+#if 0
+	if (v0.x < v1.x) {
+		if ((m_x1 < v0.x) || (m_x0 > v1.x))
+			continue;
+		}
+	else {
+		if ((m_x1 < v1.x) || (m_x0 > v0.x))
+			continue;
+		}
+	if (v0.y < v1.y) {
+		if ((m_y < v0.y) || (m_y > v1.y))
+			continue;
+		}
+	else {
+		if ((m_y < v1.y) || (m_y > v0.y))
+			continue;
+		}
+#endif
+	APOINT v;
 	if (!LineLineIntersection (v, v0, v1, p0, p1))
 		continue;
-#if 1
+	if ((j > 0) && (v.x == vi [j - 1].x) && (v.y == vi [j - 1].y))
+		continue;
 	v0.x -= v.x;
 	v0.y -= v.y;
 	v1.x -= v.x;
 	v1.y -= v.y;
+#if 0
 	if (Dot (v0, v1) > 0.0)
 		continue;
-#else
-	if (v0.x < v1.x) {
-		if ((v.x < v0.x) || (v.x > v1.x))
-			continue;
-		}
-	else {
-		if ((v.x < v1.x) || (v.x > v0.x))
-			continue;
-		}
-	if (v0.y < v1.y) {
-		if ((v.y < v0.y) || (v.y > v1.y))
-			continue;
-		}
-	else {
-		if ((v.y < v1.y) || (v.y > v0.y))
-			continue;
-		}
 #endif
 	double l1 = _hypot (v0.x, v0.y);
 	double l2 = _hypot (v1.x, v1.y);
-	z [j++] = v0.z + (v1.z - v0.z) * l1 / (l1 + l2);
+	vi [j] = v;
+	zi [j++] = v0.z + (v1.z - v0.z) * l1 / (l1 + l2);
 	}
 if (j == 0) {
 	m_z0 = m_z1 = MAX_DEPTH;
 	return 0.0;
 	}
 if (j == 1) {
-	m_z0 = m_z1 = z [0];
+	m_z0 = m_z1 = zi [0];
 	return 0.0;
 	}
-m_z0 = z [0];
-m_z1 = z [1];
+if (vi [0].x <= vi [1].x) {
+	m_z0 = zi [0];
+	m_z1 = zi [1];
+	}
+else {
+	m_z0 = zi [0];
+	m_z1 = zi [1];
+	}	
 if (j > 2 && depth == 0)
 	ZRange (1);
 return (m_z1 - m_z0) / (double) (m_x1 - m_x0);
@@ -459,7 +470,6 @@ for (m_y = minPt.y; m_y < maxPt.y; m_y++) {
 				i = (uint) m_y/*(m_viewHeight - m_y - 1)*/ * (uint) rowOffset + m_x0;
 				CBGR* pixelP = m_renderBuffer + i;
 				depthType* zBufP = m_depthBuffer + i;
-
 				double dz = ZRange ();
 				
 				if (bEnableShading) {
