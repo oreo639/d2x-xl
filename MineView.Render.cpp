@@ -277,10 +277,10 @@ void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort r
 	ushort bmWidth2;
 	byte* fadeTables = paletteManager.FadeTable ();
 	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
-	double scale = (double) max (tex.m_info.m_viewWidth, tex.m_info.m_viewHeight);
+	double scale = (double) max (tex.m_info.width, tex.m_info.height);
 
-tex.m_info.m_viewHeight = tex.m_info.m_viewWidth;
-bmWidth2 = tex.m_info.m_viewWidth / 2;
+tex.m_info.height = tex.m_info.width;
+bmWidth2 = tex.m_info.width / 2;
 
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
@@ -377,7 +377,7 @@ B = IA * UV;
 //#pragma omp parallel
 {
 //#	pragma omp for private (scanLight, deltaLight)
-for (m_y = minPt.m_y; m_y < maxPt.m_y; m_y++) {
+for (m_y = minPt.y; m_y < maxPt.y; m_y++) {
 	// Determine min and max x for this m_y.
 	// Check each of the four lines of the quadrilaterial
 	// to figure out the min and max x
@@ -386,8 +386,8 @@ for (m_y = minPt.m_y; m_y < maxPt.m_y; m_y++) {
 	for (i = 0; i < 4; i++) {
 		// if line intersects this m_y then update m_x0 & m_x1
 		int j = (i + 1) % 4; // j = other point of line
-		long yi = a [i].m_y;
-		long yj = a [j].m_y;
+		long yi = a [i].y;
+		long yj = a [j].y;
 		if ((m_y >= yi && m_y <= yj) || (m_y >= yj && m_y <= yi)) {
 			double w = yi - yj;
 			if (w != 0.0) { // avoid divide by zero
@@ -434,15 +434,15 @@ for (m_y = minPt.m_y; m_y < maxPt.m_y; m_y++) {
 				h = B.uVec.v.x * (double) m_y + B.fVec.v.x;
 				u0 = (B.rVec.v.x * x0d + h) / w0;
 				u1 = (B.rVec.v.x * x1d + h) / w1;
-				h = B.uVec.v.m_y * (double) m_y + B.fVec.v.m_y;
-				v0 = (B.rVec.v.m_y * x0d + h) / w0;
-				v1 = (B.rVec.v.m_y * x1d + h) / w1;
+				h = B.uVec.v.y * (double) m_y + B.fVec.v.y;
+				v0 = (B.rVec.v.y * x0d + h) / w0;
+				v1 = (B.rVec.v.y * x1d + h) / w1;
 				
 				// use 22.10 integer math
 				// the 22 allows for large texture bitmap sizes
 				// the 10 gives more than enough accuracy for the delta values
 
-				m = min (tex.m_info.m_viewWidth, tex.m_info.m_viewHeight);
+				m = min (tex.m_info.width, tex.m_info.height);
 				if (!m)
 					m = 64;
 				m *= 1024;
@@ -454,15 +454,14 @@ for (m_y = minPt.m_y; m_y < maxPt.m_y; m_y++) {
 				dv = ((uint) (((v0 - v1) * 1024.0) / dx) % m);
 				u = ((uint) (u0 * 1024.0)) % m;
 				v = ((uint) (-v0 * 1024.0)) % m;
-				vd = 1024 / tex.m_info.m_viewHeight;
-				vm = tex.m_info.m_viewWidth * (tex.m_info.m_viewHeight - 1);
+				vd = 1024 / tex.m_info.height;
+				vm = tex.m_info.width * (tex.m_info.height - 1);
 				
 				i = (uint) m_y/*(m_viewHeight - m_y - 1)*/ * (uint) rowOffset + m_x0;
 				CBGR* pixelP = m_renderBuffer + i;
 				depthType* zBufP = m_depthBuffer + i;
 
-				double dz;
-				dz = ZRange (a, m_x0, m_x1, m_y, m_z0, m_z1);
+				double dz = ZRange (a);
 				
 				if (bEnableShading) {
 					for (int x = m_x0; x < m_x1; x++) {
