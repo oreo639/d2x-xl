@@ -415,6 +415,8 @@ public:
 
 	inline double ZRange (void);
 
+	inline double ZRange (int x0, int x1, int y, double& z);
+
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);
 	BOOL GLInitPalette (GLvoid);
