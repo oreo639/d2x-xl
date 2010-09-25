@@ -45,6 +45,29 @@ v0.y = (long) (v1.y + ua * (v2.y - v1.y));
 return INTERSECTING;
 }
 
+#elif 0
+
+int LineLineIntersection (APOINT& vi, APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
+{
+	double A = (double) (v2.y - v1.y) / (double) (v2.x - v1.x);
+	double B = v1.y - A * v1.x;
+	double C = (double) (v4.y - v2.y) / (double) (v4.x - v3.x);
+	double D = v3.y - A * v3.x;
+
+if (C != A) {
+	double x = (B + D) / (C - A);
+	double y = A * x + B;
+	vi.x = (long) x;
+	vi.y = (long) y;
+	}
+else {
+	if (B != D)
+		return 0;
+	vi = v4;
+	}
+return 1;
+}
+
 #else
 
 int LineLineIntersection (APOINT& vi, APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
@@ -61,8 +84,8 @@ if (det == 0)
 double C1 = A1 * v1.x + B1 * v1.y;
 double C2 = A2 * v3.x + B2 * v3.y;
 
-vi.x = (long) (B2 * C1 - B1 * C2) / det);
-vi.y = (long) (A1 * C2 - A2 * C1) / det);
+vi.x = (long) ((B2 * C1 - B1 * C2) / det);
+vi.y = (long) ((A1 * C2 - A2 * C1) / det);
 return 1;
 }
 
@@ -76,12 +99,12 @@ long PointLineIntersection (long& x0, long& y0, long x1, long y1, long x2, long 
 long dx = x2 - x1;
 long dy = y2 - y1;
 double u = (x3 - x2) * dx + (y3 - y2) * dy;
-double d = hypot ((double) dx, (double) dy);
+double d = _hypot ((double) dx, (double) dy);
 u /= d * d;
 x0 = (long) (x1 + u * dx + 0.5);
 y0 = (long) (y1 + u * dy + 0.5);
-return (long) (hypot ((double) (x3 - x0), (double) (y3 - y0)) + 0.5);
-)
+return (long) (_hypot ((double) (x3 - x0), (double) (y3 - y0)) + 0.5);
+}
 
 //------------------------------------------------------------------------------
 
@@ -92,18 +115,18 @@ return (double) v1.x * (double) v2.x + (double) v1.y * (double) v2.y;
 
 //------------------------------------------------------------------------------
 
-bool PointInTriangle (APOINT& A, APOINT& B, APOINT& C, APOINT& P)
+static bool PointInTriangle (APOINT& A, APOINT& B, APOINT& C, APOINT& P)
 {
-APOINT v0 = (C.x - A.x, C.y - A.y);
-APOINT v1 = (B.x - A.x, B.y - A.y);
-APOINT v2 = (P.x - A.x, P.y - A.y);
+APOINT v0 = {C.x - A.x, C.y - A.y};
+APOINT v1 = {B.x - A.x, B.y - A.y};
+APOINT v2 = {P.x - A.x, P.y - A.y};
 
 // Compute dot products
-dot00 = Dot (v0, v0);
-dot01 = Dot (v0, v1);
-dot02 = Dot (v0, v2);
-dot11 = Dot (v1, v1);
-dot12 = Dot (v1, v2);
+double dot00 = Dot (v0, v0);
+double dot01 = Dot (v0, v1);
+double dot02 = Dot (v0, v2);
+double dot11 = Dot (v1, v1);
+double dot12 = Dot (v1, v2);
 
 // Compute barycentric coordinates
 double invDenom = 1.0 / (dot00 * dot11 - dot01 * dot01);
@@ -114,29 +137,79 @@ return (u > 0.0) && (v > 0.0) && (u + v < 1.0);
 }
 
 //------------------------------------------------------------------------------
+// v1, v2, v3: triangle corners (z known)
+// v0: reference point (z needed)
 
-depthType InterpolateZ (APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
+inline depthType InterpolateZ (APOINT& v0, APOINT& v1, APOINT& v2, APOINT& v3)
 {
 	APOINT vi;
 
-int i = LineLineIntersection (vi, v1, v2, v3, v4);
-long zi = v1.z + (v2.z - v1.z) * hypot (vi.x - v1.x, vi.y - v1.y) / hypot (v2.x - v1.x, v2.y - v1.y);
-return (depthType) (v3.z + (zi - v3.z) * hypot (v4.x - v3.x, v4.y - v3.y) / hypot (vi.x - v3.x, vi.y - v3.y));
+int i = LineLineIntersection (vi, v1, v2, v3, v0);
+depthType zi = (depthType) (v1.z + (v2.z - v1.z) * _hypot (vi.x - v1.x, vi.y - v1.y) / _hypot (v2.x - v1.x, v2.y - v1.y));
+return (depthType) (v3.z + (zi - v3.z) * _hypot (v0.x - v3.x, v0.y - v3.y) / _hypot (vi.x - v3.x, vi.y - v3.y));
 }
 
 //------------------------------------------------------------------------------
 
 inline depthType CMineView::Z (CTexture& tex, APOINT* a, int x, int y)
 {
-	static int ptIdxTable [2][5] = {{0, 2, 3, 0, 2}, {0, 1, 2, 0, 1}};
-
 	APOINT v0 = {x, y};
-	int* ptIdx = &ptIdxTable [PointInTriangle (a [0], a [1], a [2], v0)][0];
 
-	long z [3];
-for (int i = 0; i < 3; i++)
-	z [i] = InterpolateZ (a [ptIdx [i]], a [ptIdx [i + 1]], a [ptIdx [i + 2]], v0);
-return (depthType) (z2 + (z1 - z2) * (double) x / (double) tex.m_info.width);
+return InterpolateZ (v0, a [0], a [2], a [PointInTriangle (a [0], a [1], a [2], v0) ? 1 : 3]);
+}
+
+//------------------------------------------------------------------------------
+
+inline double CMineView::ZRange (APOINT* a)
+{
+	APOINT p0 = {m_x0, m_y}, p1 = {m_x1, m_y}, vi [4], v;
+	int j = 0;
+
+for (int i = 0; i < 4; i++) {
+	APOINT& v0 = a [i];
+	APOINT& v1 = a [(i + 1) % 4];
+	if (!LineLineIntersection (v, v0, v1, p0, p1))
+		continue;
+#if 1
+	v0.x = v.x - v0.x;
+	v0.m_y = v.m_y - v0.m_y;
+	v1.x -= v.x;
+	v1.m_y -= v.m_y;
+	if (Dot (v0, v1) > 0.0)
+		continue;
+#else
+	if (v0.x < v1.x) {
+		if ((v.x < v0.x) || (v.x > v1.x))
+			continue;
+		}
+	else {
+		if ((v.x < v1.x) || (v.x > v0.x))
+			continue;
+		}
+	if (v0.m_y < v1.m_y) {
+		if ((v.m_y < v0.m_y) || (v.m_y > v1.m_y))
+			continue;
+		}
+	else {
+		if ((v.m_y < v1.m_y) || (v.m_y > v0.m_y))
+			continue;
+		}
+#endif
+	vi [j++] = v;
+	}
+if (j == 0) {
+	m_z0 = m_z1 = MAX_DEPTH;
+	return 0.0;
+	}
+if (j == 1) {
+	m_z0 = m_z1 = (depthType) vi [0].z;
+	return 0.0;
+	}
+m_z0 = (double) vi [0].z;
+m_z1 = (double) vi [1].z;
+if (j > 2 && depth == 0)
+	ZRange (a, m_x0, m_x1, m_y, m_z0, m_z1, 1);
+return (m_z1 - m_z0) / (double) (m_x1 - m_x0);
 }
 
 //------------------------------------------------------------------------------
@@ -184,7 +257,7 @@ dest.b = (byte) (((int) dest.b * b + (int) src.b * a / 32767) / 255);
 // RenderFace()
 //------------------------------------------------------------------------
 
-void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort width, ushort height, ushort rowOffset)
+void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort rowOffset)
 {
 	int h, i, j, k;
 	APOINT a [4];
@@ -201,10 +274,10 @@ void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort w
 	ushort bmWidth2;
 	byte* fadeTables = paletteManager.FadeTable ();
 	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
-	double scale = (double) max (tex.m_info.width, tex.m_info.height);
+	double scale = (double) max (tex.m_info.m_viewWidth, tex.m_info.m_viewHeight);
 
-tex.m_info.height = tex.m_info.width;
-bmWidth2 = tex.m_info.width / 2;
+tex.m_info.m_viewHeight = tex.m_info.m_viewWidth;
+bmWidth2 = tex.m_info.m_viewWidth / 2;
 
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
@@ -225,9 +298,9 @@ for (i = 0; i < 4; i++) {
 
 // clip min/max with screen min/max
 minPt.x = max (minPt.x, 0);
-maxPt.x = min (maxPt.x, width - 1);
+maxPt.x = min (maxPt.x, m_viewWidth - 1);
 minPt.y = max (minPt.y, 0);
-maxPt.y = min (maxPt.y, height - 1);
+maxPt.y = min (maxPt.y, m_viewHeight - 1);
 
 
 // map unit square into texture coordinate
@@ -301,76 +374,76 @@ B = IA * UV;
 //#pragma omp parallel
 {
 //#	pragma omp for private (scanLight, deltaLight)
-for (int y = minPt.y; y < maxPt.y; y++) {
-	// Determine min and max x for this y.
+for (m_y = minPt.m_y; m_y < maxPt.m_y; m_y++) {
+	// Determine min and max x for this m_y.
 	// Check each of the four lines of the quadrilaterial
 	// to figure out the min and max x
-	int x0 = maxPt.x; // start out w/ min point all the way to the right
-	int x1 = minPt.x; // and max point to the left
+	m_x0 = maxPt.x; // start out w/ min point all the way to the right
+	m_x1 = minPt.x; // and max point to the left
 	for (i = 0; i < 4; i++) {
-		// if line intersects this y then update x0 & x1
+		// if line intersects this m_y then update m_x0 & m_x1
 		int j = (i + 1) % 4; // j = other point of line
-		long yi = a [i].y;
-		long yj = a [j].y;
-		if ((y >= yi && y <= yj) || (y >= yj && y <= yi)) {
+		long yi = a [i].m_y;
+		long yj = a [j].m_y;
+		if ((m_y >= yi && m_y <= yj) || (m_y >= yj && m_y <= yi)) {
 			double w = yi - yj;
 			if (w != 0.0) { // avoid divide by zero
-				double di = (double) (y - yi);
-				double dj = (double) (y - yj);
+				double di = (double) (m_y - yi);
+				double dj = (double) (m_y - yj);
 				int x = (int) (((double) a [i].x * dj - (double) a [j].x * di) / w);
-				if (x < x0) {
+				if (x < m_x0) {
 					scanLight = (int) (((double) light [i] * dj - (double) light [j] * di) / w);
-					x0 = x;
+					m_x0 = x;
 					}
-				if (x > x1) {
+				if (x > m_x1) {
 					deltaLight = (int) (((double) light [i] * dj - (double) light [j] * di) / w);
-					x1 = x;
+					m_x1 = x;
 					}
 				}
 			}
 		} // end for
 	
 	// clip
-	x0 = max (x0, minPt.x);
-	x1 = min (x1, maxPt.x);
+	m_x0 = max (m_x0, minPt.x);
+	m_x1 = min (m_x1, maxPt.x);
 	
 	// Instead of finding every point using the matrix transformation,
 	// just define the end points and delta values then simply
 	// add the delta values to u and v
-	if (abs (x0 - x1) > 0) {
+	if (abs (m_x0 - m_x1) > 0) {
 		double u0, u1, v0, v1, w0, w1, h, x0d, x1d;
 		uint u, v, du, dv, m, vd, vm, dx;
-		deltaLight = (deltaLight - scanLight) / (x1 - x0);
+		deltaLight = (deltaLight - scanLight) / (m_x1 - m_x0);
 		
 		// loop for every 32 bytes
-		for (int xEnd = x1; x0 < xEnd ; x0 += bmWidth2) {
-			if (xEnd - x0 > bmWidth2)
-				x1 = bmWidth2 + x0;
+		for (int xEnd = m_x1; m_x0 < xEnd ; m_x0 += bmWidth2) {
+			if (xEnd - m_x0 > bmWidth2)
+				m_x1 = bmWidth2 + m_x0;
 			else
-				x1 = xEnd;
+				m_x1 = xEnd;
 
-			h = B.uVec.v.z * (double) y + B.fVec.v.z;
-			x0d = (double) x0;
-			x1d = (double) x1;
+			h = B.uVec.v.z * (double) m_y + B.fVec.v.z;
+			x0d = (double) m_x0;
+			x1d = (double) m_x1;
 			w0 = (B.rVec.v.z * x0d + h) / scale; // scale factor (64 pixels = 1.0 unit)
 			w1 = (B.rVec.v.z * x1d + h) / scale;
 			if ((fabs (w0) > 0.0001) && (fabs (w1) > 0.0001)) {
-				h = B.uVec.v.x * (double) y + B.fVec.v.x;
+				h = B.uVec.v.x * (double) m_y + B.fVec.v.x;
 				u0 = (B.rVec.v.x * x0d + h) / w0;
 				u1 = (B.rVec.v.x * x1d + h) / w1;
-				h = B.uVec.v.y * (double) y + B.fVec.v.y;
-				v0 = (B.rVec.v.y * x0d + h) / w0;
-				v1 = (B.rVec.v.y * x1d + h) / w1;
+				h = B.uVec.v.m_y * (double) m_y + B.fVec.v.m_y;
+				v0 = (B.rVec.v.m_y * x0d + h) / w0;
+				v1 = (B.rVec.v.m_y * x1d + h) / w1;
 				
 				// use 22.10 integer math
 				// the 22 allows for large texture bitmap sizes
 				// the 10 gives more than enough accuracy for the delta values
 
-				m = min (tex.m_info.width, tex.m_info.height);
+				m = min (tex.m_info.m_viewWidth, tex.m_info.m_viewHeight);
 				if (!m)
 					m = 64;
 				m *= 1024;
-				dx = x1 - x0;
+				dx = m_x1 - m_x0;
 				if (!dx)
 					dx = 1;
 				du = ((uint) (((u1 - u0) * 1024.0) / dx) % m);
@@ -378,15 +451,18 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				dv = ((uint) (((v0 - v1) * 1024.0) / dx) % m);
 				u = ((uint) (u0 * 1024.0)) % m;
 				v = ((uint) (-v0 * 1024.0)) % m;
-				vd = 1024 / tex.m_info.height;
-				vm = tex.m_info.width * (tex.m_info.height - 1);
+				vd = 1024 / tex.m_info.m_viewHeight;
+				vm = tex.m_info.m_viewWidth * (tex.m_info.m_viewHeight - 1);
 				
-				i = (uint) (height - y - 1) * (uint) rowOffset + x0;
+				i = (uint) m_y/*(m_viewHeight - m_y - 1)*/ * (uint) rowOffset + m_x0;
 				CBGR* pixelP = m_renderBuffer + i;
 				depthType* zBufP = m_depthBuffer + i;
+
+				double dz;
+				dz = ZRange (a, m_x0, m_x1, m_y, m_z0, m_z1);
 				
 				if (bEnableShading) {
-					for (int x = x0; x < x1; x++) {
+					for (int x = m_x0; x < m_x1; x++) {
 						u += du;
 						u %= m;
 						v += dv;
@@ -401,7 +477,8 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 						// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
 						i = (u / 1024) + ((v / vd) & vm);
 #if 1
-						Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, Z (tex, a,x, y), scanLight);
+						Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, /*Z (tex, a,x, m_y)*/(depthType) m_z0, scanLight);
+						m_z0 += dz;
 #else
 						if (tex.m_info.bmData [i].a > 0) {
 							CBGR c = tex.m_info.bmData [i];
@@ -415,14 +492,15 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 						} 
 					}
 				else {
-					for (int x = x0; x < x1; x++) {
+					for (int x = m_x0; x < m_x1; x++) {
 						u += du;
 						u %= m;
 						v += dv;
 						v %= m;
 						i = (u / 1024) + ((v / vd) & vm);
 #if 1
-							Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, Z (tex, a,x, y));
+						Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, /*Z (tex, a,x, m_y)*/(depthType) m_z0);
+						m_z0 += dz;
 #else
 						if (tex.m_info.bmData [i].a > 0)
 							*pixelP++ = tex.m_info.bmData [i];

@@ -211,6 +211,9 @@ protected: // create from serialization only
 
 	bool			m_bIgnoreDepth;
 
+	int			m_x0, m_x1, m_y;
+	double		z0, z1;
+
 #if OGL_RENDERING
 	HGLRC           m_glRC; // Permanent Rendering Context
 	CDC             *m_glDC; // Private GDI Device Context
@@ -402,11 +405,13 @@ public:
 
 	BOOL SetWindowPos(const CWnd *pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags);
 
-	void RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort width, ushort height, ushort rowOffset);
+	void RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort rowOffset);
 
 	inline void Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness = 32767);
 
 	inline depthType Z (CTexture& tex, APOINT* a, int x, int y);
+
+	inline double ZRange (APOINT* a, int depth = 0);
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);

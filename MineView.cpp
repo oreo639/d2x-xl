@@ -602,7 +602,7 @@ void CMineView::InitView (CDC *pViewDC)
 		if (m_DC.m_hDC == 0)
 			m_DC.CreateCompatibleDC (pViewDC);
 		if (m_DC.m_hDC) {
-			BITMAPINFO bmi = {{sizeof (BITMAPINFOHEADER), m_viewWidth, m_viewHeight, 1, m_viewDepth * 8, BI_RGB, 0, 0, 0, 0, 0}, {255,255,255,0}};
+			BITMAPINFO bmi = {{sizeof (BITMAPINFOHEADER), m_viewWidth, -m_viewHeight, 1, m_viewDepth * 8, BI_RGB, 0, 0, 0, 0, 0}, {255,255,255,0}};
 		m_DIB = ::CreateDIBSection (NULL, (BITMAPINFO *) &bmi, DIB_RGB_COLORS, (void**) &m_renderBuffer, null, 0);
 		if (m_depthBuffer != null) 
 			delete m_depthBuffer;

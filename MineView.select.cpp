@@ -116,7 +116,7 @@ return ((int) p0.y - (int) p1.y) * ((int) p2.x - (int) p1.x)  -
 
 //--------------------------------------------------------------------------
 
-bool PointInTriangle (APOINT &p, APOINT &a, APOINT &b, APOINT &c)
+static bool PointInTriangle (APOINT &p, APOINT &a, APOINT &b, APOINT &c)
 {
 __int64 fab = Side (p, a, b);
 __int64 fbc = Side (p, b, c);
