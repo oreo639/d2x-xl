@@ -47,7 +47,7 @@ return INTERSECTING;
 
 #else
 
-int LineLineIntersection (APOINT& v0, APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
+int LineLineIntersection (APOINT& vi, APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
 {
 	double A1 = v2.y - v1.y;
 	double B1 = v1.x - v2.x;
@@ -61,8 +61,8 @@ if (det == 0)
 double C1 = A1 * v1.x + B1 * v1.y;
 double C2 = A2 * v3.x + B2 * v3.y;
 
-i.x = (long) (B2 * C1 - B1 * C2) / det);
-i.y = (long) (A1 * C2 - A2 * C1) / det);
+vi.x = (long) (B2 * C1 - B1 * C2) / det);
+vi.y = (long) (A1 * C2 - A2 * C1) / det);
 return 1;
 }
 
@@ -120,6 +120,8 @@ depthType InterpolateZ (APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
 	APOINT vi;
 
 int i = LineLineIntersection (vi, v1, v2, v3, v4);
+long zi = v1.z + (v2.z - v1.z) * hypot (vi.x - v1.x, vi.y - v1.y) / hypot (v2.x - v1.x, v2.y - v1.y);
+return (depthType) (v3.z + (zi - v3.z) * hypot (v4.x - v3.x, v4.y - v3.y) / hypot (vi.x - v3.x, vi.y - v3.y));
 }
 
 //------------------------------------------------------------------------------
