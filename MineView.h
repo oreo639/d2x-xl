@@ -406,7 +406,7 @@ public:
 
 	inline void Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness = 32767);
 
-	inline depthType Z (CTexture& tex, APOINT* a, int i);
+	inline depthType Z (CTexture& tex, APOINT* a, int x, int y);
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);
