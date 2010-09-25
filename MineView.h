@@ -211,6 +211,8 @@ protected: // create from serialization only
 
 	bool			m_bIgnoreDepth;
 
+	APOINT		m_screenCoord [4];
+	APOINT		m_texCoord [4];
 	int			m_x0, m_x1, m_y;
 	double		m_z0, m_z1;
 
@@ -411,7 +413,7 @@ public:
 
 	inline depthType Z (CTexture& tex, APOINT* a, int x, int y);
 
-	inline double ZRange (APOINT* a, int depth = 0);
+	inline double ZRange (int depth = 0);
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);

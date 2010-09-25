@@ -108,9 +108,9 @@ return (long) (_hypot ((double) (x3 - x0), (double) (y3 - y0)) + 0.5);
 
 //------------------------------------------------------------------------------
 
-inline double Dot (APOINT& v1, APOINT& v2)
+inline double Dot (APOINT& v0, APOINT& v1)
 {
-return (double) v1.x * (double) v2.x + (double) v1.y * (double) v2.y;
+return (double) v0.x * (double) v1.x + (double) v0.y * (double) v1.y;
 }
 
 //------------------------------------------------------------------------------
@@ -160,20 +160,20 @@ return InterpolateZ (v0, a [0], a [2], a [PointInTriangle (a [0], a [1], a [2], 
 
 //------------------------------------------------------------------------------
 
-inline double CMineView::ZRange (APOINT* a, int depth)
+inline double CMineView::ZRange (int depth)
 {
 	APOINT p0 = {m_x0, m_y}, p1 = {m_x1, m_y}, v;
 	int h = -1, j = 0;
 	double z [4];
 
 for (int i = 0; i < 4; i++) {
-	APOINT& v0 = a [i];
-	APOINT& v1 = a [(i + 1) % 4];
+	APOINT& v0 = m_screenCoord [i];
+	APOINT& v1 = m_screenCoord [(i + 1) % 4];
 	if (!LineLineIntersection (v, v0, v1, p0, p1))
 		continue;
 #if 1
-	v0.x = v.x - v0.x;
-	v0.y = v.y - v0.y;
+	v0.x -= v.x;
+	v0.y -= v.y;
 	v1.x -= v.x;
 	v1.y -= v.y;
 	if (Dot (v0, v1) > 0.0)
@@ -211,7 +211,7 @@ if (j == 1) {
 m_z0 = z [0];
 m_z1 = z [1];
 if (j > 2 && depth == 0)
-	ZRange (a, 1);
+	ZRange (1);
 return (m_z1 - m_z0) / (double) (m_x1 - m_x0);
 }
 
@@ -263,7 +263,6 @@ dest.b = (byte) (((int) dest.b * b + (int) src.b * a / 32767) / 255);
 void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort rowOffset)
 {
 	int h, i, j, k;
-	APOINT a [4];
 	APOINT minPt, maxPt;
 	CDoubleMatrix A, IA, B, UV;
 	//double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
@@ -285,16 +284,16 @@ bmWidth2 = tex.m_info.width / 2;
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
 	ushort nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
-	a [i] = m_viewPoints [nVertex];
+	m_screenCoord [i] = m_viewPoints [nVertex];
 	}
 // determin min/max points
 minPt.x = minPt.y = 32767; // some number > any screen resolution
 maxPt.x = maxPt.y = -32767;
 for (i = 0; i < 4; i++) {
-	long h = a [i].x;
+	long h = m_screenCoord [i].x;
 	minPt.x = min (minPt.x, h);
 	maxPt.x = max (maxPt.x, h);
-	h = a [i].y;
+	h = m_screenCoord [i].y;
 	minPt.y = min (minPt.y, h);
 	maxPt.y = max (maxPt.y, h);
 	}
@@ -307,18 +306,18 @@ maxPt.y = min (maxPt.y, m_viewHeight - 1);
 
 
 // map unit square into texture coordinate
-A.Square2Quad (a);
+A.Square2Quad (m_screenCoord);
 
 // calculate adjoint matrix (same as inverse)
 IA = A.Adjoint ();
 
-// store uv coordinates into b []
+// store uv coordinates into m_texCoord []
 // fill in texture
-APOINT b [4];  // Descent's (u,v) coordinates for textures
+APOINT m_texCoord [4];  // Descent's (u,v) coordinates for textures
 uvls = segP->m_sides [nSide].m_info.uvls;
 for (i = 0; i < 4; i++) {
-	b [i].x = uvls [i].u;
-	b [i].y = uvls [i].v;
+	m_texCoord [i].x = uvls [i].u;
+	m_texCoord [i].y = uvls [i].v;
 	}
 	
 	// define texture light
@@ -329,7 +328,7 @@ for (i = 0; i < 4; i++) {
 		light [i] = 0x7fff;
 		}
 	}
-	// reduce texture light if current side is on a delta light
+	// reduce texture light if current side is on m_screenCoord delta light
 	// first make sure we have allocated space for delta lights
 if (bEnableDeltaShading) {
 	CLightDeltaIndex *lightDeltaIndices;
@@ -338,7 +337,7 @@ if (bEnableDeltaShading) {
 	if (!lightManager.LightStatus (face.m_nSegment, face.m_nSide)->bIsOn &&
 		 (lightDeltaIndices = lightManager.LightDeltaIndex (0)) &&
 		 (lightDeltaValues = lightManager.LightDeltaValue (0))) {
-		// search delta light index to see if current side has a light
+		// search delta light index to see if current side has m_screenCoord light
 		CLightDeltaIndex	*dli = lightDeltaIndices;
 		for (i = 0; i < dlIdxCount; i++, dli++) {
 //				if (dli->m_info.nSegment == current->segP) {
@@ -367,8 +366,8 @@ if (bEnableDeltaShading) {
 	// map unit square into uv coordinates
 	// uv of 0x800 = 64 pixels in texture
 	// therefore uv of 32 = 1 pixel
-//square2quad_matrix(UV,b);
-UV.Square2Quad (b);
+//square2quad_matrix(UV,m_texCoord);
+UV.Square2Quad (m_texCoord);
 //scale_matrix (UV, 1.0 / 2048.0);
 UV.Scale (1.0 / 2048.0);
 //multiply_matrix (B, IA, UV);
@@ -386,14 +385,14 @@ for (m_y = minPt.y; m_y < maxPt.y; m_y++) {
 	for (i = 0; i < 4; i++) {
 		// if line intersects this m_y then update m_x0 & m_x1
 		int j = (i + 1) % 4; // j = other point of line
-		long yi = a [i].y;
-		long yj = a [j].y;
+		long yi = m_screenCoord [i].y;
+		long yj = m_screenCoord [j].y;
 		if ((m_y >= yi && m_y <= yj) || (m_y >= yj && m_y <= yi)) {
 			double w = yi - yj;
 			if (w != 0.0) { // avoid divide by zero
 				double di = (double) (m_y - yi);
 				double dj = (double) (m_y - yj);
-				int x = (int) (((double) a [i].x * dj - (double) a [j].x * di) / w);
+				int x = (int) (((double) m_screenCoord [i].x * dj - (double) m_screenCoord [j].x * di) / w);
 				if (x < m_x0) {
 					scanLight = (int) (((double) light [i] * dj - (double) light [j] * di) / w);
 					m_x0 = x;
@@ -461,7 +460,7 @@ for (m_y = minPt.y; m_y < maxPt.y; m_y++) {
 				CBGR* pixelP = m_renderBuffer + i;
 				depthType* zBufP = m_depthBuffer + i;
 
-				double dz = ZRange (a);
+				double dz = ZRange ();
 				
 				if (bEnableShading) {
 					for (int x = m_x0; x < m_x1; x++) {
@@ -469,7 +468,7 @@ for (m_y = minPt.y; m_y < maxPt.y; m_y++) {
 						u %= m;
 						v += dv;
 						v %= m;
-						// a fade value denotes the brightness of a color
+						// m_screenCoord fade value denotes the brightness of m_screenCoord color
 						// scanLight / 4 is the index in the fadeTables which consists of 34 tables with 256 entries each
 						// so for each color there are 34 fade (brightness) values ranges from 1/34 to 34/34
 						// actually the fade tables contain palette indices denoting the dimmed color corresponding to the 
@@ -479,14 +478,14 @@ for (m_y = minPt.y; m_y < maxPt.y; m_y++) {
 						// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
 						i = (u / 1024) + ((v / vd) & vm);
 #if 1
-						Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, /*Z (tex, a,x, m_y)*/(depthType) m_z0, scanLight);
+						Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, /*Z (tex, m_screenCoord,x, m_y)*/(depthType) m_z0, scanLight);
 						m_z0 += dz;
 #else
-						if (tex.m_info.bmData [i].a > 0) {
+						if (tex.m_info.bmData [i].m_screenCoord > 0) {
 							CBGR c = tex.m_info.bmData [i];
 							pixelP->r = (byte) ((int) (c.r) * fade / 8191);
 							pixelP->g = (byte) ((int) (c.g) * fade / 8191);
-							pixelP->b = (byte) ((int) (c.b) * fade / 8191);
+							pixelP->m_texCoord = (byte) ((int) (c.m_texCoord) * fade / 8191);
 							}
 						pixelP++;
 #endif
@@ -501,10 +500,10 @@ for (m_y = minPt.y; m_y < maxPt.y; m_y++) {
 						v %= m;
 						i = (u / 1024) + ((v / vd) & vm);
 #if 1
-						Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, /*Z (tex, a,x, m_y)*/(depthType) m_z0);
+						Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, /*Z (tex, m_screenCoord,x, m_y)*/(depthType) m_z0);
 						m_z0 += dz;
 #else
-						if (tex.m_info.bmData [i].a > 0)
+						if (tex.m_info.bmData [i].m_screenCoord > 0)
 							*pixelP++ = tex.m_info.bmData [i];
 #endif
 						}
