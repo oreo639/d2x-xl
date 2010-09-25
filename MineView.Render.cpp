@@ -17,58 +17,9 @@
 extern byte sideVertTable [6][4];
 int bEnableDeltaShading = 0;
 
-//------------------------------------------------------------------------------
-
 #if 0
 
-#define NOTINTERSECTING   -2
-#define PARALLEL			  -1
-#define COINCIDENT		   0
-#define INTERSECTING			1
-
-int LineLineIntersection (APOINT& v0, APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
-{
-double denom = ((v4.y - v3.y) * (v2.x - v1.x)) - ((v4.x - v3.x) * (v2.y - v1.y));
-double numea = ((v4.x - v3.x) * (v1.y - v3.y)) - ((v4.y - v3.y) * (v1.x - v3.x));
-double numeb = ((v2.x - v1.x) * (v1.y - v3.y)) - ((v2.y - v1.y) * (v1.x - v3.x));
-
-if (denom == 0.0f)
-  return (numea == 0.0f && numeb == 0.0f) ? COINCIDENT : PARALLEL;
-
-double ua = numea / denom;
-double ub = numeb / denom;
-
-if(ua < 0.0f || ua > 1.0f || ub < 0.0f || ub > 1.0f)
-  return NOTINTERSECTING;
-v0.x = (long) (v1.x + ua * (v2.x - v1.x));
-v0.y = (long) (v1.y + ua * (v2.y - v1.y));
-return INTERSECTING;
-}
-
-#elif 0
-
-int LineLineIntersection (APOINT& vi, APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
-{
-	double A = (double) (v2.y - v1.y) / (double) (v2.x - v1.x);
-	double B = v1.y - A * v1.x;
-	double C = (double) (v4.y - v2.y) / (double) (v4.x - v3.x);
-	double D = v3.y - A * v3.x;
-
-if (C != A) {
-	double x = (B + D) / (C - A);
-	double y = A * x + B;
-	vi.x = (long) x;
-	vi.y = (long) y;
-	}
-else {
-	if (B != D)
-		return 0;
-	vi = v4;
-	}
-return 1;
-}
-
-#else
+//------------------------------------------------------------------------------
 
 int LineLineIntersection (APOINT& vi, APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
 {
@@ -88,8 +39,6 @@ vi.x = (long) ((B2 * C1 - B1 * C2) / det);
 vi.y = (long) ((A1 * C2 - A2 * C1) / det);
 return 1;
 }
-
-#endif
 
 //------------------------------------------------------------------------------
 // Compute intersection of perpendicular to p1,p2 through p3 with p1,p2.
@@ -158,9 +107,11 @@ inline depthType CMineView::Z (CTexture& tex, APOINT* a, int x, int y)
 return InterpolateZ (v0, a [0], a [2], a [PointInTriangle (a [0], a [1], a [2], v0) ? 1 : 3]);
 }
 
+#endif
+
 //------------------------------------------------------------------------------
 
-inline double CMineView::ZRange (int depth)
+inline double CMineView::ZRange (void)
 {
 	APOINT p0 = {m_x0, m_y}, p1 = {m_x1, m_y}, vi [4];
 	int h = -1, j = 0;
@@ -192,14 +143,31 @@ for (int i = 0; i < 4; i++) {
 		continue;
 	if ((j > 0) && (v.x == vi [j - 1].x) && (v.y == vi [j - 1].y))
 		continue;
+#if 1
+	if (v0.x < v1.x) {
+		if ((v.x < v0.x) || (v.x > v1.x))
+			continue;
+		}
+	else {
+		if ((v.x < v1.x) || (v.x > v0.x))
+			continue;
+		}
+	if (v0.y < v1.y) {
+		if ((v.y < v0.y) || (v.y > v1.y))
+			continue;
+		}
+	else {
+		if ((v.y < v1.y) || (v.y > v0.y))
+			continue;
+		}
+#else
+	if (Dot (v0, v1) > 0.0)
+		continue;
+#endif
 	v0.x -= v.x;
 	v0.y -= v.y;
 	v1.x -= v.x;
 	v1.y -= v.y;
-#if 0
-	if (Dot (v0, v1) > 0.0)
-		continue;
-#endif
 	double l1 = _hypot (v0.x, v0.y);
 	double l2 = _hypot (v1.x, v1.y);
 	vi [j] = v;
@@ -221,8 +189,6 @@ else {
 	m_z0 = zi [0];
 	m_z1 = zi [1];
 	}	
-if (j > 2 && depth == 0)
-	ZRange (1);
 return (m_z1 - m_z0) / (double) (m_x1 - m_x0);
 }
 
