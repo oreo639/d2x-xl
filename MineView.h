@@ -212,7 +212,7 @@ protected: // create from serialization only
 	bool			m_bIgnoreDepth;
 
 	int			m_x0, m_x1, m_y;
-	double		z0, z1;
+	double		m_z0, m_z1;
 
 #if OGL_RENDERING
 	HGLRC           m_glRC; // Permanent Rendering Context

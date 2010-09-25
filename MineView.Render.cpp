@@ -160,10 +160,11 @@ return InterpolateZ (v0, a [0], a [2], a [PointInTriangle (a [0], a [1], a [2], 
 
 //------------------------------------------------------------------------------
 
-inline double CMineView::ZRange (APOINT* a)
+inline double CMineView::ZRange (APOINT* a, int depth)
 {
-	APOINT p0 = {m_x0, m_y}, p1 = {m_x1, m_y}, vi [4], v;
-	int j = 0;
+	APOINT p0 = {m_x0, m_y}, p1 = {m_x1, m_y}, v;
+	int h = -1, j = 0;
+	double z [4];
 
 for (int i = 0; i < 4; i++) {
 	APOINT& v0 = a [i];
@@ -172,9 +173,9 @@ for (int i = 0; i < 4; i++) {
 		continue;
 #if 1
 	v0.x = v.x - v0.x;
-	v0.m_y = v.m_y - v0.m_y;
+	v0.y = v.y - v0.y;
 	v1.x -= v.x;
-	v1.m_y -= v.m_y;
+	v1.y -= v.y;
 	if (Dot (v0, v1) > 0.0)
 		continue;
 #else
@@ -186,29 +187,31 @@ for (int i = 0; i < 4; i++) {
 		if ((v.x < v1.x) || (v.x > v0.x))
 			continue;
 		}
-	if (v0.m_y < v1.m_y) {
-		if ((v.m_y < v0.m_y) || (v.m_y > v1.m_y))
+	if (v0.y < v1.y) {
+		if ((v.y < v0.y) || (v.y > v1.y))
 			continue;
 		}
 	else {
-		if ((v.m_y < v1.m_y) || (v.m_y > v0.m_y))
+		if ((v.y < v1.y) || (v.y > v0.y))
 			continue;
 		}
 #endif
-	vi [j++] = v;
+	double l1 = _hypot (v0.x, v0.y);
+	double l2 = _hypot (v1.x, v1.y);
+	z [j++] = v0.z + (v1.z - v0.z) * l1 / (l1 + l2);
 	}
 if (j == 0) {
 	m_z0 = m_z1 = MAX_DEPTH;
 	return 0.0;
 	}
 if (j == 1) {
-	m_z0 = m_z1 = (depthType) vi [0].z;
+	m_z0 = m_z1 = z [0];
 	return 0.0;
 	}
-m_z0 = (double) vi [0].z;
-m_z1 = (double) vi [1].z;
+m_z0 = z [0];
+m_z1 = z [1];
 if (j > 2 && depth == 0)
-	ZRange (a, m_x0, m_x1, m_y, m_z0, m_z1, 1);
+	ZRange (a, 1);
 return (m_z1 - m_z0) / (double) (m_x1 - m_x0);
 }
 
