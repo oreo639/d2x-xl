@@ -39,6 +39,8 @@ class CPaletteManager {
 
 		void LoadName (CFileManager& fp);
 
+		inline void SetName (const char* name) { strncpy_s (m_name, sizeof (m_name), name, sizeof (m_name)); }
+
 		int LoadCustom (CFileManager& fp, long size);
 
 		int SaveCustom (CFileManager& fp);

@@ -136,6 +136,8 @@ if (IsD2File ()) {
 			}
 		}
 	}
+else
+	PaletteManager.SetName ("descent.pig");
 }
 
 // -----------------------------------------------------------------------------
@@ -333,7 +335,8 @@ triggerManager.Read (fp, FileInfo ().version);
 triggerManager.ReadReactor (fp, FileInfo ().version);
 segmentManager.ReadRobotMakers (fp, FileInfo ().version);
 lightManager.ReadLightDeltas (fp, FileInfo ().version);
-segmentManager.ReadEquipMakers (fp, FileInfo ().version);
+if (!DLE.IsD1File ())
+	segmentManager.ReadEquipMakers (fp, FileInfo ().version);
 return 0;
 }
 

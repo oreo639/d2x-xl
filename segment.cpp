@@ -181,7 +181,7 @@ if (nLevelType) {
 		m_info.damage [1] = fp.ReadInt16 ();
 		}
 	}
-m_info.staticLight = fp.ReadInt32 ();
+m_info.staticLight = (nLevelType == 0) ? (int) fp.ReadInt16 () : fp.ReadInt32 ();
 }
 
 // -----------------------------------------------------------------------------
@@ -209,7 +209,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 	m_info.verts [i] = fp.ReadInt16 ();
 
-if (nLevelVersion == 0)
+if (nLevelType == 0)
 	ReadExtras (fp, nLevelType, nLevelVersion, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // read the wall bit mask

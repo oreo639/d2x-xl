@@ -91,14 +91,14 @@ if (m_matCenInfo [nClass].Setup (fp)) {
 
 void CSegmentManager::ReadRobotMakers (CFileManager& fp, int nFileVersion)
 {
-ReadMatCens (fp, nFileVersion, 1);
+ReadMatCens (fp, nFileVersion, 0);
 }
 
 // ----------------------------------------------------------------------------- 
 
 void CSegmentManager::WriteRobotMakers (CFileManager& fp, int nFileVersion)
 {
-WriteMatCens (fp, nFileVersion, 1);
+WriteMatCens (fp, nFileVersion, 0);
 }
 
 // ----------------------------------------------------------------------------- 

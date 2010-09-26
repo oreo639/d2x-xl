@@ -124,6 +124,8 @@ if (DLE.IsD2File ()) {
 	for (i = 0; i < m_deltaValueInfo.count; i++)
 		m_deltaValues [i].Read (fp, nFileVersion);
 	}
+else
+	ResetInfo ();
 }
 
 //------------------------------------------------------------------------------

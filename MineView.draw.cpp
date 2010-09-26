@@ -262,7 +262,7 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 
 	CSide* sideP = segP->Side (0);
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-#ifdef _DEBUG
+#if 0 //def _DEBUG
 		if ((nSegment == 40) && (nSide == 3))
 			nSegment = nSegment;
 		if ((nSegment == 193) && (nSide == 2))
@@ -824,7 +824,7 @@ void CMineView::DrawFaceTextured (CFaceListEntry& fle)
 		CSegment* segP = segmentManager.Segment (fle);
 		CSide* sideP = segmentManager.Side (fle);
 
-#ifdef _DEBUG
+#if 0 //def _DEBUG
 	if ((fle.m_nSegment == 3) && (fle.m_nSide == 3))
 		fle.m_nSegment = fle.m_nSegment;
 	else if ((fle.m_nSegment == 7) && (fle.m_nSide == 5))
