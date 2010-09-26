@@ -206,14 +206,16 @@ if (brightness == 0)
 if (src.a == 0)
 	return false;
 
-if (depth <= z)
-	return false;
+if (m_bTestDepth) {
+	if (depth <= z)
+		return false;
 #ifdef _DEBUG
-if (depth != MAX_DEPTH)
-	z = z;
+	if (depth != MAX_DEPTH)
+		z = z;
 #endif
-if (!m_bIgnoreDepth)
-	depth = z;
+	if (!m_bIgnoreDepth)
+		depth = z;
+	}
 
 if (brightness == 32767) {
 	if (src.a == 255) {
@@ -449,7 +451,11 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				vm = tex.m_info.width * (tex.m_info.height - 1);
 				
 				i = (uint) y/*(m_viewHeight - y - 1)*/ * (uint) rowOffset + x0;
-				double z, dz = ZRange (x0, x1, y, z);
+				double z, dz;
+				if (m_bTestDepth)
+					dz = ZRange (x0, x1, y, z);
+				else
+					z = dz = 0.0;
 				
 				if (bEnableShading) {
 					for (int x = x0; x < x1; x++, i++) {

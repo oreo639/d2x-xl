@@ -211,6 +211,7 @@ protected: // create from serialization only
 	int			m_nMineCenter;
 
 	bool			m_bIgnoreDepth;
+	bool			m_bTestDepth;
 
 	APOINT		m_screenCoord [4];
 	APOINT		m_texCoord [4];

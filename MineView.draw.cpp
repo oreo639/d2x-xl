@@ -307,14 +307,21 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 	}
 SortFaces (0, faceCount - 1);
 CalcSegDist ();
-m_bIgnoreDepth = false;
-for (int nFace = faceCount - 1; nFace >= 0; nFace--)
-	if (!faceRenderList [nFace].m_bTransparent)
-	 	DrawFaceTextured (faceRenderList [nFace]);
-m_bIgnoreDepth = true;
-for (int nFace = 0; nFace < faceCount; nFace++)
-	if (faceRenderList [nFace].m_bTransparent)
-	 	DrawFaceTextured (faceRenderList [nFace]);
+m_bTestDepth = false;
+if (m_bTestDepth) {
+	m_bIgnoreDepth = false;
+	for (int nFace = faceCount - 1; nFace >= 0; nFace--)
+		if (!faceRenderList [nFace].m_bTransparent)
+	 		DrawFaceTextured (faceRenderList [nFace]);
+	m_bIgnoreDepth = true;
+	for (int nFace = 0; nFace < faceCount; nFace++)
+		if (faceRenderList [nFace].m_bTransparent)
+	 		DrawFaceTextured (faceRenderList [nFace]);
+	}
+else {
+	for (int nFace = 0; nFace < faceCount; nFace++)
+ 		DrawFaceTextured (faceRenderList [nFace]);
+	}
 }
 
 //--------------------------------------------------------------------------
