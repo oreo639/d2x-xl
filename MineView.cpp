@@ -610,7 +610,6 @@ void CMineView::InitView (CDC *pViewDC)
 		if (m_overdrawFilter != null)
 			delete m_overdrawFilter;
 		m_depthBuffer = new depthType [m_viewWidth * m_viewHeight];
-		m_overdrawFilter = new ushort [m_viewWidth * m_viewHeight];
 		}
 	}
 	// if DIB exists, then use our own DC instead of the View DC
@@ -621,8 +620,6 @@ if (m_DIB != 0) {
 		for (int i = m_viewWidth * m_viewHeight; i > 0; )
 		m_depthBuffer [--i] = MAX_DEPTH;
 		}
-	if (m_overdrawFilter != null)
-		memset (m_overdrawFilter, 0xff, m_viewWidth * m_viewHeight);
 	}
 #endif
 }

@@ -97,7 +97,7 @@ enum eMouseStates
 
 class CFaceListEntry : public CSideKey {
 	public:
-		long	m_z;
+		long	m_zMin, m_zMax;
 		bool	m_bTransparent;
 	};
 

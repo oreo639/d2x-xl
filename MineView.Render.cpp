@@ -347,11 +347,10 @@ void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort r
 	short flickLight = lightManager.VariableLight (face);
 	short deltaLight, scanLight;
 	short light [4];
-	ushort bmWidth2, faceKey = segmentManager.Index (segP) * 6 + nSide;
+	ushort bmWidth2;
 	byte* fadeTables = paletteManager.FadeTable ();
 	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
 	double scale = (double) max (tex.m_info.width, tex.m_info.height);
-	int nOverdraw = 0;
 
 tex.m_info.height = tex.m_info.width;
 bmWidth2 = tex.m_info.width / 2;
@@ -542,9 +541,9 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				if (bEnableShading) {
 					for (int x = x0; x < x1; x++, i++) {
 						u += du;
+						u %= m;
 						v += dv;
-						//u %= m;
-						//v %= m;
+						v %= m;
 						// m_screenCoord fade value denotes the brightness of m_screenCoord color
 						// scanLight / 4 is the index in the fadeTables which consists of 34 tables with 256 entries each
 						// so for each color there are 34 fade (brightness) values ranges from 1/34 to 34/34
@@ -553,53 +552,37 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 						// We don't need this anymore here since we're rendering RGB and can compute the brightness directly
 						// from scanLight, the maximum of which is 8191
 						// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
-						if (m_overdrawFilter [i] != faceKey) 
-							{
-							u %= m;
-							v %= m;
 #if 1
-							if (Blend (m_renderBuffer [i], tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)], m_depthBuffer [i], (depthType) z, scanLight))
-								m_overdrawFilter [i] = faceKey;
-							z += dz;
+						Blend (m_renderBuffer [i], tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)], m_depthBuffer [i], (depthType) z, scanLight);
+						z += dz;
 #else
-							int t = (u / 1024) + ((v / vd) & vm);
-							if (tex.m_info.bmData [t].m_screenCoord > 0) {
-								CBGR c = tex.m_info.bmData [t];
-								CBGR* pixel = m_renderBuffer + i;
-								pixelP->r = (byte) ((int) (c.r) * fade / 8191);
-								pixelP->g = (byte) ((int) (c.g) * fade / 8191);
-								pixelP->b = (byte) ((int) (c.b) * fade / 8191);
-								pixelP->m_texCoord = (byte) ((int) (c.m_texCoord) * fade / 8191);
-								}
-#endif
-							scanLight += deltaLight;
+						int t = (u / 1024) + ((v / vd) & vm);
+						if (tex.m_info.bmData [t].m_screenCoord > 0) {
+							CBGR c = tex.m_info.bmData [t];
+							CBGR* pixel = m_renderBuffer + i;
+							pixelP->r = (byte) ((int) (c.r) * fade / 8191);
+							pixelP->g = (byte) ((int) (c.g) * fade / 8191);
+							pixelP->b = (byte) ((int) (c.b) * fade / 8191);
+							pixelP->m_texCoord = (byte) ((int) (c.m_texCoord) * fade / 8191);
 							}
-						else
-							nOverdraw++;
+#endif
+						scanLight += deltaLight;
 						} 
 					}
 				else {
 					for (int x = x0; x < x1; x++, i++) {
 						u += du;
+						u %= m;
 						v += dv;
-						//u %= m;
-						//v %= m;
-						if (m_overdrawFilter [i] != faceKey) 
-							{
-							u %= m;
-							v %= m;
+						v %= m;
 #if 1
-							if (Blend (m_renderBuffer [i], tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)], m_depthBuffer [i], (depthType) z))
-								m_overdrawFilter [i] = faceKey;
-							z += dz;
+						Blend (m_renderBuffer [i], tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)], m_depthBuffer [i], (depthType) z);
+						z += dz;
 #else
-							int t = (u / 1024) + ((v / vd) & vm);
-							if (tex.m_info.bmData [t].m_screenCoord > 0)
-								m_renderBuffer [i] = tex.m_info.bmData [t];
+						int t = (u / 1024) + ((v / vd) & vm);
+						if (tex.m_info.bmData [t].m_screenCoord > 0)
+							m_renderBuffer [i] = tex.m_info.bmData [t];
 #endif
-							}
-						else
-							nOverdraw++;
 						}
 					}
 				}

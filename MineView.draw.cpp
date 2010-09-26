@@ -223,13 +223,13 @@ static CFaceListEntry faceRenderList [SEGMENT_LIMIT * 6];
 
 void SortFaces (int left, int right)
 {
-	long m = faceRenderList [(left + right) / 2].m_z;
+	CFaceListEntry m = faceRenderList [(left + right) / 2];
 	int l = left, r = right;
 
 do {
-	while (faceRenderList [l].m_z > m)
+	while ((faceRenderList [l].m_zMax > m.m_zMax) || ((faceRenderList [l].m_zMax == m.m_zMax) && (faceRenderList [l].m_zMin > m.m_zMin)))
 		l++;
-	while (faceRenderList [r].m_z < m)
+	while ((faceRenderList [r].m_zMax < m.m_zMax) || ((faceRenderList [l].m_zMax == m.m_zMax) && (faceRenderList [l].m_zMin < m.m_zMin)))
 		r--;
 	if (l <= r) {
 		if (l < r)
@@ -288,16 +288,19 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 		if (a.v.x * b.v.y <= a.v.y * b.v.x)
 			continue;
 
-		long zMax = LONG_MIN;
+		long zMin = -LONG_MIN, zMax = LONG_MIN;
 		for (short nVertex = 0; nVertex < 4; nVertex++) {
 			long z = m_viewPoints [segP->m_info.verts [sideVertP [nVertex]]].z;
+			if (zMin > z)
+				zMin = z;
 			if (zMax < z)
 				zMax = z;
 			}
 
 		faceRenderList [faceCount].m_nSegment = nSegment;
 		faceRenderList [faceCount].m_nSide = nSide;
-		faceRenderList [faceCount].m_z = zMax;
+		faceRenderList [faceCount].m_zMin = zMin;
+		faceRenderList [faceCount].m_zMax = zMax;
 		faceRenderList [faceCount].m_bTransparent = textureManager.Texture (sideP->BaseTex ())->Transparent ();
 		++faceCount;
 		}
