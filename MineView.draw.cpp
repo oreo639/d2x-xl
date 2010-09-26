@@ -827,6 +827,10 @@ void CMineView::DrawFaceTextured (CFaceListEntry& fle)
 #ifdef _DEBUG
 	if ((fle.m_nSegment == 3) && (fle.m_nSide == 3))
 		fle.m_nSegment = fle.m_nSegment;
+	else if ((fle.m_nSegment == 7) && (fle.m_nSide == 5))
+		fle.m_nSegment = fle.m_nSegment;
+	else
+		return;
 #endif
 
 	if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
