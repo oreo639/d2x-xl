@@ -59,8 +59,16 @@ Count ()--;
 #else //USE_FREELIST
 
 undoManager.Begin (udVertices);
+#ifdef _DEBUG
+if (nDelVert == 179)
+	nDelVert = nDelVert;
+#endif
 if (nDelVert < --Count ()) {
-	*Vertex (nDelVert) = *Vertex (Count ());
+#ifdef _DEBUG
+	if (Count () == 300)
+		nDelVert = nDelVert;
+#endif
+	Vertex (nDelVert)->v = Vertex (Count ())->v;
 	segmentManager.UpdateVertices (Count (), nDelVert);
 	}
 undoManager.End ();
@@ -76,9 +84,11 @@ UnmarkAll (NEW_MASK);
 // mark all used verts
 segmentManager.MarkAll (NEW_MASK);
 undoManager.Begin (udVertices);
-for (CVertexIterator vi; vi; vi++)
+for (CVertexIterator vi (-Count ()); vi; ) {
+	--vi;
 	if (!(vi->Status () & NEW_MASK))
 		Delete (vi.Index ()); 
+	}
 undoManager.End ();
 }
 

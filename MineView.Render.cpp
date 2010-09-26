@@ -173,6 +173,8 @@ for (int i = 0; i < 4; i++) {
 	vi [j] = v;
 	zi [j++] = v0.z + (v1.z - v0.z) * l1 / (l1 + l2);
 	}
+if (j > 3)
+	j = 2;
 if (j == 0) {
 	z = MAX_DEPTH;
 	return 0.0;
@@ -438,9 +440,13 @@ UV.Scale (1.0 / 2048.0);
 //multiply_matrix (B, IA, UV);
 B = IA * UV;
 
+#ifndef _DEBUG
 #pragma omp parallel
+#endif
 {
+#ifndef _DEBUG
 #	pragma omp for private (scanLight, deltaLight)
+#endif
 for (int y = minPt.y; y < maxPt.y; y++) {
 	int i;
 	// Determine min and max x for this y.

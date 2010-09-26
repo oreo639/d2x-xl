@@ -33,7 +33,7 @@ return Count ()++;
 
 void CSegmentManager::Remove (short nDelSeg)
 {
-#if USE_FREELSIT
+#if USE_FREELIST
 m_free += nDelSeg;
 Count ()--;
 #else

@@ -96,6 +96,10 @@ void CSegmentManager::UpdateVertices (short nOldVert, short nNewVert)
 {
 CSegment _const_ * segP = Segment (0);
 
+#ifdef _DEBUG
+if (nOldVert == 300)
+	nOldVert = nOldVert;
+#endif
 for (CSegmentIterator si; si; si++) {
 	ushort* vertP = si->m_info.verts;
 	for (short nVertex = 0; nVertex < 8; nVertex++) {

@@ -660,8 +660,8 @@ if (QueryMsg ("Are you sure you want to delete the marked cubes?") != IDYES)
 
 DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 for (nSegment = segmentManager.Count () - 1; nSegment >= 0; nSegment--) {
-		DLE.MainFrame ()->Progress ().StepIt ();
-		if (segmentManager.Segment (nSegment)->m_info.wallFlags & MARKED_MASK) {
+	DLE.MainFrame ()->Progress ().StepIt ();
+	if (segmentManager.Segment (nSegment)->IsMarked ()) {
 		if (segmentManager.Count () <= 1)
 			break;
 		if (objectManager.Object (0)->m_info.nSegment != nSegment)

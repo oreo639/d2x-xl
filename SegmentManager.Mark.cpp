@@ -80,7 +80,7 @@ void CSegmentManager::MarkAll (byte mask)
 {
 for (CSegmentIterator si; si; si++) {
 	CSegment* segP = &(*si);
-	segP->m_info.wallFlags |= mask; 
+	segP->Mark (mask); 
 	for (short i = 0; i < 8; i++)
 		segP->Vertex (i)->Status () |= mask;
 	}

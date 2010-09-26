@@ -543,9 +543,8 @@ if (!Visible (segP))
 	ushort *pv = segP->m_info.verts;
 
 for (i = 0; i < 8; i++, pv++) {
-	int	v = *pv;
-	if (!(IN_RANGE (m_viewPoints [v].x, x_max) &&
-			IN_RANGE (m_viewPoints [v].y, y_max)))
+	int v = *pv;
+	if (!(IN_RANGE (m_viewPoints [v].x, x_max) && IN_RANGE (m_viewPoints [v].y, y_max)))
 		return;
 	}
 if (bPartial) {

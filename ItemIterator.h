@@ -16,7 +16,16 @@ class CGameItemIterator {
 		_T		m_null;
 
 	public:
-		CGameItemIterator (_T* buffer, int count, int start = 0) : m_index (start), m_buffer (buffer), m_count (count - start) {}
+		CGameItemIterator (_T* buffer, int count, int start = 0) : m_index (start), m_buffer (buffer), m_count (count - start) {
+			if (count < 0) {
+				m_index = -count - start;
+				m_count = -count;
+				}
+			else {
+				m_index = start;
+				m_count = count;
+				}
+			}
 
 #if USE_FREELIST
 
@@ -75,7 +84,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return &m_buffer [--m_index];
+			return m_buffer [--m_index];
 			}
 
 		// postfix decrement
@@ -83,7 +92,7 @@ class CGameItemIterator {
 			if (m_count <= 0)
 				return m_null;
 			--m_count;
-			return &m_buffer [m_index--];
+			return m_buffer [m_index--];
 			}
 
 #endif // USE_FREELIST
