@@ -608,7 +608,7 @@ segP->m_info.function = SEGMENT_FUNC_NONE;
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::Delete (short nDelSeg)
+void CSegmentManager::Delete (short nDelSeg, bool bDeleteVerts)
 {
 if (Count () < 2)
 	return; 

@@ -665,9 +665,10 @@ for (nSegment = segmentManager.Count () - 1; nSegment >= 0; nSegment--) {
 		if (segmentManager.Count () <= 1)
 			break;
 		if (objectManager.Object (0)->m_info.nSegment != nSegment)
-			segmentManager.Delete (nSegment); // delete segP w/o asking "are you sure"
+			segmentManager.Delete (nSegment, false); // delete segP w/o asking "are you sure"
 		}
 	}
+vertexManager.DeleteUnused ();
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 // wrap back then forward to make sure segment is valid
 Wrap (selections [0].m_nSegment, -1, 0, segmentManager.Count () - 1);
