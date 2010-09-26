@@ -301,7 +301,8 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 		faceRenderList [faceCount].m_nSide = nSide;
 		faceRenderList [faceCount].m_zMin = zMin;
 		faceRenderList [faceCount].m_zMax = zMax;
-		faceRenderList [faceCount].m_bTransparent = textureManager.Texture (sideP->BaseTex ())->Transparent ();
+		CWall* wallP = sideP->Wall ();
+		faceRenderList [faceCount].m_bTransparent = textureManager.Texture (sideP->BaseTex ())->Transparent () || (wallP && (wallP->Alpha () < 255));
 		++faceCount;
 		}
 	}
@@ -834,7 +835,7 @@ void CMineView::DrawFaceTextured (CFaceListEntry& fle)
 	m_alpha = (wallP == null) ? 255 : wallP->Alpha ();
 	if (wallP->IsTransparent ()) {
 		DrawAnimDirArrows (sideP->BaseTex (), &tex);
-		CColor colorP = lightManager.GetTexColor (sideP->nBaseTex, true);
+		CColor* colorP = lightManager.GetTexColor (sideP->BaseTex (), true);
 		CBGRA color (colorP->Red (), colorP->Green (), colorP->Blue (), 255);
 		RenderFace (segP, fle.m_nSide, tex, (m_viewWidth + 3) & ~3, &color);
 		}
