@@ -218,7 +218,7 @@ if (bUseTexColors && UseTexColors ()) {
 			return colorP;
 		}
 	CWall* wallP = segmentManager.Wall (key);
-	colorP = GetTexColor (nBaseTex, (wallP != null) && (wallP->Type () == WALL_TRANSPARENT));
+	colorP = GetTexColor (nBaseTex, (wallP != null) && wallP->IsTransparent ());
 	if (colorP != null)
 		return colorP;
 	}	

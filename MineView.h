@@ -211,6 +211,7 @@ protected: // create from serialization only
 
 	bool			m_bIgnoreDepth;
 	bool			m_bTestDepth;
+	byte			m_alpha;
 
 	APOINT		m_screenCoord [4];
 	APOINT		m_texCoord [4];
@@ -410,7 +411,7 @@ public:
 
 	BOOL SetWindowPos(const CWnd *pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags);
 
-	void RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort rowOffset);
+	void RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort rowOffset, CBGRA* colorP = null);
 
 	inline bool Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness = 32767);
 

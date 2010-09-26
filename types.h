@@ -107,6 +107,12 @@ class CColor : public CGameItem {
 		virtual CGameItem* Copy (CGameItem* destP);
 
 		CColor (eItemType itemType = itUndefined) : CGameItem (itemType) {}
+
+		inline byte Red (void) { return (byte) (m_info.color.r * 255); }
+
+		inline byte Green (void) { return (byte) (m_info.color.g * 255); }
+
+		inline byte Blue (void) { return (byte) (m_info.color.b * 255); }
 };
 
 

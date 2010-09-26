@@ -217,28 +217,29 @@ if (m_bTestDepth) {
 		depth = z;
 	}
 
+int a = (int) src.a * m_alpha / 255;
 if (brightness == 32767) {
-	if (src.a == 255) {
+	if (a == 255) {
 		dest = src;
 		return true;
 		}
 
-	int b = 255 - src.a;
-	dest.r = (byte) (((int) dest.r * b + (int) src.r * src.a) / 255);
-	dest.g = (byte) (((int) dest.g * b + (int) src.g * src.a) / 255);
-	dest.b = (byte) (((int) dest.b * b + (int) src.b * src.a) / 255);
+	int b = 255 - a;
+	dest.r = (byte) (((int) dest.r * b + (int) src.r * a) / 255);
+	dest.g = (byte) (((int) dest.g * b + (int) src.g * a) / 255);
+	dest.b = (byte) (((int) dest.b * b + (int) src.b * a) / 255);
 	return true;
 	}
 
-if (src.a == 255) {
+if (a == 255) {
 	dest.r = (byte) ((int) src.r * brightness / 32767);
 	dest.g = (byte) ((int) src.g * brightness / 32767);
 	dest.b = (byte) ((int) src.b * brightness / 32767);
 	return true;
 	}
 
-int b = 255 - src.a;
-int a = src.a * brightness;
+int b = 255 - a;
+a *= brightness;
 dest.r = (byte) (((int) dest.r * b + (int) src.r * a / 32767) / 255);
 dest.g = (byte) (((int) dest.g * b + (int) src.g * a / 32767) / 255);
 dest.b = (byte) (((int) dest.b * b + (int) src.b * a / 32767) / 255);
@@ -249,7 +250,7 @@ return true;
 // RenderFace()
 //------------------------------------------------------------------------
 
-void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort rowOffset)
+void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort rowOffset, CBGRA* colorP)
 {
 	int h, i, j, k;
 	APOINT minPt, maxPt;
@@ -265,6 +266,7 @@ void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort r
 	ushort bmWidth2;
 	byte* fadeTables = paletteManager.FadeTable ();
 	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
+	bool bTexColor = colorP == null;
 	double scale = (double) max (tex.m_info.width, tex.m_info.height);
 
 tex.m_info.height = tex.m_info.width;
@@ -459,10 +461,6 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				
 				if (bEnableShading) {
 					for (int x = x0; x < x1; x++, i++) {
-						u += du;
-						u %= m;
-						v += dv;
-						v %= m;
 						// m_screenCoord fade value denotes the brightness of m_screenCoord color
 						// scanLight / 4 is the index in the fadeTables which consists of 34 tables with 256 entries each
 						// so for each color there are 34 fade (brightness) values ranges from 1/34 to 34/34
@@ -472,7 +470,14 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 						// from scanLight, the maximum of which is 8191
 						// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
 #if 1
-						Blend (m_renderBuffer [i], tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)], m_depthBuffer [i], (depthType) z, scanLight);
+						if (bTexColor) {
+							u += du;
+							u %= m;
+							v += dv;
+							v %= m;
+							colorP = &tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)];
+							}
+						Blend (m_renderBuffer [i], *colorP, m_depthBuffer [i], (depthType) z, scanLight);
 						z += dz;
 #else
 						int t = (u / 1024) + ((v / vd) & vm);
@@ -490,12 +495,15 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 					}
 				else {
 					for (int x = x0; x < x1; x++, i++) {
-						u += du;
-						u %= m;
-						v += dv;
-						v %= m;
+						if (bTexColor) {
+							u += du;
+							u %= m;
+							v += dv;
+							v %= m;
+							colorP = &tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)];
+							}
 #if 1
-						Blend (m_renderBuffer [i], tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)], m_depthBuffer [i], (depthType) z);
+						Blend (m_renderBuffer [i], *colorP, m_depthBuffer [i], (depthType) z);
 						z += dz;
 #else
 						int t = (u / 1024) + ((v / vd) & vm);

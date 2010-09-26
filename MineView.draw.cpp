@@ -829,17 +829,16 @@ void CMineView::DrawFaceTextured (CFaceListEntry& fle)
 		CTexture tex (textureManager.m_bmBuf);
 		CSegment* segP = segmentManager.Segment (fle);
 		CSide* sideP = segmentManager.Side (fle);
+		CWall* wallP = segmentManager.Wall (fle);
 
-#if 0 //def _DEBUG
-	if ((fle.m_nSegment == 3) && (fle.m_nSide == 3))
-		fle.m_nSegment = fle.m_nSegment;
-	else if ((fle.m_nSegment == 7) && (fle.m_nSide == 5))
-		fle.m_nSegment = fle.m_nSegment;
-	else
-		return;
-#endif
-
-	if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
+	m_alpha = (wallP == null) ? 255 : wallP->Alpha ();
+	if (wallP->IsTransparent ()) {
+		DrawAnimDirArrows (sideP->BaseTex (), &tex);
+		CColor colorP = lightManager.GetTexColor (sideP->nBaseTex, true);
+		CBGRA color (colorP->Red (), colorP->Green (), colorP->Blue (), 255);
+		RenderFace (segP, fle.m_nSide, tex, (m_viewWidth + 3) & ~3, &color);
+		}
+	else if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 		DrawAnimDirArrows (sideP->BaseTex (), &tex);
 		RenderFace (segP, fle.m_nSide, tex, (m_viewWidth + 3) & ~3);
 		}
