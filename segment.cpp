@@ -267,7 +267,10 @@ if (nLevelType == 2) {
 	fp.Write (m_info.damage [0]);
 	fp.Write (m_info.damage [1]);
 	}
-fp.Write (m_info.staticLight);
+if (nLevelType == 0)
+	fp.WriteInt16 ((short) m_info.staticLight);
+else
+	fp.Write (m_info.staticLight);
 }
 
 // -----------------------------------------------------------------------------

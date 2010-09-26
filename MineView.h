@@ -414,8 +414,6 @@ public:
 
 	inline depthType Z (CTexture& tex, APOINT* a, int x, int y);
 
-	inline double ZRange (void);
-
 	inline double ZRange (int x0, int x1, int y, double& z);
 
 #if OGL_RENDERING

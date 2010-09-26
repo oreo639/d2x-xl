@@ -137,7 +137,7 @@ if (IsD2File ()) {
 		}
 	}
 else
-	PaletteManager.SetName ("descent.pig");
+	paletteManager.SetName ("descent.pig");
 }
 
 // -----------------------------------------------------------------------------
