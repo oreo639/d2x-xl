@@ -327,6 +327,7 @@ int a = src.a * brightness;
 dest.r = (byte) (((int) dest.r * b + (int) src.r * a / 32767) / 255);
 dest.g = (byte) (((int) dest.g * b + (int) src.g * a / 32767) / 255);
 dest.b = (byte) (((int) dest.b * b + (int) src.b * a / 32767) / 255);
+return true;
 }
 
 //------------------------------------------------------------------------
@@ -350,6 +351,7 @@ void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort r
 	byte* fadeTables = paletteManager.FadeTable ();
 	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
 	double scale = (double) max (tex.m_info.width, tex.m_info.height);
+	int nOverdraw = 0;
 
 tex.m_info.height = tex.m_info.width;
 bmWidth2 = tex.m_info.width / 2;
@@ -551,7 +553,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 						// We don't need this anymore here since we're rendering RGB and can compute the brightness directly
 						// from scanLight, the maximum of which is 8191
 						// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
-						//if (m_overdrawFilter [i] != faceKey) 
+						if (m_overdrawFilter [i] != faceKey) 
 							{
 							u %= m;
 							v %= m;
@@ -572,6 +574,8 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 #endif
 							scanLight += deltaLight;
 							}
+						else
+							nOverdraw++;
 						} 
 					}
 				else {
@@ -580,7 +584,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 						v += dv;
 						//u %= m;
 						//v %= m;
-						//if (m_overdrawFilter [i] != faceKey) 
+						if (m_overdrawFilter [i] != faceKey) 
 							{
 							u %= m;
 							v %= m;
@@ -594,6 +598,8 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 								m_renderBuffer [i] = tex.m_info.bmData [t];
 #endif
 							}
+						else
+							nOverdraw++;
 						}
 					}
 				}
