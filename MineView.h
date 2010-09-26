@@ -125,7 +125,6 @@ protected: // create from serialization only
 	HBITMAP		m_DIB;
 	CBGR*			m_renderBuffer;
 	depthType*	m_depthBuffer;
-	ushort*		m_overdrawFilter;
 	CDC			m_DC;
 	CDC			*m_pDC; // if all goes well, this is set to &m_DC
 	bool			m_bUpdate;

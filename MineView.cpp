@@ -143,7 +143,7 @@ m_glDC = null;
 m_nViewDist = 0;
 m_depthPerception = 10000.0f;
 m_depthBuffer = null;
-m_overdrawFilter = null;
+m_bTestDepth = true;
 Reset ();
 }
 
@@ -607,8 +607,6 @@ void CMineView::InitView (CDC *pViewDC)
 		m_DIB = ::CreateDIBSection (NULL, (BITMAPINFO *) &bmi, DIB_RGB_COLORS, (void**) &m_renderBuffer, null, 0);
 		if (m_depthBuffer != null) 
 			delete m_depthBuffer;
-		if (m_overdrawFilter != null)
-			delete m_overdrawFilter;
 		m_depthBuffer = new depthType [m_viewWidth * m_viewHeight];
 		}
 	}

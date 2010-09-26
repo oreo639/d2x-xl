@@ -307,7 +307,6 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 	}
 SortFaces (0, faceCount - 1);
 CalcSegDist ();
-m_bTestDepth = false;
 if (m_bTestDepth) {
 	m_bIgnoreDepth = false;
 	for (int nFace = faceCount - 1; nFace >= 0; nFace--)
