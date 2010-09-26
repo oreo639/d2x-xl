@@ -117,6 +117,10 @@ inline double CMineView::ZRange (int x0, int x1, int y, double& z)
 	int h = -1, j = 0;
 	double zi [4];
 
+#ifdef _DEBUG
+if (y == 517)
+	y = y;
+#endif
 for (int i = 0; i < 4; i++) {
 	APOINT v0 = m_screenCoord [i];
 	APOINT v1 = m_screenCoord [(i + 1) % 4];
@@ -183,16 +187,14 @@ if (j == 1) {
 	z = zi [0];
 	return 0.0;
 	}
-double z1;
 if (vi [0].x <= vi [1].x) {
 	z = zi [0];
-	z1 = zi [1];
+	return (zi [1] - z) / (double) (x1 - x0);
 	}
 else {
-	z = zi [0];
-	z1 = zi [1];
+	z = zi [1];
+	return (zi [0] - z) / (double) (x1 - x0);
 	}	
-return (z1 - z) / (double) (x1 - x0);
 }
 
 //------------------------------------------------------------------------------
@@ -284,36 +286,40 @@ return 0.0;
 
 //------------------------------------------------------------------------------
 
-inline void CMineView::Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness)
+inline bool CMineView::Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness)
 {
 if (brightness == 0)
-	return;
+	return false;
 if (src.a == 0)
-	return;
+	return false;
 
 if (depth <= z)
-	return;
+	return false;
+#ifdef _DEBUG
+if (depth != MAX_DEPTH)
+	z = z;
+#endif
 if (!m_bIgnoreDepth)
 	depth = z;
 
 if (brightness == 32767) {
 	if (src.a == 255) {
 		dest = src;
-		return;
+		return true;
 		}
 
 	int b = 255 - src.a;
 	dest.r = (byte) (((int) dest.r * b + (int) src.r * src.a) / 255);
 	dest.g = (byte) (((int) dest.g * b + (int) src.g * src.a) / 255);
 	dest.b = (byte) (((int) dest.b * b + (int) src.b * src.a) / 255);
-	return;
+	return true;
 	}
 
 if (src.a == 255) {
 	dest.r = (byte) ((int) src.r * brightness / 32767);
 	dest.g = (byte) ((int) src.g * brightness / 32767);
 	dest.b = (byte) ((int) src.b * brightness / 32767);
-	return;
+	return true;
 	}
 
 int b = 255 - src.a;
@@ -333,14 +339,14 @@ void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort r
 	APOINT minPt, maxPt;
 	CDoubleMatrix A, IA, B, UV;
 	//double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
-	CUVL *uvls;
+	CUVL* uvls;
 	bool bD2XLights = (DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 	// TEMPORARY
 	CSideKey face (short (segP - segmentManager.Segment (0)), nSide);
 	short flickLight = lightManager.VariableLight (face);
 	short deltaLight, scanLight;
 	short light [4];
-	ushort bmWidth2;
+	ushort bmWidth2, faceKey = segmentManager.Index (segP) * 6 + nSide;
 	byte* fadeTables = paletteManager.FadeTable ();
 	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
 	double scale = (double) max (tex.m_info.width, tex.m_info.height);
@@ -529,16 +535,14 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				vm = tex.m_info.width * (tex.m_info.height - 1);
 				
 				i = (uint) y/*(m_viewHeight - y - 1)*/ * (uint) rowOffset + x0;
-				CBGR* pixelP = m_renderBuffer + i;
-				depthType* zBufP = m_depthBuffer + i;
 				double z, dz = ZRange (x0, x1, y, z);
 				
 				if (bEnableShading) {
-					for (int x = x0; x < x1; x++) {
+					for (int x = x0; x < x1; x++, i++) {
 						u += du;
-						u %= m;
 						v += dv;
-						v %= m;
+						//u %= m;
+						//v %= m;
 						// m_screenCoord fade value denotes the brightness of m_screenCoord color
 						// scanLight / 4 is the index in the fadeTables which consists of 34 tables with 256 entries each
 						// so for each color there are 34 fade (brightness) values ranges from 1/34 to 34/34
@@ -547,36 +551,49 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 						// We don't need this anymore here since we're rendering RGB and can compute the brightness directly
 						// from scanLight, the maximum of which is 8191
 						// byte fade = fadeTables [j + ((scanLight / 4) & 0x1f00)];
-						i = (u / 1024) + ((v / vd) & vm);
+						//if (m_overdrawFilter [i] != faceKey) 
+							{
+							u %= m;
+							v %= m;
 #if 1
-						Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, /*Z (tex, m_screenCoord,x, y)*/(depthType) z, scanLight);
-						z += dz;
+							if (Blend (m_renderBuffer [i], tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)], m_depthBuffer [i], (depthType) z, scanLight))
+								m_overdrawFilter [i] = faceKey;
+							z += dz;
 #else
-						if (tex.m_info.bmData [i].m_screenCoord > 0) {
-							CBGR c = tex.m_info.bmData [i];
-							pixelP->r = (byte) ((int) (c.r) * fade / 8191);
-							pixelP->g = (byte) ((int) (c.g) * fade / 8191);
-							pixelP->m_texCoord = (byte) ((int) (c.m_texCoord) * fade / 8191);
-							}
-						pixelP++;
+							int t = (u / 1024) + ((v / vd) & vm);
+							if (tex.m_info.bmData [t].m_screenCoord > 0) {
+								CBGR c = tex.m_info.bmData [t];
+								CBGR* pixel = m_renderBuffer + i;
+								pixelP->r = (byte) ((int) (c.r) * fade / 8191);
+								pixelP->g = (byte) ((int) (c.g) * fade / 8191);
+								pixelP->b = (byte) ((int) (c.b) * fade / 8191);
+								pixelP->m_texCoord = (byte) ((int) (c.m_texCoord) * fade / 8191);
+								}
 #endif
-						scanLight += deltaLight;
+							scanLight += deltaLight;
+							}
 						} 
 					}
 				else {
-					for (int x = x0; x < x1; x++) {
+					for (int x = x0; x < x1; x++, i++) {
 						u += du;
-						u %= m;
 						v += dv;
-						v %= m;
-						i = (u / 1024) + ((v / vd) & vm);
+						//u %= m;
+						//v %= m;
+						//if (m_overdrawFilter [i] != faceKey) 
+							{
+							u %= m;
+							v %= m;
 #if 1
-						Blend (*pixelP++, tex.m_info.bmData [i], *zBufP++, /*Z (tex, m_screenCoord,x, y)*/(depthType) z);
-						z += dz;
+							if (Blend (m_renderBuffer [i], tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)], m_depthBuffer [i], (depthType) z))
+								m_overdrawFilter [i] = faceKey;
+							z += dz;
 #else
-						if (tex.m_info.bmData [i].m_screenCoord > 0)
-							*pixelP++ = tex.m_info.bmData [i];
+							int t = (u / 1024) + ((v / vd) & vm);
+							if (tex.m_info.bmData [t].m_screenCoord > 0)
+								m_renderBuffer [i] = tex.m_info.bmData [t];
 #endif
+							}
 						}
 					}
 				}

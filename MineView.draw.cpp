@@ -821,6 +821,11 @@ void CMineView::DrawFaceTextured (CFaceListEntry& fle)
 		CSegment* segP = segmentManager.Segment (fle);
 		CSide* sideP = segmentManager.Side (fle);
 
+#ifdef _DEBUG
+	if ((fle.m_nSegment == 3) && (fle.m_nSide == 3))
+		fle.m_nSegment = fle.m_nSegment;
+#endif
+
 	if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 		DrawAnimDirArrows (sideP->BaseTex (), &tex);
 		RenderFace (segP, fle.m_nSide, tex, (m_viewWidth + 3) & ~3);

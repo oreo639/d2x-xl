@@ -125,6 +125,7 @@ protected: // create from serialization only
 	HBITMAP		m_DIB;
 	CBGR*			m_renderBuffer;
 	depthType*	m_depthBuffer;
+	ushort*		m_overdrawFilter;
 	CDC			m_DC;
 	CDC			*m_pDC; // if all goes well, this is set to &m_DC
 	bool			m_bUpdate;
@@ -409,7 +410,7 @@ public:
 
 	void RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort rowOffset);
 
-	inline void Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness = 32767);
+	inline bool Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness = 32767);
 
 	inline depthType Z (CTexture& tex, APOINT* a, int x, int y);
 
