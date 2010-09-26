@@ -115,6 +115,7 @@ m_rotateRates [3] = (double) PI / 8.0;
 m_rotateRates [2] = (double) PI / 16.0;
 m_rotateRates [1] = (double) PI / 32.0;
 m_rotateRates [0] = (double) PI / 64.0;
+m_bDepthTest = 1;
 m_iRotateRate = GetPrivateProfileInt ("DLE-XP", "RotateRate", 3, INIFILE);
 GetPrivateProfileString ("DLE-XP", "MoveRate", "1", szMoveRate, sizeof (szMoveRate), INIFILE);
 m_moveRate = (double) atof (szMoveRate);
@@ -237,7 +238,7 @@ for (i = 0; i <= IDC_PREFS_VIEW_EFFECTS - IDC_PREFS_VIEW_ROBOTS; i++) {
 	else
 		m_objViewFlags &= ~(1 << i);
 	}
-DDX_Check (pDX, IDC_VIEW_DEPTHTEST, m_bDepthTest);
+DDX_Check (pDX, IDC_PREFS_VIEW_DEPTHTEST, m_bDepthTest);
 DDX_Check (pDX, IDC_PREFS_EXPERTMODE, m_bExpertMode);
 DDX_Check (pDX, IDC_PREFS_SPLASHSCREEN, m_bSplashScreen);
 DDX_Text (pDX, IDC_PREFS_UNDO, m_nMaxUndo);
@@ -361,6 +362,7 @@ sprintf_s (szMoveRate, sizeof (szMoveRate), "%1.3f", m_moveRate);
 WritePrivateProfileDouble ("MoveRate", m_moveRate);
 WritePrivateProfileInt ("ExpertMode", m_bExpertMode);
 WritePrivateProfileInt ("SplashScreen", m_bSplashScreen);
+WritePrivateProfileInt ("DepthTest", m_bDepthTest);
 WritePrivateProfileInt ("MineViewFlags", m_mineViewFlags);
 WritePrivateProfileInt ("ObjViewFlags", m_objViewFlags);
 WritePrivateProfileInt ("TexViewFlags", m_texViewFlags);
