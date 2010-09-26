@@ -380,6 +380,8 @@ public:
 			m_nDelayRefresh--;
 		}
 	inline bool DelayRefresh (void) { return m_nDelayRefresh > 0; }
+	inline bool DepthTest (void) { return m_bTestDepth; }
+	inline void SetDepthTest (bool bDepthTest) { m_bTestDepth = bDepthTest; }
 
 	void SetMouseState (int newMouseState);
 	BOOL SetCursor (HCURSOR hCursor);

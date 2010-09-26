@@ -2,9 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by dle-xp.rc
 //
-#define IDC_PREFS_VIEW_ALLTEXTURES2     10447
-#define IDC_PREFS_VIEW_DEPTHTEST        10447
-
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

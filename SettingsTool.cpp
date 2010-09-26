@@ -52,6 +52,7 @@ BEGIN_MESSAGE_MAP(CPrefsDlg, CToolDlg)
 	ON_BN_CLICKED (IDC_PREFS_VIEW_HIDEMARKED, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_VIEW_ALLTEXTURES, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_VIEW_SKYBOX, OnOK)
+	ON_BN_CLICKED (IDC_PREFS_VIEW_DEPTHTEST, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_DEPTH_OFF, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_DEPTH_LOW, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_DEPTH_MEDIUM, OnOK)
@@ -124,6 +125,7 @@ m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFla
 m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, INIFILE);
 m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, INIFILE);
 m_bUseTexColors = GetPrivateProfileInt ("DLE-XP", "UseTexColors", m_bUseTexColors, INIFILE);
+m_bDepthTest = GetPrivateProfileInt ("DLE-XP", "DepthTest", m_bDepthTest, INIFILE);
 m_nViewDist = GetPrivateProfileInt ("DLE-XP", "ViewDistance", 0, INIFILE);
 m_nMineCenter = GetPrivateProfileInt ("DLE-XP", "MineCenter", 0, INIFILE);
 m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", DLE_MAX_UNDOS, INIFILE);
@@ -151,6 +153,8 @@ m_btnBrowseMissions.AutoLoad (IDC_PREFS_BROWSE_MISSIONS, this);
 m_mineViewFlags = DLE.MineView ()->GetMineViewFlags ();
 m_objViewFlags = DLE.MineView ()->GetObjectViewFlags ();
 m_texViewFlags = DLE.TextureView ()->GetViewFlags ();
+m_bDepthTest = DLE.MineView ()->DepthTest ();
+m_bDepthTest = GetPrivateProfileInt ("DLE-XP", "DepthTest", m_bDepthTest, INIFILE);
 m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, INIFILE);
 m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, INIFILE);
 m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, INIFILE);
@@ -233,6 +237,7 @@ for (i = 0; i <= IDC_PREFS_VIEW_EFFECTS - IDC_PREFS_VIEW_ROBOTS; i++) {
 	else
 		m_objViewFlags &= ~(1 << i);
 	}
+DDX_Check (pDX, IDC_VIEW_DEPTHTEST, m_bDepthTest);
 DDX_Check (pDX, IDC_PREFS_EXPERTMODE, m_bExpertMode);
 DDX_Check (pDX, IDC_PREFS_SPLASHSCREEN, m_bSplashScreen);
 DDX_Text (pDX, IDC_PREFS_UNDO, m_nMaxUndo);
@@ -318,6 +323,7 @@ void CPrefsDlg::GetAppSettings ()
 strcpy_s (m_d1Path, sizeof (m_d1Path), descentPath [0]);
 strcpy_s (m_d2Path, sizeof (m_d2Path), descentPath [1]);
 strcpy_s (m_missionsPath, sizeof (m_missionsPath), missionPath);
+m_bDepthTest = DLE.MineView ()->DepthTest ();
 m_mineViewFlags = DLE.MineView ()->GetMineViewFlags ();
 m_objViewFlags = DLE.MineView ()->GetObjectViewFlags ();
 m_texViewFlags = DLE.TextureView ()->GetViewFlags ();
@@ -405,6 +411,7 @@ if (strcmp (missionPath, m_missionsPath)) {
 if (!bInitApp)
 	DLE.MineView ()->DelayRefresh (true);
 DLE.MineView ()->m_nViewDist = m_nViewDist;
+DLE.MineView ()->SetDepthTest (m_bDepthTest);
 DLE.MineView ()->SetViewMineFlags (m_mineViewFlags);
 DLE.MineView ()->SetViewObjectFlags (m_objViewFlags);
 DLE.TextureView ()->SetViewFlags (m_texViewFlags);

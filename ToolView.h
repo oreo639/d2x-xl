@@ -1230,6 +1230,7 @@ class CPrefsDlg : public CToolDlg
 		int				m_nMineCenter;
 		int				m_nMaxUndo;
 		BOOL				m_bSplashScreen;
+		BOOL				m_bDepthTest;
 		bool				m_bNoRefresh;
 		bool				m_bInvalid;
 
