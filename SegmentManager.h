@@ -162,7 +162,7 @@ class CSegmentManager {
 
 		short Create (void);
 
-		void Delete (short nDelSeg = -1, , bool bDeleteVerts = true);
+		void Delete (short nDelSeg = -1, bool bDeleteVerts = true);
 
 		void ResetSide (short nSegment, short nSide);
 
