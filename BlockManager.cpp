@@ -57,6 +57,7 @@ short CBlockManager::Read (CFileManager& fp)
 	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	short				xlatSegNum [SEGMENT_LIMIT];
 	int				byteBuf; // needed for scanning byte values
+	CTrigger*		newTriggers = null;
 
 // remember number of vertices for later
 origVertCount = vertexManager.Count ();
@@ -111,10 +112,8 @@ while (!fp.EoF ()) {
 		scanRes = fscanf_s (fp.File (), "    tmap_num %hd\n", &sideP->m_info.nBaseTex);
 		scanRes = fscanf_s (fp.File (), "    tmap_num2 %hd\n", &sideP->m_info.nOvlTex);
 		for (i = 0; i < 4; i++)
-			scanRes = fscanf_s (fp.File (), "    uvls %hd %hd %hd\n",
-						&sideP->m_info.uvls [i].u,
-						&sideP->m_info.uvls [i].v,
-						&sideP->m_info.uvls [i].l);
+			scanRes = fscanf_s (fp.File (), "    uvls %hd %hd %hd\n", 
+									  &sideP->m_info.uvls [i].u, &sideP->m_info.uvls [i].v, &sideP->m_info.uvls [i].l);
 		if (bExtBlkFmt) {
 			scanRes = fscanf_s (fp.File (), "    wall %hd\n", &sideP->m_info.nWall);
 			if (sideP->m_info.nWall != NO_WALL) {
@@ -130,7 +129,7 @@ while (!fp.EoF ()) {
 				scanRes = fscanf_s (fp.File (), "        flags %hd\n", &w.Info ().flags);
 				scanRes = fscanf_s (fp.File (), "        state %d\n", &byteBuf);
 				w.Info ().state = (byte) byteBuf;
-				scanRes = fscanf_s (fp.File (), "        nClip %d\n", &byteBuf);
+				scanRes = fscanf_s (fp.File (), "        clip %d\n", &byteBuf);
 				w.Info ().nClip = (byte) byteBuf;
 				scanRes = fscanf_s (fp.File (), "        keys %d\n", &byteBuf);
 				w.Info ().keys = (byte) byteBuf;
@@ -159,6 +158,8 @@ while (!fp.EoF ()) {
 							CTrigger* trigP = triggerManager.Trigger (w.Info ().nTrigger);
 							*trigP = t;
 							trigP->Backup (opAdd);
+							trigP->SetLink (newTriggers);
+							newTriggers = trigP;
 							++nNewTriggers;
 							}
 						}
@@ -188,8 +189,8 @@ while (!fp.EoF ()) {
 		// each vertex relative to the origin has a x', y', and z' component
 		// adjust vertices relative to origin
 		CDoubleVector v;
-		v.Set (x, y, z);
-		v.Set (v ^ xAxis, v ^ xAxis, v ^ xAxis);
+		v.Set (X2D (x), X2D (y), X2D (z));
+		v.Set (v ^ xAxis, v ^ yAxis, v ^ zAxis);
 		v += origin;
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
@@ -261,13 +262,14 @@ while (!fp.EoF ()) {
 	nNewSegs++;
 	}
 
-for (CWallTriggerIterator ti; ti; ti++) {
-	CTrigger *trigP = &(*ti);
+while (newTriggers != null) {
+	CTrigger* trigP = newTriggers;
+	newTriggers = dynamic_cast<CTrigger*> (trigP->Link ());
 	for (j = 0; j < trigP->Count (); j++) {
 		if (trigP->Segment (j) >= 0)
 			trigP->Segment (j) = xlatSegNum [trigP->Segment (j)];
 		else if (trigP->Count () == 1) {
-			triggerManager.Delete (ti.Index ());
+			triggerManager.Delete (triggerManager.Index (trigP));
 			i--;
 			}
 		else {
@@ -275,6 +277,7 @@ for (CWallTriggerIterator ti; ti; ti++) {
 			}
 		}
 	}
+
 undoManager.End ();
 sprintf_s (message, sizeof (message),
 			" Block tool: %d blocks, %d walls, %d triggers pasted.", 
@@ -323,9 +326,7 @@ for (CSegmentIterator si; si; si++) {
 			fprintf (fp.File (), "    tmap_num2 %d\n",sideP->m_info.nOvlTex);
 			for (j = 0; j < 4; j++) {
 				fprintf (fp.File (), "    uvls %d %d %d\n",
-				sideP->m_info.uvls [j].u,
-				sideP->m_info.uvls [j].v,
-				sideP->m_info.uvls [j].l);
+							sideP->m_info.uvls [j].u, sideP->m_info.uvls [j].v, sideP->m_info.uvls [j].l);
 				}
 			if (bExtBlkFmt) {
 				fprintf (fp.File (), "    wall %d\n", sideP->m_info.nWall);
@@ -337,7 +338,7 @@ for (CSegmentIterator si; si; si++) {
 					fprintf (fp.File (), "        type %d\n", wallP->Type ());
 					fprintf (fp.File (), "        flags %d\n", wallP->Info ().flags);
 					fprintf (fp.File (), "        state %d\n", wallP->Info ().state);
-					fprintf (fp.File (), "        nClip %d\n", wallP->Info ().nClip);
+					fprintf (fp.File (), "        clip %d\n", wallP->Info ().nClip);
 					fprintf (fp.File (), "        keys %d\n", wallP->Info ().keys);
 					fprintf (fp.File (), "        cloak %d\n", wallP->Info ().cloakValue);
 					if (wallP->Info ().nTrigger == NO_TRIGGER)

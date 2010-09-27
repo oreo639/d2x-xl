@@ -93,7 +93,7 @@ class CUndoItem {
 
 		void Destroy (void) {
 			if (m_backup != null) {
-				delete[] m_backup;
+				delete m_backup;
 				Reset ();
 				}
 			}

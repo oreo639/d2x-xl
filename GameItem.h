@@ -41,6 +41,7 @@ class CGameItem {
 		eItemType	m_itemType;
 		eEditType	m_editType;
 		CGameItem*	m_parent;
+		CGameItem*	m_link;
 
 	public:
 		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_editType (opNone), m_parent (null) {}
@@ -70,6 +71,10 @@ class CGameItem {
 		inline CGameItem* Parent (void) { return m_parent; }
 
 		inline void SetParent (CGameItem* parent) { m_parent = parent; }
+
+		inline CGameItem* Link (void) { return m_link; }
+
+		inline void SetLink (CGameItem* item) { m_link = item; }
 	};
 
 // -----------------------------------------------------------------------------
