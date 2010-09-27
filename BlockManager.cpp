@@ -50,13 +50,13 @@ m.fVec.Normalize ();
 
 short CBlockManager::Read (CFileManager& fp) 
 {
-	int				i, j;
+	int				i, j, scanRes;
 	short				origVertCount;
 	CDoubleMatrix	m;
 	CDoubleVector	xAxis, yAxis, zAxis, origin;
 	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	short				xlatSegNum [SEGMENT_LIMIT];
-	int				byteBuf;
+	int				byteBuf; // needed for scanning byte values
 
 // remember number of vertices for later
 origVertCount = vertexManager.Count ();
@@ -93,7 +93,7 @@ while (!fp.EoF ()) {
 	CSegment* segP = segmentManager.Segment (nSegment);
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
-	fscanf_s (fp.File (), "segment %hd\n", &segP->Index ());
+	scanRes = fscanf_s (fp.File (), "segment %d\n", &segP->Index ());
 	xlatSegNum [segP->Index ()] = nSegment;
 	// invert segment number so its children can be children can be fixed later
 	segP->Index () = ~segP->Index ();
@@ -102,46 +102,52 @@ while (!fp.EoF ()) {
 	CSide* sideP = segP->m_sides;
 	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 		short test;
-		fscanf_s (fp.File (), "  side %hd\n", &test);
+		scanRes = fscanf_s (fp.File (), "  side %hd\n", &test);
 		if (test != nSide) {
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
 		sideP->m_info.nWall = NO_WALL;
-		fscanf_s (fp.File (), "    tmap_num %hd\n", &sideP->m_info.nBaseTex);
-		fscanf_s (fp.File (), "    tmap_num2 %hd\n", &sideP->m_info.nOvlTex);
+		scanRes = fscanf_s (fp.File (), "    tmap_num %hd\n", &sideP->m_info.nBaseTex);
+		scanRes = fscanf_s (fp.File (), "    tmap_num2 %hd\n", &sideP->m_info.nOvlTex);
 		for (i = 0; i < 4; i++)
-			fscanf_s (fp.File (), "    uvls %hd %hd %hd\n",
+			scanRes = fscanf_s (fp.File (), "    uvls %hd %hd %hd\n",
 						&sideP->m_info.uvls [i].u,
 						&sideP->m_info.uvls [i].v,
 						&sideP->m_info.uvls [i].l);
 		if (bExtBlkFmt) {
-			fscanf_s (fp.File (), "    nWall %d\n", &sideP->m_info.nWall);
+			scanRes = fscanf_s (fp.File (), "    nWall %hd\n", &sideP->m_info.nWall);
 			if (sideP->m_info.nWall != NO_WALL) {
 				CWall w;
 				CTrigger t;
 				w.Clear ();
 				t.Clear ();
-				fscanf_s (fp.File (), "        segment %ld\n", &w.m_nSegment);
-				fscanf_s (fp.File (), "        side %ld\n", &w.m_nSide);
-				fscanf_s (fp.File (), "        hps %ld\n", &w.Info ().hps);
-				fscanf_s (fp.File (), "        type %d\n", &w.Info ().type);
-				fscanf_s (fp.File (), "        flags %d\n", &w.Info ().flags);
-				fscanf_s (fp.File (), "        state %d\n", &w.Info ().state);
-				fscanf_s (fp.File (), "        nClip %d\n", &w.Info ().nClip);
-				fscanf_s (fp.File (), "        keys %d\n", &w.Info ().keys);
-				fscanf_s (fp.File (), "        cloak %d\n", &w.Info ().cloakValue);
-				fscanf_s (fp.File (), "        trigger %d\n", &byteBuf);
-				w.Info ().nTrigger = byteBuf;
+				scanRes = fscanf_s (fp.File (), "        segment %hd\n", &w.m_nSegment);
+				scanRes = fscanf_s (fp.File (), "        side %hd\n", &w.m_nSide);
+				scanRes = fscanf_s (fp.File (), "        hps %d\n", &w.Info ().hps);
+				scanRes = fscanf_s (fp.File (), "        type %d\n", &byteBuf);
+				w.Info ().type = (byte) byteBuf;
+				scanRes = fscanf_s (fp.File (), "        flags %hd\n", &w.Info ().flags);
+				scanRes = fscanf_s (fp.File (), "        state %d\n", &byteBuf);
+				w.Info ().state = (byte) byteBuf;
+				scanRes = fscanf_s (fp.File (), "        nClip %d\n", &byteBuf);
+				w.Info ().nClip = (byte) byteBuf;
+				scanRes = fscanf_s (fp.File (), "        keys %d\n", &byteBuf);
+				w.Info ().keys = (byte) byteBuf;
+				scanRes = fscanf_s (fp.File (), "        cloak %d\n", &byteBuf);
+				w.Info ().cloakValue = (byte) byteBuf;
+				scanRes = fscanf_s (fp.File (), "        trigger %d\n", &byteBuf);
+				w.Info ().nTrigger = (byte) byteBuf;
 				if ((w.Info ().nTrigger >= 0) && (w.Info ().nTrigger < MAX_TRIGGERS)) {
-					fscanf_s (fp.File (), "			    type %d\n", &t.Info ().type);
-					fscanf_s (fp.File (), "			    flags %hd\n", &t.Info ().flags);
-					fscanf_s (fp.File (), "			    value %ld\n", &t.Info ().value);
-					fscanf_s (fp.File (), "			    timer %d\n", &t.Info ().time);
-					fscanf_s (fp.File (), "			    count %hd\n", &t.Count ());
+					scanRes = fscanf_s (fp.File (), "			    type %d\n", &byteBuf);
+					t.Info ().type = (byte) byteBuf;
+					scanRes = fscanf_s (fp.File (), "			    flags %hd\n", &t.Info ().flags);
+					scanRes = fscanf_s (fp.File (), "			    value %d\n", &t.Info ().value);
+					scanRes = fscanf_s (fp.File (), "			    timer %d\n", &t.Info ().time);
+					scanRes = fscanf_s (fp.File (), "			    count %hd\n", &t.Count ());
 					for (i = 0; i < t.Count (); i++) {
-						fscanf_s (fp.File (), "			        segP %hd\n", &t [i].m_nSegment);
-						fscanf_s (fp.File (), "			        side %hd\n", &t [i].m_nSide);
+						scanRes = fscanf_s (fp.File (), "			        segP %hd\n", &t [i].m_nSegment);
+						scanRes = fscanf_s (fp.File (), "			        side %hd\n", &t [i].m_nSide);
 						}
 					}
 				if (wallManager.HaveResources ()) {
@@ -167,14 +173,14 @@ while (!fp.EoF ()) {
 			}
 		}
 	short children [6];
-	fscanf_s (fp.File (), "  children %hd %hd %hd %hd %hd %hd\n", 
+	scanRes = fscanf_s (fp.File (), "  children %hd %hd %hd %hd %hd %hd\n", 
 				 children + 0, children + 1, children + 2, children + 3, children + 4, children + 5, children + 6);
 	for (i = 0; i < 6; i++)
 		segP->SetChild (i, children [i]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
 		int x, y, z, test;
-		fscanf_s (fp.File (), "  vms_vector %hd %ld %ld %ld\n", &test, &x, &y, &z);
+		scanRes = fscanf_s (fp.File (), "  vms_vector %d %d %d %d\n", &test, &x, &y, &z);
 		if (test != i) {
 			ErrorMsg ("Invalid vertex number read");
 			return (0);
@@ -203,13 +209,17 @@ while (!fp.EoF ()) {
 	// mark vertices
 	for (i = 0; i < 8; i++)
 		segP->Vertex (i)->Status () |= MARKED_MASK;
-	fscanf_s (fp.File (), "  staticLight %ld\n", &segP->m_info.staticLight);
+	scanRes = fscanf_s (fp.File (), "  staticLight %d\n", &segP->m_info.staticLight);
 	if (bExtBlkFmt) {
-		fscanf_s (fp.File (), "  special %d\n", &segP->m_info.function);
-		fscanf_s (fp.File (), "  nMatCen %d\n", &segP->m_info.nMatCen);
-		fscanf_s (fp.File (), "  value %d\n", &segP->m_info.value);
-		fscanf_s (fp.File (), "  childFlags %d\n", &segP->m_info.childFlags);
-		fscanf_s (fp.File (), "  wallFlags %d\n", &segP->m_info.wallFlags);
+		scanRes = fscanf_s (fp.File (), "  special %d\n", &segP->m_info.function);
+		scanRes = fscanf_s (fp.File (), "  nMatCen %d\n", &byteBuf);
+		segP->m_info.nMatCen = (byte) byteBuf;
+		scanRes = fscanf_s (fp.File (), "  value %d\n", &byteBuf);
+		segP->m_info.value = (byte) byteBuf;
+		scanRes = fscanf_s (fp.File (), "  childFlags %d\n", &byteBuf);
+		segP->m_info.childFlags = (byte) byteBuf;
+		scanRes = fscanf_s (fp.File (), "  wallFlags %d\n", &byteBuf);
+		segP->m_info.wallFlags = (byte) byteBuf;
 		switch (segP->m_info.function) {
 			case SEGMENT_FUNC_FUELCEN:
 				if (!segmentManager.CreateFuelCenter (nSegment, SEGMENT_FUNC_FUELCEN, false, false))
@@ -243,9 +253,10 @@ while (!fp.EoF ()) {
 	segP->m_info.wallFlags = MARKED_MASK; // no other bits
 	// calculate childFlags
 	segP->m_info.childFlags = 0;
-	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
+	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 		if (segP->Child (i) >= 0)
-		segP->m_info.childFlags |= (1 << i);
+			segP->m_info.childFlags |= (1 << i);
+		}
 	segP->Backup ();
 	nNewSegs++;
 	}
@@ -340,8 +351,8 @@ for (CSegmentIterator si; si; si++) {
 								count++;
 						fprintf (fp.File (), "        trigger %d\n", wallP->Info ().nTrigger);
 						fprintf (fp.File (), "			    type %d\n", trigP->Type ());
-						fprintf (fp.File (), "			    flags %ld\n", trigP->Info ().flags);
-						fprintf (fp.File (), "			    value %ld\n", trigP->Info ().value);
+						fprintf (fp.File (), "			    flags %d\n", trigP->Info ().flags);
+						fprintf (fp.File (), "			    value %d\n", trigP->Info ().value);
 						fprintf (fp.File (), "			    timer %d\n", trigP->Info ().time);
 						fprintf (fp.File (), "			    count %d\n", count);
 						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
@@ -365,9 +376,9 @@ for (CSegmentIterator si; si; si++) {
 			//                       A is the axis unit vVertexor (always 1)
 			nVertex = segP->m_info.verts [i];
 			CVertex v = *vertexManager.Vertex (nVertex) - origin;
-			fprintf (fp.File (), "  vms_vector %d %ld %ld %ld\n", i, D2X (v ^ m.rVec), D2X (v ^ m.uVec), D2X (v ^ m.fVec));
+			fprintf (fp.File (), "  vms_vector %d %d %d %d\n", i, D2X (v ^ m.rVec), D2X (v ^ m.uVec), D2X (v ^ m.fVec));
 			}
-		fprintf (fp.File (), "  staticLight %ld\n",segP->m_info.staticLight);
+		fprintf (fp.File (), "  staticLight %d\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {
 			fprintf (fp.File (), "  special %d\n",segP->m_info.function);
 			fprintf (fp.File (), "  nMatCen %d\n",segP->m_info.nMatCen);
@@ -484,7 +495,9 @@ if (fp.Open (szFile, "w")) {
 //  undoManager.UpdateBuffer(0);
 strcpy_s (m_filename, sizeof (m_filename), szFile); // remember fp for quick paste
 fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
+DLE.MainFrame ()->InitProgress (segmentManager.MarkedCount ());
 Write (fp);
+DLE.MainFrame ()->Progress ().DestroyWindow ();
 fp.Close ();
 sprintf_s (message, sizeof (message), " Block tool: %d blocks copied to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
