@@ -71,8 +71,10 @@ class CWall : public CSideKey, public CGameItem {
 		inline byte Alpha (void) { 
 			if (IsTransparent ())
 				return 128;
-			if (IsCloaked () || IsIllusion ())
+			if (IsCloaked ())
 				return 255 * (m_info.cloakValue % 32) / 31;
+			if (IsIllusion ())
+				return 255 * (100 - m_info.cloakValue) / 100;
 			if (m_info.hps == 0)
 				return 255;
 			return X2I (255 * m_info.hps); 
