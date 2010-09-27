@@ -116,7 +116,7 @@ while (!fp.EoF ()) {
 						&sideP->m_info.uvls [i].v,
 						&sideP->m_info.uvls [i].l);
 		if (bExtBlkFmt) {
-			scanRes = fscanf_s (fp.File (), "    nWall %hd\n", &sideP->m_info.nWall);
+			scanRes = fscanf_s (fp.File (), "    wall %hd\n", &sideP->m_info.nWall);
 			if (sideP->m_info.nWall != NO_WALL) {
 				CWall w;
 				CTrigger t;
@@ -146,7 +146,7 @@ while (!fp.EoF ()) {
 					scanRes = fscanf_s (fp.File (), "			    timer %d\n", &t.Info ().time);
 					scanRes = fscanf_s (fp.File (), "			    count %hd\n", &t.Count ());
 					for (i = 0; i < t.Count (); i++) {
-						scanRes = fscanf_s (fp.File (), "			        segP %hd\n", &t [i].m_nSegment);
+						scanRes = fscanf_s (fp.File (), "			        segment %hd\n", &t [i].m_nSegment);
 						scanRes = fscanf_s (fp.File (), "			        side %hd\n", &t [i].m_nSide);
 						}
 					}
@@ -209,16 +209,16 @@ while (!fp.EoF ()) {
 	// mark vertices
 	for (i = 0; i < 8; i++)
 		segP->Vertex (i)->Status () |= MARKED_MASK;
-	scanRes = fscanf_s (fp.File (), "  staticLight %d\n", &segP->m_info.staticLight);
+	scanRes = fscanf_s (fp.File (), "  static_light %d\n", &segP->m_info.staticLight);
 	if (bExtBlkFmt) {
 		scanRes = fscanf_s (fp.File (), "  special %d\n", &segP->m_info.function);
-		scanRes = fscanf_s (fp.File (), "  nMatCen %d\n", &byteBuf);
+		scanRes = fscanf_s (fp.File (), "  matcen_num %d\n", &byteBuf);
 		segP->m_info.nMatCen = (byte) byteBuf;
 		scanRes = fscanf_s (fp.File (), "  value %d\n", &byteBuf);
 		segP->m_info.value = (byte) byteBuf;
-		scanRes = fscanf_s (fp.File (), "  childFlags %d\n", &byteBuf);
+		scanRes = fscanf_s (fp.File (), "  child_bitmask %d\n", &byteBuf);
 		segP->m_info.childFlags = (byte) byteBuf;
-		scanRes = fscanf_s (fp.File (), "  wallFlags %d\n", &byteBuf);
+		scanRes = fscanf_s (fp.File (), "  wall_bitmask %d\n", &byteBuf);
 		segP->m_info.wallFlags = (byte) byteBuf;
 		switch (segP->m_info.function) {
 			case SEGMENT_FUNC_FUELCEN:
@@ -328,7 +328,7 @@ for (CSegmentIterator si; si; si++) {
 				sideP->m_info.uvls [j].l);
 				}
 			if (bExtBlkFmt) {
-				fprintf (fp.File (), "    nWall %d\n", sideP->m_info.nWall);
+				fprintf (fp.File (), "    wall %d\n", sideP->m_info.nWall);
 				if (sideP->m_info.nWall != NO_WALL) {
 					CWall* wallP = sideP->Wall ();
 					fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
@@ -357,7 +357,7 @@ for (CSegmentIterator si; si; si++) {
 						fprintf (fp.File (), "			    count %d\n", count);
 						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
 							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
-								fprintf (fp.File (), "			        segP %d\n", trigP->Segment (iTarget));
+								fprintf (fp.File (), "			        segment %d\n", trigP->Segment (iTarget));
 								fprintf (fp.File (), "			        side %d\n", trigP->Side (iTarget));
 								}
 						}
@@ -378,13 +378,13 @@ for (CSegmentIterator si; si; si++) {
 			CVertex v = *vertexManager.Vertex (nVertex) - origin;
 			fprintf (fp.File (), "  vms_vector %d %d %d %d\n", i, D2X (v ^ m.rVec), D2X (v ^ m.uVec), D2X (v ^ m.fVec));
 			}
-		fprintf (fp.File (), "  staticLight %d\n",segP->m_info.staticLight);
+		fprintf (fp.File (), "  static_light %d\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {
 			fprintf (fp.File (), "  special %d\n",segP->m_info.function);
-			fprintf (fp.File (), "  nMatCen %d\n",segP->m_info.nMatCen);
+			fprintf (fp.File (), "  matcen_num %d\n",segP->m_info.nMatCen);
 			fprintf (fp.File (), "  value %d\n",segP->m_info.value);
-			fprintf (fp.File (), "  childFlags %d\n",segP->m_info.childFlags);
-			fprintf (fp.File (), "  wallFlags %d\n",segP->m_info.wallFlags);
+			fprintf (fp.File (), "  child_bitmask %d\n",segP->m_info.childFlags);
+			fprintf (fp.File (), "  wall_bitmask %d\n",segP->m_info.wallFlags);
 			}
 		}
 	}

@@ -121,6 +121,7 @@ int CFileManager::EoF (void)
 if (!m_info.file)
 	return 1;
 #endif
+Tell ();
 return (m_info.position >= m_info.size);
 }
 
