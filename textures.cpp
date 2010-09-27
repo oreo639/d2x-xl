@@ -17,9 +17,13 @@ void CTexture::ComputeIndex (byte* bmIndex)
 {
 	CBGR* palette = paletteManager.Current ();
 
+#ifndef _DEBUG
 #pragma omp parallel 
+#endif
 	{
+#ifndef _DEBUG
 #	pragma omp for
+#endif
 	for (int y = 0; y < (int) m_info.height; y++) {
 		int i = y * m_info.width;
 		int k = m_info.size - m_info.width - i;

@@ -23,7 +23,7 @@ class CGameItemIterator {
 				}
 			else {
 				m_index = start;
-				m_count = count;
+				m_count = count - start;
 				}
 			}
 

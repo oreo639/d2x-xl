@@ -183,10 +183,9 @@ else {
 		return WritePogTexture (fp, texP);
 		}
 	texP->ComputeIndex (bmIndex);
-	bmIndex += w * (h - 1); // point to last row of bitmap
-	for (int row = 0; row < h; row++) {
-		fp.Write (bmIndex, 1, w);
+	for (bmIndex += w * h /*point to last row of bitmap*/; h > 0; h--) {
 		bmIndex -= w;
+		fp.Write (bmIndex, 1, w);
 		}
 	delete bmIndex;
 	}
