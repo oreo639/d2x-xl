@@ -407,7 +407,7 @@ for (short nSide = 0; nSide < 6; nSide++) {
 	segP->SetChild (nOppSide, nCenterSeg);
 	centerSegP->SetChild (nSide, nSegment);
 	CWall* wallP = centerSegP->m_sides [nSide].Wall ();
-	if (wallP == NULL)
+	if (wallP == null)
 		segP->m_sides [nSide].m_info.nWall = NO_WALL;
 	else {
 		segP->m_sides [nSide].m_info.nWall = wallManager.Index (wallP);

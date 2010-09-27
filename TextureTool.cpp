@@ -474,7 +474,7 @@ int nSide = current->m_nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
 wallP = current->Wall ();
-m_nColorIndex = (wallP && (wallP->Type () == WALL_TRANSPARENT)) ? wallP->Info ().cloakValue : colorP->m_info.index;
+m_nColorIndex = ((wallP != null) && (wallP->Type () == WALL_TRANSPARENT)) ? wallP->Info ().cloakValue : colorP->m_info.index;
 m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
 m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
 m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);

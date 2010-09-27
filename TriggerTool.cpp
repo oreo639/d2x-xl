@@ -638,7 +638,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 		if (sideP->Info ().nWall >= MAX_WALLS)
 			continue;
 		CWall *wallP = wallManager.Wall (sideP->Info ().nWall);
-		if (wallP->Info ().nTrigger >= TriggerCount ())
+		if ((wallP == null) || (wallP->Info ().nTrigger >= TriggerCount ()))
 			continue;
 		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
 			triggerManager.Delete (wallP->Info ().nTrigger);

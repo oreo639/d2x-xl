@@ -805,6 +805,8 @@ DrawLine (texP, pt [0], pt [3], color);
 // DrawFaceTextured()
 //--------------------------------------------------------------------------
 
+static short nDbgSeg = -1, nDbgSide = -1;
+
 void CMineView::DrawFaceTextured (CFaceListEntry& fle) 
 {
 	//short x_max = m_viewWidth * 2;
@@ -831,6 +833,11 @@ void CMineView::DrawFaceTextured (CFaceListEntry& fle)
 		CSegment* segP = segmentManager.Segment (fle);
 		CSide* sideP = segmentManager.Side (fle);
 		CWall* wallP = segmentManager.Wall (fle);
+
+#ifdef _DEBUG
+	if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide)))
+		nDbgSeg = nDbgSeg;
+#endif
 
 	m_alpha = (wallP == null) ? 255 : wallP->Alpha ();
 	if ((wallP != null) && (wallP->IsTransparent () || wallP->IsCloaked ())) {

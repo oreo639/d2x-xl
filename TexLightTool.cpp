@@ -327,7 +327,7 @@ if (lightManager.UseTexColors ()) {
 			if (sideP->m_info.nWall < 0)
 				continue;
 			wallP = wallManager.Wall (sideP->m_info.nWall);
-			if (wallP->Type () != WALL_TRANSPARENT)
+			if ((wallP == null) || !wallP->IsTransparent ())
 				continue;
 			if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
 				continue;
@@ -352,7 +352,7 @@ if (/*(DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
 		point.y -= rcPal.top;
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
 			CWall *wallP = current->Wall ();
-			if (wallP && (wallP->Type () == WALL_TRANSPARENT)) {
+			if ((wallP != null) && (wallP->Type () == WALL_TRANSPARENT)) {
 				wallP->Info ().cloakValue = m_nColorIndex;
 				SetWallColor ();
 				}

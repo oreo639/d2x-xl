@@ -372,7 +372,7 @@ if ((nBitmap >= 0) && (nBitmap <= 129)) {
 		}
 	}
 wndP->ReleaseDC (pDC);
-wndP->InvalidateRect (NULL, TRUE);
+wndP->InvalidateRect (null, TRUE);
 wndP->UpdateWindow ();
 }
 
