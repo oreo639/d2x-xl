@@ -275,12 +275,25 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnProp (int nProp)
 {
 CHECKMINE;
-undoManager.Begin (udSegments);
 if (Prop (nProp)->GetCheck ())
 	m_nProps |= 1 << nProp;
 else
 	m_nProps &= ~(1 << nProp);
-current->Segment ()->m_info.props = m_nProps;
+
+BOOL bMarked = segmentManager.HaveMarkedSegments ();
+
+undoManager.Begin (udSegments);
+DLE.MineView ()->DelayRefresh (true);
+UpdateData (TRUE);
+if (bMarked) {
+	CSegment *segP = segmentManager.Segment (0);
+	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
+		if (segP->IsMarked ())
+			segP->m_info.props = m_nProps;
+	}
+else 					
+	current->Segment ()->m_info.props = m_nProps;
+DLE.MineView ()->DelayRefresh (false);
 undoManager.End ();
 }
 
@@ -516,7 +529,6 @@ CHECKMINE;
 
 	BOOL	bChangeOk = TRUE;
 	BOOL	bMarked = segmentManager.HaveMarkedSegments ();
-
 
 undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
