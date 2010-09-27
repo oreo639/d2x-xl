@@ -66,10 +66,12 @@ class CWall : public CSideKey, public CGameItem {
 
 		inline bool IsCloaked (void) { return m_info.type == WALL_CLOAKED; }
 
+		inline bool IsIllusion (void) { return m_info.type == WALL_ILLUSION; }
+
 		inline byte Alpha (void) { 
 			if (IsTransparent ())
 				return 128;
-			if (IsCloaked ())
+			if (IsCloaked () || IsIllusion ())
 				return 255 * (m_info.cloakValue % 32) / 31;
 			if (m_info.hps == 0)
 				return 255;
