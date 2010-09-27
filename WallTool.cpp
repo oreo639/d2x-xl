@@ -702,7 +702,7 @@ if (pScrollBar == TransparencySlider ()) {
 		nPos = 0;
 	else if (nPos > 10)
 		nPos = 10;
-	if  (m_wallP [0]->Type () == WALL_TRANSPARENT) {
+	if (m_wallP [0]->Type () == WALL_TRANSPARENT) {
 		m_nStrength = nPos * 10;
 		UpdateData (FALSE);
 		OnStrength ();
