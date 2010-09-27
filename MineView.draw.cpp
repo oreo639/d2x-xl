@@ -833,10 +833,15 @@ void CMineView::DrawFaceTextured (CFaceListEntry& fle)
 		CWall* wallP = segmentManager.Wall (fle);
 
 	m_alpha = (wallP == null) ? 255 : wallP->Alpha ();
-	if ((wallP != null) && wallP->IsTransparent ()) {
+	if ((wallP != null) && (wallP->IsTransparent () || wallP->IsCloaked ())) {
 		DrawAnimDirArrows (sideP->BaseTex (), &tex);
-		CColor* colorP = lightManager.GetTexColor (sideP->BaseTex (), true);
-		CBGRA color (colorP->Red (), colorP->Green (), colorP->Blue (), 255);
+		CBGRA color;
+		if (wallP->IsCloaked ())
+			color = CBGRA (0, 0, 0, 255);
+		else {
+			CColor* colorP = lightManager.GetTexColor (sideP->BaseTex (), true);
+			color = CBGRA (colorP->Red (), colorP->Green (), colorP->Blue (), 255);
+			}
 		RenderFace (segP, fle.m_nSide, *textureManager.Texture (sideP->BaseTex ()), (m_viewWidth + 3) & ~3, &color);
 		}
 	else if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
