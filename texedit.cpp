@@ -410,9 +410,10 @@ else if (PtInRect (rcPal, point)) {
 
 void CTextureEdit::OnOK ()
 {
-if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) || (m_texP->m_info.nFormat != m_nFormat))
+if (m_bModified) {
 	m_texP->Copy (m_texture [0]);
-m_texP->m_info.bCustom = m_bModified;
+	m_texP->m_info.bCustom = true;
+	}
 CDialog::OnOK ();
 }
 
@@ -584,7 +585,7 @@ bool CTextureEdit::LoadTGA (CFileManager& fp)
 	tTgaHeader	tgaHeader;
 	char			imgIdent [255];
 	int			h, i, j, s;
-	tRGBA			color;
+	tBGRA			color;
 
 fp.Read (&tgaHeader, sizeof (tgaHeader), 1);
 if ((tgaHeader.width * tgaHeader.height > 4096 * 4096)) {

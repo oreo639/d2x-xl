@@ -248,6 +248,14 @@ class CBGRA : public CBGR {
 			return *this;
 			}
 
+		CBGRA& operator= (const tBGRA& other) {
+			r = other.r;
+			g = other.g;
+			b = other.b;
+			a = other.a;
+			return *this;
+			}
+
 		CBGRA& operator= (const CBGR& other) {
 			r = other.r;
 			g = other.g;
