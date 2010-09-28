@@ -6,6 +6,9 @@
 class CBlockManager {
 	private:
 		char m_filename [256];
+		CSegment* m_oldSegments;
+		CSegment* m_newSegments;
+		short	m_xlatSegNum [SEGMENT_LIMIT];
 
 	public:
 		void Cut (void);

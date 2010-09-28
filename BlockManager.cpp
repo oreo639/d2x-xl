@@ -55,11 +55,10 @@ short CBlockManager::Read (CFileManager& fp)
 	CDoubleMatrix	m;
 	CDoubleVector	xAxis, yAxis, zAxis, origin;
 	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
-	short				xlatSegNum [SEGMENT_LIMIT];
 	int				byteBuf; // needed for scanning byte values
-	CSegment			* oldSegments = null, * newSegments = null;
 	CTrigger			* newTriggers = null;
-
+	
+m_oldSegments = m_newSegments = null;
 // remember number of vertices for later
 origVertCount = vertexManager.Count ();
 
@@ -77,11 +76,11 @@ zAxis.Set (m.uVec.v.x * m.fVec.v.y - m.fVec.v.x * m.uVec.v.y,
 			  m.rVec.v.x * m.uVec.v.y - m.uVec.v.x * m.rVec.v.y);
 
 nNewSegs = 0;
-memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
+memset (m_xlatSegNum, 0xff, sizeof (m_xlatSegNum));
 
 for (i = 0, j = segmentManager.Count (); i < j; i++) {
-	segmentManager.Segment (i)->SetLink (oldSegments);
-	oldSegments = segmentManager.Segment (i);
+	segmentManager.Segment (i)->SetLink (m_oldSegments);
+	m_oldSegments = segmentManager.Segment (i);
 	}	
 
 undoManager.Begin (udAll);
@@ -100,14 +99,14 @@ while (!fp.EoF ()) {
 		return nNewSegs;
 		}
 	CSegment* segP = segmentManager.Segment (nSegment);
-	segP->SetLink (newSegments);
-	newSegments = segP;
+	segP->SetLink (m_newSegments);
+	m_newSegments = segP;
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
 	scanRes = fscanf_s (fp.File (), "segment %d\n", &segP->Index ());
-	xlatSegNum [segP->Index ()] = nSegment;
+	m_xlatSegNum [segP->Index ()] = nSegment;
 	// invert segment number so its children can be children can be fixed later
-	segP->Index () = ~segP->Index ();
+	segP->Index () = -segP->Index () - 1;
 
 	// read in side information 
 	CSide* sideP = segP->m_sides;
@@ -184,6 +183,7 @@ while (!fp.EoF ()) {
 				}
 			}
 		}
+
 	short children [6];
 	scanRes = fscanf_s (fp.File (), "  children %hd %hd %hd %hd %hd %hd\n", 
 				 children + 0, children + 1, children + 2, children + 3, children + 4, children + 5, children + 6);
@@ -224,13 +224,16 @@ while (!fp.EoF ()) {
 			}
 		vertexManager.Status (nVertex) |= MARKED_MASK;
 		}
+
+#if 0
 	// check each side whether it shares all four vertices with another side
 	// if so, make the segment owning that side a child
 	for (short nSide = 0; nSide < 6; nSide++) {
 		if (segP->Child (nSide) >= 0) // has a child in the block
 			continue;
+		short nVertex;
 		ushort sharedVerts [4];
-		for (short nVertex = 0; nVertex < 4; nVertex++) {
+		for (nVertex = 0; nVertex < 4; nVertex++) {
 			ushort h = sideVertTable [nSide][nVertex];
 			if ((bShared & (1 << h)) == 0)
 				break;
@@ -239,25 +242,35 @@ while (!fp.EoF ()) {
 		if (nVertex == 4) {
 			for (nVertex = 0; nVertex < 4; nVertex++)
 				vertexManager.Status (sharedVerts [nVertex]) |= SHARED_MASK;
-			for (CSegment* childSegP = oldSegments; childSegP != null; childSegP = dynamic_cast<CSegment*>(childSegP->Link ())) {
+			for (CSegment* childSegP = m_oldSegments; childSegP != null; childSegP = dynamic_cast<CSegment*>(childSegP->Link ())) {
+				short nChildSide;
 				for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 					if (childSegP->Child (nChildSide) != -1)
 						continue;
+					short nChildVert;
 					for (nChildVert = 0; nChildVert < 4; nChildVert++) {
-						if (!childSegP->Vertex (sideVertTable [nChildSide][nChildVert]).Marked (SHARED_MASK))
+						if (!childSegP->Vertex (sideVertTable [nChildSide][nChildVert])->IsMarked (SHARED_MASK))
 							break;
 						}
 					if (nChildVert == 4) {
 						childSegP->SetChild (nChildSide, nSegment);
-						segP->SetChild (nSide, segmentManager.Index (childSegP));
+						short nChildSeg = segmentManager.Index (childSegP);
+						segP->SetChild (nSide, nChildSeg);
+						segmentManager.SetTextures (CSideKey (nSegment, nSide), 0, 0); 
+						segmentManager.SetTextures (CSideKey (nChildSeg, nChildSide), 0, 0); 
+						childSegP = null; // break out of outer loop
 						break;
 						}	
 					}
+				if (childSegP == null)
+					break;
 				}
+			for (nVertex = 0; nVertex < 4; nVertex++)
+				vertexManager.Status (sharedVerts [nVertex]) &= ~SHARED_MASK;
 			}
 		}
+#endif
 	// mark vertices
-	for (i = 0; i < 8; i++)
 	scanRes = fscanf_s (fp.File (), "  static_light %d\n", &segP->m_info.staticLight);
 	if (bExtBlkFmt) {
 		scanRes = fscanf_s (fp.File (), "  special %d\n", &segP->m_info.function);
@@ -310,21 +323,23 @@ while (!fp.EoF ()) {
 	nNewSegs++;
 	}
 
-while (newSegments != null) {
-	short nSegment = segmentManager.Index (newSegments);
+#if 0
+while (m_newSegments != null) {
+	short nSegment = segmentManager.Index (m_newSegments);
 	for (int nSide = 0; nSide < 6; nSide++) {
-		if (newSegments->Child (nSide) < 0)
+		if (m_newSegments->Child (nSide) < 0)
 			segmentManager.Join (CSideKey (nSegment, nSide), true);
 		}
-	newSegments = dynamic_cast<CSegment*> (newSegments->Link ());
+	m_newSegments = dynamic_cast<CSegment*> (m_newSegments->Link ());
 	}
+#endif
 
 while (newTriggers != null) {
 	CTrigger* trigP = newTriggers;
 	newTriggers = dynamic_cast<CTrigger*> (trigP->Link ());
 	for (j = 0; j < trigP->Count (); j++) {
 		if (trigP->Segment (j) >= 0)
-			trigP->Segment (j) = xlatSegNum [trigP->Segment (j)];
+			trigP->Segment (j) = m_xlatSegNum [trigP->Segment (j)];
 		else if (trigP->Count () == 1) {
 			triggerManager.Delete (triggerManager.Index (trigP));
 			i--;
@@ -440,11 +455,11 @@ for (CSegmentIterator si; si; si++) {
 			}
 		fprintf (fp.File (), "  static_light %d\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {
-			fprintf (fp.File (), "  special %d\n",segP->m_info.function);
-			fprintf (fp.File (), "  matcen_num %d\n",segP->m_info.nMatCen);
-			fprintf (fp.File (), "  value %d\n",segP->m_info.value);
-			fprintf (fp.File (), "  child_bitmask %d\n",segP->m_info.childFlags);
-			fprintf (fp.File (), "  wall_bitmask %d\n",segP->m_info.wallFlags);
+			fprintf (fp.File (), "  special %d\n", segP->m_info.function);
+			fprintf (fp.File (), "  matcen_num %d\n", segP->m_info.nMatCen);
+			fprintf (fp.File (), "  value %d\n", segP->m_info.value);
+			fprintf (fp.File (), "  child_bitmask %d\n", segP->m_info.childFlags);
+			fprintf (fp.File (), "  wall_bitmask %d\n", segP->m_info.wallFlags);
 			}
 		}
 	}
@@ -590,9 +605,6 @@ if (!Read (szFile))
 
 int CBlockManager::Read (char *filename) 
 {
-	CSegment *segP, *seg2P;
-	short nSegment;
-	short count;
 	CFileManager fp;
 
 _strlwr_s (filename, 256);
@@ -618,8 +630,8 @@ strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
 undoManager.Begin (udAll);
 DLE.MineView ()->DelayRefresh (true);
-segP = segmentManager.Segment (0);
-for (nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
+CSegment* segP = segmentManager.Segment (0);
+for (short nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
 	segP->Index () = nSegment;
 	segP->Unmark ();
 	}
@@ -629,48 +641,24 @@ for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 	vertexManager.Vertex (nVertex)->Unmark (MARKED_MASK | NEW_MASK);
 
 DLE.MainFrame ()->InitProgress (fp.Length ());
-count = Read (fp);
+short count = Read (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 
 // int up the new segmentManager.Segment () children
-segP = segmentManager.Segment (0);
-for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
-	if (segP->Index () < 0) {  // if segment was just inserted
-		// if child has a segment number that was just inserted, set it to the
-		//  segment's offset number, otherwise set it to -1
-		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
-			if (segP->HasChild (nChild)) {
-				seg2P = segmentManager.Segment (0);
-				short nSegOffset;
-				for (nSegOffset = 0; nSegOffset < segmentManager.Count (); nSegOffset++, seg2P++) {
-					if (segP->Child (nChild) == ~seg2P->Index ()) {
-						segP->SetChild (nChild, nSegOffset);
-						break;
-						}
-					}
-				if (nSegOffset == segmentManager.Count ()) { // no child found
-					segmentManager.ResetSide (nSegment, nChild);
-					// auto link the new segment with any touching segmentManager.Segment ()
-					seg2P = segmentManager.Segment (0);
-					for (short nSegment2 = 0; nSegment2 < segmentManager.Count (); nSegment2++, seg2P++) {
-						if (nSegment != nSegment2) {
-							// first check to see if segmentManager.Segment () are any where near each other
-							// use x, y, and z coordinate of first point of each segment for comparison
-							CVertex* v1 = vertexManager.Vertex (segP ->m_info.verts [0]);
-							CVertex* v2 = vertexManager.Vertex (seg2P->m_info.verts [0]);
-							if (fabs (v1->v.x - v2->v.x) < 10.0 &&
-								 fabs (v1->v.y - v2->v.y) < 10.0 &&
-								 fabs (v1->v.z - v2->v.z) < 10.0) {
-								for (short nSide2 = 0; nSide2 < 6; nSide2++) {
-									segmentManager.Link (nSegment, nChild, nSegment2, nSide2, I2X (3));
-									}
-								}
-							}
-						}
-					}
-				} 
-			else {
-				segP->SetChild (nChild, -1); // force child to agree with bitmask
+for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<CSegment*>(newSegP->Link ())) {
+	// if child has a segment number that was just inserted, set it to the
+	//  segment's offset number, otherwise set it to -1
+	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
+		if (newSegP->HasChild (nSide)) // has a child in the block
+			newSegP->SetChild (nSide, m_xlatSegNum [segP->Child (nSide)]);
+		else {
+			for (CSegment* oldSegP = m_oldSegments; oldSegP != null; oldSegP = dynamic_cast<CSegment*>(oldSegP->Link ())) {
+				CVertex* v1 = vertexManager.Vertex (newSegP->m_info.verts [0]);
+				CVertex* v2 = vertexManager.Vertex (oldSegP->m_info.verts [0]);
+				if (fabs (v1->v.x - v2->v.x) < 10.0 && fabs (v1->v.y - v2->v.y) < 10.0 && fabs (v1->v.z - v2->v.z) < 10.0) {
+					for (short nChildSide = 0; nChildSide < 6; nChildSide++)
+						segmentManager.Link (segmentManager.Index (newSegP), nSide, segmentManager.Index (oldSegP), nChildSide, I2X (3));
+					} 
 				}
 			}
 		}
@@ -680,7 +668,7 @@ for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 	vertexManager.Vertex (nVertex)->Unmark (NEW_MASK);
 // now set all seg_numbers
 segP = segmentManager.Segment (0);
-for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
+for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	segP->Index () = nSegment;
 fp.Close ();
 DLE.MineView ()->Refresh ();
