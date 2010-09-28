@@ -1121,7 +1121,7 @@ objP = objectManager.Object (0);
 bool bAll = (segmentManager.MarkedCount (true) == 0);
 int nDeleted = 0;
 for (int h = objectManager.Count (), i = 0; i < h; ) {
-	if ((objP->Type () == nType) && (objP->Id () == nId) && (bAll || (segmentManager.Segment (objP->m_info.nSegment)->m_info.wallFlags &= MARKED_MASK))) {
+	if ((objP->Type () == nType) && (objP->Id () == nId) && (bAll || (segmentManager.Segment (objP->m_info.nSegment)->Unmark ()))) {
 		objectManager.Delete (i);
 		nDeleted++;
 		h--;

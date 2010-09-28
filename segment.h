@@ -77,7 +77,7 @@ typedef struct tSegment {
 	byte		props;
 	char		nMatCen;				// which center segment is associated with, high bit set 
 	char		value;				// matcens: bitmask of producable robots, fuelcenters: energy given? --MK, 3/15/95 
-	byte		s2Flags;			// New for Descent 2
+	byte		flags;				// internally used
 	short		damage [2];
 	int		staticLight;		// average static light in segment 
 	byte		childFlags;			// bit0 to 5: children, bit6: unused, bit7: special 
@@ -147,11 +147,11 @@ public:
 
 	inline CUVL _const_ * Uvls (short nSide) _const_ { return Side (nSide)->Uvls (); }
 
-	inline void Mark (byte mask = MARKED_MASK) { m_info.wallFlags |= mask; }
+	inline void Mark (byte mask = MARKED_MASK) { m_info.flags |= mask; }
 
-	inline void Unmark (byte mask = MARKED_MASK) { m_info.wallFlags &= ~mask; }
+	inline void Unmark (byte mask = MARKED_MASK) { m_info.flags &= ~mask; }
 
-	inline bool IsMarked (byte mask = MARKED_MASK) { return (m_info.wallFlags & mask) != 0; }
+	inline bool IsMarked (byte mask = MARKED_MASK) { return (m_info.flags & mask) != 0; }
 
 	inline CSide _const_ & operator[] (uint i) _const_ { return m_sides [i]; }
 

@@ -255,7 +255,7 @@ while (!fp.EoF ()) {
 		segP->m_info.nMatCen = -1;
 		segP->m_info.value = -1;
 		}
-	segP->m_info.wallFlags = MARKED_MASK; // no other bits
+	segP->Mark (MARKED_MASK); // no other bits
 	// calculate childFlags
 	segP->m_info.childFlags = 0;
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
@@ -321,7 +321,7 @@ for (CSegmentIterator si; si; si++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	CSegment* segP = &(*si);
 	short nSegment = si.Index ();
-	if (segP->m_info.wallFlags & MARKED_MASK) {
+	if (segP->IsMarked ()) {
 		fprintf (fp.File (), "segment %d\n", nSegment);
 		CSide* sideP = segP->m_sides;
 		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, sideP++) {
@@ -352,7 +352,7 @@ for (CSegmentIterator si; si; si++) {
 						int iTarget, count = 0;
 						// count trigger targets in marked area
 						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
-							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
+							if (segmentManager.Segment (trigP->Segment (iTarget))->IsMarked ())
 								count++;
 						fprintf (fp.File (), "        trigger %d\n", wallP->Info ().nTrigger);
 						fprintf (fp.File (), "			    type %d\n", trigP->Type ());
@@ -361,7 +361,7 @@ for (CSegmentIterator si; si; si++) {
 						fprintf (fp.File (), "			    timer %d\n", trigP->Info ().time);
 						fprintf (fp.File (), "			    count %d\n", count);
 						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
-							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
+							if (segmentManager.Segment (trigP->Segment (iTarget))->IsMarked ()) {
 								fprintf (fp.File (), "			        segment %d\n", trigP->Segment (iTarget));
 								fprintf (fp.File (), "			        side %d\n", trigP->Side (iTarget));
 								}
@@ -441,7 +441,7 @@ DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 CSegment *segP = segmentManager.Segment (segmentManager.Count ());
 for (short nSegment = segmentManager.Count () - 1; nSegment; nSegment--) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-    if ((--segP)->m_info.wallFlags & MARKED_MASK) {
+    if ((--segP)->IsMarked ()) {
 		if (segmentManager.Count () <= 1)
 			break;
 		segmentManager.Delete (nSegment); // delete segP w/o asking "are you sure"

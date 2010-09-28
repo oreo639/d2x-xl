@@ -171,7 +171,6 @@ else {
 	m_info.nMatCen = -1;
 	m_info.value = 0;
 	}
-m_info.s2Flags = 0;  
 if (nLevelType) {
 	if (nLevelVersion < 20)
 		Upgrade ();
@@ -260,7 +259,7 @@ if (bExtras) {
 	fp.Write (m_info.function);
 	fp.Write (m_info.nMatCen);
 	fp.Write (m_info.value);
-	fp.Write (m_info.s2Flags);
+	fp.WriteByte (0); // s2Flags
 	}
 if (nLevelType == 2) {
 	fp.Write (m_info.props);
@@ -337,6 +336,7 @@ m_info.nMatCen = -1;
 m_info.value = -1; 
 m_info.childFlags = 0;
 m_info.wallFlags = 0; 
+m_info.flags = 0;
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	m_sides [i].Setup (); 
 	SetUV (i, 0, 0); 
@@ -484,6 +484,7 @@ m_info.function = 0;
 m_info.value = -1;
 m_info.nMatCen = -1;
 m_info.wallFlags = 0;
+m_info.flags = 0;
 SetChild (nSide, -1); 
 m_info.childFlags &= ~(1 << nSide); 
 if (nSide < 0) {

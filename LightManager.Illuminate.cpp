@@ -79,7 +79,7 @@ scale = fLight / 100.0; // 100.0% = normal
 	//#pragma omp for
 	for (CSegmentIterator si; si; si++) {
 		CSegment* segP = &(*si);
-		if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
+		if (bAll || (segP->IsMarked ())) {
 			segP->Backup ();
 			CSide* sideP = segP->m_sides;
 			for (int j = 0; j < 6; j++) {
@@ -668,7 +668,7 @@ fLight /= 100.0;
 CSegment *segP = segmentManager.Segment (0);
 for (CSegmentIterator si; si; si++) {
 	CSegment* segP = &(*si);
-	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
+	if (bAll || (segP->IsMarked ())) {
 		if (!bDynSegLights)
 			segP->m_info.staticLight = nLight;
 		else {

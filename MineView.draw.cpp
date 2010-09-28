@@ -371,7 +371,7 @@ CHECKMINE;
 			m_viewPoints [nVert].x + 4,
 			m_viewPoints [nVert].y + 4);
 			}
-		if (segP->m_info.wallFlags & MARKED_MASK) {
+		if (segP->IsMarked ()) {
 			m_pDC->SelectObject (m_penCyan);
 			DrawSegmentQuick (segP);
 			} 
@@ -401,7 +401,7 @@ CHECKMINE;
 			}
 		} 
 	else {
-		if (segP->m_info.wallFlags & MARKED_MASK)
+		if (segP->IsMarked ())
 			m_pDC->SelectObject (m_penHiCyan);
 		else if (nSegment == current->m_nSegment)
 			if (SelectMode (eSelectCube)) // && edit_mode != EDIT_OFF) {
@@ -893,7 +893,7 @@ CHECKMINE;
 if (!clear_it) {
 	for (i = 0; i < segmentManager.Count (); i++) {
 		segP = segmentManager.Segment (i);
-		if (segP->m_info.wallFlags & MARKED_MASK) {
+		if (segP->IsMarked ()) {
 			m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
 			DrawSegmentQuick (segP);
 			}
@@ -970,7 +970,7 @@ CHECKMINE;
 	short linenum = current->m_nPoint;
 	short pointnum = current->m_nPoint;
 
-m_pDC->SelectObject ((segP->m_info.wallFlags & MARKED_MASK) ? m_penCyan : (m_selectMode == SEGMENT_MODE) ? m_penRed : GetStockObject (WHITE_PEN));
+m_pDC->SelectObject ((segP->IsMarked ()) ? m_penCyan : (m_selectMode == SEGMENT_MODE) ? m_penRed : GetStockObject (WHITE_PEN));
 
 // draw current side
 // must draw in same order as segment to avoid leftover pixels on screen

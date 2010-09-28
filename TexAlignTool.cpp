@@ -809,10 +809,15 @@ if (!segmentManager.HaveMarkedSegments ())
 	// call recursive function which aligns one at a time
 	AlignChildren (current->m_nSegment, current->m_nSide, true, false);
 else {	// use all marked sides as alignment source
-	for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++)
+	bool bStart = true;
+	if (current->Segment ()->IsMarked ()) {
+		AlignChildren (current->m_nSegment, current->m_nSide, true, true);
+		bStart = false;
+		}
+	for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, bStart = false)
 		for (short nSide = 0; nSide < 6; nSide++)
 			if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) 
-				AlignChildren (nSegment, nSide, true, true);
+				AlignChildren (nSegment, nSide, bStart, true);
 	}
 undoManager.End ();
 UpdateAlignWnd ();

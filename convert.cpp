@@ -217,7 +217,6 @@ paletteManager.Reload ();
 
   // convert textures
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegment++, segP++) {
-	segP->m_info.s2Flags = 0;
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++) {
 		if ((segP->Child (nSide) == -1) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 			d1Texture = segP->m_sides [nSide].m_info.nBaseTex;

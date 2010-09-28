@@ -503,7 +503,7 @@ for (i = 0; i < 4; i++) {
 	}
 
 // define Walls ()
-segP->m_info.wallFlags = 0; // unmarked
+segP->Unmark (0xff); // unmarked
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
 	segP->m_sides [nSide].m_info.nWall = NO_WALL; 
 

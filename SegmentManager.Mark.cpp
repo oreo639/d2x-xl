@@ -38,14 +38,14 @@ void CSegmentManager::Mark (short nSegment)
 {
   CSegment *segP = Segment (nSegment); 
 
-segP->m_info.wallFlags ^= MARKED_MASK; /* flip marked bit */
+segP->Mark (); /* flip marked bit */
 
 // update vertices's marked status
 // ..first clear all marked verts
 // ..then mark all verts for marked Segment ()
 for (CSegmentIterator si; si; si++) {
 	CSegment* segP = &(*si);
-	if (segP->m_info.wallFlags & MARKED_MASK)
+	if (segP->IsMarked ())
 		for (short nVertex = 0; nVertex < 8; nVertex++)
 			segP->Vertex (nVertex)->Status () |= MARKED_MASK; 
 	}
@@ -68,9 +68,9 @@ for (CSegmentIterator si; si; si++) {
 		 (vertexManager.Status (vertP [5]) & MARKED_MASK) &&
 		 (vertexManager.Status (vertP [6]) & MARKED_MASK) &&
 		 (vertexManager.Status (vertP [7]) & MARKED_MASK))
-		si->m_info.wallFlags |= MARKED_MASK; 
+		si->Mark (); 
 	else
-		si->m_info.wallFlags &= ~MARKED_MASK; 
+		si->Unmark (); 
 	}
 }
 
@@ -93,7 +93,7 @@ void CSegmentManager::UnmarkAll (byte mask)
 {
 for (CSegmentIterator si; si; si++) {
 	CSegment* segP = &(*si);
-	segP->m_info.wallFlags &= ~mask; 
+	segP->Unmark (mask); 
 	for (short i = 0; i < 8; i++)
 		segP->Vertex (i)->Status () &= ~mask;
 	}
@@ -120,11 +120,10 @@ short CSegmentManager::MarkedCount (bool bCheck)
 {
 int nCount = 0; 
 for (CSegmentIterator si; si; si++) {
-	if (si->m_info.wallFlags & MARKED_MASK) {
+	if (si->IsMarked ()) {
 		if (bCheck)
 			return 1; 
-		else
-			++nCount; 
+		++nCount; 
 		}
 	}
 return nCount; 

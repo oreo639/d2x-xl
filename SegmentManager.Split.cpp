@@ -128,7 +128,7 @@ memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (ver
 // replace existing point with new point
 segP = Segment (current->m_nSegment); 
 segP->m_info.verts [sideVertTable [current->m_nSide][current->m_nPoint]] = vertexManager.Count (); 
-segP->m_info.wallFlags &= ~MARKED_MASK; 
+segP->Unmark (); 
 
 // update total number of vertices
 vertexManager.Status (vertexManager.Count ()++) = 0; 
@@ -205,7 +205,7 @@ for (i = 0; i < 2; i++)
 		// replace existing points with new points
 		nLine = sideLineTable [current->m_nSide][current->m_nLine]; 
 		segP->m_info.verts [lineVertTable [nLine][i]] = vertexManager.Count (); 
-		segP->m_info.wallFlags &= ~MARKED_MASK; 
+		segP->Unmark (); 
 		// update total number of vertices
 		vertexManager.Status (vertexManager.Count ()++) = 0; 
 		}
@@ -293,7 +293,7 @@ if (!solidify) {
 			memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (vert [i]), sizeof (*vertexManager.Vertex (0)));
 			// replace existing points with new points
 			segP->m_info.verts [sideVertTable [nSide][i]] = vertexManager.Count (); 
-			segP->m_info.wallFlags &= ~MARKED_MASK; 
+			segP->Unmark (); 
 
 			// update total number of vertices
 			vertexManager.Status (vertexManager.Count ()++) = 0; 
