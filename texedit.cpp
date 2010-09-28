@@ -597,7 +597,6 @@ if (!m_texture [0].Allocate (h))
 	return false;
 m_texture [0].m_info.width = m_nWidth = tgaHeader.width;
 m_texture [0].m_info.height = m_nHeight = tgaHeader.height;
-m_texture [0].m_info.size = h;
 m_nSize = tgaHeader.width * tgaHeader.height;
 if (tgaHeader.identSize)
 	fp.Read (imgIdent, tgaHeader.identSize, 1);
@@ -976,9 +975,10 @@ void CTextureEdit::OnDefault (void)
 if (QueryMsg("Are you sure you want to restore this texture\n"
 				 "back to its original texture\n") == IDYES) {
 	Backup ();
-	m_texP->m_info.bCustom = m_bModified = FALSE;
+	m_texP->m_info.bCustom = m_bModified = false;
 	//m_texP->Load (m_iTexture);
-	m_texture [0].Reload ();
+	if (!m_texP->Reload ())
+		m_texture [0].Copy (*m_texP);
 	Refresh ();
 	}
 }

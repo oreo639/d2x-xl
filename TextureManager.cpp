@@ -119,9 +119,15 @@ for (CExtraTexture* p = m_extra; p != null; ) {
 CFileManager* CTextureManager::OpenPigFile (int nVersion)
 {
 	CFileManager* fp = new CFileManager;
-	char	filename [256];
+	char	filename [256], appFolder [256];
 
-strcpy_s (filename, sizeof (filename), nVersion ? descentPath [1] : descentPath [0]);
+if ((strchr (descentPath [nVersion], ':') == null) && (descentPath [nVersion][0] != '\\')) {
+	::GetModuleFileName (0, appFolder, sizeof (appFolder));
+	CFileManager::SplitPath (appFolder, filename, null, null);
+	strcat_s (filename, sizeof (filename), descentPath [nVersion]);
+	}
+else
+	strcpy_s (filename, sizeof (filename), descentPath [nVersion]);
 if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fp->Open (filename, "rb")) {
