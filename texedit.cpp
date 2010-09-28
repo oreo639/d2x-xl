@@ -598,7 +598,6 @@ m_texture [0].m_info.height = m_nHeight = tgaHeader.height;
 m_nSize = tgaHeader.width * tgaHeader.height;
 if (tgaHeader.identSize)
 	fp.Read (imgIdent, tgaHeader.identSize, 1);
-#if 1
 h = 0; //m_nWidth * (m_nHeight - 1);
 s = (tgaHeader.bits == 32) ? 4 : 3;
 color.a = 255;
@@ -610,15 +609,9 @@ for (i = m_nHeight; i; i--) {
 		}
 	h -= 2 * m_nWidth;
 	}
-#else
-fp.Read (m_tga, m_nSize * sizeof (tRGBA), 1);
-#endif
 m_bModified = TRUE;
-//if (TGA2Bitmap (m_tga, m_bitmap, (int) tgaHeader.width, (int) tgaHeader.height)) {
-	m_nFormat = 1;
-//	return true;
-//	}
-return false;
+m_nFormat = 1;
+return true;
 }
 
 //************************************************************************
