@@ -272,7 +272,8 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 
 #define MARKED_MASK  0x80 // used on wallFlags & vertexStatus 
 #define DELETED_MASK 0x40 // used on wallFlags & vertexStatus 
-#define NEW_MASK     0x20 // used on vertexStatus                
+#define NEW_MASK     0x20 // used on vertexStatus      
+#define SHARED_MASK	0x10
 
 #define SHOW_LINES_POINTS    0x01
 #define SHOW_LINES_PARTIAL   0x02

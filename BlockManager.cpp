@@ -57,8 +57,8 @@ short CBlockManager::Read (CFileManager& fp)
 	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	short				xlatSegNum [SEGMENT_LIMIT];
 	int				byteBuf; // needed for scanning byte values
-	CSegment*		newSegments = null;
-	CTrigger*		newTriggers = null;
+	CSegment			* oldSegments = null, * newSegments = null;
+	CTrigger			* newTriggers = null;
 
 // remember number of vertices for later
 origVertCount = vertexManager.Count ();
@@ -78,6 +78,11 @@ zAxis.Set (m.uVec.v.x * m.fVec.v.y - m.fVec.v.x * m.uVec.v.y,
 
 nNewSegs = 0;
 memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
+
+for (i = 0, j = segmentManager.Count (); i < j; i++) {
+	segmentManager.Segment (i)->SetLink (oldSegments);
+	oldSegments = segmentManager.Segment (i);
+	}	
 
 undoManager.Begin (udAll);
 while (!fp.EoF ()) {
@@ -185,6 +190,7 @@ while (!fp.EoF ()) {
 	for (i = 0; i < 6; i++)
 		segP->SetChild (i, children [i]);
 	// read in vertices
+	byte bShared = 0;
 	for (i = 0; i < 8; i++) {
 		int x, y, z, test;
 		scanRes = fscanf_s (fp.File (), "  vms_vector %d %d %d %d\n", &test, &x, &y, &z);
@@ -202,21 +208,56 @@ while (!fp.EoF ()) {
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
 		CVertex* vertP = vertexManager.Find (v);
-		if (vertP != null)
-			segP->m_info.verts [i] = vertexManager.Index (vertP);
+		ushort nVertex;
+		if (vertP != null) {
+			nVertex = segP->m_info.verts [i] = vertexManager.Index (vertP);
+			bShared |= 1 << i;
+			}
 		// else make a new vertex
 		else  {
-			ushort nVertex;
+			nVertex;
 			vertexManager.Add (&nVertex);
 			vertexManager.Status (nVertex) |= NEW_MASK;
 			segP->m_info.verts [i] = nVertex;
 			*vertexManager.Vertex (nVertex) = v;
 			vertexManager.Vertex (nVertex)->Backup ();
 			}
+		vertexManager.Status (nVertex) |= MARKED_MASK;
+		}
+	// check each side whether it shares all four vertices with another side
+	// if so, make the segment owning that side a child
+	for (short nSide = 0; nSide < 6; nSide++) {
+		if (segP->Child (nSide) >= 0) // has a child in the block
+			continue;
+		ushort sharedVerts [4];
+		for (short nVertex = 0; nVertex < 4; nVertex++) {
+			ushort h = sideVertTable [nSide][nVertex];
+			if ((bShared & (1 << h)) == 0)
+				break;
+			sharedVerts [nVertex] = segP->m_info.verts [h];
+			}
+		if (nVertex == 4) {
+			for (nVertex = 0; nVertex < 4; nVertex++)
+				vertexManager.Status (sharedVerts [nVertex]) |= SHARED_MASK;
+			for (CSegment* childSegP = oldSegments; childSegP != null; childSegP = dynamic_cast<CSegment*>(childSegP->Link ())) {
+				for (nChildSide = 0; nChildSide < 6; nChildSide++) {
+					if (childSegP->Child (nChildSide) != -1)
+						continue;
+					for (nChildVert = 0; nChildVert < 4; nChildVert++) {
+						if (!childSegP->Vertex (sideVertTable [nChildSide][nChildVert]).Marked (SHARED_MASK))
+							break;
+						}
+					if (nChildVert == 4) {
+						childSegP->SetChild (nChildSide, nSegment);
+						segP->SetChild (nSide, segmentManager.Index (childSegP));
+						break;
+						}	
+					}
+				}
+			}
 		}
 	// mark vertices
 	for (i = 0; i < 8; i++)
-		segP->Vertex (i)->Status () |= MARKED_MASK;
 	scanRes = fscanf_s (fp.File (), "  static_light %d\n", &segP->m_info.staticLight);
 	if (bExtBlkFmt) {
 		scanRes = fscanf_s (fp.File (), "  special %d\n", &segP->m_info.function);
@@ -272,7 +313,7 @@ while (!fp.EoF ()) {
 while (newSegments != null) {
 	short nSegment = segmentManager.Index (newSegments);
 	for (int nSide = 0; nSide < 6; nSide++) {
-		if (newSegments->Child (nSide) >= 0)
+		if (newSegments->Child (nSide) < 0)
 			segmentManager.Join (CSideKey (nSegment, nSide), true);
 		}
 	newSegments = dynamic_cast<CSegment*> (newSegments->Link ());
@@ -382,15 +423,17 @@ for (CSegmentIterator si; si; si++) {
 				}
 			}
 		fprintf (fp.File (), "  children");
-		for (i = 0; i < 6; i++)
-			fprintf (fp.File (), " %d", segP->Child (i));
+		for (i = 0; i < 6; i++) {
+			short nChild = segP->Child (i);
+			fprintf (fp.File (), " %d", ((nChild < 0) || !segmentManager.Segment (nChild)->IsMarked ()) ? -1 : nChild);
+			}
 		fprintf (fp.File (), "\n");
 		// save vertices
 		for (i = 0; i < 8; i++) {
 			// each vertex relative to the origin has a x', y', and z' component
 			// which is a constant (k) times the axis
 			// k = (B*A)/(A*A) where B is the vertex relative to the origin
-			//                       A is the axis unit vVertexor (always 1)
+			//                       A is the axis unit vertex (always 1)
 			nVertex = segP->m_info.verts [i];
 			CVertex v = *vertexManager.Vertex (nVertex) - origin;
 			fprintf (fp.File (), "  vms_vector %d %d %d %d\n", i, D2X (v ^ m.rVec), D2X (v ^ m.uVec), D2X (v ^ m.fVec));
