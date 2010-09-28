@@ -294,7 +294,7 @@ if (!m_bShowTexture)
 offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_centerPt.x - 128;
 offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_centerPt.y - 128;
 
-memset (tex.m_data, 0, sizeof (textureManager.m_bmBuf));
+memset (tex.Buffer (), 0, sizeof (textureManager.m_bmBuf));
 if (textureManager.Define (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (textureManager.Define failed)");
 	return;
@@ -303,12 +303,12 @@ oldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 pDC->RealizePalette();
 hRgn.CreatePolygonRgn (m_apts, sizeof (m_apts) / sizeof (POINT), ALTERNATE);
 pDC->SelectObject (&hRgn);
-scale = min (tex.m_info.width, tex.m_info.height) / 64;
+scale = min (tex.Width (), tex.m_info.height) / 64;
 for (x = m_minPt.x; x < m_maxPt.x; x++) {
 	for (y = m_minPt.y; y < m_maxPt.y; y++) {
 		i = ((int) ((((x - offset.x) * 2) / m_zoom)) & 63) * scale;
 		j = ((int) ((((y - offset.y) * 2) / m_zoom)) & 63) * scale;
-		pDC->SetPixel (x, y, h = tex.m_data [(tex.m_info.width - j) * tex.m_info.width + i].ColorRef ());
+		pDC->SetPixel (x, y, h = tex.Buffer () [(tex.Width () - j) * tex.Width () + i].ColorRef ());
 		}
 	}
 DeleteObject(hRgn);

@@ -267,10 +267,10 @@ void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort r
 	byte* fadeTables = paletteManager.FadeTable ();
 	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
 	bool bTexColor = colorP == null;
-	double scale = (double) max (tex.m_info.width, tex.m_info.height);
+	double scale = (double) max (tex.Width (), tex.m_info.height);
 
-tex.m_info.height = tex.m_info.width;
-bmWidth2 = tex.m_info.width / 2;
+tex.m_info.height = tex.Width ();
+bmWidth2 = tex.Width () / 2;
 
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
@@ -437,7 +437,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				// the 22 allows for large texture bitmap sizes
 				// the 10 gives more than enough accuracy for the delta values
 
-				m = min (tex.m_info.width, tex.m_info.height);
+				m = min (tex.Width (), tex.m_info.height);
 				if (!m)
 					m = 64;
 				m *= 1024;
@@ -445,12 +445,12 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				if (!dx)
 					dx = 1;
 				du = ((uint) (((u1 - u0) * 1024.0) / dx) % m);
-				// v0 & v1 swapped since tex.m_data is flipped
+				// v0 & v1 swapped since tex.Buffer () is flipped
 				dv = ((uint) (((v0 - v1) * 1024.0) / dx) % m);
 				u = ((uint) (u0 * 1024.0)) % m;
 				v = ((uint) (-v0 * 1024.0)) % m;
 				vd = 1024 / tex.m_info.height;
-				vm = tex.m_info.width * (tex.m_info.height - 1);
+				vm = tex.Width () * (tex.m_info.height - 1);
 				
 				i = (uint) y/*(m_viewHeight - y - 1)*/ * (uint) rowOffset + x0;
 				double z, dz;
@@ -475,14 +475,14 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							colorP = &tex.m_data [(u / 1024) + ((v / vd) & vm)];
+							colorP = &tex.Buffer () [(u / 1024) + ((v / vd) & vm)];
 							}
 						Blend (m_renderBuffer [i], *colorP, m_depthBuffer [i], (depthType) z, scanLight);
 						z += dz;
 #else
 						int t = (u / 1024) + ((v / vd) & vm);
-						if (tex.m_data [t].m_screenCoord > 0) {
-							CBGR c = tex.m_data [t];
+						if (tex.Buffer () [t].m_screenCoord > 0) {
+							CBGR c = tex.Buffer () [t];
 							CBGR* pixel = m_renderBuffer + i;
 							pixelP->r = (byte) ((int) (c.r) * fade / 8191);
 							pixelP->g = (byte) ((int) (c.g) * fade / 8191);
@@ -500,15 +500,15 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							colorP = &tex.m_data [(u / 1024) + ((v / vd) & vm)];
+							colorP = &tex.Buffer () [(u / 1024) + ((v / vd) & vm)];
 							}
 #if 1
 						Blend (m_renderBuffer [i], *colorP, m_depthBuffer [i], (depthType) z);
 						z += dz;
 #else
 						int t = (u / 1024) + ((v / vd) & vm);
-						if (tex.m_data [t].m_screenCoord > 0)
-							m_renderBuffer [i] = tex.m_data [t];
+						if (tex.Buffer () [t].m_screenCoord > 0)
+							m_renderBuffer [i] = tex.Buffer () [t];
 #endif
 						}
 					}

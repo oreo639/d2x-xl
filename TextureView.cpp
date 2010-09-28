@@ -300,21 +300,21 @@ for (int i = 0; i < m_filter.Count (1); i++) {
 		continue;
 	if (!textureManager.Define (m_filter.MapViewToTex (i), 0, &tex, 0, 0)) {
 #if 1
-		bmi->bmiHeader.biWidth = tex.m_info.width;
-		bmi->bmiHeader.biHeight = tex.m_info.width;
+		bmi->bmiHeader.biWidth = tex.Width ();
+		bmi->bmiHeader.biHeight = tex.Width ();
 		bmi->bmiHeader.biBitCount = 32;
 		StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
-							m_iconSize.cx, m_iconSize.cy, 0, 0, tex.m_info.width, tex.m_info.width, 
-							(void*) tex.m_data, bmi, DIB_RGB_COLORS, SRCCOPY);
+							m_iconSize.cx, m_iconSize.cy, 0, 0, tex.Width (), tex.Width (), 
+							(void*) tex.Buffer (), bmi, DIB_RGB_COLORS, SRCCOPY);
 #else
 		double scale = 1.0 / tex.Scale ();
-		double xStep = scale * (double) tex.m_info.width / (double) m_iconSize.cx;
+		double xStep = scale * (double) tex.Width () / (double) m_iconSize.cx;
 		double yStep = scale * (double) tex.m_info.height / (double) m_iconSize.cy;
 		int left = 3 + x * m_iconSpace.cx;
-		for (double hx = 0; hx < tex.m_info.width; hx += xStep) {
+		for (double hx = 0; hx < tex.Width (); hx += xStep) {
 			int top = 3 + y * m_iconSpace.cy;
-			for (double hy = 0; hy < tex.m_info.width; hy += yStep) 
-				pDC->SetPixel (left, top++, tex.m_data [(int) hy * tex.m_info.width + (int) hx].ColorRef ());
+			for (double hy = 0; hy < tex.Width (); hy += yStep) 
+				pDC->SetPixel (left, top++, tex.Buffer () [(int) hy * tex.Width () + (int) hx].ColorRef ());
 			left++;
 			}
 #endif

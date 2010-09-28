@@ -346,7 +346,7 @@ class CTexture {
 
 		CBGRA& operator[] (uint i) { return *Buffer (i); }
 
-		CBGRA& operator[] (CUV uv) { return *Buffer (uv.v * Width () + uv.u); }
+		CBGRA& operator[] (CUV uv) { return *Buffer ((Height () - uv.v - 1) * Width () + uv.u); }
 };
 
 //------------------------------------------------------------------------

@@ -115,10 +115,10 @@ if (bShowTexture) {
 		if (pDC->GetDeviceCaps (RASTERCAPS) & RC_DIBTODEV) {
 			BITMAPINFO* bmi = paletteManager.BMI ();
 			bmi->bmiHeader.biWidth = 
-			bmi->bmiHeader.biHeight = tex.m_info.width;
+			bmi->bmiHeader.biHeight = tex.Width ();
 			bmi->bmiHeader.biBitCount = 32;
 			bmi->bmiHeader.biSizeImage = ((((bmi->bmiHeader.biWidth * bmi->bmiHeader.biBitCount) + 31) & ~31) >> 3) * bmi->bmiHeader.biHeight;
-			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tex.m_info.width, tex.m_info.width,
+			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tex.Width (), tex.Width (),
 					        	(void *) textureManager.m_bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
 			}
 		else 
@@ -126,14 +126,14 @@ if (bShowTexture) {
 			{
 			double scale = tex.Scale ();
 			if (scale == 1.0) {
-				for (uint i = 0, x = 0; x < tex.m_info.width; x++)
-					for (uint y = 0; y < tex.m_info.width; y++)
+				for (uint i = 0, x = 0; x < tex.Width (); x++)
+					for (uint y = 0; y < tex.Width (); y++)
 						pDC->SetPixel ((int) x, (int) y, textureManager.m_bmBuf [i++].ColorRef ());
 				}
 			else {
-				for (uint x = 0; x < tex.m_info.width; x = (int) (x + scale))
-					for (uint y = 0; y < tex.m_info.width; y = (int) (y + scale))
-						pDC->SetPixel ((int) (x / scale), (int) (y / scale), textureManager.m_bmBuf [y * tex.m_info.width + x].ColorRef ());
+				for (uint x = 0; x < tex.Width (); x = (int) (x + scale))
+					for (uint y = 0; y < tex.Width (); y = (int) (y + scale))
+						pDC->SetPixel ((int) (x / scale), (int) (y / scale), textureManager.m_bmBuf [y * tex.Width () + x].ColorRef ());
 				}
 			}
 		//pDC->SelectPalette (pOldPalette, FALSE);

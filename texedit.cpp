@@ -587,12 +587,14 @@ bool CTextureEdit::LoadTGA (CFileManager& fp)
 	tRGBA			color;
 
 fp.Read (&tgaHeader, sizeof (tgaHeader), 1);
-if ((tgaHeader.width * tgaHeader.height > 2048 * 2048)) {
+if ((tgaHeader.width * tgaHeader.height > 4096 * 4096)) {
 	ErrorMsg ("Image too large.");
 	return false;
 	}
-m_nWidth = tgaHeader.width;
-m_nHeight = tgaHeader.height;
+if (!m_texture [0].Allocate (tgaHeader.width * tgaHeader.height))
+	return false;
+m_texture [0].m_info.width = m_nWidth = tgaHeader.width;
+m_texture [0].m_info.height = m_nHeight = tgaHeader.height;
 m_nSize = tgaHeader.width * tgaHeader.height;
 if (tgaHeader.identSize)
 	fp.Read (imgIdent, tgaHeader.identSize, 1);
@@ -993,15 +995,20 @@ void CTextureEdit::DrawTexture (void)
 {
 if (!BeginPaint (&m_textureWnd))
 	return;
+CPalette *oldPalette = m_pDC->SelectPalette (paletteManager.Render (), FALSE);
+m_pDC->RealizePalette ();
+m_pDC->SetStretchBltMode (STRETCH_DELETESCANS);
 BITMAPINFO* bmi = paletteManager.BMI ();
 bmi->bmiHeader.biWidth =
 bmi->bmiHeader.biHeight = m_texture [0].Width ();
-bmi->bmiHeader.biSizeImage = m_texture [0].BufSize ();
+bmi->bmiHeader.biBitCount = 32;
+//bmi->bmiHeader.biSizeImage = m_texture [0].BufSize ();
 bmi->bmiHeader.biClrUsed = 0;
 CRect	rc;
 m_textureWnd.GetClientRect (&rc);
 StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_texture [0].Width (), m_texture [0].Width (),
 					(void *) m_texture [0].Buffer (), bmi, DIB_RGB_COLORS, SRCCOPY);
+m_pDC->SelectPalette (oldPalette, FALSE);
 EndPaint ();
 }
 
