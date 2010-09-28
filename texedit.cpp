@@ -521,7 +521,7 @@ void CTextureEdit::ColorPoint (UINT nFlags, CPoint& point, int& color)
 
 GetClientRect (&m_textureWnd, rcEdit);
 
-if (m_nFormat) {
+if (m_texture [0].m_info.nFormat) {
 	m_lBtnDown = m_rBtnDown = false;
 	ErrorMsg ("Cannot edit TGA images.");
 	}
@@ -611,7 +611,7 @@ for (i = m_nHeight; i; i--) {
 	h -= 2 * m_nWidth;
 	}
 m_bModified = TRUE;
-m_nFormat = 1;
+m_texture [0].m_info.nFormat = 1;
 return true;
 }
 
@@ -808,7 +808,7 @@ for (y = 0; y < m_nHeight; y++) {
 		}
 	}
 
-m_nFormat = 0;
+m_texture [0].m_info.nFormat = 0;
 bFuncRes = true;
 
 errorExit:
@@ -925,7 +925,7 @@ memset(&ofn, 0, sizeof (OPENFILENAME));
 
 ofn.lStructSize = sizeof (OPENFILENAME);
 ofn.hwndOwner = m_hWnd;
-ofn.lpstrFilter = m_nFormat ? "Truevision Targa\0*.tga\0" : "256 color Bitmap Files\0*.bmp\0";
+ofn.lpstrFilter = m_texture [0].m_info.nFormat ? "Truevision Targa\0*.tga\0" : "256 color Bitmap Files\0*.bmp\0";
 ofn.nFilterIndex = 1;
 ofn.lpstrFile= szFile;
 ofn.lpstrDefExt = "bmp";
@@ -937,7 +937,7 @@ if (GetSaveFileName (&ofn)) {
 		ErrorMsg ("Could not create bitmap fp.");
 		return;
 		}
-	if (m_nFormat)
+	if (m_texture [0].m_info.nFormat)
 		SaveTGA (fp);
 	else
 		SaveBitmap (fp);
@@ -989,8 +989,6 @@ void CTextureEdit::DrawTexture (void)
 {
 if (!BeginPaint (&m_textureWnd))
 	return;
-CPalette *oldPalette = m_pDC->SelectPalette (paletteManager.Render (), FALSE);
-m_pDC->RealizePalette ();
 m_pDC->SetStretchBltMode (STRETCH_DELETESCANS);
 BITMAPINFO* bmi = paletteManager.BMI ();
 bmi->bmiHeader.biWidth =
@@ -1002,7 +1000,6 @@ CRect	rc;
 m_textureWnd.GetClientRect (&rc);
 StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_texture [0].Width (), m_texture [0].Width (),
 					(void *) m_texture [0].Buffer (), bmi, DIB_RGB_COLORS, SRCCOPY);
-m_pDC->SelectPalette (oldPalette, FALSE);
 EndPaint ();
 }
 

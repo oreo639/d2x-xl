@@ -349,6 +349,7 @@ class CTexture {
 				return false;
 			memcpy (Buffer (), src.Buffer (), src.BufSize ());
 			memcpy (&m_info, &src.m_info, sizeof (m_info));
+			m_info.bValid = true;
 			return true;
 			}
 
