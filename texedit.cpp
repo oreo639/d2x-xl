@@ -306,10 +306,6 @@ m_pPaintWnd = null;
 m_pOldPal = null;
 m_lBtnDown =
 m_rBtnDown = false;
-m_bitmap = 
-m_backupBM = null;
-m_tga =
-m_backupTGA = null;
 if (!*m_szDefExt)
 	strcpy_s (m_szDefExt, sizeof (m_szDefExt), "bmp");
 }
@@ -318,22 +314,8 @@ if (!*m_szDefExt)
 
 CTextureEdit::~CTextureEdit ()
 {
-if (m_bitmap) {
-	delete m_bitmap;
-	m_bitmap = null;
-	}
-if (m_backupBM) {
-	delete m_backupBM;
-	m_backupBM = null;
-	}
-if (m_tga) {
-	delete m_tga;
-	m_tga = null;
-	}
-if (m_backupTGA) {
-	delete m_backupTGA;
-	m_backupTGA = null;
-	}
+m_texture [0].Release ();
+m_texture [1].Release ();
 }
 
 //------------------------------------------------------------------------------
@@ -370,24 +352,12 @@ if (!(m_texP->m_info.bmData && m_texP->m_info.bValid)) {
 	DEBUGMSG (" Texture tool: Invalid texture");
 	EndDialog (IDCANCEL);
 	}
-m_nWidth = m_texP->m_info.width;
-m_nHeight = m_texP->m_info.height;
-m_nSize = m_texP->m_info.size;
-m_bitmap = new byte [2048 * 2048];
-if (!m_bitmap) {
+else if (!m_texture [0].Copy (*m_texP)) {
 	DEBUGMSG (" Texture tool: Not enough memory for texture editing");
 	EndDialog (IDCANCEL);
 	}
-memcpy (m_bitmap, m_texP->m_info.bmData, m_nSize);
-m_tga = new CBGRA [2048 * 2048];
-if (!m_tga) {
-	DEBUGMSG (" Texture tool: Not enough memory for TGA texture editing");
-	}
-else if (m_nFormat = m_texP->m_info.nFormat)
-	memcpy (m_tga, m_texP->m_info.bmData, m_nSize * sizeof (tRGBA));
-m_backupBM = new byte [2048 * 2048];
-m_backupTGA = new CBGRA [2048 * 2048];
-if (!(m_backupBM && m_backupTGA))
+
+if (!m_texture [1].Allocate (m_texP->Size ()))
 	DEBUGMSG (" Texture tool: Not enough memory for undo function");
 Backup ();
 Refresh ();
@@ -405,23 +375,15 @@ DDX_Text (pDX, IDC_TEXEDIT_COLORS, m_szColors, sizeof (m_szColors));
 
 void CTextureEdit::Backup (void)
 {
-if (m_backupBM) {
-	memcpy (m_backupBM, m_bitmap, m_nSize);
-	if (m_backupTGA)
-		memcpy (m_backupTGA, m_tga, m_nSize * sizeof (tRGBA));
-	m_nOldWidth = m_nWidth;
-	m_nOldHeight = m_nHeight;
-	m_nOldSize = m_nSize;
-	m_nOldFormat = m_nFormat;
-	}
+if (m_texture [1].Buffer ())
+	m_texture [1].Copy (m_texture [0]);
 }
 
 //------------------------------------------------------------------------------
 
 bool CTextureEdit::PtInRect (CRect& rc, CPoint& pt)
 {
-return (pt.x >= rc.left) && (pt.x < rc.right) &&
- 		 (pt.y >= rc.top) && (pt.y < rc.bottom);
+return (pt.x >= rc.left) && (pt.x < rc.right) && (pt.y >= rc.top) && (pt.y < rc.bottom);
 }
 
 //------------------------------------------------------------------------------
@@ -448,29 +410,8 @@ else if (PtInRect (rcPal, point)) {
 
 void CTextureEdit::OnOK ()
 {
-if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) || (m_texP->m_info.nFormat != m_nFormat)) {
-	byte* bmIndexP = m_nFormat ? new byte [m_nWidth * m_nHeight] : null;
-	CBGRA* bmDataP = new CBGRA [m_nWidth * m_nHeight];
-
-	if (!bmIndexP) {
-		DEBUGMSG (" Texture tool: Not enough memory for the new texture");
-		EndDialog (IDCANCEL);
-		}
-	delete m_texP->m_info.bmData;
-	if (m_texP->m_info.bmData)
-		delete m_texP->m_info.bmData;
-	m_texP->m_info.bmData = bmDataP;
-	m_texP->m_info.width = m_nWidth;
-	m_texP->m_info.height = m_nHeight;
-	m_texP->m_info.size = m_nSize;
-	m_texP->m_info.nFormat = (unsigned char) m_nFormat;
-	}
-if (m_texP->m_info.nFormat)
-	memcpy (m_texP->m_info.bmData, m_tga, m_texP->m_info.size * sizeof (tRGBA));
-else {
-	for (uint i = 0; i < m_texP->m_info.size; i++)
-		m_texP->m_info.bmData [i] = *paletteManager.Current (i);
-	}	
+if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) || (m_texP->m_info.nFormat != m_nFormat))
+	m_texP->Copy (m_texture [0]);
 m_texP->m_info.bCustom = m_bModified;
 CDialog::OnOK ();
 }
@@ -591,11 +532,11 @@ else if (PtInRect (rcEdit, point)) {
 	x = (int) ((double) (point.x - rcEdit.left) * (64.0 / rcEdit.Width ()));
 	y = (int) ((double) (point.y - rcEdit.top) * (64.0 / rcEdit.Height ()));
 	if (nFlags & MK_CONTROL) {
-		color = m_bitmap [m_nWidth * (m_nHeight - 1 - y) + x];
+		color = m_texture [0][m_nWidth * (m_nHeight - 1 - y) + x].ColorRef ();
 		DrawLayers ();
 		}
 	else if (BeginPaint (&m_textureWnd)) {
-		m_bitmap [m_nWidth * (m_nHeight - 1 - y) + x] = (byte) color;
+		m_texture [0][m_nWidth * (m_nHeight - 1 - y) + x] = color;
 		SetTexturePixel (x, y);
 		EndPaint ();
 		}
@@ -645,10 +586,6 @@ bool CTextureEdit::LoadTGA (CFileManager& fp)
 	int			h, i, j, s;
 	tRGBA			color;
 
-if (!m_tga) {
-	DEBUGMSG (" Texture tool: Not enough memory for TGA texture editing");
-	return false;
-	}
 fp.Read (&tgaHeader, sizeof (tgaHeader), 1);
 if ((tgaHeader.width * tgaHeader.height > 2048 * 2048)) {
 	ErrorMsg ("Image too large.");
@@ -667,10 +604,7 @@ h = m_nWidth * (m_nHeight - 1);
 for (i = m_nHeight; i; i--) {
 	for (j = m_nWidth; j; j--, h++) {
 		fp.Read (&color, s, 1);
-		m_tga [h].r = color.r;
-		m_tga [h].g = color.g;
-		m_tga [h].b = color.b;
-		m_tga [h].a = color.a;
+		m_texture [0][h] = color;
 		}
 	h -= 2 * m_nWidth;
 	}
@@ -695,7 +629,7 @@ bool CTextureEdit::LoadBitmap (CFileManager& fp)
 	PALETTEENTRY* sysPal = null;
 	BITMAPFILEHEADER bmfh;
 	BITMAPINFOHEADER bmih;
-	byte colorMap [256];
+	byte palIndexTable [256];
 	bool bFuncRes = false;
 	uint x, y, width, paletteSize;
 
@@ -756,7 +690,7 @@ paletteManager.Render ()->GetPaletteEntries (0, 256, sysPal);
 // check color palette
 int i;
 for (i = 0; i < int (paletteSize); i++) {
-	colorMap [i] = i;
+	palIndexTable [i] = i;
 	if ((palette [i].rgbRed != sysPal [i].peRed) ||
 		 (palette [i].rgbGreen != sysPal [i].peGreen) ||
 		 (palette [i].rgbBlue != sysPal [i].peBlue)) {
@@ -787,7 +721,7 @@ if (i != int (paletteSize)) {
 					}
 				}
 			}
-		colorMap[i] = closest_index;
+		palIndexTable [i] = closest_index;
 		}
 	}
 
@@ -844,7 +778,7 @@ m_nSize = m_nWidth * m_nHeight;
 
 // read data into bitmap
 m_bModified = TRUE;  // mark this as m_bModified
-width = (((int)(bmih.biWidth*bmih.biBitCount + 31)>>3)) & ~3;
+width = (((int)(bmih.biWidth * bmih.biBitCount + 31) >> 3)) & ~3;
 double mx, my;
 mx = (x1 - x0) / (double) m_nWidth;
 my = (y1 - y0) / (double) m_nHeight;
@@ -859,21 +793,21 @@ for (y = 0; y < m_nHeight; y++) {
 		if (v < 0) 
 			v+= (int) bmih.biHeight; //       0 to height
 	
-		byte byteVal;
+		byte palIndex;
 
 		if (bmih.biBitCount == 4) {
 			long offset = (int) v * (int) width + (int) u / 2;
 			fp.Seek ((int) bmfh.bfOffBits + offset, SEEK_SET);
-			fp.Read (&byteVal, 1, 1);
+			fp.Read (&palIndex, 1, 1);
 			if (!(u & 1))
-			byteVal >>= 4;
-			byteVal &= 0x0f;
-			m_bitmap [y * m_nWidth + x] = colorMap [byteVal];
+			palIndex >>= 4;
+			palIndex &= 0x0f;
+			m_texture [0][y * m_nWidth + x] = palIndexTable [palIndex];
 			}
 		else {
 			fp.Seek ((int) bmfh.bfOffBits + (int) v *(int) width + (int) u, SEEK_SET);
-			fp.Read (&byteVal, 1, 1);
-			m_bitmap [y * m_nWidth + x] = colorMap [byteVal];
+			fp.Read (&palIndex, 1, 1);
+			m_texture [0][y * m_nWidth + x] = palette [palIndexTable [palIndex]];
 			}
 		}
 	}
@@ -946,11 +880,11 @@ void CTextureEdit::SaveBitmap (CFileManager& fp)
 {
 BITMAPFILEHEADER bmfh;
 
-bmfh.bfType = 'B' + ('M'<<8);
-bmfh.bfSize = sizeof (BITMAPFILEHEADER)+sizeof (BITMAPINFOHEADER)+256*4+m_nSize;
+bmfh.bfType = 'B' + ('M' << 8);
+bmfh.bfSize = sizeof (BITMAPFILEHEADER) + sizeof (BITMAPINFOHEADER) + 256 * 4 + m_nSize;
 bmfh.bfReserved1 = 0;
 bmfh.bfReserved2 = 0;
-bmfh.bfOffBits   = sizeof (BITMAPFILEHEADER)+sizeof (BITMAPINFOHEADER)+256*4;
+bmfh.bfOffBits   = sizeof (BITMAPFILEHEADER) + sizeof (BITMAPINFOHEADER) + 256 * 4;
 
 // define the bitmap header
 BITMAPINFO* bmi = paletteManager.BMI ();
@@ -958,14 +892,14 @@ bmi->bmiHeader.biWidth = m_nWidth;
 bmi->bmiHeader.biHeight = m_nHeight;
 
 // write the headers
-fp.Write(&bmfh, sizeof (BITMAPFILEHEADER), 1);
-fp.Write(&bmi->bmiHeader, sizeof (BITMAPINFOHEADER), 1);
+fp.Write (&bmfh, sizeof (BITMAPFILEHEADER), 1);
+fp.Write (&bmi->bmiHeader, sizeof (BITMAPINFOHEADER), 1);
 
 // write palette
-fp.Write(bmi->bmiColors, sizeof (RGBQUAD), 256);
+fp.Write (bmi->bmiColors, sizeof (RGBQUAD), 256);
 
 // save bitmap data
-fp.Write(m_bitmap, m_nSize, 1);
+textureManager.WriteCustomTexture (fp, &m_texture [0]);
 }
 
 //************************************************************************
@@ -973,9 +907,6 @@ fp.Write(m_bitmap, m_nSize, 1);
 void CTextureEdit::SaveTGA (CFileManager& fp)
 {
 	tTgaHeader	h;
-	int			i, j;
-	tRGBA			c;
-	CBGRA			*pc;
 
 memset (&h, 0, sizeof (h));
 h.imageType = 2;
@@ -983,17 +914,7 @@ h.width = m_nWidth;
 h.height = m_nHeight;
 h.bits = 32;
 fp.Write (&h, sizeof (h), 1);
-pc = m_tga + m_nWidth * (m_nHeight - 1);
-for (i = m_nHeight; i; i--) {
-	for (j = m_nWidth; j; j--, pc++) {
-		c.r = pc->r;
-		c.g = pc->g;
-		c.b = pc->b;
-		c.a = pc->a;
-		fp.Write (&c, sizeof (c), 1);
-		}
-	pc -= 2 * m_nWidth;
-	}
+textureManager.WriteCustomTexture (fp, &m_texture [0]);
 }
 
 //************************************************************************
@@ -1036,14 +957,8 @@ if (GetSaveFileName (&ofn)) {
 
 void CTextureEdit::OnUndo ()
 {
-if (m_backupBM) {
-	memcpy (m_bitmap, m_backupBM, m_nOldSize);
-	if (m_backupTGA)
-		memcpy (m_tga, m_backupTGA, m_nOldSize * sizeof (tRGBA));
-	m_nWidth = m_nOldWidth;
-	m_nHeight = m_nOldHeight;
-	m_nSize = m_nOldSize;
-	m_nFormat = m_nOldFormat;
+if (m_texture [1].Buffer ()) {
+	m_texture [0].Copy (m_texture [1]);
 	Refresh ();
 	}
 }
@@ -1065,11 +980,7 @@ if (QueryMsg("Are you sure you want to restore this texture\n"
 	Backup ();
 	m_texP->m_info.bCustom = m_bModified = FALSE;
 	//m_texP->Load (m_iTexture);
-	memcpy (m_bitmap, m_texP->m_info.bmData, m_texP->m_info.size);
-	m_nWidth = m_texP->m_info.width;
-	m_nHeight = m_texP->m_info.height;
-	m_nSize = m_texP->m_info.size;
-	m_nFormat = 0;
+	m_texture [0].Copy (*m_texP);
 	Refresh ();
 	}
 }
@@ -1088,7 +999,7 @@ bmi->bmiHeader.biHeight = m_nWidth;
 CRect	rc;
 m_textureWnd.GetClientRect (&rc);
 StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_nWidth, m_nWidth, 
-					(void *)m_bitmap, bmi, DIB_RGB_COLORS, SRCCOPY);
+					(void *) m_texture [0].Buffer (), bmi, DIB_RGB_COLORS, SRCCOPY);
 EndPaint ();
 }
 
@@ -1169,7 +1080,7 @@ void CTextureEdit::SetTexturePixel (int x, int y)
 	CRect		rc;
 	int		cx, cy;
 	double	xs, ys;
-	int		color = PALETTEINDEX (m_bitmap [(63 - y) * 64 + x]);
+	int		color = m_texture [0][(63 - y) * 64 + x].ColorRef ();
 
 m_textureWnd.GetClientRect (&rc);
 cx = rc.Width ();
@@ -1195,8 +1106,8 @@ void CTextureEdit::SetPalettePixel (int x, int y)
 
 m_paletteWnd.GetClientRect (&rc);
 int dx, dy;
-for (dy=0;dy<8;dy++)
-	for (dx=0;dx<8;dx++)
+for (dy = 0; dy < 8; dy++)
+	for (dx = 0; dx < 8; dx++)
 		m_pDC->SetPixel ((x << 3) + dx + rc.left, (y << 3) + dy + rc.top, PALETTEINDEX (y * 32 + x));
 }
 

@@ -45,11 +45,7 @@ class CTextureEdit : public CDialog
 		CWnd			m_textureWnd;
 		CPaletteWnd	m_paletteWnd;
 		CWnd			m_layerWnd;
-		CTexture	m_texture;
-		byte			*m_bitmap,
-						*m_backupBM;
-		CBGRA			*m_tga,
-						*m_backupTGA;
+		CTexture		m_texture [2];
 		int			m_fgColor,
 						m_bgColor;
 		bool			m_lBtnDown,

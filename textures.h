@@ -256,6 +256,22 @@ class CBGRA : public CBGR {
 			return *this;
 			}
 
+		CBGRA& operator= (COLORREF color) {
+			r = GetRValue (color);
+			g = GetGValue (color);
+			b = GetBValue (color);
+			a = 255;
+			return *this;
+			}
+
+		CBGRA& operator= (const RGBQUAD& color) {
+			r = color.rgbRed;
+			g = color.rgbGreen;
+			b = color.rgbBlue;
+			a = 255;
+			return *this;
+			}
+
 		CBGRA (byte red = 0, byte green = 0, byte blue = 0, byte alpha = 255)
 			: CBGR (red, green, blue), a (alpha) 
 			{}
@@ -264,6 +280,11 @@ class CBGRA : public CBGR {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
+
+class CUV {
+	public:
+		int u, v;
+};
 
 typedef struct tTexture {
 	CBGRA*	bmData;
@@ -286,7 +307,7 @@ class CTexture {
 
 		~CTexture() { Release (); }
 
-		bool Allocate (int nSize, int nTexture);
+		bool Allocate (int nSize);
 
 		int Load (CFileManager& fp, short nTexture, int nVersion = -1);
 
@@ -303,6 +324,28 @@ class CTexture {
 		void ComputeIndex (byte* bmIndex);
 
 		inline bool Transparent (void) { return m_info.bTransparent; }
+
+		inline uint Width (void) { return m_info.width; }
+
+		inline uint Height (void) { return m_info.height; }
+
+		inline uint Size (void) { return Width () * Height (); }
+
+		inline uint BufSize (void) { return Width () * Height () * sizeof (CBGRA); }
+
+		inline CBGRA* Buffer (uint i = 0) { return m_info.bmData + i; }
+
+		inline bool Copy (CTexture& src) {
+			if (!Allocate (src.Size ()))
+				return false;
+			memcpy (Buffer (), src.Buffer (), src.BufSize ());
+			memcpy (&m_info, &src.m_info, sizeof (m_info));
+			return true;
+			}
+
+		CBGRA& operator[] (uint i) { return *Buffer (i); }
+
+		CBGRA& operator[] (CUV uv) { return *Buffer (uv.v * Width () + uv.u); }
 };
 
 //------------------------------------------------------------------------

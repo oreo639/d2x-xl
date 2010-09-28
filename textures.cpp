@@ -174,9 +174,9 @@ return bShowTexture;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-bool CTexture::Allocate (int nSize, int nTexture)
+bool CTexture::Allocate (int nSize)
 {
-if ((m_info.bmData != null) && ((m_info.width * m_info.height != nSize)))
+if ((m_info.bmData != null) && ((Size () != nSize)))
 	Release ();
 if (m_info.bmData == null)
 	m_info.bmData = new CBGRA [nSize];
@@ -285,7 +285,7 @@ int nSize = info.BufSize ();
 if (m_info.bmData && ((m_info.width * m_info.height == nSize)))
 	return 0; // already loaded
 m_info.nFormat = 0;
-if (!Allocate (nSize, nTexture)) 
+if (!Allocate (nSize)) 
 	return 1;
 fp.Seek (textureManager.m_nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (fp, info);

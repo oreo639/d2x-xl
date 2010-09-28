@@ -161,7 +161,7 @@ return nOffset;
 
 //-----------------------------------------------------------------------------------
 
-bool CTextureManager::WritePogTexture (CFileManager& fp, CTexture *texP)
+bool CTextureManager::WriteCustomTexture (CFileManager& fp, CTexture *texP)
 {
 if (texP->m_info.nFormat) {
 	tRGBA rgba = {0, 0, 0, 255};
@@ -180,7 +180,7 @@ else {
 	byte* bmIndex = new byte [w * h];
 	if (bmIndex == null) { // write as TGA
 		texP->m_info.nFormat = 1;
-		return WritePogTexture (fp, texP);
+		return WriteCustomTexture (fp, texP);
 		}
 	texP->ComputeIndex (bmIndex);
 	for (bmIndex += w * h /*point to last row of bitmap*/; h > 0; h--) {
@@ -276,9 +276,9 @@ DEBUGMSG (message);
 
 for (i = 0, texP = Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
-		WritePogTexture (fp, texP);
+		WriteCustomTexture (fp, texP);
 for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
-	WritePogTexture (fp, extraTexP);
+	WriteCustomTexture (fp, extraTexP);
 
 return 0;
 }
