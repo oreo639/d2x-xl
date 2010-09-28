@@ -48,7 +48,7 @@ class CTextureEdit : public CDialog
 		CTexture	m_texture;
 		byte			*m_bitmap,
 						*m_backupBM;
-		tRGBA			*m_tga,
+		CBGRA			*m_tga,
 						*m_backupTGA;
 		int			m_fgColor,
 						m_bgColor;

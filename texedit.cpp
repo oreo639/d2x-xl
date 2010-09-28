@@ -379,14 +379,14 @@ if (!m_bitmap) {
 	EndDialog (IDCANCEL);
 	}
 memcpy (m_bitmap, m_texP->m_info.bmData, m_nSize);
-m_tga = new tRGBA [2048 * 2048];
+m_tga = new CBGRA [2048 * 2048];
 if (!m_tga) {
 	DEBUGMSG (" Texture tool: Not enough memory for TGA texture editing");
 	}
 else if (m_nFormat = m_texP->m_info.nFormat)
 	memcpy (m_tga, m_texP->m_info.bmData, m_nSize * sizeof (tRGBA));
 m_backupBM = new byte [2048 * 2048];
-m_backupTGA = new tRGBA [2048 * 2048];
+m_backupTGA = new CBGRA [2048 * 2048];
 if (!(m_backupBM && m_backupTGA))
 	DEBUGMSG (" Texture tool: Not enough memory for undo function");
 Backup ();
@@ -643,7 +643,7 @@ bool CTextureEdit::LoadTGA (CFileManager& fp)
 	tTgaHeader	tgaHeader;
 	char			imgIdent [255];
 	int			h, i, j, s;
-	tBGRA			bgra;
+	tRGBA			color;
 
 if (!m_tga) {
 	DEBUGMSG (" Texture tool: Not enough memory for TGA texture editing");
@@ -662,15 +662,15 @@ if (tgaHeader.identSize)
 #if 1
 h = 0; //m_nWidth * (m_nHeight - 1);
 s = (tgaHeader.bits == 32) ? 4 : 3;
-bgra.a = 255;
+color.a = 255;
 h = m_nWidth * (m_nHeight - 1);
 for (i = m_nHeight; i; i--) {
 	for (j = m_nWidth; j; j--, h++) {
-		fp.Read (&bgra, s, 1);
-		m_tga [h].a = bgra.a;
-		m_tga [h].r = bgra.r;
-		m_tga [h].g = bgra.g;
-		m_tga [h].b = bgra.b;
+		fp.Read (&color, s, 1);
+		m_tga [h].r = color.r;
+		m_tga [h].g = color.g;
+		m_tga [h].b = color.b;
+		m_tga [h].a = color.a;
 		}
 	h -= 2 * m_nWidth;
 	}
@@ -691,201 +691,202 @@ return false;
 
 bool CTextureEdit::LoadBitmap (CFileManager& fp)
 {
-	RGBQUAD *palette=null;
-	PALETTEENTRY *sysPal=null;
+	RGBQUAD* palette = null;
+	PALETTEENTRY* sysPal = null;
 	BITMAPFILEHEADER bmfh;
 	BITMAPINFOHEADER bmih;
-	byte color_map[256];
+	byte colorMap [256];
 	bool bFuncRes = false;
 	uint x, y, width, paletteSize;
 
-   palette = (RGBQUAD *) malloc(256*sizeof (RGBQUAD));
-	if (!palette) {
-	  ErrorMsg ("Not enough memory for palette.");
-	  goto errorExit;
+palette = new RGBQUAD [256];
+if (palette == null) {
+	ErrorMsg ("Not enough memory for palette.");
+	goto errorExit;
 	}
 
-	sysPal = (PALETTEENTRY *) malloc(256*sizeof (PALETTEENTRY));
-	if (!sysPal) {
-	  ErrorMsg ("Not enough memory for palette.");
-	  goto errorExit;
+sysPal = new PALETTEENTRY [256];
+if (sysPal == null) {
+	ErrorMsg ("Not enough memory for palette.");
+	goto errorExit;
 	}
 
-	// read the header information
-	fp.Read(&bmfh, sizeof (bmfh), 1);
-	fp.Read(&bmih, sizeof (bmih), 1);
+// read the header information
+fp.Read (&bmfh, sizeof (bmfh), 1);
+fp.Read (&bmih, sizeof (bmih), 1);
 
-	// handle exceptions
-	if (bmih.biClrUsed==0)  
-		bmih.biClrUsed = 256;
-	if (bmih.biHeight < 0) 
-		bmih.biHeight *= -1;
+// handle exceptions
+if (bmih.biClrUsed == 0)  
+	bmih.biClrUsed = 256;
+if (bmih.biHeight < 0) 
+	bmih.biHeight = -bmih.biHeight;
 
-	// make sure it is a bitmap fp
-	if (bmfh.bfType != 'B' + (((ushort)'M')<<8) ) {
-	  ErrorMsg ("This is not a bitmap fp.");
-	  goto errorExit;
+// make sure it is a bitmap fp
+if (bmfh.bfType != 'B' + (((ushort) 'M') << 8) ) {
+	ErrorMsg ("This is not a bitmap fp.");
+	goto errorExit;
 	}
 
-	// make sure it is a 256 or 16 color bitmap
-	if (bmih.biBitCount != 8 && bmih.biBitCount != 4) {
-	  ErrorMsg ("DLE-XP only reads 16 or 256 color bitmap files.\n\n"
-		   "Hint: Load this image into a paint program\n"
-		   "then save it as a 16 or 256 color *.bmp fp.");
-	  goto errorExit;
+// make sure it is a 256 or 16 color bitmap
+if (bmih.biBitCount != 8 && bmih.biBitCount != 4) {
+	ErrorMsg ("DLE-XP only reads 16 or 256 color bitmap files.\n\n"
+	"Hint: Load this image into a paint program\n"
+	"then save it as a 16 or 256 color *.bmp fp.");
+	goto errorExit;
 	}
 
-	// make sure the data is not compressed
-	if (bmih.biCompression != BI_RGB) {
-	  ErrorMsg ("Cannot read compressed bitmap files.\n\n"
-		   "Hint: Try loading this image into a paint program\n"
-		   "then save it as a 256 color *.bmp fp with the\n"
-		   "compression option off.");
-	  goto errorExit;
+// make sure the data is not compressed
+if (bmih.biCompression != BI_RGB) {
+	ErrorMsg ("Cannot read compressed bitmap files.\n\n"
+	"Hint: Try loading this image into a paint program\n"
+	"then save it as a 256 color *.bmp fp with the\n"
+	"compression option off.");
+	goto errorExit;
 	}
 
-	// read palette
-	paletteSize = min((int)bmih.biClrUsed, 256);
-	if (paletteSize == 0) {
-	  paletteSize = 1 << bmih.biBitCount;
-	}
-	fp.Read(palette, sizeof (RGBQUAD), paletteSize);
+// read palette
+paletteSize = min((int) bmih.biClrUsed, 256);
+if (paletteSize == 0)
+	paletteSize = 1 << bmih.biBitCount;
+fp.Read (palette, sizeof (RGBQUAD), paletteSize);
 
-	// read the logical palette entries
-	paletteManager.Render ()->GetPaletteEntries (0, 256, sysPal);
+// read the logical palette entries
+paletteManager.Render ()->GetPaletteEntries (0, 256, sysPal);
 
-	// check color palette
-	int i;
-	for (i = 0; i < int (paletteSize); i++) {
-	  color_map [i] = i;
-	  if (palette [i].rgbRed != sysPal [i].peRed ||
-			palette [i].rgbGreen != sysPal [i].peGreen ||
-			palette [i].rgbBlue != sysPal [i].peBlue) {
-			break;
-	  }
+// check color palette
+int i;
+for (i = 0; i < int (paletteSize); i++) {
+	colorMap [i] = i;
+	if ((palette [i].rgbRed != sysPal [i].peRed) ||
+		 (palette [i].rgbGreen != sysPal [i].peGreen) ||
+		 (palette [i].rgbBlue != sysPal [i].peBlue)) {
+		break;
+		}		
 	}
-	if (i != int (paletteSize)) {
-		if (!bExpertMode)
-			ErrorMsg ("The palette of this bitmap fp is not exactly the\n"
-					  "the same as the Descent palette. Therefore, some color\n"
-					  "changes may occur.\n\n"
-					  "Hint: If you want the palettes to match, then save one of\n"
-					  "the Descent textures to a fp an use it as a starting point.\n"
-					  "If you plan to use transparencies, then you may want to start\n"
-					  "with the texture called 'empty'.");
+
+if (i != int (paletteSize)) {
+	if (!bExpertMode)
+		ErrorMsg ("The palette of this bitmap fp is not exactly the\n"
+					 "the same as the Descent palette. Therefore, some color\n"
+					 "changes may occur.\n\n"
+					 "Hint: If you want the palettes to match, then save one of\n"
+					 "the Descent textures to a fp an use it as a starting point.\n"
+					 "If you plan to use transparencies, then you may want to start\n"
+					 "with the texture called 'empty'.");
 		for (i = 0; i < int (paletteSize); i++) {
-			uint closest_index = i;
-			if ((palette [i].rgbRed != sysPal [i].peRed) ||
-				 (palette [i].rgbGreen != sysPal [i].peGreen) ||
-				 (palette [i].rgbBlue != sysPal [i].peBlue)) {
-				uint closest_delta = 0x7fffffff;
-				int j;
-				for (j = 0; (j < 255) && closest_delta; j++) {
-					uint delta = ColorDelta (palette + i, sysPal, j);
-					if (delta < closest_delta) {
-						closest_index = j;
-						closest_delta = delta;
-						}
+		uint closest_index = i;
+		if ((palette [i].rgbRed != sysPal [i].peRed) ||
+			 (palette [i].rgbGreen != sysPal [i].peGreen) ||
+			 (palette [i].rgbBlue != sysPal [i].peBlue)) {
+			uint closest_delta = 0x7fffffff;
+			for (int j = 0; (j < 255) && (closest_delta != 0); j++) {
+				uint delta = ColorDelta (palette + i, sysPal, j);
+				if (delta < closest_delta) {
+					closest_index = j;
+					closest_delta = delta;
 					}
 				}
-			color_map[i] = closest_index;
 			}
+		colorMap[i] = closest_index;
 		}
+	}
 
-	int x0, x1, y0, y1;
-	// if size is not 64 x 64, ask if they want to "size to fit"
-	if ((bmih.biWidth != m_nWidth) || (bmih.biHeight != m_nHeight)) {
-		sprintf_s (message, sizeof (message), "The bitmap being loaded is a %d x %d image.\n"
+int x0, x1, y0, y1;
+// if size is not 64 x 64, ask if they want to "size to fit"
+if ((bmih.biWidth != m_nWidth) || (bmih.biHeight != m_nHeight)) {
+	sprintf_s (message, sizeof (message), 
+				  "The bitmap being loaded is a %d x %d image.\n"
 				  "Do you want the image to be sized to fit the\n"
 				  "the current %d x %d texture size?\n\n"
-			     "(press no to see another option)", 
-			     (int) bmih.biWidth, (int) bmih.biHeight, 
-				  (int) m_nWidth, (int) m_nHeight);
-		switch (Query2Msg (message, MB_YESNOCANCEL)) {
-			case IDYES:
-				Backup();
+				  "(press no to see another option)", 
+				 (int) bmih.biWidth, (int) bmih.biHeight, 
+				 (int) m_nWidth, (int) m_nHeight);
+	switch (Query2Msg (message, MB_YESNOCANCEL)) {
+		case IDYES:
+			Backup();
+			x0 = 0;
+			y0 = 0;
+			x1 = (int) bmih.biWidth + 1;
+			y1 = (int) bmih.biHeight + 1;
+			break;
+
+		case IDNO:
+			Backup();
+			if (Query2Msg("Would you like to center/tile the image?", MB_YESNO) == IDYES) {
+				x0 = (int)(bmih.biWidth - m_nWidth) / 2;
+				y0 = (int)(bmih.biHeight - m_nHeight) / 2;
+				x1 = x0 + m_nWidth;
+				y1 = y0 + m_nHeight;
+				}
+			else if ((bmih.biWidth > 1024) || (bmih.biHeight > 1024)) 
+				goto errorExit;
+			else {
 				x0 = 0;
 				y0 = 0;
-				x1 = (int)bmih.biWidth+1;
-				y1 = (int)bmih.biHeight+1;
-				break;
-
-			case IDNO:
-				Backup();
-				if (Query2Msg("Would you like to center/tile the image?", MB_YESNO) == IDYES) {
-					x0 = (int)(bmih.biWidth - m_nWidth)/2;
-					y0 = (int)(bmih.biHeight - m_nHeight)/2;
-					x1 = x0+m_nWidth;
-					y1 = y0+m_nHeight;
-					}
-				else if ((bmih.biWidth > 1024) || (bmih.biHeight > 1024)) 
-					goto errorExit;
-				else {
-					x0 = 0;
-					y0 = 0;
-					x1 = m_nWidth = (ushort) bmih.biWidth;
-					y1 = m_nHeight = (ushort) bmih.biHeight;
-					}
-				break;
+				x1 = m_nWidth = (ushort) bmih.biWidth;
+				y1 = m_nHeight = (ushort) bmih.biHeight;
+				}
+			break;
 
 			default:
 				goto errorExit;
-				}
-			}
-	else {
-	  x0 = 0;
-	  y0 = 0;
-	  x1 = m_nWidth;
-	  y1 = m_nHeight;
+		}
+	}
+else {
+	x0 = 0;
+	y0 = 0;
+	x1 = m_nWidth;
+	y1 = m_nHeight;
 	}
 
-	// save bitmap for undo command
-   m_nSize = m_nWidth * m_nHeight;
+// save bitmap for undo command
+m_nSize = m_nWidth * m_nHeight;
 
-	// read data into bitmap
-	m_bModified = TRUE;  // mark this as m_bModified
-	width = (((int)(bmih.biWidth*bmih.biBitCount + 31)>>3)) & ~3;
-	double mx, my;
-	mx = (x1 - x0) / (double) m_nWidth;
-	my = (y1 - y0) / (double) m_nHeight;
-	for (y = 0; y < m_nHeight; y++) {
-		for (x = 0; x < m_nWidth; x++) {
-			int u = (int) (mx * x + x0);
-			int v = (int) (my * y + y0);
-			u %= (int)bmih.biWidth;          //  -width to width
-			if (u<0) 
-				u+= (int)bmih.biWidth;  //       0 to width
-			v %= (int)bmih.biHeight;         // -height to height
-			if (v<0) 
-			v+= (int)bmih.biHeight; //       0 to height
-			
-			byte byte;
+// read data into bitmap
+m_bModified = TRUE;  // mark this as m_bModified
+width = (((int)(bmih.biWidth*bmih.biBitCount + 31)>>3)) & ~3;
+double mx, my;
+mx = (x1 - x0) / (double) m_nWidth;
+my = (y1 - y0) / (double) m_nHeight;
+for (y = 0; y < m_nHeight; y++) {
+	for (x = 0; x < m_nWidth; x++) {
+		int u = (int) (mx * x + x0);
+		int v = (int) (my * y + y0);
+		u %= (int) bmih.biWidth;          //  -width to width
+		if (u < 0) 
+			u+= (int) bmih.biWidth;  //       0 to width
+		v %= (int) bmih.biHeight;         // -height to height
+		if (v < 0) 
+			v+= (int) bmih.biHeight; //       0 to height
+	
+		byte byteVal;
 
-			if (bmih.biBitCount == 4) {
-				long offset = (int)v*(int)width + (int)u / 2;
-				fp.Seek ((int)bmfh.bfOffBits + offset, SEEK_SET);
-				fp.Read(&byte, 1, 1);
-				if (!(u&1))
-					byte >>=4;
-				byte &= 0x0f;
-				m_bitmap [y*m_nWidth+x] = color_map[byte];
-				}
-			else {
-				fp.Seek ((int)bmfh.bfOffBits + (int)v*(int)width + (int)u, SEEK_SET);
-				fp.Read(&byte, 1, 1);
-				m_bitmap [y*m_nWidth+x] = color_map[byte];
-				}
+		if (bmih.biBitCount == 4) {
+			long offset = (int) v * (int) width + (int) u / 2;
+			fp.Seek ((int) bmfh.bfOffBits + offset, SEEK_SET);
+			fp.Read (&byteVal, 1, 1);
+			if (!(u & 1))
+			byteVal >>= 4;
+			byteVal &= 0x0f;
+			m_bitmap [y * m_nWidth + x] = colorMap [byteVal];
+			}
+		else {
+			fp.Seek ((int) bmfh.bfOffBits + (int) v *(int) width + (int) u, SEEK_SET);
+			fp.Read (&byteVal, 1, 1);
+			m_bitmap [y * m_nWidth + x] = colorMap [byteVal];
 			}
 		}
+	}
+
 m_nFormat = 0;
 bFuncRes = true;
 
 errorExit:
 
 if (palette) 
-  free(palette);
+	delete palette;
 if (sysPal) 
-  free(sysPal);
+	delete sysPal;
 return bFuncRes;
 }
 
@@ -973,8 +974,8 @@ void CTextureEdit::SaveTGA (CFileManager& fp)
 {
 	tTgaHeader	h;
 	int			i, j;
-	tBGRA			c;
-	tRGBA			*pc;
+	tRGBA			c;
+	CBGRA			*pc;
 
 memset (&h, 0, sizeof (h));
 h.imageType = 2;

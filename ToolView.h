@@ -969,12 +969,10 @@ class CTextureTool : public CTexToolDlg
 		bool					m_bInitTextureListBoxes;
 
 		char					m_szTextureBuf [100];
-		int					last_texture1,
-								last_texture2,
-								last_mode;
-		int					save_texture1,
-								save_texture2;
-		CUVL					save_uvls[4];
+		int					m_lastTexture [2];
+		int					m_lastMode;
+		int					m_saveTexture [2];
+		CUVL					m_saveUVLs [4];
 //		int					frame [2];
 		double				m_lights [4];
 //		CWnd					m_textureWnd;

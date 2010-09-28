@@ -132,13 +132,13 @@ END_MESSAGE_MAP()
 CTextureTool::CTextureTool (CPropertySheet *pParent)
 	: CTexToolDlg (nLayout ? IDD_TEXTUREDATA2 : IDD_TEXTUREDATA, pParent, 1, IDC_TEXTURE_SHOW, RGB (0,0,0))
 {
-last_texture1 = -1;
-last_texture2 = 0;
-save_texture1 = -1;
-save_texture2 = 0;
+m_lastTexture [0] = -1;
+m_lastTexture [1] = 0;
+m_saveTexture [0] = -1;
+m_saveTexture [1] = 0;
 int i;
 for (i = 0; i < 4; i++)
-	save_uvls [i].l = defaultUVLs [i].l;
+	m_saveUVLs [i].l = defaultUVLs [i].l;
 #if TEXTOODLG == 0
 m_frame [0] = 0;
 m_frame [1] = 0;
@@ -515,10 +515,10 @@ else {
 	bShowTexture = (nWall >= 0) && (nWall < wallManager.WallCount ());
 	}
 if (bShowTexture) {
-	if ((texture1!=last_texture1) || (texture2!=last_texture2) || (mode!=last_mode)) {
-		last_texture1 = texture1;
-		last_texture2 = texture2;
-		last_mode = mode;
+	if ((texture1!=m_lastTexture [0]) || (texture2!=m_lastTexture [1]) || (mode!=m_lastMode)) {
+		m_lastTexture [0] = texture1;
+		m_lastTexture [1] = texture2;
+		m_lastMode = mode;
 		strcpy_s (message, sizeof (message), textureManager.Name (texture1));
 		cbTexture1->SetCurSel (i = cbTexture1->SelectString (-1, message));  // unselect if string not found
 		if (sideP->m_info.nOvlTex) {
@@ -530,8 +530,8 @@ if (bShowTexture) {
 		}
 	}
 else {
-	last_texture1 = -1;
-	last_texture2 = -1;
+	m_lastTexture [0] = -1;
+	m_lastTexture [1] = -1;
 	cbTexture1->SelectString (-1, "(none)");
 	cbTexture2->SelectString (-1, "(none)");
 	}
@@ -558,8 +558,8 @@ if (!CTexToolDlg::Refresh ())
 #else
 if (!PaintTexture (&m_textureWnd))
 #endif
-	last_texture1 =
-	last_texture2 = -1;
+	m_lastTexture [0] =
+	m_lastTexture [1] = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -837,11 +837,11 @@ CHECKMINE;
 	CSide		*sideP = current->Side ();
 	CComboBox	*pcb;
 
-save_texture1 = sideP->m_info.nBaseTex & 0x3fff;
-save_texture2 = sideP->m_info.nOvlTex & 0x3fff;
+m_saveTexture [0] = sideP->m_info.nBaseTex & 0x3fff;
+m_saveTexture [1] = sideP->m_info.nOvlTex & 0x3fff;
 int i;
 for (i = 0; i < 4; i++)
-	save_uvls [i].l = sideP->m_info.uvls [i].l;
+	m_saveUVLs [i].l = sideP->m_info.uvls [i].l;
 
 //CBTexture1 ()->SelectString (-1, texture_name1);
 //CBTexture2 ()->SelectString (-1, texture_name2);
@@ -895,9 +895,9 @@ if (!(m_bUse1st || m_bUse2nd))
 
 //CheckForDoor ();
 undoManager.Begin (udSegments);
-segmentManager.SetTextures (*current, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+segmentManager.SetTextures (*current, m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
 for (int i = 0; i < 4; i++)
-	sideP->m_info.uvls [i].l = save_uvls [i].l;
+	sideP->m_info.uvls [i].l = m_saveUVLs [i].l;
 undoManager.End ();
 Refresh ();
 DLE.MineView ()->Refresh ();
@@ -913,7 +913,7 @@ CHECKMINE;
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
-if (save_texture1 == -1 || save_texture2 == -1)
+if (m_saveTexture [0] == -1 || m_saveTexture [1] == -1)
 	return;
 //CheckForDoor ();
 // set all segment sides as not "pasted" yet
@@ -952,10 +952,10 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
 			if (segP->Child (nSide) == -1) {
-				segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+				segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
 				int i;
 				for (i = 0; i < 4; i++)
-					sideP->m_info.uvls [i].l = save_uvls [i].l;
+					sideP->m_info.uvls [i].l = m_saveUVLs [i].l;
 				}
 			}
 		}
@@ -989,13 +989,13 @@ if (bAll)
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++)
 		if (bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
-			if (m_bUse1st && (sideP->m_info.nBaseTex != last_texture1))
+			if (m_bUse1st && (sideP->m_info.nBaseTex != m_lastTexture [0]))
 				continue;
-			if (m_bUse2nd && ((sideP->m_info.nOvlTex & 0x3FFF) != last_texture2))
+			if (m_bUse2nd && ((sideP->m_info.nOvlTex & 0x3FFF) != m_lastTexture [1]))
 				continue;
 			if ((segP->Child (nSide) >= 0) && (sideP->m_info.nWall == NO_WALL))
 				 continue;
-			segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+			segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
 			}
 undoManager.End ();
 Refresh ();
@@ -1027,9 +1027,9 @@ if ((old_texture2 < 0) || (old_texture2 >= MAX_TEXTURES))
 // mark segment as "pasted"
 segP->Index () = 1;
 // paste texture
-segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
 for (i = 0; i < 4; i++)
-	sideP->m_info.uvls [i].l = save_uvls [i].l;
+	sideP->m_info.uvls [i].l = m_saveUVLs [i].l;
 
 // now check each adjing side to see it has the same texture
 for (i = 0; i < 4; i++) {
