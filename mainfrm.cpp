@@ -892,12 +892,12 @@ segmentManager.JoinLines ();
 
 void CMainFrame::OnJoinSides ()
 {
-segmentManager.Join (0);
+segmentManager.Join (*current, false);
 }
 
 void CMainFrame::OnJoinCurrentSide ()
 {
-segmentManager.Join (1);
+segmentManager.Join (*current, true);
 }
 
 void CMainFrame::OnSplitPoints ()

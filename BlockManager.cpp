@@ -57,6 +57,7 @@ short CBlockManager::Read (CFileManager& fp)
 	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	short				xlatSegNum [SEGMENT_LIMIT];
 	int				byteBuf; // needed for scanning byte values
+	CSegment*		newSegments = null;
 	CTrigger*		newTriggers = null;
 
 // remember number of vertices for later
@@ -94,6 +95,8 @@ while (!fp.EoF ()) {
 		return nNewSegs;
 		}
 	CSegment* segP = segmentManager.Segment (nSegment);
+	segP->SetLink (newSegments);
+	newSegments = segP;
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
 	scanRes = fscanf_s (fp.File (), "segment %d\n", &segP->Index ());
@@ -264,6 +267,15 @@ while (!fp.EoF ()) {
 		}
 	segP->Backup ();
 	nNewSegs++;
+	}
+
+while (newSegments != null) {
+	short nSegment = segmentManager.Index (newSegments);
+	for (int nSide = 0; nSide < 6; nSide++) {
+		if (newSegments->Child (nSide) >= 0)
+			segmentManager.Join (CSideKey (nSegment, nSide), true);
+		}
+	newSegments = dynamic_cast<CSegment*> (newSegments->Link ());
 	}
 
 while (newTriggers != null) {

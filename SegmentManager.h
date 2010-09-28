@@ -186,7 +186,7 @@ class CSegmentManager {
 
 		bool Split (void);
 
-		void Join (int solidify);
+		void Join (CSideKey key, bool bFind);
 
 		bool Link (short nSegment1, short nSide1, short nSegment2, short nSide2, double margin);
 

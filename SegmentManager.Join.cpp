@@ -115,10 +115,10 @@ undoManager.End ();
 
 void CSegmentManager::JoinPoints (void) 
 {
-  CSegment *seg1, *seg2; 
- double distance; //v1x, v1y, v1z, v2x, v2y, v2z; 
-  int vert1, vert2; 
-  CSelection * cur1, * cur2; 
+	CSegment *seg1, *seg2; 
+	double distance; //v1x, v1y, v1z, v2x, v2y, v2z; 
+	int vert1, vert2; 
+	CSideKey key, otherKey;
 
 if (tunnelMaker.Active ()) 
 	return; 
@@ -131,18 +131,11 @@ if (selections [0].m_nSegment== selections [1].m_nSegment) {
 	return;
 	}
 
-if (*current == selections [0]) {
-	cur1 = &selections [0]; 
-	cur2 = &selections [1]; 
-	}
-else {
-	cur1 = &selections [1]; 
-	cur2 = &selections [0]; 
-	}
-seg1 = Segment (cur1->m_nSegment); 
-seg2 = Segment (cur2->m_nSegment); 
-vert1 = seg1->m_info.verts [sideVertTable [cur1->m_nSide][cur1->m_nPoint]]; 
-vert2 = seg2->m_info.verts [sideVertTable [cur2->m_nSide][cur2->m_nPoint]]; 
+other = &selections [*current == selections [0]];
+seg1 = Segment (current->m_nSegment); 
+seg2 = Segment (other->m_nSegment); 
+vert1 = seg1->m_info.verts [sideVertTable [current->m_nSide][current->m_nPoint]]; 
+vert2 = seg2->m_info.verts [sideVertTable [other->m_nSide][other->m_nPoint]]; 
 // make sure verts are different
 if (vert1== vert2) {
 	ErrorMsg ("These points are already joined."); 
@@ -159,7 +152,7 @@ if (QueryMsg("Are you sure you want to join the current point\n"
 	return; 
 undoManager.Begin (udSegments);
 // define vert numbers
-seg1->m_info.verts [sideVertTable [cur1->m_nSide][cur1->m_nPoint]] = vert2; 
+seg1->m_info.verts [sideVertTable [current->m_nSide][current->m_nPoint]] = vert2; 
 // delete any unused vertices
 //  vertexManager.DeleteUnused (); 
 FixChildren (); 
@@ -181,7 +174,6 @@ void CSegmentManager::JoinLines (void)
   short match [2]; 
   short i, j, nLine; 
   bool fail; 
-  CSelection *cur1, *cur2; 
 
 if (tunnelMaker.Active ())
 	return; 
@@ -194,21 +186,14 @@ if (selections [0].m_nSegment == selections [1].m_nSegment) {
 	return;
 	}
 
-if (*current == selections [0]) {
-	cur1 = &selections [0]; 
-	cur2 = &selections [1]; 
-	} 
-else {
-	cur1 = &selections [1]; 
-	cur2 = &selections [0]; 
-	}
-seg1 = Segment (cur1->m_nSegment); 
-seg2 = Segment (cur2->m_nSegment); 
+other = &selections [*current == selections [0]];
+seg1 = Segment (current->m_nSegment); 
+seg2 = Segment (other->m_nSegment); 
 
 for (i = 0; i < 2; i++) {
-	nLine = sideLineTable [cur1->m_nSide][cur1->m_nLine]; 
+	nLine = sideLineTable [current->m_nSide][current->m_nLine]; 
 	v1 = vert1 [i] = seg1->m_info.verts [lineVertTable [nLine][i]]; 
-	nLine = sideLineTable [cur2->m_nSide][cur2->m_nLine]; 
+	nLine = sideLineTable [other->m_nSide][other->m_nLine]; 
 	v2 = vert2 [i] = seg2->m_info.verts [lineVertTable [nLine][i]]; 
 	v1x [i] = vertexManager.Vertex (v1)->v.x; 
 	v1y [i] = vertexManager.Vertex (v1)->v.y; 
@@ -259,7 +244,7 @@ if (fail) {
 undoManager.Begin (udSegments);
 // define vert numbers
 for (i = 0; i < 2; i++) {
-	nLine = sideLineTable [cur1->m_nSide][cur1->m_nLine]; 
+	nLine = sideLineTable [current->m_nSide][current->m_nLine]; 
 	seg1->m_info.verts [lineVertTable [nLine][i]] = vert2 [match [i]]; 
 	}
 FixChildren (); 
@@ -279,7 +264,7 @@ DLE.MineView ()->Refresh ();
 //  Changes - Added option to solidifyally figure out "other segment"
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::Join (int solidify)
+void CSegmentManager::Join (CSideKey key, bool bFind)
 {
 	CSegment *segP; 
 	CSegment *seg1, *seg2; 
@@ -288,32 +273,32 @@ void CSegmentManager::Join (int solidify)
 	double radius, minRadius, maxRadius, totalRad, minTotalRad; 
 	tVertMatch match [4]; 
 	bool fail; 
-	CSelection *cur1, *cur2, mySeg; 
+	CSideKey otherKey;
+	short thisPoint, otherPoint;
 
 if (tunnelMaker.Active ()) 
 	return; 
 
 // figure out "other' segment
-if (solidify) {
-	if (Segment (current->m_nSegment)->Child (current->m_nSide) != -1) {
+if (bFind) {
+	if (Segment (key.m_nSegment)->Child (key.m_nSide) != -1) {
 		if (!bExpertMode)
 			ErrorMsg ("The current side is already joined to another segment"); 
 		return; 
 		}
 
-	cur1 = current; 
-	cur2 = &mySeg; 
-	mySeg.m_nSegment = -1;
+	thisPoint = (key == *current) ? current->m_nPoint : 0;
+	otherKey.m_nSegment = -1;
 	// find first segment (other than this segment) which shares all 4 points
 	// of the current side (points must be < 5.0 away)
-	seg1 = Segment (cur1->m_nSegment); 
+	seg1 = Segment (key.m_nSegment); 
 	for (i = 0; i < 4; i++) {
-		memcpy (&v1 [i], vertexManager.Vertex (seg1->m_info.verts [sideVertTable [cur1->m_nSide][i]]), sizeof (CVertex));
+		memcpy (&v1 [i], vertexManager.Vertex (seg1->m_info.verts [sideVertTable [key.m_nSide][i]]), sizeof (CVertex));
 		}
 	minTotalRad = 1e300;
 	for (CSegmentIterator si; si; si++) {
 		nSegment = si.Index ();
-		if (nSegment == cur1->m_nSegment)
+		if (nSegment == key.m_nSegment)
 			continue; 
 		seg2 = &(*si);
 		for (nSide = 0; nSide < 6; nSide++) {
@@ -349,9 +334,9 @@ if (solidify) {
 				totalRad += match [i].d;
 			if (minTotalRad > totalRad) {
 				minTotalRad = totalRad;
-				mySeg.m_nSegment = nSegment; 
-				mySeg.m_nSide = nSide; 
-				mySeg.m_nPoint = 0; // should not be used
+				otherKey.m_nSegment = nSegment; 
+				otherKey.m_nSide = nSide; 
+				otherPoint = 0;
 			// force break from loops
 				if (minTotalRad == 0) {
 					nSide = 6; 
@@ -360,39 +345,37 @@ if (solidify) {
 				}
 			}
 		}
-	if (mySeg.m_nSegment < 0) {
+	if (otherKey.m_nSegment < 0) {
 		if (!bExpertMode)
 			ErrorMsg ("Could not find another segment whose side is within\n10.0 units from the current side"); 
 		return; 
 		}
 	}
-else
-	if (*current== selections [0]) {
-		cur1 = &selections [0]; 
-		cur2 = &selections [1]; 
-		}
-	else {
-		cur1 = &selections [1]; 
-		cur2 = &selections [0]; 
-		}
+else {
+	int i = key == selections [0];
+	other = &selections [*current == selections [0]];
+	otherKey = *other; 
+	otherPoint = other->m_nPoint;
+	thisPoint = current->m_nPoint;
+	}
 
-if (cur1->m_nSegment == cur2->m_nSegment) {
+if (key.m_nSegment == otherKey.m_nSegment) {
 	if (!bExpertMode)
 		ErrorMsg ("You cannot joint two sides on the same segment.\n\n"
-					"Hint: The two red squares represent the current side, \n"
-					"and the 'other' segment's current side.  Press 'S' to change\n"
-					"the current side or press the space bar to switch to the other segment."); 
+					 "Hint: The two red squares represent the current side, \n"
+					 "and the 'other' segment's current side.  Press 'S' to change\n"
+					 "the current side or press the space bar to switch to the other segment."); 
 	return; 
 	}
 
-seg1 = Segment (cur1->m_nSegment); 
-seg2 = Segment (cur2->m_nSegment); 
+seg1 = Segment (key.m_nSegment); 
+seg2 = Segment (otherKey.m_nSegment); 
 
 // figure out matching corners to join to.
 // get coordinates for calulaction and set match = none
 for (i = 0; i < 4; i++) {
-	memcpy (&v1 [i], vertexManager.Vertex (seg1->m_info.verts [sideVertTable [cur1->m_nSide][i]]), sizeof (CVertex)); 
-	memcpy (&v2 [i], vertexManager.Vertex (seg2->m_info.verts [sideVertTable [cur2->m_nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v1 [i], vertexManager.Vertex (seg1->m_info.verts [sideVertTable [key.m_nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v2 [i], vertexManager.Vertex (seg2->m_info.verts [sideVertTable [otherKey.m_nSide][i]]), sizeof (CVertex)); 
 	match [i].i = -1; 
 	}
 
@@ -425,7 +408,7 @@ if (!fail)
 			 (match [2].i == match [3].i);
 
 if (fail) {
-	int offset = (4 + cur1->m_nPoint - (3 - cur2->m_nPoint)) % 4; 
+	int offset = (4 + thisPoint - (3 - otherPoint)) % 4; 
 	match [0].i = (offset + 3) % 4; 
 	match [1].i = (offset + 2) % 4; 
 	match [2].i = (offset + 1) % 4; 
@@ -455,7 +438,7 @@ if (maxRadius >= JOIN_DISTANCE) {
 // then solidifyally link them together without asking
 if (minRadius <= 5) {
 	undoManager.Begin (udSegments);
-	LinkSides (cur1->m_nSegment, cur1->m_nSide, cur2->m_nSegment, cur2->m_nSide, match); 
+	LinkSides (key.m_nSegment, key.m_nSide, otherKey.m_nSegment, otherKey.m_nSide, match); 
 	SetLinesToDraw (); 
 	undoManager.End ();
 	DLE.MineView ()->Refresh ();
@@ -487,9 +470,9 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  /* no remaining children */
 
 // now define two sides:
 // near side has opposite side number segment 1
-segP->SetChild (oppSideTable [cur1->m_nSide], cur1->m_nSegment); 
+segP->SetChild (oppSideTable [key.m_nSide], key.m_nSegment); 
 // far side has same side number as segment 1
-segP->SetChild (cur1->m_nSide, cur2->m_nSegment); 
+segP->SetChild (key.m_nSide, otherKey.m_nSegment); 
 segP->m_info.owner = -1;
 segP->m_info.group = -1;
 segP->m_info.function = 0; 
@@ -498,8 +481,8 @@ segP->m_info.value = -1;
 
 // define vert numbers
 for (i = 0; i < 4; i++) {
-	segP->m_info.verts [oppSideVertTable [cur1->m_nSide][i]] = seg1->m_info.verts [sideVertTable [cur1->m_nSide][i]]; 
-	segP->m_info.verts [sideVertTable [cur1->m_nSide][i]] = seg2->m_info.verts [sideVertTable [cur2->m_nSide][match [i].i]]; 
+	segP->m_info.verts [oppSideVertTable [key.m_nSide][i]] = seg1->m_info.verts [sideVertTable [key.m_nSide][i]]; 
+	segP->m_info.verts [sideVertTable [key.m_nSide][i]] = seg2->m_info.verts [sideVertTable [otherKey.m_nSide][match [i].i]]; 
 	}
 
 // define Walls ()
@@ -510,7 +493,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
 // define sides
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if (segP->Child (nSide) == -1) {
-		SetTextures (CSideKey (nNewSeg, nSide), seg1->m_sides [cur1->m_nSide].m_info.nBaseTex, seg1->m_sides [cur1->m_nSide].m_info.nOvlTex); 
+		SetTextures (CSideKey (nNewSeg, nSide), seg1->m_sides [key.m_nSide].m_info.nBaseTex, seg1->m_sides [key.m_nSide].m_info.nOvlTex); 
 		Segment (nNewSeg)->SetUV (nSide, 0, 0); 
 		}
 	else {
@@ -524,14 +507,14 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 segP->m_info.staticLight = seg1->m_info.staticLight; 
 
 // update cur segment
-seg1->SetChild (cur1->m_nSide, nNewSeg); 
-SetTextures (*cur1, 0, 0); 
+seg1->SetChild (key.m_nSide, nNewSeg); 
+SetTextures (key, 0, 0); 
 for (i = 0; i < 4; i++) 
-	seg1->m_sides [cur1->m_nSide].m_info.uvls [i].Clear (); 
-seg2->SetChild (cur2->m_nSide, nNewSeg); 
-SetTextures (CSideKey (cur2->m_nSegment, cur2->m_nSide), 0, 0); 
+	seg1->m_sides [key.m_nSide].m_info.uvls [i].Clear (); 
+seg2->SetChild (otherKey.m_nSide, nNewSeg); 
+SetTextures (otherKey, 0, 0); 
 for (i = 0; i < 4; i++) 
-	seg2->m_sides [cur2->m_nSide].m_info.uvls [i].Clear (); 
+	seg2->m_sides [otherKey.m_nSide].m_info.uvls [i].Clear (); 
 
 // update number of Segment () and vertices
 Count ()++; 
