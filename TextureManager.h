@@ -72,6 +72,8 @@ class CTextureManager {
 			return p ? p : "";
 			}
 		
+		inline int Index (CTexture* texP, int nVersion = -1) { return texP - &m_textures [(nVersion < 0) ? Version () : nVersion][0]; }
+
 		CTexture* Texture (short nTexture) { return &m_textures [Version ()][nTexture]; }
 
 		inline bool IsLava (short nTexture) { return (strstr (Name (nTexture), "lava") != null); }

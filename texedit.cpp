@@ -976,7 +976,7 @@ if (QueryMsg("Are you sure you want to restore this texture\n"
 	Backup ();
 	m_texP->m_info.bCustom = m_bModified = FALSE;
 	//m_texP->Load (m_iTexture);
-	m_texture [0].Copy (*m_texP);
+	m_texture [0].Reload ();
 	Refresh ();
 	}
 }

@@ -277,9 +277,6 @@ int CTexture::Load (CFileManager& fp, short nTexture, int nVersion)
 if (m_info.bCustom)
 	return 0;
 
-if (nVersion < 0)
-	nVersion = DLE.IsD1File () ? 0 : 1;
-
 CPigTexture& info = textureManager.Info (nVersion, nTexture);
 int nSize = info.BufSize ();
 if (m_data && ((m_info.width * m_info.height == nSize)))
@@ -291,6 +288,19 @@ fp.Seek (textureManager.m_nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (fp, info);
 m_info.bFrame = (strstr (textureManager.m_names [nVersion][nTexture], "frame") != null);
 return 0;
+}
+
+//------------------------------------------------------------------------
+
+int CTexture::Reload (void) 
+{
+CFileManager* fp = textureManager.OpenPigFile (textureManager.Version ());
+if (fp == null)
+	return 1;
+Release ();
+int i = Load (*fp, textureManager.Index (this), textureManager.Version ());
+delete fp;
+return i;
 }
 
 //------------------------------------------------------------------------
