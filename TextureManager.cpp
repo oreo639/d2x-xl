@@ -361,20 +361,19 @@ for (i = 0; i < 2; i++) {
 	// Define bmDataP based on texture numbers and rotation
 destTexP->m_info.width = texP [0]->m_info.width;
 destTexP->m_info.height = texP [0]->m_info.height;
-destTexP->m_info.size = texP [0]->m_info.size;
 destTexP->m_info.bValid = 1;
 
 CBGRA* srcDataP = texP [0]->m_data;
 if (srcDataP != null) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) {
-		memcpy (bmDataP, srcDataP, texP [0]->m_info.size * sizeof (CBGRA));
+		memcpy (bmDataP, srcDataP, texP [0]->BufSize ());
 		}
 	else {
 		// otherwise, copy bit by bit
 		w = texP [0]->m_info.width;
 		int l1 = y0 * w + x0;
-		int l2 = (texP [0]->m_info.size - l1) * sizeof (CBGRA);
+		int l2 = (texP [0]->Size () - l1) * sizeof (CBGRA);
 		memcpy (bmDataP, srcDataP + l1, l2 * sizeof (CBGRA));
 		memcpy (bmDataP + l2, srcDataP, l1 * sizeof (CBGRA));
 		CBGRA* destDataP = bmDataP;

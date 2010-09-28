@@ -157,7 +157,7 @@ pigTexInfo.offset = nOffset;
 // check for transparency and super transparency
 if (!texP->m_info.nFormat)
 	if (srcP = (byte *) texP->m_data) {
-		for (uint j = 0; j < texP->m_info.size; j++, srcP++) {
+		for (uint j = 0, h = texP->Size (); j < h; j++, srcP++) {
 			if (*srcP == 255) 
 				pigTexInfo.flags |= BM_FLAG_TRANSPARENT;
 			if (*srcP == 254) 
@@ -167,7 +167,7 @@ if (!texP->m_info.nFormat)
 pigTexInfo.Write (fp);
 if (pos != 0xFFFFFFFF)
 	fp.Seek (pos);
-return nOffset + texP->m_info.nFormat ? texP->m_info.size * 4 : texP->m_info.size;
+return nOffset + texP->m_info.nFormat ? texP->Size () * sizeof (CBGRA) : texP->Size ();
 }
 
 //-----------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ int CTextureManager::WriteCustomTexture (CFileManager& fp, CTexture *texP)
 if (texP->m_info.nFormat) {
 	tRGBA rgba = {0, 0, 0, 255};
 	CBGRA* bufP = texP->m_data;
-	for (int i = texP->m_info.size; i; i--, bufP++) {
+	for (int i = texP->Size (); i; i--, bufP++) {
 		rgba.r = bufP->r;
 		rgba.g = bufP->g;
 		rgba.b = bufP->b;

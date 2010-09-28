@@ -588,14 +588,16 @@ bool CTextureEdit::LoadTGA (CFileManager& fp)
 	tBGRA			color;
 
 fp.Read (&tgaHeader, sizeof (tgaHeader), 1);
-if ((tgaHeader.width * tgaHeader.height > 4096 * 4096)) {
+h = tgaHeader.width * tgaHeader.height;
+if (h > 4096 * 4096) {
 	ErrorMsg ("Image too large.");
 	return false;
 	}
-if (!m_texture [0].Allocate (tgaHeader.width * tgaHeader.height))
+if (!m_texture [0].Allocate (h))
 	return false;
 m_texture [0].m_info.width = m_nWidth = tgaHeader.width;
 m_texture [0].m_info.height = m_nHeight = tgaHeader.height;
+m_texture [0].m_info.size = h;
 m_nSize = tgaHeader.width * tgaHeader.height;
 if (tgaHeader.identSize)
 	fp.Read (imgIdent, tgaHeader.identSize, 1);

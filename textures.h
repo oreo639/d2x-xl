@@ -295,7 +295,7 @@ class CUV {
 };
 
 typedef struct tTexture {
-	uint		width, height, size, offset;
+	uint		width, height, offset;
 	int		id; 
 	bool		bCustom, bExtData, bFrame, bUsed, bValid, bTransparent;
 	byte		nFormat;	// 0: Bitmap, 1: TGA (RGB)

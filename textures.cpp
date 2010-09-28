@@ -26,7 +26,7 @@ void CTexture::ComputeIndex (byte* bmIndex)
 #endif
 	for (int y = 0; y < (int) m_info.height; y++) {
 		int i = y * m_info.width;
-		int k = m_info.size - m_info.width - i;
+		int k = Size () - Width () - i;
 		for (int x = 0; x < (int) m_info.width; x++) {
 			bmIndex [k + x] = paletteManager.ClosestColor (m_data [i + x]);
 			}
@@ -213,12 +213,11 @@ void CTexture::Load (CFileManager& fp, CPigTexture& info)
 
 m_info.width = info.width;
 m_info.height = info.height;
-m_info.size = info.BufSize ();
 m_info.bValid = 1;
 m_info.bTransparent = false;
 if (m_info.nFormat) {
 	tRGBA color;
-	for (uint i = 0; i < m_info.size; i++) {
+	for (uint i = 0, h = Size (); i < h; i++) {
 		fp.Read (&color, sizeof (color), 1);
 		m_data [i] = color;
 		if (color.a < 255)
