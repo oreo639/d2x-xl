@@ -87,7 +87,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 		texP = Textures (1, nTexture);
 		texP->Release ();
 		}
-	//if (!(texP->m_info.bmData = new CBGRA [nSize]))
+	//if (!(texP->m_data = new CBGRA [nSize]))
 	//	continue;
 	texP->m_info.nFormat = (pigTexInfo.flags & 0x80) != 0;
 	//texP->m_info.width = pigTexInfo.width;
@@ -119,12 +119,23 @@ return 0;
 
 //-----------------------------------------------------------------------------------
 
-uint CTextureManager::WritePogTextureHeader (CFileManager& fp, CTexture *texP, int nTexture, uint nOffset)
+uint CTextureManager::WriteCustomTextureHeader (CFileManager& fp, CTexture *texP, int nId, uint nOffset)
 {
 	CPigTexture pigTexInfo (1);
 	byte *srcP;
+	uint pos = 0xFFFFFFFF;
 
-sprintf_s (pigTexInfo.name, sizeof (pigTexInfo.name), "POG%04d", nTexture);
+if (nId >= 0) {
+	texP->m_info.id = nId;
+	texP->m_info.offset = nOffset;
+	}
+else {
+	pos = fp.Tell ();
+	nId = texP->m_info.id;
+	fp.Seek (nOffset = texP->m_info.offset);
+	}
+
+sprintf_s (pigTexInfo.name, sizeof (pigTexInfo.name), "POG%04d", nId);
 #if 1
 pigTexInfo.Setup (1, texP->m_info.width, texP->m_info.height, texP->m_info.nFormat ? 0x80 : 0, nOffset);
 #else
@@ -143,11 +154,9 @@ pigTexInfo.avgColor = 0;
 pigTexInfo.offset = nOffset;
 #endif
 
-nOffset += texP->m_info.nFormat ? texP->m_info.size * 4 : texP->m_info.size;
-
 // check for transparency and super transparency
 if (!texP->m_info.nFormat)
-	if (srcP = (byte *) texP->m_info.bmData) {
+	if (srcP = (byte *) texP->m_data) {
 		for (uint j = 0; j < texP->m_info.size; j++, srcP++) {
 			if (*srcP == 255) 
 				pigTexInfo.flags |= BM_FLAG_TRANSPARENT;
@@ -156,16 +165,18 @@ if (!texP->m_info.nFormat)
 			}
 	}
 pigTexInfo.Write (fp);
-return nOffset;
+if (pos != 0xFFFFFFFF)
+	fp.Seek (pos);
+return nOffset + texP->m_info.nFormat ? texP->m_info.size * 4 : texP->m_info.size;
 }
 
 //-----------------------------------------------------------------------------------
 
-bool CTextureManager::WriteCustomTexture (CFileManager& fp, CTexture *texP)
+int CTextureManager::WriteCustomTexture (CFileManager& fp, CTexture *texP)
 {
 if (texP->m_info.nFormat) {
 	tRGBA rgba = {0, 0, 0, 255};
-	CBGRA* bufP = texP->m_info.bmData;
+	CBGRA* bufP = texP->m_data;
 	for (int i = texP->m_info.size; i; i--, bufP++) {
 		rgba.r = bufP->r;
 		rgba.g = bufP->g;
@@ -180,7 +191,7 @@ else {
 	byte* bmIndex = new byte [w * h];
 	if (bmIndex == null) { // write as TGA
 		texP->m_info.nFormat = 1;
-		return WriteCustomTexture (fp, texP);
+		return (WriteCustomTexture (fp, texP) == 0) ? 0 : -1;
 		}
 	texP->ComputeIndex (bmIndex);
 	for (bmIndex += w * h /*point to last row of bitmap*/; h > 0; h--) {
@@ -189,7 +200,7 @@ else {
 		}
 	delete bmIndex;
 	}
-return true;
+return 1;
 }
 
 //-----------------------------------------------------------------------------------
@@ -231,7 +242,7 @@ int CTextureManager::CreatePog (CFileManager& fp)
 	CPigHeader		pigFileInfo (1);
 	uint				textureCount = 0, nOffset = 0;
 	int				nVersion = DLE.FileType ();
-	int				nExtra, i, h = MaxTextures (nVersion);
+	int				nId, i, h = MaxTextures (nVersion);
 	CExtraTexture*	extraTexP;
 	CTexture*		texP;
 
@@ -264,21 +275,24 @@ for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	fp.Write (extraTexP->m_index);
 
 // write texture headers
-nExtra = 0;
+nId = 0;
 for (i = 0, texP = Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
-		nOffset = WritePogTextureHeader (fp, texP, nExtra++, nOffset);
+		nOffset = WriteCustomTextureHeader (fp, texP, nId++, nOffset);
 for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
-	nOffset = WritePogTextureHeader (fp, extraTexP, nExtra++, nOffset);
+	nOffset = WriteCustomTextureHeader (fp, extraTexP, nId++, nOffset);
 
 sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures", pigFileInfo.nTextures);
 DEBUGMSG (message);
 
 for (i = 0, texP = Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
-		WriteCustomTexture (fp, texP);
+		if (0 > WriteCustomTexture (fp, texP))
+			WriteCustomTextureHeader (fp, texP); // need to rewrite to reflect changed texture type in header data
+
 for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
-	WriteCustomTexture (fp, extraTexP);
+	if (0 > WriteCustomTexture (fp, extraTexP))
+		WriteCustomTextureHeader (fp, texP); // need to rewrite to reflect changed texture type in header data
 
 return 0;
 }

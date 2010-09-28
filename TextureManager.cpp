@@ -339,7 +339,7 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture* destTexP, 
 	tFrac			scale, scale2;
 	//int			rc; // return code
 	CTexture*	texP [2];
-	CBGRA*		bmDataP = destTexP->m_info.bmData;
+	CBGRA*		bmDataP = destTexP->m_data;
 	int			fileType = DLE.FileType ();
 
 nTextures [0] = nBaseTex;
@@ -353,7 +353,7 @@ for (i = 0; i < 2; i++) {
 		nTextures [i] = 0;
 	// buffer m_textures if not already buffered
 	texP [i] = &m_textures [fileType][nTextures [i]];
-	//if (!(texP [i]->m_info.bmData && texP [i]->m_info.bValid))
+	//if (!(texP [i]->m_data && texP [i]->m_info.bValid))
 	//	if (rc = texP [i]->Load (nTextures [i]))
 	//		return rc;
 	}
@@ -364,7 +364,7 @@ destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.size = texP [0]->m_info.size;
 destTexP->m_info.bValid = 1;
 
-CBGRA* srcDataP = texP [0]->m_info.bmData;
+CBGRA* srcDataP = texP [0]->m_data;
 if (srcDataP != null) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) {
@@ -392,7 +392,7 @@ if (srcDataP != null) {
 
 if (nTextures [1] == 0)
 	return 0;
-srcDataP = texP [1]->m_info.bmData;
+srcDataP = texP [1]->m_data;
 if (srcDataP == null)
 	return 0;
 

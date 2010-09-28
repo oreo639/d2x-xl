@@ -82,7 +82,7 @@ class CTextureManager {
 
 		int CreatePog (CFileManager& fp);
 
-		bool WriteCustomTexture (CFileManager& fp, CTexture *texP);
+		int WriteCustomTexture (CFileManager& fp, CTexture *texP);
 
 		void Setup (void);
 
@@ -114,7 +114,7 @@ class CTextureManager {
 
 		inline CBGRA& Blend (CBGRA& dest, CBGRA& src);
 
-		uint WritePogTextureHeader (CFileManager& fp, CTexture *texP, int nTexture, uint nOffset);
+		uint WriteCustomTextureHeader (CFileManager& fp, CTexture *texP, int nId = -1, uint nOffset = 0);
 	};
 
 extern CTextureManager textureManager;

@@ -689,7 +689,7 @@ y = pt0.y;
 int xStep = 0, yStep = 0;
 int dd = (dx >= dy) ? dx: dy;
 for (i = dd + 1; i; i--) {
-	texP->m_info.bmData [y*texP->m_info.width+x] = color;
+	texP->m_data [y*texP->m_info.width+x] = color;
 	yStep += dy;
 	if (yStep >= dx) {
 		y += yInc;
@@ -704,7 +704,7 @@ for (i = dd + 1; i; i--) {
 #else //0; faster
 if (dx >= dy) {
 	for (i = dx + 1; i; i--, x += xInc) {
-		texP->m_info.bmData [y * texP->m_info.width + x] = color;
+		texP->m_data [y * texP->m_info.width + x] = color;
 		nStep += dy;
 		if (nStep >= dx) {
 			y += yInc;
@@ -714,7 +714,7 @@ if (dx >= dy) {
 	}
 else {
 	for (i = dy + 1; i; i--, y += yInc) {
-		texP->m_info.bmData [y * texP->m_info.width + x] = color;
+		texP->m_data [y * texP->m_info.width + x] = color;
 		nStep += dx;
 		if (nStep >= dy) {
 			x += xInc;
@@ -728,10 +728,10 @@ if (dx == 0) {
 	x = pt0.x;
 	if (dy>0)
 		for (y=pt0.y;y<=pt1.y;y++)
-			texP->m_info.bmData [y*texP->m_info.width+x] = color;
+			texP->m_data [y*texP->m_info.width+x] = color;
 	else
 		for (y=pt0.y;y>=pt1.y;y--)
-			texP->m_info.bmData [y*texP->m_info.width+x] = color;
+			texP->m_data [y*texP->m_info.width+x] = color;
 	return;
 	}
 

@@ -348,7 +348,7 @@ m_iTexture = current->Side ()->m_info.nBaseTex;
 if (m_iTexture >= MAX_TEXTURES_D2)
 	m_iTexture = 0;
 m_texP = textureManager.Textures (DLE.FileType (), m_iTexture);
-if (!(m_texP->m_info.bmData && m_texP->m_info.bValid)) {
+if (!(m_texP->m_data && m_texP->m_info.bValid)) {
 	DEBUGMSG (" Texture tool: Invalid texture");
 	EndDialog (IDCANCEL);
 	}
@@ -356,7 +356,7 @@ else if (!m_texture [0].Copy (*m_texP)) {
 	DEBUGMSG (" Texture tool: Not enough memory for texture editing");
 	EndDialog (IDCANCEL);
 	}
-
+m_texture [1].Clear ();
 if (!m_texture [1].Allocate (m_texP->Size ()))
 	DEBUGMSG (" Texture tool: Not enough memory for undo function");
 Backup ();
@@ -994,11 +994,13 @@ void CTextureEdit::DrawTexture (void)
 if (!BeginPaint (&m_textureWnd))
 	return;
 BITMAPINFO* bmi = paletteManager.BMI ();
-bmi->bmiHeader.biWidth = m_nWidth;
-bmi->bmiHeader.biHeight = m_nWidth;
+bmi->bmiHeader.biWidth =
+bmi->bmiHeader.biHeight = m_texture [0].Width ();
+bmi->bmiHeader.biSizeImage = m_texture [0].BufSize ();
+bmi->bmiHeader.biClrUsed = 0;
 CRect	rc;
 m_textureWnd.GetClientRect (&rc);
-StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_nWidth, m_nWidth, 
+StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_texture [0].Width (), m_texture [0].Width (),
 					(void *) m_texture [0].Buffer (), bmi, DIB_RGB_COLORS, SRCCOPY);
 EndPaint ();
 }

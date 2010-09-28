@@ -28,7 +28,7 @@ void CTexture::ComputeIndex (byte* bmIndex)
 		int i = y * m_info.width;
 		int k = m_info.size - m_info.width - i;
 		for (int x = 0; x < (int) m_info.width; x++) {
-			bmIndex [k + x] = paletteManager.ClosestColor (m_info.bmData [i + x]);
+			bmIndex [k + x] = paletteManager.ClosestColor (m_data [i + x]);
 			}
 		}
 	}
@@ -176,11 +176,11 @@ return bShowTexture;
 
 bool CTexture::Allocate (int nSize)
 {
-if ((m_info.bmData != null) && ((Size () != nSize)))
+if ((m_data != null) && ((Size () != nSize)))
 	Release ();
-if (m_info.bmData == null)
-	m_info.bmData = new CBGRA [nSize];
-return (m_info.bmData != null);
+if (m_data == null)
+	m_data = new CBGRA [nSize];
+return (m_data != null);
 }
 
 //------------------------------------------------------------------------
@@ -188,9 +188,9 @@ return (m_info.bmData != null);
 void CTexture::Release (void) 
 {
 if (!m_info.bExtData) {
-	if (m_info.bmData) {
-		delete m_info.bmData;
-		m_info.bmData = null;
+	if (m_data != null) {
+		delete m_data;
+		m_data = null;
 		}
 	}
 bool bFrame = m_info.bFrame;
@@ -220,11 +220,11 @@ if (m_info.nFormat) {
 	tRGBA color;
 	for (uint i = 0; i < m_info.size; i++) {
 		fp.Read (&color, sizeof (color), 1);
-		m_info.bmData [i] = color;
+		m_data [i] = color;
 		if (color.a < 255)
 			m_info.bTransparent = true;
 		}
-	//texP->m_info.bValid = TGA2Bitmap (texP->m_info.bmData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
+	//texP->m_info.bValid = TGA2Bitmap (texP->m_data, texP->m_data, (int) pigTexInfo.width, (int) pigTexInfo.height);
 	}
 else if (info.flags & 0x08) {
 	int nSize = fp.ReadInt32 ();
@@ -243,16 +243,16 @@ else if (info.flags & 0x08) {
 				for (int j = 0; j < runLength; j++) {
 					if (x < info.width) {
 						int h = y * info.width + x++;
-						m_info.bmData [h] = color;
-						m_info.bmData [h].a = alpha;
+						m_data [h] = color;
+						m_data [h].a = alpha;
 						}
 					}
 				}
 			else {
 				int h = y * info.width + x++;
-				m_info.bmData [h] = palette [palIndex];
+				m_data [h] = palette [palIndex];
 				if (palIndex >= 254)
-					m_info.bmData [h].a = 0;
+					m_data [h].a = 0;
 				}
 			}
 		}
@@ -262,9 +262,9 @@ else {
 		for (int x = 0; x < info.width; x++) {
 			int h = y * info.width + x;
 			palIndex = fp.ReadByte ();
-			m_info.bmData [h] = palette [palIndex];
+			m_data [h] = palette [palIndex];
 			if (palIndex >= 254)
-				m_info.bmData [h].a = 0;
+				m_data [h].a = 0;
 			}
 		}
 	}
@@ -282,7 +282,7 @@ if (nVersion < 0)
 
 CPigTexture& info = textureManager.Info (nVersion, nTexture);
 int nSize = info.BufSize ();
-if (m_info.bmData && ((m_info.width * m_info.height == nSize)))
+if (m_data && ((m_info.width * m_info.height == nSize)))
 	return 0; // already loaded
 m_info.nFormat = 0;
 if (!Allocate (nSize)) 

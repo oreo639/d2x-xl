@@ -445,7 +445,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				if (!dx)
 					dx = 1;
 				du = ((uint) (((u1 - u0) * 1024.0) / dx) % m);
-				// v0 & v1 swapped since tex.m_info.bmData is flipped
+				// v0 & v1 swapped since tex.m_data is flipped
 				dv = ((uint) (((v0 - v1) * 1024.0) / dx) % m);
 				u = ((uint) (u0 * 1024.0)) % m;
 				v = ((uint) (-v0 * 1024.0)) % m;
@@ -475,14 +475,14 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							colorP = &tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)];
+							colorP = &tex.m_data [(u / 1024) + ((v / vd) & vm)];
 							}
 						Blend (m_renderBuffer [i], *colorP, m_depthBuffer [i], (depthType) z, scanLight);
 						z += dz;
 #else
 						int t = (u / 1024) + ((v / vd) & vm);
-						if (tex.m_info.bmData [t].m_screenCoord > 0) {
-							CBGR c = tex.m_info.bmData [t];
+						if (tex.m_data [t].m_screenCoord > 0) {
+							CBGR c = tex.m_data [t];
 							CBGR* pixel = m_renderBuffer + i;
 							pixelP->r = (byte) ((int) (c.r) * fade / 8191);
 							pixelP->g = (byte) ((int) (c.g) * fade / 8191);
@@ -500,15 +500,15 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							colorP = &tex.m_info.bmData [(u / 1024) + ((v / vd) & vm)];
+							colorP = &tex.m_data [(u / 1024) + ((v / vd) & vm)];
 							}
 #if 1
 						Blend (m_renderBuffer [i], *colorP, m_depthBuffer [i], (depthType) z);
 						z += dz;
 #else
 						int t = (u / 1024) + ((v / vd) & vm);
-						if (tex.m_info.bmData [t].m_screenCoord > 0)
-							m_renderBuffer [i] = tex.m_info.bmData [t];
+						if (tex.m_data [t].m_screenCoord > 0)
+							m_renderBuffer [i] = tex.m_data [t];
 #endif
 						}
 					}

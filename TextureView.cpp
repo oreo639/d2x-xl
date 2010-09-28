@@ -305,7 +305,7 @@ for (int i = 0; i < m_filter.Count (1); i++) {
 		bmi->bmiHeader.biBitCount = 32;
 		StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
 							m_iconSize.cx, m_iconSize.cy, 0, 0, tex.m_info.width, tex.m_info.width, 
-							(void*) tex.m_info.bmData, bmi, DIB_RGB_COLORS, SRCCOPY);
+							(void*) tex.m_data, bmi, DIB_RGB_COLORS, SRCCOPY);
 #else
 		double scale = 1.0 / tex.Scale ();
 		double xStep = scale * (double) tex.m_info.width / (double) m_iconSize.cx;
@@ -314,7 +314,7 @@ for (int i = 0; i < m_filter.Count (1); i++) {
 		for (double hx = 0; hx < tex.m_info.width; hx += xStep) {
 			int top = 3 + y * m_iconSpace.cy;
 			for (double hy = 0; hy < tex.m_info.width; hy += yStep) 
-				pDC->SetPixel (left, top++, tex.m_info.bmData [(int) hy * tex.m_info.width + (int) hx].ColorRef ());
+				pDC->SetPixel (left, top++, tex.m_data [(int) hy * tex.m_info.width + (int) hx].ColorRef ());
 			left++;
 			}
 #endif

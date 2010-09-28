@@ -287,8 +287,8 @@ class CUV {
 };
 
 typedef struct tTexture {
-	CBGRA*	bmData;
-	uint		width, height, size;
+	uint		width, height, size, offset;
+	int		id; 
 	bool		bCustom, bExtData, bFrame, bUsed, bValid, bTransparent;
 	byte		nFormat;	// 0: Bitmap, 1: TGA (RGB)
 } tTexture;
@@ -296,10 +296,11 @@ typedef struct tTexture {
 class CTexture {
 	public:
 		tTexture	m_info;
+		CBGRA*	m_data;
 
 		CTexture (CBGRA* dataP = null) {
 			Clear ();
-			m_info.bmData = dataP;
+			m_data = dataP;
 			m_info.bExtData = (dataP != null);
 			}
 
@@ -333,7 +334,7 @@ class CTexture {
 
 		inline uint BufSize (void) { return Width () * Height () * sizeof (CBGRA); }
 
-		inline CBGRA* Buffer (uint i = 0) { return m_info.bmData + i; }
+		inline CBGRA* Buffer (uint i = 0) { return m_data + i; }
 
 		inline bool Copy (CTexture& src) {
 			if (!Allocate (src.Size ()))
