@@ -167,7 +167,7 @@ if (!texP->m_info.nFormat)
 pigTexInfo.Write (fp);
 if (pos != 0xFFFFFFFF)
 	fp.Seek (pos);
-return nOffset + texP->m_info.nFormat ? texP->Size () * sizeof (CBGRA) : texP->Size ();
+return nOffset + (texP->m_info.nFormat ? texP->Size () * sizeof (CBGRA) : texP->Size ());
 }
 
 //-----------------------------------------------------------------------------------

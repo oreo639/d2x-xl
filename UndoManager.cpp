@@ -383,6 +383,10 @@ void CUndoManager::Begin (int dataFlags)
 {
 if (!Locked ()) {
 	if (0 == m_nModified++) {
+#ifdef _DEBUG
+		if (m_nModified > 3)
+			m_nModified = m_nModified;
+#endif
 		if (m_nMode != 0) {
 			m_nMode = 0;
 			m_current.Destroy ();

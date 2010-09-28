@@ -456,7 +456,7 @@ if (maxRadius >= JOIN_DISTANCE) {
 if (minRadius <= 5) {
 	undoManager.Begin (udSegments);
 	LinkSides (cur1->m_nSegment, cur1->m_nSide, cur2->m_nSegment, cur2->m_nSide, match); 
-	SetLinesToDraw(); 
+	SetLinesToDraw (); 
 	undoManager.End ();
 	DLE.MineView ()->Refresh ();
 	return; 

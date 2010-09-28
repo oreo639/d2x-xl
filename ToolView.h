@@ -1144,7 +1144,7 @@ class CTextureTool : public CTexToolDlg
 		int ScrollSpeed (ushort texture,int *x,int *y);
 		int AlignTextures (short start_segment, short start_side, short only_child);
 		void AlignChildTextures (int nSegment, int nSide, int nDepth);
-		void AlignChildren (short nSegment, short nSide, bool bStart);
+		void AlignChildren (short nSegment, short nSide, bool bStart, bool bMarked);
 		void SetWallColor (void);
 
 		inline CScrollBar *HScrollAlign ()

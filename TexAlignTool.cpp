@@ -171,7 +171,7 @@ if (segmentManager.IsWall ()) {
 	m_minPt.y = max(m_minPt.y, minRect.y);
 	m_maxPt.y = min(m_maxPt.y, maxRect.y);
 
-	if (false && m_bShowChildren) {
+	if (m_bShowChildren) {
 		short nChildSide, nChild, nChildLine;
 		int point0, point1, vert0, vert1;
 		short iChildSide, iChildLine;
@@ -731,14 +731,14 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::AlignChildren (short nSegment, short nSide, bool bStart)
+void CTextureTool::AlignChildren (short nSegment, short nSide, bool bStart, bool bMarked)
 {
 // set all segment sides as not aligned yet
 if (bStart) {
 	CSegment *segP = segmentManager.Segment (0);
 	int i;
 	for (i = segmentManager.Count (); i; i--, segP++)
-		 segP->Index () = 0; // all six sides not aligned yet
+		segP->Index () = (bMarked && !segP->IsMarked ()) ? -1 : 0; // all four sides not aligned yet
 	}
 // mark current side as aligned
 segmentManager.Segment (nSegment)->Index () = 1;
@@ -792,7 +792,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.
 			childSideP->m_info.uvls [i].v = (short) (length * sin (angle)); 
 			}
 		}
-	AlignChildren (nSegment, nSide, false);
+	AlignChildren (nSegment, nSide, false, false);
 	}
 undoManager.End ();
 UpdateAlignWnd ();
@@ -805,14 +805,14 @@ void CTextureTool::OnAlignChildren ()
 // set all segment sides as not aligned yet
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-if (segmentManager.HaveMarkedSegments ())
+if (!segmentManager.HaveMarkedSegments ())
 	// call recursive function which aligns one at a time
-	AlignChildren (current->m_nSegment, current->m_nSide, true);
+	AlignChildren (current->m_nSegment, current->m_nSide, true, false);
 else {	// use all marked sides as alignment source
 	for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++)
 		for (short nSide = 0; nSide < 6; nSide++)
 			if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) 
-				AlignChildren (nSegment, nSide, true);
+				AlignChildren (nSegment, nSide, true, true);
 	}
 undoManager.End ();
 UpdateAlignWnd ();
@@ -914,6 +914,8 @@ else {
 			CSegment* childSegP = segmentManager.Segment (nChildSeg);
 			if (childSegP->Index ())
 				continue;
+			//if (bMarked && !childSegP->IsMarked ())
+			//	continue;
 			childSegP->Index () = segmentManager.AlignTextures (nSegment, nSide, nChildSeg, m_bUse1st, m_bUse2nd, 0);
 			if (childSegP->Index () >= 0)
 				childList [tos++] = nChildSeg;
@@ -962,7 +964,7 @@ void CTextureTool::Rot2nd (int iAngle)
 	CSide *sideP = current->Side ();
  
 if ((sideP->m_info.nOvlTex & 0x1fff) && ((sideP->m_info.nOvlTex & 0xc000) != rotMasks [iAngle])) {
-undoManager.Begin (udSegments);
+	undoManager.Begin (udSegments);
 	sideP->m_info.nOvlTex &= ~0xc000;
    sideP->m_info.nOvlTex |= rotMasks [iAngle];
 	m_alignRot2nd = iAngle;

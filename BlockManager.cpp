@@ -83,11 +83,13 @@ while (!fp.EoF ()) {
 	DLE.MainFrame ()->Progress ().SetPos (fp.Tell ());
 // abort if there are not at least 8 vertices free
 	if (MAX_VERTICES - vertexManager.Count () < 8) {
+		undoManager.End ();
 		ErrorMsg ("No more free vertices");
 		return nNewSegs;
 		}
 	short nSegment = segmentManager.Add ();
 	if (nSegment < 0) {
+		undoManager.End ();
 		ErrorMsg ("No more free segments");
 		return nNewSegs;
 		}
@@ -105,6 +107,7 @@ while (!fp.EoF ()) {
 		short test;
 		scanRes = fscanf_s (fp.File (), "  side %hd\n", &test);
 		if (test != nSide) {
+			undoManager.End ();
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
@@ -183,6 +186,7 @@ while (!fp.EoF ()) {
 		int x, y, z, test;
 		scanRes = fscanf_s (fp.File (), "  vms_vector %d %d %d %d\n", &test, &x, &y, &z);
 		if (test != i) {
+			undoManager.End ();
 			ErrorMsg ("Invalid vertex number read");
 			return (0);
 			}
