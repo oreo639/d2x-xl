@@ -652,12 +652,16 @@ for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<
 		if (newSegP->HasChild (nSide)) // has a child in the block
 			newSegP->SetChild (nSide, m_xlatSegNum [segP->Child (nSide)]);
 		else {
+			CVertex* v1 = vertexManager.Vertex (newSegP->m_info.verts [sideVertTable [nSide][0]]);
 			for (CSegment* oldSegP = m_oldSegments; oldSegP != null; oldSegP = dynamic_cast<CSegment*>(oldSegP->Link ())) {
-				CVertex* v1 = vertexManager.Vertex (newSegP->m_info.verts [0]);
-				CVertex* v2 = vertexManager.Vertex (oldSegP->m_info.verts [0]);
-				if (fabs (v1->v.x - v2->v.x) < 10.0 && fabs (v1->v.y - v2->v.y) < 10.0 && fabs (v1->v.z - v2->v.z) < 10.0) {
-					for (short nChildSide = 0; nChildSide < 6; nChildSide++)
-						segmentManager.Link (segmentManager.Index (newSegP), nSide, segmentManager.Index (oldSegP), nChildSide, I2X (3));
+				for (short nChildSide = 0; nChildSide < 6; nChildSide++) {
+					for (short nChildVertex = 0; nChildVertex < 4; nChildVertex++) {
+						CVertex* v2 = vertexManager.Vertex (oldSegP->m_info.verts [sideVertTable [nChildSide][nChildVertex]]);
+						if ((fabs (v1->v.x - v2->v.x) < 10.0) && (fabs (v1->v.y - v2->v.y) < 10.0) && (fabs (v1->v.z - v2->v.z) < 10.0)) {
+							segmentManager.Link (segmentManager.Index (newSegP), nSide, segmentManager.Index (oldSegP), nChildSide, 3.0);
+							break;
+							}
+						}
 					} 
 				}
 			}
