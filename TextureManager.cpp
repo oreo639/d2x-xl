@@ -279,7 +279,7 @@ CFileManager* fp = OpenPigFile (nVersion);
 if (fp == null)
 	return false;
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
-	m_textures [nVersion][i].Load (fp, i, nVersion);
+	m_textures [nVersion][i].Load (*fp, i, nVersion);
 fp->Close ();
 delete fp;
 m_bAvailable [nVersion] = true;
