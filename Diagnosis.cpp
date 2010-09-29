@@ -1484,7 +1484,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
-	if (wallP->Type () > (DLE.IsD1File () ? WALL_CLOSED : DLE.IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
+	if (wallP->Type () > (DLE.IsD1File () ? WALL_CLOSED : DLE.IsStdLevel () ? WALL_CLOAKED : WALL_COLORED)) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall type out of range (wall=%d, type=%d)",
 					nWall,wallP->Type ());

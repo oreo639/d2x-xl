@@ -87,7 +87,7 @@ switch (type) {
 		m_info.cloakValue = 17;
 		break;
 
-	case WALL_TRANSPARENT:
+	case WALL_COLORED:
 		m_info.cloakValue = 0;
 		break;
 

@@ -144,7 +144,7 @@ BOOL CWallTool::OnInitDialog ()
 		"Close",
 		"Overlay",
 		"Cloaked",
-		"Transparent"
+		"Colored"
 		};
 
 	CComboBox *pcb;
@@ -213,7 +213,7 @@ for (i = 0; i < MAX_WALL_FLAGS; i++)
 DDX_Check (pDX, IDC_WALL_FLYTHROUGH, m_bFlyThrough);
 DDX_Text (pDX, IDC_WALL_MSG, m_szMsg, sizeof (m_szMsg));
 char szTransparency [20];
-int t = (int) (((m_nType == WALL_TRANSPARENT) ? m_nStrength : m_nCloak) + 5) / 10;
+int t = (int) (((m_nType == WALL_COLORED) ? m_nStrength : m_nCloak) + 5) / 10;
 DDX_Slider (pDX, IDC_WALL_TRANSPARENCY, t);
 sprintf_s (szTransparency, sizeof (szTransparency), "transp: %d%c", t * 10, '%');
 SetDlgItemText (IDC_WALL_TRANSPARENCY_TEXT, szTransparency);
@@ -282,12 +282,12 @@ else {
     // enable all
 	EnableControls (TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (FALSE);
-   if ((DLE.IsD2File ()) && (m_wallP [0]->Type () == WALL_TRANSPARENT))
+   if ((DLE.IsD2File ()) && (m_wallP [0]->Type () == WALL_COLORED))
 		GetDlgItem (IDC_WALL_STRENGTH)->EnableWindow (FALSE);
 	else {
 		GetDlgItem (IDC_WALL_FLYTHROUGH)->EnableWindow (FALSE);
 		}
-   if ((DLE.IsD1File ()) || (m_wallP [0]->Type () == WALL_TRANSPARENT))
+   if ((DLE.IsD1File ()) || (m_wallP [0]->Type () == WALL_COLORED))
 		GetDlgItem (IDC_WALL_CLOAK)->EnableWindow (FALSE);
 
     // enable buddy proof and switch checkboxes only if d2 level
@@ -552,7 +552,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		wallManager.Wall (m_nWall [bSide])->Setup (keys [bSide], m_nWall [bSide], m_nType, m_wallP [0]->Info ().nClip, -1, true);
 		if ((wallP->Type () == WALL_OPEN) || (wallP->Type () == WALL_CLOSED))
 			segmentManager.SetTextures (*wallP, nBaseTex, nOvlTex);
-//		else if ((wallP->Type () == WALL_CLOAKED) || (wallP->Type () == WALL_TRANSPARENT))
+//		else if ((wallP->Type () == WALL_CLOAKED) || (wallP->Type () == WALL_COLORED))
 //			wallP->Info ().cloakValue = m_defWall.cloakValue;
 		}
 DLE.MineView ()->Refresh ();
@@ -646,7 +646,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		UpdateData (TRUE);
 		undoManager.Begin (udWalls);
 		m_wallP [bSide]->Info ().hps = (int) m_nStrength * F1_0;
-		if ((m_wallP [bSide]->Type () == WALL_TRANSPARENT) && m_bFlyThrough)
+		if ((m_wallP [bSide]->Type () == WALL_COLORED) && m_bFlyThrough)
 			m_wallP [bSide]->Info ().hps = -m_wallP [bSide]->Info ().hps;
 		undoManager.End ();
 		}
@@ -702,7 +702,7 @@ if (pScrollBar == TransparencySlider ()) {
 		nPos = 0;
 	else if (nPos > 10)
 		nPos = 10;
-	if (m_wallP [0]->Type () == WALL_TRANSPARENT) {
+	if (m_wallP [0]->Type () == WALL_COLORED) {
 		m_nStrength = nPos * 10;
 		UpdateData (FALSE);
 		OnStrength ();

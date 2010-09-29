@@ -381,7 +381,7 @@ if	((lightManager.IsLight (current->Side ()->m_info.nBaseTex) != -1) ||
 	  (lightManager.IsLight (current->Side ()->m_info.nOvlTex & 0x3fff) != -1)))
 	return true;
 CWall *wallP = current->Wall ();
-return (wallP != null) && (wallP->Type () == WALL_TRANSPARENT);
+return (wallP != null) && (wallP->Type () == WALL_COLORED);
 
 }
 
@@ -474,7 +474,7 @@ int nSide = current->m_nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
 wallP = current->Wall ();
-m_nColorIndex = ((wallP != null) && (wallP->Type () == WALL_TRANSPARENT)) ? wallP->Info ().cloakValue : colorP->m_info.index;
+m_nColorIndex = ((wallP != null) && (wallP->Type () == WALL_COLORED)) ? wallP->Info ().cloakValue : colorP->m_info.index;
 m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
 m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
 m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);

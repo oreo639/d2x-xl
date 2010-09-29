@@ -62,7 +62,7 @@ class CWall : public CSideKey, public CGameItem {
 		
 		bool IsVariable (void);
 
-		inline bool IsTransparent (void) { return m_info.type == WALL_TRANSPARENT; }
+		inline bool IsTransparent (void) { return m_info.type == WALL_COLORED; }
 
 		inline bool IsCloaked (void) { return m_info.type == WALL_CLOAKED; }
 

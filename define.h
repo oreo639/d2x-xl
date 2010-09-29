@@ -415,7 +415,7 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define WALL_CLOSED			5	// Wall.  Used for transparent walls. 
 #define WALL_OVERLAY			6 	// Goes over an actual solid side.  For triggers (Descent 2)
 #define WALL_CLOAKED			7 	// Can see it, and see through it  (Descent 2)
-#define WALL_TRANSPARENT	8
+#define WALL_COLORED	8
 
 // Various wall flags. 
 #define WALL_BLASTED				1  	// Blasted out wall. 

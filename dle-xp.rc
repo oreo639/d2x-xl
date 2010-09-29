@@ -56,7 +56,7 @@ BEGIN
     CONTROL         "lava",IDC_CUBE_LAVA,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,116,96,25,11
     CONTROL         "blocked",IDC_CUBE_BLOCKED,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,102,106,39,11
     CONTROL         "no damage",IDC_CUBE_NODAMAGE,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,95,116,46,11
-    CONTROL         "outdoors",IDC_CUBE_OUTDOORS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,172,86,39,11
+    CONTROL         "self-illuminate",IDC_CUBE_OUTDOORS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,158,86,53,11
     CONTROL         "end of exit tunnel",IDC_CUBE_ENDOFEXIT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,145,107,66,10
     CONTROL         "set default texture",IDC_CUBE_SETDEFTEXTURE,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,143,117,68,10
     EDITTEXT        IDC_CUBE_SHIELD_DAMAGE,259,108,34,12,ES_CENTER | ES_AUTOHSCROLL
@@ -939,7 +939,7 @@ BEGIN
     CONTROL         "lava",IDC_CUBE_LAVA,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,133,20,50,11
     CONTROL         "blocked",IDC_CUBE_BLOCKED,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,133,30,50,11
     CONTROL         "no damage",IDC_CUBE_NODAMAGE,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,133,40,50,11
-    CONTROL         "outdoors",IDC_CUBE_OUTDOORS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,133,50,50,11
+    CONTROL         "self-illuminate",IDC_CUBE_OUTDOORS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,129,50,54,11
     CONTROL         "end of exit tunnel",IDC_CUBE_ENDOFEXIT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,117,61,66,10
     CONTROL         "set default texture",IDC_CUBE_SETDEFTEXTURE,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,116,71,67,10
     EDITTEXT        IDC_CUBE_SHIELD_DAMAGE,70,100,34,12,ES_CENTER | ES_AUTOHSCROLL
@@ -6109,8 +6109,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,21,0
- PRODUCTVERSION 1,8,21,0
+ FILEVERSION 1,8,22,0
+ PRODUCTVERSION 1,8,22,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6127,12 +6127,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
             VALUE "FileDescription", "Descent Level Editor XP [28 sep 2010]"
-            VALUE "FileVersion", "1, 8, 21, 0"
+            VALUE "FileVersion", "1, 8, 22, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2010 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 8, 21, 0"
+            VALUE "ProductVersion", "1, 8, 22, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6159,7 +6159,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.8.21\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.8.22\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 
