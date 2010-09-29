@@ -374,8 +374,8 @@ CBGRA* srcDataP = texP [0]->Buffer ();
 if (srcDataP != null) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) {
-		destTexP->m_override = srcDataP;
-		//memcpy (bmDataP, srcDataP, texP [0]->BufSize ());
+		//destTexP->m_override = srcDataP;
+		memcpy (bmDataP, srcDataP, texP [0]->BufSize ());
 		}
 	else {
 		// otherwise, copy bit by bit

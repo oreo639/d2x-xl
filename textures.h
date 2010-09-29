@@ -307,9 +307,8 @@ class CTexture {
 		CBGRA*	m_data;
 		CBGRA*	m_override;
 
-		CTexture (CBGRA* dataP = null) {
+		CTexture (CBGRA* dataP = null) : m_override (null), m_data (dataP) {
 			Clear ();
-			m_data = dataP;
 			m_info.bExtData = (dataP != null);
 			}
 
