@@ -374,9 +374,11 @@ CBGRA* srcDataP = texP [0]->Buffer ();
 if (srcDataP != null) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) {
+#if 1
 		if (texP [1]->Buffer () == null)
 			destTexP->m_override = srcDataP;
 		else
+#endif
 			memcpy (bmDataP, srcDataP, texP [0]->BufSize ());
 		}
 	else {
