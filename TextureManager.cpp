@@ -345,7 +345,7 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture* destTexP, 
 	tFrac			scale, scale2;
 	//int			rc; // return code
 	CTexture*	texP [2];
-	CBGRA*		bmDataP = destTexP->m_data;
+	CBGRA*		bmDataP = destTexP->Buffer ();
 	int			fileType = DLE.FileType ();
 
 nTextures [0] = nBaseTex;
@@ -368,12 +368,14 @@ for (i = 0; i < 2; i++) {
 destTexP->m_info.width = texP [0]->m_info.width;
 destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.bValid = 1;
+destTexP->m_override = null;
 
-CBGRA* srcDataP = texP [0]->m_data;
+CBGRA* srcDataP = texP [0]->Buffer ();
 if (srcDataP != null) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) {
-		memcpy (bmDataP, srcDataP, texP [0]->BufSize ());
+		destTexP->m_override = srcDataP;
+		//memcpy (bmDataP, srcDataP, texP [0]->BufSize ());
 		}
 	else {
 		// otherwise, copy bit by bit
@@ -397,7 +399,7 @@ if (srcDataP != null) {
 
 if (nTextures [1] == 0)
 	return 0;
-srcDataP = texP [1]->m_data;
+srcDataP = texP [1]->Buffer ();
 if (srcDataP == null)
 	return 0;
 

@@ -268,6 +268,7 @@ void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort r
 	bool bEnableShading = (m_viewMineFlags & eViewMineShading) != 0;
 	bool bTexColor = colorP == null;
 	double scale = (double) max (tex.Width (), tex.m_info.height);
+	CBGRA* colorBuf = tex.Buffer ();
 
 tex.m_info.height = tex.Width ();
 bmWidth2 = tex.Width () / 2;
@@ -475,7 +476,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							colorP = &tex.Buffer () [(u / 1024) + ((v / vd) & vm)];
+							colorP = &colorBuf [(u / 1024) + ((v / vd) & vm)];
 							}
 						Blend (m_renderBuffer [i], *colorP, m_depthBuffer [i], (depthType) z, scanLight);
 						z += dz;
@@ -500,7 +501,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							colorP = &tex.Buffer () [(u / 1024) + ((v / vd) & vm)];
+							colorP = &colorBuf [(u / 1024) + ((v / vd) & vm)];
 							}
 #if 1
 						Blend (m_renderBuffer [i], *colorP, m_depthBuffer [i], (depthType) z);

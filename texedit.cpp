@@ -348,7 +348,7 @@ m_iTexture = current->Side ()->m_info.nBaseTex;
 if (m_iTexture >= MAX_TEXTURES_D2)
 	m_iTexture = 0;
 m_texP = textureManager.Textures (DLE.FileType (), m_iTexture);
-if (!(m_texP->m_data && m_texP->m_info.bValid)) {
+if ((m_texP->Buffer () == null) || !m_texP->m_info.bValid) {
 	DEBUGMSG (" Texture tool: Invalid texture");
 	EndDialog (IDCANCEL);
 	}

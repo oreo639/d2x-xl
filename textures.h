@@ -305,6 +305,7 @@ class CTexture {
 	public:
 		tTexture	m_info;
 		CBGRA*	m_data;
+		CBGRA*	m_override;
 
 		CTexture (CBGRA* dataP = null) {
 			Clear ();
@@ -344,7 +345,7 @@ class CTexture {
 
 		inline uint BufSize (void) { return Width () * Height () * sizeof (CBGRA); }
 
-		inline CBGRA* Buffer (uint i = 0) { return m_data + i; }
+		inline CBGRA* Buffer (uint i = 0) { return (m_override == null) ? &m_data [i] : &m_override [i]; }
 
 		inline bool Copy (CTexture& src) {
 			if (!Allocate (src.Size ()))

@@ -704,7 +704,7 @@ for (i = dd + 1; i; i--) {
 #else //0; faster
 if (dx >= dy) {
 	for (i = dx + 1; i; i--, x += xInc) {
-		texP->m_data [y * texP->m_info.width + x] = color;
+		*texP->Buffer (y * texP->m_info.width + x) = color;
 		nStep += dy;
 		if (nStep >= dx) {
 			y += yInc;
@@ -714,7 +714,7 @@ if (dx >= dy) {
 	}
 else {
 	for (i = dy + 1; i; i--, y += yInc) {
-		texP->m_data [y * texP->m_info.width + x] = color;
+		*texP->Buffer (y * texP->m_info.width + x) = color;
 		nStep += dx;
 		if (nStep >= dy) {
 			x += xInc;
