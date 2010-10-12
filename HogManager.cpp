@@ -509,11 +509,11 @@ ofn.lStructSize = sizeof (OPENFILENAME);
 ofn.hwndOwner = GetSafeHwnd ();
 ofn.lpstrFilter = "Descent Level\0*.rdl\0"
 						"Descent 2 Level\0*.rl2\0"
-						"Texture fp\0*.pog\0"
-						"Robot fp\0*.hxm\0"
-						"Lightmap fp\0*.lgt\0"
-						"Color fp\0*.clr\0"
-						"Palette fp\0*.pal\0"
+						"Texture file\0*.pog\0"
+						"Robot file\0*.hxm\0"
+						"Lightmap file\0*.lgt\0"
+						"Color file\0*.clr\0"
+						"Palette file\0*.pal\0"
 						"All Files\0*.*\0";
 if (DLE.IsD1File ()) {
 	ofn.nFilterIndex = 1;

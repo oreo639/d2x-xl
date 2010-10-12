@@ -47,9 +47,8 @@ long PointLineIntersection (long& x0, long& y0, long x1, long y1, long x2, long 
 {
 long dx = x2 - x1;
 long dy = y2 - y1;
-double u = (x3 - x2) * dx + (y3 - y2) * dy;
-double d = _hypot ((double) dx, (double) dy);
-u /= d * d;
+double u = (x3 - x1) * dx + (y3 - y1) * dy;
+u /= (double) dx * (double) dx + (double) dy * (double) dy;
 x0 = (long) (x1 + u * dx + 0.5);
 y0 = (long) (y1 + u * dy + 0.5);
 return (long) (_hypot ((double) (x3 - x0), (double) (y3 - y0)) + 0.5);
