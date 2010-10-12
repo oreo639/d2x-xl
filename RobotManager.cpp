@@ -381,7 +381,7 @@ else { //they're different
 	else { //no robot of that type present
 		// find a matcen producing a robot of that type
 		CSegment* segP;
-		for (short i = 0; (segP = segmentManager.FindRobotMaker (i)) != null; i = segmentManager.Index (segP)) {
+		for (short i = 0; (segP = segmentManager.FindRobotMaker (i)) != null; i = segmentManager.Index (segP) + 1) {
 			int nBotGen = segP->Info ().nMatCen;
 			if ((nId < 32) 
 				 ? segmentManager.RobotMaker (nBotGen)->Info ().objFlags [0] & (1 << nId) 
