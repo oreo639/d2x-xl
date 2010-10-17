@@ -218,8 +218,9 @@ count = 0;
 for (i = 0; i < Count () - 1; i++)
 	if (Object (i)->m_info.nSegment == current->m_nSegment)
 		count++;
-objP->Position ().v.y += count * I2X (2);
-objP->m_location.lastPos.v.y += count * I2X (2);
+i = (count & 1) ? -count : count;
+objP->Position ().v.y += i;
+objP->m_location.lastPos.v.y += i;
 // set the id if new object is a player or a coop
 if ((type == OBJ_PLAYER) || (type == OBJ_COOP))
 	objP->Id () = (byte) id;

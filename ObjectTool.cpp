@@ -284,6 +284,7 @@ if (bAddNone) {
 CStringResource res;
 
 for (int i = 0; i < nMax; i++) {
+	res.Clear ();
 	switch (nType) {
 		case 0:
 			h = pIndex ? pIndex [i]: i;
@@ -514,6 +515,7 @@ CBObjNo ()->ResetContent ();
 CGameObject *objP = objectManager.Object (0);
 int i;
 for (i = 0; i < objectManager.Count (); i++, objP++) {
+	res.Clear ();
 	switch(objP->Type ()) {
 		case OBJ_ROBOT: /* an evil enemy */
 			res.Load (ROBOT_STRING_TABLE + objP->Id ());
@@ -1190,12 +1192,14 @@ else {
 	for (i = 0; i < objectManager.Count (); i++)
 		if (objectManager.Object (i)->Info ().nSegment == current->m_nSegment)
 			count++;
-	objP->Position ().v.y += count * 2 * F1_0;
-	objP->m_location.lastPos.v.y += count * 2 * F1_0;
+	i = (count & 1) ? -count : count;
+	objP->Position ().v.y += i;
+	objP->m_location.lastPos.v.y += i;
 	objP->Info ().nSegment = current->m_nSegment;
 	Refresh ();
 	DLE.MineView ()->Refresh (false);
 	}
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------

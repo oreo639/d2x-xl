@@ -142,6 +142,8 @@ pcb->AddString ("Spray");
 pcb->AddString ("Bubbles");
 pcb->AddString ("Fire");
 pcb->AddString ("Waterfall");
+pcb->AddString ("Rain");
+pcb->AddString ("Snow");
 pcb->SetCurSel (0);
 m_bInited = true;
 return TRUE;
