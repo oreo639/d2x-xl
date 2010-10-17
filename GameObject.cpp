@@ -579,7 +579,7 @@ fp.Write (nBrightness);
 for (int i = 0; i < 4; i++)
 	fp.Write (color [i]);
 fp.Write (nSide);
-fp.Write (nSide);
+fp.Write (nType);
 fp.Write (bEnabled);
 }
 
@@ -898,7 +898,7 @@ return Copy (new CGameObject);	// only make a copy if modified
 
 void CGameObject::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, editType);
+CGameItem::Id () = undoManager.Backup (this, editType);
 }
 
 // -----------------------------------------------------------------------------

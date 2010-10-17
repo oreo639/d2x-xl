@@ -1002,6 +1002,7 @@ switch(type) {
 		pcb->SetItemData (h, -1);
 		for (i = 0; i < MAX_POWERUP_IDS; i++) {
 			j = powerupIdStrXlat [i];
+			res.Clear ();
 			res.Load (POWERUP_STRING_TABLE + j);
 			if (!strcmp (res.Value (), "(not used)"))
 				continue;
@@ -1175,31 +1176,8 @@ void CObjectTool::OnAdvanced ()
 
 void CObjectTool::OnMove ()
 {
-#if 0
-if (QueryMsg ("Are you sure you want to move the\n"
-				 "current object to the current segment?\n") != IDYES)
-	return;
-#endif
-undoManager.Begin (udObjects);
-if (current->m_nObject == objectManager.Count ())
-	objectManager.SecretSegment () = current->m_nSegment;
-else {
-	CGameObject *objP = current->Object ();
-	CVertex center;
-	objP->Position () = segmentManager.CalcCenter (center, current->m_nSegment);
-	// bump position over if this is not the first object in the segment
-	int i, count = 0;
-	for (i = 0; i < objectManager.Count (); i++)
-		if (objectManager.Object (i)->Info ().nSegment == current->m_nSegment)
-			count++;
-	i = (count & 1) ? -count : count;
-	objP->Position ().v.y += i;
-	objP->m_location.lastPos.v.y += i;
-	objP->Info ().nSegment = current->m_nSegment;
-	Refresh ();
-	DLE.MineView ()->Refresh (false);
-	}
-undoManager.End ();
+objectManager.Move ();
+Refresh ();
 }
 
 //------------------------------------------------------------------------

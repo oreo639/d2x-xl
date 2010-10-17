@@ -129,7 +129,7 @@ if (!HaveResources ())
 	return -1;
 m_objects [Count ()].Clear ();
 m_objects [Count ()].Backup (opAdd);
-return ++Count ();
+return Count ()++;
 }
 
 // -----------------------------------------------------------------------------
@@ -149,7 +149,7 @@ bool CObjectManager::Create (byte newType, short nSegment)
 	short ids [MAX_PLAYERS_D2X + MAX_COOP_PLAYERS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	CGameObject *objP, *currObjP;
 	byte type;
-	short nObject, id, i, count;
+	short nObject, id;
 
 // If OBJ_NONE used, then make a copy of the current object type
 // otherwise use the type passed as the parameter "newType"
@@ -214,13 +214,7 @@ objP->Position () = segmentManager.CalcCenter (center, current->m_nSegment);
 objP->m_location.lastPos = objP->Position ();
 current->m_nObject = nObject;
 // bump position over if this is not the first object in the segment
-count = 0;
-for (i = 0; i < Count () - 1; i++)
-	if (Object (i)->m_info.nSegment == current->m_nSegment)
-		count++;
-i = (count & 1) ? -count : count;
-objP->Position ().v.y += i;
-objP->m_location.lastPos.v.y += i;
+Move (objP);
 // set the id if new object is a player or a coop
 if ((type == OBJ_PLAYER) || (type == OBJ_COOP))
 	objP->Id () = (byte) id;
@@ -277,6 +271,37 @@ if (selections [0].m_nObject >= Count ())
 	selections [0].m_nObject = Count () - 1;
 if (selections [1].m_nObject >= Count ())
 	selections [1].m_nObject = Count () - 1;
+undoManager.End ();
+}
+
+// -----------------------------------------------------------------------------
+
+void CObjectManager::Move (CGameObject * objP)
+{
+#if 0
+if (QueryMsg ("Are you sure you want to move the\n"
+				 "current object to the current segment?\n") != IDYES)
+	return;
+#endif
+undoManager.Begin (udObjects);
+if (objP == null)
+	objP = current->Object ();
+if (objectManager.Index (objP) == objectManager.Count ())
+	objectManager.SecretSegment () = current->m_nSegment;
+else {
+	CVertex center;
+	objP->Position () = segmentManager.CalcCenter (center, current->m_nSegment);
+	// bump position over if this is not the first object in the segment
+	int i, count = 0;
+	for (i = 0; i < objectManager.Count (); i++)
+		if (objectManager.Object (i)->Info ().nSegment == current->m_nSegment)
+			count++;
+	i = (count & 1) ? -count : count;
+	objP->Position ().v.y += 2 * i;
+	objP->m_location.lastPos.v.y += 2 * i;
+	objP->Info ().nSegment = current->m_nSegment;
+	DLE.MineView ()->Refresh (false);
+	}
 undoManager.End ();
 }
 
