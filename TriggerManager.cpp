@@ -475,26 +475,25 @@ if (m_reactorInfo.Setup (fp)) {
 
 void CTriggerManager::Read (CFileManager& fp, int nFileVersion)
 {
-if (!m_info [0].Restore (fp))
-	return;
-
-for (short i = 0; i < Count (0); i++) {
-	if (Count (0) < MAX_TRIGGERS) {
-#if USE_FREELIST
-		CTrigger* trigP = WallTrigger (--m_free);
-#else
-		CTrigger* trigP = WallTrigger (i);
-#endif
-		trigP->Read (fp, nFileVersion, false);
-		trigP->Index () = i;
+if (m_info [0].Restore (fp)) {
+	for (short i = 0; i < Count (0); i++) {
+		if (Count (0) < MAX_TRIGGERS) {
+	#if USE_FREELIST
+			CTrigger* trigP = WallTrigger (--m_free);
+	#else
+			CTrigger* trigP = WallTrigger (i);
+	#endif
+			trigP->Read (fp, nFileVersion, false);
+			trigP->Index () = i;
+			}
+		else {
+			CTrigger t;
+			t.Read (fp, nFileVersion, false);
+			}
 		}
-	else {
-		CTrigger t;
-		t.Read (fp, nFileVersion, false);
-		}
+	if (Count (0) > MAX_TRIGGERS)
+		Count (0) = MAX_TRIGGERS;
 	}
-if (Count (0) > MAX_TRIGGERS)
-	Count (0) = MAX_TRIGGERS;
 
 int bObjTriggersOk = 1;
 
@@ -535,23 +534,22 @@ void CTriggerManager::Write (CFileManager& fp, int nFileVersion)
 if (Count (0) + Count (1) == 0)
 	m_info [0].offset = -1;
 else {
-	short i;
-
 	m_info [0].size = DLE.IsD1File () ? 54 : 52; // 54 = sizeof (trigger)
 	m_info [0].offset = fp.Tell ();
 
 	for (CWallTriggerIterator ti; ti; ti++)
 		ti->Write (fp, nFileVersion, false);
+	}
 
-	if (DLE.LevelVersion () >= 12) {
-		fp.Write (ObjTriggerCount ());
-		if (ObjTriggerCount () > 0) {
-			SortObjTriggers ();
-			for (i = 0; i < ObjTriggerCount (); i++)
-				ObjTrigger (i)->Write (fp, nFileVersion, true);
-			for (i = 0; i < ObjTriggerCount (); i++)
-				fp.WriteInt16 (ObjTrigger (i)->Info ().nObject);
-			}
+if (DLE.LevelVersion () >= 12) {
+	fp.Write (ObjTriggerCount ());
+	if (ObjTriggerCount () > 0) {
+		SortObjTriggers ();
+		short i;
+		for (i = 0; i < ObjTriggerCount (); i++)
+			ObjTrigger (i)->Write (fp, nFileVersion, true);
+		for (i = 0; i < ObjTriggerCount (); i++)
+			fp.WriteInt16 (ObjTrigger (i)->Info ().nObject);
 		}
 	}
 }
