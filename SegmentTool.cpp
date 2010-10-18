@@ -603,7 +603,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_ROBOTMAKER:
 			if (nType == m_nType)
 				goto errorExit;
-			if (segmentManager.CreateRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
+			if (!segmentManager.CreateRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
 				undoManager.Unroll ();
 				goto funcExit;
 				}
@@ -621,7 +621,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_FUELCEN:
 			if (nType == m_nType)
 				continue;
-			if (segmentManager.CreateFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
+			if (!segmentManager.CreateFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
 				undoManager.Unroll ();
 				goto funcExit;
 				}
@@ -630,7 +630,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_REACTOR:
 			if (nType == m_nType)
 				continue;
-			if (segmentManager.CreateReactor (nSegNum, false, m_bSetDefTexture == 1)) {
+			if (!segmentManager.CreateReactor (nSegNum, false, m_bSetDefTexture == 1)) {
 				undoManager.Unroll ();
 				goto funcExit;
 				}
@@ -640,7 +640,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_GOAL_RED:
 			if (nType == m_nType)
 				continue;
-			if (segmentManager.CreateGoal (nSegNum, false, m_bSetDefTexture == 1, nType, -1))
+			if (!segmentManager.CreateGoal (nSegNum, false, m_bSetDefTexture == 1, nType, -1))
 				goto errorExit;		
 			break;
 
@@ -654,7 +654,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				}
 			if (nType == m_nType)
 				continue;
-			if (segmentManager.CreateTeam (nSegNum, false, false, nType, -1))
+			if (!segmentManager.CreateTeam (nSegNum, false, false, nType, -1))
 				goto errorExit;		
 			break;
 
@@ -665,7 +665,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if (segmentManager.CreateSpeedBoost (nSegNum, false))
+			if (!segmentManager.CreateSpeedBoost (nSegNum, false))
 				goto errorExit;
 			break;
 
@@ -676,7 +676,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if (segmentManager.CreateSkybox (nSegNum, false))
+			if (!segmentManager.CreateSkybox (nSegNum, false))
 				goto errorExit;
 			break;
 
@@ -687,7 +687,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if (segmentManager.CreateEquipMaker (nSegNum, false))
+			if (!segmentManager.CreateEquipMaker (nSegNum, false))
 				goto errorExit;
 			break;
 

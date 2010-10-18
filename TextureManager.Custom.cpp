@@ -175,15 +175,21 @@ return nOffset + (texP->m_info.nFormat ? texP->Size () * sizeof (CBGRA) : texP->
 int CTextureManager::WriteCustomTexture (CFileManager& fp, CTexture *texP)
 {
 if (texP->m_info.nFormat) {
-	tRGBA rgba = {0, 0, 0, 255};
+	tRGBA rgba [16384];
 	CBGRA* bufP = texP->Buffer ();
+	int j = 0;
 	for (int i = texP->Size (); i; i--, bufP++) {
-		rgba.r = bufP->r;
-		rgba.g = bufP->g;
-		rgba.b = bufP->b;
-		rgba.a = bufP->a;
-		fp.Write (&rgba, sizeof (rgba), 1);
+		rgba [j].r = bufP->r;
+		rgba [j].g = bufP->g;
+		rgba [j].b = bufP->b;
+		rgba [j].a = bufP->a;
+		if (++j == sizeofa (rgba)) {
+			fp.Write (rgba, sizeof (tRGBA), j);
+			j = 0;
+			}
 		}
+	if (j > 0)
+		fp.Write (rgba, sizeof (tRGBA), j);
 	}
 else {
 	ushort w = texP->m_info.width;

@@ -13,29 +13,6 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CTexture::ComputeIndex (byte* bmIndex)
-{
-	CBGR* palette = paletteManager.Current ();
-
-#ifndef _DEBUG
-#pragma omp parallel 
-#endif
-	{
-#ifndef _DEBUG
-#	pragma omp for
-#endif
-	for (int y = 0; y < (int) m_info.height; y++) {
-		int i = y * m_info.width;
-		int k = Size () - Width () - i;
-		for (int x = 0; x < (int) m_info.width; x++) {
-			bmIndex [k + x] = paletteManager.ClosestColor (m_data [i + x]);
-			}
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb)
 {
 CBGR* color = paletteManager.Current (nIndex);
@@ -172,6 +149,29 @@ return bShowTexture;
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+void CTexture::ComputeIndex (byte* bmIndex)
+{
+	CBGR* palette = paletteManager.Current ();
+
+#ifndef _DEBUG
+#pragma omp parallel 
+#endif
+	{
+#ifndef _DEBUG
+#	pragma omp for
+#endif
+	for (int y = 0; y < (int) m_info.height; y++) {
+		int i = y * m_info.width;
+		int k = Size () - Width () - i;
+		for (int x = 0; x < (int) m_info.width; x++) {
+			bmIndex [k + x] = paletteManager.ClosestColor (m_data [i + x]);
+			}
+		}
+	}
+}
+
 //------------------------------------------------------------------------------
 
 bool CTexture::Allocate (int nSize)
