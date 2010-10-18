@@ -205,7 +205,7 @@ else if (i == 2)
 else if (i == 2)
 	m_movez -= value;
 # else
-m_move -= CDoubleVector (m_view.m_invMat [0].rVec [i], m_view.m_invMat [0].uVec [i], m_view.m_invMat [0].fVec [i]) * value;
+m_move -= CDoubleVector (m_view.m_data [0].m_invMat.rVec [i], m_view.m_data [0].m_invMat.uVec [i], m_view.m_data [0].m_invMat.fVec [i]) * value;
 # endif
 #endif
 Refresh (false);

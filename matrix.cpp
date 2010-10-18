@@ -347,12 +347,13 @@ switch (axis) {
 		mRot.uVec.Set (uVec.v.x * cosX + fVec.v.x * sinX, 
 					      uVec.v.y * cosX + fVec.v.y * sinX,
 						   uVec.v.z * cosX + fVec.v.z * sinX);
-		mRot.fVec.Set (-uVec.v.x * sinX + fVec.v.x * cosX,
-							-uVec.v.y * sinX + fVec.v.y * cosX,
-							-uVec.v.z * sinX + fVec.v.z * cosX);
+		mRot.fVec.Set (fVec.v.x * cosX - uVec.v.x * sinX,
+							fVec.v.y * cosX - uVec.v.y * sinX,
+							fVec.v.z * cosX - uVec.v.z * sinX);
 		uVec = mRot.uVec;
 		fVec = mRot.fVec;
 		break;
+
 	case 'y':
 		// spin y
 		//	cos	0	-sin
@@ -368,17 +369,18 @@ switch (axis) {
 		rVec = mRot.rVec;
 		fVec = mRot.fVec;
 		break;
+
 	case 'z':
 		// spin z
 		//	cos	sin	0
 		//	-sin	cos	0
 		//	0	0	1
-		mRot.rVec.Set ((int) (rVec.v.x * cosX + uVec.v.x * sinX),
-							(int) (rVec.v.y * cosX + uVec.v.y * sinX),
-							(int) (rVec.v.z * cosX + uVec.v.z * sinX));
-		mRot.uVec.Set ((int) (-rVec.v.x * sinX + uVec.v.x * cosX),
-							(int) (-rVec.v.y * sinX + uVec.v.y * cosX),
-							(int) (-rVec.v.z * sinX + uVec.v.z * cosX));
+		mRot.rVec.Set (rVec.v.x * cosX + uVec.v.x * sinX,
+							rVec.v.y * cosX + uVec.v.y * sinX,
+							rVec.v.z * cosX + uVec.v.z * sinX);
+		mRot.uVec.Set (uVec.v.x * cosX - rVec.v.x * sinX,
+							uVec.v.y * cosX - rVec.v.y * sinX,
+							uVec.v.z * cosX - rVec.v.z * sinX);
 		rVec = mRot.rVec;
 		uVec = mRot.uVec;
 		break;

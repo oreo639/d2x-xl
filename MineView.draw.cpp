@@ -151,7 +151,7 @@ else if (m_nMineCenter == 2) {
 		for (j = 0; j <= 360; j += 15) {
 			double scale = (5 * cos (Radians (i)));
 			circle.Set (scale * cos (Radians (j)), scale * sin (Radians (j)), 5 * sin (Radians (i)));
-			circle -= m_view.m_move [0];
+			circle -= m_view.m_data [0].m_move;
 			m_view.Project (circle, pt);
 			if (j == 0)
 				m_pDC->MoveTo (pt.x,pt.y);
@@ -166,7 +166,7 @@ else if (m_nMineCenter == 2) {
 		for (j = 0; j <= 360; j += 15) {
 			double scale = (5 * cos (Radians (i)));
 			circle.Set (scale * cos (Radians (j)), 5 * sin (Radians (i)), scale * sin (Radians (j)));
-			circle -= m_view.m_move [0];
+			circle -= m_view.m_data [0].m_move;
 			m_view.Project (circle, pt);
 			if (j == 0)
 				m_pDC->MoveTo (pt.x,pt.y);
@@ -181,7 +181,7 @@ else if (m_nMineCenter == 2) {
 		for (j = 0; j <= 360; j += 15) {
 			double scale = (5 * cos (Radians (i)));
 			circle.Set (5 * sin (Radians (i)), scale * cos (Radians (j)), scale * sin (Radians (j)));
-			circle -= m_view.m_move [0];
+			circle -= m_view.m_data [0].m_move;
 			m_view.Project (circle, pt);
 			if (j == 0)
 				m_pDC->MoveTo (pt.x,pt.y);
@@ -1271,7 +1271,9 @@ for (i = 0; i < tunnelMaker.Length (); i++, segP--)
 void TransformModelPoint (CVertex& dest, APOINT &src, CDoubleMatrix &orient, CVertex offs)
 {
 CDoubleVector v (src.x, src.y, src.z);
-dest = orient * v;
+dest.v.x = orient.rVec.v.x * v.v.x + orient.uVec.v.x * v.v.y + orient.fVec.v.x * v.v.z;
+dest.v.y = orient.rVec.v.y * v.v.x + orient.uVec.v.y * v.v.y + orient.fVec.v.y * v.v.z;
+dest.v.z = orient.rVec.v.z * v.v.x + orient.uVec.v.z * v.v.y + orient.fVec.v.z * v.v.z;
 dest += offs;
 }
 
@@ -1414,8 +1416,8 @@ if ((nObject == current->m_nObject) || (nObject == other->m_nObject)) {
 	pt [0] =
 	pt [1] =
 	pt [2] = objP->Position ();
-	pt [1].v.x -= objP->m_info.size;
-	pt [2].v.x += objP->m_info.size;
+	pt [1].v.x -= X2D (objP->m_info.size);
+	pt [2].v.x += X2D (objP->m_info.size);
 	m_view.Project (pt [0], poly_draw [0]);
 	m_view.Push ();
 	m_view.Unrotate ();

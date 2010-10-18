@@ -854,9 +854,9 @@ int CGameObject::CheckNormal (CViewMatrix& view, CVertex& a, CVertex& b)
 CVertex _a = m_location.orient * a;
 CVertex _b = m_location.orient * b;
 _a += m_location.pos;
-_a += view.m_move [0];
+_a += view.m_data [0].m_move;
 _b += _a;
-return Dot (view.m_mat [0].fVec, _a) > Dot (view.m_mat [0].fVec, _b);
+return Dot (view.m_data [0].m_mat.fVec, _a) > Dot (view.m_data [0].m_mat.fVec, _b);
 }
 
 // -----------------------------------------------------------------------------
@@ -866,9 +866,9 @@ int CGameObject::CheckNormal (CViewMatrix& view, CFixVector& a, CFixVector& b)
 CVertex _a = m_location.orient * CDoubleVector (a);
 CVertex _b = m_location.orient * CDoubleVector (b);
 _a += m_location.pos;
-_a += view.m_move [0];
+_a += view.m_data [0].m_move;
 _b += _a;
-return Dot (view.m_mat [0].fVec, _a) > Dot (view.m_mat [0].fVec, _b);
+return Dot (view.m_data [0].m_mat.fVec, _a) > Dot (view.m_data [0].m_mat.fVec, _b);
 }
 
 // -----------------------------------------------------------------------------
