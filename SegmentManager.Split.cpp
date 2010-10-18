@@ -449,8 +449,8 @@ for (short nSegment = 0; nSegment < 5; nSegment++) {
 						}
 					}
 				if (h == 4) {
-					segP->SetChild (nSide, Count () + nChildSeg);
-					childSegP->SetChild (nChildSide, Count () + nSegment);
+					segP->SetChild (nSide, nNewSegs [nChildSeg]);
+					childSegP->SetChild (nChildSide, nNewSegs [nSegment]);
 					break;
 					}
 				}

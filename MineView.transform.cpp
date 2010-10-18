@@ -115,7 +115,8 @@ zoom = (zoomX < zoomY) ? zoomX: zoomY;
 Zoom (1, zoom);
 for (;;) {
 	m_view.SetViewInfo (depthPerception, m_viewWidth, m_viewHeight);
-	SetViewPoints (&rc);
+	if (!SetViewPoints (&rc))
+		return 1;
 	if ((rc.Width () <= crc.Width ()) && (rc.Height () <= crc.Height ()))
 		break;
 	Zoom (1, 0.95);
@@ -124,28 +125,33 @@ for (;;) {
 dy = (crc.Height () - rc.Height ()) / 2;
 while (rc.top - dy > 0) {
 	Pan ('Y', -1);
-	SetViewPoints (&rc);
+	if (!SetViewPoints (&rc))
+		return 1;
 	}
 if (rc.top < dy)
 	while (rc.top - dy < 0) {
 		Pan ('Y', 1);
-		SetViewPoints (&rc);
+		if (!SetViewPoints (&rc))
+			return 1;
 		}
 else
 	while (rc.bottom + dy > crc.bottom) {
 		Pan ('Y', -1);
-		SetViewPoints (&rc);
+		if (!SetViewPoints (&rc))
+			return 1;
 		}
 dx = (crc.Width () - rc.Width ()) / 2;
 if (rc.left < dx)
 	while (rc.left - dx < 0) {
 		Pan ('X', -1);
-		SetViewPoints (&rc);
+		if (!SetViewPoints (&rc))
+			return 1;
 		}
 else
 	while (rc.right + dx > crc.right) {
 		Pan ('X', +1);
-		SetViewPoints (&rc);
+		if (!SetViewPoints (&rc))
+			return 1;
 		}
 MarkVisibleVerts (true);
 DelayRefresh (false);

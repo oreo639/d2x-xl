@@ -1174,7 +1174,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	trigP = triggerManager.ObjTrigger (nTrigger);
 	if ((trigP->Type () != TT_MESSAGE) && (trigP->Type () != TT_SOUND) && (trigP->Type () != TT_COUNTDOWN) && !trigP->Count ()) {
-		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigger=%d, object=%d))", nTrigger, trigP->Info ().nObject);
+		sprintf_s (message, sizeof (message), "ERROR: Object trigger has no targets (trigger=%d, object=%d))", nTrigger, trigP->Info ().nObject);
 		if (UpdateStats (message,0, nTrigger, trigP->Info ().nObject, -1, -1, -1, -1, nTrigger)) return true;
 		}
 	}

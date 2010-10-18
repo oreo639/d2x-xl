@@ -19,12 +19,12 @@
 
 //------------------------------------------------------------------------------
 
-void CMineView::SetViewPoints (CRect *pRC, bool bSetViewInfo)
+int CMineView::SetViewPoints (CRect *pRC, bool bSetViewInfo)
 {
-CHECKMINE;
+CHECKMINEV(0);
 
 	CRect		rc (LONG_MAX, LONG_MAX, -LONG_MAX, -LONG_MAX);
-	long		i, 
+	long		i, nProjected,
 				x, y, z,
 				minX = LONG_MAX, minY = LONG_MAX, minZ = LONG_MAX,
 				maxX = LONG_MIN, maxY = LONG_MIN, maxZ = LONG_MIN;
@@ -40,9 +40,10 @@ if (bSetViewInfo)
 i = vertexManager.Count ();
 APOINT *a = m_viewPoints + i;
 CVertex* vertP = vertexManager.Vertex (i);
-for (; i--; ) {
+for (nProjected = 0; i--; ) {
 	if ((--vertP)->Status () == 255)
 		continue;
+	nProjected++;
 	m_view.Project (*(vertP), *(--a));
 	x = a->x;
 	y = a->y;
@@ -72,6 +73,8 @@ for (; i--; ) {
 		m_maxVPIdx.z = (short) i;
 		}
 	}
+if (!nProjected)
+	return 0;
 #if OGL_RENDERING 
 //flip mine over for OpenGL
 for (i = vertexManager.Count (), a = m_viewPoints; i--; a++) {
@@ -90,6 +93,7 @@ m_minViewPoint.z = (short) minZ;
 m_maxViewPoint.x = (short) rc.right;
 m_maxViewPoint.y = (short) rc.top;
 m_maxViewPoint.z = (short) maxZ;
+return nProjected;
 }
 
 //----------------------------------------------------------------------------

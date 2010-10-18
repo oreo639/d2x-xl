@@ -415,9 +415,9 @@ void CWallTool::OnDeleteWall ()
 
 GetWalls ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++) {
+	if (bSide)
+		GetOtherWall ();
 	nWall = m_nWall [bSide];
-	if (bSide && (m_nWall [1] > m_nWall [0]))
-		nWall--;
 	if (nWall >= 0) {
 		m_bDelayRefresh = true;
 		wallManager.Delete ((ushort) nWall);
@@ -483,7 +483,7 @@ CWall *CWallTool::GetOtherWall (void)
 {
 CSideKey opp;
 
-if (segmentManager.OppositeSide (opp))
+if (!segmentManager.OppositeSide (opp))
 	return m_wallP [1] = null;
 m_nWall [1] = segmentManager.Segment (opp.m_nSegment)->m_sides [opp.m_nSide].Info ().nWall;
 return m_wallP [1] = (m_nWall [1] < wallManager.WallCount () ? wallManager.Wall (m_nWall [1]) : null);

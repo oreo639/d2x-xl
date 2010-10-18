@@ -493,37 +493,37 @@ if (m_info [0].Restore (fp)) {
 		}
 	if (Count (0) > MAX_TRIGGERS)
 		Count (0) = MAX_TRIGGERS;
-	}
 
-int bObjTriggersOk = 1;
+	int bObjTriggersOk = 1;
 
-if (nFileVersion >= 33) {
-	ObjTriggerCount () = fp.ReadInt32 ();
-	for (short i = 0; i < ObjTriggerCount (); i++) {
-		m_triggers [1][i].Read (fp, nFileVersion, true);
-		m_triggers [1][i].Index () = i;
-		}
-	if (nFileVersion >= 40) {
-		for (short i = 0; i < ObjTriggerCount (); i++)
-			m_triggers [1][i].Info ().nObject = fp.ReadInt16 ();
-		}
-	else {
+	if (nFileVersion >= 33) {
+		ObjTriggerCount () = fp.ReadInt32 ();
 		for (short i = 0; i < ObjTriggerCount (); i++) {
-			fp.ReadInt16 ();
-			fp.ReadInt16 ();
-			m_triggers [1][i].Info ().nObject = fp.ReadInt16 ();
+			m_triggers [1][i].Read (fp, nFileVersion, true);
+			m_triggers [1][i].Index () = i;
 			}
-		if (nFileVersion < 36)
-			fp.Seek (700 * sizeof (short), SEEK_CUR);
-		else
-			fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
+		if (nFileVersion >= 40) {
+			for (short i = 0; i < ObjTriggerCount (); i++)
+				m_triggers [1][i].Info ().nObject = fp.ReadInt16 ();
+			}
+		else {
+			for (short i = 0; i < ObjTriggerCount (); i++) {
+				fp.ReadInt16 ();
+				fp.ReadInt16 ();
+				m_triggers [1][i].Info ().nObject = fp.ReadInt16 ();
+				}
+			if (nFileVersion < 36)
+				fp.Seek (700 * sizeof (short), SEEK_CUR);
+			else
+				fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
+			}
 		}
-	}
-if (bObjTriggersOk && ObjTriggerCount ())
-	SortObjTriggers ();
-else {
-	ObjTriggerCount () = 0;
-	Clear (1);
+	if (bObjTriggersOk && ObjTriggerCount ())
+		SortObjTriggers ();
+	else {
+		ObjTriggerCount () = 0;
+		Clear (1);
+		}
 	}
 }
 
@@ -537,19 +537,21 @@ else {
 	m_info [0].size = DLE.IsD1File () ? 54 : 52; // 54 = sizeof (trigger)
 	m_info [0].offset = fp.Tell ();
 
-	for (CWallTriggerIterator ti; ti; ti++)
-		ti->Write (fp, nFileVersion, false);
-	}
+	if (Count (0)) {
+		for (CWallTriggerIterator ti; ti; ti++)
+			ti->Write (fp, nFileVersion, false);
+		}
 
-if (DLE.LevelVersion () >= 12) {
-	fp.Write (ObjTriggerCount ());
-	if (ObjTriggerCount () > 0) {
-		SortObjTriggers ();
-		short i;
-		for (i = 0; i < ObjTriggerCount (); i++)
-			ObjTrigger (i)->Write (fp, nFileVersion, true);
-		for (i = 0; i < ObjTriggerCount (); i++)
-			fp.WriteInt16 (ObjTrigger (i)->Info ().nObject);
+	if (DLE.LevelVersion () >= 12) {
+		fp.Write (ObjTriggerCount ());
+		if (ObjTriggerCount () > 0) {
+			SortObjTriggers ();
+			short i;
+			for (i = 0; i < ObjTriggerCount (); i++)
+				ObjTrigger (i)->Write (fp, nFileVersion, true);
+			for (i = 0; i < ObjTriggerCount (); i++)
+				fp.WriteInt16 (ObjTrigger (i)->Info ().nObject);
+			}
 		}
 	}
 }

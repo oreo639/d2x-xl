@@ -271,7 +271,7 @@ public:
 		}
 	void DrawMineCenter (CDC *pViewDC);
 	bool VertexVisible (int v);
-	void SetViewPoints (CRect *pRC = null, bool bSetViewInfo = true);
+	int SetViewPoints (CRect *pRC = null, bool bSetViewInfo = true);
 	void ShiftViewPoints ();
 	// drawing functions
 	void	InitView(CDC* pViewDC);
