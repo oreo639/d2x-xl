@@ -256,7 +256,7 @@ if (fp == null)
 m_header [nVersion].Read (*fp);
 m_info [nVersion] = new CPigTexture [m_header [nVersion].nTextures];
 for (int i = 0; i < m_header [nVersion].nTextures; i++)
-	m_info [nVersion][i].Read (*fp, nVersion);
+	m_info [nVersion][i].Read (fp, nVersion);
 m_nOffsets [nVersion] = fp->Tell ();
 if (nVersion == 0)
 	m_nOffsets [0] += m_header [0].nSounds * sizeof (PIG_SOUND);

@@ -452,7 +452,7 @@ for (CWallTriggerIterator ti; ti; ti++)
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::ReadReactor (CFileManager& fp, int nFileVersion)
+void CTriggerManager::ReadReactor (CFileManager* fp, int nFileVersion)
 {
 if (m_reactorInfo.Restore (fp)) {
 	for (short i = 0; i < ReactorTriggerCount (); i++)
@@ -462,7 +462,7 @@ if (m_reactorInfo.Restore (fp)) {
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::WriteReactor (CFileManager& fp, int nFileVersion)
+void CTriggerManager::WriteReactor (CFileManager* fp, int nFileVersion)
 {
 if (m_reactorInfo.Setup (fp)) {
 	m_reactorInfo.size = 42;
@@ -473,7 +473,7 @@ if (m_reactorInfo.Setup (fp)) {
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::Read (CFileManager& fp, int nFileVersion)
+void CTriggerManager::Read (CFileManager* fp, int nFileVersion)
 {
 if (m_info [0].Restore (fp)) {
 	for (short i = 0; i < Count (0); i++) {
@@ -497,25 +497,25 @@ if (m_info [0].Restore (fp)) {
 	int bObjTriggersOk = 1;
 
 	if (nFileVersion >= 33) {
-		ObjTriggerCount () = fp.ReadInt32 ();
+		ObjTriggerCount () = fp->ReadInt32 ();
 		for (short i = 0; i < ObjTriggerCount (); i++) {
 			m_triggers [1][i].Read (fp, nFileVersion, true);
 			m_triggers [1][i].Index () = i;
 			}
 		if (nFileVersion >= 40) {
 			for (short i = 0; i < ObjTriggerCount (); i++)
-				m_triggers [1][i].Info ().nObject = fp.ReadInt16 ();
+				m_triggers [1][i].Info ().nObject = fp->ReadInt16 ();
 			}
 		else {
 			for (short i = 0; i < ObjTriggerCount (); i++) {
-				fp.ReadInt16 ();
-				fp.ReadInt16 ();
-				m_triggers [1][i].Info ().nObject = fp.ReadInt16 ();
+				fp->ReadInt16 ();
+				fp->ReadInt16 ();
+				m_triggers [1][i].Info ().nObject = fp->ReadInt16 ();
 				}
 			if (nFileVersion < 36)
-				fp.Seek (700 * sizeof (short), SEEK_CUR);
+				fp->Seek (700 * sizeof (short), SEEK_CUR);
 			else
-				fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
+				fp->Seek (2 * sizeof (short) * fp->ReadInt16 (), SEEK_CUR);
 			}
 		}
 	if (bObjTriggersOk && ObjTriggerCount ())
@@ -529,13 +529,13 @@ if (m_info [0].Restore (fp)) {
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::Write (CFileManager& fp, int nFileVersion)
+void CTriggerManager::Write (CFileManager* fp, int nFileVersion)
 {
 if (Count (0) + Count (1) == 0)
 	m_info [0].offset = -1;
 else {
 	m_info [0].size = DLE.IsD1File () ? 54 : 52; // 54 = sizeof (trigger)
-	m_info [0].offset = fp.Tell ();
+	m_info [0].offset = fp->Tell ();
 
 	if (Count (0)) {
 		for (CWallTriggerIterator ti; ti; ti++)
@@ -543,14 +543,14 @@ else {
 		}
 
 	if (DLE.LevelVersion () >= 12) {
-		fp.Write (ObjTriggerCount ());
+		fp->Write (ObjTriggerCount ());
 		if (ObjTriggerCount () > 0) {
 			SortObjTriggers ();
 			short i;
 			for (i = 0; i < ObjTriggerCount (); i++)
 				ObjTrigger (i)->Write (fp, nFileVersion, true);
 			for (i = 0; i < ObjTriggerCount (); i++)
-				fp.WriteInt16 (ObjTrigger (i)->Info ().nObject);
+				fp->WriteInt16 (ObjTrigger (i)->Info ().nObject);
 			}
 		}
 	}

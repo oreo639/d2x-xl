@@ -17,13 +17,13 @@ class CFixMatrix {
 public:
 	CFixVector rVec, uVec, fVec;
 #if 0
-	inline void Read (CFileManager& fp) { 
+	inline void Read (CFileManager* fp) { 
 		rVec.Read (fp);
 		uVec.Read (fp);
 		fVec.Read (fp);
 	}
 
-	inline void Write (CFileManager& fp) { 
+	inline void Write (CFileManager* fp) { 
 		rVec.Write (fp);
 		uVec.Write (fp);
 		fVec.Write (fp);
@@ -97,13 +97,13 @@ class CDoubleMatrix {
 public:
 	CDoubleVector rVec, uVec, fVec;
 #if 0
-	inline void Read (CFileManager& fp) { 
+	inline void Read (CFileManager* fp) { 
 		rVec.Read (fp);
 		uVec.Read (fp);
 		fVec.Read (fp);
 		}
 
-	inline void Write (CFileManager& fp) { 
+	inline void Write (CFileManager* fp) { 
 		rVec.Write (fp);
 		uVec.Write (fp);
 		fVec.Write (fp);

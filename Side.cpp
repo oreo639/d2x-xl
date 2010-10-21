@@ -8,12 +8,12 @@
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CSide::Read (CFileManager& fp, bool bTextured)
+void CSide::Read (CFileManager* fp, bool bTextured)
 {
 if (bTextured) {
-	m_info.nBaseTex = fp.ReadInt16 ();
+	m_info.nBaseTex = fp->ReadInt16 ();
 	if (m_info.nBaseTex & 0x8000) {
-		m_info.nOvlTex = fp.ReadInt16 ();
+		m_info.nOvlTex = fp->ReadInt16 ();
 		if ((m_info.nOvlTex & 0x1FFF) == 0)
 			m_info.nOvlTex = 0;
 		}
@@ -33,13 +33,13 @@ else {
 
 // -----------------------------------------------------------------------------
 
-void CSide::Write (CFileManager& fp)
+void CSide::Write (CFileManager* fp)
 {
 if (m_info.nOvlTex == 0)
-	fp.Write (m_info.nBaseTex);
+	fp->Write (m_info.nBaseTex);
 else {
-	fp.WriteInt16 (m_info.nBaseTex | 0x8000);
-	fp.Write (m_info.nOvlTex);
+	fp->WriteInt16 (m_info.nBaseTex | 0x8000);
+	fp->Write (m_info.nOvlTex);
 	}
 for (int i = 0; i < 4; i++)
 	m_info.uvls [i].Write (fp);

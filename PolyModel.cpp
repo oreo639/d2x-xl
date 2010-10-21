@@ -166,7 +166,7 @@ if (bCustom) {
 			fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
 			n = fp.ReadInt16 ();                         // n_robot_types
 			for (i = 0; i < n; i++)
-				robotManager.RobotInfo (N_ROBOT_TYPES_D2 + i)->Read (fp);
+				robotManager.RobotInfo (N_ROBOT_TYPES_D2 + i)->Read (&fp);
 			n  = fp.ReadInt16 ();                         // n_robot_joints
 			fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
 			break;
@@ -176,9 +176,9 @@ if (bCustom) {
 	n = fp.ReadInt16 ();                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
-		m_polyModels [N_POLYGON_MODELS_D2 + i].Read (fp);
+		m_polyModels [N_POLYGON_MODELS_D2 + i].Read (&fp);
 	for (i = 0; i < n; i++) 
-		m_polyModels [N_POLYGON_MODELS_D2 + i].Read (fp, true);
+		m_polyModels [N_POLYGON_MODELS_D2 + i].Read (&fp, true);
 	}
 else {
 	id = fp.ReadInt32 ();	  					   // read id
@@ -201,7 +201,7 @@ else {
 	fp.Seek (n * sizeof (WCLIP), SEEK_CUR);     // weapon clips
 	n = fp.ReadUInt32 ();                          // n_robots
 	for (i = 0; i < n; i++) 
-		robotManager.RobotInfo (i)->Read (fp);
+		robotManager.RobotInfo (i)->Read (&fp);
 	n = fp.ReadUInt32 ();                          // n_wclips
 	fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     // robot joints
 	n = fp.ReadUInt32 ();                          // n_wclips
@@ -211,9 +211,9 @@ else {
 	n = fp.ReadUInt32 ();                          // n_wclips
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
-		m_polyModels [i].Read (fp);
+		m_polyModels [i].Read (&fp);
 	for (i = 0; i < n; i++) 
-		m_polyModels [i].Read (fp, true);
+		m_polyModels [i].Read (&fp, true);
 	}
 fp.Close ();
 return 0;
@@ -392,40 +392,40 @@ return;
 // ReadModelData ();
 //------------------------------------------------------------------------------
 
-void CPolyModel::Read (CFileManager& fp, bool bRenderData) 
+void CPolyModel::Read (CFileManager* fp, bool bRenderData) 
 {
 if (bRenderData) {
 	Release ();
 	if ((m_info.renderData = new byte [m_info.dataSize]))
-		fp.Read (m_info.renderData, m_info.dataSize, 1);
+		fp->Read (m_info.renderData, m_info.dataSize, 1);
 	}
 else {
-	m_info.nModels = fp.ReadInt32 ();
-	m_info.dataSize = fp.ReadInt32 ();
-	fp.ReadInt32 ();
+	m_info.nModels = fp->ReadInt32 ();
+	m_info.dataSize = fp->ReadInt32 ();
+	fp->ReadInt32 ();
 	m_info.renderData = null;
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].ptr = fp.ReadInt32 ();
+		m_info.subModels [i].ptr = fp->ReadInt32 ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		fp.Read (m_info.subModels [i].offset);
+		fp->Read (m_info.subModels [i].offset);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		fp.Read (m_info.subModels [i].norm);
+		fp->Read (m_info.subModels [i].norm);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		fp.Read (m_info.subModels [i].pnt);
+		fp->Read (m_info.subModels [i].pnt);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].rad = fp.ReadInt32 ();
+		m_info.subModels [i].rad = fp->ReadInt32 ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].parent = (byte) fp.ReadSByte ();
+		m_info.subModels [i].parent = (byte) fp->ReadSByte ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		fp.Read (m_info.subModels [i].vMin);
+		fp->Read (m_info.subModels [i].vMin);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		fp.Read (m_info.subModels [i].vMax);
-	fp.Read (m_info.vMin);
-	fp.Read (m_info.vMax);
-	m_info.rad = fp.ReadInt32 ();
-	m_info.textureCount = fp.ReadByte ();
-	m_info.firstTexture = fp.ReadUInt16 ();
-	m_info.simplerModel = fp.ReadByte ();
+		fp->Read (m_info.subModels [i].vMax);
+	fp->Read (m_info.vMin);
+	fp->Read (m_info.vMax);
+	m_info.rad = fp->ReadInt32 ();
+	m_info.textureCount = fp->ReadByte ();
+	m_info.firstTexture = fp->ReadUInt16 ();
+	m_info.simplerModel = fp->ReadByte ();
 	}
 }
 

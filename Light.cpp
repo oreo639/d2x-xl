@@ -56,22 +56,22 @@ Id () = undoManager.Backup (this, editType);
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CVariableLight::Read (CFileManager& fp) 
+void CVariableLight::Read (CFileManager* fp) 
 {
 CSideKey::Read (fp);
-m_info.mask = fp.ReadUInt32 ();
-m_info.timer = fp.ReadInt32 ();
-m_info.delay = fp.ReadInt32 ();
+m_info.mask = fp->ReadUInt32 ();
+m_info.timer = fp->ReadInt32 ();
+m_info.delay = fp->ReadInt32 ();
 }
 
 //------------------------------------------------------------------------------
 
-void CVariableLight::Write (CFileManager& fp) 
+void CVariableLight::Write (CFileManager* fp) 
 {
 CSideKey::Write (fp);
-fp.Write (m_info.mask);
-fp.Write (m_info.timer);
-fp.Write (m_info.delay);
+fp->Write (m_info.mask);
+fp->Write (m_info.timer);
+fp->Write (m_info.delay);
 }
 
 //------------------------------------------------------------------------------
@@ -161,24 +161,24 @@ switch (EditType ()) {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CLightDeltaValue::Read (CFileManager& fp, int version, bool bFlag)
+void CLightDeltaValue::Read (CFileManager* fp, int version, bool bFlag)
 {
-m_nSegment = fp.ReadInt16 ();
-m_nSide = fp.ReadSByte ();
-fp.ReadSByte ();
+m_nSegment = fp->ReadInt16 ();
+m_nSide = fp->ReadSByte ();
+fp->ReadSByte ();
 for (int i = 0; i < 4; i++)
-	m_info.vertLight [i] = fp.ReadSByte ();
+	m_info.vertLight [i] = fp->ReadSByte ();
 }
 
 // -----------------------------------------------------------------------------
 
-void CLightDeltaValue::Write (CFileManager& fp, int version, bool bFlag)
+void CLightDeltaValue::Write (CFileManager* fp, int version, bool bFlag)
 {
-fp.Write (m_nSegment);
-fp.WriteSByte ((sbyte) m_nSide);
-fp.WriteByte (0);
+fp->Write (m_nSegment);
+fp->WriteSByte ((sbyte) m_nSide);
+fp->WriteByte (0);
 for (int i = 0; i < 4; i++)
-	fp.Write (m_info.vertLight [i]);
+	fp->Write (m_info.vertLight [i]);
 }
 
 
@@ -209,33 +209,33 @@ Id () = undoManager.Backup (this, editType);
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CLightDeltaIndex::Read (CFileManager& fp, int version, bool bD2X)
+void CLightDeltaIndex::Read (CFileManager* fp, int version, bool bD2X)
 {
-m_nSegment = fp.ReadInt16 ();
+m_nSegment = fp->ReadInt16 ();
 if (bD2X) {
-	ushort h = fp.ReadInt16 ();
+	ushort h = fp->ReadInt16 ();
 	m_nSide = h & 7;
 	m_info.count = (h >> 3) & 0x1FFF;
 	}
 else {
-	m_nSide = fp.ReadSByte ();
-	m_info.count = fp.ReadSByte ();
+	m_nSide = fp->ReadSByte ();
+	m_info.count = fp->ReadSByte ();
 	}
-m_info.index = fp.ReadInt16 ();
+m_info.index = fp->ReadInt16 ();
 }
 
 // -----------------------------------------------------------------------------
 
-void CLightDeltaIndex::Write (CFileManager& fp, int version, bool bD2X)
+void CLightDeltaIndex::Write (CFileManager* fp, int version, bool bD2X)
 {
-fp.Write (m_nSegment);
+fp->Write (m_nSegment);
 if (bD2X)
-	fp.WriteInt16 ((m_nSide & 7) | (m_info.count << 3));
+	fp->WriteInt16 ((m_nSide & 7) | (m_info.count << 3));
 else {
-	fp.WriteSByte ((sbyte) m_nSide);
-	fp.WriteSByte ((sbyte) m_info.count);
+	fp->WriteSByte ((sbyte) m_nSide);
+	fp->WriteSByte ((sbyte) m_info.count);
 	}
-fp.Write (m_info.index);
+fp->Write (m_info.index);
 }
 
 // -----------------------------------------------------------------------------

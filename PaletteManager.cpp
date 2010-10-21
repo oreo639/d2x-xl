@@ -118,9 +118,9 @@ for (int i = 0; i < 256; i++) {
 
 //------------------------------------------------------------------------
 
-int CPaletteManager::LoadCustom (CFileManager& fp, long size)
+int CPaletteManager::LoadCustom (CFileManager* fp, long size)
 {
-if (fp.Read (m_rawData, 1, sizeof (m_rawData)) != sizeof (m_rawData))
+if (fp->Read (m_rawData, 1, sizeof (m_rawData)) != sizeof (m_rawData))
 	return 0;
 CreateFadeTable ();
 Decode (m_custom);
@@ -132,9 +132,9 @@ return 1;
 
 //------------------------------------------------------------------------
 
-int CPaletteManager::SaveCustom (CFileManager& fp)
+int CPaletteManager::SaveCustom (CFileManager* fp)
 {
-return fp.Write (m_rawData, 1, sizeof (m_rawData)) == sizeof (m_rawData);
+return fp->Write (m_rawData, 1, sizeof (m_rawData)) == sizeof (m_rawData);
 }
 
 //------------------------------------------------------------------------
@@ -229,11 +229,11 @@ return MAKEINTRESOURCE (IDR_GROUPA_256);
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::LoadName (CFileManager& fp)
+void CPaletteManager::LoadName (CFileManager* fp)
 {
 int i;
 for (i = 0; i < 15; i++) {
-	m_name [i] = fp.ReadChar ();
+	m_name [i] = fp->ReadChar ();
 	if (m_name [i] == 0x0a) {
 		m_name [i] = 0;
 		break;

@@ -103,13 +103,13 @@ if (bShowTexture) {
 			{
 			double scale = tex.Scale ();
 			if (scale == 1.0) {
-				for (uint i = 0, x = 0; x < tex.Width (); x++)
-					for (uint y = 0; y < tex.Width (); y++)
+				for (uint i = 0, y = 0; y < tex.Width (); y++)
+					for (uint x = 0; x < tex.Width (); x++)
 						pDC->SetPixel ((int) x, (int) y, textureManager.m_bmBuf [i++].ColorRef ());
 				}
 			else {
-				for (uint x = 0; x < tex.Width (); x = (int) (x + scale))
-					for (uint y = 0; y < tex.Width (); y = (int) (y + scale))
+				for (uint y = 0; y < tex.Width (); y = (int) (y + scale))
+					for (uint x = 0; x < tex.Width (); x = (int) (x + scale))
 						pDC->SetPixel ((int) (x / scale), (int) (y / scale), textureManager.m_bmBuf [y * tex.Width () + x].ColorRef ());
 				}
 			}

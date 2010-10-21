@@ -94,26 +94,26 @@ for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 //------------------------------------------------------------------------------
 
-void CTriggerTargets::Read (CFileManager& fp) 
+void CTriggerTargets::Read (CFileManager* fp) 
 {
 	int i;
 
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	m_targets [i].m_nSegment = fp.ReadInt16 ();
+	m_targets [i].m_nSegment = fp->ReadInt16 ();
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	m_targets [i].m_nSide = fp.ReadInt16 ();
+	m_targets [i].m_nSide = fp->ReadInt16 ();
 }
 
 //------------------------------------------------------------------------------
 
-void CTriggerTargets::Write (CFileManager& fp) 
+void CTriggerTargets::Write (CFileManager* fp) 
 {
 	int i;
 
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fp.WriteInt16 ((short) ((m_targets [i].m_nSegment < 0) ? m_targets [i].m_nSegment : segmentManager.Segment (m_targets [i].m_nSegment)->Index ()));
+	fp->WriteInt16 ((short) ((m_targets [i].m_nSegment < 0) ? m_targets [i].m_nSegment : segmentManager.Segment (m_targets [i].m_nSegment)->Index ()));
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fp.Write (m_targets [i].m_nSide);
+	fp->Write (m_targets [i].m_nSide);
 }
 
 //------------------------------------------------------------------------------
@@ -138,27 +138,27 @@ CTriggerTargets::Clear ();
 
 //------------------------------------------------------------------------------
 
-void CTrigger::Read (CFileManager& fp, int version, bool bObjTrigger)
+void CTrigger::Read (CFileManager* fp, int version, bool bObjTrigger)
 {
 if (DLE.IsD2File ()) {
-	m_info.type = fp.ReadByte ();
-	m_info.flags = bObjTrigger ? fp.ReadInt16 () : (ushort) fp.ReadByte ();
-	m_count = fp.ReadByte ();
-	fp.ReadByte ();
-	m_info.value = fp.ReadInt32 ();
+	m_info.type = fp->ReadByte ();
+	m_info.flags = bObjTrigger ? fp->ReadInt16 () : (ushort) fp->ReadByte ();
+	m_count = fp->ReadByte ();
+	fp->ReadByte ();
+	m_info.value = fp->ReadInt32 ();
 	if ((DLE.LevelVersion () < 21) && (m_info.type == TT_EXIT))
 		m_info.value = 0;
 	if ((version < 39) && (m_info.type == TT_MASTER))
 		m_info.value = 0;
-	m_info.time = fp.ReadInt32 ();
+	m_info.time = fp->ReadInt32 ();
 	}
 else {
-	m_info.type = fp.ReadByte ();
-	m_info.flags = fp.ReadInt16 ();
-	m_info.value = fp.ReadInt32 ();
-	m_info.time = fp.ReadInt32 ();
-	fp.ReadByte (); //skip 8 bit value "link_num"
-	m_count = char (fp.ReadInt16 ());
+	m_info.type = fp->ReadByte ();
+	m_info.flags = fp->ReadInt16 ();
+	m_info.value = fp->ReadInt32 ();
+	m_info.time = fp->ReadInt32 ();
+	fp->ReadByte (); //skip 8 bit value "link_num"
+	m_count = char (fp->ReadInt16 ());
 	if (m_count < 0)
 		m_count = 0;
 	else if (m_count > MAX_TRIGGER_TARGETS)
@@ -169,26 +169,26 @@ this->CTriggerTargets::Read (fp);
 
 //------------------------------------------------------------------------------
 
-void CTrigger::Write (CFileManager& fp, int version, bool bObjTrigger)
+void CTrigger::Write (CFileManager* fp, int version, bool bObjTrigger)
 {
 if (DLE.IsD2File ()) {
-	fp.Write (m_info.type);
+	fp->Write (m_info.type);
 	if (bObjTrigger)
-		fp.Write (m_info.flags);
+		fp->Write (m_info.flags);
 	else
-		fp.WriteSByte ((sbyte) m_info.flags);
-	fp.WriteSByte ((sbyte) m_count);
-	fp.WriteByte (0);
-	fp.Write (m_info.value);
-	fp.Write (m_info.time);
+		fp->WriteSByte ((sbyte) m_info.flags);
+	fp->WriteSByte ((sbyte) m_count);
+	fp->WriteByte (0);
+	fp->Write (m_info.value);
+	fp->Write (m_info.time);
 	}
 else {
-	fp.Write (m_info.type);
-	fp.Write (m_info.flags);
-	fp.Write (m_info.value);
-	fp.Write (m_info.time);
-	fp.WriteSByte ((sbyte) m_count);
-	fp.Write (m_count);
+	fp->Write (m_info.type);
+	fp->Write (m_info.flags);
+	fp->Write (m_info.value);
+	fp->Write (m_info.time);
+	fp->WriteSByte ((sbyte) m_count);
+	fp->Write (m_count);
 	}
 this->CTriggerTargets::Write (fp);
 }
@@ -229,28 +229,28 @@ Id () = undoManager.Backup (this, editType);
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CReactorTrigger::Read (CFileManager& fp, int version, bool bFlag)
+void CReactorTrigger::Read (CFileManager* fp, int version, bool bFlag)
 {
 	int	i;
 
-m_count = char (fp.ReadInt16 ());
+m_count = char (fp->ReadInt16 ());
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	m_targets [i].m_nSegment = fp.ReadInt16 ();
+	m_targets [i].m_nSegment = fp->ReadInt16 ();
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	m_targets [i].m_nSide = fp.ReadInt16 ();
+	m_targets [i].m_nSide = fp->ReadInt16 ();
 }
 
 //------------------------------------------------------------------------------
 
-void CReactorTrigger::Write (CFileManager& fp, int version, bool bFlag)
+void CReactorTrigger::Write (CFileManager* fp, int version, bool bFlag)
 {
 	int	i;
 
-fp.Write (m_count);
+fp->Write (m_count);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fp.Write (m_targets [i].m_nSegment);
+	fp->Write (m_targets [i].m_nSegment);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fp.Write (m_targets [i].m_nSide);
+	fp->Write (m_targets [i].m_nSide);
 }
 
 // -----------------------------------------------------------------------------

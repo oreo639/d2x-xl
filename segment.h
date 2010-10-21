@@ -97,13 +97,13 @@ public:
 public:
 	void Upgrade (void);
 
-	void Read (CFileManager& fp, int nLevelType, int nLevelVersion);
+	void Read (CFileManager* fp, int nLevelType, int nLevelVersion);
 	
-	void Write (CFileManager& fp, int nLevelType, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelType, int nLevelVersion);
 	
-	void ReadExtras (CFileManager& fp, int nLevelType, int nLevelVersion, bool bExtras);
+	void ReadExtras (CFileManager* fp, int nLevelType, int nLevelVersion, bool bExtras);
 	
-	void WriteExtras (CFileManager& fp, int nLevelType, bool bExtras);
+	void WriteExtras (CFileManager* fp, int nLevelType, bool bExtras);
 	
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
@@ -117,9 +117,9 @@ public:
 
 	void SetUV (short nSide, short x, short y);
 
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false) {}
+	void Read (CFileManager* fp, int version = 0, bool bFlag = false) {}
 
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false) {}
+	void Write (CFileManager* fp, int version = 0, bool bFlag = false) {}
 
 	inline CSide _const_ * Side (short i) _const_ { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
 
@@ -158,9 +158,9 @@ public:
 	CSegment () : CGameItem (itSegment) {}
 
 private:
-	byte ReadWalls (CFileManager& fp, int nLevelVersion);
+	byte ReadWalls (CFileManager* fp, int nLevelVersion);
 
-	byte WriteWalls (CFileManager& fp, int nLevelVersion);
+	byte WriteWalls (CFileManager* fp, int nLevelVersion);
 
 };
 
@@ -183,9 +183,9 @@ class CMatCenter : public CGameItem {
 public:
 	tMatCenter	m_info;
 
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Read (CFileManager* fp, int version = 0, bool bFlag = false);
 	
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Write (CFileManager* fp, int version = 0, bool bFlag = false);
 
 	void Setup (short nSegment, short nIndex, int nFlags) {
 		Clear ();

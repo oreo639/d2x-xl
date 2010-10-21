@@ -14,8 +14,8 @@ public:
 	ushort  version;
 	int		size;
 
-	void Read (CFileManager& fp);
-	void Write (CFileManager& fp);
+	void Read (CFileManager* fp);
+	void Write (CFileManager* fp);
 };
 
 // -----------------------------------------------------------------------------
@@ -26,8 +26,8 @@ public:
 	int  size;
 
 	CPlayerItemInfo () { offset = -1, size = 0; }
-	void Read (CFileManager& fp);
-	void Write (CFileManager& fp);
+	void Read (CFileManager* fp);
+	void Write (CFileManager* fp);
 };
 
 // -----------------------------------------------------------------------------
@@ -41,10 +41,10 @@ public:
 	CMineItemInfo () { Reset (); }
 
 	void Reset (void) { offset = -1, count = size = 0; } 
-	bool Setup (CFileManager& fp);
-	bool Restore (CFileManager& fp);
-	void Read (CFileManager& fp);
-	void Write (CFileManager& fp);
+	bool Setup (CFileManager* fp);
+	bool Restore (CFileManager* fp);
+	void Read (CFileManager* fp);
+	void Write (CFileManager* fp);
 };
 
 // -----------------------------------------------------------------------------
@@ -56,8 +56,8 @@ public:
 	int					level;
 	CPlayerItemInfo	player;
 
-	void Read (CFileManager& fp);
-	void Write (CFileManager& fp);
+	void Read (CFileManager* fp);
+	void Write (CFileManager* fp);
 };
 
 // -----------------------------------------------------------------------------

@@ -83,10 +83,10 @@ SaveColors (TexColor (0), MAX_TEXTURES_D2, fp);
 
 //------------------------------------------------------------------------------
 
-void CLightManager::ReadVariableLights (CFileManager& fp)
+void CLightManager::ReadVariableLights (CFileManager* fp)
 {
 if (DLE.LevelVersion () > 6) {
-	lightManager.Count () = (short) fp.ReadInt32 ();
+	lightManager.Count () = (short) fp->ReadInt32 ();
 	for (int i = 0; i < lightManager.Count (); i++) {
 		if (i < MAX_VARIABLE_LIGHTS)
 			VariableLight (i)->Read (fp);
@@ -100,10 +100,10 @@ if (DLE.LevelVersion () > 6) {
 
 //------------------------------------------------------------------------------
 
-void CLightManager::WriteVariableLights (CFileManager& fp)
+void CLightManager::WriteVariableLights (CFileManager* fp)
 {
 if (DLE.LevelVersion () > 6) {
-	fp.Write (lightManager.Count ());
+	fp->Write (lightManager.Count ());
 	for (int i = 0; i < lightManager.Count (); i++) {
 		VariableLight (i)->Write (fp);
 		}
@@ -112,7 +112,7 @@ if (DLE.LevelVersion () > 6) {
 
 //------------------------------------------------------------------------------
 
-void CLightManager::ReadLightDeltas (CFileManager& fp, int nFileVersion)
+void CLightManager::ReadLightDeltas (CFileManager* fp, int nFileVersion)
 {
 if (DLE.IsD2File ()) {
 
@@ -130,7 +130,7 @@ else
 
 //------------------------------------------------------------------------------
 
-void CLightManager::WriteLightDeltas (CFileManager& fp, int nFileVersion)
+void CLightManager::WriteLightDeltas (CFileManager* fp, int nFileVersion)
 {
 if (DeltaIndexCount () > 0) {
 	if ((DLE.LevelVersion () >= 15) && (nFileVersion >= 34)) 
@@ -140,12 +140,12 @@ if (DeltaIndexCount () > 0) {
 	int i;
 
 	m_deltaIndexInfo.size = 6;
-	m_deltaIndexInfo.offset = fp.Tell ();
+	m_deltaIndexInfo.offset = fp->Tell ();
 	for (i = 0; i < m_deltaIndexInfo.count; i++)
 		m_deltaIndex [i].Write (fp, nFileVersion, bD2X);
 
 	m_deltaValueInfo.size = 8;
-	m_deltaValueInfo.offset = fp.Tell ();
+	m_deltaValueInfo.offset = fp->Tell ();
 	for (i = 0; i < m_deltaValueInfo.count; i++)
 		m_deltaValues [i].Write (fp, nFileVersion);
 #if USE_FREELIST

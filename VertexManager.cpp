@@ -113,7 +113,7 @@ for (CVertexIterator vi; vi; vi++)
 
 // ----------------------------------------------------------------------------- 
 
-void CVertexManager::Read (CFileManager& fp, int nFileVersion)
+void CVertexManager::Read (CFileManager* fp, int nFileVersion)
 {
 for (int i = 0; i < Count (); i++)
 	m_vertices [i].Read (fp, nFileVersion);
@@ -121,9 +121,9 @@ for (int i = 0; i < Count (); i++)
 
 // ----------------------------------------------------------------------------- 
 
-void CVertexManager::Write (CFileManager& fp, int nFileVersion)
+void CVertexManager::Write (CFileManager* fp, int nFileVersion)
 {
-m_info.offset = fp.Tell ();
+m_info.offset = fp->Tell ();
 for (CVertexIterator vi; vi; vi++)
 	vi->Write (fp, nFileVersion);
 }

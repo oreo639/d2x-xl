@@ -378,75 +378,75 @@ wndP->UpdateWindow ();
 
 // -----------------------------------------------------------------------------
 
-void CObjPhysicsInfo::Read (CFileManager& fp, int version)
+void CObjPhysicsInfo::Read (CFileManager* fp, int version)
 {
-fp.ReadVector (velocity);
-fp.ReadVector (thrust);
-mass = fp.ReadInt32 ();
-drag = fp.ReadInt32 ();
-brakes = fp.ReadInt32 ();
-fp.ReadVector (rotvel);
-fp.ReadVector (rotthrust);
-turnroll = fp.ReadFixAng ();
-flags = fp.ReadInt16 ();
+fp->ReadVector (velocity);
+fp->ReadVector (thrust);
+mass = fp->ReadInt32 ();
+drag = fp->ReadInt32 ();
+brakes = fp->ReadInt32 ();
+fp->ReadVector (rotvel);
+fp->ReadVector (rotthrust);
+turnroll = fp->ReadFixAng ();
+flags = fp->ReadInt16 ();
 }
 
 // -----------------------------------------------------------------------------
 
-void CObjPhysicsInfo::Write (CFileManager& fp, int version)
+void CObjPhysicsInfo::Write (CFileManager* fp, int version)
 {
-fp.WriteVector (velocity);
-fp.WriteVector (thrust);
-fp.WriteInt32 (mass);
-fp.WriteInt32 (drag);
-fp.WriteInt32 (brakes);
-fp.WriteVector (rotvel);
-fp.WriteVector (rotthrust);
-fp.WriteInt16 (turnroll);
-fp.WriteInt16 (flags);
+fp->WriteVector (velocity);
+fp->WriteVector (thrust);
+fp->WriteInt32 (mass);
+fp->WriteInt32 (drag);
+fp->WriteInt32 (brakes);
+fp->WriteVector (rotvel);
+fp->WriteVector (rotthrust);
+fp->WriteInt16 (turnroll);
+fp->WriteInt16 (flags);
 }
 
 // -----------------------------------------------------------------------------
 
-void CObjAIInfo::Read (CFileManager& fp, int version)
+void CObjAIInfo::Read (CFileManager* fp, int version)
 {
-behavior = fp.ReadSByte ();
+behavior = fp->ReadSByte ();
 for (int i = 0; i < MAX_AI_FLAGS; i++)
-	flags [i] = fp.ReadSByte ();
-hide_segment = fp.ReadInt16 ();
-hide_index = fp.ReadInt16 ();
-path_length = fp.ReadInt16 ();
-cur_path_index = fp.ReadInt16 ();
+	flags [i] = fp->ReadSByte ();
+hide_segment = fp->ReadInt16 ();
+hide_index = fp->ReadInt16 ();
+path_length = fp->ReadInt16 ();
+cur_path_index = fp->ReadInt16 ();
 if (DLE.IsD1File ()) {
-	follow_path_start_seg = fp.ReadInt16 ();
-	follow_path_end_seg = fp.ReadInt16 ();
+	follow_path_start_seg = fp->ReadInt16 ();
+	follow_path_end_seg = fp->ReadInt16 ();
 	}
 }
 
 // ------------------------------------------------------------------------
 
-void CObjAIInfo::Write (CFileManager& fp, int version)
+void CObjAIInfo::Write (CFileManager* fp, int version)
 {
-fp.Write (behavior);
+fp->Write (behavior);
 for (int i = 0; i < MAX_AI_FLAGS; i++)
-	fp.Write (flags [i]);
-fp.Write (hide_segment);
-fp.Write (hide_index);
-fp.Write (path_length);
-fp.Write (cur_path_index);
+	fp->Write (flags [i]);
+fp->Write (hide_segment);
+fp->Write (hide_index);
+fp->Write (path_length);
+fp->Write (cur_path_index);
 if (DLE.IsD1File ()) {
-	fp.Write (follow_path_start_seg);
-	fp.Write (follow_path_end_seg);
+	fp->Write (follow_path_start_seg);
+	fp->Write (follow_path_end_seg);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-void CObjExplosionInfo::Read (CFileManager& fp, int version)
+void CObjExplosionInfo::Read (CFileManager* fp, int version)
 {
-spawn_time = fp.ReadInt32 ();
-delete_time = fp.ReadInt32 ();
-delete_objnum = (byte)fp.ReadInt16 ();
+spawn_time = fp->ReadInt32 ();
+delete_time = fp->ReadInt32 ();
+delete_objnum = (byte)fp->ReadInt16 ();
 next_attach = 
 prev_attach = 
 attach_parent =-1;
@@ -454,235 +454,235 @@ attach_parent =-1;
 
 // ------------------------------------------------------------------------
 
-void CObjExplosionInfo::Write (CFileManager& fp, int version)
+void CObjExplosionInfo::Write (CFileManager* fp, int version)
 {
-fp.Write (spawn_time);
-fp.Write (delete_time);
-fp.Write (delete_objnum);
+fp->Write (spawn_time);
+fp->Write (delete_time);
+fp->Write (delete_objnum);
 }
 
 // ------------------------------------------------------------------------
 
-void CObjLaserInfo::Read (CFileManager& fp, int version)
+void CObjLaserInfo::Read (CFileManager* fp, int version)
 {
-parent_type = fp.ReadInt16 ();
-parent_num = fp.ReadInt16 ();
-parent_signature = fp.ReadInt32 ();
+parent_type = fp->ReadInt16 ();
+parent_num = fp->ReadInt16 ();
+parent_signature = fp->ReadInt32 ();
 }
 
 // ------------------------------------------------------------------------
 
-void CObjLaserInfo::Write (CFileManager& fp, int version)
+void CObjLaserInfo::Write (CFileManager* fp, int version)
 {
-fp.Write (parent_type);
-fp.Write (parent_num);
-fp.Write (parent_signature);
+fp->Write (parent_type);
+fp->Write (parent_num);
+fp->Write (parent_signature);
 }
 
 // ------------------------------------------------------------------------
 
-void CObjPowerupInfo::Read (CFileManager& fp, int version)
+void CObjPowerupInfo::Read (CFileManager* fp, int version)
 {
-count = (version >= 25) ? fp.ReadInt32 () : 1;
+count = (version >= 25) ? fp->ReadInt32 () : 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjPowerupInfo::Write (CFileManager& fp, int version)
+void CObjPowerupInfo::Write (CFileManager* fp, int version)
 {
 if (version >= 25) 
-	fp.Write (count);
+	fp->Write (count);
 }
 
 // ------------------------------------------------------------------------
 
-void CObjLightInfo::Read (CFileManager& fp, int version)
+void CObjLightInfo::Read (CFileManager* fp, int version)
 {
-intensity = fp.ReadInt32 ();
+intensity = fp->ReadInt32 ();
 }
 
 // ------------------------------------------------------------------------
 
-void CObjLightInfo::Write (CFileManager& fp, int version)
+void CObjLightInfo::Write (CFileManager* fp, int version)
 {
-fp.Write (intensity);
+fp->Write (intensity);
 }
 
 // ------------------------------------------------------------------------
 
-void CObjPolyModelInfo::Read (CFileManager& fp, int version)
+void CObjPolyModelInfo::Read (CFileManager* fp, int version)
 {
-nModel = fp.ReadInt32 ();
+nModel = fp->ReadInt32 ();
 for (int i = 0; i < MAX_SUBMODELS; i++)
-	fp.ReadVector (anim_angles [i]);
-subobj_flags = fp.ReadInt32 ();
-nOverrideTexture = fp.ReadInt32 ();
+	fp->ReadVector (anim_angles [i]);
+subobj_flags = fp->ReadInt32 ();
+nOverrideTexture = fp->ReadInt32 ();
 alt_textures = 0;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjPolyModelInfo::Write (CFileManager& fp, int version)
+void CObjPolyModelInfo::Write (CFileManager* fp, int version)
 {
-fp.Write (nModel);
+fp->Write (nModel);
 for (int i = 0; i < MAX_SUBMODELS; i++)
-	fp.WriteVector (anim_angles [i]);
-fp.Write (subobj_flags);
-fp.Write (nOverrideTexture);
+	fp->WriteVector (anim_angles [i]);
+fp->Write (subobj_flags);
+fp->Write (nOverrideTexture);
 }
 
 // ------------------------------------------------------------------------
 
-void CObjVClipInfo::Read (CFileManager& fp, int version)
+void CObjVClipInfo::Read (CFileManager* fp, int version)
 {
-vclip_num = fp.ReadInt32 ();
-frametime = fp.ReadInt32 ();
-framenum = fp.ReadSByte ();
+vclip_num = fp->ReadInt32 ();
+frametime = fp->ReadInt32 ();
+framenum = fp->ReadSByte ();
 }
 
 // ------------------------------------------------------------------------
 
-void CObjVClipInfo::Write (CFileManager& fp, int version)
+void CObjVClipInfo::Write (CFileManager* fp, int version)
 {
-fp.Write (vclip_num);
-fp.Write (frametime);
-fp.Write (framenum);
+fp->Write (vclip_num);
+fp->Write (frametime);
+fp->Write (framenum);
 }
 
 // ------------------------------------------------------------------------
 
-void CSmokeInfo::Read (CFileManager& fp, int version)
+void CSmokeInfo::Read (CFileManager* fp, int version)
 {
-nLife = fp.ReadInt32 ();
-nSize [0] = fp.ReadInt32 ();
-nParts = fp.ReadInt32 ();
-nSpeed = fp.ReadInt32 ();
-nDrift = fp.ReadInt32 ();
-nBrightness = fp.ReadInt32 ();
+nLife = fp->ReadInt32 ();
+nSize [0] = fp->ReadInt32 ();
+nParts = fp->ReadInt32 ();
+nSpeed = fp->ReadInt32 ();
+nDrift = fp->ReadInt32 ();
+nBrightness = fp->ReadInt32 ();
 for (int i = 0; i < 4; i++)
-	color [i] = fp.ReadSByte ();
-nSide = fp.ReadSByte ();
-nType = (version < 18) ? 0 : fp.ReadSByte ();
-bEnabled = (version < 19) ? 1 : fp.ReadSByte ();
+	color [i] = fp->ReadSByte ();
+nSide = fp->ReadSByte ();
+nType = (version < 18) ? 0 : fp->ReadSByte ();
+bEnabled = (version < 19) ? 1 : fp->ReadSByte ();
 }
 
 // ------------------------------------------------------------------------
 
-void CSmokeInfo::Write (CFileManager& fp, int version)
+void CSmokeInfo::Write (CFileManager* fp, int version)
 {
-fp.Write (nLife);
-fp.Write (nSize [0]);
-fp.Write (nParts);
-fp.Write (nSpeed);
-fp.Write (nDrift);
-fp.Write (nBrightness);
+fp->Write (nLife);
+fp->Write (nSize [0]);
+fp->Write (nParts);
+fp->Write (nSpeed);
+fp->Write (nDrift);
+fp->Write (nBrightness);
 for (int i = 0; i < 4; i++)
-	fp.Write (color [i]);
-fp.Write (nSide);
-fp.Write (nType);
-fp.Write (bEnabled);
+	fp->Write (color [i]);
+fp->Write (nSide);
+fp->Write (nType);
+fp->Write (bEnabled);
 }
 
 // ------------------------------------------------------------------------
 
-void CLightningInfo::Read (CFileManager& fp, int version)
+void CLightningInfo::Read (CFileManager* fp, int version)
 {
-nLife = fp.ReadInt32 ();
-nDelay = fp.ReadInt32 ();
-nLength = fp.ReadInt32 ();
-nAmplitude = fp.ReadInt32 ();
-nOffset = fp.ReadInt32 ();
-nLightnings = fp.ReadInt16 ();
-nId = fp.ReadInt16 ();
-nTarget = fp.ReadInt16 ();
-nNodes = fp.ReadInt16 ();
-nChildren = fp.ReadInt16 ();
-nSteps = fp.ReadInt16 ();
-nAngle = fp.ReadSByte ();
-nStyle = fp.ReadSByte ();
-nSmoothe = fp.ReadSByte ();
-bClamp = fp.ReadSByte ();
-bPlasma = fp.ReadSByte ();
-bSound = fp.ReadSByte ();
-bRandom = fp.ReadSByte ();
-bInPlane = fp.ReadSByte ();
+nLife = fp->ReadInt32 ();
+nDelay = fp->ReadInt32 ();
+nLength = fp->ReadInt32 ();
+nAmplitude = fp->ReadInt32 ();
+nOffset = fp->ReadInt32 ();
+nLightnings = fp->ReadInt16 ();
+nId = fp->ReadInt16 ();
+nTarget = fp->ReadInt16 ();
+nNodes = fp->ReadInt16 ();
+nChildren = fp->ReadInt16 ();
+nSteps = fp->ReadInt16 ();
+nAngle = fp->ReadSByte ();
+nStyle = fp->ReadSByte ();
+nSmoothe = fp->ReadSByte ();
+bClamp = fp->ReadSByte ();
+bPlasma = fp->ReadSByte ();
+bSound = fp->ReadSByte ();
+bRandom = fp->ReadSByte ();
+bInPlane = fp->ReadSByte ();
 for (int i = 0; i < 4; i++)
-	color [i] = fp.ReadSByte ();
-bEnabled = (version < 19) ? 1 : fp.ReadSByte ();
+	color [i] = fp->ReadSByte ();
+bEnabled = (version < 19) ? 1 : fp->ReadSByte ();
 }
 
 // ------------------------------------------------------------------------
 
-void CLightningInfo::Write (CFileManager& fp, int version)
+void CLightningInfo::Write (CFileManager* fp, int version)
 {
-fp.Write (nLife);
-fp.Write (nDelay);
-fp.Write (nLength);
-fp.Write (nAmplitude);
-fp.Write (nOffset);
-fp.Write (nLightnings);
-fp.Write (nId);
-fp.Write (nTarget);
-fp.Write (nNodes);
-fp.Write (nChildren);
-fp.Write (nSteps);
-fp.Write (nAngle);
-fp.Write (nStyle);
-fp.Write (nSmoothe);
-fp.Write (bClamp);
-fp.Write (bPlasma);
-fp.Write (bSound);
-fp.Write (bRandom);
-fp.Write (bInPlane);
+fp->Write (nLife);
+fp->Write (nDelay);
+fp->Write (nLength);
+fp->Write (nAmplitude);
+fp->Write (nOffset);
+fp->Write (nLightnings);
+fp->Write (nId);
+fp->Write (nTarget);
+fp->Write (nNodes);
+fp->Write (nChildren);
+fp->Write (nSteps);
+fp->Write (nAngle);
+fp->Write (nStyle);
+fp->Write (nSmoothe);
+fp->Write (bClamp);
+fp->Write (bPlasma);
+fp->Write (bSound);
+fp->Write (bRandom);
+fp->Write (bInPlane);
 for (int i = 0; i < 4; i++)
-	fp.Write (color [i]);
-fp.Write (bEnabled);
+	fp->Write (color [i]);
+fp->Write (bEnabled);
 }
 
 // ------------------------------------------------------------------------
 
-void CSoundInfo::Read (CFileManager& fp, int version)
+void CSoundInfo::Read (CFileManager* fp, int version)
 {
-fp.Read (szFilename, 1, sizeof (szFilename));
-nVolume = fp.ReadInt32 ();
-bEnabled = (version < 19) ? 1 : fp.ReadSByte ();
+fp->Read (szFilename, 1, sizeof (szFilename));
+nVolume = fp->ReadInt32 ();
+bEnabled = (version < 19) ? 1 : fp->ReadSByte ();
 }
 // ------------------------------------------------------------------------
 
-void CSoundInfo::Write (CFileManager& fp, int version)
+void CSoundInfo::Write (CFileManager* fp, int version)
 {
-fp.Write (szFilename, 1, sizeof (szFilename));
-fp.Write (nVolume);
-fp.Write (bEnabled);
+fp->Write (szFilename, 1, sizeof (szFilename));
+fp->Write (nVolume);
+fp->Write (bEnabled);
 }
 
 // ------------------------------------------------------------------------
 
-void CGameObject::Read (CFileManager& fp, int version, bool bFlag) 
+void CGameObject::Read (CFileManager* fp, int version, bool bFlag) 
 {
-m_info.type = fp.ReadSByte ();
-m_info.id = fp.ReadSByte ();
-m_info.controlType = fp.ReadSByte ();
-m_info.movementType = fp.ReadSByte ();
-m_info.renderType = fp.ReadSByte ();
-m_info.flags = fp.ReadSByte ();
-m_info.multiplayer = (version > 37) ? fp.ReadSByte () : 0;
-m_info.nSegment = fp.ReadInt16 ();
+m_info.type = fp->ReadSByte ();
+m_info.id = fp->ReadSByte ();
+m_info.controlType = fp->ReadSByte ();
+m_info.movementType = fp->ReadSByte ();
+m_info.renderType = fp->ReadSByte ();
+m_info.flags = fp->ReadSByte ();
+m_info.multiplayer = (version > 37) ? fp->ReadSByte () : 0;
+m_info.nSegment = fp->ReadInt16 ();
 m_location.pos.Read (fp);
-fp.Read (m_location.orient);
-m_info.size = fp.ReadInt32 ();
-m_info.shields = fp.ReadInt32 ();
+fp->Read (m_location.orient);
+m_info.size = fp->ReadInt32 ();
+m_info.shields = fp->ReadInt32 ();
 m_location.lastPos.Read (fp);
-m_info.contents.type = fp.ReadSByte ();
-m_info.contents.id = fp.ReadSByte ();
-m_info.contents.count = fp.ReadSByte ();
+m_info.contents.type = fp->ReadSByte ();
+m_info.contents.id = fp->ReadSByte ();
+m_info.contents.count = fp->ReadSByte ();
 
 switch (m_info.movementType) {
 	case MT_PHYSICS:
 		mType.physInfo.Read (fp, version);
 		break;
 	case MT_SPINNING:
-		fp.ReadVector (mType.spinRate);
+		fp->ReadVector (mType.spinRate);
 		break;
 	case MT_NONE:
 		break;
@@ -752,34 +752,34 @@ switch (m_info.renderType) {
 
 // ------------------------------------------------------------------------
 
-void CGameObject::Write (CFileManager& fp, int version, bool bFlag)
+void CGameObject::Write (CFileManager* fp, int version, bool bFlag)
 {
 if (DLE.IsStdLevel () && (m_info.type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
-fp.Write (m_info.type);
-fp.Write (m_info.id);
-fp.Write (m_info.controlType);
-fp.Write (m_info.movementType);
-fp.Write (m_info.renderType);
-fp.Write (m_info.flags);
-fp.Write (m_info.multiplayer);
-fp.Write (m_info.nSegment);
-fp.Write (m_location.pos);
-fp.Write (m_location.orient);
-fp.Write (m_info.size);
-fp.Write (m_info.shields);
-fp.Write (m_location.lastPos);
-fp.Write (m_info.contents.type);
-fp.Write (m_info.contents.id);
-fp.Write (m_info.contents.count);
+fp->Write (m_info.type);
+fp->Write (m_info.id);
+fp->Write (m_info.controlType);
+fp->Write (m_info.movementType);
+fp->Write (m_info.renderType);
+fp->Write (m_info.flags);
+fp->Write (m_info.multiplayer);
+fp->Write (m_info.nSegment);
+fp->Write (m_location.pos);
+fp->Write (m_location.orient);
+fp->Write (m_info.size);
+fp->Write (m_info.shields);
+fp->Write (m_location.lastPos);
+fp->Write (m_info.contents.type);
+fp->Write (m_info.contents.id);
+fp->Write (m_info.contents.count);
 
 switch (m_info.movementType) {
 	case MT_PHYSICS:
 		mType.physInfo.Write (fp, version);
 		break;
 	case MT_SPINNING:
-		fp.Write (mType.spinRate);
+		fp->Write (mType.spinRate);
 		break;
 	case MT_NONE:
 		break;

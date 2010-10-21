@@ -54,7 +54,8 @@ if (!Create (m_info.size)) {
 if (CFileManager::Read (m_buffer, 1, m_info.size) != m_info.size)
 	Close ();
 
-CFileManager::Close ();
+CFileManager::Close (false);
+m_info.position = 0;
 return (m_buffer == null);
 }
 
@@ -183,7 +184,7 @@ return m_info.position;
 
 // ----------------------------------------------------------------------------
 
-int CMemoryFile::Close (void)
+int CMemoryFile::Close (bool bReset)
 {
 if (m_buffer != null) {
 	delete m_buffer;
@@ -196,15 +197,15 @@ return 0;
 
 // ----------------------------------------------------------------------------
 
-int CMemoryFile::Load (CFileManager& fp, size_t size)
+int CMemoryFile::Load (CFileManager* fp, size_t size)
 {
 if (!Create (size))
 	return 1;
-if (fp.Read (m_buffer, 1, size) != size) {
+if (fp->Read (m_buffer, 1, size) != size) {
 	Close ();
 	return 1;
 	}
-m_info.name = fp.Name ();
+m_info.name = fp->Name ();
 return 0;
 }
 

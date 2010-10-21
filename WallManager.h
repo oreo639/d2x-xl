@@ -128,27 +128,27 @@ class CWallManager {
 
 		bool HaveResources (void);
 
-		inline void ReadWallInfo (CFileManager& fp) { m_info [0].Read (fp); }
+		inline void ReadWallInfo (CFileManager* fp) { m_info [0].Read (fp); }
 
-		inline void WriteWallInfo (CFileManager& fp) { m_info [0].Write (fp); }
+		inline void WriteWallInfo (CFileManager* fp) { m_info [0].Write (fp); }
 
-		inline void ReadDoorInfo (CFileManager& fp) { m_info [1].Read (fp); }
+		inline void ReadDoorInfo (CFileManager* fp) { m_info [1].Read (fp); }
 
-		inline void WriteDoorInfo (CFileManager& fp) { m_info [1].Write (fp); }
+		inline void WriteDoorInfo (CFileManager* fp) { m_info [1].Write (fp); }
 
-		inline void ReadInfo (CFileManager& fp) {
+		inline void ReadInfo (CFileManager* fp) {
 			ReadWallInfo (fp);
 			ReadDoorInfo (fp);
 			}	
 
-		inline void WriteInfo (CFileManager& fp) {
+		inline void WriteInfo (CFileManager* fp) {
 			WriteWallInfo (fp);
 			WriteDoorInfo (fp);
 			}	
 
-		void Read (CFileManager& fp, int nFileVersion);
+		void Read (CFileManager* fp, int nFileVersion);
 
-		void Write (CFileManager& fp, int nFileVersion);
+		void Write (CFileManager* fp, int nFileVersion);
 
 		void Clear (void);
 
@@ -182,13 +182,13 @@ class CWallManager {
 			}
 
 	private:
-		void ReadWalls (CFileManager& fp, int nFileVersion);
+		void ReadWalls (CFileManager* fp, int nFileVersion);
 
-		void WriteWalls (CFileManager& fp, int nFileVersion);
+		void WriteWalls (CFileManager* fp, int nFileVersion);
 
-		void ReadDoors (CFileManager& fp, int nFileVersion);
+		void ReadDoors (CFileManager* fp, int nFileVersion);
 
-		void WriteDoors (CFileManager& fp, int nFileVersion);
+		void WriteDoors (CFileManager* fp, int nFileVersion);
 };
 
 extern CWallManager wallManager;

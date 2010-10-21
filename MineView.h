@@ -302,7 +302,7 @@ public:
 	void	DrawHighlight (short clear_it = 0);
 	void  DrawTunnel (void);
 
-	//void	ReadPolyModel (tPolyModel& polyModel, CFileManager& file);
+	//void	ReadPolyModel (tPolyModel& polyModel, CFileManager* file);
 
 	// view control functions
 	void	Zoom (int nSteps, double zoom);

@@ -13,15 +13,15 @@
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 #if 0
-int CFixVector::Read (CFileManager& fp) 
+int CFixVector::Read (CFileManager* fp) 
 { 
-x = fp.ReadInt32 ();
-y = fp.ReadInt32 ();
-z = fp.ReadInt32 ();
+x = fp->ReadInt32 ();
+y = fp->ReadInt32 ();
+z = fp->ReadInt32 ();
 return 1;
 }
 
-void CFixVector::Write (CFileManager& fp) 
+void CFixVector::Write (CFileManager* fp) 
 { 
 WriteInt32 (x, fp);
 WriteInt32 (y, fp);

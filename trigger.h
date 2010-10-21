@@ -25,9 +25,9 @@ class CTriggerTargets {
 
 		void Clear (void);
 
-		void Read (CFileManager& fp);
+		void Read (CFileManager* fp);
 
-		void Write (CFileManager& fp);
+		void Write (CFileManager* fp);
 
 		short Add (CSideKey key);
 
@@ -82,9 +82,9 @@ class CTrigger : public CTriggerTargets, public CGameItem {
 
 		inline byte& Type (void) { return m_info.type; }
 
-		void Read (CFileManager& fp, int version, bool bObjTrigger);
+		void Read (CFileManager* fp, int version, bool bObjTrigger);
 
-		void Write (CFileManager& fp, int version, bool bObjTrigger);
+		void Write (CFileManager* fp, int version, bool bObjTrigger);
 
 		virtual void Clear (void);
 
@@ -113,9 +113,9 @@ class CTrigger : public CTriggerTargets, public CGameItem {
 class CReactorTrigger : public CTriggerTargets, public CGameItem {
 	public:
 
-		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager* fp, int version = 0, bool bFlag = false);
 
-		void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager* fp, int version = 0, bool bFlag = false);
 
 		virtual void Clear (void) { CTriggerTargets::Clear (); }
 

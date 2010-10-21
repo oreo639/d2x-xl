@@ -379,13 +379,13 @@ if (fSrc.Open (pszFile, "rb")) {
 // set subfile name
 fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 // skip mineDataOffset and gameDataOffset
-if (theMine->LoadMineSigAndType (fSrc))
+if (theMine->LoadMineSigAndType (&fSrc))
 	goto errorExit;
 fSrc.ReadInt32 ();
 fSrc.ReadInt32 ();
-theMine->LoadPaletteName (fSrc);
+theMine->LoadPaletteName (&fSrc);
 fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-m_level.Load (fSrc, size);
+m_level.Load (&fSrc, size);
 //while (size > 0) {
 //	int chunk = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;
 //	fSrc.Read (dataBuf, 1, chunk);
@@ -396,7 +396,7 @@ m_level.Load (fSrc, size);
 //	}
 
 if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".pal")))
-	paletteManager.LoadCustom (fSrc, size);
+	paletteManager.LoadCustom (&fSrc, size);
 if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".lgt")))
 	lightManager.ReadLightMap (fSrc, size);
 if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".clr")))
@@ -988,7 +988,7 @@ switch (nType) {
 		lightManager.WriteColorMap (fTmp);
 		break;
 	case 2:
-		i = paletteManager.SaveCustom (fTmp);
+		i = paletteManager.SaveCustom (&fTmp);
 		break;
 	case 3:
 		i = textureManager.CreatePog (fTmp);

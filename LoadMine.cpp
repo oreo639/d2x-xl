@@ -30,7 +30,7 @@ if (fp == null) {
 		}
 	}
 undoManager.Lock ();
-LoadMine (*fp, bLoadFromHog, bCreate);
+LoadMine (fp, bLoadFromHog, bCreate);
 undoManager.Unlock ();
 return bCreate ? 1 : 0;
 }
@@ -79,17 +79,17 @@ return 0; // failed
 
 // -----------------------------------------------------------------------------
 
-short CMine::LoadMineSigAndType (CFileManager& fp)
+short CMine::LoadMineSigAndType (CFileManager* fp)
 {
-int sig = fp.ReadInt32 ();
+int sig = fp->ReadInt32 ();
 if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
 	ErrorMsg ("Signature value incorrect.");
-	fp.Close ();
+	fp->Close ();
 	return 1;
 	}
 
 // read version
-SetLevelVersion (fp.ReadInt32 ());
+SetLevelVersion (fp->ReadInt32 ());
 if (LevelVersion () == 1) {
 	SetFileType (RDL_FILE);
 	}
@@ -99,7 +99,7 @@ else if ((LevelVersion () >= 6L) && (LevelVersion () <= 21L)) {
 else {
 	sprintf_s (message, sizeof (message),  "Version %d unknown. Cannot load this level.", LevelVersion ());
 	ErrorMsg (message);
-	fp.Close ();
+	fp->Close ();
 	return 1;
 	}
 return 0;
@@ -107,14 +107,14 @@ return 0;
 
 // -----------------------------------------------------------------------------
 
-void CMine::LoadPaletteName (CFileManager& fp, bool bCreate)
+void CMine::LoadPaletteName (CFileManager* fp, bool bCreate)
 {
 if (IsD2File ()) {
 	if (LevelVersion () >= 8) {
-		fp.ReadInt16 ();
-		fp.ReadInt16 ();
-		fp.ReadInt16 ();
-		fp.ReadSByte ();
+		fp->ReadInt16 ();
+		fp->ReadInt16 ();
+		fp->ReadInt16 ();
+		fp->ReadSByte ();
 		}
 	// read palette file name
 	paletteManager.LoadName (fp);
@@ -142,12 +142,12 @@ else
 
 // -----------------------------------------------------------------------------
 
-short CMine::LoadMine (CFileManager& fp, bool bLoadFromHog, bool bCreate)
+short CMine::LoadMine (CFileManager* fp, bool bLoadFromHog, bool bCreate)
 {
 m_changesMade = 0;
 
 //	CFileManager fp;
-//if (fp.Open (filename, "rb")) {
+//if (fp->Open (filename, "rb")) {
 //	sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
 //	ErrorMsg (message);
 //	return -1;
@@ -157,30 +157,30 @@ if (LoadMineSigAndType (fp))
 	return -1;
 ClearMineData ();
 // read mine data offset
-int mineDataOffset = fp.ReadInt32 ();
+int mineDataOffset = fp->ReadInt32 ();
 // read game data offset
-int gameDataOffset = fp.ReadInt32 ();
+int gameDataOffset = fp->ReadInt32 ();
 LoadPaletteName (fp, bCreate);
 
 // read descent 2 reactor information
 if (IsD2File ()) {
-	ReactorTime () = fp.ReadInt32 (); // base control center explosion time
-	ReactorStrength () = fp.ReadInt32 (); // reactor strength
+	ReactorTime () = fp->ReadInt32 (); // base control center explosion time
+	ReactorStrength () = fp->ReadInt32 (); // reactor strength
 	lightManager.ReadVariableLights (fp);
 	// read secret segment number
-	SecretSegment () = fp.ReadInt32 ();
+	SecretSegment () = fp->ReadInt32 ();
 	// read secret segment orientation?
-	fp.Read (SecretOrient ());
+	fp->Read (SecretOrient ());
 	}
 
-fp.Seek (mineDataOffset, SEEK_SET);
+fp->Seek (mineDataOffset, SEEK_SET);
 if (LoadMineGeometry (fp, bCreate) != 0) {
 	ErrorMsg ("Error loading mine data");
-	fp.Close ();
+	fp->Close ();
 	return(2);
 	}
 
-fp.Seek (gameDataOffset, SEEK_SET);
+fp->Seek (gameDataOffset, SEEK_SET);
 if (LoadGameItems (fp, bCreate) != 0) {
 	ErrorMsg ("Error loading game data");
 	// reset "howmany"
@@ -189,7 +189,7 @@ if (LoadGameItems (fp, bCreate) != 0) {
 	triggerManager.ResetInfo ();
 	segmentManager.ResetInfo ();
 	lightManager.ResetInfo ();
-	fp.Close ();
+	fp->Close ();
 	return 3;
 	}
 
@@ -198,21 +198,21 @@ if (!(bLoadFromHog || bCreate)) {
 	textureManager.Reload (textureManager.Version ());
 	if (IsD2File ()) {
 		char filename [256];
-		strcpy_s (filename, sizeof (filename), fp.Name ());
+		strcpy_s (filename, sizeof (filename), fp->Name ());
 		char* ps = strstr (filename, ".");
 		if (ps)
 			strcpy_s (ps, 256 - (ps - filename), ".pog");
 		else
 			strcat_s (filename, 256, ".pog");
-		if (!fp.Open (filename, "rb")) {
-			textureManager.ReadPog (fp, fp.Size ());
-			fp.Close ();
+		if (!fp->Open (filename, "rb")) {
+			textureManager.ReadPog (*fp, fp->Size ());
+			fp->Close ();
 			}
-		CFileManager fp;
-		robotManager.ReadHAM (fp);
+		robotManager.ReadHAM (null);
 		if (IsD2File ()) {
 			char szHogFile [256], szHamFile [256], *p;
 			long nSize, nOffset;
+			CFileManager hfp;
 
 			CFileManager::SplitPath (descentPath [1], szHogFile, null, null);
 			if (p = strstr (szHogFile, "data"))
@@ -223,12 +223,12 @@ if (!(bLoadFromHog || bCreate)) {
 				if (p = strstr (szHamFile, "data"))
 					*p = '\0';
 				strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
-				if (fp.Open (szHogFile, "rb"))
+				if (hfp.Open (szHogFile, "rb"))
 					ErrorMsg ("Could not open HOG file.");
 				else {
-					if (0 < fp.Seek (nOffset + sizeof (struct level_header), SEEK_SET))
-						m_bVertigo = robotManager.ReadHAM (fp, EXTENDED_HAM) == 0;
-					fp.Close ();
+					if (0 < hfp.Seek (nOffset + sizeof (struct level_header), SEEK_SET))
+						m_bVertigo = robotManager.ReadHAM (&hfp, EXTENDED_HAM) == 0;
+					hfp.Close ();
 					}
 				}
 			}
@@ -237,9 +237,9 @@ if (!(bLoadFromHog || bCreate)) {
 			strcpy_s (filename, 256 - (ps - filename), ".hxm");
 		else
 			strcat_s (filename, 256, ".hxm");
-		if (!fp.Open (filename, "rb")) {
-			robotManager.ReadHXM (fp, -1);
-			fp.Close ();
+		if (!fp->Open (filename, "rb")) {
+			robotManager.ReadHXM (*fp, -1);
+			fp->Close ();
 			}
 		}
 	}
@@ -253,13 +253,13 @@ return 0;
 // ACTION - Reads a mine data portion of RDL file.
 // -----------------------------------------------------------------------------
 
-short CMine::LoadMineGeometry (CFileManager& fp, bool bCreate)
+short CMine::LoadMineGeometry (CFileManager* fp, bool bCreate)
 {
 // read version (1 byte)
-byte version = fp.ReadByte ();
+byte version = fp->ReadByte ();
 
 // read number of vertices (2 bytes)
-ushort nVertices = fp.ReadUInt16 ();
+ushort nVertices = fp->ReadUInt16 ();
 if (nVertices > VERTEX_LIMIT) {
 	sprintf_s (message, sizeof (message),  "Too many vertices (%d)", nVertices);
 	ErrorMsg (message);
@@ -269,7 +269,7 @@ if (IsD1File () ? nVertices > MAX_VERTICES_D1 : IsStdLevel () && (nVertices > MA
 	ErrorMsg ("Warning: Too many vertices for this level version");
 
 // read number of Segments () (2 bytes)
-ushort nSegments = fp.ReadUInt16 ();
+ushort nSegments = fp->ReadUInt16 ();
 if (nSegments > SEGMENT_LIMIT) {
 	sprintf_s (message, sizeof (message), "Too many Segments (%d)", nSegments);
 	ErrorMsg (message);
@@ -285,14 +285,14 @@ segmentManager.ResetInfo ();
 lightManager.ResetInfo ();
 
 vertexManager.Count () = nVertices;
-vertexManager.FileOffset () = fp.Tell ();
+vertexManager.FileOffset () = fp->Tell ();
 vertexManager.Read (fp, FileInfo ().version);
 
 segmentManager.Count () = nSegments;
-segmentManager.FileOffset () = fp.Tell ();
+segmentManager.FileOffset () = fp->Tell ();
 segmentManager.ReadSegments (fp, FileInfo ().version);
 
-lightManager.ReadColors (fp);
+lightManager.ReadColors (*fp);
 
 if (objectManager.Count () > MAX_OBJECTS) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
@@ -309,7 +309,7 @@ return 0;
 //          materialogrifizationator data from an RDL file.
 // -----------------------------------------------------------------------------
 
-short CMine::LoadGameItems (CFileManager& fp, bool bCreate) 
+short CMine::LoadGameItems (CFileManager* fp, bool bCreate) 
 {
 // Check signature
 Info ().Read (fp);
@@ -321,7 +321,7 @@ if (Info ().fileInfo.version < 14)
 	m_currentLevelName [0] = 0;
 else {  /*load mine filename */
 	for (char *p = m_currentLevelName; ; p++) {
-		*p = fp.ReadChar ();
+		*p = fp->ReadChar ();
 		if (*p== '\n')
 			*p = 0;
 		if (*p == 0)

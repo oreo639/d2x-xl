@@ -182,22 +182,23 @@ class CLightManager {
 		void ReadColorMap (CFileManager& fp);
 		void ReadColors (CFileManager& fp);
 		void WriteColors (CFileManager& fp);
-		void ReadVariableLights (CFileManager& fp);
-		void WriteVariableLights (CFileManager& fp);
-		void ReadLightDeltas (CFileManager& fp, int nFileVersion);
-		void WriteLightDeltas (CFileManager& fp, int nFileVersion);
 
-		inline void ReadDeltaIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Read (fp); }
-		inline void WriteDeltaIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Write (fp); }
-		inline void ReadDeltaValueInfo (CFileManager& fp) { m_deltaValueInfo.Read (fp); }
-		inline void WriteDeltaValueInfo (CFileManager& fp) { m_deltaValueInfo.Write (fp); }
+		void ReadVariableLights (CFileManager* fp);
+		void WriteVariableLights (CFileManager* fp);
+		void ReadLightDeltas (CFileManager* fp, int nFileVersion);
+		void WriteLightDeltas (CFileManager* fp, int nFileVersion);
 
-		inline void ReadLightDeltaInfo (CFileManager& fp) {
+		inline void ReadDeltaIndexInfo (CFileManager* fp) { m_deltaIndexInfo.Read (fp); }
+		inline void WriteDeltaIndexInfo (CFileManager* fp) { m_deltaIndexInfo.Write (fp); }
+		inline void ReadDeltaValueInfo (CFileManager* fp) { m_deltaValueInfo.Read (fp); }
+		inline void WriteDeltaValueInfo (CFileManager* fp) { m_deltaValueInfo.Write (fp); }
+
+		inline void ReadLightDeltaInfo (CFileManager* fp) {
 			ReadDeltaIndexInfo (fp);
 			ReadDeltaValueInfo (fp);
 			}
 
-		inline void WriteLightDeltaInfo (CFileManager& fp) {
+		inline void WriteLightDeltaInfo (CFileManager* fp) {
 			WriteDeltaIndexInfo (fp);
 			WriteDeltaValueInfo (fp);
 			}

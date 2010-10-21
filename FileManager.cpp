@@ -360,7 +360,7 @@ return Tell ();
 
 // ----------------------------------------------------------------------------
 
-int CFileManager::Close (void)
+int CFileManager::Close (bool bReset)
 {
 	int result;
 
@@ -368,8 +368,10 @@ if (!m_info.file)
 	return 0;
 result = fclose (m_info.file);
 m_info.file = null;
-m_info.size = 0;
-m_info.position = -1;
+if (bReset) {
+	m_info.size = 0;
+	m_info.position = -1;
+	}
 return result;
 }
 

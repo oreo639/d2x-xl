@@ -134,19 +134,19 @@ class CMine {
 		bool SpinSelection (double angle); 
 		void LoadSideTextures (short nSegment, short nSide);
 
-		short LoadMineSigAndType (CFileManager& fp);
-		void LoadPaletteName (CFileManager& fp, bool bNewMine = false);
+		short LoadMineSigAndType (CFileManager* fp);
+		void LoadPaletteName (CFileManager* fp, bool bNewMine = false);
 
 	private:
 		short CreateNewLevel (CMemoryFile& fp);
 		int FixIndexValues (void) { return segmentManager.Fix () | wallManager.Fix (); }
 
 		short LoadLevel (CFileManager* fp, bool bLoadFromHog);
-		short LoadMine (CFileManager& fp, bool bLoadFromHog, bool bCreate);
-		short LoadMineGeometry (CFileManager& fp, bool bNewMine);
-		short LoadGameItems (CFileManager& fp, bool bNewMine);
-		short SaveMineGeometry (CFileManager& fp);
-		short SaveGameItems (CFileManager& fp);
+		short LoadMine (CFileManager* fp, bool bLoadFromHog, bool bCreate);
+		short LoadMineGeometry (CFileManager* fp, bool bNewMine);
+		short LoadGameItems (CFileManager* fp, bool bNewMine);
+		short SaveMineGeometry (CFileManager* fp);
+		short SaveGameItems (CFileManager* fp);
 		void ClearMineData (void);
 	};
 

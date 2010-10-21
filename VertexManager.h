@@ -73,9 +73,9 @@ class CVertexManager  {
 
 		void SetIndex (void);
 
-		void Read (CFileManager& fp, int nFileVersion);
+		void Read (CFileManager* fp, int nFileVersion);
 
-		void Write (CFileManager& fp, int nFileVersion);
+		void Write (CFileManager* fp, int nFileVersion);
 
 		void Clear (void);
 

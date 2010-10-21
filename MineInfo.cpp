@@ -5,79 +5,79 @@
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CMineFileInfo::Read (CFileManager& fp) 
+void CMineFileInfo::Read (CFileManager* fp) 
 {
-signature = fp.ReadInt16 ();
-version = fp.ReadInt16 ();
-size = fp.ReadInt32 ();
+signature = fp->ReadInt16 ();
+version = fp->ReadInt16 ();
+size = fp->ReadInt32 ();
 }
 
 // -----------------------------------------------------------------------------
 
-void CMineFileInfo::Write (CFileManager& fp) 
+void CMineFileInfo::Write (CFileManager* fp) 
 {
-fp.Write (signature);
-fp.Write (version);
-fp.Write (size);
-}
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-void CPlayerItemInfo::Read (CFileManager& fp) 
-{
-offset = fp.ReadInt32 ();
-size  = fp.ReadInt32 ();
-}
-
-// -----------------------------------------------------------------------------
-
-void CPlayerItemInfo::Write (CFileManager& fp) 
-{
-fp.Write (offset);
-fp.Write (size);
+fp->Write (signature);
+fp->Write (version);
+fp->Write (size);
 }
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CMineItemInfo::Read (CFileManager& fp) 
+void CPlayerItemInfo::Read (CFileManager* fp) 
 {
-offset = fp.ReadInt32 ();
-count = fp.ReadInt32 ();
-size  = fp.ReadInt32 ();
+offset = fp->ReadInt32 ();
+size  = fp->ReadInt32 ();
 }
 
 // -----------------------------------------------------------------------------
 
-void CMineItemInfo::Write (CFileManager& fp) 
+void CPlayerItemInfo::Write (CFileManager* fp) 
+{
+fp->Write (offset);
+fp->Write (size);
+}
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+void CMineItemInfo::Read (CFileManager* fp) 
+{
+offset = fp->ReadInt32 ();
+count = fp->ReadInt32 ();
+size  = fp->ReadInt32 ();
+}
+
+// -----------------------------------------------------------------------------
+
+void CMineItemInfo::Write (CFileManager* fp) 
 {
 if (count == 0)
 	offset = -1;
-fp.Write (offset);
-fp.Write (count);
-fp.Write (size);
+fp->Write (offset);
+fp->Write (count);
+fp->Write (size);
 }
 
 // -----------------------------------------------------------------------------
 
-bool CMineItemInfo::Setup (CFileManager& fp) 
+bool CMineItemInfo::Setup (CFileManager* fp) 
 {
-offset = (count == 0) ? -1 : fp.Tell ();
+offset = (count == 0) ? -1 : fp->Tell ();
 return offset >= 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool CMineItemInfo::Restore (CFileManager& fp) 
+bool CMineItemInfo::Restore (CFileManager* fp) 
 {
 if (offset < 0) {
 	count = 0;
 	return false;
 	}
-fp.Seek (offset);
+fp->Seek (offset);
 return true;
 }
 
@@ -85,11 +85,11 @@ return true;
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CMineInfo::Read (CFileManager& fp) 
+void CMineInfo::Read (CFileManager* fp) 
 {
 fileInfo.Read (fp);
-fp.Read (mineFilename, 1, sizeof (mineFilename));
-level = fp.ReadInt32 ();
+fp->Read (mineFilename, 1, sizeof (mineFilename));
+level = fp->ReadInt32 ();
 player.Read (fp);
 objectManager.ReadInfo (fp);
 wallManager.ReadInfo (fp);
@@ -105,13 +105,13 @@ if (fileInfo.size > 143)
 
 // -----------------------------------------------------------------------------
 
-void CMineInfo::Write (CFileManager& fp) 
+void CMineInfo::Write (CFileManager* fp) 
 {
-	long startPos = fp.Tell ();
+	long startPos = fp->Tell ();
 
 fileInfo.Write (fp);
-fp.Write (mineFilename, 1, sizeof (mineFilename));
-fp.Write (level);
+fp->Write (mineFilename, 1, sizeof (mineFilename));
+fp->Write (level);
 player.Write (fp);
 objectManager.WriteInfo (fp);
 wallManager.WriteInfo (fp);
@@ -123,11 +123,11 @@ segmentManager.WriteRobotMakerInfo (fp);
 lightManager.WriteLightDeltaInfo (fp);
 if (fileInfo.size < 0) {
 	segmentManager.WriteEquipMakerInfo (fp);
-	fileInfo.size = fp.Tell () - startPos;
-	long endPos = fp.Tell ();
-	fp.Seek (startPos);
+	fileInfo.size = fp->Tell () - startPos;
+	long endPos = fp->Tell ();
+	fp->Seek (startPos);
 	fileInfo.Write (fp);
-	fp.Seek (endPos);
+	fp->Seek (endPos);
 	}
 }
 

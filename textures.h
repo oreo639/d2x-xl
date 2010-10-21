@@ -148,36 +148,36 @@ public:
 		avgColor = 0;
 		}
 
-	void Read (CFileManager& fp, int nVersion = -1) {
+	void Read (CFileManager* fp, int nVersion = -1) {
 		if (nVersion >= 0)
 			m_nVersion = nVersion;
-		fp.ReadBytes (name, sizeof (name));
-		dflags = fp.ReadByte ();
-		width = (ushort) fp.ReadByte ();
-		height = (ushort) fp.ReadByte ();
+		fp->ReadBytes (name, sizeof (name));
+		dflags = fp->ReadByte ();
+		width = (ushort) fp->ReadByte ();
+		height = (ushort) fp->ReadByte ();
 		if (m_nVersion == 1)
-			whExtra = fp.ReadByte ();
+			whExtra = fp->ReadByte ();
 		else {
 			name [7] = 0;
 			whExtra = 0;
 			}
-		flags = fp.ReadByte ();
-		avgColor = fp.ReadByte ();
-		offset = fp.ReadUInt32 ();
+		flags = fp->ReadByte ();
+		avgColor = fp->ReadByte ();
+		offset = fp->ReadUInt32 ();
 		Decode ();
 		}
 
-	void Write (CFileManager& fp) {
+	void Write (CFileManager* fp) {
 		Encode ();
-		fp.WriteBytes (name, sizeof (name));
-		fp.Write (dflags);
-		fp.WriteByte ((byte) width);
-		fp.WriteByte ((byte) height);
+		fp->WriteBytes (name, sizeof (name));
+		fp->Write (dflags);
+		fp->WriteByte ((byte) width);
+		fp->WriteByte ((byte) height);
 		if (m_nVersion == 1)
-			fp.Write (whExtra);
-		fp.Write (flags);
-		fp.Write (avgColor);
-		fp.Write (offset);
+			fp->Write (whExtra);
+		fp->Write (flags);
+		fp->Write (avgColor);
+		fp->Write (offset);
 		}
 
 	inline int BufSize (void) { return (int) width * (int) height; }

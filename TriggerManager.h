@@ -174,21 +174,21 @@ class CTriggerManager {
 #else
 		bool Full (void);
 #endif
-		inline void ReadInfo (CFileManager& fp) { m_info [0].Read (fp); }
+		inline void ReadInfo (CFileManager* fp) { m_info [0].Read (fp); }
 
-		inline void WriteInfo (CFileManager& fp) { m_info [0].Write (fp); }
+		inline void WriteInfo (CFileManager* fp) { m_info [0].Write (fp); }
 
-		inline void ReadReactorInfo (CFileManager& fp) { m_reactorInfo.Read (fp); }
+		inline void ReadReactorInfo (CFileManager* fp) { m_reactorInfo.Read (fp); }
 
-		inline void WriteReactorInfo (CFileManager& fp) { m_reactorInfo.Write (fp); }
+		inline void WriteReactorInfo (CFileManager* fp) { m_reactorInfo.Write (fp); }
 
-		void Read (CFileManager& fp, int nFileVersion);
+		void Read (CFileManager* fp, int nFileVersion);
 
-		void Write (CFileManager& fp, int nFileVersion);
+		void Write (CFileManager* fp, int nFileVersion);
 
-		void ReadReactor (CFileManager& fp, int nFileVersion);
+		void ReadReactor (CFileManager* fp, int nFileVersion);
 
-		void WriteReactor (CFileManager& fp, int nFileVersion);
+		void WriteReactor (CFileManager* fp, int nFileVersion);
 
 		void Clear (void);
 

@@ -14,7 +14,7 @@ class CMemoryFile : public CFileManager {
 	public:
 		virtual int Open (const char *filename, const char *mode);
 		virtual size_t Read (void *buf, size_t elsize, size_t nelem);
-		virtual int Close (void);
+		virtual int Close (bool bReset = true);
 		virtual int Seek (size_t offset, int whence = SEEK_SET);
 		virtual int Tell (void);
 		virtual char *GetS (char *buf, size_t n);
@@ -23,7 +23,7 @@ class CMemoryFile : public CFileManager {
 		virtual int PutC (int c);
 		virtual int PutS (const char *str);
 
-		int Load (CFileManager& fp, size_t size);
+		int Load (CFileManager* fp, size_t size);
 
 		int Load (const byte* buffer, size_t size);
 

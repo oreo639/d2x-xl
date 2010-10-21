@@ -436,7 +436,7 @@ for (CWallIterator wi; wi; wi++)
 
 // ----------------------------------------------------------------------------- 
 
-void CWallManager::ReadWalls (CFileManager& fp, int nFileVersion)
+void CWallManager::ReadWalls (CFileManager* fp, int nFileVersion)
 {
 if (m_info [0].Restore (fp)) {
 #if USE_FREELIST
@@ -460,11 +460,11 @@ if (m_info [0].Restore (fp)) {
 
 // ----------------------------------------------------------------------------- 
 
-void CWallManager::WriteWalls (CFileManager& fp, int nFileVersion)
+void CWallManager::WriteWalls (CFileManager* fp, int nFileVersion)
 {
 if (m_info [0].Setup (fp)) {
 	m_info [0].size = 24;
-	m_info [0].offset = fp.Tell ();
+	m_info [0].offset = fp->Tell ();
 	for (CWallIterator wi; wi; wi++)
 		wi->Write (fp, nFileVersion);
 	}
@@ -472,10 +472,10 @@ if (m_info [0].Setup (fp)) {
 
 // ----------------------------------------------------------------------------- 
 
-void CWallManager::ReadDoors (CFileManager& fp, int nFileVersion)
+void CWallManager::ReadDoors (CFileManager* fp, int nFileVersion)
 {
 if (m_info [1].offset >= 0) {
-	fp.Seek (m_info [1].offset);
+	fp->Seek (m_info [1].offset);
 	for (short i = 0; i < DoorCount (); i++) {
 		if (i < MAX_DOORS) {
 			m_doors [i].Read (fp, nFileVersion);
@@ -493,11 +493,11 @@ if (m_info [1].offset >= 0) {
 
 // ----------------------------------------------------------------------------- 
 
-void CWallManager::WriteDoors (CFileManager& fp, int nFileVersion)
+void CWallManager::WriteDoors (CFileManager* fp, int nFileVersion)
 {
 if (m_info [1].Setup (fp)) {
 	m_info [1].size = 16;
-	m_info [1].offset = fp.Tell ();
+	m_info [1].offset = fp->Tell ();
 	for (short i = 0; i < WallCount (); i++)
 		m_doors [i].Write (fp, nFileVersion);
 	}
@@ -515,7 +515,7 @@ for (short i = 0; i < DoorCount (); i++)
 
 //------------------------------------------------------------------------------
 
-void CWallManager::Read (CFileManager& fp, int nFileVersion)
+void CWallManager::Read (CFileManager* fp, int nFileVersion)
 {
 ReadWalls (fp, nFileVersion);
 ReadDoors (fp, nFileVersion);
@@ -523,7 +523,7 @@ ReadDoors (fp, nFileVersion);
 
 //------------------------------------------------------------------------------
 
-void CWallManager::Write (CFileManager& fp, int nFileVersion)
+void CWallManager::Write (CFileManager* fp, int nFileVersion)
 {
 WriteWalls (fp, nFileVersion);
 WriteDoors (fp, nFileVersion);

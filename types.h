@@ -31,14 +31,14 @@ public:
 	
 	inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
 
-	void Read (CFileManager& fp) {
-		m_nSegment = fp.ReadInt16 ();
-		m_nSide = fp.ReadInt16 ();
+	void Read (CFileManager* fp) {
+		m_nSegment = fp->ReadInt16 ();
+		m_nSide = fp->ReadInt16 ();
 		}
 
-	void Write (CFileManager& fp) {
-		fp.Write (m_nSegment);
-		fp.Write (m_nSide);
+	void Write (CFileManager* fp) {
+		fp->Write (m_nSegment);
+		fp->Write (m_nSide);
 		}
 
 	void Clear (void) {
@@ -57,16 +57,16 @@ public:
 
 class CUVL : public tUVL {
 public:
-	inline void Read (CFileManager& fp) {
-		u = fp.ReadInt16 ();
-		v = fp.ReadInt16 ();
-		l = fp.ReadInt16 ();
+	inline void Read (CFileManager* fp) {
+		u = fp->ReadInt16 ();
+		v = fp->ReadInt16 ();
+		l = fp->ReadInt16 ();
 		}
 
-	inline void Write (CFileManager& fp) {
-		fp.Write (u);
-		fp.Write (v);
-		fp.Write (l);
+	inline void Write (CFileManager* fp) {
+		fp->Write (u);
+		fp->Write (v);
+		fp->Write (l);
 		}
 
 	inline void Clear (void) { u = v = l = 0; }

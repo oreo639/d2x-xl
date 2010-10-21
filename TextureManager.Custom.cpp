@@ -69,7 +69,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	bExtraTexture = (nTexture >= MAX_TEXTURES_D2);
 	// get texture data offset from texture header
 	fp.Seek (hdrOffset + i * sizeof (PIG_TEXTURE_D2), SEEK_SET);
-	pigTexInfo.Read (fp);
+	pigTexInfo.Read (&fp);
 	nSize = (uint) pigTexInfo.width * (uint) pigTexInfo.height;
 	if ((long) (hdrSize + pigTexInfo.offset + nSize) >= nFileSize) {
 		nMissingTextures++;
@@ -164,7 +164,7 @@ if (!texP->m_info.nFormat)
 				pigTexInfo.flags |= BM_FLAG_SUPER_TRANSPARENT;
 			}
 	}
-pigTexInfo.Write (fp);
+pigTexInfo.Write (&fp);
 if (pos != 0xFFFFFFFF)
 	fp.Seek (pos);
 return nOffset + (texP->m_info.nFormat ? texP->Size () * sizeof (CBGRA) : texP->Size ());

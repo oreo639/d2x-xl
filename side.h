@@ -26,9 +26,9 @@ public:
 
 	inline tSide& Info (void) { return m_info; }
 
-	void Read (CFileManager& fp, bool bTextured);
+	void Read (CFileManager* fp, bool bTextured);
 
-	void Write (CFileManager& fp);
+	void Write (CFileManager* fp);
 
 	void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	

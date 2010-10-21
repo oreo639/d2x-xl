@@ -318,7 +318,7 @@ undoManager.End ();
 
 // -----------------------------------------------------------------------------
 
-void CObjectManager::Read (CFileManager& fp, int nFileVersion)
+void CObjectManager::Read (CFileManager* fp, int nFileVersion)
 {
 if (m_info.Restore (fp)) {
 	for (short i = 0; i < Count (); i++) {
@@ -336,7 +336,7 @@ if (m_info.Restore (fp)) {
 
 // ----------------------------------------------------------------------------- 
 
-void CObjectManager::Write (CFileManager& fp, int nFileVersion)
+void CObjectManager::Write (CFileManager* fp, int nFileVersion)
 {
 if (m_info.Setup (fp)) {
 	m_info.size = 0x108;

@@ -28,13 +28,13 @@ typedef struct tAngleVector {
 public:
 	short p, b, h;
 #if 0
-inline void Read (CFileManager& fp) { 
-	p = fp.ReadFixAng ();
-	b = fp.ReadFixAng ();
-	h = fp.ReadFixAng ();
+inline void Read (CFileManager* fp) { 
+	p = fp->ReadFixAng ();
+	b = fp->ReadFixAng ();
+	h = fp->ReadFixAng ();
 	}
 
-inline void Write (CFileManager& fp) { 
+inline void Write (CFileManager* fp) { 
 	WriteInt16 (p, fp);
 	WriteInt16 (b, fp);
 	WriteInt16 (h, fp);
@@ -53,8 +53,8 @@ public:
 	void Set (short p, short b, short h) { v.p = p, v.b = b, v.h = h; }
 	void Clear (void) { Set (0,0,0); }
 #if 0
-	inline void Read (CFileManager& fp) { v.Read (fp); }
-	inline void Write (CFileManager& fp) { v.Write (fp); }
+	inline void Read (CFileManager* fp) { v.Read (fp); }
+	inline void Write (CFileManager* fp) { v.Write (fp); }
 #endif
 	inline const CAngleVector& operator= (CAngleVector& other) { 
 		v.p = other.v.p, v.b = other.v.b, other.v.h = other.v.h; 
@@ -74,13 +74,13 @@ struct tFixVector {
 public:
 	int x, y, z;
 #if 0
-inline void Read (CFileManager& fp) { 
-	x = fp.ReadInt32 ();
-	y = fp.ReadInt32 ();
-	z = fp.ReadInt32 ();
+inline void Read (CFileManager* fp) { 
+	x = fp->ReadInt32 ();
+	y = fp->ReadInt32 ();
+	z = fp->ReadInt32 ();
 	}
 
-inline void Write (CFileManager& fp) { 
+inline void Write (CFileManager* fp) { 
 	WriteInt32 (x, fp);
 	WriteInt32 (y, fp);
 	WriteInt32 (z, fp);
@@ -100,8 +100,8 @@ public:
 	void Clear (void) { Set (0,0,0); }
 
 #if 0
-inline void Read (CFileManager& fp) { v.Read (fp); }
-inline void Write (CFileManager& fp) { v.Write (fp); }
+inline void Read (CFileManager* fp) { v.Read (fp); }
+inline void Write (CFileManager* fp) { v.Write (fp); }
 #endif
 
 inline const bool operator== (const CFixVector other);
@@ -142,13 +142,13 @@ struct tDoubleVector {
 public:
 	double x, y, z;
 #if 0
-inline void Read (CFileManager& fp) { 
-	x = X2D (fp.ReadInt32 ());
-	y = X2D (fp.ReadInt32 ());
-	z = X2D (fp.ReadInt32 ());
+inline void Read (CFileManager* fp) { 
+	x = X2D (fp->ReadInt32 ());
+	y = X2D (fp->ReadInt32 ());
+	z = X2D (fp->ReadInt32 ());
 	}
 
-inline void Write (CFileManager& fp) { 
+inline void Write (CFileManager* fp) { 
 	WriteInt32 (D2X (x), fp);
 	WriteInt32 (D2X (y), fp);
 	WriteInt32 (D2X (z), fp);
@@ -167,8 +167,8 @@ class CDoubleVector {
 		void Set (double x, double y, double z) { v.x = x, v.y = y, v.z = z; }
 		void Clear (void) { Set (0,0,0); }
 #if 0
-	inline void Read (CFileManager& fp) { v.Read (fp); }
-	inline void Write (CFileManager& fp) { v.Write (fp); }
+	inline void Read (CFileManager* fp) { v.Read (fp); }
+	inline void Write (CFileManager* fp) { v.Write (fp); }
 #endif
 	inline const bool operator== (const CDoubleVector other);
 	inline const bool operator!= (const CDoubleVector other);

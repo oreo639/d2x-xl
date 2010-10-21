@@ -143,9 +143,9 @@ public:
 			}
 		}
 
-	void Read (CFileManager& fp, bool bRenderData = false);
+	void Read (CFileManager* fp, bool bRenderData = false);
 
-	void Write (CFileManager& fp, bool bRenderData = false);
+	void Write (CFileManager* fp, bool bRenderData = false);
 
 	inline void Draw (CViewMatrix* view, CDC* pDC) {
 		if (m_info.renderData) {

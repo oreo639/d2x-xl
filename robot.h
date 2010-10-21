@@ -12,13 +12,13 @@ public:
 	short  n_joints;
 	short  offset;
 
-	void Read (CFileManager& fp) {
-		n_joints = fp.ReadInt16 ();
-		offset = fp.ReadInt16 ();
+	void Read (CFileManager* fp) {
+		n_joints = fp->ReadInt16 ();
+		offset = fp->ReadInt16 ();
 		}
-	void Write (CFileManager& fp) {
-		 fp.Write (n_joints);
-		 fp.Write (offset);
+	void Write (CFileManager* fp) {
+		 fp->Write (n_joints);
+		 fp->Write (offset);
 		}
 } tJointList;
 
@@ -28,8 +28,8 @@ typedef struct tRobotGunInfo {
 	CFixVector	points;
 	byte			subModels;
 
-	void Read (CFileManager& fp, int nField);
-	void Write (CFileManager& fp, int nField);
+	void Read (CFileManager* fp, int nField);
+	void Write (CFileManager* fp, int nField);
 } tRobotGunInfo;
 
 //------------------------------------------------------------------------------
@@ -38,8 +38,8 @@ typedef struct tRobotExplInfo {
 	short			nClip;
 	short			nSound;
 
-	void Read (CFileManager& fp);
-	void Write (CFileManager& fp);
+	void Read (CFileManager* fp);
+	void Write (CFileManager* fp);
 } tRobotExplInfo;
 
 //------------------------------------------------------------------------------
@@ -50,8 +50,8 @@ typedef struct tRobotContentsInfo {
 	sbyte			prob;			// Probability that this instance will contain something in N/16
 	sbyte			type;			// Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
 
-	void Read (CFileManager& fp);
-	void Write (CFileManager& fp);
+	void Read (CFileManager* fp);
+	void Write (CFileManager* fp);
 } tRobotContentsInfo;
 
 //------------------------------------------------------------------------------
@@ -62,8 +62,8 @@ typedef struct tRobotSoundInfo {
 	byte			claw;			// sound robot makes as it claws you (m_info.attackType should be 1)
 	byte			taunt;		// sound robot makes after you die
 
-	void Read (CFileManager& fp);
-	void Write (CFileManager& fp);
+	void Read (CFileManager* fp);
+	void Write (CFileManager* fp);
 } tRobotSoundInfo;
 
 //------------------------------------------------------------------------------
@@ -78,8 +78,8 @@ public:
 	sbyte			rapidFire;			// number of shots fired rapidly
 	sbyte			evadeSpeed;			// rate at which robot can evade shots, 0=none, 4=very fast
 
-	void Read (CFileManager& fp, int nField);
-	void Write (CFileManager& fp, int nField);
+	void Read (CFileManager* fp, int nField);
+	void Write (CFileManager* fp, int nField);
 } tRobotCombatInfo;
 
 //------------------------------------------------------------------------------
@@ -132,9 +132,9 @@ class CRobotInfo : public CGameItem {
 		tRobotInfo	m_info;
 
 	public:
-		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager* fp, int version = 0, bool bFlag = false);
 
-		void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager* fp, int version = 0, bool bFlag = false);
 
 		virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 

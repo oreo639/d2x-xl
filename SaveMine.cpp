@@ -64,7 +64,7 @@ else if (IsD2File ()) {
 	fp.Write (ReactorTime ());
 	fp.Write (ReactorStrength ());
 	// variable light new for version 7
-	lightManager.WriteVariableLights (fp);
+	lightManager.WriteVariableLights (&fp);
 	// write secret segment number
 	fp.Write (SecretSegment ());
 	// write secret return segment orientation
@@ -72,7 +72,7 @@ else if (IsD2File ()) {
 	}
 // save mine data
 mineDataOffset = fp.Tell ();
-if (0 > (mineErr = SaveMineGeometry (fp))) {
+if (0 > (mineErr = SaveMineGeometry (&fp))) {
 	fp.Close ();
 	ErrorMsg ("Error saving mine data");
 	return(2);
@@ -80,7 +80,7 @@ if (0 > (mineErr = SaveMineGeometry (fp))) {
 
 // save game data
 gameDataOffset = fp.Tell ();
-if (0 > (gameErr = SaveGameItems (fp))) {
+if (0 > (gameErr = SaveGameItems (&fp))) {
 	fp.Close ();
 	ErrorMsg ("Error saving game data");
 	return(3);
@@ -129,14 +129,14 @@ return 0;
 // ACTION - Writes a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 
-short CMine::SaveMineGeometry (CFileManager& fp)
+short CMine::SaveMineGeometry (CFileManager* fp)
 {
 // write version (1 byte)
-fp.WriteByte (COMPILED_MINE_VERSION);
+fp->WriteByte (COMPILED_MINE_VERSION);
 // write no. of vertices (2 bytes)
-fp.WriteUInt16 (vertexManager.Count ());
+fp->WriteUInt16 (vertexManager.Count ());
 // write number of Segments () (2 bytes)
-fp.WriteInt16 (segmentManager.Count ());
+fp->WriteInt16 (segmentManager.Count ());
 // write all vertices
 vertexManager.SetIndex ();
 segmentManager.SetIndex ();
@@ -145,7 +145,7 @@ vertexManager.Write (fp, FileInfo ().version);
 segmentManager.WriteSegments (fp, FileInfo ().version);
 // for Descent 2, save special info here
 if (LevelVersion () >= 9)
-	lightManager.WriteColors (fp);
+	lightManager.WriteColors (*fp);
 return 0;
 }
 
@@ -156,7 +156,7 @@ return 0;
 //           materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
 
-short CMine::SaveGameItems (CFileManager& fp)
+short CMine::SaveGameItems (CFileManager* fp)
 {
 if (IsD1File ()) {
 	Info ().fileInfo.signature = 0x6705;
@@ -171,36 +171,36 @@ else {
 	Info ().level = 0;
 	}
 
-int startOffset = fp.Tell ();
+int startOffset = fp->Tell ();
 Info ().Write (fp);
 if (Info ().fileInfo.version >= 14) // save mine file name
-	fp.Write (m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
+	fp->Write (m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
 if (IsD2File ())
-	fp.Write ("\n", 1, 1); // write an end - of - line
+	fp->Write ("\n", 1, 1); // write an end - of - line
 else
-	fp.Write ("", 1, 1);   // write a null
+	fp->Write ("", 1, 1);   // write a null
 
 // write pof names from resource file
 short	nSavePofNames;
 
 if (IsD2File ()) {
 	nSavePofNames = 166;
-	fp.WriteUInt16 (166);   // write # of POF names
+	fp->WriteUInt16 (166);   // write # of POF names
 	}
 else {
 	nSavePofNames = 78;
-	fp.WriteInt16 (25);	// Don't know exactly what this value is for or why it is 25?
+	fp->WriteInt16 (25);	// Don't know exactly what this value is for or why it is 25?
 	}
 
 CResource res;
 byte* savePofNames = res.Load (IsD1File () ? IDR_POF_NAMES1 : IDR_POF_NAMES2);
 if (savePofNames == null)
 	return 1;
-fp.Write (savePofNames, nSavePofNames, 13); // 13 characters each
+fp->Write (savePofNames, nSavePofNames, 13); // 13 characters each
 
-Info ().player.offset = fp.Tell ();
+Info ().player.offset = fp->Tell ();
 char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
-fp.Write (str, strlen (str) + 1, 1);
+fp->Write (str, strlen (str) + 1, 1);
 
 triggerManager.SetIndex ();
 wallManager.SetIndex ();
@@ -215,9 +215,9 @@ if (IsD2File ()) {
 	lightManager.WriteLightDeltas (fp, FileInfo ().version);
 	}
 
-fp.Seek (startOffset, SEEK_SET);
+fp->Seek (startOffset, SEEK_SET);
 Info ().Write (fp);
-fp.Seek (0, SEEK_END);
+fp->Seek (0, SEEK_END);
 return 0;
 }
 
