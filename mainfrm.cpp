@@ -902,22 +902,22 @@ segmentManager.Join (*current, true);
 
 void CMainFrame::OnSplitPoints ()
 {
-segmentManager.SplitPoints ();
+segmentManager.SeparatePoints ();
 }
 
 void CMainFrame::OnSplitLines ()
 {
-segmentManager.SplitLines ();
+segmentManager.SeparateLines ();
 }
 
 void CMainFrame::OnSplitSides ()
 {
-segmentManager.Split ();
+segmentManager.SeparateSegments ();
 }
 
 void CMainFrame::OnSplitCurrentSide ()
 {
-segmentManager.Split ();
+segmentManager.SeparateSegments ();
 }
 
 void CMainFrame::UpdateInsModeButtons (short mode)

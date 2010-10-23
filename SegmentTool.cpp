@@ -998,7 +998,7 @@ segmentManager.CreateReactor ();
 void CSegmentTool::OnSplitSegment ()
 {
 CHECKMINE;
-segmentManager.Split ();
+segmentManager.Subdivide ();
 }
 
 //------------------------------------------------------------------------------

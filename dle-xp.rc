@@ -67,8 +67,8 @@ BEGIN
     PUSHBUTTON      "&trigger details...",IDC_CUBE_TRIGGERDETAILS,412,110,60,10
     PUSHBUTTON      "&add",IDC_CUBE_ADD,488,4,60,12,WS_GROUP
     PUSHBUTTON      "&delete",IDC_CUBE_DEL,488,17,60,12
-    PUSHBUTTON      "&other segment",IDC_CUBE_OTHER,488,37,60,12
-    PUSHBUTTON      "spli&t segment",IDC_CUBE_SPLIT,488,56,60,12,WS_GROUP
+    PUSHBUTTON      "&other segment",IDC_CUBE_OTHER,488,32,60,12
+    PUSHBUTTON      "s&ubdivide segment",IDC_CUBE_SPLIT,488,48,60,20,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "add &bot maker",IDC_CUBE_ADD_MATCEN,552,4,60,12,WS_GROUP
     PUSHBUTTON      "add e&quip maker",IDC_CUBE_ADD_EQUIPMAKER,552,17,60,12,WS_GROUP
     PUSHBUTTON      "add &fuel center",IDC_CUBE_ADD_FUELCEN,552,30,60,12,WS_GROUP
@@ -967,8 +967,8 @@ BEGIN
     PUSHBUTTON      "<-- add",IDC_CUBE_ADDBOT,118,339,64,10
     PUSHBUTTON      "&add",IDC_CUBE_ADD,51,353,60,10,WS_GROUP
     PUSHBUTTON      "&delete",IDC_CUBE_DEL,51,363,60,10
-    PUSHBUTTON      "&other segment",IDC_CUBE_OTHER,51,377,60,10
-    PUSHBUTTON      "spli&t segment",IDC_CUBE_SPLIT,51,392,60,10,WS_GROUP
+    PUSHBUTTON      "&other segment",IDC_CUBE_OTHER,51,374,60,10
+    PUSHBUTTON      "s&ubdivide segment",IDC_CUBE_SPLIT,51,385,60,17,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "add &bot maker",IDC_CUBE_ADD_MATCEN,118,353,60,10,WS_GROUP
     PUSHBUTTON      "add e&quip maker",IDC_CUBE_ADD_EQUIPMAKER,118,362,60,10,WS_GROUP
     PUSHBUTTON      "add &fuel center",IDC_CUBE_ADD_FUELCEN,118,372,60,10,WS_GROUP
@@ -5965,7 +5965,7 @@ BEGIN
         MENUITEM "&Door/Wall",                  ID_DELETE_WALL
         MENUITEM "&Trigger",                    ID_DELETE_TRIGGER
     END
-    POPUP "&Join"
+    POPUP "&Join/Separate"
     BEGIN
         MENUITEM "Current Side\tCtrl+C",        ID_JOIN_CURRENTSIDE
         MENUITEM "Sides\tCtrl+S",               ID_JOIN_SIDES
@@ -5973,9 +5973,9 @@ BEGIN
         MENUITEM "Points\tCtrl+P",              ID_JOIN_POINTS
         MENUITEM SEPARATOR
         MENUITEM "Solidify Current Side\tCtrl+Shift+C", ID_SPLIT_CURRENTSIDE
-        MENUITEM "Unjoin Sides\tCtrl+Shift+S",  ID_SPLIT_SIDES
-        MENUITEM "Unjoin Lines\tCtrl+Shift+L",  ID_SPLIT_LINES
-        MENUITEM "Unjoin Points\tCtrl+Shift+P", ID_SPLIT_POINTS
+        MENUITEM "Separate Sides\tCtrl+Shift+S", ID_SPLIT_SIDES
+        MENUITEM "Separate Lines\tCtrl+Shift+L", ID_SPLIT_LINES
+        MENUITEM "Separate Points\tCtrl+Shift+P", ID_SPLIT_POINTS
     END
     POPUP "Tools"
     BEGIN
@@ -6109,8 +6109,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,27,0
- PRODUCTVERSION 1,8,27,0
+ FILEVERSION 1,8,29,0
+ PRODUCTVERSION 1,8,29,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6126,13 +6126,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor XP [18 oct 2010]"
-            VALUE "FileVersion", "1, 8, 27, 0"
+            VALUE "FileDescription", "Descent Level Editor XP [23 oct 2010]"
+            VALUE "FileVersion", "1, 8, 29, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2010 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 8, 27, 0"
+            VALUE "ProductVersion", "1, 8, 29, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6159,7 +6159,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.8.27\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.8.29\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

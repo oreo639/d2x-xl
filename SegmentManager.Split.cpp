@@ -89,7 +89,7 @@ return true;
 //
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::SplitPoints (void) 
+void CSegmentManager::SeparatePoints (void) 
 {
 short vert, nSegment, nVertex; 
 
@@ -154,7 +154,7 @@ INFOMSG("A new point was made for the current point.");
 //
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::SplitLines (void) 
+void CSegmentManager::SeparateLines (void) 
 {
   CSegment *segP; 
   short vert [2], nSegment, nVertex, nLine, i; 
@@ -234,7 +234,7 @@ INFOMSG ("Two new points were made for the current line.");
 // constitutes an error in the level structure.
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::SplitSegments (int solidify, int nSide) 
+void CSegmentManager::SeparateSegments (int solidify, int nSide) 
 {
   CSegment *segP; 
   int vert [4], nSegment, nVertex, i, nFound = 0; 
@@ -326,7 +326,7 @@ DLE.MineView ()->Refresh ();
 
 // -----------------------------------------------------------------------------
 
-bool CSegmentManager::Split (void)
+bool CSegmentManager::Subdivide (void)
 {
 	CSegment*	centerSegP = current->Segment (), *segP, *childSegP;
 	short			nCenterSeg = segmentManager.Index (centerSegP);

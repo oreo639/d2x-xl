@@ -184,7 +184,7 @@ class CSegmentManager {
 
 		void Init (short nSegment);
 
-		bool Split (void);
+		bool Subdivide (void);
 
 		void Join (CSideKey key, bool bFind);
 
@@ -200,15 +200,15 @@ class CSegmentManager {
 
 		void JoinSegments (int automatic = 0);
 
-		void SplitSegments (int solidify = 0, int nSide = -1);
+		void SeparateSegments (int solidify = 0, int nSide = -1);
 
 		void JoinLines (void);
 
 		void JoinPoints (void);
 
-		void SplitLines (void);
+		void SeparateLines (void);
 
-		void SplitPoints (void);
+		void SeparatePoints (void);
 
 		CDoubleVector CalcSideNormal (CSideKey key = CSideKey (-1, -1));
 

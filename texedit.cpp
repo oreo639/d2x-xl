@@ -907,8 +907,8 @@ void CTextureEdit::SaveTGA (CFileManager& fp)
 
 memset (&h, 0, sizeof (h));
 h.imageType = 2;
-h.width = m_nWidth;
-h.height = m_nHeight;
+h.width = m_texture [0].Width ();
+h.height = m_texture [0].Height ();
 h.bits = 32;
 fp.Write (&h, sizeof (h), 1);
 textureManager.WriteCustomTexture (fp, &m_texture [0]);
