@@ -650,9 +650,9 @@ if (bmih.biClrUsed == 0)
 if (bmih.biHeight < 0) 
 	bmih.biHeight = -bmih.biHeight;
 
-// make sure it is a bitmap fp
+// make sure it is a bitmap file
 if (bmfh.bfType != 'B' + (((ushort) 'M') << 8) ) {
-	ErrorMsg ("This is not a bitmap fp.");
+	ErrorMsg ("This is not a bitmap file.");
 	goto errorExit;
 	}
 
@@ -660,7 +660,7 @@ if (bmfh.bfType != 'B' + (((ushort) 'M') << 8) ) {
 if (bmih.biBitCount != 8 && bmih.biBitCount != 4) {
 	ErrorMsg ("DLE-XP only reads 16 or 256 color bitmap files.\n\n"
 	"Hint: Load this image into a paint program\n"
-	"then save it as a 16 or 256 color *.bmp fp.");
+	"then save it as a 16 or 256 color *.bmp file.");
 	goto errorExit;
 	}
 
@@ -668,7 +668,7 @@ if (bmih.biBitCount != 8 && bmih.biBitCount != 4) {
 if (bmih.biCompression != BI_RGB) {
 	ErrorMsg ("Cannot read compressed bitmap files.\n\n"
 	"Hint: Try loading this image into a paint program\n"
-	"then save it as a 256 color *.bmp fp with the\n"
+	"then save it as a 256 color *.bmp file with the\n"
 	"compression option off.");
 	goto errorExit;
 	}
@@ -695,11 +695,11 @@ for (i = 0; i < int (paletteSize); i++) {
 
 if (i != int (paletteSize)) {
 	if (!bExpertMode)
-		ErrorMsg ("The palette of this bitmap fp is not exactly the\n"
+		ErrorMsg ("The palette of this bitmap file is not exactly the\n"
 					 "the same as the Descent palette. Therefore, some color\n"
 					 "changes may occur.\n\n"
 					 "Hint: If you want the palettes to match, then save one of\n"
-					 "the Descent textures to a fp an use it as a starting point.\n"
+					 "the Descent textures to a file an use it as a starting point.\n"
 					 "If you plan to use transparencies, then you may want to start\n"
 					 "with the texture called 'empty'.");
 		for (i = 0; i < int (paletteSize); i++) {
@@ -847,7 +847,7 @@ if (GetOpenFileName (&ofn)) {
 	if (strchr (ofn.lpstrFile, '.'))
 		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strchr (ofn.lpstrFile, '.') + 1, 3);
 	if (fp.Open (ofn.lpstrFile, "rb")) {
-		ErrorMsg ("Could not open texture fp.");
+		ErrorMsg ("Could not open texture file.");
 		goto errorExit;
 		}
 	Backup ();
@@ -909,10 +909,10 @@ h.width = m_texture [0].Width ();
 h.height = m_texture [0].Height ();
 h.bits = 32;
 fp.Write (&h, sizeof (h), 1);
-int j = m_nWidth * (m_nHeight - 1);
+int j = h.width * h.height;
 for (int i = m_nHeight; i; i--) {
-	fp.Write (&m_texture [0][j], sizeof (CBGRA), m_nWidth);
-	j -= 2 * m_nWidth;
+	j -= m_nWidth;
+	fp.Write (&m_texture [0][j], sizeof (CBGRA), h.width);
 	}
 }
 
@@ -937,15 +937,13 @@ ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERW
 if (GetSaveFileName (&ofn)) {
 	_strlwr_s (ofn.lpstrFile, sizeof (szFile));
 	if (fp.Open (ofn.lpstrFile, "wb")) {
-		ErrorMsg ("Could not create bitmap fp.");
+		ErrorMsg ("Could not create texture file.");
 		return;
 		}
 	if (m_texture [0].m_info.nFormat)
 		SaveTGA (fp);
 	else
 		SaveBitmap (fp);
-	// define the fp header
-	// close fp
 	fp.Close ();
 	}
 }
