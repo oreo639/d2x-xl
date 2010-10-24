@@ -910,8 +910,8 @@ h.height = m_texture [0].Height ();
 h.bits = 32;
 fp.Write (&h, sizeof (h), 1);
 int j = h.width * h.height;
-for (int i = m_nHeight; i; i--) {
-	j -= m_nWidth;
+for (int i = h.height; i; i--) {
+	j -= h.width;
 	fp.Write (&m_texture [0][j], sizeof (CBGRA), h.width);
 	}
 }
