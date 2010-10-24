@@ -65,7 +65,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_VIEW_TOGGLETEXPANE, OnToggleTexturePane)
 	ON_COMMAND(ID_FILE_PREFERENCES, OnEditPrefs)
 	ON_COMMAND(ID_FILE_EDITMISSIONFILE, OnEditMission)
-	ON_COMMAND(ID_VIEW_ALIGNSIDEROTATION, OnViewAlignsiderotation)
+	ON_COMMAND(ID_VIEW_ALIGNSIDEROTATION, OnViewAlignSideRotation)
 	ON_COMMAND(ID_VIEW_ALLLINES, OnViewAlllines)
 	ON_COMMAND(ID_VIEW_CENTERENTIREMINE, OnViewCenterEntireMine)
 	ON_COMMAND(ID_VIEW_CENTERONCURRENTCUBE, OnViewCenterOnCurrentSegment)
@@ -73,11 +73,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_VIEW_HIDELINES, OnViewHidelines)
 	ON_COMMAND(ID_VIEW_LIGHTS, OnViewLights)
 	ON_COMMAND(ID_VIEW_NEARBYCUBELINES, OnViewNearbySegmentLines)
-	ON_COMMAND(ID_VIEW_OBJECTS_ALLOBJECTS, OnViewObjectsAllobjects)
-	ON_COMMAND(ID_VIEW_OBJECTS_CONTROLCENTER, OnViewObjectsControlcenter)
+	ON_COMMAND(ID_VIEW_OBJECTS_ALLOBJECTS, OnViewObjectsAll)
+	ON_COMMAND(ID_VIEW_OBJECTS_CONTROLCENTER, OnViewObjectsReactor)
 	ON_COMMAND(ID_VIEW_OBJECTS_HOSTAGES, OnViewObjectsHostages)
 	ON_COMMAND(ID_VIEW_OBJECTS_KEYS, OnViewObjectsKeys)
-	ON_COMMAND(ID_VIEW_OBJECTS_NOOBJECTS, OnViewObjectsNoobjects)
+	ON_COMMAND(ID_VIEW_OBJECTS_NOOBJECTS, OnViewObjectsNone)
 	ON_COMMAND(ID_VIEW_OBJECTS_PLAYERS, OnViewObjectsPlayers)
 	ON_COMMAND(ID_VIEW_OBJECTS_POWERUPS, OnViewObjectsPowerups)
 	ON_COMMAND(ID_VIEW_OBJECTS_ROBOTS, OnViewObjectsRobots)
@@ -88,17 +88,17 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_VIEW_PAN_OUT, OnViewPanOut)
 	ON_COMMAND(ID_VIEW_PAN_RIGHT, OnViewPanRight)
 	ON_COMMAND(ID_VIEW_PAN_UP, OnViewPanUp)
-	ON_COMMAND(ID_VIEW_PARTIALLINES, OnViewPartiallines)
+	ON_COMMAND(ID_VIEW_PARTIALLINES, OnViewPartialLines)
 	ON_COMMAND(ID_VIEW_ROTATE_CLOCKWISE, OnViewRotateClockwise)
 	ON_COMMAND(ID_VIEW_ROTATE_COUNTERCLOCKWISE, OnViewRotateCounterclockwise)
-	ON_COMMAND(ID_VIEW_ROTATE_LEFT, OnViewRotateHorizontallyleft)
-	ON_COMMAND(ID_VIEW_ROTATE_RIGHT, OnViewRotateHorizontallyright)
-	ON_COMMAND(ID_VIEW_ROTATE_DOWN, OnViewRotateVerticallydown)
-	ON_COMMAND(ID_VIEW_ROTATE_UP, OnViewRotateVerticallyup)
+	ON_COMMAND(ID_VIEW_ROTATE_LEFT, OnViewRotateHorizontallyLeft)
+	ON_COMMAND(ID_VIEW_ROTATE_RIGHT, OnViewRotateHorizontallyRight)
+	ON_COMMAND(ID_VIEW_ROTATE_DOWN, OnViewRotateVerticallyDown)
+	ON_COMMAND(ID_VIEW_ROTATE_UP, OnViewRotateVerticallyUp)
 	ON_COMMAND(ID_VIEW_SHADING, OnViewShading)
 	ON_COMMAND(ID_VIEW_DELTALIGHTS, OnViewDeltaLights)
 	ON_COMMAND(ID_VIEW_SPECIAL, OnViewSpecial)
-	ON_COMMAND(ID_VIEW_TEXTUREMAPPED, OnViewTexturemapped)
+	ON_COMMAND(ID_VIEW_TEXTUREMAPPED, OnViewTextured)
 	ON_COMMAND(ID_VIEW_WALLS, OnViewWalls)
 	ON_COMMAND(ID_VIEW_ALLTEXTURES, OnViewUsedTextures)
 	ON_COMMAND(ID_SEL_PREVTAB, OnSelectPrevTab)
@@ -809,7 +809,7 @@ void CMainFrame::OnViewFitToView ()
 	GetMineView()->FitToView ();
 }
 
-void CMainFrame::OnViewAlignsiderotation() 
+void CMainFrame::OnViewAlignSideRotation() 
 {
 	GetMineView()->AlignSide();	
 }
@@ -843,11 +843,11 @@ void CMainFrame::OnViewNearbySegmentLines()
 {
 	GetMineView()->SetViewOption(eViewNearbyCubeLines);
 }
-void CMainFrame::OnViewPartiallines() 
+void CMainFrame::OnViewPartialLines() 
 {
 	GetMineView()->SetViewOption(eViewPartialLines);
 }
-void CMainFrame::OnViewTexturemapped() 
+void CMainFrame::OnViewTextured() 
 {
 	GetMineView()->SetViewOption(eViewTextureMapped);
 }
@@ -1103,7 +1103,7 @@ SetSelectMode (eSelectBlock);
 
 
 ///////////// view Objects () //////////////
-void CMainFrame::OnViewObjectsAllobjects() 
+void CMainFrame::OnViewObjectsAll() 
 {
 	GetMineView()->SetViewObjectFlags(eViewObjectsAll);
 }
@@ -1115,7 +1115,7 @@ void CMainFrame::OnViewObjectsKeys()
 {
 	GetMineView()->ToggleViewObjects(eViewObjectsKeys);
 }
-void CMainFrame::OnViewObjectsNoobjects() 
+void CMainFrame::OnViewObjectsNone() 
 {
 	GetMineView()->SetViewObjectFlags(eViewObjectsNone);
 }
@@ -1136,7 +1136,7 @@ void CMainFrame::OnViewObjectsWeapons()
 	GetMineView()->ToggleViewObjects(eViewObjectsWeapons);
 }
 
-void CMainFrame::OnViewObjectsControlcenter() 
+void CMainFrame::OnViewObjectsReactor() 
 {
 	GetMineView()->ToggleViewObjects(eViewObjectsControlCenter);
 }
@@ -1194,22 +1194,22 @@ void CMainFrame::OnViewRotateClockwise()
 	GetMineView()->Rotate('Z', -gRotateRate);
 }
 
-void CMainFrame::OnViewRotateHorizontallyleft() 
+void CMainFrame::OnViewRotateHorizontallyLeft() 
 {
 	GetMineView()->Rotate('Y',-gRotateRate);
 }
 
-void CMainFrame::OnViewRotateHorizontallyright() 
+void CMainFrame::OnViewRotateHorizontallyRight() 
 {
 	GetMineView()->Rotate('Y', gRotateRate);
 }
 
-void CMainFrame::OnViewRotateVerticallydown() 
+void CMainFrame::OnViewRotateVerticallyDown() 
 {
 	GetMineView()->Rotate('X', gRotateRate);
 }
 
-void CMainFrame::OnViewRotateVerticallyup() 
+void CMainFrame::OnViewRotateVerticallyUp() 
 {
 	GetMineView()->Rotate('X', -gRotateRate);
 }

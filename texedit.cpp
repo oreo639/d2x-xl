@@ -584,11 +584,10 @@ bool CTextureEdit::LoadTGA (CFileManager& fp)
 {
 	tTgaHeader	tgaHeader;
 	char			imgIdent [255];
-	int			h, i, j, s;
 	tBGRA			color;
 
 fp.Read (&tgaHeader, sizeof (tgaHeader), 1);
-h = tgaHeader.width * tgaHeader.height;
+int h = tgaHeader.width * tgaHeader.height;
 if (h > 4096 * 4096) {
 	ErrorMsg ("Image too large.");
 	return false;
@@ -600,12 +599,11 @@ m_texture [0].m_info.height = m_nHeight = tgaHeader.height;
 m_nSize = tgaHeader.width * tgaHeader.height;
 if (tgaHeader.identSize)
 	fp.Read (imgIdent, tgaHeader.identSize, 1);
-h = 0; //m_nWidth * (m_nHeight - 1);
-s = (tgaHeader.bits == 32) ? 4 : 3;
+int s = (tgaHeader.bits == 32) ? 4 : 3;
 color.a = 255;
 h = m_nWidth * (m_nHeight - 1);
-for (i = m_nHeight; i; i--) {
-	for (j = m_nWidth; j; j--, h++) {
+for (int i = m_nHeight; i; i--) {
+	for (int j = m_nWidth; j; j--, h++) {
 		fp.Read (&color, s, 1);
 		m_texture [0][h] = color;
 		}
@@ -911,7 +909,11 @@ h.width = m_texture [0].Width ();
 h.height = m_texture [0].Height ();
 h.bits = 32;
 fp.Write (&h, sizeof (h), 1);
-textureManager.WriteCustomTexture (fp, &m_texture [0]);
+int j = m_nWidth * (m_nHeight - 1);
+for (int i = m_nHeight; i; i--) {
+	fp.Write (&m_texture [0][j], sizeof (CBGRA), m_nWidth);
+	j -= 2 * m_nWidth;
+	}
 }
 
 //************************************************************************
