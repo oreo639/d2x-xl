@@ -19,6 +19,7 @@ class CViewMatrix
 {
 	public:
 		CViewData	m_data [2];
+		int			m_nSaved;
 
 	private:
 		double m_depthPerception;
@@ -48,8 +49,8 @@ class CViewMatrix
 		void Unproject (CVertex& vert, APOINT& apoint);
 		inline double Aspect (void) { return (double) m_viewHeight / (double) m_viewWidth; }
 		inline double Scale (void) { return m_data [0].m_scale; }
-		void Push (void);
-		void Pop (void);
+		bool Push (void);
+		bool Pop (void);
 		void Unrotate (void);
 		//int CheckNormal (CGameObject *objP, CVertex& a, CVertex& b);
 		//int CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b);

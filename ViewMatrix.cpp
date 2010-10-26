@@ -13,7 +13,7 @@
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-CViewMatrix::CViewMatrix () 
+CViewMatrix::CViewMatrix () : m_nSaved (0)
 {
 Set (0,0,0,1,1,1,0,0,0);
 m_data [0].m_scale = 1;
@@ -79,16 +79,23 @@ m_data [0].m_angles[i] += a;
 
 //--------------------------------------------------------------------------
 
-void CViewMatrix::Push (void)
+bool CViewMatrix::Push (void)
 {
+if (m_nSaved > 0)
+	return false;
+++m_nSaved;
 memcpy (&m_data [1], &m_data [0], sizeof (CViewData));
+return true;
 }
 
 //--------------------------------------------------------------------------
 
-void CViewMatrix::Pop (void)
+bool CViewMatrix::Pop (void)
 {
+if (m_nSaved < 1)
+	return false;
 memcpy (&m_data [0], &m_data [1], sizeof (CViewData));
+return true;
 }
 
 //--------------------------------------------------------------------------
