@@ -1411,7 +1411,7 @@ if (theMine == null)
 			 maxWalls = MAX_WALLS;
 	CSegment *segP;
 	CSide *sideP;
-	CWall *wallP = wallManager.Wall (0), *w, *ow;
+	CWall *w, *ow;
 	int segCount = segmentManager.Count ();
 	byte wallFixed [MAX_WALLS_D2];
 
@@ -1481,6 +1481,8 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 			}
 		} 
 	}
+
+CWall *wallP = wallManager.Wall (0);
 for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	// check wall range type

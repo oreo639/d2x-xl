@@ -205,7 +205,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 	m_sides [i].m_info.nChild = (m_info.childFlags & (1 << i)) ? fp->ReadInt16 () : -1;
 
 // read vertex numbers (16 bytes)
-for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
+for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 	m_info.verts [i] = fp->ReadInt16 ();
 
 if (nLevelType == 0)
@@ -217,7 +217,9 @@ m_info.wallFlags = byte (fp->ReadSByte ());
 // read in wall numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 	m_sides [i].m_info.nWall = (m_info.wallFlags & (1 << i)) 
-										? ushort ((nLevelVersion < 13) ? fp->ReadSByte () : fp->ReadInt16 ())
+										? (nLevelVersion < 13) 
+											? (ushort) fp->ReadByte () 
+											: fp->ReadUInt16 ()
 										: NO_WALL;
 
 // read in textures and uvls (0 to 60 bytes)

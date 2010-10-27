@@ -45,14 +45,14 @@ CDoubleVector sinSpin (sin (vSpin.v.x), sin (vSpin.v.y), sin (vSpin.v.z));
 CDoubleVector cosSpin (cos (vSpin.v.x), cos (vSpin.v.y), cos (vSpin.v.z));
 
 m_data [0].m_mat.Set (vSize.v.x * cosSpin.v.z * cosSpin.v.y, 
-				   vSize.v.y * sinSpin.v.z * cosSpin.v.y, 
-				   -vSize.v.z * sinSpin.v.y,
-				   -vSize.v.x * sinSpin.v.z * cosSpin.v.x + vSize.v.x * cosSpin.v.z * sinSpin.v.y * sinSpin.v.x,
-				   vSize.v.y * sinSpin.v.z * sinSpin.v.y * sinSpin.v.x + vSize.v.y * cosSpin.v.z * cosSpin.v.x,
-				   vSize.v.z * cosSpin.v.y * sinSpin.v.x,
-				   vSize.v.x * cosSpin.v.z * sinSpin.v.y * cosSpin.v.x - vSize.v.x * sinSpin.v.z * sinSpin.v.x,
-				   vSize.v.y * sinSpin.v.z * sinSpin.v.y * cosSpin.v.x - vSize.v.y * cosSpin.v.z * sinSpin.v.x,
-				   vSize.v.z * cosSpin.v.y * cosSpin.v.x);
+							 vSize.v.y * sinSpin.v.z * cosSpin.v.y, 
+							 -vSize.v.z * sinSpin.v.y,
+							 -vSize.v.x * sinSpin.v.z * cosSpin.v.x + vSize.v.x * cosSpin.v.z * sinSpin.v.y * sinSpin.v.x,
+							 vSize.v.y * sinSpin.v.z * sinSpin.v.y * sinSpin.v.x + vSize.v.y * cosSpin.v.z * cosSpin.v.x,
+							 vSize.v.z * cosSpin.v.y * sinSpin.v.x,
+							 vSize.v.x * cosSpin.v.z * sinSpin.v.y * cosSpin.v.x - vSize.v.x * sinSpin.v.z * sinSpin.v.x,
+							 vSize.v.y * sinSpin.v.z * sinSpin.v.y * cosSpin.v.x - vSize.v.y * cosSpin.v.z * sinSpin.v.x,
+							 vSize.v.z * cosSpin.v.y * cosSpin.v.x);
 m_data [0].m_invMat = m_data [0].m_mat.Inverse ();
 m_data [0].m_invMove = m_data [0].m_invMat * m_data [0].m_move;
 }
@@ -94,6 +94,7 @@ bool CViewMatrix::Pop (void)
 {
 if (m_nSaved < 1)
 	return false;
+--m_nSaved;
 memcpy (&m_data [0], &m_data [1], sizeof (CViewData));
 return true;
 }

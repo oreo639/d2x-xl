@@ -3,6 +3,8 @@
 #include "mine.h"
 #include "dle-xp.h"
 
+extern short nDbgSeg, nDbgSide;
+
 // ----------------------------------------------------------------------------- 
 
 void CSegmentManager::SetIndex (void)
@@ -22,6 +24,10 @@ if (m_segmentInfo.Restore (fp)) {
 	int i;
 
 	for (i = 0; i < Count (); i++) {
+#ifdef _DEBUG
+		if (i == nDbgSeg)
+			nDbgSeg = nDbgSeg;
+#endif
 		if (i < MAX_SEGMENTS)
 			m_segments [i].Read (fp, nLevelType, nLevelVersion);
 		else {
