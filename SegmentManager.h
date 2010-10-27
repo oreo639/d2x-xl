@@ -328,7 +328,7 @@ class CSegmentManager {
 
 		void DeleteWalls (short nSegment);
 
-		bool Create (short nSegment, bool bCreate, byte nFunction, short nTexture = -1, char* szError = null);
+		short Create (short nSegment, bool bCreate, byte nFunction, short nTexture = -1, char* szError = null);
 
 		bool Define (short nSegment, byte nFunction, short nTexture);
 

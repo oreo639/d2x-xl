@@ -970,7 +970,7 @@ BEGIN
     PUSHBUTTON      "&other segment",IDC_CUBE_OTHER,51,374,60,10
     PUSHBUTTON      "s&ubdivide segment",IDC_CUBE_SPLIT,51,385,60,17,BS_MULTILINE | WS_GROUP
     PUSHBUTTON      "add &bot maker",IDC_CUBE_ADD_MATCEN,118,353,60,10,WS_GROUP
-    PUSHBUTTON      "add e&quip maker",IDC_CUBE_ADD_EQUIPMAKER,118,362,60,10,WS_GROUP
+    PUSHBUTTON      "add e&quip maker",IDC_CUBE_ADD_EQUIPMAKER,118,363,60,10,WS_GROUP
     PUSHBUTTON      "add &fuel center",IDC_CUBE_ADD_FUELCEN,118,372,60,10,WS_GROUP
     PUSHBUTTON      "add &reactor",IDC_CUBE_ADD_CONTROLCEN,118,382,60,10,WS_GROUP
     PUSHBUTTON      "add re&pair center",IDC_CUBE_ADD_REPAIRCEN,118,392,60,10,WS_GROUP
@@ -6109,8 +6109,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,31,0
- PRODUCTVERSION 1,8,31,0
+ FILEVERSION 1,8,32,0
+ PRODUCTVERSION 1,8,32,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6127,12 +6127,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
             VALUE "FileDescription", "Descent Level Editor XP [27 oct 2010]"
-            VALUE "FileVersion", "1, 8, 31, 0"
+            VALUE "FileVersion", "1, 8, 32, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2010 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 8, 31, 0"
+            VALUE "ProductVersion", "1, 8, 32, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6159,7 +6159,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.8.31\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.8.32\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

@@ -171,7 +171,7 @@ return nNewSeg;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::Create (short nSegment, bool bCreate, byte nFunction, short nTexture, char* szError)
+short CSegmentManager::Create (short nSegment, bool bCreate, byte nFunction, short nTexture, char* szError)
 {
 if ((szError != null) && DLE.IsD1File ()) {
 	if (!bExpertMode)
@@ -181,10 +181,15 @@ if ((szError != null) && DLE.IsD1File ()) {
 
 undoManager.Begin (udSegments);
 if (bCreate) {
+	if (current->Child () >= 0) {
+		undoManager.End ();
+		return -1;
+		}
 	nSegment = Add ();
 	if (nSegment < 0) {
 		Remove (nSegment);
-		return false; 
+		undoManager.End ();
+		return -1; 
 		}
 	}	
 DLE.MineView ()->DelayRefresh (true);
@@ -195,14 +200,14 @@ if (!Define (nSegment, nFunction, -1)) {
 	undoManager.End ();
 	DLE.MineView ()->DelayRefresh (false);
 	m_bCreating = false;
-	return false; 
+	return -1; 
 	}	
 Segment (nSegment)->Backup ();
 m_bCreating = false;
 undoManager.End ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
-return true;
+return nSegment;
 }
 
 // ----------------------------------------------------------------------------- 
@@ -249,35 +254,35 @@ return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER, bSetDefTextures
 
 bool CSegmentManager::CreateReactor (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
-return Create (nSegment, bCreate, SEGMENT_FUNC_REACTOR, bSetDefTextures ? DLE.IsD1File () ? 10 : 357 : -1, "Flag goals are not available in Descent 1.");
+return 0 <= Create (nSegment, bCreate, SEGMENT_FUNC_REACTOR, bSetDefTextures ? DLE.IsD1File () ? 10 : 357 : -1, "Flag goals are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
 bool CSegmentManager::CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
 {
-return Create (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Flag goals are not available in Descent 1.");
+return 0 <= Create (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Flag goals are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
 bool CSegmentManager::CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
 {
-return Create (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Team start positions are not available in Descent 1.");
+return 0 <= Create (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Team start positions are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
 bool CSegmentManager::CreateSkybox (short nSegment, bool bCreate) 
 {
-return Create (nSegment, bCreate, SEGMENT_FUNC_SKYBOX, -1, "Skyboxes are not available in Descent 1.");
+return 0 <= Create (nSegment, bCreate, SEGMENT_FUNC_SKYBOX, -1, "Skyboxes are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
 bool CSegmentManager::CreateSpeedBoost (short nSegment, bool bCreate) 
 {
-return Create (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost segments are not available in Descent 1.");
+return 0 <= Create (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost segments are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
