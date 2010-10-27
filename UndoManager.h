@@ -51,10 +51,9 @@ class CUndoItem {
 		uint	m_nId; // used by undo manager
 
 		int Create (_T* source, int length) {
-			if (m_backup != null) 
+			if (m_length > -1) 
 				return -1;
-			if (length > 0) {
-				m_length = length;
+			if (0 < (m_length = length)) {
 				m_backup = new _T [length];
 				if (m_backup == null) {
 					m_length = -1;

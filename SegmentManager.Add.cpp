@@ -185,7 +185,7 @@ if (bCreate) {
 		undoManager.End ();
 		return -1;
 		}
-	nSegment = Add ();
+	nSegment = Create ();
 	if (nSegment < 0) {
 		Remove (nSegment);
 		undoManager.End ();

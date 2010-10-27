@@ -126,7 +126,7 @@ class CWallManager {
 
 		bool CreateExit (short type);
 
-		bool HaveResources (void);
+		bool HaveResources (CSideKey* key = null);
 
 		inline void ReadWallInfo (CFileManager* fp) { m_info [0].Read (fp); }
 

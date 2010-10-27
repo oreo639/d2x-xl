@@ -21,9 +21,9 @@ return WallCount () >= MAX_WALLS;
 
 //------------------------------------------------------------------------------
 
-bool CWallManager::HaveResources (void)
+bool CWallManager::HaveResources (CSideKey* key)
 {
-CWall* wallP = segmentManager.Wall ();
+CWall* wallP = segmentManager.Wall (key);
 if (wallP != null) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -68,7 +68,7 @@ return (short) WallCount ()++;
 
 CWall* CWallManager::Create (CSideKey key, short type, ushort flags, byte keys, char nClip, short nTexture) 
 {
-if (!HaveResources ())
+if (!HaveResources (&key))
 	return null;
 
 current->Get (key);

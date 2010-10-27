@@ -120,7 +120,7 @@ class CSegmentManager {
 			return sideP->Wall (); 
 			}
 
-		inline CWall _const_ * Wall (void) { return Wall (*current); }
+		inline CWall _const_ * Wall (CSideKey* key = null) { return Wall ((key == null) ? *current : *key); }
 
 		int IsWall (CSideKey key = CSideKey ());
 
