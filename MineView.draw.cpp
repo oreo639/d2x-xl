@@ -272,6 +272,8 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 		if ((nSegment == 193) && (nSide == 2))
 			nSegment = nSegment;
 #endif
+		if (segP->m_info.bTunnel)
+			continue;
 		if (segP->Child (nSide) != -1) { // not a solid side
 			CWall* wallP = sideP->Wall ();
 			if (wallP == null) // no wall either
@@ -543,11 +545,13 @@ if (left < r)
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentQuick	(CSegment *segP, bool bPartial)
+void CMineView::DrawSegmentQuick	(CSegment *segP, bool bPartial, char bTunnel)
 {
 CHECKMINE;
 
 if (!Visible (segP))
+	return;
+if (segP->m_info.bTunnel != bTunnel)
 	return;
 
 	short x_max = m_viewWidth * 2;
@@ -1261,7 +1265,7 @@ for (h = tunnelMaker.Length () * 4, i = 0; i < h; i++)
 	m_view.Project (*vertexManager.Vertex (--j), m_viewPoints [j]);
 CSegment *segP = segmentManager.Segment (MAX_SEGMENTS - 1);
 for (i = 0; i < tunnelMaker.Length (); i++, segP--)
-	DrawSegmentQuick (segP);
+	DrawSegmentQuick (segP, false, 1);
 }
 
 //--------------------------------------------------------------------------

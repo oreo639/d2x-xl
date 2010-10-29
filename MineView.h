@@ -285,7 +285,7 @@ public:
 	void	DrawSegment (CSegment *segP, bool bPartial);
 	void	DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short clear_it = 0);
 	void	DrawSegmentPartial (CSegment *segP);
-	void	DrawSegmentQuick (CSegment *segP, bool bPartial = false);
+	void	DrawSegmentQuick (CSegment *segP, bool bPartial = false, char bTunnel = 0);
 	void	DrawFaceTextured (CFaceListEntry& fle);
 	void	DrawCubePoints (CSegment *segP);
 

@@ -82,7 +82,8 @@ typedef struct tSegment {
 	int		staticLight;		// average static light in segment 
 	byte		childFlags;			// bit0 to 5: children, bit6: unused, bit7: special 
 	byte		wallFlags;			// bit0 to 5: door/walls, bit6: deleted, bit7: marked segment 
-	short		mapBitmask;		// which lines are drawn when displaying wireframe 
+	short		mapBitmask;			// which lines are drawn when displaying wireframe 
+	byte		bTunnel;				// part of a tunnel?
 	char		owner;
 	char		group;
 } tSegment;

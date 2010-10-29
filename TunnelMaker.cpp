@@ -258,10 +258,11 @@ for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 	CSegment* segP = segmentManager.Segment (m_nSegments [nSegment]);
 	// copy current segment
 	*segP = *segmentManager.Segment (current->m_nSegment);
+	segP->m_info.bTunnel = 0;
 	if (nSegment == 0) {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
-		segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
-		m_info [0].Segment ()->SetChild (m_info [0].m_nSide, m_nSegments [nSegment]);
+		segP->SetChild (m_info [0].m_nSide, m_nSegments [1]);
+		m_info [0].Segment ()->SetChild (m_info [0].m_nSide, m_nSegments [0]);
 		} 
 	else if (nSegment == m_nLength [0] - 1) {
 		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
@@ -285,7 +286,7 @@ if (m_bActive) {
 	undoManager.Lock ();
 	for (int i = m_nLength [0]; i > 0; )
 		segmentManager.Remove (m_nSegments [--i]);
-	for (int i = m_nLength [0] * 4; i > 0; )
+	for (int i = (m_nLength [0] - 1) * 4; i > 0; )
 		vertexManager.Delete (m_nVertices [--i]);
 	undoManager.Unlock ();
 	m_nLength [0] = 0;
@@ -369,7 +370,7 @@ if (!m_bActive) {
 else {
 	// ask if user wants to keep the new nSegment
 	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES) 
-	Destroy ();
+		Destroy ();
 	else {
 		Destroy ();
 		undoManager.Begin (udSegments | udVertices);
@@ -456,9 +457,10 @@ m_nLength [0] = min (m_nLength [0], m_nMaxSegments - 1);
 if (m_nLength [1] < m_nLength [0]) {
 	for (i = m_nLength [1]; i < m_nLength [0]; i++) {
 		m_nSegments [i] = segmentManager.Add ();
+		segmentManager.Segment (m_nSegments [i])->m_info.bTunnel = 1;
 		//segmentManager.Segment (m_nSegments [i])->Setup ();
 		}
-	vertexManager.Add (&m_nVertices [m_nLength [1]], (m_nLength [0] - m_nLength [1]) * 4);
+	vertexManager.Add (&m_nVertices [m_nLength [1]], (m_nLength [0] - m_nLength [1] - 1) * 4);
 	}
 
 // calculate nSegment m_points
@@ -530,7 +532,7 @@ for (i = 1; i < 4; i++) {
 // calculate segment vertices as weighted average between the two sides
 // then spin vertices in the direction of the segment vector
 ushort nVertex = 0;
-for (i = 0; i < m_nLength [0]; i++) {
+for (i = 0; i < m_nLength [0] - 1; i++) {
 	for (j = 0; j < 4; j++) {
 		CVertex* vertP = vertexManager.Vertex (m_nVertices [nVertex++]);
 		double h = (double) i / (double) m_nLength [0];
@@ -580,12 +582,12 @@ if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
 	}
 pDC->SelectObject (bluePen);
 CMineView* viewP = DLE.MineView ();
-int h = tunnelMaker.Length () * 4;
+int h = (tunnelMaker.Length () - 1) * 4;
 for (int i = 0; i < h; i++)
 	view.Project (*vertexManager.Vertex (m_nVertices [i]), viewP->m_viewPoints [m_nVertices [i]]);
 h = tunnelMaker.Length ();
 for (int i = 0; i < h; i++)
-	viewP->DrawSegmentQuick (segmentManager.Segment (m_nSegments [i]));
+	viewP->DrawSegmentQuick (segmentManager.Segment (m_nSegments [i]), false, 1);
 }
 
 //------------------------------------------------------------------------------

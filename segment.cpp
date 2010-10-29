@@ -16,10 +16,10 @@ byte sideVertTable[6][4] = {
 	{3,2,1,0} 
 };
 
-// define oppisite side of a given side 
+// define opposite side of a given side 
 byte oppSideTable[6] = {2,3,0,1,5,4};
 
-// define points for the oppisite side of a given side 
+// define points for the opposite side of a given side 
 byte oppSideVertTable[6][4] = {
 	{4,5,1,0},
 	{1,5,6,2},
