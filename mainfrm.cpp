@@ -952,7 +952,7 @@ SetInsertMode (MIRROR);
 
 void CMainFrame::OnToggleInsMode ()
 {
-UpdateInsModeButtons (segmentManager.SetAddMode (segmentManager.AddMode () + 1) % 3);
+UpdateInsModeButtons (segmentManager.SetAddMode ((segmentManager.AddMode () + 1) % 3));
 }
 
 void CMainFrame::OnEditorToolbar ()

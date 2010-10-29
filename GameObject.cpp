@@ -169,6 +169,7 @@ id = m_info.id;
 memset (&mType, 0, sizeof (mType));
 memset (&cType, 0, sizeof (cType));
 memset (&rType, 0, sizeof (rType));
+m_info.type = type;
 switch (type) {
 	case OBJ_ROBOT: // an evil enemy
 		m_info.controlType = CT_AI;

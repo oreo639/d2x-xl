@@ -1291,7 +1291,7 @@ return nObjects;
 
 void CObjectTool::SetNewObjId (CGameObject *objP, int nType, int nId, int nMaxId)
 {
-if (nId = objP->Id ())
+if (nId == objP->Id ())
 	return;
 
 	int nObjects = ObjOfAKindCount (nType);
