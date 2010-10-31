@@ -244,6 +244,9 @@ if (!(bLoadFromHog || bCreate)) {
 		}
 	}
 objectManager.Sort ();
+DLE.MainFrame ()->SetSelectMode (eSelectSide);
+current->Reset ();
+other->Reset ();
 return 0;
 }
 

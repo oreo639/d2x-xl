@@ -17,9 +17,9 @@ class CSelection : public CSideKey {
 public:
 	CSelection() :
 		CSideKey (0, DEFAULT_SIDE),
-		m_nLine(DEFAULT_LINE),
-		m_nPoint(DEFAULT_POINT),
-		m_nObject(DEFAULT_OBJECT)
+		m_nLine (DEFAULT_LINE),
+		m_nPoint (DEFAULT_POINT),
+		m_nObject (DEFAULT_OBJECT)
 	{}
 
 	short m_nLine;
@@ -50,6 +50,14 @@ public:
 	CColor* LightColor (void);
 
 	void Setup (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1);
+
+	void Reset (void) {
+		m_nSegment = 0;
+		m_nSide = DEFAULT_SIDE;
+		m_nLine = DEFAULT_LINE,
+		m_nPoint = DEFAULT_POINT,
+		m_nObject = DEFAULT_OBJECT;
+		}
 
 	inline void Setup (CSideKey key) { Setup (key.m_nSegment, key.m_nSide); }
 

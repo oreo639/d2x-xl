@@ -15,10 +15,7 @@
 
 #define CURRENT_POINT(a) ((current->m_nPoint + (a))&0x03)
 
-//This dialog is always active,
-//but is hidden or restored by user
-//::ShowWindow(hwnd,SW_HIDE);
-//::ShowWindow(hwnd,SW_RESTORE);
+//------------------------------------------------------------------------------
 
 bool CMine::EditGeoFwd (void)
 {
@@ -59,7 +56,6 @@ else
  return true;
 }
 
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 bool CMine::EditGeoBack (void) 
@@ -223,7 +219,7 @@ bool CMine::RotateSelection (double angle, bool perpendicular)
 	CVertex		center, oppCenter;
 	int			i, pts [4];
 
-switch (m_selectMode){
+switch (m_selectMode) {
 	case POINT_MODE:
 		ErrorMsg ("Cannot bend a point");
 		return false;

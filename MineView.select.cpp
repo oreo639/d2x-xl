@@ -215,13 +215,9 @@ return true;
 //==========================================================================
 void CMineView::NextPoint(int dir) 
 {
-//if (theMine->SplineActive ())
-//	DrawHighlight (1);
-//if (m_selectMode==POINT_MODE)
 Wrap (current->m_nPoint, dir, 0, 3);
 current->m_nLine = current->m_nPoint;
 Refresh ();
-//SetSelectMode (POINT_MODE);
 }
 
 //==========================================================================
@@ -240,7 +236,6 @@ void CMineView::NextSide (int dir)
 {
 Wrap (current->m_nSide, dir, 0, 5);
 Refresh (true);
-//SetSelectMode (SIDE_MODE);
 }
 
 //==========================================================================
@@ -274,7 +269,6 @@ void CMineView::NextLine (int dir)
 Wrap (current->m_nLine, dir, 0, 3);
 current->m_nPoint = current->m_nLine;
 Refresh ();
-//SetSelectMode (LINE_MODE);
 }
 
 //==========================================================================
@@ -297,17 +291,13 @@ if (segmentManager.Count () <= 0)
 
 if (0) {//!ViewOption (eViewPartialLines)) {
 	DrawHighlight (1);
-	//if (m_selectMode == SEGMENT_MODE)
 	Wrap (current->m_nSegment, dir, 0, segmentManager.Count () - 1);
 	Refresh (true);
-	//SetSelectMode (SEGMENT_MODE);
 	DrawHighlight (0);
 	}
 else {
-	//if (m_selectMode == SEGMENT_MODE)
 	Wrap (current->m_nSegment, dir, 0, segmentManager.Count () - 1);
 	Refresh (true);
-	//SetSelectMode (SEGMENT_MODE);
 	}
 }
 
@@ -426,13 +416,10 @@ void CMineView::NextObject (int dir)
   short oldObject = current->m_nObject;
   short newObject = current->m_nObject;
 
-//  DrawHighlight (1);
 if (objectManager.Count () > 1) {
-//	if (m_selectMode == OBJECT_MODE)
 	Wrap (newObject, dir, 0, (short) objectManager.Count () - 1);
 	Refresh (true);
 	}
-//SetSelectMode (OBJECT_MODE);
 RefreshObject (oldObject, newObject);
 }
 
