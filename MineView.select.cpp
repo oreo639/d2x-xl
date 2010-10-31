@@ -144,7 +144,7 @@ mousePos.x = (short) xMouse;
 mousePos.y = (short) yMouse;
 mousePos.z = 0;
 do {
-	wrap (&next_segment, direction, 0, segmentManager.Count () - 1); /* point to next segment */
+	Wrap (next_segment, direction, 0, segmentManager.Count () - 1); /* point to next segment */
 	segP = segmentManager.Segment (next_segment);
 	if (!Visible (segP))
 		continue;
@@ -218,7 +218,7 @@ void CMineView::NextPoint(int dir)
 //if (theMine->SplineActive ())
 //	DrawHighlight (1);
 //if (m_selectMode==POINT_MODE)
-wrap(&current->m_nPoint,dir,0,4-1);
+Wrap (current->m_nPoint, dir, 0, 3);
 current->m_nLine = current->m_nPoint;
 Refresh ();
 //SetSelectMode (POINT_MODE);
@@ -238,7 +238,7 @@ NextPoint (-1);
 //==========================================================================
 void CMineView::NextSide (int dir) 
 {
-wrap(&current->m_nSide,dir,0,6-1);
+Wrap (current->m_nSide, dir, 0, 5);
 Refresh (true);
 //SetSelectMode (SIDE_MODE);
 }
@@ -256,7 +256,7 @@ NextSide (-1);
 //==========================================================================
 void CMineView::NextSide2 (int dir)
 {
-wrap(&current->m_nSide,dir,0,6-1);
+Wrap (current->m_nSide, dir, 0, 5);
 Refresh ();
 }
 
@@ -271,7 +271,7 @@ NextSide2 (-1);
 
 void CMineView::NextLine (int dir) 
 {
-wrap (&current->m_nLine, dir, 0, 4-1);
+Wrap (current->m_nLine, dir, 0, 3);
 current->m_nPoint = current->m_nLine;
 Refresh ();
 //SetSelectMode (LINE_MODE);
@@ -298,14 +298,14 @@ if (segmentManager.Count () <= 0)
 if (0) {//!ViewOption (eViewPartialLines)) {
 	DrawHighlight (1);
 	//if (m_selectMode == SEGMENT_MODE)
-		wrap (&current->m_nSegment,dir,0, segmentManager.Count () - 1);
+	Wrap (current->m_nSegment, dir, 0, segmentManager.Count () - 1);
 	Refresh (true);
 	//SetSelectMode (SEGMENT_MODE);
 	DrawHighlight (0);
 	}
 else {
 	//if (m_selectMode == SEGMENT_MODE)
-		wrap (&current->m_nSegment, dir, 0, segmentManager.Count () - 1);
+	Wrap (current->m_nSegment, dir, 0, segmentManager.Count () - 1);
 	Refresh (true);
 	//SetSelectMode (SEGMENT_MODE);
 	}
@@ -423,17 +423,17 @@ return true;
 
 void CMineView::NextObject (int dir) 
 {
-  short old_object = current->m_nObject;
-  short new_object = current->m_nObject;
+  short oldObject = current->m_nObject;
+  short newObject = current->m_nObject;
 
 //  DrawHighlight (1);
 if (objectManager.Count () > 1) {
 //	if (m_selectMode == OBJECT_MODE)
-		wrap(&new_object,dir,0, (short)objectManager.Count () - 1) ;
+	Wrap (newObject, dir, 0, (short) objectManager.Count () - 1);
 	Refresh (true);
 	}
 //SetSelectMode (OBJECT_MODE);
-RefreshObject (old_object, new_object);
+RefreshObject (oldObject, newObject);
 }
 
 //==========================================================================

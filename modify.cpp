@@ -139,16 +139,15 @@ if (radius - moveRate < 0.25) {
 		return false;
 		}
 	}
-else {
-	// normalize direction
-	if (radius > 0.1) 
-		v /= radius;
-	else 
-		v = segmentManager.CalcSideNormal (*current);
-	// move on x, y, and z
-	v *= -moveRate;
-	MoveOn (v);
-	}
+
+// normalize direction
+if (radius > 0.1) 
+	v /= radius;
+else 
+	v = segmentManager.CalcSideNormal (*current);
+// move on x, y, and z
+v *= -moveRate;
+MoveOn (v);
 return true;
 }
 
@@ -385,8 +384,8 @@ switch (m_selectMode){
 
 	case LINE_MODE:
 		undoManager.Begin (udVertices);
-		*vertexManager.Vertex (segP->Info ().verts [p0]) += delta;
-		*vertexManager.Vertex (segP->Info ().verts [p1]) += delta;
+		*vertexManager.Vertex (segP->Info ().verts [sideVertP [CURRENT_POINT (0)]]) += delta;
+		*vertexManager.Vertex (segP->Info ().verts [sideVertP [CURRENT_POINT (1)]]) += delta;
 		undoManager.End ();
 		break;
 

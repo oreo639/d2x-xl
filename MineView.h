@@ -388,12 +388,12 @@ public:
 	BOOL SetCursor (HCURSOR hCursor);
 //	void UpdateCursor (void);
 
-	inline void wrap (short *x, short delta,short min,short max) {
-		*x += delta;
-		if (*x > max)
-			*x = min;
-		else if (*x < min)
-			*x = max;
+	inline void Wrap (short& v, short delta, short min, short max) {
+		v += delta;
+		if (v > max)
+			v = min;
+		else if (v < min)
+			v = max;
 		}
 
 	bool SelectCurrentSegment(short direction,long mouse_x, long mouse_y);

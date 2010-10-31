@@ -650,7 +650,7 @@ for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<
 	//  segment's offset number, otherwise set it to -1
 	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		if (newSegP->HasChild (nSide)) // has a child in the block
-			newSegP->SetChild (nSide, m_xlatSegNum [segP->Child (nSide)]);
+			newSegP->SetChild (nSide, m_xlatSegNum [newSegP->Child (nSide)]);
 		else {
 			CVertex* v1 = vertexManager.Vertex (newSegP->m_info.verts [sideVertTable [nSide][0]]);
 			for (CSegment* oldSegP = m_oldSegments; oldSegP != null; oldSegP = dynamic_cast<CSegment*>(oldSegP->Link ())) {

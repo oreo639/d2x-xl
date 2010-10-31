@@ -435,6 +435,7 @@ if (IsRobotMaker (segP)) {
 					if (!h)	//only add flagged objects to 2nd list box
 						continue;
 					}
+				res.Clear ();
 				res.Load (ROBOT_STRING_TABLE + j);
 				h = plb [i]->AddString (res.Value ());
 				plb [i]->SetItemData (h, j);
@@ -461,6 +462,7 @@ else if (IsEquipMaker (segP)) {
 					if (!h)	//only add flagged objects to 2nd list box
 						continue;
 					}
+				res.Clear ();
 				res.Load (POWERUP_STRING_TABLE + j);
 				if (!strcmp (res.Value (), "(not used)"))
 					continue;

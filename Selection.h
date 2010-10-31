@@ -51,6 +51,8 @@ public:
 
 	void Setup (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1);
 
+	inline void Setup (CSideKey key) { Setup (key.m_nSegment, key.m_nSide); }
+
 	void Fix (short nSegment);
 
 	inline short& Index (void) { return m_nIndex; }
