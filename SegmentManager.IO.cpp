@@ -16,7 +16,7 @@ for (CSegmentIterator si; si; si++)
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::ReadSegments (CFileManager* fp, int nFileVersion)
+void CSegmentManager::ReadSegments (CFileManager* fp, int nLevelVersion)
 {
 if (m_segmentInfo.Restore (fp)) {
 	int nLevelType = DLE.IsD2XLevel () ? 2 : DLE.IsD2File () ? 1 : 0;
@@ -46,7 +46,7 @@ if (m_segmentInfo.Restore (fp)) {
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::WriteSegments (CFileManager* fp, int nFileVersion)
+void CSegmentManager::WriteSegments (CFileManager* fp, int nLevelVersion)
 {
 if (m_segmentInfo.Setup (fp)) {
 	m_segmentInfo.offset = fp->Tell ();
@@ -55,7 +55,7 @@ if (m_segmentInfo.Setup (fp)) {
 	int nLevelVersion = DLE.LevelVersion ();
 
 	for (int i = 0; i < Count (); i++)
-		m_segments [i].Write (fp, nLevelType, nFileVersion);
+		m_segments [i].Write (fp, nLevelType, nLevelVersion);
 	if (!DLE.IsD2File ())
 		return;
 	for (int i = 0; i < Count (); i++)
@@ -65,15 +65,15 @@ if (m_segmentInfo.Setup (fp)) {
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::ReadMatCens (CFileManager* fp, int nFileVersion, int nClass)
+void CSegmentManager::ReadMatCens (CFileManager* fp, int nLevelVersion, int nClass)
 {
 if (m_matCenInfo [nClass].Restore (fp)) {
 	for (int i = 0; i < MatCenCount (nClass); i++) {
 		if (i < MAX_MATCENS)
-			m_matCens [nClass][i].Read (fp, nFileVersion);
+			m_matCens [nClass][i].Read (fp, nLevelVersion);
 		else {
 			CMatCenter m;
-			m.Read (fp, nFileVersion);
+			m.Read (fp, nLevelVersion);
 			}
 		}
 	if (MatCenCount (nClass) > MAX_MATCENS)
@@ -83,42 +83,42 @@ if (m_matCenInfo [nClass].Restore (fp)) {
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::WriteMatCens (CFileManager* fp, int nFileVersion, int nClass)
+void CSegmentManager::WriteMatCens (CFileManager* fp, int nLevelVersion, int nClass)
 {
 if (m_matCenInfo [nClass].Setup (fp)) {
 	m_matCenInfo [nClass].size = (DLE.IsD1File () || (nClass == 0)) ? 16 : 20; 
 	m_matCenInfo [nClass].offset = fp->Tell ();
 	for (int i = 0; i < MatCenCount (nClass); i++)
-		m_matCens [nClass][i].Write (fp, nFileVersion);
+		m_matCens [nClass][i].Write (fp, nLevelVersion);
 	}
 }
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::ReadRobotMakers (CFileManager* fp, int nFileVersion)
+void CSegmentManager::ReadRobotMakers (CFileManager* fp, int nLevelVersion)
 {
-ReadMatCens (fp, nFileVersion, 0);
+ReadMatCens (fp, nLevelVersion, 0);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::WriteRobotMakers (CFileManager* fp, int nFileVersion)
+void CSegmentManager::WriteRobotMakers (CFileManager* fp, int nLevelVersion)
 {
-WriteMatCens (fp, nFileVersion, 0);
+WriteMatCens (fp, nLevelVersion, 0);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::ReadEquipMakers (CFileManager* fp, int nFileVersion)
+void CSegmentManager::ReadEquipMakers (CFileManager* fp, int nLevelVersion)
 {
-ReadMatCens (fp, nFileVersion, 1);
+ReadMatCens (fp, nLevelVersion, 1);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::WriteEquipMakers (CFileManager* fp, int nFileVersion)
+void CSegmentManager::WriteEquipMakers (CFileManager* fp, int nLevelVersion)
 {
-WriteMatCens (fp, nFileVersion, 1);
+WriteMatCens (fp, nLevelVersion, 1);
 }
 
 // ----------------------------------------------------------------------------- 

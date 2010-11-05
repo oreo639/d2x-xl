@@ -379,7 +379,7 @@ wndP->UpdateWindow ();
 
 // -----------------------------------------------------------------------------
 
-void CObjPhysicsInfo::Read (CFileManager* fp, int version)
+void CObjPhysicsInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 fp->ReadVector (velocity);
 fp->ReadVector (thrust);
@@ -394,7 +394,7 @@ flags = fp->ReadInt16 ();
 
 // -----------------------------------------------------------------------------
 
-void CObjPhysicsInfo::Write (CFileManager* fp, int version)
+void CObjPhysicsInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->WriteVector (velocity);
 fp->WriteVector (thrust);
@@ -409,7 +409,7 @@ fp->WriteInt16 (flags);
 
 // -----------------------------------------------------------------------------
 
-void CObjAIInfo::Read (CFileManager* fp, int version)
+void CObjAIInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 behavior = fp->ReadSByte ();
 for (int i = 0; i < MAX_AI_FLAGS; i++)
@@ -426,7 +426,7 @@ if (DLE.IsD1File ()) {
 
 // ------------------------------------------------------------------------
 
-void CObjAIInfo::Write (CFileManager* fp, int version)
+void CObjAIInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->Write (behavior);
 for (int i = 0; i < MAX_AI_FLAGS; i++)
@@ -443,7 +443,7 @@ if (DLE.IsD1File ()) {
 
 // ------------------------------------------------------------------------
 
-void CObjExplosionInfo::Read (CFileManager* fp, int version)
+void CObjExplosionInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 spawn_time = fp->ReadInt32 ();
 delete_time = fp->ReadInt32 ();
@@ -455,7 +455,7 @@ attach_parent =-1;
 
 // ------------------------------------------------------------------------
 
-void CObjExplosionInfo::Write (CFileManager* fp, int version)
+void CObjExplosionInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->Write (spawn_time);
 fp->Write (delete_time);
@@ -464,7 +464,7 @@ fp->Write (delete_objnum);
 
 // ------------------------------------------------------------------------
 
-void CObjLaserInfo::Read (CFileManager* fp, int version)
+void CObjLaserInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 parent_type = fp->ReadInt16 ();
 parent_num = fp->ReadInt16 ();
@@ -473,7 +473,7 @@ parent_signature = fp->ReadInt32 ();
 
 // ------------------------------------------------------------------------
 
-void CObjLaserInfo::Write (CFileManager* fp, int version)
+void CObjLaserInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->Write (parent_type);
 fp->Write (parent_num);
@@ -482,36 +482,36 @@ fp->Write (parent_signature);
 
 // ------------------------------------------------------------------------
 
-void CObjPowerupInfo::Read (CFileManager* fp, int version)
+void CObjPowerupInfo::Read (CFileManager* fp, int nLevelVersion)
 {
-count = (version >= 25) ? fp->ReadInt32 () : 1;
+count = (nLevelVersion >= 25) ? fp->ReadInt32 () : 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjPowerupInfo::Write (CFileManager* fp, int version)
+void CObjPowerupInfo::Write (CFileManager* fp, int nLevelVersion)
 {
-if (version >= 25) 
+if (nLevelVersion >= 25) 
 	fp->Write (count);
 }
 
 // ------------------------------------------------------------------------
 
-void CObjLightInfo::Read (CFileManager* fp, int version)
+void CObjLightInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 intensity = fp->ReadInt32 ();
 }
 
 // ------------------------------------------------------------------------
 
-void CObjLightInfo::Write (CFileManager* fp, int version)
+void CObjLightInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->Write (intensity);
 }
 
 // ------------------------------------------------------------------------
 
-void CObjPolyModelInfo::Read (CFileManager* fp, int version)
+void CObjPolyModelInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 nModel = fp->ReadInt32 ();
 for (int i = 0; i < MAX_SUBMODELS; i++)
@@ -523,7 +523,7 @@ alt_textures = 0;
 
 // ------------------------------------------------------------------------
 
-void CObjPolyModelInfo::Write (CFileManager* fp, int version)
+void CObjPolyModelInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->Write (nModel);
 for (int i = 0; i < MAX_SUBMODELS; i++)
@@ -534,7 +534,7 @@ fp->Write (nOverrideTexture);
 
 // ------------------------------------------------------------------------
 
-void CObjVClipInfo::Read (CFileManager* fp, int version)
+void CObjVClipInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 vclip_num = fp->ReadInt32 ();
 frametime = fp->ReadInt32 ();
@@ -543,7 +543,7 @@ framenum = fp->ReadSByte ();
 
 // ------------------------------------------------------------------------
 
-void CObjVClipInfo::Write (CFileManager* fp, int version)
+void CObjVClipInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->Write (vclip_num);
 fp->Write (frametime);
@@ -552,7 +552,7 @@ fp->Write (framenum);
 
 // ------------------------------------------------------------------------
 
-void CSmokeInfo::Read (CFileManager* fp, int version)
+void CSmokeInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 nLife = fp->ReadInt32 ();
 nSize [0] = fp->ReadInt32 ();
@@ -563,13 +563,13 @@ nBrightness = fp->ReadInt32 ();
 for (int i = 0; i < 4; i++)
 	color [i] = fp->ReadSByte ();
 nSide = fp->ReadSByte ();
-nType = (version < 18) ? 0 : fp->ReadSByte ();
-bEnabled = (version < 19) ? 1 : fp->ReadSByte ();
+nType = (nLevelVersion < 18) ? 0 : fp->ReadSByte ();
+bEnabled = (nLevelVersion < 19) ? 1 : fp->ReadSByte ();
 }
 
 // ------------------------------------------------------------------------
 
-void CSmokeInfo::Write (CFileManager* fp, int version)
+void CSmokeInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->Write (nLife);
 fp->Write (nSize [0]);
@@ -586,7 +586,7 @@ fp->Write (bEnabled);
 
 // ------------------------------------------------------------------------
 
-void CLightningInfo::Read (CFileManager* fp, int version)
+void CLightningInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 nLife = fp->ReadInt32 ();
 nDelay = fp->ReadInt32 ();
@@ -609,12 +609,12 @@ bRandom = fp->ReadSByte ();
 bInPlane = fp->ReadSByte ();
 for (int i = 0; i < 4; i++)
 	color [i] = fp->ReadSByte ();
-bEnabled = (version < 19) ? 1 : fp->ReadSByte ();
+bEnabled = (nLevelVersion < 19) ? 1 : fp->ReadSByte ();
 }
 
 // ------------------------------------------------------------------------
 
-void CLightningInfo::Write (CFileManager* fp, int version)
+void CLightningInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->Write (nLife);
 fp->Write (nDelay);
@@ -642,15 +642,15 @@ fp->Write (bEnabled);
 
 // ------------------------------------------------------------------------
 
-void CSoundInfo::Read (CFileManager* fp, int version)
+void CSoundInfo::Read (CFileManager* fp, int nLevelVersion)
 {
 fp->Read (szFilename, 1, sizeof (szFilename));
 nVolume = fp->ReadInt32 ();
-bEnabled = (version < 19) ? 1 : fp->ReadSByte ();
+bEnabled = (nLevelVersion < 19) ? 1 : fp->ReadSByte ();
 }
 // ------------------------------------------------------------------------
 
-void CSoundInfo::Write (CFileManager* fp, int version)
+void CSoundInfo::Write (CFileManager* fp, int nLevelVersion)
 {
 fp->Write (szFilename, 1, sizeof (szFilename));
 fp->Write (nVolume);
@@ -659,7 +659,7 @@ fp->Write (bEnabled);
 
 // ------------------------------------------------------------------------
 
-void CGameObject::Read (CFileManager* fp, int version, bool bFlag) 
+void CGameObject::Read (CFileManager* fp, int nLevelVersion, bool bFlag) 
 {
 m_info.type = fp->ReadSByte ();
 m_info.id = fp->ReadSByte ();
@@ -667,7 +667,7 @@ m_info.controlType = fp->ReadSByte ();
 m_info.movementType = fp->ReadSByte ();
 m_info.renderType = fp->ReadSByte ();
 m_info.flags = fp->ReadSByte ();
-m_info.multiplayer = (version > 37) ? fp->ReadSByte () : 0;
+m_info.multiplayer = (nLevelVersion > 37) ? fp->ReadSByte () : 0;
 m_info.nSegment = fp->ReadInt16 ();
 m_location.pos.Read (fp);
 fp->Read (m_location.orient);
@@ -680,7 +680,7 @@ m_info.contents.count = fp->ReadSByte ();
 
 switch (m_info.movementType) {
 	case MT_PHYSICS:
-		mType.physInfo.Read (fp, version);
+		mType.physInfo.Read (fp, nLevelVersion);
 		break;
 	case MT_SPINNING:
 		fp->ReadVector (mType.spinRate);
@@ -693,19 +693,19 @@ switch (m_info.movementType) {
 
 switch (m_info.controlType) {
 	case CT_AI:
-		cType.aiInfo.Read (fp, version);
+		cType.aiInfo.Read (fp, nLevelVersion);
 		break;
 	case CT_EXPLOSION:
-		cType.explInfo.Read (fp, version);
+		cType.explInfo.Read (fp, nLevelVersion);
 		break;
 	case CT_WEAPON:
-		cType.laserInfo.Read (fp, version);
+		cType.laserInfo.Read (fp, nLevelVersion);
 		break;
 	case CT_LIGHT:
-		cType.lightInfo.Read (fp, version);
+		cType.lightInfo.Read (fp, nLevelVersion);
 		break;
 	case CT_POWERUP:
-		cType.powerupInfo.Read (fp, version);
+		cType.powerupInfo.Read (fp, nLevelVersion);
 		break;
 	case CT_NONE:
 	case CT_FLYING:
@@ -727,7 +727,7 @@ switch (m_info.renderType) {
 		break;
 	case RT_MORPH:
 	case RT_POLYOBJ: 
-		rType.polyModelInfo.Read (fp, version);
+		rType.polyModelInfo.Read (fp, nLevelVersion);
 		break;
 	case RT_WEAPON_VCLIP:
 	case RT_HOSTAGE:
@@ -753,7 +753,7 @@ switch (m_info.renderType) {
 
 // ------------------------------------------------------------------------
 
-void CGameObject::Write (CFileManager* fp, int version, bool bFlag)
+void CGameObject::Write (CFileManager* fp, int nLevelVersion, bool bFlag)
 {
 if (DLE.IsStdLevel () && (m_info.type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
@@ -777,7 +777,7 @@ fp->Write (m_info.contents.count);
 
 switch (m_info.movementType) {
 	case MT_PHYSICS:
-		mType.physInfo.Write (fp, version);
+		mType.physInfo.Write (fp, nLevelVersion);
 		break;
 	case MT_SPINNING:
 		fp->Write (mType.spinRate);
@@ -790,19 +790,19 @@ switch (m_info.movementType) {
 
 switch (m_info.controlType) {
 	case CT_AI:
-		cType.aiInfo.Write (fp, version);
+		cType.aiInfo.Write (fp, nLevelVersion);
 		break;
 	case CT_EXPLOSION:
-		cType.explInfo.Write (fp, version);
+		cType.explInfo.Write (fp, nLevelVersion);
 		break;
 	case CT_WEAPON:
-		cType.laserInfo.Write (fp, version);
+		cType.laserInfo.Write (fp, nLevelVersion);
 		break;
 	case CT_LIGHT:
-		cType.lightInfo.Write (fp, version);
+		cType.lightInfo.Write (fp, nLevelVersion);
 		break;
 	case CT_POWERUP:
-		cType.powerupInfo.Write (fp, version);
+		cType.powerupInfo.Write (fp, nLevelVersion);
 		break;
 	case CT_NONE:
 	case CT_FLYING:
@@ -824,24 +824,24 @@ switch (m_info.renderType) {
 		break;
 	case RT_MORPH:
 	case RT_POLYOBJ:
-		rType.polyModelInfo.Write (fp, version);
+		rType.polyModelInfo.Write (fp, nLevelVersion);
 	break;
 	case RT_WEAPON_VCLIP:
 	case RT_HOSTAGE:
 	case RT_POWERUP:
 	case RT_FIREBALL:
-		rType.vClipInfo.Write (fp, version);
+		rType.vClipInfo.Write (fp, nLevelVersion);
 		break;
 	case RT_LASER:
 		break;
 	case RT_SMOKE:
-		rType.smokeInfo.Write (fp, version);
+		rType.smokeInfo.Write (fp, nLevelVersion);
 		break;
 	case RT_LIGHTNING:
-		rType.lightningInfo.Write (fp, version);
+		rType.lightningInfo.Write (fp, nLevelVersion);
 		break;
 	case RT_SOUND:
-		rType.soundInfo.Write (fp, version);
+		rType.soundInfo.Write (fp, nLevelVersion);
 		break;
 	default:
 		break;

@@ -110,8 +110,8 @@ public:
 	short     turnroll;    // rotation caused by turn banking 
 	ushort     flags;      // misc physics flags 
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -127,8 +127,8 @@ public:
 	byte track_goal;     //  Object this object is tracking. 
 	int multiplier;		//  Power if this is a fusion bolt (or other super weapon to be added). 
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -142,8 +142,8 @@ public:
 	byte  prev_attach;    // previous explosion in attach list 
 	byte  next_attach;    // next explosion in attach list 
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -152,8 +152,8 @@ class CObjLightInfo {
 public:
   int  intensity;    // how bright the light is
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -162,8 +162,8 @@ class CObjPowerupInfo {
 public:
 	int  count;      // how many/much we pick up (vulcan cannon only?) 
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -174,8 +174,8 @@ public:
 	int	frametime;
 	byte	framenum;
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -189,8 +189,8 @@ public:
 	int      nOverrideTexture;    // if this is not -1, map all face to this 
 	byte     alt_textures;     // if not -1, use these textures instead 
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -210,8 +210,8 @@ public:
 	int  danger_laser_signature;
 	short  danger_laser_num;
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -229,8 +229,8 @@ public:
 	byte			nType;
 	byte			bEnabled;
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -259,8 +259,8 @@ public:
 	byte			bEnabled;
 	byte			color [4];
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -271,8 +271,8 @@ public:
 	char			szFilename [40];
 	byte			bEnabled;
 
-	void Read (CFileManager* fp, int version);
-	void Write (CFileManager* fp, int version);
+	void Read (CFileManager* fp, int nLevelVersion);
+	void Write (CFileManager* fp, int nLevelVersion);
 };
 
 //------------------------------------------------------------------------
@@ -354,9 +354,9 @@ class CGameObject : public CGameItem {
 
 		inline byte& Type (void) { return m_info.type; }
 
-		void Read (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager* fp, int nLevelVersion = 0, bool bFlag = false);
 
-		void Write (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager* fp, int nLevelVersion = 0, bool bFlag = false);
 
 		void Create (byte type, short nSegment);
 

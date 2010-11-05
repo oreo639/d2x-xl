@@ -140,9 +140,9 @@ fp->WriteInt16 (segmentManager.Count ());
 // write all vertices
 vertexManager.SetIndex ();
 segmentManager.SetIndex ();
-vertexManager.Write (fp, FileInfo ().version);
+vertexManager.Write (fp, LevelVersion ());
 // write segment information
-segmentManager.WriteSegments (fp, FileInfo ().version);
+segmentManager.WriteSegments (fp, LevelVersion ());
 // for Descent 2, save special info here
 if (LevelVersion () >= 9)
 	lightManager.WriteColors (*fp);
@@ -205,14 +205,14 @@ fp->Write (str, strlen (str) + 1, 1);
 triggerManager.SetIndex ();
 wallManager.SetIndex ();
 
-objectManager.Write (fp, FileInfo ().version);
-wallManager.Write (fp, FileInfo ().version);
-triggerManager.Write (fp, FileInfo ().version);
-triggerManager.WriteReactor (fp, FileInfo ().version);
-segmentManager.WriteRobotMakers (fp, FileInfo ().version);
+objectManager.Write (fp, LevelVersion ());
+wallManager.Write (fp, LevelVersion ());
+triggerManager.Write (fp, LevelVersion ());
+triggerManager.WriteReactor (fp, LevelVersion ());
+segmentManager.WriteRobotMakers (fp, LevelVersion ());
 if (IsD2File ()) {
-	segmentManager.WriteEquipMakers (fp, FileInfo ().version);
-	lightManager.WriteLightDeltas (fp, FileInfo ().version);
+	segmentManager.WriteEquipMakers (fp, LevelVersion ());
+	lightManager.WriteLightDeltas (fp, LevelVersion ());
 	}
 
 fp->Seek (startOffset, SEEK_SET);

@@ -189,7 +189,7 @@ void CSegment::Read (CFileManager* fp, int nLevelType, int nLevelVersion)
 {
 	int	i;
 
-if (nLevelVersion >= 9) {
+if (nLevelType == 2) {
 	m_info.owner = fp->ReadSByte ();
 	m_info.group = fp->ReadSByte ();
 	}
@@ -558,7 +558,7 @@ switch (EditType ()) {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CMatCenter::Read (CFileManager* fp, int version, bool bFlag)
+void CMatCenter::Read (CFileManager* fp, int nLevelVersion, bool bFlag)
 {
 m_info.objFlags [0] = fp->ReadInt32 ();
 if (DLE.IsD2File ())
@@ -571,7 +571,7 @@ m_info.nFuelCen = fp->ReadInt16 ();
 
 // -----------------------------------------------------------------------------
 
-void CMatCenter::Write (CFileManager* fp, int version, bool bFlag)
+void CMatCenter::Write (CFileManager* fp, int nLevelVersion, bool bFlag)
 {
 fp->Write (m_info.objFlags [0]);
 if (DLE.IsD2File ())

@@ -467,7 +467,7 @@ void CTriggerManager::WriteReactor (CFileManager* fp, int nFileVersion)
 if (m_reactorInfo.Setup (fp)) {
 	m_reactorInfo.size = 42;
 	for (short i = 0; i < ReactorTriggerCount (); i++)
-		m_reactorTriggers [i].Read (fp, nFileVersion);
+		m_reactorTriggers [i].Write (fp, nFileVersion);
 	}
 }
 
