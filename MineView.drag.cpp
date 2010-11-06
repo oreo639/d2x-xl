@@ -49,6 +49,7 @@ void CMineView::HighlightDrag (short nVert, long x, long y)
 {
 CHECKMINE;
 
+m_pDC = &m_DC;
 m_pDC->SelectObject((HBRUSH) GetStockObject (NULL_BRUSH));
 //m_pDC->SetROP2 (R2_NOT);
 m_pDC->SetROP2 (R2_NOT);
@@ -136,7 +137,7 @@ CHECKMINE;
 
 //ReleaseCapture ();
 	int		m_changesMade = 1;
-	int		i, new_vert, count = 0;
+	int		i, newVert, count = 0;
 	long		xPos,yPos;
 	short		point1,vert1;
 	short		point2,vert2;
@@ -150,40 +151,40 @@ vert1 = segmentManager.Segment (0) [current->m_nSegment].m_info.verts [point1];
 for (i = 0; i < vertexManager.Count (); i++) {
 	long xPoint = m_viewPoints [i].x;
 	long yPoint = m_viewPoints [i].y;
-	if (abs(xPos - xPoint) < 5 && abs(yPos - yPoint)<5) {
+	if ((abs (xPos - xPoint) < 5) && (abs (yPos - yPoint) < 5)) {
 		count++;
-		new_vert = i;
+		newVert = i;
 		}
 	}
 // if too many matches found
 if ((count > 1) && 
-	 (QueryMsg("It is not clear which point you want to snap to."
-				  "Do you want to attach these points anyway?") == IDYES))
+	 (QueryMsg ("It is not clear which point you want to snap to."
+				   "Do you want to attach these points anyway?") == IDYES))
 	count = 1;
 if (count == 1) {
 // make sure new vert is not one of the current segment's verts
 	for (i = 0; i < 8; i++) {
-		if (i!=point1) {
+		if (i != point1) {
 			vert2 = current->Segment ()->m_info.verts [i];
-			if (new_vert == vert2) {
+			if (newVert == vert2) {
 				ErrorMsg ("Cannot drop point onto another corner of the current segment.");
 				break;
 				}
 			}
 		}
-	if (i==8 && new_vert!=vert1) {
+	if ((i == 8) && (newVert != vert1)) {
 	// make sure the new line lengths are close enough
 		for (i = 0; i < 3; i++) {
 			point2 = connectPointTable [point1] [i];
-			vert2 = segmentManager.Segment (0) [current->m_nSegment].m_info.verts [point2];
-			if (Distance (*vertexManager.Vertex (new_vert), *vertexManager.Vertex (vert2)) >= 1000.0) {
+			vert2 = segmentManager.Segment (current->m_nSegment)->m_info.verts [point2];
+			if (Distance (*vertexManager.Vertex (newVert), *vertexManager.Vertex (vert2)) >= 1000.0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
 				}
 			}
-		if (i==3) { //
+		if (i == 3) { //
 			// replace origional vertex with new vertex
-			current->Segment ()->m_info.verts [point1] = new_vert;
+			current->Segment ()->m_info.verts [point1] = newVert;
 			// all unused vertices
 			vertexManager.DeleteUnused ();
 			segmentManager.FixChildren ();

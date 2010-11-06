@@ -216,7 +216,7 @@ void CViewMatrix::Project (CDoubleVector& vertex, APOINT& apoint)
 v += m_data [0].m_move;
 r = m_data [0].m_mat * v;
 double scale = 5.0;
-if ((m_depthPerception < 10000) && (r.v.z > - m_depthPerception)) 
+if ((m_depthPerception < 10000) && (r.v.z > -m_depthPerception)) 
 	scale *= m_depthPerception / (r.v.z + m_depthPerception);
 r *= CDoubleVector (scale, scale, 1.0);
 apoint.x = ((long) (Round (r.v.x) + m_viewWidth) % 32767);
@@ -231,7 +231,9 @@ apoint.z = (long) Round (r.v.z * 10000); // 5 digits precision
 void CViewMatrix::Unproject (CVertex& vertex, APOINT& apoint) 
 {
 CDoubleVector v (double (apoint.x - x_center), double (y_center - apoint.y), double (apoint.z));
-double scale = (v.v.z + depthPerception) / depthPerception / 5.0;
+double scale = 0.2;
+if (m_depthPerception < 10000)
+ scale *= (v.v.z + depthPerception) / depthPerception;
 v *= CDoubleVector (scale, scale, 1.0);
 CDoubleVector r = m_data [0].m_invMat * v;
 r -= m_data [0].m_move;
