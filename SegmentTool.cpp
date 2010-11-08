@@ -252,7 +252,7 @@ void CSegmentTool::OnSetCoord (void)
 CHECKMINE;
 UpdateData (TRUE);
 undoManager.Begin (udVertices);
-current->Segment ()->Vertex (current->Segment ()->m_info.verts [sideVertTable[current->m_nSide][current->m_nPoint]])->Set (m_nCoord [0], m_nCoord [1], m_nCoord [2]);
+current->Segment ()->Vertex (sideVertTable [current->m_nSide][current->m_nPoint])->Set (m_nCoord [0], m_nCoord [1], m_nCoord [2]);
 undoManager.End ();
 DLE.MineView ()->Refresh (false);
 }
@@ -324,7 +324,7 @@ void CSegmentTool::OnSide6 () { OnSide (5); }
 void CSegmentTool::OnPoint (int nPoint)
 {
 CHECKMINE;
-current->m_nPoint = m_nPoint = nPoint;
+current->m_nLine = current->m_nPoint = m_nPoint = nPoint;
 DLE.MineView ()->Refresh ();
 }
 

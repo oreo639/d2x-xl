@@ -764,7 +764,8 @@ fp->Write (m_info.controlType);
 fp->Write (m_info.movementType);
 fp->Write (m_info.renderType);
 fp->Write (m_info.flags);
-fp->Write (m_info.multiplayer);
+if (nLevelVersion > 37)
+	fp->Write (m_info.multiplayer);
 fp->Write (m_info.nSegment);
 fp->Write (m_location.pos);
 fp->Write (m_location.orient);

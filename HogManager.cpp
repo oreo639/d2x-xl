@@ -455,11 +455,11 @@ void CHogManager::OnRename ()
 if (index < 0)
 	return;
 LBFiles ()->GetText (index, buf);
-CInputDialog dlg (this, "Rename fp", "Enter new name:",(char *) buf, sizeof (buf));
+CInputDialog dlg (this, "Rename file", "Enter new name:",(char *) buf, sizeof (buf));
 if (dlg.DoModal () != IDOK)
 	return;
 if (FindFilename (buf) >= 0) {
-	ErrorMsg ("A fp with that name already exists\nin the HOG fp.");
+	ErrorMsg ("A file with that name already exists\nin the HOG file.");
 	return;
 	}
 CFileManager fp;
@@ -472,7 +472,7 @@ level_header lh;
 int fileno = GetFileData (index, &size, &offset);
 fp.Seek (offset, SEEK_SET);
 if (!fp.Read (&lh, sizeof (lh), 1))
-	ErrorMsg ("Cannot read from HOG fp");
+	ErrorMsg ("Cannot read from HOG file");
 else {
 	memset(lh.name, 0, sizeof (lh.name));
 	buf[12] = null;
@@ -480,7 +480,7 @@ else {
 	strncpy_s (lh.name, sizeof (lh.name), buf, 12);
 	fp.Seek (offset, SEEK_SET);
 	if (!fp.Write (&lh, sizeof (lh), 1))
-		ErrorMsg ("Cannot write to HOG fp");
+		ErrorMsg ("Cannot write to HOG file");
 	else {
 		// update list box
 		DeleteFile ();
