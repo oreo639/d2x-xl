@@ -93,9 +93,9 @@ class CObjectManager {
 
 		inline void WriteInfo (CFileManager* fp) { m_info.Write (fp); }
 
-		void Read (CFileManager* fp, int nFileVersion);
+		void Read (CFileManager* fp);
 
-		void Write (CFileManager* fp, int nFileVersion);
+		void Write (CFileManager* fp);
 
 		void Clear (void);
 

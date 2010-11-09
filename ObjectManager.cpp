@@ -318,17 +318,17 @@ undoManager.End ();
 
 // -----------------------------------------------------------------------------
 
-void CObjectManager::Read (CFileManager* fp, int nFileVersion)
+void CObjectManager::Read (CFileManager* fp)
 {
 if (m_info.Restore (fp)) {
 	for (short i = 0; i < Count (); i++) {
 		if (i < MAX_OBJECTS) {
-			m_objects [i].Read (fp, nFileVersion);
+			m_objects [i].Read (fp);
 			m_objects [i].Index () = i;
 			}
 		else {
 			CGameObject o;
-			o.Read (fp, nFileVersion);
+			o.Read (fp);
 			}	
 		}
 	}
@@ -336,12 +336,12 @@ if (m_info.Restore (fp)) {
 
 // ----------------------------------------------------------------------------- 
 
-void CObjectManager::Write (CFileManager* fp, int nFileVersion)
+void CObjectManager::Write (CFileManager* fp)
 {
 if (m_info.Setup (fp)) {
 	m_info.size = 0x108;
 	for (short i = 0; i < Count (); i++)
-		m_objects [i].Write (fp, nFileVersion);
+		m_objects [i].Write (fp);
 	}
 }
 

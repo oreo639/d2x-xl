@@ -8,9 +8,9 @@ class CVertex : public CDoubleVector, public CGameItem {
 		byte m_status;
 
 	public:
-		void Read (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager* fp = 0, bool bFlag = false);
 
-		void Write (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager* fp = 0, bool bFlag = false);
 
 		inline const CVertex& operator= (const CVertex& other) { 
 			v = other.v, m_status = other.m_status; 

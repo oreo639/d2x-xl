@@ -88,6 +88,8 @@ class CMine {
 		inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
 		inline bool IsD2XFile (void) { return IsD2File () && IsD2XLevel (); }
 
+		inline int LevelType (void) { return IsD2XLevel () ? 2 : IsD2File () ? 1 : 0; }
+
 		inline CMineInfo& Info (void)	{ return Data ().m_info; }
 
 		inline CMineFileInfo& FileInfo (void) { return Data ().m_info.fileInfo; }

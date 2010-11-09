@@ -138,7 +138,7 @@ CTriggerTargets::Clear ();
 
 //------------------------------------------------------------------------------
 
-void CTrigger::Read (CFileManager* fp, int version, bool bObjTrigger)
+void CTrigger::Read (CFileManager* fp, bool bObjTrigger)
 {
 if (DLE.IsD2File ()) {
 	m_info.type = fp->ReadByte ();
@@ -148,7 +148,7 @@ if (DLE.IsD2File ()) {
 	m_info.value = fp->ReadInt32 ();
 	if ((DLE.LevelVersion () < 21) && (m_info.type == TT_EXIT))
 		m_info.value = 0;
-	if ((version < 39) && (m_info.type == TT_MASTER))
+	if ((DLE.FileVersion () < 39) && (m_info.type == TT_MASTER))
 		m_info.value = 0;
 	m_info.time = fp->ReadInt32 ();
 	}
@@ -169,7 +169,7 @@ this->CTriggerTargets::Read (fp);
 
 //------------------------------------------------------------------------------
 
-void CTrigger::Write (CFileManager* fp, int version, bool bObjTrigger)
+void CTrigger::Write (CFileManager* fp, bool bObjTrigger)
 {
 if (DLE.IsD2File ()) {
 	fp->Write (m_info.type);
@@ -229,7 +229,7 @@ Id () = undoManager.Backup (this, editType);
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CReactorTrigger::Read (CFileManager* fp, int version, bool bFlag)
+void CReactorTrigger::Read (CFileManager* fp, bool bFlag)
 {
 	int	i;
 
@@ -242,7 +242,7 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 //------------------------------------------------------------------------------
 
-void CReactorTrigger::Write (CFileManager* fp, int version, bool bFlag)
+void CReactorTrigger::Write (CFileManager* fp, bool bFlag)
 {
 	int	i;
 

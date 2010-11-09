@@ -182,13 +182,13 @@ class CTriggerManager {
 
 		inline void WriteReactorInfo (CFileManager* fp) { m_reactorInfo.Write (fp); }
 
-		void Read (CFileManager* fp, int nFileVersion);
+		void Read (CFileManager* fp);
 
-		void Write (CFileManager* fp, int nFileVersion);
+		void Write (CFileManager* fp);
 
-		void ReadReactor (CFileManager* fp, int nFileVersion);
+		void ReadReactor (CFileManager* fp);
 
-		void WriteReactor (CFileManager* fp, int nFileVersion);
+		void WriteReactor (CFileManager* fp);
 
 		void Clear (void);
 

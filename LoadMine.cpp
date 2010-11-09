@@ -289,11 +289,11 @@ lightManager.ResetInfo ();
 
 vertexManager.Count () = nVertices;
 vertexManager.FileOffset () = fp->Tell ();
-vertexManager.Read (fp, FileInfo ().version);
+vertexManager.Read (fp);
 
 segmentManager.Count () = nSegments;
 segmentManager.FileOffset () = fp->Tell ();
-segmentManager.ReadSegments (fp, FileInfo ().version);
+segmentManager.ReadSegments (fp);
 
 lightManager.ReadColors (*fp);
 
@@ -332,14 +332,14 @@ else {  /*load mine filename */
 		}
 	}
 
-objectManager.Read (fp, FileInfo ().version);
-wallManager.Read (fp, FileInfo ().version);
-triggerManager.Read (fp, FileInfo ().version);
-triggerManager.ReadReactor (fp, FileInfo ().version);
-segmentManager.ReadRobotMakers (fp, FileInfo ().version);
-lightManager.ReadLightDeltas (fp, FileInfo ().version);
+objectManager.Read (fp);
+wallManager.Read (fp);
+triggerManager.Read (fp);
+triggerManager.ReadReactor (fp);
+segmentManager.ReadRobotMakers (fp);
+lightManager.ReadLightDeltas (fp);
 if (!DLE.IsD1File ())
-	segmentManager.ReadEquipMakers (fp, FileInfo ().version);
+	segmentManager.ReadEquipMakers (fp);
 return 0;
 }
 

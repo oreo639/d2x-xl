@@ -145,20 +145,20 @@ m_info.damage [1] = 0;
 
 // -----------------------------------------------------------------------------
 
-byte CSegment::ReadWalls (CFileManager* fp, int nLevelVersion)
+byte CSegment::ReadWalls (CFileManager* fp)
 {
 	byte wallFlags = byte (fp->ReadSByte ());
 	int	i;
 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	if (m_info.wallFlags & (1 << i)) 
-		m_sides [i].m_info.nWall = (nLevelVersion >= 13) ? fp->ReadUInt16 () : (ushort) fp->ReadByte ();
+		m_sides [i].m_info.nWall = (DLE.LevelVersion () >= 13) ? fp->ReadUInt16 () : (ushort) fp->ReadByte ();
 return wallFlags;
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegment::ReadExtras (CFileManager* fp, int nLevelType, int nLevelVersion, bool bExtras)
+void CSegment::ReadExtras (CFileManager* fp, bool bExtras)
 {
 if (bExtras) {
 	m_info.function = fp->ReadSByte ();
@@ -171,8 +171,8 @@ else {
 	m_info.nMatCen = -1;
 	m_info.value = 0;
 	}
-if (nLevelType) {
-	if (nLevelVersion < 20)
+if (DLE.LevelType ()) {
+	if (DLE.LevelVersion () < 20)
 		Upgrade ();
 	else {
 		m_info.props = fp->ReadSByte ();
@@ -180,16 +180,16 @@ if (nLevelType) {
 		m_info.damage [1] = fp->ReadInt16 ();
 		}
 	}
-m_info.staticLight = (nLevelType == 0) ? (int) fp->ReadInt16 () : fp->ReadInt32 ();
+m_info.staticLight = (DLE.LevelType () == 0) ? (int) fp->ReadInt16 () : fp->ReadInt32 ();
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegment::Read (CFileManager* fp, int nLevelType, int nLevelVersion)
+void CSegment::Read (CFileManager* fp)
 {
 	int	i;
 
-if (nLevelType == 2) {
+if (DLE.LevelType () == 2) {
 	m_info.owner = fp->ReadSByte ();
 	m_info.group = fp->ReadSByte ();
 	}
@@ -208,8 +208,8 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 	m_info.verts [i] = fp->ReadInt16 ();
 
-if (nLevelType == 0)
-	ReadExtras (fp, nLevelType, nLevelVersion, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
+if (DLE.LevelType () == 0)
+	ReadExtras (fp, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // read the wall bit mask
 m_info.wallFlags = byte (fp->ReadSByte ());
@@ -217,7 +217,7 @@ m_info.wallFlags = byte (fp->ReadSByte ());
 // read in wall numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 	m_sides [i].m_info.nWall = (m_info.wallFlags & (1 << i)) 
-										? (nLevelVersion < 13) 
+										? (DLE.LevelVersion () < 13) 
 											? (ushort) fp->ReadByte () 
 											: fp->ReadUInt16 ()
 										: NO_WALL;
@@ -229,7 +229,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 
 // -----------------------------------------------------------------------------
 
-byte CSegment::WriteWalls (CFileManager* fp, int nLevelVersion)
+byte CSegment::WriteWalls (CFileManager* fp)
 {
 	int	i;
 
@@ -244,7 +244,7 @@ fp->Write (m_info.wallFlags);
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (m_info.wallFlags & (1 << i)) {
 		CWall _const_ * wallP = m_sides [i].Wall ();
-		if (nLevelVersion >= 13)
+		if (DLE.LevelVersion () >= 13)
 			fp->WriteUInt16 ((ushort) const_cast<CWall*>(wallP)->Index ());
 		else
 			fp->WriteSByte ((sbyte) const_cast<CWall*>(wallP)->Index ());
@@ -255,7 +255,7 @@ return m_info.wallFlags;
 
 // -----------------------------------------------------------------------------
 
-void CSegment::WriteExtras (CFileManager* fp, int nLevelType, bool bExtras)
+void CSegment::WriteExtras (CFileManager* fp, bool bExtras)
 {
 if (bExtras) {
 	fp->Write (m_info.function);
@@ -263,12 +263,12 @@ if (bExtras) {
 	fp->Write (m_info.value);
 	fp->WriteByte (0); // s2Flags
 	}
-if (nLevelType == 2) {
+if (DLE.LevelType () == 2) {
 	fp->Write (m_info.props);
 	fp->Write (m_info.damage [0]);
 	fp->Write (m_info.damage [1]);
 	}
-if (nLevelType == 0)
+if (DLE.LevelType () == 0)
 	fp->WriteInt16 ((short) m_info.staticLight);
 else
 	fp->Write (m_info.staticLight);
@@ -276,11 +276,11 @@ else
 
 // -----------------------------------------------------------------------------
 
-void CSegment::Write (CFileManager* fp, int nLevelType, int nLevelVersion)
+void CSegment::Write (CFileManager* fp)
 {
 	int	i;
 
-if (nLevelType == 2) {
+if (DLE.LevelType () == 2) {
 	fp->Write (m_info.owner);
 	fp->Write (m_info.group);
 	}
@@ -292,7 +292,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 		m_info.childFlags |= (1 << i);
 		}
 	}
-if (nLevelType == 0) {
+if (DLE.LevelType () == 0) {
 	if (m_info.function != 0) { // if this is a special segment
 		m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		}
@@ -315,11 +315,11 @@ if ((m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (m_info.nMatCen == -1)) {
 	m_info.value = 0;
 	m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 	}
-if (nLevelType == 0)
-	WriteExtras (fp, nLevelType, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
+if (DLE.LevelType () == 0)
+	WriteExtras (fp, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // calculate wall bit mask
-WriteWalls (fp, nLevelVersion);
+WriteWalls (fp);
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
 	if ((Child (i) == -1) || (m_info.wallFlags & (1 << i))) 
 		m_sides [i].Write (fp);
@@ -558,7 +558,7 @@ switch (EditType ()) {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CMatCenter::Read (CFileManager* fp, int nLevelVersion, bool bFlag)
+void CMatCenter::Read (CFileManager* fp, bool bFlag)
 {
 m_info.objFlags [0] = fp->ReadInt32 ();
 if (DLE.IsD2File ())
@@ -571,7 +571,7 @@ m_info.nFuelCen = fp->ReadInt16 ();
 
 // -----------------------------------------------------------------------------
 
-void CMatCenter::Write (CFileManager* fp, int nLevelVersion, bool bFlag)
+void CMatCenter::Write (CFileManager* fp, bool bFlag)
 {
 fp->Write (m_info.objFlags [0]);
 if (DLE.IsD2File ())

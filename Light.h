@@ -35,9 +35,9 @@ class CLightDeltaValue : public CSideKey, public CGameItem {
 	public:
 		tLightDeltaValue m_info;
 
-		void Read (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager* fp, bool bFlag = false);
 
-		void Write (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager* fp, bool bFlag = false);
 
 		virtual void Clear (void) { 
 			memset (&m_info, 0, sizeof (m_info)); 
@@ -67,9 +67,9 @@ class CLightDeltaIndex : public CSideKey, public CGameItem {
 	public:
 		tLightDeltaIndex m_info;
 
-		void Read (CFileManager* fp, int version, bool bD2X);
+		void Read (CFileManager* fp, bool bD2X);
 
-		void Write (CFileManager* fp, int version, bool bD2X);
+		void Write (CFileManager* fp, bool bD2X);
 
 		virtual void Clear (void) { 
 			memset (&m_info, 0, sizeof (m_info)); 

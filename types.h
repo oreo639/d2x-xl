@@ -94,9 +94,9 @@ class CColor : public CGameItem {
 	public:
 		tColor	m_info;
 
-		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager& fp, bool bFlag = false);
 
-		void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager& fp, bool bFlag = false);
 
 		virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 

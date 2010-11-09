@@ -149,14 +149,14 @@ DLE.MineView ()->Refresh ();
 
 // -----------------------------------------------------------------------------
 
-void CWall::Read (CFileManager* fp, int version, bool bFlag)
+void CWall::Read (CFileManager* fp, bool bFlag)
 {
 m_nSegment = fp->ReadInt32 ();
 m_nSide = fp->ReadInt32 (); 
 m_info.hps = fp->ReadInt32 ();
 m_info.linkedWall = fp->ReadInt32 ();
 m_info.type = fp->ReadByte ();
-m_info.flags = ushort ((version < 37) ? fp->ReadSByte () : fp->ReadInt16 ());         
+m_info.flags = ushort ((DLE.FileVersion () < 37) ? fp->ReadSByte () : fp->ReadInt16 ());         
 m_info.state = fp->ReadByte ();         
 m_info.nTrigger = fp->ReadByte ();       
 m_info.nClip = fp->ReadByte ();      
@@ -167,14 +167,14 @@ m_info.cloakValue = fp->ReadSByte ();
 
 // -----------------------------------------------------------------------------
 
-void CWall::Write (CFileManager* fp, int version, bool bFlag)
+void CWall::Write (CFileManager* fp, bool bFlag)
 {
 fp->WriteInt32 ((m_nSegment < 0) ? m_nSegment : segmentManager.Segment (m_nSegment)->Index ());
 fp->WriteInt32 ((int) m_nSide); 
 fp->Write (m_info.hps);
 fp->Write (m_info.linkedWall);
 fp->Write (m_info.type);
-if (version < 37) 
+if (DLE.FileVersion () < 37) 
 	fp->WriteSByte ((sbyte) m_info.flags);
 else
 	fp->Write (m_info.flags);         
@@ -315,7 +315,7 @@ switch (EditType ()) {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CDoor::Read (CFileManager* fp, int version, bool bFlag)
+void CDoor::Read (CFileManager* fp, bool bFlag)
 {
 m_info.nParts = fp->ReadInt32 ();
 m_info.nFrontWall [0] = fp->ReadInt16 ();
@@ -327,7 +327,7 @@ m_info.time = fp->ReadInt32 ();
 
 // -----------------------------------------------------------------------------
 
-void CDoor::Write (CFileManager* fp, int version, bool bFlag)
+void CDoor::Write (CFileManager* fp, bool bFlag)
 {
 fp->Write (m_info.nParts);
 fp->Write (m_info.nFrontWall [0]);

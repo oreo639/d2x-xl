@@ -8,7 +8,7 @@
 
 // -----------------------------------------------------------------------------
 
-void CVertex::Read (CFileManager* fp, int version, bool bFlag) 
+void CVertex::Read (CFileManager* fp, bool bFlag) 
 { 
 m_status = 0;
 fp->ReadVector (v); 
@@ -16,7 +16,7 @@ fp->ReadVector (v);
 
 // -----------------------------------------------------------------------------
 
-void CVertex::Write (CFileManager* fp, int version, bool bFlag) 
+void CVertex::Write (CFileManager* fp, bool bFlag) 
 { 
 fp->WriteVector (v); 
 }

@@ -50,7 +50,11 @@ public:
 
 	inline int FileType (void) { return theMine ? theMine->FileType (): RL2_FILE; }
 
+	inline int FileVersion (void) { return theMine ? theMine->FileInfo ().version : 0; }
+
 	inline int LevelVersion (void) { return theMine ? theMine->LevelVersion () : 7; }
+
+	inline int LevelType (void) { return theMine ? theMine->LevelType () : 1; }
 
 	inline bool IsStdLevel (void) { return LevelVersion () < 9; }
 

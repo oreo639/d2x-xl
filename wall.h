@@ -48,9 +48,9 @@ class CWall : public CSideKey, public CGameItem {
 
 		inline byte& Type (void) { return m_info.type; }
 
-		void Read (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager* fp, bool bFlag = false);
 		
-		void Write (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager* fp, bool bFlag = false);
 		
 		void Setup (CSideKey key, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine);
 		
@@ -117,9 +117,9 @@ class CDoor : public CGameItem {
 		tDoor	m_info;
 
 	public:
-		void Read (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager* fp, bool bFlag = false);
 
-		void Write (CFileManager* fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager* fp, bool bFlag = false);
 
 		virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 
@@ -148,8 +148,8 @@ class CCloakingWall : public CGameItem {    // NEW for Descent 2
 public:
 	tCloakingWall m_info;
 
-	void Read (CFileManager* fp, int version = 0, bool bFlag = false);
-	void Write (CFileManager* fp, int version = 0, bool bFlag = false);
+	void Read (CFileManager* fp, bool bFlag = false);
+	void Write (CFileManager* fp, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 

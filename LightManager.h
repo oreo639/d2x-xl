@@ -185,8 +185,8 @@ class CLightManager {
 
 		void ReadVariableLights (CFileManager* fp);
 		void WriteVariableLights (CFileManager* fp);
-		void ReadLightDeltas (CFileManager* fp, int nFileVersion);
-		void WriteLightDeltas (CFileManager* fp, int nFileVersion);
+		void ReadLightDeltas (CFileManager* fp);
+		void WriteLightDeltas (CFileManager* fp);
 
 		inline void ReadDeltaIndexInfo (CFileManager* fp) { m_deltaIndexInfo.Read (fp); }
 		inline void WriteDeltaIndexInfo (CFileManager* fp) { m_deltaIndexInfo.Write (fp); }

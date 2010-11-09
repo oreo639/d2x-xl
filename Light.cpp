@@ -4,7 +4,7 @@
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-void CColor::Read (CFileManager& fp, int version, bool bNewFormat)
+void CColor::Read (CFileManager& fp, bool bNewFormat)
 {
 m_info.index = fp.ReadSByte ();
 if (bNewFormat) {
@@ -21,7 +21,7 @@ else {
 
 // ------------------------------------------------------------------------
 
-void CColor::Write (CFileManager& fp, int version, bool bFlag) 
+void CColor::Write (CFileManager& fp, bool bFlag) 
 {
 fp.Write (m_info.index);
 fp.WriteInt32 ((int) (m_info.color.r * 0x7fffffff + 0.5));
@@ -161,7 +161,7 @@ switch (EditType ()) {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CLightDeltaValue::Read (CFileManager* fp, int version, bool bFlag)
+void CLightDeltaValue::Read (CFileManager* fp, bool bFlag)
 {
 m_nSegment = fp->ReadInt16 ();
 m_nSide = fp->ReadSByte ();
@@ -172,7 +172,7 @@ for (int i = 0; i < 4; i++)
 
 // -----------------------------------------------------------------------------
 
-void CLightDeltaValue::Write (CFileManager* fp, int version, bool bFlag)
+void CLightDeltaValue::Write (CFileManager* fp, bool bFlag)
 {
 fp->Write (m_nSegment);
 fp->WriteSByte ((sbyte) m_nSide);
@@ -209,7 +209,7 @@ Id () = undoManager.Backup (this, editType);
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CLightDeltaIndex::Read (CFileManager* fp, int version, bool bD2X)
+void CLightDeltaIndex::Read (CFileManager* fp, bool bD2X)
 {
 m_nSegment = fp->ReadInt16 ();
 if (bD2X) {
@@ -226,7 +226,7 @@ m_info.index = fp->ReadInt16 ();
 
 // -----------------------------------------------------------------------------
 
-void CLightDeltaIndex::Write (CFileManager* fp, int version, bool bD2X)
+void CLightDeltaIndex::Write (CFileManager* fp, bool bD2X)
 {
 fp->Write (m_nSegment);
 if (bD2X)

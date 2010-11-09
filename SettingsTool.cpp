@@ -413,7 +413,7 @@ if (strcmp (missionPath, m_missionsPath)) {
 if (!bInitApp)
 	DLE.MineView ()->DelayRefresh (true);
 DLE.MineView ()->m_nViewDist = m_nViewDist;
-DLE.MineView ()->SetDepthTest (m_bDepthTest);
+DLE.MineView ()->SetDepthTest (m_bDepthTest != 0);
 DLE.MineView ()->SetViewMineFlags (m_mineViewFlags);
 DLE.MineView ()->SetViewObjectFlags (m_objViewFlags);
 DLE.TextureView ()->SetViewFlags (m_texViewFlags);

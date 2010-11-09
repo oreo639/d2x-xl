@@ -287,17 +287,17 @@ class CSegmentManager {
 
 		inline void WriteEquipMakerInfo (CFileManager* fp) { m_matCenInfo [1].Write (fp); }
 
-		void ReadSegments (CFileManager* fp, int nLevelVersion);
+		void ReadSegments (CFileManager* fp);
 		
-		void WriteSegments (CFileManager* fp, int nLevelVersion);
+		void WriteSegments (CFileManager* fp);
 		
-		void ReadRobotMakers (CFileManager* fp, int nLevelVersion);
+		void ReadRobotMakers (CFileManager* fp);
 		
-		void WriteRobotMakers (CFileManager* fp, int nLevelVersion);
+		void WriteRobotMakers (CFileManager* fp);
 		
-		void ReadEquipMakers (CFileManager* fp, int nLevelVersion);
+		void ReadEquipMakers (CFileManager* fp);
 		
-		void WriteEquipMakers (CFileManager* fp, int nLevelVersion);
+		void WriteEquipMakers (CFileManager* fp);
 
 		void Clear (void);
 
@@ -340,9 +340,9 @@ class CSegmentManager {
 
 		void RenumberMatCens (byte nFunction, short nClass);
 
-		void ReadMatCens (CFileManager* fp, int nLevelVersion, int nClass);
+		void ReadMatCens (CFileManager* fp, int nClass);
 		
-		void WriteMatCens (CFileManager* fp, int nLevelVersion, int nClass);
+		void WriteMatCens (CFileManager* fp, int nClass);
 	
 	};
 

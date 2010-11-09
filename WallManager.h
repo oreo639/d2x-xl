@@ -146,9 +146,9 @@ class CWallManager {
 			WriteDoorInfo (fp);
 			}	
 
-		void Read (CFileManager* fp, int nFileVersion);
+		void Read (CFileManager* fp);
 
-		void Write (CFileManager* fp, int nFileVersion);
+		void Write (CFileManager* fp);
 
 		void Clear (void);
 
@@ -182,13 +182,13 @@ class CWallManager {
 			}
 
 	private:
-		void ReadWalls (CFileManager* fp, int nFileVersion);
+		void ReadWalls (CFileManager* fp);
 
-		void WriteWalls (CFileManager* fp, int nFileVersion);
+		void WriteWalls (CFileManager* fp);
 
-		void ReadDoors (CFileManager* fp, int nFileVersion);
+		void ReadDoors (CFileManager* fp);
 
-		void WriteDoors (CFileManager* fp, int nFileVersion);
+		void WriteDoors (CFileManager* fp);
 };
 
 extern CWallManager wallManager;

@@ -24,7 +24,7 @@ void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int 
 
 if (DLE.LevelVersion () > nFirstVersion) { 
 	for (; nColors; nColors--, pc++)
-		pc->Read (fp, 0, bNewFormat);
+		pc->Read (fp, bNewFormat);
 	}
 }
 
@@ -112,17 +112,17 @@ if (DLE.LevelVersion () > 6) {
 
 //------------------------------------------------------------------------------
 
-void CLightManager::ReadLightDeltas (CFileManager* fp, int nFileVersion)
+void CLightManager::ReadLightDeltas (CFileManager* fp)
 {
 if (DLE.IsD2File ()) {
 
-	bool bD2X = (DLE.LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
+	bool bD2X = (DLE.LevelVersion () >= 15) && (DLE.FileVersion () >= 34);
 	int i;
 
 	for (i = 0; i < m_deltaIndexInfo.count; i++)
-		m_deltaIndex [i].Read (fp, nFileVersion, bD2X);
+		m_deltaIndex [i].Read (fp, bD2X);
 	for (i = 0; i < m_deltaValueInfo.count; i++)
-		m_deltaValues [i].Read (fp, nFileVersion);
+		m_deltaValues [i].Read (fp);
 	}
 else
 	ResetInfo ();
@@ -130,24 +130,24 @@ else
 
 //------------------------------------------------------------------------------
 
-void CLightManager::WriteLightDeltas (CFileManager* fp, int nFileVersion)
+void CLightManager::WriteLightDeltas (CFileManager* fp)
 {
 if (DeltaIndexCount () > 0) {
-	if ((DLE.LevelVersion () >= 15) && (nFileVersion >= 34)) 
+	if ((DLE.LevelVersion () >= 15) && (DLE.FileVersion () >= 34)) 
 		SortDeltaIndex ();
 
-	bool bD2X = (DLE.LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
+	bool bD2X = (DLE.LevelVersion () >= 15) && (DLE.FileVersion () >= 34);
 	int i;
 
 	m_deltaIndexInfo.size = 6;
 	m_deltaIndexInfo.offset = fp->Tell ();
 	for (i = 0; i < m_deltaIndexInfo.count; i++)
-		m_deltaIndex [i].Write (fp, nFileVersion, bD2X);
+		m_deltaIndex [i].Write (fp, bD2X);
 
 	m_deltaValueInfo.size = 8;
 	m_deltaValueInfo.offset = fp->Tell ();
 	for (i = 0; i < m_deltaValueInfo.count; i++)
-		m_deltaValues [i].Write (fp, nFileVersion);
+		m_deltaValues [i].Write (fp);
 #if USE_FREELIST
 	UnsortDeltaIndex (); // otherwise the undo manager will screw up
 #endif
