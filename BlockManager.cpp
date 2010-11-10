@@ -657,7 +657,7 @@ for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<
 				for (short nChildSide = 0; nChildSide < 6; nChildSide++) {
 					for (short nChildVertex = 0; nChildVertex < 4; nChildVertex++) {
 						CVertex* v2 = vertexManager.Vertex (oldSegP->m_info.verts [sideVertTable [nChildSide][nChildVertex]]);
-						if ((fabs (v1->v.x - v2->v.x) < 10.0) && (fabs (v1->v.y - v2->v.y) < 10.0) && (fabs (v1->v.z - v2->v.z) < 10.0)) {
+						if ((fabs (v1->v.x - v2->v.x) < 160.0) && (fabs (v1->v.y - v2->v.y) < 160.0) && (fabs (v1->v.z - v2->v.z) < 160.0)) {
 							segmentManager.Link (segmentManager.Index (newSegP), nSide, segmentManager.Index (oldSegP), nChildSide, 3.0);
 							break;
 							}

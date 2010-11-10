@@ -545,9 +545,9 @@ for (CSegmentIterator si; si; si++) {
 		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
 		CVertex* vSeg = vertexManager.Vertex (segP->m_info.verts [0]);
-		if (fabs ((double) (vNewSeg->v.x - vSeg->v.x)) < 10.0 &&
-		    fabs ((double) (vNewSeg->v.y - vSeg->v.y)) < 10.0 &&
-		    fabs ((double) (vNewSeg->v.z - vSeg->v.z)) < 10.0) {
+		if (fabs ((double) (vNewSeg->v.x - vSeg->v.x)) < 160.0 &&
+		    fabs ((double) (vNewSeg->v.y - vSeg->v.y)) < 160.0 &&
+		    fabs ((double) (vNewSeg->v.z - vSeg->v.z)) < 160.0) {
 			for (short nSide = 0; nSide < 6; nSide++) {
 				if (!Link (nNewSeg, nNewSide, nSegment, nSide, 3)) {
 					// if these Segment () were linked, then unlink them
