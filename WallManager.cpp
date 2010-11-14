@@ -146,18 +146,13 @@ void CWallManager::Delete (short nDelWall)
 {
 if (nDelWall == NO_WALL)
 	return;
-CWall* delWallP;
-if (nDelWall < 0)
+CWall* delWallP = (nDelWall < 0) ? null : Wall (nDelWall);
+if (delWallP == null) {
 	delWallP = current->Wall ();
-else {
-	delWallP = Wall (nDelWall);
-	if (delWallP == null) {
-		delWallP = current->Wall ();
-		nDelWall = Index (delWallP);
-		}
+	if (delWallP == null)
+		return;
 	}
-if (delWallP == null)
-	return;
+nDelWall = Index (delWallP);
 
 undoManager.Begin (udSegments | udWalls | udTriggers);
 delWallP->Backup (opDelete);
@@ -174,7 +169,6 @@ delWallP->Backup ();
 Remove (nDelWall);
 
 undoManager.End ();
-//DLE.MineView ()->Refresh ();
 triggerManager.UpdateReactor ();
 }
 

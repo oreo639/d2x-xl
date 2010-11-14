@@ -280,15 +280,23 @@ SetupVertices ();
 
 //------------------------------------------------------------------------------
 
+void CTunnelMaker::Remove (int l)
+{
+undoManager.Lock ();
+for (int i = l; i > 0; )
+	segmentManager.Remove (m_nSegments [--i]);
+for (int i = (l - 1) * 4; i > 0; )
+	vertexManager.Delete (m_nVertices [--i]);
+undoManager.Unlock ();
+}
+
+//------------------------------------------------------------------------------
+
 void CTunnelMaker::Destroy (void)
 {
 if (m_bActive) {
 	undoManager.Lock ();
-	for (int i = m_nLength [0]; i > 0; )
-		segmentManager.Remove (m_nSegments [--i]);
-	for (int i = (m_nLength [0] - 1) * 4; i > 0; )
-		vertexManager.Delete (m_nVertices [--i]);
-	undoManager.Unlock ();
+	Remove (m_nLength [0]);
 	m_nLength [0] = 0;
 	m_bActive = false;
 	}
@@ -318,17 +326,17 @@ if (!m_bActive) {
 	else if (m_nMaxSegments < 3) {
 //	if ((vertexManager.Count () + 3 /*MAX_TUNNEL_SEGMENTS*/ * 4 > MAX_VERTICES) ||
 //		 (segmentManager.Count () + 3 /*MAX_TUNNEL_SEGMENTS*/ > MAX_SEGMENTS)) {
-		ErrorMsg ("Insufficient number of free vertices and/or segments\nto use the nSegment generator.");
+		ErrorMsg ("Insufficient number of free vertices and/or segments\nto use the segment generator.");
 		return;
 		}
 	// make sure there are no children on either segment/side
 	other = &selections [!current->Index ()];
 	if ((current->Segment ()->Child (current->m_nSide) != -1) ||
 		 (other->Segment ()->Child (other->m_nSide) != -1)) {
-		ErrorMsg ("Starting and/or ending point of nSegment\n"
-					"already have segment(s) attached.\n\n"
-					"Hint: Put the current segment and the alternate segment\n"
-					"on sides which do not have cubes attached.");
+		ErrorMsg ("Starting and/or ending point of segment\n"
+					 "already have segment(s) attached.\n\n"
+					 "Hint: Put the current segment and the alternate segment\n"
+					 "on sides which do not have cubes attached.");
 		return;
 		}
 
@@ -342,10 +350,10 @@ if (!m_bActive) {
 	// calculate length between cubes
 	length = Distance (m_points [0], m_points [3]);
 	if (length < 50) {
-		ErrorMsg ("End m_points of nSegment are too close.\n\n"
-					"Hint: Select two sides which are further apart\n"
-					"using the spacebar and left/right arrow keys,\n"
-					"then try again.");
+		ErrorMsg ("End points of segment are too close.\n\n"
+					 "Hint: Select two sides which are further apart\n"
+					 "using the spacebar and left/right arrow keys,\n"
+					 "then try again.");
 		return;
 		}
 	// base nSegment length on distance between cubes
@@ -357,11 +365,11 @@ if (!m_bActive) {
 			m_info [i].m_length = MAX_TUNNEL_LENGTH;
 		}
 	if (!bExpertMode)
-		ErrorMsg ("Place the current segment on one of the nSegment end m_points.\n\n"
-				  "Use the ']' and '[' keys to adjust the length of the red\n"
-				  "nSegment segment.\n\n"
-				  "Press 'P' to rotate the point connections.\n\n"
-				  "Press 'G' or select Tools/Tunnel Generator when you are finished.");
+		ErrorMsg ("Place the current segment on one of the segment end points.\n\n"
+				    "Use the ']' and '[' keys to adjust the length of the red\n"
+				    "segment segment.\n\n"
+				    "Press 'P' to rotate the point connections.\n\n"
+				    "Press 'G' or select Tools/Tunnel Generator when you are finished.");
 
 	m_nLength [0] = m_nLength [1] = 0;
 
@@ -454,13 +462,15 @@ m_nLength [1] = m_nLength [0];
 m_nLength [0] = (int) ((fabs (m_info [0].m_length) + fabs (m_info [1].m_length)) / 20 + length / 40.0);
 m_nLength [0] = min (m_nLength [0], m_nMaxSegments - 1);
 
-if (m_nLength [1] < m_nLength [0]) {
-	for (i = m_nLength [1]; i < m_nLength [0]; i++) {
+if (m_nLength [1] != m_nLength [0]) {
+	if (m_nLength [1] > 0)
+		Remove (m_nLength [1]);
+	for (i = 0; i < m_nLength [0]; i++) {
 		m_nSegments [i] = segmentManager.Add ();
 		segmentManager.Segment (m_nSegments [i])->m_info.bTunnel = 1;
 		//segmentManager.Segment (m_nSegments [i])->Setup ();
 		}
-	vertexManager.Add (&m_nVertices [m_nLength [1]], (m_nLength [0] - m_nLength [1] - 1) * 4);
+	vertexManager.Add (&m_nVertices [0], (m_nLength [0] - 1) * 4);
 	}
 
 // calculate nSegment m_points

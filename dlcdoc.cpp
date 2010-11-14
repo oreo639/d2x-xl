@@ -671,6 +671,7 @@ if ((QueryMsg ("Are you sure you want to delete this object?") == IDYES))
 void CDlcDoc::OnDeleteWall ()
 {
 wallManager.Delete ();
+DLE.MineView ()->Refresh ();
 }
 
 void CDlcDoc::OnDeleteTrigger ()

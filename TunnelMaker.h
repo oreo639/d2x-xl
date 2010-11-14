@@ -79,6 +79,8 @@ class CTunnelMaker {
 		void PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* origin, CVertex* normal); 
 
 		void SetupVertices (void);
+
+		void Remove (int l);
 	};
 
 extern CTunnelMaker tunnelMaker;
