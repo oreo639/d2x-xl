@@ -374,7 +374,7 @@ else
 switch (m_selectMode){
 	case POINT_MODE:
 		undoManager.Begin (udVertices);
-		*vertexManager.Vertex (segP->Info ().verts [p0]) += delta;
+		*vertexManager.Vertex (segP->Info ().verts [sideVertP [CURRENT_POINT (0)]]) += delta;
 		undoManager.End ();
 		break;
 
