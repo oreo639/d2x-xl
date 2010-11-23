@@ -59,16 +59,9 @@ Count ()--;
 #else //USE_FREELIST
 
 undoManager.Begin (udVertices);
-#ifdef _DEBUG
-if (nDelVert == 179)
-	nDelVert = nDelVert;
-#endif
 if (nDelVert < --Count ()) {
-#ifdef _DEBUG
-	if (Count () == 300)
-		nDelVert = nDelVert;
-#endif
 	Vertex (nDelVert)->v = Vertex (Count ())->v;
+	Vertex (nDelVert)->Status () = 0;
 	segmentManager.UpdateVertices (Count (), nDelVert);
 	}
 undoManager.End ();

@@ -379,6 +379,7 @@ if (ObjTriggerCount () >= MAX_OBJ_TRIGGERS) {
 	return null;
 	}
 
+nObject = objectManager.Index (objP);
 undoManager.Begin (udTriggers);
 short nTrigger = ObjTriggerCount ()++;
 CTrigger* trigP = ObjTrigger (nTrigger);
@@ -387,11 +388,10 @@ trigP->Info ().nObject = nObject;
 trigP->Index () = nTrigger;
 undoManager.End ();
 SortObjTriggers ();
-for (ushort i = ObjTriggerCount (); i; )
-	if (ObjTrigger (--i)->Index () == nTrigger)
-		return ObjTrigger (i);
 undoManager.End ();
-
+for (ushort i = ObjTriggerCount (); i; )
+	if (ObjTrigger (--i)->Index () == nTrigger) 
+		return ObjTrigger (i);
 return ObjTrigger (nTrigger);
 }
 

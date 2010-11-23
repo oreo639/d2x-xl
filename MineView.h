@@ -70,7 +70,7 @@ enum eSelectModes {
 	eSelectPoint	= POINT_MODE,
 	eSelectLine		= LINE_MODE,
 	eSelectSide		= SIDE_MODE,
-	eSelectCube		= SEGMENT_MODE,
+	eSelectSegment	= SEGMENT_MODE,
 	eSelectObject	= OBJECT_MODE,
 	eSelectBlock	= BLOCK_MODE
 	};

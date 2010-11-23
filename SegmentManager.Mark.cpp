@@ -154,6 +154,13 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 		for (i = 0; i < nPoints; i++)
 			p [i] = segP->Info ().verts [sideVertTable [current->m_nSide][i]]; 
 		break; 
+
+	case eSelectSegment:
+		nPoints = 8; 
+		for (i = 0; i < nPoints; i++)
+			p [i] = segP->Info ().verts [i]; 
+		break; 
+
 	default:
 		bSegMark = true; 
 	}
@@ -166,7 +173,7 @@ else {
 		if (!(vertexManager.Status (p [i]) & MARKED_MASK)) 
 			break; 
 		// if all verts are marked, then unmark them
-	if (i== nPoints) {
+	if (i == nPoints) {
 		for (i = 0; i < nPoints; i++)
 			vertexManager.Status (p [i]) &= ~MARKED_MASK; 
 		}

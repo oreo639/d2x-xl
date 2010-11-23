@@ -1088,7 +1088,7 @@ SetSelectMode (eSelectSide);
 
 void CMainFrame::OnSelectCubeMode ()
 {
-SetSelectMode (eSelectCube);
+SetSelectMode (eSelectSegment);
 }
 
 void CMainFrame::OnSelectObjectMode ()

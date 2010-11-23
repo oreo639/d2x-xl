@@ -130,7 +130,7 @@ if ((nChild = Segment ()->Child (oppSideTable [m_nSide])) > -1) {
 	return;
 	}
 for (short nSide = 0; nSide < 6; nSide++)
-	if ((nChild = Segment ()->Child (nSide) >= 0)) {
+	if ((nChild = Segment ()->Child (nSide)) >= 0) {
 		m_nSegment = nChild;
 		return;
 		}

@@ -361,6 +361,8 @@ if (!m_texture [1].Allocate (m_texP->Size ()))
 	DEBUGMSG (" Texture tool: Not enough memory for undo function");
 Backup ();
 Refresh ();
+m_nWidth = m_texP->Width ();
+m_nHeight = m_texP->Height ();
 return TRUE;
 }
 
@@ -397,7 +399,7 @@ GetClientRect (&m_paletteWnd, rcPal);
 if (PtInRect (rcEdit, point)) {
 	Backup ();
 	ColorPoint (nFlags, point, color);
-  }
+	}
 else if (PtInRect (rcPal, point)) {
 	point.x -= rcPal.left;
 	point.y -= rcPal.top;

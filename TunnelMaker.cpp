@@ -295,7 +295,6 @@ undoManager.Unlock ();
 void CTunnelMaker::Destroy (void)
 {
 if (m_bActive) {
-	undoManager.Lock ();
 	Remove (m_nLength [0]);
 	m_nLength [0] = 0;
 	m_bActive = false;

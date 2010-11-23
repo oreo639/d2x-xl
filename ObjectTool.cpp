@@ -1151,10 +1151,10 @@ CDoubleMatrix* orient;
 undoManager.Begin (udObjects);
 if (current->m_nObject == objectManager.Count ()) {
 	orient = &objectManager.SecretOrient ();
-	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
+	orient->Set (1, 0, 0, 0, 1, 0, 0, 0, 1);
 } else {
 	orient = &current->Object ()->m_location.orient;
-	orient->Set (1, 0, 0, 1, 0, 0, 0, 0, 1);
+	orient->Set (1, 0, 0, 0, 1, 0, 0, 0, 1);
 	}
 undoManager.End ();
 Refresh ();

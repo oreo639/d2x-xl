@@ -410,7 +410,7 @@ CHECKMINE;
 		if (segP->IsMarked ())
 			m_pDC->SelectObject (m_penHiCyan);
 		else if (nSegment == current->m_nSegment)
-			if (SelectMode (eSelectCube)) // && edit_mode != EDIT_OFF) {
+			if (SelectMode (eSelectSegment)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);         // RED
 			else
 				m_pDC->SelectObject (GetStockObject (WHITE_PEN)); // WHITE
