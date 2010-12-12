@@ -1268,7 +1268,9 @@ while (fgets (szBuf, sizeof (szBuf), fMsn)) {
 		l += int (strlen (szBuf + 1));
 		continue;
 		}
-	else if (!(psz = strchr (szBuf, '=')))	// otherwise need <tag> '=' <value> format
+	if (!(psz = strchr (szBuf, '=')))	// otherwise need <tag> '=' <value> format
+		continue;
+	if (psz - szBuf >= sizeof (szTag))	// invalid keyword
 		continue;
 	for (i = -1; psz + i > szBuf; i--)	// remove blanks around '='
 		if (psz [i] != ' ') {
