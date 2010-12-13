@@ -1510,8 +1510,8 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		// check to make sure segment points back to wall
 		sideP = segmentManager.Segment (wallP->m_nSegment)->m_sides + wallP->m_nSide;
 		if (sideP->m_info.nWall != nWall) {
-			w = wallManager.Wall (nWall);
-			if ((nWall < wallCount) && (w->m_nSegment == wallP->m_nSegment) && (w->m_nSide == wallP->m_nSide)) {
+			w = wallManager.Wall (sideP->m_info.nWall);
+			if ((sideP->m_info.nWall < wallCount) && (w->m_nSegment == wallP->m_nSegment) && (w->m_nSide == wallP->m_nSide)) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message),
 								"FIXED: Duplicate wall found (wall=%d, segment=%d)", nWall, wallP->m_nSegment);

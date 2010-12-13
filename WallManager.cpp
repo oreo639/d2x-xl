@@ -176,9 +176,9 @@ triggerManager.UpdateReactor ();
 
 CWall *CWallManager::FindBySide (CSideKey key, int i)
 {
-for (CWallIterator wi; wi; wi++)
-	if (*wi == key)
-		return &(*wi);
+for (int i = 0; i < WallCount (); i++)
+	if (m_walls [i] == key)
+		return &m_walls [i];
 return null;
 }
 
@@ -186,10 +186,9 @@ return null;
 
 CWall* CWallManager::FindByTrigger (short nTrigger, int i)
 {
-for (CWallIterator wi (0, i); wi; wi++) {
-	if (wi->Info ().nTrigger == nTrigger)
-		return &(*wi);
-	}
+for (; i < WallCount (); i++)
+	if (m_walls [i].Info ().nTrigger == nTrigger)
+		return &m_walls [i];
 return null;
 }
 
@@ -210,9 +209,9 @@ if (wallP != null) {
 
 CWall* CWallManager::FindBySegment (short nSegment, int i)
 {
-for (CWallIterator wi; wi; wi++)
-	if (wi->m_nSegment == nSegment)
-		return &(*wi);
+for (; i < WallCount (); i++)
+	if (m_walls [i].m_nSegment == nSegment)
+		return &m_walls [i];
 return null;
 }
 
@@ -424,8 +423,8 @@ return false;
 void CWallManager::SetIndex (void)
 {
 int j = 0;
-for (CWallIterator wi; wi; wi++)
-	wi->Index () = j++;
+for (int i = 0; i < WallCount (); i++)
+	m_walls [i].Index () = j++;
 }
 
 // ----------------------------------------------------------------------------- 
@@ -459,8 +458,8 @@ void CWallManager::WriteWalls (CFileManager* fp)
 if (m_info [0].Setup (fp)) {
 	m_info [0].size = 24;
 	m_info [0].offset = fp->Tell ();
-	for (CWallIterator wi; wi; wi++)
-		wi->Write (fp);
+	for (int i = 0; i < WallCount (); i++)
+		m_walls [i].Write (fp);
 	}
 }
 
