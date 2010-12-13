@@ -3,6 +3,7 @@
 #include <math.h>
 #include <io.h>
 #include <string.h>
+#include <errno.h>
 
 #include "mine.h"
 #include "dle-xp.h"
@@ -257,9 +258,9 @@ return 0;
 
 //------------------------------------------------------------------------------
 
-int CHogManager::AddFile (LPSTR pszName, long size, long offset, int fileno)
+int CHogManager::AddFile (LPSTR pszName, long length, long size, long offset, int fileno)
 {
-_strlwr_s (pszName, 256);
+_strlwr_s (pszName, length);
 
 	int index = LBFiles ()->AddString (pszName);
 
@@ -326,20 +327,21 @@ return true;
 
 //------------------------------------------------------------------------------
 
-long CHogManager::FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt)
+long CHogManager::FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt, int* indexP)
 {
-strcpy_s (message, sizeof (message), m_pszSubFile);
+strcpy_s (message, sizeof (message), (pszSubFile == null) ? m_pszSubFile : pszSubFile);
 char* p = strrchr (message, '.');
 if (p == null) 
 	return 0;
 
 long size, offset;
+int index = -1;
 
 sprintf_s (p, 5, pszExt);
 if (pszSubFile)
-	FindFileData (pszFile, message, &size, &offset);
+	FindFileData (pszFile, message, &size, &offset, &fp);
 else {
-	int index = FindFilename (message);
+	index = FindFilename (message);
 	if (index < 0)
 		size = offset = -1;
 	else
@@ -348,6 +350,8 @@ else {
 if ((size <= 0) && (offset < 0)) 
 	return 0;
 fp.Seek (sizeof (struct level_header) + offset, SEEK_SET);
+if (indexP != null)
+	*indexP = index;
 return size;
 }
 
@@ -447,18 +451,46 @@ CDialog::OnOK ();
 // CHogManager::RenameMsg()
 //------------------------------------------------------------------------------
 
-void CHogManager::OnRename ()
+void CHogManager::Rename (CFileManager& fp, int index, char* szNewName)
 {
-	char buf[20];
+	long size, offset;
+	level_header lh;
+	int fileno = GetFileData (index, &size, &offset);
+
+fp.Seek (offset, SEEK_SET);
+if (!fp.Read (&lh, sizeof (lh), 1))
+	ErrorMsg ("Cannot read from HOG file");
+else {
+	memset (lh.name, 0, sizeof (lh.name));
+	szNewName [12] = '\0';
+	_strlwr_s (szNewName, sizeof (lh.name));
+	strncpy_s (lh.name, sizeof (lh.name), szNewName, 12);
+	fp.Seek (offset, SEEK_SET);
+	if (!fp.Write (&lh, sizeof (lh), 1))
+		ErrorMsg ("Cannot write to HOG file");
+	else {
+		// update list box
+		DeleteFile ();
+		AddFile (lh.name, sizeof (lh.name), size, offset, fileno);
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void CHogManager::OnRename (void)
+{
+	char szOldName [20], szNewName [20];
 	int index = LBFiles ()->GetCurSel ();
 
 if (index < 0)
 	return;
-LBFiles ()->GetText (index, buf);
-CInputDialog dlg (this, "Rename file", "Enter new name:",(char *) buf, sizeof (buf));
+LBFiles ()->GetText (index, szOldName);
+strcpy_s (szNewName, sizeof (szNewName), szOldName);
+CInputDialog dlg (this, "Rename file", "Enter new name:", (char *) szNewName, sizeof (szNewName));
 if (dlg.DoModal () != IDOK)
 	return;
-if (FindFilename (buf) >= 0) {
+if (FindFilename (szNewName) >= 0) {
 	ErrorMsg ("A file with that name already exists\nin the HOG file.");
 	return;
 	}
@@ -467,24 +499,19 @@ if (fp.Open (m_pszFile, "r+b")) {
 	ErrorMsg ("Could not open HOG file.");
 	return;
 	}
-long size, offset;
-level_header lh;
-int fileno = GetFileData (index, &size, &offset);
-fp.Seek (offset, SEEK_SET);
-if (!fp.Read (&lh, sizeof (lh), 1))
-	ErrorMsg ("Cannot read from HOG file");
-else {
-	memset(lh.name, 0, sizeof (lh.name));
-	buf[12] = null;
-	_strlwr_s (buf, sizeof (buf));
-	strncpy_s (lh.name, sizeof (lh.name), buf, 12);
-	fp.Seek (offset, SEEK_SET);
-	if (!fp.Write (&lh, sizeof (lh), 1))
-		ErrorMsg ("Cannot write to HOG file");
-	else {
-		// update list box
-		DeleteFile ();
-		AddFile (lh.name, size, offset, fileno);
+Rename (fp, index, szNewName);
+
+// if renamed file was a level file, rename all auxiliary files belonging to that level, too
+char* p = strstr (szOldName, ".rl2");
+if (p != null) {
+		static char* subFileExts [] = {".pal", ".lgt", ".clr", ".pog", ".hxm"};
+
+	p = strstr (szNewName, ".rl2");
+	for (int i = 0; i < sizeofa (subFileExts); i++) {
+		if (0 < FindSubFile (fp, m_pszFile, szOldName, subFileExts [i], &index)) {
+			strcpy_s (szNewName, sizeof (szNewName), subFileExts [i]);
+			Rename (fp, index, szNewName);
+			}
 		}
 	}
 fp.Close ();
@@ -559,7 +586,7 @@ while (!fSrc.EoF ()) {
 fSrc.Close ();
 fDest.Close ();
 // update list boxes
-AddFile (lh.name, lh.size, offset, LBFiles ()->GetCount ());
+AddFile (lh.name, sizeof (lh.name), lh.size, offset, LBFiles ()->GetCount ());
 }
 
 //------------------------------------------------------------------------------
@@ -719,24 +746,29 @@ return true;
 // CHogManager - read hog data
 //------------------------------------------------------------------------------
 
-bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOOL bVerbose) 
+bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOOL bVerbose, CFileManager* fp) 
 {
 	struct level_header *level;
 	char data [256];
 	long position;
-	CFileManager fp;
 	int nFiles;
+	CFileManager _fp;
 
 *nSize = -1;
 *nPos = -1;
-if (fp.Open (pszFile, "rb")) {
-	if (bVerbose) {
-		sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)",pszFile);
-		ErrorMsg (message);
+if (fp != null)
+	fp->Seek (0);
+else {
+	fp = &_fp;
+	if (fp.Open (pszFile, "rb")) {
+		if (bVerbose) {
+			sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)\n(%s)", pszFile, strerror (errno));
+			ErrorMsg (message);
+			}
+		return false;
 		}
-	return false;
 	}
-fp.Read (data, 3, 1); // verify signature "DHF"
+fp->Read (data, 3, 1); // verify signature "DHF"
 if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
 	if (bVerbose)
 		ErrorMsg ("This is not a Descent HOG file");
@@ -744,15 +776,16 @@ if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
 	}
 position = 3;
 nFiles = 0;
-while (!fp.EoF ()) {
-	fp.Seek (position, SEEK_SET);
-	if (fp.Read (data, sizeof (struct level_header), 1) != 1) 
+while (!fp->EoF ()) {
+	fp->Seek (position, SEEK_SET);
+	if (fp->Read (data, sizeof (struct level_header), 1) != 1) 
 		break;
 	level = (struct level_header *) data;
 	if (level->size > 100000000L || level->size < 0) {
 		if (bVerbose)
 			ErrorMsg ("Error reading HOG file");
-		fp.Close ();
+		if (fp == &_fp)
+			fp->Close ();
 		return false;
 		}
 	level->name [sizeof (level->name) - 1] = 0; // null terminate in case its bad
@@ -762,12 +795,14 @@ while (!fp.EoF ()) {
 	if (!_strcmpi (level->name, pszSubFile)) {
 		*nSize = level->size;
 		*nPos = position;
-		fp.Close ();
+		if (fp == &_fp)
+			fp->Close ();
 		return true;
 		}
 	position += sizeof (struct level_header) + level->size;
 	}
-fp.Close ();
+if (fp == &_fp)
+	fp->Close ();
 return false;
 }
 

@@ -47,7 +47,7 @@ class CHogManager : public CDialog {
 		void EndDialog (int nResult);
 		int FindFilename (LPSTR pszName);
 		void ClearFileList (void);
-		int AddFile (LPSTR pszName, long size, long offset, int fileno);
+		int AddFile (LPSTR pszName, long length, long size, long offset, int fileno);
 		int DeleteFile (int index = -1);
 		int GetFileData (int index = -1, long *size = null, long *offset = null);
 		int AddFileData (int index, long size, long offset, int fileno);
@@ -66,7 +66,8 @@ class CHogManager : public CDialog {
 			{ return (CListBox *) GetDlgItem (IDC_HOG_FILES); }
 
 	private:
-		long FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt);
+		long FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt, int* indexP = null);
+		void Rename (CFileManager& fp, int index, char* szNewName);
 
 	DECLARE_MESSAGE_MAP ()
 	};
@@ -76,7 +77,7 @@ class CHogManager : public CDialog {
 bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags = 0, CWnd *pParentWnd = null);
 int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs);
 bool ReadHogData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels, bool bGetFileData = true);
-bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOOL bVerbose = TRUE);
+bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOOL bVerbose = TRUE, CFileManager* fp = null);
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size);
 int ReadMissionFile (char *pszFile);
 int WriteMissionFile (char *pszFile, int levelVersion, bool bSaveAs = true);
