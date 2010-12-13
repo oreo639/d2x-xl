@@ -698,10 +698,10 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",nObject, objP->Id ());
 			}
 	  case OBJ_COOP:
-		  if (objP->Id () > 2) {
+		  if (objP->Id () > MAX_PLAYERS + 2) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",nObject, objP->Id ());
-				objP->Id () = 2;
+				objP->Id () = MAX_PLAYERS + objP->Id () % 3;
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",nObject, objP->Id ());
@@ -711,7 +711,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 		  if (objP->Id () > SOUND_ID) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",nObject, objP->Id ());
-				objP->Id () = 2;
+				objP->Id () = SOUND_ID;
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",nObject, objP->Id ());
