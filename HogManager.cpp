@@ -327,7 +327,7 @@ return true;
 
 //------------------------------------------------------------------------------
 
-long CHogManager::FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt, int* indexP)
+long CHogManager::FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt)
 {
 strcpy_s (message, sizeof (message), (pszSubFile == null) ? m_pszSubFile : pszSubFile);
 char* p = strrchr (message, '.');
@@ -339,7 +339,7 @@ int index = -1;
 
 sprintf_s (p, 5, pszExt);
 if (pszSubFile)
-	FindFileData (pszFile, message, &size, &offset, &fp);
+	FindFileData (pszFile, message, &size, &offset, TRUE, &fp);
 else {
 	index = FindFilename (message);
 	if (index < 0)
@@ -350,8 +350,6 @@ else {
 if ((size <= 0) && (offset < 0)) 
 	return 0;
 fp.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-if (indexP != null)
-	*indexP = index;
 return size;
 }
 
@@ -470,7 +468,7 @@ else {
 		ErrorMsg ("Cannot write to HOG file");
 	else {
 		// update list box
-		DeleteFile ();
+		DeleteFile (index);
 		AddFile (lh.name, sizeof (lh.name), size, offset, fileno);
 		}
 	}
@@ -506,11 +504,16 @@ char* p = strstr (szOldName, ".rl2");
 if (p != null) {
 		static char* subFileExts [] = {".pal", ".lgt", ".clr", ".pog", ".hxm"};
 
-	p = strstr (szNewName, ".rl2");
 	for (int i = 0; i < sizeofa (subFileExts); i++) {
-		if (0 < FindSubFile (fp, m_pszFile, szOldName, subFileExts [i], &index)) {
-			strcpy_s (szNewName, sizeof (szNewName), subFileExts [i]);
-			Rename (fp, index, szNewName);
+		if (0 < FindSubFile (fp, m_pszFile, szOldName, subFileExts [i])) {
+			p = strchr (szOldName, '.');
+			memcpy (p, subFileExts [i], sizeof (subFileExts [i]));
+			index = LBFiles ()->FindStringExact (-1, szOldName);
+			if (index >= 0) {
+				p = strchr (szNewName, '.');
+				memcpy (p, subFileExts [i], sizeof (subFileExts [i]));
+				Rename (fp, index, szNewName);
+				}
 			}
 		}
 	}
@@ -760,7 +763,7 @@ if (fp != null)
 	fp->Seek (0);
 else {
 	fp = &_fp;
-	if (fp.Open (pszFile, "rb")) {
+	if (fp->Open (pszFile, "rb")) {
 		if (bVerbose) {
 			sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)\n(%s)", pszFile, strerror (errno));
 			ErrorMsg (message);

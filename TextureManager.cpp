@@ -506,9 +506,13 @@ for (i = 0; i < h; i++)
 	m_textures [nVersion][i].m_info.bUsed = false;
 
 for (i = segmentManager.Count (); i; i--, segP++) {
+#ifdef _DEBUG
+	if (segP - segmentManager.Segment (0) == 394)
+		segP = segP;
+#endif
 	CSide* sideP = segP->m_sides;
 	for (j = 6; j; j--, sideP++) {
-		if ((sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
+		if (((short) sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
 			m_textures [nVersion][sideP->m_info.nBaseTex & 0x1FFF].m_info.bUsed = true;
 			if ((sideP->m_info.nOvlTex & 0x1FFF) != 0)
 				m_textures [nVersion][sideP->m_info.nOvlTex & 0x1FFF].m_info.bUsed = true;

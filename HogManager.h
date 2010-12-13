@@ -66,7 +66,7 @@ class CHogManager : public CDialog {
 			{ return (CListBox *) GetDlgItem (IDC_HOG_FILES); }
 
 	private:
-		long FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt, int* indexP = null);
+		long FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt);
 		void Rename (CFileManager& fp, int index, char* szNewName);
 
 	DECLARE_MESSAGE_MAP ()
