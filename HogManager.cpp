@@ -597,10 +597,10 @@ ExportSubFile (m_pszFile, szFile, offset, lh.size);
 //------------------------------------------------------------------------------
 // CHogManager - DeleteMsg
 //
-// Deletes an item from a HOG fp using the following steps:
+// Deletes an item from a HOG file using the following steps:
 //
-// 1) Creates a new HOG fp which does not contain the fp selected
-// 2) Deletes original HOG fp
+// 1) Creates a new HOG file which does not contain the fp selected
+// 2) Deletes original HOG file
 // 3) Renames new fp to original fp's name
 //
 //------------------------------------------------------------------------------
@@ -624,7 +624,7 @@ if (delete_index < 0) {
 if (!bExpertMode) {
 	strcpy_s (message, sizeof (message), "Are you sure you want to delete '");
 	plb->GetText (delete_index, message + strlen (message));
-	strcat_s (message, sizeof (message), "'?\n(This operation will change the HOG fp immediately)");
+	strcat_s (message, sizeof (message), "'?\n(This operation will change the HOG file immediately)");
 	if (QueryMsg (message) != IDYES)
 		return;
 	}
@@ -657,13 +657,13 @@ bool ReadHogData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels
 
 ClearFileList (plb);
 if (fp.Open (pszFile, "rb")) {
-	sprintf_s (message, sizeof (message), "Unable to open HOG fp (%s)",pszFile);
+	sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)",pszFile);
 	ErrorMsg (message);
 	return false;
 	}
 fp.Read (data, 3, 1); // verify signature "DHF"
 if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
-	ErrorMsg ("This is not a Descent HOG fp");
+	ErrorMsg ("This is not a Descent HOG file");
 	return false;
 	}
 position = 3;
@@ -674,7 +674,7 @@ while (!fp.EoF ()) {
 		break;
 	level = (struct level_header *) data;
 	if (level->size < 0) {
-		ErrorMsg ("Error reading HOG fp");
+		ErrorMsg ("Error reading HOG file");
 		fp.Close ();
 		return false;
 		}
@@ -689,7 +689,7 @@ while (!fp.EoF ()) {
 									 strstr (level->name, ".pal")))) {
 		int i = plb->AddString (level->name);
 		if (bGetFileData && (0 > AddFileData (plb, i, level->size, position, nFiles))) {
-			ErrorMsg ("Too many files in HOG fp.");
+			ErrorMsg ("Too many files in HOG file.");
 			fp.Close ();
 			return false;
 			}
@@ -731,7 +731,7 @@ bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOO
 *nPos = -1;
 if (fp.Open (pszFile, "rb")) {
 	if (bVerbose) {
-		sprintf_s (message, sizeof (message), "Unable to open HOG fp (%s)",pszFile);
+		sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)",pszFile);
 		ErrorMsg (message);
 		}
 	return false;
@@ -739,7 +739,7 @@ if (fp.Open (pszFile, "rb")) {
 fp.Read (data, 3, 1); // verify signature "DHF"
 if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
 	if (bVerbose)
-		ErrorMsg ("This is not a Descent HOG fp");
+		ErrorMsg ("This is not a Descent HOG file");
 	return false;
 	}
 position = 3;
@@ -751,7 +751,7 @@ while (!fp.EoF ()) {
 	level = (struct level_header *) data;
 	if (level->size > 100000000L || level->size < 0) {
 		if (bVerbose)
-			ErrorMsg ("Error reading HOG fp");
+			ErrorMsg ("Error reading HOG file");
 		fp.Close ();
 		return false;
 		}
@@ -955,11 +955,11 @@ return lh.size + sizeof (lh);
 //------------------------------------------------------------------------------
 // make_hog()
 //
-// Action - makes a HOG fp which includes three files
+// Action - makes a HOG file which includes three files
 //             1. the rdl fp to include (only one)
 //             2. a briefing fp (called brief.txb)
 //             3. an ending sequence (same name as hog w/ .txb extension)
-//          also makes a mission fp for this HOG fp
+//          also makes a mission file for this HOG file
 //
 // Changes - now saves rl2 files
 //------------------------------------------------------------------------------
@@ -1013,8 +1013,8 @@ return i;
 
 void WriteCustomFiles (CFileManager& fp, char* szFolder, char* szFile, bool bCreate = false)
 {
-	static char* szPogQuery = "This level contains custom textures.\nWould you like save these textures into the HOG fp?\n\nNote: You must use version 1.2 or higher of Descent2 to see\nthe textures when you play the game.";
-	static char* szHxmQuery = "This level contains custom robot settings.\nWould you like save these changes into the HOG fp?\n\nNote: You must use version 1.2 or higher of Descent2 for\nthe changes to take effect.";
+	static char* szPogQuery = "This level contains custom textures.\nWould you like save these textures into the HOG file?\n\nNote: You must use version 1.2 or higher of Descent2 to see\nthe textures when you play the game.";
+	static char* szHxmQuery = "This level contains custom robot settings.\nWould you like save these changes into the HOG file?\n\nNote: You must use version 1.2 or higher of Descent2 for\nthe changes to take effect.";
 
 if (lightManager.HasCustomLightMap ())
 	WriteCustomFile (fp, 0, szFolder, szFile);
@@ -1038,9 +1038,9 @@ int MakeHog (char *rdlFilename, char *hogFilename, char*szSubFile, bool bSaveAs)
 	int				custom_robots = 0;
 	int				custom_textures = 0;
 
-// create HOG fp which contains szTmp.rdl, szTmp.txb, and dlebrief.txb");
+// create HOG file which contains szTmp.rdl, szTmp.txb, and dlebrief.txb");
 if (fp.Open (hogFilename, "wb")) {
-	sprintf_s (message, sizeof (message), "Unable to create HOG fp:\n%s", hogFilename);
+	sprintf_s (message, sizeof (message), "Unable to create HOG file:\n%s", hogFilename);
 	ErrorMsg (message);
 	return 1;
 	}
@@ -1159,13 +1159,13 @@ else if (bIdenticalLevelFound) {
 	}
 else {
 	// otherwise, if save fp was not found,
-	// then ask user if they want to append to the HOG fp
+	// then ask user if they want to append to the HOG file
 	if (QueryMsg ("Would you like to add the level to the end\n"
-					  "of this HOG fp?\n\n"
-					  "(Press OK to append this level to the HOG fp\n"
-					  "or Cancel to overwrite the entire HOG fp") == IDYES) {
+					  "of this HOG file?\n\n"
+					  "(Press OK to append this level to the HOG file\n"
+					  "or Cancel to overwrite the entire HOG file") == IDYES) {
 		if (!bExpertMode)
-			ErrorMsg ("Don't forget to add this level's name to the mission fp.\n");
+			ErrorMsg ("Don't forget to add this level's name to the mission file.\n");
 		}
 	else
 		bQuickSave = 1;
@@ -1188,7 +1188,7 @@ if (fp.Open (szHogFile, "r+b")) {
 	}
 DeleteLevelSubFiles (fp, szFile);
 fp.Close ();
-// now append sub-files to the end of the HOG fp
+// now append sub-files to the end of the HOG file
 
 if (fp.Open (szHogFile, "ab")) {
 	ErrorMsg ("Could not open destination HOG file for save.");
@@ -1362,11 +1362,11 @@ if (bSaveAs) {
 	fopen_s (&fMsn, szMsn, "rt");
 	if (fMsn) {
 		fclose (fMsn);
-		if (AfxMessageBox ("A mission fp with that name already exists.\nOverwrite mission fp?", MB_YESNO) != IDYES)
+		if (AfxMessageBox ("A mission file with that name already exists.\nOverwrite mission file?", MB_YESNO) != IDYES)
 			return -1;
 		}
 	}
-// create mission fp
+// create mission file
 fopen_s (&fMsn, szMsn, "wt");
 if (!fMsn)
 	return -1;
