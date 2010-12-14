@@ -269,7 +269,7 @@ int CDiagTool::CheckId (CGameObject *objP)
 		break;
 
 	case OBJ_COOP: /* a cooperative player object */
-		if ((id < 0) || (id > 2)) {
+		if ((id < MAX_PLAYERS) || (id > MAX_PLAYERS + 2)) {
 			return 1;
 		}
 		break;

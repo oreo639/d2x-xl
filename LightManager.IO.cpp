@@ -87,9 +87,12 @@ void CLightManager::ReadVariableLights (CFileManager* fp)
 {
 if (DLE.LevelVersion () > 6) {
 	lightManager.Count () = (short) fp->ReadInt32 ();
-	for (int i = 0; i < lightManager.Count (); i++) {
-		if (i < MAX_VARIABLE_LIGHTS)
+	for (int i = 0, j = lightManager.Count (); i < j; i++) {
+		if (i < MAX_VARIABLE_LIGHTS) {
 			VariableLight (i)->Read (fp);
+			if ((VariableLight (i)->m_nSegment < 0) || (VariableLight (i)->m_nSegment >= segmentManager.Count ())) 
+				--lightManager.Count ();
+			}
 		else { // skip excess data
 			CVariableLight l;
 			l.Read (fp);
@@ -103,10 +106,17 @@ if (DLE.LevelVersion () > 6) {
 void CLightManager::WriteVariableLights (CFileManager* fp)
 {
 if (DLE.LevelVersion () > 6) {
+	long fPos = fp->Tell ();
 	fp->Write (lightManager.Count ());
-	for (int i = 0; i < lightManager.Count (); i++) {
-		VariableLight (i)->Write (fp);
+	for (int i = 0, j = lightManager.Count (); i < j; i++) {
+		if ((VariableLight (i)->m_nSegment < 0) || (VariableLight (i)->m_nSegment >= segmentManager.Count ())) 
+			--lightManager.Count ();
+		else
+			VariableLight (i)->Write (fp);
 		}
+	fp->Seek (fPos, SEEK_SET);
+	fp->Write (lightManager.Count ());
+	fp->Seek (0, SEEK_END);
 	}
 }
 

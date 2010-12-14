@@ -4,6 +4,7 @@
 
 // external globals
 extern int bEnableDeltaShading; // uvls.cpp
+extern short nDbgSeg, nDbgSide;
 
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
@@ -188,6 +189,10 @@ for (CSegmentIterator si; si; si++) {
 for (CSegmentIterator si; si; si++) {
 	CSegment *segP = &(*si);
 	short nSegment = (short) si.Index ();
+#if DBG
+	if (nSegment == nDbgSeg)
+		nDbgSeg = nDbgSeg;
+#endif
 	CSide* sideP = segP->m_sides;
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
@@ -196,7 +201,7 @@ for (CSegmentIterator si; si; si++) {
 			continue;
 		if (bCopyTexLights)
 			FaceColor (nSegment, nSide)->Clear ();
-		uint brightness = 0;
+		uint brightness = (segP->m_info.function == SEGMENT_FUNC_SKYBOX) ? 1 : 0;
 		int nTexture = sideP->m_info.nBaseTex;
 		if ((nTexture >= 0) && (nTexture < MAX_TEXTURES))
 			brightness = max (brightness, LightWeight (nTexture));
@@ -266,20 +271,30 @@ else
 
 void CLightManager::GatherFaceLight (CSegment* segP, short nSide, uint brightness, CColor* lightColorP)
 {
-CUVL*	uvlP = segP->m_sides [nSide].m_info.uvls;
-uint	vertBrightness, lightBrightness;
-byte*	sideVerts = sideVertTable [nSide];
+	CUVL*	uvlP = segP->m_sides [nSide].m_info.uvls;
+	uint	vertBrightness, lightBrightness;
+	byte*	sideVerts = sideVertTable [nSide];
 
 for (int i = 0; i < 4; i++, uvlP++) {
-	if (segP->m_info.verts [sideVerts [i]] == 2180)
-		i = i;
 	CColor* vertColorP = VertexColor (segP->m_info.verts [sideVerts [i]]);
-	vertBrightness = (ushort) uvlP->l;
-	lightBrightness = (uint) (brightness * (m_cornerLights ? m_cornerLights [i] : 1.0));
-	BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
-	vertBrightness += lightBrightness;
-	vertBrightness = min (0x8000, vertBrightness);
-	uvlP->l = (ushort) vertBrightness;
+#if DBG
+	if (segP->Index () == nDbgSeg)
+		nDbgSeg = nDbgSeg;
+#endif
+	if (segP->m_info.function == SEGMENT_FUNC_SKYBOX) {
+		uvlP->l = (ushort) 0xFFFF;
+		vertColorP->m_info.color.r =
+		vertColorP->m_info.color.g =
+		vertColorP->m_info.color.b = 255;
+		}
+	else {
+		vertBrightness = (ushort) uvlP->l;
+		lightBrightness = (uint) (brightness * (m_cornerLights ? m_cornerLights [i] : 1.0));
+		BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
+		vertBrightness += lightBrightness;
+		vertBrightness = min (0x8000, vertBrightness);
+		uvlP->l = (ushort) vertBrightness;
+		}
 	}
 }
 

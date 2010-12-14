@@ -260,10 +260,18 @@ if (modelRenderer.CheckNormal (offset, normal)) {
 void CPolyModel::SetPoints (int start, int end) 
 {
 	CVertex	m_pt;
+	CDoubleMatrix& orient = modelRenderer.m_object->m_location.orient;
 
 for (int i = start; i < end; i++) {
 	// rotate point using Objects () rotation matrix
+#if 1
+	CVertex& v = modelRenderer.m_data.points [i];
+	m_pt.v.x = orient.rVec.v.x * v.v.x + orient.uVec.v.x * v.v.y + orient.fVec.v.x * v.v.z;
+	m_pt.v.y = orient.rVec.v.y * v.v.x + orient.uVec.v.y * v.v.y + orient.fVec.v.y * v.v.z;
+	m_pt.v.z = orient.rVec.v.z * v.v.x + orient.uVec.v.z * v.v.y + orient.fVec.v.z * v.v.z;
+#else
 	m_pt = modelRenderer.m_object->m_location.orient * modelRenderer.m_data.points [i];
+#endif
 	// set point to be in world coordinates
 	m_pt += modelRenderer.m_object->m_location.pos;
 	// now that points are relative to set screen xy points (modelRenderer.m_screenPoly)
