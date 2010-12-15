@@ -293,11 +293,12 @@ void CPaletteWnd::OnRButtonUp (UINT nFlags, CPoint point)
 m_pParentWnd->SendMessage (WM_RBUTTONUP, (WPARAM) nFlags, (LPARAM) point.x + (((LPARAM) point.y) << 16));
 }
 #endif
-//************************************************************************
-// DIALOG - CTextureEdit (constructor)
-//************************************************************************
 
-CTextureEdit::CTextureEdit (CWnd *pParent)
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+CTextureEdit::CTextureEdit (int bOverlay, char* pszName, CWnd *pParent)
 	: CDialog (IDD_EDITTEXTURE, pParent) 
 {
 *m_szColors = '\0';
@@ -306,6 +307,9 @@ m_pPaintWnd = null;
 m_pOldPal = null;
 m_lBtnDown =
 m_rBtnDown = false;
+strcpy_s (m_szName, sizeof (m_szName), pszName);
+_strlwr_s (m_szName, sizeof (m_szName));
+m_bOverlay = bOverlay;
 if (!*m_szDefExt)
 	strcpy_s (m_szDefExt, sizeof (m_szDefExt), "bmp");
 }
@@ -344,7 +348,7 @@ m_bgColor = 1; // white
 m_lBtnDown  = FALSE;
 m_rBtnDown = FALSE;
 m_bModified = FALSE;
-m_iTexture = current->Side ()->m_info.nBaseTex;
+m_iTexture = m_bOverlay ? current->Side ()->m_info.nOvlTex : current->Side ()->m_info.nBaseTex;
 if (m_iTexture >= MAX_TEXTURES_D2)
 	m_iTexture = 0;
 m_texP = textureManager.Textures (DLE.FileType (), m_iTexture);
@@ -507,7 +511,7 @@ ScreenToClient (rc);
 rc.DeflateRect (dx / 2, dy / 2);
 }
 
-//************************************************************************
+//------------------------------------------------------------------------------
 // CTextureEdit - ColorPoint
 //
 // Action - Uses coordinates to determine which pixel mouse cursor is
@@ -515,7 +519,7 @@ rc.DeflateRect (dx / 2, dy / 2);
 // the new color.  If it is over the texture, the texture will be updated
 // with the color.
 // If control key is held down, color is defined by bitmap instead.
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::ColorPoint (UINT nFlags, CPoint& point, int& color) 
 {
@@ -546,9 +550,7 @@ else if (PtInRect (rcEdit, point)) {
 	}
 }
 
-//************************************************************************
-// TTextureDialog - WMDrawItem
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnPaint () //EvDrawItem(UINT, DRAWITEMSTRUCT &) 
 {
@@ -556,18 +558,14 @@ CDialog::OnPaint ();
 Refresh ();
 }
 
-//************************************************************************
-// TTextureDialog - Open Message
-//************************************************************************
+//------------------------------------------------------------------------------
 
 inline int Sqr (int i)
 {
 return i * i;
 }
 
-//************************************************************************
-// 
-//************************************************************************
+//------------------------------------------------------------------------------
 
 inline int ColorDelta (RGBQUAD *bmPal, PALETTEENTRY *sysPal, int j)
 {
@@ -578,9 +576,7 @@ return
 	Sqr (bmPal->rgbRed - sysPal->peRed);
 }
 
-//************************************************************************
-// 
-//************************************************************************
+//------------------------------------------------------------------------------
 
 bool CTextureEdit::LoadTGA (CFileManager& fp)
 {
@@ -616,9 +612,7 @@ m_texture [0].m_info.nFormat = 1;
 return true;
 }
 
-//************************************************************************
-// 
-//************************************************************************
+//------------------------------------------------------------------------------
 
 bool CTextureEdit::LoadBitmap (CFileManager& fp)
 {
@@ -821,9 +815,7 @@ if (sysPal)
 return bFuncRes;
 }
 
-//************************************************************************
-// 
-//************************************************************************
+//------------------------------------------------------------------------------
 
 char	CTextureEdit::m_szDefExt [4] = "bmp";
 
@@ -869,9 +861,7 @@ errorExit:
 fp.Close ();
 }
 
-//************************************************************************
-// TTextureDialog - Save Message
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::SaveBitmap (CFileManager& fp)
 {
@@ -899,7 +889,7 @@ fp.Write (bmi->bmiColors, sizeof (RGBQUAD), 256);
 textureManager.WriteCustomTexture (fp, &m_texture [0]);
 }
 
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::SaveTGA (CFileManager& fp)
 {
@@ -918,12 +908,12 @@ for (int i = h.height; i; i--) {
 	}
 }
 
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnSave ()
 {
 OPENFILENAME ofn;
-char szFile[256] = "\0";
+char szFile [256] = "\0";
 CFileManager fp;
 
 memset(&ofn, 0, sizeof (OPENFILENAME));
@@ -933,7 +923,8 @@ ofn.hwndOwner = m_hWnd;
 ofn.lpstrFilter = m_texture [0].m_info.nFormat ? "Truevision Targa\0*.tga\0" : "256 color Bitmap Files\0*.bmp\0";
 ofn.nFilterIndex = 1;
 ofn.lpstrFile= szFile;
-ofn.lpstrDefExt = "bmp";
+ofn.lpstrDefExt = m_texture [0].m_info.nFormat ? "tga" : "bmp";
+sprintf (szFile, "%s.%s", m_szName, ofn.lpstrDefExt);
 ofn.nMaxFile = sizeof (szFile);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 if (GetSaveFileName (&ofn)) {
@@ -950,9 +941,7 @@ if (GetSaveFileName (&ofn)) {
 	}
 }
 
-//************************************************************************
-// TTextureDialog -  Undo Message
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnUndo ()
 {
@@ -968,9 +957,7 @@ pWnd->InvalidateRect (null);
 pWnd->UpdateWindow ();
 }
 
-//************************************************************************
-// TTextureDialog -  Default Message
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::OnDefault (void) 
 {
@@ -985,9 +972,7 @@ if (QueryMsg("Are you sure you want to restore this texture\n"
 	}
 }
 
-//************************************************************************
-// TTextureDialog - DrawTexture
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::DrawTexture (void) 
 {
@@ -1007,18 +992,14 @@ StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_texture [0].Widt
 EndPaint ();
 }
 
-//************************************************************************
-// TTextureDialog - DrawPalette
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::DrawPalette (void) 
 {
 m_paletteWnd.DrawPalette ();
 }
 
-//************************************************************************
-// TTextureDialog - DrawLayers
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::DrawLayers () 
 {
@@ -1064,9 +1045,7 @@ sprintf_s (m_szColors, sizeof (m_szColors), "foreground = %s, background = %s.",
 UpdateData (FALSE);
 }
 
-//************************************************************************
-// TTextureDialog - Refresh
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::Refresh (void) 
 {
@@ -1075,9 +1054,7 @@ DrawPalette ();
 DrawLayers ();
 }
 
-
-//************************************************************************
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::SetTexturePixel (int x, int y) 
 {
@@ -1101,8 +1078,7 @@ for (dy = 0; dy < 4; dy++)
 		m_pDC->SetPixel (x + (int) ((double) dx * xs), y + (int) ((double) dy * ys), color);
 }
 
-//************************************************************************
-//************************************************************************
+//------------------------------------------------------------------------------
 
 void CTextureEdit::SetPalettePixel (int x, int y) 
 {
@@ -1115,4 +1091,4 @@ for (dy = 0; dy < 8; dy++)
 		m_pDC->SetPixel ((x << 3) + dx + rc.left, (y << 3) + dy + rc.top, PALETTEINDEX (y * 32 + x));
 }
 
-//************************************************************************
+//------------------------------------------------------------------------------

@@ -46,6 +46,8 @@ class CTextureEdit : public CDialog
 		CPaletteWnd	m_paletteWnd;
 		CWnd			m_layerWnd;
 		CTexture		m_texture [2];
+		int			m_bOverlay;
+		char			m_szName [256];
 		int			m_fgColor,
 						m_bgColor;
 		bool			m_lBtnDown,
@@ -67,7 +69,7 @@ class CTextureEdit : public CDialog
 						m_nOldFormat;
 		static char	m_szDefExt [4];
 
-		CTextureEdit (CWnd * pParent = null);
+		CTextureEdit (int bOverlay, char* pszName, CWnd * pParent = null);
 		~CTextureEdit ();
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);

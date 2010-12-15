@@ -820,9 +820,12 @@ SelectTexture (IDC_TEXTURE_2ND, false);
 
 void CTextureTool::OnEditTexture () 
 {
-	CTextureEdit	e (null);
+int i = CBTexture1 ()->GetItemData (CBTexture1 ()->GetCurSel ());
+int j = m_bUse1st ? 0 : CBTexture2 ()->GetItemData (CBTexture1 ()->GetCurSel ());
 
-int i = int (e.DoModal ());
+CTextureEdit e (j != 0, textureManager.Name ((short) (j ? j : i)));
+
+i = int (e.DoModal ());
 DLE.MineView ()->Refresh (false);
 Refresh ();
 }
@@ -843,8 +846,6 @@ int i;
 for (i = 0; i < 4; i++)
 	m_saveUVLs [i].l = sideP->m_info.uvls [i].l;
 
-//CBTexture1 ()->SelectString (-1, texture_name1);
-//CBTexture2 ()->SelectString (-1, texture_name2);
 pcb = CBTexture1 ();
 t1Name = textureManager.Name ((short) pcb->GetItemData (pcb->GetCurSel ()));
 pcb = CBTexture2 ();
