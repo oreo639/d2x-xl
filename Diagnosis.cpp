@@ -269,7 +269,7 @@ int CDiagTool::CheckId (CGameObject *objP)
 		break;
 
 	case OBJ_COOP: /* a cooperative player object */
-		if ((id < MAX_PLAYERS) || (id > MAX_PLAYERS + 2)) {
+		if ((id < MAX_PLAYERS) || (id >= MAX_PLAYERS + MAX_COOP_PLAYERS)) {
 			return 1;
 		}
 		break;
@@ -698,10 +698,10 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",nObject, objP->Id ());
 			}
 	  case OBJ_COOP:
-		  if (objP->Id () > MAX_PLAYERS + 2) {
+		  if (objP->Id () >= MAX_PLAYERS + MAX_COOP_PLAYERS) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",nObject, objP->Id ());
-				objP->Id () = MAX_PLAYERS + objP->Id () % 3;
+				objP->Id () = MAX_PLAYERS + objP->Id () % MAX_COOP_PLAYERS;
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",nObject, objP->Id ());
@@ -818,7 +818,7 @@ if (objectManager.Object (0)->m_info.type != OBJ_PLAYER || objectManager.Object 
 			}
 		else if (objP->Type () == OBJ_COOP) {
 			nPlayers [1]++;
-			if (CheckAndFixPlayer (0, 3, nObject, players + MAX_PLAYERS))
+			if (CheckAndFixPlayer (MAX_PLAYERS, MAX_PLAYERS + MAX_COOP_PLAYERS, nObject, players))
 				bFix |= 2;
 			}
 		}
@@ -831,9 +831,9 @@ if (m_bAutoFixBugs) {
 				players [id] = ++i;
 		}
 	if (bFix & 2) {
-		for (i = 0, id = MAX_PLAYERS; id < MAX_PLAYERS + MAX_COOP_PLAYERS; id++)
+		for (id = MAX_PLAYERS; id < MAX_PLAYERS + MAX_COOP_PLAYERS; id++)
 			if (players [id] != 0) 
-				players [id] = ++i;
+				players [id] = id;
 		}
 	objP = objectManager.Object (0);
 	for (nObject = 0; nObject < objCount; nObject++, objP++) {

@@ -1331,7 +1331,7 @@ switch (objP->Type ()) {
 		break;
 
 	case OBJ_COOP:
-		SetNewObjId (objP, OBJ_COOP, nCurSel + MAX_PLAYERS, 3);
+		SetNewObjId (objP, OBJ_COOP, nCurSel + MAX_PLAYERS, MAX_PLAYERS + MAX_COOP_PLAYERS);
 		break;
 
 	case OBJ_WEAPON:
