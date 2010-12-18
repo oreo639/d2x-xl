@@ -516,6 +516,11 @@ if (p != null) {
 				}
 			}
 		}
+	p = strchr (szNewName, '.');
+	memcpy (p, ".rl2", 5);
+	index = LBFiles ()->FindStringExact (-1, szNewName);
+	if (index >= 0)
+		LBFiles ()->SetCurSel (index);
 	}
 fp.Close ();
 }
