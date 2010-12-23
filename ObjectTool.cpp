@@ -30,7 +30,7 @@ char *objectNameTable [MAX_OBJECT_TYPES] = {
 	"Clutter",
 	"Ghost",
 	"Light",
-	"CoOp",
+	"Player (Coop)",
 	"Marker",
 	"Camera",
 	"Monsterball",
@@ -67,6 +67,7 @@ byte contentsList [MAX_CONTAINS_NUMBER] = {
 char objectSelection [MAX_OBJECT_TYPES] = {
 	-1, -1, 0, 1, 2, 3, -1, 4, -1, 5, -1, -1, -1, -1, 6, -1, 7, 8, 9, 10, 11
 };
+
 char contentsSelection [MAX_OBJECT_TYPES] = {
 	-1, -1, 0, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 };
@@ -363,6 +364,7 @@ for (i = 0; i < nTextures; i++) {
 CStringResource res;
 
 for (i = j = 0; i < MAX_POWERUP_IDS; i++) {
+	//res.Clear ();
 	//res.Load (POWERUP_STRING_TABLE + i);
 	//if (strcmp (sz, "(not used)"))
 		powerupIdStrXlat [j++] = i;
@@ -388,6 +390,7 @@ CBContType ()->SetItemData (i, -1);
 // setup sound list boxes
 //char szSound [100];
 for (i = 0; i < 196; i++) {
+	res.Clear ();
 	res.Load (6000 + i);
 	//LoadString (hInst, 6000 + i, szSound,sizeof (szSound));
 	// int nSound = (szSound [0] - '0') * 100 + (szSound [1] - '0') * 10 + (szSound [2] - '0');
@@ -603,7 +606,8 @@ sprintf_s (m_szInfo, sizeof (m_szInfo), "segment %d", objP->Info ().nSegment);
 if (/*(objectSelection [objP->Type ()] == 0) &&*/ robotManager.RobotInfo (objP->Id ())->Info ().bCustom)
 	strcat_s (m_szInfo, sizeof (m_szInfo), "\r\nmodified");
 
-CBObjType ()->SetCurSel (objectSelection [objP->Type ()]);
+//CBObjType ()->SetCurSel (objectSelection [objP->Type ()]);
+SelectItemData (CBObjType (), objP->Type ());
 SetObjectId (CBObjId (), objP->Type (), objP->Id ());
 
 // ungray most buttons and combo boxes
@@ -668,11 +672,11 @@ DLE.MineView ()->Refresh (FALSE);
 
 void CObjectTool::RefreshRobot ()
 {
-  int i,j, nType;
   CRobotInfo robotInfo;
+  int i, j, nType = CBObjType ()->GetItemData (CBObjType ()->GetCurSel ());
 
   // get selection
-if ((nType = objectTypeList [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
+if (nType != OBJ_ROBOT) {
 	CBContId ()->SetCurSel (-1);
 	CBWeapon1 ()->SetCurSel (-1);
 	CBWeapon2 ()->SetCurSel (-1);
@@ -1223,7 +1227,8 @@ return true;
 void CObjectTool::OnSetObjType () 
 {
 CGameObject *objP = current->Object ();
-int selection = objectTypeList [CBObjType ()->GetCurSel ()];
+//int selection = objectTypeList [CBObjType ()->GetCurSel ()];
+int selection = CBObjType ()->GetItemData (CBObjType ()->GetCurSel ());
 if (DLE.IsD1File () && (selection == OBJ_WEAPON)) {
 	ErrorMsg ("You can not use this type of object in a Descent 1 level");
 	return;
@@ -1527,7 +1532,7 @@ if (objP->m_info.renderType == RT_POLYOBJ) {
 
 void CObjectTool::OnDefault ()
 {
-if (objectTypeList [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
+if (CBObjType ()->GetItemData (CBObjType ()->GetCurSel ()) != OBJ_ROBOT)
 	return;
 int i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 undoManager.Begin (udRobots);
