@@ -220,7 +220,7 @@ if (info.count >= MAX_MATCENS) {
 	 return false;
 	}
 undoManager.Begin (udSegments);
-if (!Create (nSegment, bCreate, nType))
+if (0 > (nSegment = Create (nSegment, bCreate, nType)))
 	return false;
 matCens [info.count].Setup (nSegment, info.count, 0);
 Segment (nSegment)->m_info.value = 
