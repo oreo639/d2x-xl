@@ -90,7 +90,7 @@ if (DLE.LevelVersion () > 6) {
 	for (int i = 0, j = lightManager.Count (); i < j; i++) {
 		if (i < MAX_VARIABLE_LIGHTS) {
 			VariableLight (i)->Read (fp);
-			if ((VariableLight (i)->m_nSegment < 0) || (VariableLight (i)->m_nSegment >= segmentManager.Count ())) 
+			if ((VariableLight (i)->m_nSegment < 0) /*|| (VariableLight (i)->m_nSegment >= segmentManager.Count ())*/) 
 				--lightManager.Count ();
 			}
 		else { // skip excess data
