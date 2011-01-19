@@ -40,8 +40,8 @@ BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_POINT2, OnPoint2)
 	ON_BN_CLICKED (IDC_CUBE_POINT3, OnPoint3)
 	ON_BN_CLICKED (IDC_CUBE_POINT4, OnPoint4)
-	ON_BN_CLICKED (IDC_CUBE_ADDBOT, OnAddMatCenter)
-	ON_BN_CLICKED (IDC_CUBE_DELBOT, OnDeleteMatCenter)
+	ON_BN_CLICKED (IDC_CUBE_ADDBOT, OnAddObjectToMatCenter)
+	ON_BN_CLICKED (IDC_CUBE_DELBOT, OnDeleteObjectFromMatCenter)
 	ON_BN_CLICKED (IDC_CUBE_TRIGGERDETAILS, OnTriggerDetails)
 	ON_BN_CLICKED (IDC_CUBE_WALLDETAILS, OnWallDetails)
 	ON_CBN_SELCHANGE (IDC_CUBE_CUBENO, OnSetSegment)
@@ -754,7 +754,7 @@ void CSegmentTool::OnDamage1 () { OnDamage (1); }
 
 //------------------------------------------------------------------------------
 
-int CSegmentTool::FindRobotMaker (CListBox *plb, LPSTR pszObj)
+int CSegmentTool::FindObjectInRobotMaker (CListBox *plb, LPSTR pszObj)
 {
 	int i, j;
 
@@ -769,7 +769,7 @@ return j;
 
 //------------------------------------------------------------------------------
 
-int CSegmentTool::FindEquipMaker (CListBox *plb, LPSTR pszObj)
+int CSegmentTool::FindObjectInEquipMaker (CListBox *plb, LPSTR pszObj)
 {
 	int i, j;
 
@@ -786,12 +786,12 @@ return j;
 // 
 //------------------------------------------------------------------------
 
-void CSegmentTool::AddRobotMaker ()
+void CSegmentTool::AddObjectToRobotMaker ()
 {
 CHECKMINE;
 CSegment *segP = current->Segment ();
 char szObj [80];
-int i = FindRobotMaker (LBAvailBots (), szObj);
+int i = FindObjectInRobotMaker (LBAvailBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 undoManager.Begin (udMatCenters);
@@ -809,12 +809,12 @@ DLE.MineView ()->Refresh ();
 // 
 //------------------------------------------------------------------------
 
-void CSegmentTool::AddEquipMaker ()
+void CSegmentTool::AddObjectToEquipMaker ()
 {
 CHECKMINE;
 CSegment *segP = current->Segment ();
 char szObj [80];
-int i = FindEquipMaker (LBAvailBots (), szObj);
+int i = FindObjectInEquipMaker (LBAvailBots (), szObj);
 if ((i < 0) || (i >= MAX_POWERUP_IDS_D2))
 	return;
 undoManager.Begin (udMatCenters);
@@ -832,26 +832,26 @@ DLE.MineView ()->Refresh ();
 // CSegmentTool - AddMsg
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnAddMatCenter ()
+void CSegmentTool::OnAddObjectToMatCenter ()
 {
 CHECKMINE;
 CSegment *segP = current->Segment ();
 if (IsRobotMaker (segP))
-	AddRobotMaker ();
+	AddObjectToRobotMaker ();
 else if (IsEquipMaker (segP))
-	AddEquipMaker ();
+	AddObjectToEquipMaker ();
 }
 
 //------------------------------------------------------------------------
 // CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
-void CSegmentTool::DeleteRobotMaker () 
+void CSegmentTool::DeleteObjectFromRobotMaker () 
 {
 CHECKMINE;
 CSegment *segP = current->Segment ();
 char szObj [80];
-int i = FindRobotMaker (LBUsedBots (), szObj);
+int i = FindObjectInRobotMaker (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 undoManager.Begin (udMatCenters);
@@ -869,12 +869,12 @@ DLE.MineView ()->Refresh ();
 // CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
-void CSegmentTool::DeleteEquipMaker () 
+void CSegmentTool::DeleteObjectFromEquipMaker () 
 {
 CHECKMINE;
 CSegment *segP = current->Segment ();
 char szObj [80];
-int i = FindEquipMaker (LBUsedBots (), szObj);
+int i = FindObjectInEquipMaker (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 undoManager.Begin (udMatCenters);
@@ -892,14 +892,14 @@ DLE.MineView ()->Refresh ();
 // CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnDeleteMatCenter () 
+void CSegmentTool::OnDeleteObjectFromMatCenter () 
 {
 CHECKMINE;
 CSegment *segP = current->Segment ();
 if (IsRobotMaker (segP))
-	DeleteRobotMaker ();
+	DeleteObjectFromRobotMaker ();
 else if (IsEquipMaker (segP))
-	DeleteEquipMaker ();
+	DeleteObjectFromEquipMaker ();
 }
 
 //------------------------------------------------------------------------
@@ -956,7 +956,7 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::OnAddRobotMaker ()
 {
 CHECKMINE;
-AddRobotMaker ();
+segmentManager.CreateRobotMaker ();
 m_nLastSegment = -1;
 Refresh ();
 }
@@ -966,7 +966,7 @@ Refresh ();
 void CSegmentTool::OnAddEquipMaker ()
 {
 CHECKMINE;
-AddEquipMaker ();
+segmentManager.CreateEquipMaker ();
 m_nLastSegment = -1;
 Refresh ();
 }
