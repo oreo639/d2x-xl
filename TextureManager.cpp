@@ -204,7 +204,9 @@ void CTextureManager::Load (ushort nBaseTex, ushort nOvlTex)
 
 void CTextureManager::LoadNames (int nVersion)
 {
-	int nResource = (DLE.IsD1File ()) ? TEXTURE_STRING_TABLE_D1 : TEXTURE_STRING_TABLE_D2;
+if (nVersion < 0)
+	nVersion = DLE.IsD1File () ? 0 : 1;
+	int nResource = (nVersion == 0) ? TEXTURE_STRING_TABLE_D1 : TEXTURE_STRING_TABLE_D2;
 	CStringResource res;
 	int j = MaxTextures (nVersion);
 
