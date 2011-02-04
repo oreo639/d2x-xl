@@ -312,6 +312,9 @@ return extraTexP;
 inline CBGRA& CTextureManager::Blend (CBGRA& dest, CBGRA& src)
 {
 if (paletteManager.SuperTransp (src))
+	dest.r =
+	dest.g =
+	dest.b =
 	dest.a = 0;
 else if (src.a > 0) {
 	if (src.a == 255)
@@ -327,16 +330,13 @@ return dest;
 }
 
 //------------------------------------------------------------------------------
-// textureManager.Define ()
+// textureManager.BlendTextures ()
 //
-// ACTION - Defines data with texture.  If bitmap_handle != 0,
-//          then data is copied from the global data.  Otherwise,
-//          the pig file defines bmBuf and then global memory
-//          is allocated and the data is copied to the global memory.
-//          The next time that texture is used, the handle will be defined.
+// Builds a texture for rendering by blending base and optional overlay texture
+// and writing the result into a temporary buffer
 //------------------------------------------------------------------------------
 
-int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture* destTexP, int x0, int y0) 
+int CTextureManager::BlendTextures (short nBaseTex, short nOvlTex, CTexture* destTexP, int x0, int y0) 
 {
 	typedef struct tFrac {
 		int	c, d;

@@ -859,7 +859,7 @@ void CMineView::DrawFaceTextured (CFaceListEntry& fle)
 			}
 		RenderFace (segP, fle.m_nSide, *textureManager.Texture (sideP->BaseTex ()), (m_viewWidth + 3) & ~3, &color);
 		}
-	else if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
+	else if (!textureManager.BlendTextures (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 		DrawAnimDirArrows (sideP->BaseTex (), &tex);
 		RenderFace (segP, fle.m_nSide, tex, (m_viewWidth + 3) & ~3);
 		}

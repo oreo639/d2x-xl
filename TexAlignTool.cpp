@@ -295,8 +295,8 @@ offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_center
 offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_centerPt.y - 128;
 
 memset (tex.Buffer (), 0, sizeof (textureManager.m_bmBuf));
-if (textureManager.Define (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
-	DEBUGMSG (" Texture tool: Texture not found (textureManager.Define failed)");
+if (textureManager.BlendTextures (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
+	DEBUGMSG (" Texture tool: Texture not found (textureManager.BlendTextures failed)");
 	return;
 	}
 oldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);

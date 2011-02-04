@@ -298,7 +298,7 @@ for (int i = 0; i < m_filter.Count (1); i++) {
 			}
 	if (nOffset &&	--nOffset)
 		continue;
-	if (!textureManager.Define (m_filter.MapViewToTex (i), 0, &tex, 0, 0)) {
+	if (!textureManager.BlendTextures (m_filter.MapViewToTex (i), 0, &tex, 0, 0)) {
 #if 1
 		bmi->bmiHeader.biWidth = tex.Width ();
 		bmi->bmiHeader.biHeight = tex.Width ();

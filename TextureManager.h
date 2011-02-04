@@ -47,7 +47,7 @@ class CTextureManager {
 		
 		void Load (ushort nBaseTex, ushort nOvlTex);
 		
-		int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
+		int BlendTextures (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
 		
 		void Release (bool bDeleteAll = false, bool bDeleteUnused = false);
 		

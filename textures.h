@@ -372,7 +372,7 @@ public:
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-//int textureManager.Define (short nBaseTex,short nOvlTex, CTexture *pDestTx, int x0, int y0);
+//int textureManager.BlendTextures (short nBaseTex,short nOvlTex, CTexture *pDestTx, int x0, int y0);
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb);
 
 bool PaintTexture (CWnd *wndP, int bkColor = -1, 

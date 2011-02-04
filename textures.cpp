@@ -84,8 +84,8 @@ if (bShowTexture) {
 		}
 	if (nOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
 		CTexture tex (textureManager.m_bmBuf);
-		if (textureManager.Define (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
-			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
+		if (textureManager.BlendTextures (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
+			DEBUGMSG (" Texture renderer: Texture not found (textureManager.BlendTextures failed)");
 		//CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 		//pDC->RealizePalette ();
 #if 0
