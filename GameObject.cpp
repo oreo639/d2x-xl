@@ -358,13 +358,12 @@ pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 if ((nBitmap >= 0) && (nBitmap <= 129)) {
 	sprintf_s (message, sizeof (message),"OBJ_%03d_BMP", nBitmap);
 	CResource res;
-	char *resP = (char*) res.Load (message, RT_BITMAP);
-	BITMAPINFO *bmi = (BITMAPINFO *) resP;
+	BITMAPINFO *bmi = (BITMAPINFO *) res.Load (message, RT_BITMAP);
 	if (bmi) {	//if not, there is a problem in the resource file
 		int ncolors = (int) bmi->bmiHeader.biClrUsed;
 		if (ncolors == 0)
 			ncolors = 1 << (bmi->bmiHeader.biBitCount); // 256 colors for 8-bit data
-		char *pImage = resP + sizeof (BITMAPINFOHEADER) + ncolors * 4;
+		char *pImage = (char*) bmi + sizeof (BITMAPINFOHEADER) + ncolors * 4;
 		int width = (int) bmi->bmiHeader.biWidth;
 		int height = (int) bmi->bmiHeader.biHeight;
 		int xoffset = (64 - width) / 2;
