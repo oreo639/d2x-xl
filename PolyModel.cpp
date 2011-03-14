@@ -229,7 +229,7 @@ return 0;
 //static int m_pt, m_pt0, modelRenderer.m_nPolyPoints;
 //static int modelRenderer.m_lastObjType = -1;
 //static int modelRenderer.m_lastObjId = -1;
-//static APOINT modelRenderer.m_screenPoly [MAX_POLYMODEL_POINTS];
+//static tLongVector modelRenderer.m_screenPoly [MAX_POLYMODEL_POINTS];
 
 //------------------------------------------------------------------------------
 // draw_poly

@@ -108,7 +108,7 @@ extern short edit_mode;
 extern tUVL   defaultUVLs[4];
 extern char  *objectNameTable[MAX_OBJECT_TYPES];
 extern byte powerupTypeTable[MAX_POWERUP_IDS_D2];
-extern APOINT *scrn; //MAX_VERTICES
+extern tLongVector *scrn; //MAX_VERTICES
 extern short gx0, gy0, gz0;
 extern double spinx,spiny,spinz;
 extern double movex, movey, movez;

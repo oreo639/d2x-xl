@@ -45,8 +45,8 @@ class CViewMatrix
 		//void Multiply (double A[4][4], double B[4][4]);
 		void Calculate (double xMove, double yMove, double zMove);
 		void CalculateInverse (double xMove, double yMove, double zMove);
-		void Project (CDoubleVector& vert, APOINT& apoint);
-		void Unproject (CVertex& vert, APOINT& apoint);
+		void Project (CDoubleVector& vert, tLongVector& apoint);
+		void Unproject (CVertex& vert, tLongVector& apoint);
 		inline double Aspect (void) { return (double) m_viewHeight / (double) m_viewWidth; }
 		inline double Scale (void) { return m_data [0].m_scale; }
 		bool Push (void);

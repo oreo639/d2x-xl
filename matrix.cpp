@@ -389,7 +389,7 @@ switch (axis) {
 
 //------------------------------------------------------------------------
 
-void CDoubleMatrix::Square2Quad (APOINT a [4]) 
+void CDoubleMatrix::Square2Quad (tLongVector a [4]) 
 {
 // infer "unity square" to "quad" prespective transformation
 // see page 55-56 of Digital Image Warping by George Wolberg (3rd edition) 

@@ -38,7 +38,7 @@ InitViewDimensions ();
 if (bSetViewInfo)
 	m_view.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
 i = vertexManager.Count ();
-APOINT *a = m_viewPoints + i;
+tLongVector *a = m_viewPoints + i;
 CVertex* vertP = vertexManager.Vertex (i);
 for (nProjected = 0; i--; ) {
 	if ((--vertP)->Status () == 255)
@@ -147,7 +147,7 @@ else if (m_nMineCenter == 2) {
 	// 5 circles around each axis at angles of 30, 60, 90, 120, and 150
 	// each circle has 18 points
 	CVertex circle;
-	APOINT pt;
+	tLongVector pt;
 
 	m_pDC->SelectObject (m_penCyan);
 	int i, j;
@@ -285,9 +285,9 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 			}
 
 		byte* sideVertP = &sideVertTable [nSide][0];
-		APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertP [0]]];
-		APOINT& p1 = m_viewPoints [segP->m_info.verts [sideVertP [1]]];
-		APOINT& p3 = m_viewPoints [segP->m_info.verts [sideVertP [3]]];
+		tLongVector& p0 = m_viewPoints [segP->m_info.verts [sideVertP [0]]];
+		tLongVector& p1 = m_viewPoints [segP->m_info.verts [sideVertP [1]]];
+		tLongVector& p3 = m_viewPoints [segP->m_info.verts [sideVertP [3]]];
 
 		CDoubleVector	a ((double) (p1.x - p0.x), (double) (p1.y - p0.y), 0.0), 
 							b ((double) (p3.x - p0.x), (double) (p3.y - p0.y), 0.0);
@@ -1116,7 +1116,7 @@ for (i = 0; i < wallManager.WallCount (); i++) {
 		 IN_RANGE (m_viewPoints [segP->m_info.verts [sideVertTable [j][3]]].y, y_max)) {
 
 			CVertex	center, orthog, vector;
-			APOINT	point;
+			tLongVector	point;
 
 		center = segmentManager.CalcSideCenter (walls [i]);
 		orthog = segmentManager.CalcSideNormal (walls [i]);
@@ -1128,7 +1128,7 @@ for (i = 0; i < wallManager.WallCount (); i++) {
 			m_viewPoints [segP->m_info.verts [sideVertTable [walls [i].m_nSide][j]]].y);
 			}
 		if (walls [i].Info ().nTrigger != NO_TRIGGER) {
-				APOINT arrowStartPoint,arrowEndPoint,arrow1Point,arrow2Point;
+				tLongVector arrowStartPoint,arrowEndPoint,arrow1Point,arrow2Point;
 				CVertex fin;
 
 			// calculate arrow points
@@ -1238,7 +1238,7 @@ void CMineView::DrawTunnel (void)
 m_pDC->SelectObject (m_penRed);
 m_pDC->SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 tunnelMaker.ComputeTunnel ();
-APOINT point;
+tLongVector point;
 m_view.Project (points [1], point);
 if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)){
 	m_view.Project (points [0], point);
@@ -1276,7 +1276,7 @@ for (i = 0; i < tunnelMaker.Length (); i++, segP--)
 //        then its a secret return point)
 //--------------------------------------------------------------------------
 
-void TransformModelPoint (CVertex& dest, APOINT &src, CDoubleMatrix &orient, CVertex offs)
+void TransformModelPoint (CVertex& dest, tLongVector &src, CDoubleMatrix &orient, CVertex offs)
 {
 CDoubleVector v (src.x, src.y, src.z);
 dest.v.x = orient.rVec.v.x * v.v.x + orient.uVec.v.x * v.v.y + orient.fVec.v.x * v.v.z;
@@ -1293,8 +1293,8 @@ CHECKMINE;
 	short				poly;
 	CGameObject*	objP;
 	CVertex			pt [MAX_POLY];
-	APOINT			poly_draw [MAX_POLY];
-	APOINT			object_shape [MAX_POLY] = {
+	tLongVector			poly_draw [MAX_POLY];
+	tLongVector			object_shape [MAX_POLY] = {
 		{ 0,  4, -4},
 		{ 0,  0, -4},
 		{ 0,  0,  4},

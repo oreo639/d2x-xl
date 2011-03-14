@@ -100,7 +100,7 @@ tUVL defaultUVLs [4] = {
 
 
 
-APOINT *scrn;
+tLongVector *scrn;
 short gx0,gy0,gz0;
 double spinx,spiny,spinz;
 double movex, movey, movez;

@@ -194,7 +194,7 @@ if (count == 1) {
 	}
 else {
 	// no vertex found, just drop point along screen axii
-	APOINT apoint;
+	tLongVector apoint;
 	apoint.x = (short) xPos;
 	apoint.y = (short) yPos;
 	apoint.z = m_viewPoints [vert1].z;

@@ -176,7 +176,7 @@ class CModelRenderer {
 		CDC*					m_pDC;
 		CVertex				m_offset;
 		CDoubleVector		m_normal;
-		APOINT				m_screenPoly [MAX_POLYMODEL_POINTS];
+		tLongVector				m_screenPoly [MAX_POLYMODEL_POINTS];
 		int					m_nPolyPoints;
 		int					m_lastObjType;
 		int					m_lastObjId;

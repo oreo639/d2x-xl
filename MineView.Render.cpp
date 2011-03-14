@@ -19,7 +19,7 @@ int bEnableDeltaShading = 0;
 
 //------------------------------------------------------------------------------
 
-int LineLineIntersection (APOINT& vi, APOINT& v1, APOINT& v2, APOINT& v3, APOINT& v4)
+int LineLineIntersection (tLongVector& vi, tLongVector& v1, tLongVector& v2, tLongVector& v3, tLongVector& v4)
 {
 	double A1 = v2.y - v1.y;
 	double B1 = v1.x - v2.x;
@@ -56,18 +56,18 @@ return (long) (_hypot ((double) (x3 - x0), (double) (y3 - y0)) + 0.5);
 
 //------------------------------------------------------------------------------
 
-inline double Dot (APOINT& v0, APOINT& v1)
+inline double Dot (tLongVector& v0, tLongVector& v1)
 {
 return (double) v0.x * (double) v1.x + (double) v0.y * (double) v1.y;
 }
 
 //------------------------------------------------------------------------------
 
-static bool PointInTriangle (APOINT& A, APOINT& B, APOINT& C, APOINT& P)
+static bool PointInTriangle (tLongVector& A, tLongVector& B, tLongVector& C, tLongVector& P)
 {
-APOINT v0 = {C.x - A.x, C.y - A.y};
-APOINT v1 = {B.x - A.x, B.y - A.y};
-APOINT v2 = {P.x - A.x, P.y - A.y};
+tLongVector v0 = {C.x - A.x, C.y - A.y};
+tLongVector v1 = {B.x - A.x, B.y - A.y};
+tLongVector v2 = {P.x - A.x, P.y - A.y};
 
 // Compute dot products
 double dot00 = Dot (v0, v0);
@@ -88,9 +88,9 @@ return (u > 0.0) && (v > 0.0) && (u + v < 1.0);
 // v1, v2, v3: triangle corners (z known)
 // v0: reference point (z needed)
 
-inline depthType InterpolateZ (APOINT& v0, APOINT& v1, APOINT& v2, APOINT& v3)
+inline depthType InterpolateZ (tLongVector& v0, tLongVector& v1, tLongVector& v2, tLongVector& v3)
 {
-	APOINT vi;
+	tLongVector vi;
 
 int i = LineLineIntersection (vi, v1, v2, v3, v0);
 depthType zi = (depthType) (v1.z + (v2.z - v1.z) * _hypot (vi.x - v1.x, vi.y - v1.y) / _hypot (v2.x - v1.x, v2.y - v1.y));
@@ -99,9 +99,9 @@ return (depthType) (v3.z + (zi - v3.z) * _hypot (v0.x - v3.x, v0.y - v3.y) / _hy
 
 //------------------------------------------------------------------------------
 
-inline depthType CMineView::Z (CTexture& tex, APOINT* a, int x, int y)
+inline depthType CMineView::Z (CTexture& tex, tLongVector* a, int x, int y)
 {
-	APOINT v0 = {x, y};
+	tLongVector v0 = {x, y};
 
 return InterpolateZ (v0, a [0], a [2], a [PointInTriangle (a [0], a [1], a [2], v0) ? 1 : 3]);
 }
@@ -112,7 +112,7 @@ return InterpolateZ (v0, a [0], a [2], a [PointInTriangle (a [0], a [1], a [2], 
 
 inline double CMineView::ZRange (int x0, int x1, int y, double& z)
 {
-	APOINT p0 = {x0, y}, p1 = {x1, y}, vi [4];
+	tLongVector p0 = {x0, y}, p1 = {x1, y}, vi [4];
 	int h = -1, j = 0;
 	double zi [4];
 
@@ -121,8 +121,8 @@ if (y == 517)
 	y = y;
 #endif
 for (int i = 0; i < 4; i++) {
-	APOINT v0 = m_screenCoord [i];
-	APOINT v1 = m_screenCoord [(i + 1) % 4];
+	tLongVector v0 = m_screenCoord [i];
+	tLongVector v1 = m_screenCoord [(i + 1) % 4];
 #if 0
 	if (v0.x < v1.x) {
 		if ((x1 < v0.x) || (x0 > v1.x))
@@ -141,7 +141,7 @@ for (int i = 0; i < 4; i++) {
 			continue;
 		}
 #endif
-	APOINT v;
+	tLongVector v;
 	if (!LineLineIntersection (v, v0, v1, p0, p1))
 		continue;
 	if ((j > 0) && (v.x == vi [j - 1].x) && (v.y == vi [j - 1].y))
@@ -252,7 +252,7 @@ return true;
 void CMineView::RenderFace (CSegment* segP, short nSide, CTexture& tex, ushort rowOffset, CBGRA* colorP)
 {
 	int h, i, j, k;
-	APOINT minPt, maxPt;
+	tLongVector minPt, maxPt;
 	CDoubleMatrix A, IA, B, UV;
 	//double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
 	CUVL* uvls;
@@ -304,7 +304,7 @@ IA = A.Adjoint ();
 
 // store uv coordinates into m_texCoord []
 // fill in texture
-APOINT m_texCoord [4];  // Descent's (u,v) coordinates for textures
+tLongVector m_texCoord [4];  // Descent's (u,v) coordinates for textures
 uvls = segP->m_sides [nSide].m_info.uvls;
 for (i = 0; i < 4; i++) {
 	m_texCoord [i].x = uvls [i].u;

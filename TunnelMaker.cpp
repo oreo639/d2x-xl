@@ -568,7 +568,7 @@ if (!m_bActive)
 pDC->SelectObject (redPen);
 pDC->SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 tunnelMaker.ComputeTunnel ();
-APOINT point;
+tLongVector point;
 view.Project (m_points [1], point);
 if (IN_RANGE (point.x, x_max) && IN_RANGE (point.y, y_max)) {
 	view.Project (m_points [0], point);

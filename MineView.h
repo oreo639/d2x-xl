@@ -177,11 +177,11 @@ protected: // create from serialization only
 	//double		M[4][4];  /* 4x4 matrix used in coordinate transformation */
 	//double		IM[4][4]; /* inverse matrix of M[4][4] */
 //	double		depthPerception;
-	APOINT		m_viewPoints [VERTEX_LIMIT];
-	APOINT		m_minViewPoint;
-	APOINT		m_maxViewPoint;
-	APOINT		m_minVPIdx;
-	APOINT		m_maxVPIdx;
+	tLongVector		m_viewPoints [VERTEX_LIMIT];
+	tLongVector		m_minViewPoint;
+	tLongVector		m_maxViewPoint;
+	tLongVector		m_minVPIdx;
+	tLongVector		m_maxVPIdx;
 
 	int			m_mouseState;
 	int			m_lastMouseState;
@@ -213,8 +213,8 @@ protected: // create from serialization only
 	bool			m_bTestDepth;
 	byte			m_alpha;
 
-	APOINT		m_screenCoord [4];
-	APOINT		m_texCoord [4];
+	tLongVector		m_screenCoord [4];
+	tLongVector		m_texCoord [4];
 	int			m_x0, m_x1, m_y;
 	double		m_z0, m_z1;
 
@@ -415,7 +415,7 @@ public:
 
 	inline bool Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness = 32767);
 
-	inline depthType Z (CTexture& tex, APOINT* a, int x, int y);
+	inline depthType Z (CTexture& tex, tLongVector* a, int x, int y);
 
 	inline double ZRange (int x0, int x1, int y, double& z);
 

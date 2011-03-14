@@ -1090,7 +1090,7 @@ void CMineView::MarkRubberBandedVertices (void)
 {
 CHECKMINE;
 
-	APOINT	*pa = m_viewPoints;
+	tLongVector	*pa = m_viewPoints;
 	int		x, y;
 
 for (int i = 0, j = vertexManager.Count (); i < j; i++, pa++) {

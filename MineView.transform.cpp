@@ -80,7 +80,7 @@ void CMineView::ShiftViewPoints ()
 if (!(m_xRenderOffs && m_yRenderOffs))
 	return;
 
-	APOINT *a = m_viewPoints;
+	tLongVector *a = m_viewPoints;
 
 int i;
 for (i = vertexManager.Count (); i; i--, a++) {

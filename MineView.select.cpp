@@ -29,7 +29,7 @@ CGameObject *objP;
 short closest_object;
 short i;
 double radius,closest_radius;
-APOINT pt;
+tLongVector pt;
 CGameObject temp_obj;
 
 // default to object 0 but set radius very large
@@ -108,7 +108,7 @@ RefreshObject(i, closest_object);
 
 //--------------------------------------------------------------------------
 
-int Side (APOINT &p0, APOINT &p1, APOINT &p2)
+int Side (tLongVector &p0, tLongVector &p1, tLongVector &p2)
 {
 return ((int) p0.y - (int) p1.y) * ((int) p2.x - (int) p1.x)  - 
 		 ((int) p0.x - (int) p1.x) * ((int) p2.y - (int) p1.y);
@@ -116,7 +116,7 @@ return ((int) p0.y - (int) p1.y) * ((int) p2.x - (int) p1.x)  -
 
 //--------------------------------------------------------------------------
 
-static bool PointInTriangle (APOINT &p, APOINT &a, APOINT &b, APOINT &c)
+static bool PointInTriangle (tLongVector &p, tLongVector &a, tLongVector &b, tLongVector &c)
 {
 __int64 fab = Side (p, a, b);
 __int64 fbc = Side (p, b, c);
@@ -134,7 +134,7 @@ bool CMineView::SelectCurrentSegment (short direction, long xMouse, long yMouse)
   short			cur_segment, next_segment;
   short			i, j;
   int			x, y;
-  APOINT			sideVerts [4], mousePos;
+  tLongVector			sideVerts [4], mousePos;
   bool			bFound = false;
 
 /* find next segment which is within the cursor position */

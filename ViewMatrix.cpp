@@ -209,7 +209,7 @@ m_data [0].m_invMove = m_data [0].m_invMat * m_data [0].m_move;
 // Project()
 //--------------------------------------------------------------------------
 
-void CViewMatrix::Project (CDoubleVector& vertex, APOINT& apoint) 
+void CViewMatrix::Project (CDoubleVector& vertex, tLongVector& apoint) 
 {
 	CDoubleVector	r, v = vertex;
 
@@ -228,7 +228,7 @@ apoint.z = (long) Round (r.v.z * 10000); // 5 digits precision
 //			     unset_point()
 //--------------------------------------------------------------------------
 
-void CViewMatrix::Unproject (CVertex& vertex, APOINT& apoint) 
+void CViewMatrix::Unproject (CVertex& vertex, tLongVector& apoint) 
 {
 CDoubleVector r (double (apoint.x - x_center), double (y_center - apoint.y), double (apoint.z) / 10000.0);
 double scale = 0.2;
