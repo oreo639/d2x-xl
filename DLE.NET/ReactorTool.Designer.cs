@@ -241,7 +241,7 @@
             this.Controls.Add (this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject ("$this.Icon")));
             this.Name = "ReactorTool";
-            this.Text = "ReactorTool";
+            this.Text = "Reactor";
             this.groupBox2.ResumeLayout (false);
             this.groupBox2.PerformLayout ();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit ();

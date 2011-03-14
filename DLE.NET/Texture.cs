@@ -157,23 +157,27 @@ namespace DLE.NET
     public class Texture
     {
         public BGRA [] m_bmData;
-        public byte [] m_bmIndex;
+        public BGRA [] m_override;
         public uint m_width = 0, m_height = 0, m_size = 0;
         public bool m_bCustom = false, m_bExtData = false, m_bFrame = false, m_bUsed = false, m_bValid = false;
         public byte m_nFormat = 0;	// 0: Bitmap, 1: TGA (RGB)
         public ushort m_nIndex = 0;
 
-        //------------------------------------------------------------------------------
+        public BGRA [] Buffer { get { return m_bmData; } }
+        public uint Width { get { return m_width; } }
+        public uint Height { get { return m_height; } }
+        public uint Size { get { return Width * Height; } }
 
-        public Texture (BGRA[] dataP = null, byte[] indexP = null)
+        //----------------------------------------------------------------------------
+
+        public Texture (BGRA[] dataP = null)
         {
             Clear ();
             m_bmData = dataP;
-            m_bmIndex = indexP;
             m_bExtData = (dataP != null);
         }
 
-        //------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------
 
         bool Allocate (int nSize, int nTexture)
         {
@@ -181,8 +185,6 @@ namespace DLE.NET
                 Release ();
             if (m_bmData == null)
                 m_bmData = new BGRA [nSize];
-            if (m_bmIndex == null)
-                m_bmIndex = new byte [nSize];
             return (m_bmData != null);
         }
 
@@ -191,10 +193,7 @@ namespace DLE.NET
         public void Release ()
         {
             if (!m_bExtData)
-            {
                 m_bmData = null;
-                m_bmIndex = null;
-            }
         }
 
         //------------------------------------------------------------------------------
@@ -225,7 +224,6 @@ namespace DLE.NET
                 try
                 {
                     m_bmData = new BGRA [m_size];
-                    m_bmIndex = new byte [m_size];
                 }
                 catch (InsufficientMemoryException)
                 {
@@ -237,12 +235,28 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
+        void ComputeIndex (byte [] bmIndex)
+        {
+	        BGR[] palette = DLE.PaletteManager.Current ();
+
+	        for (uint y = 0; y < (int) Height; y++) {
+		        uint i = y * Width;
+		        uint k = Size - Width - i;
+		        for (uint x = 0; x < Width; x++) 
+                {
+			        bmIndex [k + x] = DLE.PaletteManager.ClosestColor (m_bmData [i + x]);
+		        }
+	        }
+        }
+
+        //------------------------------------------------------------------------------
+
         void Load (BinaryReader fp, PigTexture info)
         {
             byte [] rowSize = new byte [4096];
             byte [] rowData = new byte [4096];
             BGR [] palette = DLE.paletteManager.Current ();
-            byte palIndex;
+            byte palIndex, alpha;
 
             if (m_nFormat != 0)
             {
@@ -251,7 +265,7 @@ namespace DLE.NET
                     m_bmData [i].r = fp.ReadByte ();
                     m_bmData [i].g = fp.ReadByte ();
                     m_bmData [i].b = fp.ReadByte ();
-                    m_bmIndex [i] = (byte) ((fp.ReadByte () == 0) ? 255 : 0); // transparency
+                    m_bmData [i].a = fp.ReadByte ();
                 }
                 //texP->m_info.bValid = TGA2Bitmap (texP->m_info.bmData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
             }
@@ -259,7 +273,7 @@ namespace DLE.NET
             {
                 uint nSize = fp.ReadUInt32 ();
                 rowSize = fp.ReadBytes (info.height);
-                byte byteVal, runLength, runValue;
+                byte runLength;
                 ushort nLine = 0;
                 for (int y = info.height - 1; y >= 0; y--)
                 {
@@ -267,26 +281,23 @@ namespace DLE.NET
                     for (int x = 0, i = 0; x < info.width; )
                     {
                         palIndex = rowData [i];
-                        if ((byteVal & 0xe0) == 0xe0)
+                        if ((palIndex & 0xe0) == 0xe0)
                         {
-                            runLength = (byte)(byteVal & 0x1f);
-                            runValue = rowData [i++];
+                            runLength = (byte)(palIndex & 0x1f);
+                            palIndex = rowData [i++];
+                            alpha = (byte)((palIndex < 254) ? 255 : 0);
                             for (int j = 0; j < runLength; j++)
                             {
                                 if (x < info.width)
                                 {
-                                    int h = y * info.width + x;
-                                    m_bmIndex [h] = palIndex;
-                                    m_bmData [h].Assign (palette [palIndex]);
+                                    m_bmData [y * info.width + x].Assign (palette [palIndex], alpha);
                                     x++;
                                 }
                             }
                         }
                         else
                         {
-                            int h = y * info.width + x;
-                            m_bmIndex [h] = palIndex;
-                            m_bmData [h].Assign (palette [palIndex]);
+                            m_bmData [y * info.width + x].Assign (palette [palIndex], (byte) ((palIndex < 254) ? 255 : 0));
                             x++;
                         }
                     }
@@ -300,8 +311,9 @@ namespace DLE.NET
                     {
 			            int h = y * info.width + x;
 			            palIndex = fp.ReadByte ();
-			            m_bmIndex [h] = palIndex;
 			            m_bmData [h].Assign (palette [palIndex]);
+                        if (palIndex < 254)
+                            m_bmData [h].a = 0; // transparent
 			        }
                 }
             }

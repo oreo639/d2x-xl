@@ -1028,7 +1028,7 @@ namespace DLE.NET.Properties {
         
         internal static System.Drawing.Bitmap texturefilter_16x16 {
             get {
-                object obj = ResourceManager.GetObject("texturefilter-16x16", resourceCulture);
+                object obj = ResourceManager.GetObject("texturefilter_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

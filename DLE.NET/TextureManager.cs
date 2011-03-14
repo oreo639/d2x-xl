@@ -66,6 +66,12 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
+        public void Destroy (int nVersion)
+        {
+        }
+
+        //------------------------------------------------------------------------------
+
         public Texture Texture (int nTexture)
         {
             return Textures [nTexture];
@@ -171,7 +177,7 @@ namespace DLE.NET
         if (nVersion < 0) {
 	        nVersion = Version;
 	        m_pigFiles [nVersion] = DLE.descentPath [nVersion];
-            m_paletteName = paletteManager.Name;
+            m_paletteName = DLE.PaletteManager.Name;
 	        m_info [nVersion] = null;
 	        }
         Release (nVersion, true, false);
@@ -228,6 +234,27 @@ namespace DLE.NET
         }
 
 
+        //------------------------------------------------------------------------------
+
+        void Blend (ref BGRA dest, BGRA src)
+        {
+        if (DLE.PaletteManager.SuperTransp (src))
+	        dest.r =
+	        dest.g =
+	        dest.b =
+	        dest.a = 0;
+        else if (src.a > 0) {
+	        if (src.a == 255)
+		        dest = src;
+	        else {
+		        int b = 255 - src.a;
+		        dest.r = (byte) (((int) dest.r * b + (int) src.r * src.a) / 255);
+		        dest.g = (byte) (((int) dest.g * b + (int) src.g * src.a) / 255);
+		        dest.b = (byte) (((int) dest.b * b + (int) src.b * src.a) / 255);
+		        }
+	        }
+        }
+
         //-------------------------------------------------------------------------
 
         private struct tFrac
@@ -235,17 +262,16 @@ namespace DLE.NET
             public int c, d;
         }
 
-        int Define (short nBaseTex, short nOvlTex, Texture destTexP, int x0, int y0) 
+        int BlendTextures (short nBaseTex, short nOvlTex, Texture destTexP, int x0, int y0) 
         {
 
-            byte [] src;
             short [] nTextures = new short [2];
-            int mode;
-            int w, h, i, j, x, y, y1, s;
-            tFrac scale, scale2;
             Texture [] texP = new Texture [2];
-            byte [] bmBufP = destTexP.m_bmIndex;
-            byte c;
+            BGRA [] bmBufP = destTexP.Buffer;
+            BGRA [] srcDataP;
+            int mode;
+            int w, h, i, j, x, y, z, y1, s;
+            tFrac scale, scale2;
 
             nTextures [0] = nBaseTex;
             nTextures [1] = (short) (nOvlTex & 0x3fff);
@@ -263,30 +289,35 @@ namespace DLE.NET
             destTexP.m_height = texP [0].m_height;
             destTexP.m_size = texP [0].m_size;
             destTexP.m_bValid = true;
-            src = texP [0].m_bmData;
+            srcDataP = texP [0].Buffer;
             // if not rotated, then copy directly
-            if (x0 == 0 && y0 == 0) 
-                Buffer.BlockCopy (bmBufP, 0, src, 0, src.Length);
-            else 
+            if (x0 == 0 && y0 == 0)
+            {
+                Buffer.BlockCopy (bmBufP, 0, srcDataP, 0, srcDataP.Length * 4);
+            }
+            else
             {
                 // otherwise, copy bit by bit
-                w = (int) texP [0].m_width;
+                w = (int)texP [0].m_width;
                 int l1 = y0 * w + x0;
-                int l2 = (int) texP [0].m_size - l1;
-                Buffer.BlockCopy (bmBufP, 0, src, l1, l2);
-                Buffer.BlockCopy (bmBufP, l2, src, 0, l2);
+                int l2 = (int)texP [0].m_size - l1;
+                Buffer.BlockCopy (bmBufP, 0, srcDataP, l1, l2);
+                Buffer.BlockCopy (bmBufP, l2, srcDataP, 0, l2);
                 h = w;//texP [0].m_height;
                 i = 0;
                 for (y = 0; y < h; y++)
                     for (x = 0; x < w; x++)
-                        bmBufP [i] = src [(((y - y0 + h) % h) * w) + ((x - x0 + w) % w)];
+                    {
+                        z = (((y - y0 + h) % h) * w) + ((x - x0 + w) % w);
+                        bmBufP [i] = srcDataP [z];
+                    }
             }
 
             // Overlay texture 2 if present
 
             if (nTextures [1] == 0)
                 return 0;
-            src = texP [1].m_bmData;
+            srcDataP = texP [1].Buffer;
             if (texP [0].m_width == texP [1].m_width)
                 scale.c = scale.d = 1;
             else if (texP [0].m_width < texP [1].m_width) 
@@ -314,9 +345,7 @@ namespace DLE.NET
                     {
                         for (x = 0; x < w; x++, i++) 
                         {
-                            c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-                            if (c != 255)
-                                bmBufP [i] = c;
+                            bmBufP [i].Blend (srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
                         }
                     }
                 }
@@ -328,9 +357,7 @@ namespace DLE.NET
                         j = i;
                         for (x = 0; x < w; x++, j += w) 
                         {
-                            c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-                            if (c != 255)
-                                bmBufP [j] = c;
+                            bmBufP [j].Blend (srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
                         }
                     }
                 }
@@ -341,9 +368,7 @@ namespace DLE.NET
                     {
                         for (x = 0; x < w; x++, i--) 
                         {
-                            c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-                            if (c != 255)
-                                bmBufP [i] = c;
+                            bmBufP [i].Blend (srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
                         }
                     }
                 }
@@ -355,9 +380,7 @@ namespace DLE.NET
                         j = i;
                         for (x = 0; x < w; x++, i -= w) 
                         {
-                            c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-                            if (c != 255)
-                                bmBufP [j] = c;
+                            bmBufP [j].Blend (srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
                         }
                     }
                 }
@@ -371,9 +394,7 @@ namespace DLE.NET
                         y1 = ((y + y0) % h) * w;
                         for (x = 0; x < w; x++) 
                         {
-                            c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-                            if (c != 255)
-                                bmBufP [y1 + (x + x0) % w] = c;
+                            bmBufP [y1 + (x + x0) % w].Blend (srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
                         }
                     }
                 }
@@ -383,9 +404,7 @@ namespace DLE.NET
                     {
                         for (x = 0; x < w; x++) 
                         {
-                            c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-                            if (c != 255)
-                                bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
+                            bmBufP [((x + y0) % h) * w + (y + x0) % w].Blend (srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
                         }
                     }
                 }
@@ -396,9 +415,7 @@ namespace DLE.NET
                         y1 = ((y + y0) % h) * w;
                         for (x = w - 1; x >= 0; x--) 
                         {
-                            c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-                            if (c != 255)
-                                bmBufP [y1 + (x + x0) % w] = c;
+                            bmBufP [y1 + (x + x0) % w].Blend (srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
                         }
                     }
                 }
@@ -408,9 +425,7 @@ namespace DLE.NET
                     {
                         for (x = w - 1; x >= 0; x--) 
                         {
-                            c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-                            if (c != 255)
-                                bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
+                            bmBufP [((x + y0) % h) * w + (y + x0) % w].Blend (srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
                         }
                     }
                 }
