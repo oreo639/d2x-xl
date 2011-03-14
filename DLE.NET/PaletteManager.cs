@@ -254,6 +254,7 @@ namespace DLE.NET
 	            dest [i].g = (byte) (m_rawData [j++] * 4);
 	            dest [i].b = (byte) (m_rawData [j++] * 4);
 	        }
+            m_superTransp = dest [254];
         }
 
         //------------------------------------------------------------------------
