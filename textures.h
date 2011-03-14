@@ -233,7 +233,14 @@ class CBGR {
 
 		inline COLORREF ColorRef (void) { return RGB (r, g, b); }
 
+		inline uint Delta (CBGR& other) {
+			return (uint) (Sqr ((int) r - (int) other.r) + Sqr ((int) g - (int) other.g) + Sqr ((int) b - (int) other.b));
+			}
+
 		inline const bool operator== (const CBGR& other) const { return (r == other.r) && (g == other.g) && (b == other.b); }
+
+	private:
+		inline int Sqr (int i) { return i * i; }
 };
 
 class CBGRA : public CBGR {

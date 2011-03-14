@@ -347,7 +347,7 @@ int CTextureManager::BlendTextures (short nBaseTex, short nOvlTex, CTexture* des
 	tFrac			scale, scale2;
 	//int			rc; // return code
 	CTexture*	texP [2];
-	CBGRA*		bmDataP = destTexP->Buffer ();
+	CBGRA*		bmBufP = destTexP->Buffer ();
 	int			fileType = DLE.FileType ();
 
 nTextures [0] = nBaseTex;
@@ -366,7 +366,7 @@ for (i = 0; i < 2; i++) {
 	//		return rc;
 	}
 	
-	// Define bmDataP based on texture numbers and rotation
+	// Define bmBufP based on texture numbers and rotation
 destTexP->m_info.width = texP [0]->m_info.width;
 destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.bValid = 1;
@@ -381,16 +381,16 @@ if (srcDataP != null) {
 			destTexP->m_override = srcDataP;
 		else
 #endif
-			memcpy (bmDataP, srcDataP, texP [0]->BufSize ());
+			memcpy (bmBufP, srcDataP, texP [0]->BufSize ());
 		}
 	else {
 		// otherwise, copy bit by bit
 		w = texP [0]->m_info.width;
 		int l1 = y0 * w + x0;
 		int l2 = (texP [0]->Size () - l1) * sizeof (CBGRA);
-		memcpy (bmDataP, srcDataP + l1, l2 * sizeof (CBGRA));
-		memcpy (bmDataP + l2, srcDataP, l1 * sizeof (CBGRA));
-		CBGRA* destDataP = bmDataP;
+		memcpy (bmBufP, srcDataP + l1, l2 * sizeof (CBGRA));
+		memcpy (bmBufP + l2, srcDataP, l1 * sizeof (CBGRA));
+		CBGRA* destDataP = bmBufP;
 		h = w;//texP [0]->m_info.height;
 		for (y = 0; y < h; y++) {
 			for (x = 0; x < w; x++) {
@@ -428,7 +428,7 @@ s = (texP [1]->m_info.width * texP [1]->m_info.width)/*texP [1]->m_info.size*/ /
 if (!(x0 || y0)) {
 	CBGRA * destDataP, * destData2;
 	if (mode == 0x0000) {
-		destDataP = bmDataP;
+		destDataP = bmBufP;
 		for (y = 0; y < h; y++) {
 			for (x = 0; x < w; x++, destDataP++) {
 				Blend (*destDataP, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
@@ -436,7 +436,7 @@ if (!(x0 || y0)) {
 			}
 		}
 	else if (mode == (short) 0x4000) {
-		destDataP = bmDataP + h - 1;
+		destDataP = bmBufP + h - 1;
 		for (y = 0; y < h; y++, destDataP--) {
 			for (x = 0, destData2 = destDataP; x < w; x++, destData2 += w) {
 				Blend (*destData2, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
@@ -444,7 +444,7 @@ if (!(x0 || y0)) {
 			}
 		}
 	else if (mode == (short) 0x8000) {
-		destDataP = bmDataP + s - 1;
+		destDataP = bmBufP + s - 1;
 		for (y = 0; y < h; y++) {
 			for (x = 0; x < w; x++, destDataP--) {
 				Blend (*destDataP, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
@@ -452,7 +452,7 @@ if (!(x0 || y0)) {
 			}
 		}
 	else if (mode == (short) 0xC000) {
-		destDataP = bmDataP + (h - 1) * w;
+		destDataP = bmBufP + (h - 1) * w;
 		for (y = 0; y < h; y++, destDataP++) {
 			for (x = 0, destData2 = destDataP; x < w; x++, destData2 -= w) {
 				Blend (*destData2, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
@@ -465,14 +465,14 @@ else {
 		for (y = 0; y < h; y++) {
 			y1 = ((y + y0) % h) * w;
 			for (x = 0; x < w; x++) {
-				Blend (bmDataP [y1 + (x + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
+				Blend (bmBufP [y1 + (x + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
 			}
 		}
 	else if (mode == (short) 0x4000) {
 		for (y = h - 1; y >= 0; y--) {
 			for (x = 0; x < w; x++) {
-				Blend (bmDataP [((x + y0) % h) * w + (y + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
+				Blend (bmBufP [((x + y0) % h) * w + (y + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
 			}
 		}
@@ -481,14 +481,14 @@ else {
 			y1 = ((y + y0) % h) * w;
 			int i = (y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d;
 			for (x = w - 1; x >= 0; x--) {
-				Blend (bmDataP [y1 + (x + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
+				Blend (bmBufP [y1 + (x + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
 				}
 			}
 		}
 	else if (mode == (short) 0xC000) {
 		for (y = 0; y < h; y++) {
 			for (x = w - 1; x >= 0; x--) {
-				Blend (bmDataP [((x + y0) % h) * w + (y + x0) % w], srcDataP [i]);
+				Blend (bmBufP [((x + y0) % h) * w + (y + x0) % w], srcDataP [i]);
 				}
 			}
 		}
