@@ -38,7 +38,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public TextureManager()
+        public TextureManager ()
         {
             LoadIndex (0);
             LoadIndex (1);

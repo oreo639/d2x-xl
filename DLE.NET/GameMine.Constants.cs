@@ -38,12 +38,12 @@
         public const int MAX_OBJ_BITMAPS = 600;
         public const int MAX_WEAPON_TYPES = 65;
 
-        public const int MAX_SEGMENTS1 = 800;  // descent 1 max # of cubes
-        public const int MAX_SEGMENTS2 = 900;  // descent 2 max # of cubes
+        public const int MAX_SEGMENTS_D1 = 800;  // descent 1 max # of cubes
+        public const int MAX_SEGMENTS_D2 = 900;  // descent 2 max # of cubes
         public const int SEGMENT_LIMIT = 8000; // D2X-XL max # of cubes
 
         public const int MAX_VERTICES_D1 = 2808; // descent 1 max # of vertices
-        public const int MAX_VERTICES_D2 = (MAX_SEGMENTS2 * 4 + 8); // descent 2 max # of vertices
+        public const int MAX_VERTICES_D2 = (MAX_SEGMENTS_D2 * 4 + 8); // descent 2 max # of vertices
         public const int VERTEX_LIMIT = (SEGMENT_LIMIT * 4 + 8); // descent 2 max # of vertices
 
         public const int MAX_OBJECTS1 = 350;
@@ -148,8 +148,13 @@
 
         public const int MAX_BRIGHTNESS = 0x20000;
 
+        public const byte MARKED_MASK = 0x80; // used on wallFlags & vertexStatus 
+        public const byte DELETED_MASK = 0x40; // used on wallFlags & vertexStatus 
+        public const byte NEW_MASK = 0x20; // used on vertexStatus      
+        public const byte SHARED_MASK = 0x10;
+        
         // pseudo constants
-        public ushort MAX_SEGMENTS { get {return (ushort) (DLE.IsD1File ? MAX_SEGMENTS1 : DLE.IsStdLevel ? MAX_SEGMENTS2 : SEGMENT_LIMIT); } }
+        public ushort MAX_SEGMENTS { get {return (ushort) (DLE.IsD1File ? MAX_SEGMENTS_D1 : DLE.IsStdLevel ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT); } }
         public ushort MAX_VERTICES { get {return (ushort) (DLE.IsD1File ? MAX_VERTICES_D1 : DLE.IsStdLevel ? MAX_VERTICES_D2 : VERTEX_LIMIT); } }
         public ushort MAX_OBJECTS { get {return (ushort) (DLE.IsStdLevel ? MAX_OBJECTS1 : MAX_OBJECTS2); } }
         public ushort MAX_WALLS { get {return (ushort) (DLE.IsD1File ? MAX_WALLS_D1 : (LevelVersion < 12) ? MAX_WALLS_D2 : WALL_LIMIT); } }

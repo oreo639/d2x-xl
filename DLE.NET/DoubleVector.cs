@@ -48,6 +48,13 @@ namespace DLE.NET
             v.z = z;
         }
 
+        public DoubleVector (DoubleVector other)
+        {
+            v.x = other.v.x;
+            v.y = other.v.y;
+            v.z = other.v.z;
+        }
+
         public DoubleVector (tDoubleVector other)
         {
             v.x = other.x;
