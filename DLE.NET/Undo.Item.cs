@@ -56,7 +56,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-		void Reset () 
+        public void Reset () 
         {
 			m_backup = null;
 			m_source = null;
@@ -64,7 +64,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-		bool Diff () 
+        public bool Diff () 
         {
 			if (m_backup == null)
 				return false;
@@ -84,7 +84,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-		bool Cleanup () 
+        public bool Cleanup () 
         {
 			if (!Diff ())
 				Destroy ();
@@ -92,5 +92,6 @@ namespace DLE.NET
 		}
 
         // ------------------------------------------------------------------------
+
     }
 }
