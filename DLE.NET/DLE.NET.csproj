@@ -99,6 +99,7 @@
   <ItemGroup>
     <Compile Include="AngleVector.cs" />
     <Compile Include="BitmapInfoHeader.cs" />
+    <Compile Include="BufPtr.cs" />
     <Compile Include="Customization\DockHelper.cs" />
     <Compile Include="DiagnosisTool.cs">
       <SubType>Form</SubType>
@@ -130,6 +131,7 @@
     <Compile Include="GraphicsPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="KeyList.cs" />
     <Compile Include="MineInfo.cs" />
     <Compile Include="MineView.cs" />
     <Compile Include="PaletteManager.cs" />

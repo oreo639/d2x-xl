@@ -7,5 +7,6 @@ namespace DLE.NET
 {
     class UndoManager
     {
+        public const int DLE_MAX_UNDOS = 500;
     }
 }

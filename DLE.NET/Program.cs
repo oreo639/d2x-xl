@@ -11,11 +11,13 @@ namespace DLE.NET
         public static Settings Settings { get { return settings; } }
         public static TextureManager TextureManager { get { return textureManager; } }
         public static PaletteManager PaletteManager { get { return paletteManager; } }
+        public static UndoManager UndoManager { get { return undoManager; } }
 
         static GameMine theMine = new GameMine ();
         static Settings settings = new Settings ();
         public static TextureManager textureManager = new TextureManager ();
         public static PaletteManager paletteManager = new PaletteManager ();
+        public static UndoManager undoManager = new UndoManager ();
 
         static public bool Modified { get; set; }
 

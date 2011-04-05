@@ -146,6 +146,10 @@ namespace DLE.NET
 	        return v1.v.x * v2.v.x + v1.v.y * v2.v.y + v1.v.z * v2.v.z;
 	    }
 
+        #endregion
+
+        #region interface functions
+
         public int CompareTo (DoubleVector other)
         {
         if (v.x < other.v.x)
@@ -161,6 +165,17 @@ namespace DLE.NET
         if (v.z > other.v.z)
             return 1;
         return 0;
+        }
+
+        public DoubleVector Clone ()
+        {
+            return new DoubleVector (this);
+        }
+
+        public DoubleVector Copy (DoubleVector dest)
+        {
+            dest.v = this.v;
+            return dest;
         }
 
         #endregion

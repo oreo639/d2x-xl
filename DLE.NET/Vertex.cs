@@ -73,7 +73,16 @@ namespace DLE.NET
         public IGameItem Copy (IGameItem dest)
         {
             Vertex v = dest as Vertex;
-            v = this;
+            this.v = v.v;
+            this.Status = v.Status;
+            return this;
+        }
+
+        public IGameItem CopyTo (IGameItem dest)
+        {
+            Vertex v = dest as Vertex;
+            v.v = this.v;
+            v.Status = this.Status;
             return dest;
         }
 

@@ -11,13 +11,15 @@ namespace DLE.NET
 
         public MineItemInfo m_info;
 
-        public const uint MAX_VERTICES_D1 = 2808; // descent 1 max # of vertices
-        public const uint MAX_VERTICES_D2 = (GameMine.MAX_SEGMENTS_D2 * 4 + 8); // descent 2 max # of vertices
-        public const uint VERTEX_LIMIT = (GameMine.SEGMENT_LIMIT * 4 + 8); // descent 2 max # of vertices
+        public const int MAX_VERTICES_D1 = 2808; // descent 1 max # of vertices
+        public const int MAX_VERTICES_D2 = (GameMine.MAX_SEGMENTS_D2 * 4 + 8); // descent 2 max # of vertices
+        public const int VERTEX_LIMIT = (GameMine.SEGMENT_LIMIT * 4 + 8); // descent 2 max # of vertices
 
-        public uint MaxVertices { get { return DLE.IsD1File ? MAX_VERTICES_D1 : DLE.IsStdLevel ? MAX_VERTICES_D2 : VERTEX_LIMIT; } }
+        public int MaxVertices { get { return DLE.IsD1File ? MAX_VERTICES_D1 : DLE.IsStdLevel ? MAX_VERTICES_D2 : VERTEX_LIMIT; } }
 
-        public List<Vertex> m_vertices = new List <Vertex> ();
+        public Dictionary<int, Vertex> m_vertices = new Dictionary <int, Vertex> ();
+
+        KeyList m_keys = new KeyList (VERTEX_LIMIT);
 
         #endregion
 
@@ -37,7 +39,7 @@ namespace DLE.NET
             set { m_info.offset = value; }
         }
 
-        public List<Vertex> Vertices { get { return m_vertices; } }
+        public Dictionary<int, Vertex> Vertices { get { return m_vertices; } }
 
         public byte Status (int i = 0) { return Vertex (i).Status; }
 
@@ -51,14 +53,17 @@ namespace DLE.NET
 
         #region code
 
-        public int Add (Vertex[] vertices, ushort count = 1, bool bUndo = true)
+        public int Add (int[] vertices, ushort count = 1, bool bUndo = true)
         {
             if (Count + count > MaxVertices)
                 return 0;
             for (ushort i = 0; i < count; i++)
-                m_vertices.Add (vertices [i] = new Vertex ());
+            {
+                vertices [i] = m_keys.Key;
+                m_vertices.Add (vertices [i], new Vertex ());
+            }
             Count += count;
-            undoManager.End ();
+            DLE.undoManager.End ();
             return count;
 
         }
