@@ -6,7 +6,7 @@ using DLE.NET.GameMine;
 
 namespace DLE.NET
 {
-    public class Vertex : DoubleVector, IGameItem
+    public class Vertex : DoubleVector, IGameItem, IComparable<Vertex>
     {
         public byte Status { get; set; }
 
@@ -75,6 +75,14 @@ namespace DLE.NET
             Vertex v = dest as Vertex;
             v = this;
             return dest;
+        }
+
+        public int CompareTo (Vertex other)
+        {
+            int i = base.CompareTo (other);
+            if (i != 0)
+                return i;
+            return (Status < other.Status) ? -1 : (Status > other.Status) ? 1 : 0;
         }
 
         #endregion

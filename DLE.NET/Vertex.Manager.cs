@@ -7,6 +7,8 @@ namespace DLE.NET
 {
     class VertexManager
     {
+        #region data
+
         public MineItemInfo m_info;
 
         public const uint MAX_VERTICES_D1 = 2808; // descent 1 max # of vertices
@@ -15,7 +17,13 @@ namespace DLE.NET
 
         public uint MaxVertices { get { return DLE.IsD1File ? MAX_VERTICES_D1 : DLE.IsStdLevel ? MAX_VERTICES_D2 : VERTEX_LIMIT; } }
 
-        public Vertex [] m_vertices = new Vertex [VERTEX_LIMIT];
+        public List<Vertex> m_vertices = new List <Vertex> ();
+
+        #endregion
+
+        // ------------------------------------------------------------------------
+
+        #region helper functions
 
         public int Count 
         { 
@@ -29,10 +37,38 @@ namespace DLE.NET
             set { m_info.offset = value; }
         }
 
-        public Vertex [] Vertices { get { return m_vertices; } }
+        public List<Vertex> Vertices { get { return m_vertices; } }
 
         public byte Status (int i = 0) { return Vertex (i).Status; }
 
         public Vertex Vertex (int i) { return m_vertices [i]; }
+
+        public int Index (Vertex vertex) { return vertex.Index; }
+
+        #endregion
+
+        // ------------------------------------------------------------------------
+
+        #region code
+
+        public int Add (Vertex[] vertices, ushort count = 1, bool bUndo = true)
+        {
+            if (Count + count > MaxVertices)
+                return 0;
+            for (ushort i = 0; i < count; i++)
+                m_vertices.Add (vertices [i] = new Vertex ());
+            Count += count;
+            undoManager.End ();
+            return count;
+
+        }
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        #endregion
     }
 }

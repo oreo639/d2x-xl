@@ -135,6 +135,8 @@
     <Compile Include="PaletteManager.cs" />
     <Compile Include="Segment.Manager.cs" />
     <Compile Include="SideKey.cs" />
+    <Compile Include="Undo.Item.cs" />
+    <Compile Include="Undo.Manager.cs" />
     <Compile Include="Vertex.cs" />
     <Compile Include="MissionTool.cs">
       <SubType>Form</SubType>

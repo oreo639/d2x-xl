@@ -7,7 +7,7 @@ using DLE.NET.GameMine;
 
 namespace DLE.NET
 {
-    public interface IGameItem
+    public interface IGameItem : IComparable
     {
         public enum ItemType : uint
         {

@@ -29,7 +29,7 @@ namespace DLE.NET
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    public class DoubleVector
+    public class DoubleVector : IComparable<DoubleVector>
     {
         public tDoubleVector v;
 
@@ -145,6 +145,24 @@ namespace DLE.NET
         {
 	        return v1.v.x * v2.v.x + v1.v.y * v2.v.y + v1.v.z * v2.v.z;
 	    }
+
+        public int CompareTo (DoubleVector other)
+        {
+        if (v.x < other.v.x)
+            return -1;
+        if (v.x > other.v.x)
+            return 1;
+        if (v.y < other.v.y)
+            return -1;
+        if (v.y > other.v.y)
+            return 1;
+        if (v.z < other.v.z)
+            return -1;
+        if (v.z > other.v.z)
+            return 1;
+        return 0;
+        }
+
         #endregion
         // ------------------------------------------------------------------------
         #region Unary operations
