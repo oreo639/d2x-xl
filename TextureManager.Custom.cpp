@@ -176,20 +176,23 @@ int CTextureManager::WriteCustomTexture (CFileManager& fp, CTexture *texP)
 {
 if (texP->m_info.nFormat) {
 	tRGBA rgba [16384];
-	CBGRA* bufP = texP->Buffer ();
-	int j = 0;
-	for (int i = texP->Size (); i; i--, bufP++) {
-		rgba [j].r = bufP->r;
-		rgba [j].g = bufP->g;
-		rgba [j].b = bufP->b;
-		rgba [j].a = bufP->a;
-		if (++j == sizeofa (rgba)) {
-			fp.Write (rgba, sizeof (tRGBA), j);
-			j = 0;
+	uint h = 0;
+	CBGRA* bufP = texP->Buffer (texP->m_info.width * (texP->m_info.height - 1));
+	for (uint i = texP->m_info.height; i; i--) {
+		for (uint j = texP->m_info.width; j; j--, bufP++) {
+			rgba [h].r = bufP->r;
+			rgba [h].g = bufP->g;
+			rgba [h].b = bufP->b;
+			rgba [h].a = bufP->a;
+			if (++h == sizeofa (rgba)) {
+				fp.Write (rgba, sizeof (tRGBA), h);
+				h = 0;
+				}
 			}
+		bufP -= 2 * texP->m_info.width;
 		}
-	if (j > 0)
-		fp.Write (rgba, sizeof (tRGBA), j);
+	if (h > 0)
+		fp.Write (rgba, sizeof (tRGBA), h);
 	}
 else {
 	ushort w = texP->m_info.width;

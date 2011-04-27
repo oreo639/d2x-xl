@@ -599,13 +599,25 @@ if (tgaHeader.identSize)
 	fp.Read (imgIdent, tgaHeader.identSize, 1);
 int s = (tgaHeader.bits == 32) ? 4 : 3;
 color.a = 255;
-h = m_nWidth * (m_nHeight - 1);
-for (int i = m_nHeight; i; i--) {
-	for (int j = m_nWidth; j; j--, h++) {
-		fp.Read (&color, s, 1);
-		m_texture [0][h] = color;
+// textures are getting reversed here for easier rendering!
+if (tgaHeader.yStart != 0) { 
+	h = m_nWidth * (m_nHeight - 1);
+	for (int i = m_nHeight; i; i--) {
+		for (int j = m_nWidth; j; j--, h++) {
+			fp.Read (&color, s, 1);
+			m_texture [0][h] = color;
+			}
+		h -= 2 * m_nWidth;
 		}
-	h -= 2 * m_nWidth;
+	}
+else {
+	h = 0;
+	for (int i = m_nHeight; i; i--) {
+		for (int j = m_nWidth; j; j--, h++) {
+			fp.Read (&color, s, 1);
+			m_texture [0][h] = color;
+			}
+		}
 	}
 m_bModified = TRUE;
 m_texture [0].m_info.nFormat = 1;

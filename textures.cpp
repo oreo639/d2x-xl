@@ -217,12 +217,25 @@ m_info.bValid = 1;
 m_info.bTransparent = false;
 if (m_info.nFormat) {
 	tRGBA color;
+#if 1
+	uint h = m_info.width * (m_info.height - 1);
+	for (uint i = m_info.height; i; i--) {
+		for (uint j = m_info.width; j; j--, h++) {
+			fp.Read (&color, sizeof (color), 1);
+			m_data [h] = color; // different data types -> type conversion!
+			if (color.a < 255)
+				m_info.bTransparent = true;
+			}
+		h -= 2 * m_info.width;
+		}
+#else
 	for (uint i = 0, h = Size (); i < h; i++) {
 		fp.Read (&color, sizeof (color), 1);
 		m_data [i] = color;
 		if (color.a < 255)
 			m_info.bTransparent = true;
 		}
+#endif
 	//texP->m_info.bValid = TGA2Bitmap (texP->m_data, texP->m_data, (int) pigTexInfo.width, (int) pigTexInfo.height);
 	}
 else if (info.flags & 0x08) {
