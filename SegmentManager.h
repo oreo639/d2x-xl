@@ -299,6 +299,8 @@ class CSegmentManager {
 		
 		void WriteEquipMakers (CFileManager* fp);
 
+		void RenumberFuelCenters (void);
+
 		void Clear (void);
 
 		int Fix (void);

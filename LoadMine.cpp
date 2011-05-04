@@ -340,6 +340,7 @@ segmentManager.ReadRobotMakers (fp);
 lightManager.ReadLightDeltas (fp);
 if (!DLE.IsD1File ())
 	segmentManager.ReadEquipMakers (fp);
+segmentManager.RenumberFuelCenters ();
 return 0;
 }
 

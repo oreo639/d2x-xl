@@ -360,8 +360,6 @@ OnResetCoord ();
 int h, i, j;
 
 // update automatic data
-segmentManager.RenumberRobotMakers ();
-segmentManager.RenumberEquipMakers ();
 // update segment number combo box if number of segments has changed
 CSegment *segP = current->Segment ();
 m_bEndOfExit = (segP->Child (current->m_nSide) == -2);

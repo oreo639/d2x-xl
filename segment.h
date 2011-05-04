@@ -49,7 +49,7 @@ extern byte pointCornerTable [8][3];
 #define SEGMENT_FUNC_NONE				0
 #define SEGMENT_FUNC_FUELCEN			1
 #define SEGMENT_FUNC_REPAIRCEN		2
-#define SEGMENT_FUNC_REACTOR		3
+#define SEGMENT_FUNC_REACTOR			3
 #define SEGMENT_FUNC_ROBOTMAKER		4
 #define SEGMENT_FUNC_GOAL_BLUE		5
 #define SEGMENT_FUNC_GOAL_RED			6
@@ -73,8 +73,8 @@ extern byte pointCornerTable [8][3];
 
 typedef struct tSegment {
 	ushort	verts [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
-	byte		function;			// special property of a segment (such as damaging, trigger, etc.) 
-	byte		props;
+	byte		function;			// general function (robot maker, energy center, ... - mutually exclusive)
+	byte		props;				// special property of a segment (such as damaging, trigger, etc.)
 	char		nMatCen;				// which center segment is associated with, high bit set 
 	char		value;				// matcens: bitmask of producable robots, fuelcenters: energy given? --MK, 3/15/95 
 	byte		flags;				// internally used

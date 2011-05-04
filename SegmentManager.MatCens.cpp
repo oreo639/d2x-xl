@@ -7,26 +7,48 @@
 
 void CSegmentManager::RenumberMatCens (byte nFunction, short nClass) 
 {
-int h, i = 0; 
+int h, i = 0, nErrors = 0; 
 
-undoManager.Begin (udSegments);
 for (h = i = 0; i < MatCenCount (nClass); i++) {
 	short nSegment = m_matCens [nClass][i].m_info.nSegment; 
-	if (nSegment >= 0) {
+	if (nSegment < 0) 
+		++nErrors;
+	else {
 		CSegment* segP = Segment (nSegment); 
-		segP->m_info.value = i; 
-		if (segP->m_info.function == nFunction)
+		if ((segP->m_info.function == nFunction) && (segP->m_info.nMatCen < 0)) 
 			segP->m_info.nMatCen = h++; 
+		else {
+			m_matCens [nClass][i].m_info.nSegment = -1; 
+			++nErrors;
+			}
 		}
 	}
-// number "value"
-CSegment* segP = Segment (0);
-for (h = i = 0; i < Count (); i++, segP++)
-	if (segP->m_info.function == SEGMENT_FUNC_NONE)
-		segP->m_info.value = 0; 
-	else
-		segP->m_info.value = h++; 
-undoManager.End ();
+
+if (nErrors) { // not all matcens assigned to a segment - try to find a segment that doesn't have a matcen
+	CSegment* segP = Segment (0);
+	for (int i = Count (); i; i--, segP++) {
+		if ((segP->m_info.function == nFunction) && (segP->m_info.nMatCen < 0)) {
+			for (int j = 0; j < MatCenCount (nClass); j++) {
+				if (m_matCens [nClass][j].m_info.nSegment < 0) {
+					segP->m_info.function = nFunction;
+					segP->m_info.nMatCen = j;
+					m_matCens [nClass][j].m_info.nSegment = Count () - i;
+					nErrors--;
+					break;
+					}
+				}
+			}
+		}
+	}
+
+if (nErrors) { // delete remaining unassigned matcens
+	for (int i = 0, j = 0; j < MatCenCount (nClass); j++) {
+		if (m_matCens [nClass][i].m_info.nSegment >= 0)
+			Segment (m_matCens [nClass][i].m_info.nSegment)->m_info.nMatCen = i++;
+		else if (i < j)
+			m_matCens [nClass][i] = m_matCens [nClass][j];
+		}
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -41,6 +63,31 @@ RenumberMatCens (SEGMENT_FUNC_ROBOTMAKER, 0);
 void CSegmentManager::RenumberEquipMakers (void) 
 {
 RenumberMatCens (SEGMENT_FUNC_EQUIPMAKER, 1);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegmentManager::RenumberFuelCenters (void)
+{
+undoManager.Begin (udSegments);
+CSegment* segP = Segment (0);
+for (int h = 0, i = Count (); i; i--, segP++)
+	segP->m_info.nMatCen = -1;
+RenumberRobotMakers ();
+RenumberEquipMakers ();
+segP = Segment (0);
+for (int h = 0, i = Count (); i; i--, segP++)
+	if ((segP->m_info.function == SEGMENT_FUNC_FUELCEN) ||
+		 (segP->m_info.function == SEGMENT_FUNC_REPAIRCEN) ||
+		 (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) ||
+		 (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER)) {
+		segP->m_info.value = h++; 
+		if (segP->m_info.nMatCen >= 0)
+			m_matCens [segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER][segP->m_info.nMatCen].m_info.nFuelCen = segP->m_info.value;
+		}
+	else
+		segP->m_info.value = -1; 
+undoManager.End ();
 }
 
 // ----------------------------------------------------------------------------- 

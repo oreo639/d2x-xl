@@ -205,6 +205,7 @@ Info ().player.offset = fp->Tell ();
 char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
 fp->Write (str, strlen (str) + 1, 1);
 
+segmentManager.RenumberFuelCenters ();
 objectManager.Write (fp);
 wallManager.Write (fp);
 triggerManager.Write (fp);
