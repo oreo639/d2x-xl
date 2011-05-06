@@ -240,6 +240,8 @@ class CDiagTool : public CToolDlg
 		CReactorTrigger	*m_triggerP;
 		bool			m_bCheckMsgs;
 		int			m_statsWidth;
+		byte			m_playerId;
+		byte			m_coopId;
 
 		CDiagTool (CPropertySheet *pParent = null);
 		~CDiagTool ();

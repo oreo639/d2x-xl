@@ -223,7 +223,7 @@ return fabs (angle);  // angle should be positive since acos returns 0 to PI but
 int CDiagTool::CheckId (CGameObject *objP) 
 {
 	int type = objP->Type ();
-	int id = objP->Id ();
+	int id= objP->Id ();
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
@@ -240,14 +240,17 @@ int CDiagTool::CheckId (CGameObject *objP)
 #endif
 		break;
 
-	case OBJ_PLAYER: /* the player on the console */
-		if ((id < 0) || (id >= MAX_PLAYERS)) {
-			return 1;
+	case OBJ_PLAYER: {
+		int bError  = (id < 0) || (id >= MAX_PLAYERS);
+		if (!m_bAutoFixBugs)
+			return bError;
+		objP->Id () = m_playerId++;
+		return 2 * bError;
 		}
 		break;
 
 	case OBJ_POWERUP: /* a powerup you can pick up */
-		if (id< 0 || id > MAX_POWERUP_IDS) {
+		if (id < 0 || id > MAX_POWERUP_IDS) {
 			return 1;
 		}
 		break;
@@ -268,9 +271,12 @@ int CDiagTool::CheckId (CGameObject *objP)
 		return 2;
 		break;
 
-	case OBJ_COOP: /* a cooperative player object */
-		if ((id < MAX_PLAYERS) || (id >= MAX_PLAYERS + MAX_COOP_PLAYERS)) {
-			return 1;
+	case OBJ_COOP: {
+		int bError = (id < MAX_PLAYERS) || (id >= MAX_PLAYERS + MAX_COOP_PLAYERS);
+		if (!m_bAutoFixBugs)
+			return bError;
+		objP->Id () = m_coopId++;
+		return 2 * bError;
 		}
 		break;
 
@@ -300,6 +306,8 @@ CHECKMINE;
 UpdateData (TRUE);
 ClearBugList ();
 m_bCheckMsgs = true;
+m_playerId = 0;
+m_coopId = MAX_PLAYERS;
 if (m_bAutoFixBugs)
 	undoManager.Begin (udAll);
   // set mode to BLOCK mode to make errors appear in red
@@ -312,8 +320,8 @@ DLE.MainFrame ()->InitProgress (segmentManager.Count () * 3 +
 										  triggerManager.WallTriggerCount () * 3 +
 										  objectManager.Count () * 2 +
 										  triggerManager.ObjTriggerCount ());
-if (!CheckBotGens ())
-	if (!CheckEquipGens ())
+//if (!CheckBotGens ())
+//	if (!CheckEquipGens ())
 		if (!CheckSegments ())
 			if (!CheckSegTypes ())
 				if (!CheckWalls ())
@@ -519,7 +527,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 // check nChild range 
 		if (nChild != -1 && nChild != -2) {
 			if (nChild < -2) {
-				sprintf_s (message, sizeof (message),"ERROR: Illegal nChild number %d (segment=%d, side=%d)",nChild,nSegment,nSide);
+				sprintf_s (message, sizeof (message),"ERROR: Illegal child number %d (segment=%d, side=%d)",nChild,nSegment,nSide);
 				if (UpdateStats (message, 1, nSegment, nSide))
 					return true;
 				}
@@ -571,7 +579,7 @@ bool CDiagTool::CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players
 if (theMine == null) 
 	return false;
 
-int id = objectManager.Object (nObject)->m_info.id;
+int id= objectManager.Object (nObject)->m_info.id;
 if ((id < nMin) || (id > nMax))
 	sprintf_s (message, sizeof (message), "WARNING: Invalid player id (Object %d)", id, nObject);
 else if (players [id])
@@ -581,9 +589,9 @@ else {
 	return false;
 	}
 if (m_bAutoFixBugs) {
-	for (id = nMin; (id < nMax) && players [id]; id++)
+	for (id= nMin; (id < nMax) && players [id]; id++)
 		;
-	objectManager.Object (nObject)->m_info.id = (id < nMax) ? id : nMax - 1;
+	objectManager.Object (nObject)->m_info.id= (id < nMax) ? id : nMax - 1;
 	players [objectManager.Object (nObject)->m_info.id]++;
 	}
 return true;
@@ -678,11 +686,11 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     // check type range
 	 if ((objP->Id () < 0) || (objP->Id () > 255)) {
 		 if (m_bAutoFixBugs) {
-			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",nObject, objP->Id ());
+			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id=%d)",nObject, objP->Id ());
 			objP->Id () = 0;
 			}
 		 else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",nObject, objP->Id ());
+			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id=%d)",nObject, objP->Id ());
 		}
 	type = objP->Type ();
     switch (type) {
@@ -691,30 +699,30 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 			  pPlayer = objP;
 			if (objP->Id () >= MAX_PLAYERS) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",nObject, objP->Id ());
+					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id=%d)",nObject, objP->Id ());
 				objP->Id () = MAX_PLAYERS - 1;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id=%d)",nObject, objP->Id ());
 			}
 	  case OBJ_COOP:
 		  if (objP->Id () >= MAX_PLAYERS + MAX_COOP_PLAYERS) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id=%d)",nObject, objP->Id ());
 				objP->Id () = MAX_PLAYERS + objP->Id () % MAX_COOP_PLAYERS;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id=%d)",nObject, objP->Id ());
 			}
 			break;
 	  case OBJ_EFFECT:
 		  if (objP->Id () > SOUND_ID) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id=%d)",nObject, objP->Id ());
 				objP->Id () = SOUND_ID;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id=%d)",nObject, objP->Id ());
 			}
 			break;
 	  case OBJ_ROBOT:
@@ -739,7 +747,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 		if (UpdateStats (message,0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
     }
-    id = objP->Id ();
+    id= objP->Id ();
 
     // check id range
     if (h = CheckId (objP)) {
@@ -776,7 +784,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 			sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",nObject,type);
 	if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) return true;
 	  }
-	  id = objP->m_info.contents.id;
+	  id= objP->m_info.contents.id;
 	  // check contains id range
 	  if (CheckId (objP)) {
 	sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",nObject,id);
@@ -826,12 +834,12 @@ if (objectManager.Object (0)->m_info.type != OBJ_PLAYER || objectManager.Object 
 if (m_bAutoFixBugs) {
 	int i;
 	if (bFix & 1) {
-		for (i = id = 0; id < MAX_PLAYERS; id++)
+		for (i = id= 0; id < MAX_PLAYERS; id++)
 			if (players [id] != 0) 
 				players [id] = ++i;
 		}
 	if (bFix & 2) {
-		for (id = MAX_PLAYERS; id < MAX_PLAYERS + MAX_COOP_PLAYERS; id++)
+		for (id= MAX_PLAYERS; id < MAX_PLAYERS + MAX_COOP_PLAYERS; id++)
 			if (players [id] != 0) 
 				players [id] = id;
 		}
@@ -848,7 +856,7 @@ if (m_bAutoFixBugs) {
 		}
 	}
 
-for (id = 0; id < MAX_PLAYERS; id++) {
+for (id= 0; id < MAX_PLAYERS; id++) {
 	if (players [id] == 0) {
 		sprintf_s (message, sizeof (message),"INFO: No player %d", id + 1);
 		if (UpdateStats (message, 0)) 

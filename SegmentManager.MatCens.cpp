@@ -83,12 +83,18 @@ RenumberEquipMakers ();
 segP = Segment (0);
 for (int h = 0, i = Count (); i; i--, segP++)
 	if ((segP->m_info.function == SEGMENT_FUNC_FUELCEN) ||
-		 (segP->m_info.function == SEGMENT_FUNC_REPAIRCEN) ||
-		 (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) ||
-		 (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER)) {
+		 (segP->m_info.function == SEGMENT_FUNC_REPAIRCEN))
 		segP->m_info.value = h++; 
-		if (segP->m_info.nMatCen >= 0)
+	else if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) ||
+				(segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER)) {
+		if (segP->m_info.nMatCen >= 0) {
+			segP->m_info.value = h++; 
 			m_matCens [segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER][segP->m_info.nMatCen].m_info.nFuelCen = segP->m_info.value;
+			}
+		else {
+			segP->m_info.value = -1; 
+			segP->m_info.function = SEGMENT_FUNC_NONE;
+			}
 		}
 	else
 		segP->m_info.value = -1; 
