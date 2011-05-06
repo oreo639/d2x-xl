@@ -77,7 +77,7 @@ switch (m_object->m_info.type) {
 		}
 		break;
 	case OBJ_ROBOT:
-		nModel = robotManager.RobotInfo ((m_object->m_info.id >= N_ROBOT_TYPES_D2) ? m_object->m_info.id /*- N_ROBOT_TYPES_D2*/ : m_object->m_info.id)->Info ().nModel;
+		nModel = robotManager.RobotInfo (m_object->m_info.id)->Info ().nModel;
 		break;
 	default:
 		return null;
@@ -112,15 +112,19 @@ if (slash)
 else
 	filename[0] = '\0';
 
-bool bCustom = (objP->Type () == OBJ_ROBOT) && (objP->Id () >= N_ROBOT_TYPES_D2);
+int bCustom = robotManager.RobotInfo (objP->Id ())->Info ().bCustom;
+int bVertigo = objP->Id () > N_ROBOT_TYPES_D2;
 
 if (bCustom) {
 	char *psz = strstr (filename, "data");
 	if (psz)
 		*psz = '\0';
 	}
-strcat_s (filename, sizeof (filename), bCustom ? "missions\\d2x.hog" : "descent2.ham");
-if (ReadModelData (filename, bCustom ? "d2x.ham" : "", bCustom))
+if (bVertigo)
+	strcpy_s (filename, sizeof (filename), "..\\missions\\d2x.hog");
+else
+	strcat_s (filename, sizeof (filename), "descent2.ham");
+if (ReadModelData (filename, bVertigo ? "d2x.ham" : "", bCustom || bVertigo))
 	m_model = null;
 return m_model == null;
 }
@@ -161,19 +165,19 @@ if (bCustom) {
 				fp.Close ();
 				return 1;
 				}
-			fp.ReadUInt16 ();                              // read version
-			n = fp.ReadInt16 ();                         // n_weapon_types
-			fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
-			n = fp.ReadInt16 ();                         // n_robot_types
+			fp.ReadInt32 ();											// read version
+			n = fp.ReadInt32 ();										// n_weapon_types
+			fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);	// weapon_info
+			n = fp.ReadInt32 ();										// n_robot_types
 			for (i = 0; i < n; i++)
 				robotManager.RobotInfo (N_ROBOT_TYPES_D2 + i)->Read (&fp);
-			n  = fp.ReadInt16 ();                         // n_robot_joints
+			n = fp.ReadInt32 ();                         // n_robot_joints
 			fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
 			break;
 			}
 		position += sizeof (struct level_header) + level.size;
 		}
-	n = fp.ReadInt16 ();                          // n_curModels
+	n = fp.ReadInt32 ();                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
 		m_polyModels [N_POLYGON_MODELS_D2 + i].Read (&fp);

@@ -347,7 +347,7 @@ CBInit (CBSpawnType (), (char**) objectNameTable, contentsList, null, MAX_CONTAI
 CBInit (CBObjAI (), (char**) aiOptionTable, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
 CBInit (CBObjClassAI (), (char**) aiOptionTable, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
 
-short nTextures = (DLE.IsD1File ()) ? MAX_TEXTURES_D1: MAX_TEXTURES_D2;
+short nTextures = (DLE.IsD1File ()) ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2;
 short i, j;
 char **psz;
 

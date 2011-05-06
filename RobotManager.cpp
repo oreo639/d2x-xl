@@ -87,39 +87,39 @@ else if (type == EXTENDED_HAM)  {
 	}
 
 	// read robot information
-	t = fp->ReadInt32 ();
-	t0 = (type == NORMAL_HAM) ? 0: N_ROBOT_TYPES_D2;
-	m_nRobotTypes = t0 + t;
-	if (m_nRobotTypes > MAX_ROBOT_TYPES) {
-		sprintf_s (message, sizeof (message), "Too many robots (%d) in <%s>.  Max is %d.", 
-					  t, fp->Name (), MAX_ROBOT_TYPES - N_ROBOT_TYPES_D2);
-		ErrorMsg (message);
-		m_nRobotTypes = MAX_ROBOT_TYPES;
-		t = m_nRobotTypes - t0;
-		}
-	for (; t; t--, t0++) {
-		RobotInfo (t0)->Read (fp);
-		*DefRobotInfo (t0) = *RobotInfo (t0);
-		}
+t = fp->ReadInt32 ();
+t0 = (type == NORMAL_HAM) ? 0: N_ROBOT_TYPES_D2;
+m_nRobotTypes = t0 + t;
+if (m_nRobotTypes > MAX_ROBOT_TYPES) {
+	sprintf_s (message, sizeof (message), "Too many robots (%d) in <%s>.  Max is %d.", 
+				  t, fp->Name (), MAX_ROBOT_TYPES - N_ROBOT_TYPES_D2);
+	ErrorMsg (message);
+	m_nRobotTypes = MAX_ROBOT_TYPES;
+	t = m_nRobotTypes - t0;
+	}
+for (; t; t--, t0++) {
+	RobotInfo (t0)->Read (fp);
+	*DefRobotInfo (t0) = *RobotInfo (t0);
+	}
 
-  // skip joints weapons, and powerups
-  t = fp->ReadInt32 ();
-  fp->Seek (sizeof (JOINTPOS) * t, SEEK_CUR);
-  if (type == NORMAL_HAM) {
-    t = fp->ReadInt32 ();
-    fp->Seek (sizeof (WEAPON_INFO) * t, SEEK_CUR);
-    t = fp->ReadInt32 ();
-    fp->Seek (sizeof (POWERUP_TYPE_INFO) * t, SEEK_CUR);
-  }
+// skip joints weapons, and powerups
+t = fp->ReadInt32 ();
+fp->Seek (sizeof (JOINTPOS) * t, SEEK_CUR);
+if (type == NORMAL_HAM) {
+	t = fp->ReadInt32 ();
+	fp->Seek (sizeof (WEAPON_INFO) * t, SEEK_CUR);
+	t = fp->ReadInt32 ();
+	fp->Seek (sizeof (POWERUP_TYPE_INFO) * t, SEEK_CUR);
+	}
 
   // read poly model data and write it to a file
-  t = fp->ReadInt32 ();
-  if (t > MAX_POLYGON_MODELS) {
-    sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",
-					t, fp->Name (), MAX_POLYGON_MODELS - N_POLYGON_MODELS_D2);
-    ErrorMsg (message);
-    return 1;
-  }
+t = fp->ReadInt32 ();
+if (t > MAX_POLYGON_MODELS) {
+	sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",
+				t, fp->Name (), MAX_POLYGON_MODELS - N_POLYGON_MODELS_D2);
+	ErrorMsg (message);
+	return 1;
+	}
 #if ALLOCATE_POLYMODELS
   // read joint information
   t = fp->ReadInt32 ();
