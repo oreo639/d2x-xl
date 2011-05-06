@@ -42,12 +42,17 @@ if (nErrors) { // not all matcens assigned to a segment - try to find a segment 
 	}
 
 if (nErrors) { // delete remaining unassigned matcens
+	nErrors = 0;
 	for (int i = 0, j = 0; j < MatCenCount (nClass); j++) {
 		if (m_matCens [nClass][i].m_info.nSegment >= 0)
 			Segment (m_matCens [nClass][i].m_info.nSegment)->m_info.nMatCen = i++;
-		else if (i < j)
-			m_matCens [nClass][i] = m_matCens [nClass][j];
+		else {
+			if (i < j)
+				m_matCens [nClass][i] = m_matCens [nClass][j];
+			++nErrors;
+			}
 		}
+	MatCenCount (nClass) -= nErrors;
 	}
 }
 
