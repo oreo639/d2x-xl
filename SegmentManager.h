@@ -336,7 +336,7 @@ class CSegmentManager {
 
 		void ComputeVertices (ushort newVerts [4]);
 
-		void RemoveMatCenter (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info);
+		void RemoveMatCenter (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info, int nFunction);
 
 		bool CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, CMatCenter* matCens, CMineItemInfo& info, char* szError);
 

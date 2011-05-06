@@ -533,24 +533,27 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::RemoveMatCenter (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info)
+void CSegmentManager::RemoveMatCenter (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info, int nFunction)
 {
 if (info.count > 0) {
 	// fill in deleted matcen
 	int nDelMatCen = segP->m_info.nMatCen;
-	if ((nDelMatCen >= 0) && (nDelMatCen < --info.count)) {
+	if (nDelMatCen >= 0) {
 		// copy last matCen in list to deleted matCen's position
 		undoManager.Begin (udSegments | udMatCenters);
-		memcpy (&matCens [nDelMatCen], &matCens [info.count], sizeof (matCens [0]));
-		matCens [nDelMatCen].m_info.nFuelCen = nDelMatCen;
 		segP->m_info.nMatCen = -1;
-		// point owner of relocated matCen to that matCen's new position
-		for (CSegmentIterator si; si; si++) {
-			CSegment *segP = &(*si);
-			if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == info.count)) {
-				segP->Backup ();
-				segP->m_info.nMatCen = nDelMatCen;
-				break;
+		segP->m_info.value = -1;
+		if (nDelMatCen < --info.count) {
+			memcpy (&matCens [nDelMatCen], &matCens [info.count], sizeof (matCens [0]));
+			matCens [nDelMatCen].m_info.nFuelCen = nDelMatCen;
+			// point owner of relocated matCen to that matCen's new position
+			for (CSegmentIterator si; si; si++) {
+				CSegment *segP = &(*si);
+				if ((segP->m_info.function == nFunction) && (segP->m_info.nMatCen == info.count)) {
+					segP->Backup ();
+					segP->m_info.nMatCen = nDelMatCen;
+					break;
+					}
 				}
 			}
 		// remove matCen from all robot maker triggers targetting it
@@ -577,9 +580,9 @@ void CSegmentManager::Undefine (short nSegment)
 segP->Backup ();
 nSegment = Index (segP);
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
-	RemoveMatCenter (segP, RobotMaker (0), m_matCenInfo [0]);
+	RemoveMatCenter (segP, RobotMaker (0), m_matCenInfo [0], SEGMENT_FUNC_ROBOTMAKER);
 else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 
-	RemoveMatCenter (segP, EquipMaker (0), m_matCenInfo [1]);
+	RemoveMatCenter (segP, EquipMaker (0), m_matCenInfo [1], SEGMENT_FUNC_EQUIPMAKER);
 else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	undoManager.Begin (udSegments);
 	CSide *sideP = segP->m_sides;
