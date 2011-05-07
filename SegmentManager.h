@@ -35,7 +35,7 @@ typedef CStaticArray< CMatCenter, MAX_NUM_MATCENS_D2 > robotMakerList;
 #else
 
 typedef CSegment segmentList [SEGMENT_LIMIT];
-typedef CMatCenter robotMakerList [MAX_NUM_MATCENS_D2];
+typedef CStaticArray<CMatCenter, MAX_NUM_MATCENS_D2> robotMakerList;
 
 #endif
 

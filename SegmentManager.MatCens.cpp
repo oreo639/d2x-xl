@@ -9,6 +9,7 @@ void CSegmentManager::RenumberMatCens (byte nFunction, short nClass)
 {
 int h, i = 0, nErrors = 0; 
 
+m_matCens [nClass].SortAscending (0, MatCenCount (nClass) - 1);
 for (h = i = 0; i < MatCenCount (nClass); i++) {
 	short nSegment = m_matCens [nClass][i].m_info.nSegment; 
 	if (nSegment < 0) 

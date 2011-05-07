@@ -204,6 +204,15 @@ public:
 
 	virtual CGameItem* Copy (CGameItem* destP);
 
+	inline bool operator< (CMatCenter& other) { return m_info.nSegment < other.m_info.nSegment; }
+
+	inline bool operator> (CMatCenter& other) { return m_info.nSegment > other.m_info.nSegment; }
+
+	inline CMatCenter& operator= (CMatCenter& other) { 
+		m_info = other.m_info; 
+		return *this;
+		}
+
 	//virtual void Undo (void);
 
 	//virtual void Redo (void);
