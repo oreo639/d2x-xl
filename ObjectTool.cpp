@@ -185,6 +185,8 @@ BEGIN_MESSAGE_MAP (CObjectTool, CToolDlg)
 	ON_BN_CLICKED (IDC_OBJ_CLOAKED, OnCloaked)
 	ON_BN_CLICKED (IDC_OBJ_MULTIPLAYER, OnMultiplayer)
 	ON_BN_CLICKED (IDC_OBJ_SORT, OnSort)
+	ON_BN_CLICKED (IDC_OBJ_SETLOC, OnSetLoc)
+	ON_BN_CLICKED (IDC_OBJ_RESETLOC, OnResetLoc)
 	ON_CBN_SELCHANGE (IDC_OBJ_OBJNO, OnSetObject)
 	ON_CBN_SELCHANGE (IDC_OBJ_TYPE, OnSetObjType)
 	ON_CBN_SELCHANGE (IDC_OBJ_ID, OnSetObjId)
@@ -419,6 +421,23 @@ if (!HaveData (pDX))
 	return;
 DDX_Text (pDX, IDC_OBJ_SPAWN_QTY, m_nSpawnQty);
 DDX_Text (pDX, IDC_OBJ_INFO, m_szInfo, sizeof (m_szInfo));
+for (int i = 0; i < 3; i++) {
+	DDX_Double (pDX, IDC_OBJ_LOCX + i, m_nPos [i]);
+	if (m_nPos [i] < -0x7fff)
+		m_nPos [i] = -0x7fff;
+	else if (m_nPos [i] > 0x7fff)
+		m_nPos [i] = 0x7fff;
+	DDX_Double (pDX, IDC_OBJ_ROTP + i, m_nOrient [i]);
+	if (m_nOrient [i] <= -180.0) {
+		m_nOrient [i] = fmod (m_nOrient [i], 360.0);
+		if (m_nOrient [i] <= -180.0)
+			m_nOrient [i] += 360.0;
+	} else if (m_nOrient [i] > 180.0) {
+		m_nOrient [i] = fmod (m_nOrient [i], 360.0);
+		if (m_nOrient [i] > -180.0)
+			m_nOrient [i] -= 360.0;
+		}
+	}
 if (!pDX->m_bSaveAndValidate) {
 	char szCount [4];
 
@@ -575,6 +594,8 @@ CBObjNo ()->SetCurSel (current->m_nObject);
 // and the object list, then return
 if (current->m_nObject == objectManager.Count ()) {
 	CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDC_OBJ_SPAWN_QTY, FALSE);
+	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDC_OBJ_MULTIPLAYER, FALSE);
+	CToolDlg::EnableControls (IDC_OBJ_LOCX, IDC_OBJ_LOCZ, FALSE);
 	CBObjNo ()->EnableWindow (TRUE);
 	BtnCtrl (IDC_OBJ_MOVE)->EnableWindow (TRUE);
 
@@ -586,6 +607,8 @@ if (current->m_nObject == objectManager.Count ()) {
 	CBSpawnType ()->SetCurSel (-1);
 	CBSpawnId ()->SetCurSel (-1);
 	CBObjClassAI ()->SetCurSel (-1);
+	memset (m_nPos, 0, sizeof (double) * 3);
+	RefreshObjOrient (objectManager.SecretOrient ());
 
 	CDC *pDC = m_showObjWnd.GetDC ();
 	if (pDC) {
@@ -610,9 +633,16 @@ if (/*(objectSelection [objP->Type ()] == 0) &&*/ robotManager.RobotInfo (objP->
 SelectItemData (CBObjType (), objP->Type ());
 SetObjectId (CBObjId (), objP->Type (), objP->Id ());
 
+// object position and orientation
+m_nPos [0] = objP->m_location.pos.v.x;
+m_nPos [1] = objP->m_location.pos.v.y;
+m_nPos [2] = objP->m_location.pos.v.z;
+RefreshObjOrient (objP->m_location.orient);
+
 // ungray most buttons and combo boxes
 CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDC_OBJ_SPAWN_QTY, TRUE);
 CToolDlg::EnableControls (IDC_OBJ_MULTIPLAYER, IDC_OBJ_MULTIPLAYER, TRUE);
+CToolDlg::EnableControls (IDC_OBJ_LOCX, IDC_OBJ_LOCZ, TRUE);
 
 // gray contains and behavior if not a robot type object
 if (objP->Type () != OBJ_ROBOT) {
@@ -1714,6 +1744,34 @@ if ((objectManager.SortObjects () = BtnCtrl (IDC_OBJ_SORT)->GetCheck ())) {
 
 //------------------------------------------------------------------------------
 
+afx_msg void CObjectTool::OnSetLoc ()
+{
+UpdateData (TRUE);
+undoManager.Begin (udObjects);
+if (current->m_nObject == objectManager.Count ()) {
+	// secret object
+	objectManager.SecretOrient ().Set(sin (Radians (m_nOrient [0])), cos (Radians (m_nOrient [0])),
+									  sin (Radians (m_nOrient [1])), cos (Radians (m_nOrient [1])),
+									  sin (Radians (m_nOrient [2])), cos (Radians (m_nOrient [2])));
+} else {
+	current->Object ()->Position ().Set (m_nPos [0], m_nPos [1], m_nPos [2]);
+	current->Object ()->Orient ().Set(sin (Radians (m_nOrient [0])), cos (Radians (m_nOrient [0])),
+									  sin (Radians (m_nOrient [1])), cos (Radians (m_nOrient [1])),
+									  sin (Radians (m_nOrient [2])), cos (Radians (m_nOrient [2])));
+	}
+undoManager.End ();
+DLE.MineView ()->Refresh (false);
+}
+
+//------------------------------------------------------------------------------
+
+afx_msg void CObjectTool::OnResetLoc ()
+{
+Refresh ();
+}
+
+//------------------------------------------------------------------------------
+
 int CObjectTool::ObjOfAKindCount (int nType, int nId)
 {
 if (nType < 0)
@@ -1727,6 +1785,23 @@ for (i = objectManager.Count (); i; i--, objP++)
 	if ((objP->Type () == nType) && ((objP->Type () == OBJ_PLAYER) || (objP->Type () == OBJ_COOP) || (objP->Id () == nId))) 
 		nCount++;
 return nCount;
+}
+
+//------------------------------------------------------------------------------
+
+void CObjectTool::RefreshObjOrient (CDoubleMatrix &orient)
+{
+orient.CopyTo (m_nOrient [0], m_nOrient [1], m_nOrient [2]);
+m_nOrient [0] = Degrees (m_nOrient [0]);
+m_nOrient [1] = Degrees (m_nOrient [1]);
+m_nOrient [2] = Degrees (m_nOrient [2]);
+// prevent display from rounding to -180
+if (m_nOrient [0] + 180 < 0.01)
+	m_nOrient [0] += 360;
+if (m_nOrient [1] + 180 < 0.01)
+	m_nOrient [1] += 360;
+if (m_nOrient [2] + 180 < 0.01)
+	m_nOrient [2] += 360;
 }
 
 //------------------------------------------------------------------------------

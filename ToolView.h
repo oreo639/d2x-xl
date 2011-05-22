@@ -375,6 +375,8 @@ class CObjectTool : public CToolDlg
 		int		m_nSpawnQty;
 		int		m_bEndsLevel;
 		char		m_szInfo [200];
+		double		m_nPos [3];
+		double		m_nOrient [3];
 
 		CObjectTool (CPropertySheet *pParent = null);
 		~CObjectTool ();
@@ -400,6 +402,7 @@ class CObjectTool : public CToolDlg
 		int ObjOfAKindCount (int nType = -1, int nId = -1);
 		int GetObjectsOfAKind (int nType, CGameObject *objList []);
 		void SetNewObjId (CGameObject *objP, int nType, int nId, int nMaxId);
+		void RefreshObjOrient (CDoubleMatrix& orient);
 
 		afx_msg void OnPaint ();
 		afx_msg void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
@@ -442,6 +445,8 @@ class CObjectTool : public CToolDlg
 		afx_msg void OnCloaked ();
 		afx_msg void OnMultiplayer ();
 		afx_msg void OnSort ();
+		afx_msg void OnSetLoc ();
+		afx_msg void OnResetLoc ();
 
 		inline CComboBox *CBObjNo ()
 			{ return CBCtrl (IDC_OBJ_OBJNO); }

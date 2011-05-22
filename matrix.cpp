@@ -229,15 +229,24 @@ Set (sinp, cosp, sinb, cosb, sinh, cosh);
 
 CDoubleMatrix& CDoubleMatrix::Set (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh)
 {
-double sbsh = sinb * sinh;
-double cbch = cosb * cosh;
-double cbsh = cosb * sinh;
-double sbch = sinb * cosh;
-
-rVec.Set (cbch + sinp * sbsh, sinb * cosp, sinp * sbch - cbsh);
-uVec.Set (sinp * cbsh - sbch, cosb * cosp, sbsh + sinp * cbch);
-fVec.Set (sinh * cosp, cosh * cosp, -sinp);
+rVec.Set (cosh * cosb - sinh * sinp * sinb, -cosp * sinb, cosh * sinp * sinb + sinh * cosb);
+uVec.Set (cosh * sinb + sinh * sinp * cosb, cosp * cosb, sinh * sinb - cosh * sinp * cosb);
+fVec.Set (-sinh * cosp, sinp, cosh * cosp);
 return *this;
+}
+
+// -----------------------------------------------------------------------------
+
+void CDoubleMatrix::CopyTo (double& p, double& b, double& h)
+{
+p = asin (fVec.v.y);
+if (cos (p) > 0.0001) {
+	b = -atan2 (rVec.v.y, uVec.v.y);
+	h = -atan2 (fVec.v.x, fVec.v.z);
+} else {
+	b = -atan2 (-rVec.v.z, -uVec.v.z);
+	h = 0;
+	}
 }
 
 // -----------------------------------------------------------------------------
