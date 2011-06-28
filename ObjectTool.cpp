@@ -759,7 +759,7 @@ BtnCtrl (IDC_OBJ_CLOAKED)->SetCheck (robotInfo.Info ().cloakType);
 
 // update scroll bars
 SlCtrl (IDC_OBJ_SCORE)->SetPos ((int) (robotInfo.Info ().scoreValue / SliderFactor (IDC_OBJ_SCORE)));
-SlCtrl (IDC_OBJ_STRENGTH)->SetPos (robotInfo.Info ().GetStrength ());
+SlCtrl (IDC_OBJ_STRENGTH)->SetPos (robotInfo.GetStrength ());
 SlCtrl (IDC_OBJ_MASS)->SetPos (FixLog (robotInfo.Info ().mass));
 SlCtrl (IDC_OBJ_DRAG)->SetPos ((int) (robotInfo.Info ().drag / SliderFactor (IDC_OBJ_DRAG)));
 SlCtrl (IDC_OBJ_EBLOBS)->SetPos ((int) (robotInfo.Info ().energyBlobs / SliderFactor (IDC_OBJ_EBLOBS)));
@@ -795,7 +795,7 @@ j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 robotInfo = *robotManager.RobotInfo (i);
 robotInfo.Info ().bCustom |= 1;
 robotInfo.Info ().scoreValue = (int) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
-robotInfo.Info ().SetStrength ((int) SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
+robotInfo.SetStrength ((int) SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
 robotInfo.Info ().mass = (int) FixExp (SlCtrl (IDC_OBJ_MASS)->GetPos ());
 robotInfo.Info ().drag = (int) (SlCtrl (IDC_OBJ_DRAG)->GetPos () * SliderFactor (IDC_OBJ_DRAG));
 robotInfo.Info ().energyBlobs = (int) (SlCtrl (IDC_OBJ_EBLOBS)->GetPos ()  * SliderFactor (IDC_OBJ_EBLOBS));
