@@ -1270,7 +1270,7 @@ void CMainFrame::OnUpdateViewLights(CCmdUI* pCmdUI)
 void CMainFrame::OnUpdateViewShading(CCmdUI* pCmdUI) 
 {
 	pCmdUI->SetCheck(GetMineView()->m_viewMineFlags & eViewMineShading ? 1 : 0);
-	//ToolView ()->Refresh ();
+	ToolView ()->Refresh ();
 }
 void CMainFrame::OnUpdateViewDeltaLights(CCmdUI* pCmdUI) 
 {

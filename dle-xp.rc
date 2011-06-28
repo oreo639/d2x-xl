@@ -419,7 +419,7 @@ BEGIN
     PUSHBUTTON      "reset brightness and color values",IDC_DEFAULT_LIGHT_AND_COLOR,442,4,50,41,BS_MULTILINE
 END
 
-IDD_OBJECTDATA DIALOGEX 0, 0, 686, 130
+IDD_OBJECTDATA DIALOGEX 0, 0, 620, 130
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Objects"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -559,21 +559,6 @@ BEGIN
     RTEXT           "AI",IDC_STATIC,13,46,8,8
     RTEXT           "Boss AI:",IDC_STATIC,520,71,27,8
     CONTROL         "ends level",IDC_OBJ_AI_ENDSLEVEL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,570,115,44,9
-    GROUPBOX        "Location",IDC_STATIC,620,0,65,105
-    EDITTEXT        IDC_OBJ_LOCX,647,11,34,12,ES_CENTER | ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_OBJ_LOCY,647,24,34,12,ES_CENTER | ES_AUTOHSCROLL
-    EDITTEXT        IDC_OBJ_LOCZ,647,37,34,12,ES_CENTER | ES_AUTOHSCROLL
-    PUSHBUTTON      "apply",IDC_OBJ_SETLOC,623,91,27,11
-    PUSHBUTTON      "reset",IDC_OBJ_RESETLOC,652,91,27,11
-    RTEXT           "Y:",IDC_STATIC,639,26,8,8
-    RTEXT           "Z:",IDC_STATIC,639,39,8,8
-    RTEXT           "X:",IDC_STATIC,639,13,8,8
-    EDITTEXT        IDC_OBJ_ROTP,647,51,34,12,ES_CENTER | ES_AUTOHSCROLL
-    RTEXT           "Rot. P:",IDC_STATIC,623,53,23,8
-    EDITTEXT        IDC_OBJ_ROTB,647,64,34,12,ES_CENTER | ES_AUTOHSCROLL
-    RTEXT           "Rot. B:",IDC_STATIC,624,66,23,8
-    EDITTEXT        IDC_OBJ_ROTH,647,77,34,12,ES_CENTER | ES_AUTOHSCROLL
-    RTEXT           "Rot. H:",IDC_STATIC,623,79,23,8
 END
 
 IDD_PREFSDATA DIALOGEX 0, 0, 620, 130
@@ -1175,7 +1160,7 @@ BEGIN
     RTEXT           "level name:",IDC_STATIC,33,17,44,8
 END
 
-IDD_OBJECTDATA2 DIALOGEX 0, 0, 222, 441
+IDD_OBJECTDATA2 DIALOGEX 0, 0, 222, 389
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Objects"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -1315,21 +1300,6 @@ BEGIN
     RTEXT           "Tactics:",IDC_STATIC,113,316,26,8
     RTEXT           "Boss AI:",IDC_STATIC,111,330,27,8
     CONTROL         "ends level",IDC_OBJ_AI_ENDSLEVEL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,162,373,44,9
-    GROUPBOX        "Location",IDC_STATIC,37,388,146,52
-    EDITTEXT        IDC_OBJ_LOCX,52,399,34,12,ES_CENTER | ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_OBJ_LOCY,52,412,34,12,ES_CENTER | ES_AUTOHSCROLL
-    EDITTEXT        IDC_OBJ_LOCZ,52,425,34,12,ES_CENTER | ES_AUTOHSCROLL
-    PUSHBUTTON      "apply",IDC_OBJ_SETLOC,150,400,27,11
-    PUSHBUTTON      "reset",IDC_OBJ_RESETLOC,150,413,27,11
-    RTEXT           "Y:",IDC_STATIC,44,414,8,8
-    RTEXT           "Z:",IDC_STATIC,44,427,8,8
-    RTEXT           "X:",IDC_STATIC,44,401,8,8
-    EDITTEXT        IDC_OBJ_ROTP,113,399,34,12,ES_CENTER | ES_AUTOHSCROLL
-    RTEXT           "Rot. P:",IDC_STATIC,89,401,23,8
-    EDITTEXT        IDC_OBJ_ROTB,113,412,34,12,ES_CENTER | ES_AUTOHSCROLL
-    RTEXT           "Rot. B:",IDC_STATIC,89,414,23,8
-    EDITTEXT        IDC_OBJ_ROTH,113,425,34,12,ES_CENTER | ES_AUTOHSCROLL
-    RTEXT           "Rot. H:",IDC_STATIC,89,427,23,8
 END
 
 IDD_DIAGDATA2 DIALOGEX 0, 0, 222, 437
@@ -2935,11 +2905,6 @@ OLDICON2                ICON                    "resource/icons/icon5.ico"
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    IDD_OBJECTDATA, DIALOG
-    BEGIN
-        RIGHTMARGIN, 685
-    END
-
     IDD_CUBEDATA2, DIALOG
     BEGIN
         BOTTOMMARGIN, 401
@@ -6144,8 +6109,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,64,0
- PRODUCTVERSION 1,8,64,0
+ FILEVERSION 1,8,65,0
+ PRODUCTVERSION 1,8,65,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6161,13 +6126,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor XP [6 may 2011]"
-            VALUE "FileVersion", "1, 8, 64, 0"
+            VALUE "FileDescription", "Descent Level Editor XP [28 jun 2011]"
+            VALUE "FileVersion", "1, 8, 65, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2011 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 8, 64, 0"
+            VALUE "ProductVersion", "1, 8, 65, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6194,7 +6159,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.8.64\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.8.65\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

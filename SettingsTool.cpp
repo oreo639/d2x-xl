@@ -163,7 +163,7 @@ m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", DLE_MAX_UNDOS, INIFILE);
 InitSlider (IDC_PREFS_VIEWDIST, 0, MAX_VIEWDIST);
 int i;
 for (i = 0; i <= MAX_VIEWDIST; i++)
-	SlCtrl (IDC_PREFS_VIEWDIST)->SetTic (i);
+	ViewDistSlider ()->SetTic (i);
 CComboBox *pcb = CBMineCenter ();
 pcb->AddString ("None");
 pcb->AddString ("Crosshairs");
@@ -253,6 +253,7 @@ else {
 	else
 		strcpy_s (szViewDist, sizeof (szViewDist), "all");
 	((CWnd *) GetDlgItem (IDC_PREFS_VIEWDIST_TEXT))->SetWindowText (szViewDist);
+	ViewDistSlider ()->SetPos (m_nViewDist);
 	CBMineCenter ()->SetCurSel (m_nMineCenter);
 	}
 DDX_Text (pDX, IDC_PREFS_PLAYER, player_profile, sizeof (player_profile));
@@ -340,6 +341,7 @@ for (i = 0; i < 5; i++)
 		break;
 		}
 m_moveRate = moveRate;
+m_nViewDist = DLE.MineView ()->ViewDist ();
 m_bUseTexColors = lightManager.UseTexColors ();
 m_bSplashScreen = DLE.m_bSplashScreen;
 }
@@ -556,10 +558,12 @@ SetLayout (1);
 
 void CPrefsDlg::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-	int	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
-if (pScrollBar == ViewDistSlider ()) {
+if ((void*) pScrollBar != (void*) ViewDistSlider ()) 
+	pScrollBar->SetScrollPos (pScrollBar->GetScrollPos (), TRUE);
+else {
+	int nPos = ViewDistSlider ()->GetPos ();
 	switch (scrollCode) {
 		case SB_LINEUP:
 			nPos--;
@@ -585,10 +589,7 @@ if (pScrollBar == ViewDistSlider ()) {
 	else if (nPos > MAX_VIEWDIST)
 		nPos = MAX_VIEWDIST;
 	DLE.MineView ()->SetViewDist (m_nViewDist = nPos);
-	UpdateData (FALSE);
-//	pScrollBar->SetScrollPos (nPos, TRUE);
 	}
-pScrollBar->SetScrollPos (nPos, TRUE);
 }
 
 //------------------------------------------------------------------------------

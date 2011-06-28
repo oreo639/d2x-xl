@@ -1042,10 +1042,10 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 			if (nTarget >= MAX_TRIGGER_TARGETS) {
 				if (m_bAutoFixBugs) {
 					trigP->Count () = MAX_TRIGGER_TARGETS;
-					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigP=%d, number of links=%d)",nTrigger,nTarget);
+					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigger=%d, number of links=%d)",nTrigger,nTarget);
 					}
 				else
-					sprintf_s (message, sizeof (message),"WARNING: Trigger has too many targets (trigP=%d, number of links=%d)",nTrigger,nTarget);
+					sprintf_s (message, sizeof (message),"WARNING: Trigger has too many targets (trigger=%d, number of links=%d)",nTrigger,nTarget);
 				if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 					return true;
 				break;
@@ -1061,11 +1061,11 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						nTarget = MAX_TRIGGER_TARGETS;	// take care of the loops
 						trigP--;
 						}
-					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant %s (trigP=%d, segment=%d)", 
+					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant %s (trigger=%d, segment=%d)", 
 								  (nSide < 0) ? "object" : "segment", nTrigger, nSegment);
 					}
 				else
-					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant %s (trigP=%d, segment=%d)", 
+					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant %s (triggger=%d, segment=%d)", 
 								  (nSide < 0) ? "object" : "segment", nTrigger, nSegment);
 				if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 					return true;
@@ -1078,10 +1078,10 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 							nSide = 0;
 						else if (nSide > 5)
 							nSide = 5;
-						sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant side (trigP=%d, side=%d)",nTrigger,nSide);
+						sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant side (trigger=%d, side=%d)",nTrigger,nSide);
 						}
 					else
-						sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant side (trigP=%d, side=%d)",nTrigger,nSide);
+						sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant side (trigger=%d, side=%d)",nTrigger,nSide);
 					if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 						return true;
 				} else {
@@ -1100,10 +1100,10 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 									nTarget = MAX_TRIGGER_TARGETS;
 									trigP--;
 									}
-								sprintf_s (message, sizeof (message),"FIXED: Trigger does not target a door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+								sprintf_s (message, sizeof (message),"FIXED: Trigger does not target a door (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 								}
 							else
-								sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+								sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a door (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 						}
 
@@ -1111,12 +1111,12 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						CSideKey opp;
 						CSide* oppSideP = segmentManager.OppositeSide (CSideKey (nSegment, nSide), opp);
 						if (oppSideP == null) {
-							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))", nTrigger, nSegment, nSide);
+							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))", nTrigger, nSegment, nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						else {
 							if (oppSideP->Wall () == null) {
-								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 								if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 								}
 							}
@@ -1134,17 +1134,17 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 									nTarget = MAX_TRIGGER_TARGETS;
 									trigP--;
 									}
-								sprintf_s (message, sizeof (message),"FIXED: Trigger target does not exist (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+								sprintf_s (message, sizeof (message),"FIXED: Trigger target does not exist (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 								}
 							else
-								sprintf_s (message, sizeof (message),"ERROR: Trigger target does not exist (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+								sprintf_s (message, sizeof (message),"ERROR: Trigger target does not exist (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						}
 //						if (trigP->Info ().flags == TRIGGER_MATCEN) {
 					else if (DLE.IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((segP->m_info.function != SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.function != SEGMENT_FUNC_EQUIPMAKER)) {
-							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						}

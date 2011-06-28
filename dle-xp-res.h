@@ -483,14 +483,6 @@
 #define IDT_OBJ_COUNT						 10584
 #define IDC_OBJ_MULTIPLAYER             10585
 #define IDC_OBJ_SORT                    10586
-#define IDC_OBJ_SETLOC						 10587
-#define IDC_OBJ_RESETLOC					 10588
-#define IDC_OBJ_LOCX						 10589
-#define IDC_OBJ_LOCY						 10590
-#define IDC_OBJ_LOCZ						 10591
-#define IDC_OBJ_ROTP						 10592
-#define IDC_OBJ_ROTB						 10593
-#define IDC_OBJ_ROTH						 10594
 
 #define IDD_HOGMANAGER                  10600
 #define IDC_HOG_FILES                   10600

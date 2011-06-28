@@ -49,6 +49,8 @@ short CMine::Load (CFileManager* fp, bool bLoadFromHog)
 {
 	bool bCreate = false;
 
+DLE.MineView ()->SetViewDist (0);
+DLE.ToolView ()->Refresh ();
 undoManager.Reset ();
 tunnelMaker.Destroy ();
 // if no file passed, define a new level w/ 1 object

@@ -78,8 +78,7 @@ if (!nProjected)
 #if OGL_RENDERING 
 //flip mine over for OpenGL
 for (i = vertexManager.Count (), a = m_viewPoints; i--; a++) {
-	a->y = rc.top + rc.bottom - a->
-		y;
+	a->y = rc.top + rc.bottom - a->y;
 	a->z = minZ + maxZ - a->z;
 	}
 #endif
