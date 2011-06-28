@@ -145,6 +145,10 @@ class CRobotInfo : public CGameItem {
 		virtual CGameItem* Copy (CGameItem* destP);
 
 		inline tRobotInfo& Info (void) { return m_info; }
+
+		inline int GetStrength (void) { return (m_info.strength > 0) ? FixLog (m_info.strength) - 12 : 0; }
+
+		inline void SetStrength (int strength) { m_info.strength = (strength > 0) ? FixExp (strength + 12) : 0; }
 };
 
 //------------------------------------------------------------------------------

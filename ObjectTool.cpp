@@ -132,7 +132,7 @@ typedef struct tSliderData {
 
 static tSliderData sliderData [] = {
 	{IDC_OBJ_SCORE, 0, 600, 50, null},
-	{IDC_OBJ_STRENGTH, 13, 20, 1, null},
+	{IDC_OBJ_STRENGTH, 0, 8, 1, null},
 	{IDC_OBJ_MASS, 10, 20, 1, null},
 	{IDC_OBJ_DRAG, 1, 13, -F1_0 / 100, null},
 	{IDC_OBJ_EBLOBS, 0, 100, 1, null},
@@ -153,11 +153,6 @@ static tSliderData sliderData [] = {
 	{IDC_OBJ_CONT_COUNT, 0, 100, 1, null},
 	{IDC_OBJ_CONT_PROB, 0, 16, 1, null}
 	};
-
-//------------------------------------------------------------------------------
-
-int fix_exp(int x);
-int fix_log(int x);
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -764,8 +759,8 @@ BtnCtrl (IDC_OBJ_CLOAKED)->SetCheck (robotInfo.Info ().cloakType);
 
 // update scroll bars
 SlCtrl (IDC_OBJ_SCORE)->SetPos ((int) (robotInfo.Info ().scoreValue / SliderFactor (IDC_OBJ_SCORE)));
-SlCtrl (IDC_OBJ_STRENGTH)->SetPos (fix_log (robotInfo.Info ().strength));
-SlCtrl (IDC_OBJ_MASS)->SetPos (fix_log (robotInfo.Info ().mass));
+SlCtrl (IDC_OBJ_STRENGTH)->SetPos (robotInfo.Info ().GetStrength ());
+SlCtrl (IDC_OBJ_MASS)->SetPos (FixLog (robotInfo.Info ().mass));
 SlCtrl (IDC_OBJ_DRAG)->SetPos ((int) (robotInfo.Info ().drag / SliderFactor (IDC_OBJ_DRAG)));
 SlCtrl (IDC_OBJ_EBLOBS)->SetPos ((int) (robotInfo.Info ().energyBlobs / SliderFactor (IDC_OBJ_EBLOBS)));
 SlCtrl (IDC_OBJ_LIGHT)->SetPos ((int) (robotInfo.Info ().lightCast / SliderFactor (IDC_OBJ_LIGHT)));
@@ -800,8 +795,8 @@ j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 robotInfo = *robotManager.RobotInfo (i);
 robotInfo.Info ().bCustom |= 1;
 robotInfo.Info ().scoreValue = (int) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
-robotInfo.Info ().strength = (int) fix_exp (SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
-robotInfo.Info ().mass = (int) fix_exp (SlCtrl (IDC_OBJ_MASS)->GetPos ());
+robotInfo.Info ().SetStrength ((int) SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
+robotInfo.Info ().mass = (int) FixExp (SlCtrl (IDC_OBJ_MASS)->GetPos ());
 robotInfo.Info ().drag = (int) (SlCtrl (IDC_OBJ_DRAG)->GetPos () * SliderFactor (IDC_OBJ_DRAG));
 robotInfo.Info ().energyBlobs = (int) (SlCtrl (IDC_OBJ_EBLOBS)->GetPos ()  * SliderFactor (IDC_OBJ_EBLOBS));
 robotInfo.Info ().lightCast = (int) (SlCtrl (IDC_OBJ_LIGHT)->GetPos () * SliderFactor (IDC_OBJ_LIGHT));
@@ -1727,22 +1722,6 @@ for (i = objectManager.Count (); i; i--, objP++)
 	if ((objP->Type () == nType) && ((objP->Type () == OBJ_PLAYER) || (objP->Type () == OBJ_COOP) || (objP->Id () == nId))) 
 		nCount++;
 return nCount;
-}
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-
-int fix_log(int x) 
-{
-return (x >= 1) ? (int) (log ((double) x) + 0.5): 0; // round (assume value is positive)
-}
-
-//------------------------------------------------------------------------------
-
-int fix_exp(int x) 
-{
-return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5): 1; // round (assume value is positive)
 }
 
 //------------------------------------------------------------------------------

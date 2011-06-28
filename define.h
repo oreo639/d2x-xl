@@ -1,6 +1,8 @@
 #ifndef __define_h
 #define __define_h
 
+#include <math.h>
+
 // Copyright (C) 1997 Bryan Aamot
 
 // -----------------------------------------------------------------------------
@@ -65,6 +67,20 @@ return (int) ((double) n * (double) m / 65536.0);
 inline int FixDiv (int n, int m)
 {
 return (int) ((double) n / (double) m * 65536.0);
+}
+
+// -----------------------------------------------------------------------------
+
+inline int FixLog (int x) 
+{
+return (x >= 1) ? (int) (log ((double) x) + 0.5) : 0; // round (assume value is positive)
+}
+
+//------------------------------------------------------------------------------
+
+inline int FixExp (int x) 
+{
+return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assume value is positive)
 }
 
 // -----------------------------------------------------------------------------
