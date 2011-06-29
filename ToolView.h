@@ -1259,7 +1259,7 @@ class CPrefsDlg : public CToolDlg
 		void WritePrivateProfileInt (LPSTR szKey, int nValue);
 		void WritePrivateProfileDouble (LPSTR szKey, double nValue);
 		void GetAppSettings ();
-		void SetAppSettings (bool bInitApp = false);
+		void SetAppSettings (int bUpdate = 0);
 		void SaveAppSettings (bool bSaveFolders = true);
 		void CompletePath (LPSTR pszPath, LPSTR pszFile, LPSTR pszExt);
 		inline CSliderCtrl* ViewDistSlider ()

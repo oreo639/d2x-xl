@@ -265,7 +265,7 @@ void CPrefsDlg::OnSetMineCenter (void)
 {
 UpdateData (TRUE);
 m_bNoRefresh = true;
-SetAppSettings ();
+SetAppSettings (-1);
 m_bNoRefresh = false;
 }
 
@@ -376,7 +376,7 @@ WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
 }
 //------------------------------------------------------------------------------
 
-void CPrefsDlg::SetAppSettings (bool bInitApp)
+void CPrefsDlg::SetAppSettings (int bUpdate)
 {
 CHECKMINE;
 if (m_bInvalid)
@@ -412,17 +412,19 @@ if (strcmp (missionPath, m_missionsPath)) {
 	strcpy_s (missionPath, sizeof (missionPath), m_missionsPath);
 	WritePrivateProfileString ("DLE-XP", "levelsDirectory", missionPath, INIFILE);
 	}
-if (!bInitApp)
+if (!bUpdate)
 	DLE.MineView ()->DelayRefresh (true);
-DLE.MineView ()->m_nViewDist = m_nViewDist;
-DLE.MineView ()->SetDepthTest (m_bDepthTest != 0);
-DLE.MineView ()->SetViewMineFlags (m_mineViewFlags);
-DLE.MineView ()->SetViewObjectFlags (m_objViewFlags);
-DLE.TextureView ()->SetViewFlags (m_texViewFlags);
-depthPerception = m_depthPerceptions [m_iDepthPerception];
-DLE.MineView ()->DepthPerception () = depthPerception;
-*(DLE.MineView ()->MineCenter ()) = m_nMineCenter;
-if (!bInitApp) {
+else if (bUpdate < 0) {
+	DLE.MineView ()->m_nViewDist = m_nViewDist;
+	DLE.MineView ()->SetDepthTest (m_bDepthTest != 0);
+	DLE.MineView ()->SetViewMineFlags (m_mineViewFlags);
+	DLE.MineView ()->SetViewObjectFlags (m_objViewFlags);
+	DLE.TextureView ()->SetViewFlags (m_texViewFlags);
+	depthPerception = m_depthPerceptions [m_iDepthPerception];
+	DLE.MineView ()->DepthPerception () = depthPerception;
+	*(DLE.MineView ()->MineCenter ()) = m_nMineCenter;
+	}
+if (!bUpdate) {
 	DLE.MineView ()->DelayRefresh (false);
 	DLE.MineView ()->Refresh (false);
 	}
@@ -430,7 +432,7 @@ angleRate = m_rotateRates [m_iRotateRate];
 moveRate = m_moveRate;
 bExpertMode = (m_bExpertMode != 0);
 lightManager.UseTexColors () = m_bUseTexColors != 0;
-if (!bInitApp)
+if (bUpdate < 1)
 	SaveAppSettings (false);
 DLE.m_bSplashScreen = m_bSplashScreen;
 undoManager.SetMaxSize (m_nMaxUndo);
@@ -442,7 +444,7 @@ void CPrefsDlg::OnOK (void)
 {
 UpdateData (TRUE);
 m_bNoRefresh = true;
-SetAppSettings ();
+SetAppSettings (-1);
 m_bNoRefresh = false;
 Refresh ();
 }
