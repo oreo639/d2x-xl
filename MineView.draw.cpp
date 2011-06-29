@@ -813,6 +813,7 @@ DrawLine (texP, pt [0], pt [3], color);
 //--------------------------------------------------------------------------
 
 short nDbgSeg = -1, nDbgSide = -1;
+int nDbgVertex = -1;
 
 void CMineView::DrawFaceTextured (CFaceListEntry& fle) 
 {

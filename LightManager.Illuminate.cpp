@@ -5,6 +5,7 @@
 // external globals
 extern int bEnableDeltaShading; // uvls.cpp
 extern short nDbgSeg, nDbgSide;
+extern int nDbgVertex;
 
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
@@ -280,6 +281,8 @@ for (int i = 0; i < 4; i++, uvlP++) {
 #if DBG
 	if (segP->Index () == nDbgSeg)
 		nDbgSeg = nDbgSeg;
+	if (segP->m_info.verts [sideVerts [i]] == nDbgVertex)
+		nDbgVertex = nDbgVertex;
 #endif
 	if (segP->m_info.function == SEGMENT_FUNC_SKYBOX) {
 		uvlP->l = (ushort) 0xFFFF;
@@ -332,6 +335,11 @@ if (UseTexColors () && bCopyTexLights) {
 	}
 bool bWall = false; 
 
+#ifdef _DEBUG
+if ((nSourceSeg == nDbgSeg) && ((nDbgSide < 0) || (nSourceSide == nDbgSide)))
+	nSourceSeg = nSourceSeg;
+#endif
+
 //#pragma omp parallel 
 	{
 //#pragma omp for private (m_cornerLights)
@@ -359,12 +367,11 @@ bool bWall = false;
 
 			// if the child side is the same as the source side, then set light and continue
 			if ((nChildSide == nSourceSide) && (nChildSeg == nSourceSeg)) {
+				m_cornerLights [0] = m_cornerLights [1] = m_cornerLights [2] = m_cornerLights [3] = 1.0;
 				GatherFaceLight (childSegP, nChildSide, brightness, lightColorP);
-				continue;
 				}
-
 			// calculate vector between center of source segment and center of child
-			if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, bWall)) 
+			else if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, bWall)) 
 				GatherFaceLight (childSegP, nChildSide, brightness, lightColorP);
 			}
 		}
