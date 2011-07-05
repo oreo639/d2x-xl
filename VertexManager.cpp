@@ -149,14 +149,28 @@ for (CVertexIterator vi; vi; vi++)
 
 CDoubleVector CVertexManager::GetCenter (void)
 {
-	CDoubleVector	v;
+	CDoubleVector	vMin (1e30, 1e30, 1e30), vMax (-1e30, -1e30, -1e30), v;
 
 if (m_info.count) {
-	for (CVertexIterator vi; vi; vi++) 
-		v += *vi;
-	v /= double (m_info.count);
+	for (CVertexIterator vi; vi; vi++) {
+		v = *vi;
+		if (vMin.v.x > v.v.x)
+			vMin.v.x = v.v.x;
+		if (vMin.v.y > v.v.y)
+			vMin.v.y = v.v.y;
+		if (vMin.v.z > v.v.z)
+			vMin.v.z = v.v.z;
+		if (vMax.v.x < v.v.x)
+			vMax.v.x = v.v.x;
+		if (vMax.v.y < v.v.y)
+			vMax.v.y = v.v.y;
+		if (vMax.v.z < v.v.z)
+			vMax.v.z = v.v.z;
+		}
 	}
-return v;
+vMin += vMax;
+vMin /= 2.0;
+return vMin;
 }
 
 // ----------------------------------------------------------------------------- 
