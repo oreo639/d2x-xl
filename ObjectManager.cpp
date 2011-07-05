@@ -353,4 +353,12 @@ for (short i = 0; i < Count (); i++)
 	m_objects [i].Clear ();
 }
 
+// ----------------------------------------------------------------------------- 
+
+void CObjectManager::SetCenter (CDoubleVector v)
+{
+for (short i = 0; i < Count (); i++)
+	m_objects [i].m_location -= v;
+}
+
 // -----------------------------------------------------------------------------

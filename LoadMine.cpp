@@ -245,6 +245,7 @@ if (!(bLoadFromHog || bCreate)) {
 			}
 		}
 	}
+UpdateCenter ();
 objectManager.Sort ();
 DLE.MainFrame ()->SetSelectMode (eSelectSide);
 current->Reset ();
@@ -311,7 +312,7 @@ return 0;
 // LoadGameItems()
 //
 // ACTION - Loads the player, object, wall, door, trigger, and
-//          materialogrifizationator data from an RDL file.
+//          materialization center data from an RDL file.
 // -----------------------------------------------------------------------------
 
 short CMine::LoadGameItems (CFileManager* fp, bool bCreate) 

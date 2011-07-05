@@ -297,6 +297,17 @@ public:
 		lastPos.Clear ();
 		orient.Clear ();
 		}
+
+	inline void operator+= (CDoubleVector v) {
+		pos += v;
+		lastPos += v;
+		}
+
+	inline void operator-= (CDoubleVector v) {
+		pos -= v;
+		lastPos -= v;
+		}
+
 } tObjLocationInfo;
 
 //------------------------------------------------------------------------

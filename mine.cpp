@@ -298,4 +298,13 @@ objectManager.ResetInfo ();
 }
 
 // ----------------------------------------------------------------------------------
+
+void CMine::UpdateCenter (void)
+{
+CDoubleVector v = vertexManager.GetCenter ();
+vertexManager.SetCenter (v);
+objectManager.SetCenter (v);
+}
+
+// ----------------------------------------------------------------------------------
 //eof mine.cpp

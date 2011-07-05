@@ -110,6 +110,8 @@ class CMine {
 
 		short Save (const char *filename, bool bSaveToHog = false);
 
+		void UpdateCenter (void);
+
 		inline LPSTR LevelName (void) { return m_currentLevelName; }
 
 		inline int LevelNameSize (void) { return sizeof m_currentLevelName; }

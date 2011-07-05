@@ -101,6 +101,8 @@ class CObjectManager {
 
 		void Sort (void);
 
+		void SetCenter (CDoubleVector v);
+
 		void UpdateSegments (short nOldSeg, short nNewSeg);
 
 	private:

@@ -307,7 +307,7 @@ while (W (p) != OP_EOF) {
 			assert (modelRenderer.m_data.nPoints < MAX_POLYMODEL_POINTS);
 			assert (m_pt0 + modelRenderer.m_nPolyPoints < MAX_POLYMODEL_POINTS);
 			for (m_pt = 0; m_pt < modelRenderer.m_nPolyPoints; m_pt++) 
-				modelRenderer.m_data.points [m_pt+m_pt0] = VP (p+8)[m_pt] + modelRenderer.m_offset;
+				modelRenderer.m_data.points [m_pt+m_pt0] = modelRenderer.m_offset + CDoubleVector (VP (p+8)[m_pt]);
 			SetPoints (m_pt0, m_pt0 + modelRenderer.m_nPolyPoints);
 			p += W (p+2)*sizeof (CFixVector) + 8;
 			break;

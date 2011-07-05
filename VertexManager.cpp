@@ -146,3 +146,27 @@ for (CVertexIterator vi; vi; vi++)
 }
 
 // ----------------------------------------------------------------------------- 
+
+CDoubleVector CVertexManager::GetCenter (void)
+{
+	CDoubleVector	v;
+
+if (m_info.count) {
+	for (CVertexIterator vi; vi; vi++) 
+		v += *vi;
+	v /= double (m_info.count);
+	}
+return v;
+}
+
+// ----------------------------------------------------------------------------- 
+
+void CVertexManager::SetCenter (CDoubleVector v)
+{
+if (m_info.count) {
+	for (CVertexIterator vi; vi; vi++) 
+		*vi -= v;
+	}
+}
+
+// ----------------------------------------------------------------------------- 
