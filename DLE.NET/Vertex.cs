@@ -18,6 +18,13 @@ namespace DLE.NET
             Status = 0;
         }
 
+        public Vertex (int key)
+            : base ()
+        {
+            Status = 0;
+            Key = key;
+        }
+
         public Vertex (double x, double y, double z)
             : base (x, y, z)
         {
@@ -40,24 +47,29 @@ namespace DLE.NET
 
         #region IGameItem Members
 
+        // ------------------------------------------------------------------------
+
         public int Key { get; set; }
-        public uint Id  { get; set; }
-        public int Index { get; set; }
         public IGameItem.ItemType ItemType { get; set; }
         public IGameItem.EditType EditType { get; set; }
         public IGameItem Parent { get; set; }
         public IGameItem Link { get; set; }
-        public bool Used { get { return Index >= 0; } }
+
+        // ------------------------------------------------------------------------
 
         public void Read (System.IO.BinaryReader fp, int version = 0, bool bFlag = false)
         {
             throw new NotImplementedException ();
         }
 
+        // ------------------------------------------------------------------------
+
         public void Write (System.IO.BinaryWriter fp, int version = 0, bool bFlag = false)
         {
             throw new NotImplementedException ();
         }
+
+        // ------------------------------------------------------------------------
 
         public void Clear ()
         {
@@ -65,10 +77,14 @@ namespace DLE.NET
             Status = 0;
         }
 
+        // ------------------------------------------------------------------------
+
         public IGameItem Clone ()
         {
             return new Vertex (this);
         }
+
+        // ------------------------------------------------------------------------
 
         public IGameItem Copy (IGameItem dest)
         {
@@ -78,6 +94,8 @@ namespace DLE.NET
             return this;
         }
 
+        // ------------------------------------------------------------------------
+
         public IGameItem CopyTo (IGameItem dest)
         {
             Vertex v = dest as Vertex;
@@ -86,6 +104,8 @@ namespace DLE.NET
             return dest;
         }
 
+        // ------------------------------------------------------------------------
+
         public int CompareTo (Vertex other)
         {
             int i = base.CompareTo (other);
@@ -93,6 +113,8 @@ namespace DLE.NET
                 return i;
             return (Status < other.Status) ? -1 : (Status > other.Status) ? 1 : 0;
         }
+
+        // ------------------------------------------------------------------------
 
         #endregion
 
