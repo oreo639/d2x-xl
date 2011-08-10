@@ -117,5 +117,23 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        Side OppositeSide (SideKey key, SideKey opp)
+        {
+        DLE.Current.Get (key); 
+        short nChildSeg = Segments [key.m_nSegment].GetChild (key.m_nSide); 
+        if (nChildSeg < 0 || nChildSeg >= Count)
+	        return null; 
+        for (short nChildSide = 0; nChildSide < 6; nChildSide++) {
+	        if (Segments [nChildSeg].GetChild (nChildSide) == key.m_nSegment) {
+		        opp.m_nSegment = nChildSeg; 
+		        opp.m_nSide = nChildSide; 
+		        return Side (opp); 
+		        }
+	        }
+        return null; 
+        }
+
+        // ------------------------------------------------------------------------
+
     }
 }
