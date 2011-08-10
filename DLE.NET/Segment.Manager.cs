@@ -79,13 +79,24 @@ namespace DLE.NET
         DoubleVector CalcSideCenter (SideKey key)
         {
         DLE.Current.Get (key);
-
 	    Segment seg = Segments [key.m_nSegment];
 	    DoubleVector v = new DoubleVector ();
         for (int i = 0; i < 4; i++)
 	        v.Add (seg.Vertex (GameTables.sideVertTable [key.m_nSide,i]));
         v /= 4.0;
         return v;
+        }
+
+        // ------------------------------------------------------------------------
+
+        DoubleVector CalcSideNormal (SideKey key)
+        {
+            DLE.Current.Get (key);
+            Segment seg = Segments [key.m_nSegment];
+            DoubleVector v = new DoubleVector ();
+            return -v.Normal (seg.Vertex (GameTables.sideVertTable [key.m_nSegment,0]),
+                              seg.Vertex (GameTables.sideVertTable [key.m_nSegment,1]),
+                              seg.Vertex (GameTables.sideVertTable [key.m_nSegment,3]));
         }
 
         // ------------------------------------------------------------------------
