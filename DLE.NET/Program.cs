@@ -15,6 +15,7 @@ namespace DLE.NET
         public static VertexManager Vertices { get { return vertexManager; } }
         public static SegmentManager Segments { get { return segmentManager; } }
         public static WallManager Walls { get { return wallManager; } }
+        public static TriggerManager Triggers { get { return triggerManager; } }
         public static ObjectManager Objects { get { return objectManager; } }
 
         static GameMine theMine = new GameMine ();
@@ -25,6 +26,7 @@ namespace DLE.NET
         public static VertexManager vertexManager = new VertexManager ();
         public static SegmentManager segmentManager = new SegmentManager ();
         public static WallManager wallManager = new WallManager ();
+        public static TriggerManager triggerManager = new TriggerManager ();
         public static ObjectManager objectManager = new ObjectManager ();
 
         static public bool Modified { get; set; }

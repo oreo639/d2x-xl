@@ -364,10 +364,10 @@ namespace DLE.NET
         void SetUV (short nSide, short x, short y)
         {
 	        DoubleVector[]	A = new DoubleVector [4], 
-                            B = new DoubleVector  [4], 
-                            C = new DoubleVector  [4], 
-                            D = new DoubleVector  [4], 
-                            E = new DoubleVector  [4]; 
+                            B = new DoubleVector [4], 
+                            C = new DoubleVector [4], 
+                            D = new DoubleVector [4], 
+                            E = new DoubleVector [4]; 
 	        int				i; 
 	        double			angle, sinAngle, cosAngle; 
 
