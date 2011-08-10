@@ -9,15 +9,23 @@ namespace DLE.NET
     {
         public static GameMine Mine { get { return theMine; } }
         public static Settings Settings { get { return settings; } }
-        public static TextureManager TextureManager { get { return textureManager; } }
-        public static PaletteManager PaletteManager { get { return paletteManager; } }
-        public static UndoManager UndoManager { get { return undoManager; } }
+        public static TextureManager Textures { get { return textureManager; } }
+        public static PaletteManager Palettes { get { return paletteManager; } }
+        public static UndoManager Undos { get { return undoManager; } }
+        public static VertexManager Vertices { get { return vertexManager; } }
+        public static SegmentManager Segments { get { return segmentManager; } }
+        public static WallManager Walls { get { return wallManager; } }
+        public static ObjectManager Objects { get { return objectManager; } }
 
         static GameMine theMine = new GameMine ();
         static Settings settings = new Settings ();
         public static TextureManager textureManager = new TextureManager ();
         public static PaletteManager paletteManager = new PaletteManager ();
         public static UndoManager undoManager = new UndoManager ();
+        public static VertexManager vertexManager = new VertexManager ();
+        public static SegmentManager segmentManager = new SegmentManager ();
+        public static WallManager wallManager = new WallManager ();
+        public static ObjectManager objectManager = new ObjectManager ();
 
         static public bool Modified { get; set; }
 

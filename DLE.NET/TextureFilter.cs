@@ -541,12 +541,12 @@ namespace DLE.NET
             int nTextures, nFrames = 0;
             short i;
 
-            nTextures = DLE.TextureManager.MaxTextures;
+            nTextures = DLE.Textures.MaxTextures;
 
             // calculate total number of textures
         m_nTextures [1] = 0;
         for (i = 0; i < nTextures; i++) {
-	        if (DLE.TextureManager.Texture (i).m_bFrame)
+	        if (DLE.Textures.Texture (i).m_bFrame)
 		        ++nFrames;
 	        else
 		        m_mapViewToTex [m_nTextures [1]++] = i;

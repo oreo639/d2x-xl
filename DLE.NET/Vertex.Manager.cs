@@ -18,10 +18,7 @@ namespace DLE.NET
 
         public int MaxVertices { get { return DLE.IsD1File ? MAX_VERTICES_D1 : DLE.IsStdLevel ? MAX_VERTICES_D2 : VERTEX_LIMIT; } }
 
-        public Dictionary<int, Vertex> m_vertices = new Dictionary <int, Vertex> ();
-        
-        List<int> m_usedKeys = new List<int> ();
-        List<int> m_freeKeys = new List<int> ();
+        Vertex [] m_vertices = new Vertex [GameMine.MAX_VERTICES];
 
         #endregion
 
@@ -41,43 +38,47 @@ namespace DLE.NET
             set { m_info.offset = value; }
         }
 
-        public Dictionary<int, Vertex> Vertices { get { return m_vertices; } }
+        public Vertex [] Vertices { get { return m_vertices; } }
 
-        public Vertex Vertex (int key) { return m_vertices [key]; }
+        public Vertex Vertex (int i) { return m_vertices [i]; }
 
-        public int Key (Vertex vertex) { return vertex.Key; }
+        public byte Status (int i = 0) { return m_vertices [i].Status; }
 
-        public byte Status (int key = 0) { return m_vertices [key].Status; }
-
-        public bool Full () { return m_vertices.Count >= MaxVertices; }
+        public bool Full { get { return Count >= GameMine.MAX_VERTICES; } }
 
         #endregion
 
         // ------------------------------------------------------------------------
 
-        VertexManager ()
+        #region code
+
+        public VertexManager ()
         {
-            m_usedKeys.Capacity = MaxVertices;
-            m_freeKeys.Capacity = MaxVertices;
-            for (int i = 0; i < MaxVertices; i++)
-                m_freeKeys.Add (i);
+            Count = 0;
+            for (int i = 0; i < GameMine.MAX_VERTICES; i++)
+                Vertices [i] = new Vertex (i);
         }
 
         // ------------------------------------------------------------------------
 
-        #region code
-
-        public int Add (int [] keys, ushort count = 1, bool bUndo = true)
+        public Vertex this [int i]
         {
-            if (m_freeKeys.Count < count)
+            get { return Vertices [i]; }
+            set { Vertices [i] = value; }
+        }
+
+        // ------------------------------------------------------------------------
+
+        public int Add (int [] vertices, ushort count = 1, bool bUndo = true)
+        {
+            if (Count + count > GameMine.MAX_VERTICES)
                 return 0;
             for (ushort i = 0; i < count; i++)
             {
-                keys [i] = m_freeKeys [0];
-                m_freeKeys.Remove (keys [i]);
-                m_usedKeys.Add (keys [i]);
-                m_vertices.Add (keys [i], new Vertex (keys [i]));
+                
+                vertices [i] = Count + i;
             }
+            DLE.undoManager.Begin ();
             Count += count;
             DLE.undoManager.End ();
             return count;
@@ -86,30 +87,26 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public int Key (Vertex vertex)
+        void Delete (int i, bool bUndo = true)
         {
-            return vertex.Key;
-        }
-
-
-        // ------------------------------------------------------------------------
-
-        void Delete (int key, bool bUndo = true)
-        {
-            m_vertices.Remove (key);
-            m_usedKeys.Remove (key);
-            m_freeKeys.Add (key);
+            DLE.undoManager.Begin ();
+            Count--;
+            if (i < Count)
+            {
+                Vertices [i].Copy (Vertices [Count]);
+                DLE.Segments.UpdateVertices ((short)Count, (short)i);
+            }
+            DLE.undoManager.End ();
         }
 
         // ------------------------------------------------------------------------
 
         void Read (FileStream fs)
         {
-
             using (BinaryReader fp = new BinaryReader (fs))
             {
-                foreach (var pair in m_vertices)
-                    pair.Value.Read (fp);
+                for (int i = 0; i < Count; i++)
+                    Vertices [i].Read (fp);
             }
         }
 
@@ -117,11 +114,10 @@ namespace DLE.NET
 
         void Write (FileStream fs)
         {
-
             using (BinaryWriter fp = new BinaryWriter (fs))
             {
-                foreach (var pair in m_vertices)
-                    pair.Value.Write (fp);
+                for (int i = 0; i < Count; i++)
+                    Vertices [i].Write (fp);
             }
         }
 
@@ -129,24 +125,24 @@ namespace DLE.NET
 
         void MarkAll (byte mask = GameMine.MARKED_MASK)
         {
-            foreach (var v in m_vertices)
-                v.Value.Status |= mask;
+            for (int i = 0; i < Count; i++)
+                Vertices [i].Status |= mask;
         }
 
         // ------------------------------------------------------------------------
 
         void UnmarkAll (byte mask = GameMine.MARKED_MASK)
         {
-            foreach (var v in m_vertices)
-                v.Value.Status &= (byte) ~mask;
+            for (int i = 0; i < Count; i++)
+                Vertices [i].Status &= (byte) ~mask;
         }
 
         // ------------------------------------------------------------------------
 
         void Clear ()
         {
-            foreach (var v in m_vertices)
-                v.Value.Clear ();
+            for (int i = 0; i < Count; i++)
+                Vertices [i].Clear ();
         }
 
         // ------------------------------------------------------------------------
@@ -155,20 +151,21 @@ namespace DLE.NET
         {
             DoubleVector vMin = new DoubleVector (1e30, 1e30, 1e30);
             DoubleVector vMax = new DoubleVector (-1e30, -1e30, -1e30);
-            foreach (var v in m_vertices)
+            for (int i = 0; i < Count; i++)
             {
-                if (vMin.v.x > v.Value.v.x)
-                    vMin.v.x = v.Value.v.x;
-                if (vMin.v.y > v.Value.v.y)
-                    vMin.v.y = v.Value.v.y;
-                if (vMin.v.z > v.Value.v.z)
-                    vMin.v.z = v.Value.v.z;
-                if (vMax.v.x < v.Value.v.x)
-                    vMax.v.x = v.Value.v.x;
-                if (vMax.v.y < v.Value.v.y)
-                    vMax.v.y = v.Value.v.y;
-                if (vMax.v.z < v.Value.v.z)
-                    vMax.v.z = v.Value.v.z;
+                Vertex v = Vertices [i];
+                if (vMin.v.x > v.v.x)
+                    vMin.v.x = v.v.x;
+                if (vMin.v.y > v.v.y)
+                    vMin.v.y = v.v.y;
+                if (vMin.v.z > v.v.z)
+                    vMin.v.z = v.v.z;
+                if (vMax.v.x < v.v.x)
+                    vMax.v.x = v.v.x;
+                if (vMax.v.y < v.v.y)
+                    vMax.v.y = v.v.y;
+                if (vMax.v.z < v.v.z)
+                    vMax.v.z = v.v.z;
             }
             vMin.Add (vMax);
             vMin.Mul (0.5);
@@ -179,19 +176,17 @@ namespace DLE.NET
 
         void SetCenter (DoubleVector offset)
         {
-            foreach (var v in m_vertices)
-            {
-                v.Value.Sub (offset);
-            }
+            for (int i = 0; i < Count; i++)
+                Vertices [i].Sub (offset);
         }
 
         // ------------------------------------------------------------------------
 
         Vertex Find (DoubleVector coord)
         {
-            foreach (var v in m_vertices)
-                if (v.Value == coord)
-                    return m_vertices [v.Key];
+            for (int i = 0; i < Count; i++)
+                if (Vertices [i] == coord)
+                    return Vertices [i];
             return null;
         }
 

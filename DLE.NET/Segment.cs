@@ -72,6 +72,15 @@ namespace DLE.NET
 	        Property.NONE,
 	        Property.OUTDOORS
         };
+        private int i;
+
+        //------------------------------------------------------------------------------
+
+        public Segment (int key = 0)
+        {
+            Key = key;
+            Setup ();
+        }
 
         //------------------------------------------------------------------------------
 
@@ -229,7 +238,7 @@ namespace DLE.NET
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	        m_sides [i].m_nWall = ((m_wallFlags & (1 << i)) != 0)
 						          ? (ushort) ((nLevelVersion < 13) ? fp.ReadSByte () : fp.ReadInt16 ())
-								  : DLE.Mine.NO_WALL;
+								  : GameMine.NO_WALL;
 
         // read in textures and uvls (0 to 60 bytes)
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
@@ -406,6 +415,22 @@ namespace DLE.NET
 	            uvls [i].v = (ushort) ((y + FixConverter.D2X (E [i].v.x / 640)) / scale); 
 	            uvls [i].u = (ushort) ((x - FixConverter.D2X (E [i].v.y / 640)) / scale); 
 	        }
+        }
+
+        //------------------------------------------------------------------------------
+
+        public Vertex Vertex (int i)
+        {
+            return DLE.Vertices [i];
+        }
+
+        //------------------------------------------------------------------------------
+
+        public void UpdateChildren (short nOldChild, short nNewChild)
+        {
+        for (short nSide = 0; nSide < 6; nSide++)
+	        if (m_sides [nSide].UpdateChild (nOldChild, nNewChild))	// no two sides can have the same child
+		        return;
         }
 
         //------------------------------------------------------------------------------

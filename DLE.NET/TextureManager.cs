@@ -177,7 +177,7 @@ namespace DLE.NET
         if (nVersion < 0) {
 	        nVersion = Version;
 	        m_pigFiles [nVersion] = DLE.descentPath [nVersion];
-            m_paletteName = DLE.PaletteManager.Name;
+            m_paletteName = DLE.Palettes.Name;
 	        m_info [nVersion] = null;
 	        }
         Release (nVersion, true, false);
@@ -238,7 +238,7 @@ namespace DLE.NET
 
         void Blend (ref BGRA dest, BGRA src)
         {
-        if (DLE.PaletteManager.SuperTransp (src))
+        if (DLE.Palettes.SuperTransp (src))
 	        dest.r =
 	        dest.g =
 	        dest.b =

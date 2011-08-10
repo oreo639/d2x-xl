@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using DLE.NET.GameMine;
 
 namespace DLE.NET
@@ -57,16 +58,17 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public void Read (System.IO.BinaryReader fp, int version = 0, bool bFlag = false)
+        public void Read (BinaryReader fp, int version = 0, bool bFlag = false)
         {
-            throw new NotImplementedException ();
+            Status = 0;
+            base.Read (fp);
         }
 
         // ------------------------------------------------------------------------
 
-        public void Write (System.IO.BinaryWriter fp, int version = 0, bool bFlag = false)
+        public void Write (BinaryWriter fp, int version = 0, bool bFlag = false)
         {
-            throw new NotImplementedException ();
+            base.Write (fp);
         }
 
         // ------------------------------------------------------------------------

@@ -331,6 +331,7 @@ namespace DLE.NET
             return FixConverter.D2X (v.x) ^ FixConverter.D2X (v.y) ^ FixConverter.D2X (v.z);
         }
         #endregion
+
         // ------------------------------------------------------------------------
 
     }

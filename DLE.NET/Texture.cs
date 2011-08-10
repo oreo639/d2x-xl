@@ -237,14 +237,14 @@ namespace DLE.NET
 
         void ComputeIndex (byte [] bmIndex)
         {
-	        BGR[] palette = DLE.PaletteManager.Current ();
+	        BGR[] palette = DLE.Palettes.Current ();
 
 	        for (uint y = 0; y < (int) Height; y++) {
 		        uint i = y * Width;
 		        uint k = Size - Width - i;
 		        for (uint x = 0; x < Width; x++) 
                 {
-			        bmIndex [k + x] = DLE.PaletteManager.ClosestColor (m_bmData [i + x]);
+			        bmIndex [k + x] = DLE.Palettes.ClosestColor (m_bmData [i + x]);
 		        }
 	        }
         }

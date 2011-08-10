@@ -134,6 +134,7 @@
     <Compile Include="KeyList.cs" />
     <Compile Include="MineInfo.cs" />
     <Compile Include="MineView.cs" />
+    <Compile Include="Object.Manager.cs" />
     <Compile Include="PaletteManager.cs" />
     <Compile Include="Segment.Manager.cs" />
     <Compile Include="SideKey.cs" />
@@ -238,6 +239,7 @@
     <Compile Include="UVL.cs" />
     <Compile Include="Vertex.Manager.cs" />
     <Compile Include="Wall.cs" />
+    <Compile Include="Wall.Manager.cs" />
     <Compile Include="WallTool.cs">
       <SubType>Form</SubType>
     </Compile>

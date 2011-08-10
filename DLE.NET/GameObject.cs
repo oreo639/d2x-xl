@@ -3,7 +3,11 @@ namespace DLE.NET
 {
     public partial class GameObject
     {
-        short       signature;     // reduced size to save memory 
+        public int Key { get; set; }
+
+        // ------------------------------------------------------------------------
+
+        short signature;     // reduced size to save memory 
         char        type;          // what type of object this is... robot, weapon, hostage, powerup, fireball 
         char        id;            // which form of object...which powerup, robot, etc. 
         byte        control_type;  // how this object is controlled 
@@ -24,5 +28,15 @@ namespace DLE.NET
         MType       mtype;
         CType       ctype;
         RType       rtype;
+
+        // ------------------------------------------------------------------------
+
+        public GameObject (int key = 0)
+        {
+            Key = key;
+        }
+
+        // ------------------------------------------------------------------------
+
     }
 }

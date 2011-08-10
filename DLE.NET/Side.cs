@@ -26,7 +26,7 @@ namespace DLE.NET
 
         public void Setup ()
         {
-            m_nWall = DLE.Mine.NO_WALL;
+            m_nWall = GameMine.NO_WALL;
             m_nBaseTex =
             m_nOvlTex = 0;
             for (int i = 0; i < 4; i++)
@@ -158,7 +158,7 @@ namespace DLE.NET
 
         public Wall Wall
         {
-            get { return (m_nWall == DLE.Mine.NO_WALL) ? null : DLE.Mine.Walls [m_nWall]; }
+            get { return (m_nWall == GameMine.NO_WALL) ? null : DLE.Walls [m_nWall]; }
         }
 
         // ------------------------------------------------------------------------
@@ -166,6 +166,16 @@ namespace DLE.NET
         public bool IsTextured
         {
             get { return (m_nChild == -1) || (m_nWall < DLE.Mine.Info.walls.count && DLE.Mine.Walls [m_nWall].m_type != Wall.Type.OPEN); }
+        }
+
+        // ------------------------------------------------------------------------
+
+        public bool UpdateChild (short nOldChild, short nNewChild)
+        {
+        if (m_nChild != nOldChild)
+	        return false;
+        m_nChild = nNewChild;
+        return true;
         }
 
         // ------------------------------------------------------------------------

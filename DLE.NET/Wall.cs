@@ -96,6 +96,13 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public Wall (int key = 0)
+        {
+            Key = key;
+        }
+
+        // ------------------------------------------------------------------------
+
         public void Read (BinaryReader fp, int version, bool bFlag)
         {
             m_nSegment = (short) fp.ReadInt32 ();

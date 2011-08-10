@@ -82,7 +82,7 @@ namespace DLE.NET
 
         public void Blend (BGRA other)
         {
-            if (DLE.PaletteManager.SuperTransp (other))
+            if (DLE.Palettes.SuperTransp (other))
                 r =
                 g =
                 b =
