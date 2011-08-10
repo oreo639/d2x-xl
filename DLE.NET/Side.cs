@@ -30,7 +30,10 @@ namespace DLE.NET
             m_nBaseTex =
             m_nOvlTex = 0;
             for (int i = 0; i < 4; i++)
+            {
+                m_uvls [i] = new UVL ();
                 m_uvls [i].l = (ushort)GameMine.DEFAULT_LIGHTING;
+            }
         }
 
         // ------------------------------------------------------------------------

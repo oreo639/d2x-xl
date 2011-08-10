@@ -9,9 +9,9 @@ namespace DLE.NET
     {
         // ------------------------------------------------------------------------
 
-        public MineItemInfo m_info;
+        public MineItemInfo m_info = new MineItemInfo ();
 
-        Trigger [] m_triggers = new Trigger [GameMine.MAX_WALLS];
+        Trigger [] m_triggers = new Trigger [GameMine.MAX_TRIGGERS];
 
         // ------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ namespace DLE.NET
         public TriggerManager ()
         {
             Count = 0;
-            for (int i = 0; i < GameMine.MAX_WALLS; i++)
+            for (int i = 0; i < GameMine.MAX_TRIGGERS; i++)
                 Triggers [i] = new Trigger (i);
         }
 

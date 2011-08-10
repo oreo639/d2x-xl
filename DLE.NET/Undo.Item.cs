@@ -17,7 +17,7 @@ namespace DLE.NET
 
 		public UndoItem () {}
 
-        public ~UndoItem () { Destroy (); }
+        ~UndoItem () { Destroy (); }
         
         // ------------------------------------------------------------------------
 

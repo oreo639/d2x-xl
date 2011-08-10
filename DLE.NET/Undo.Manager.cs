@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DLE.NET
 {
-    class UndoManager
+    public partial class UndoManager
     {
         //------------------------------------------------------------------------------
 

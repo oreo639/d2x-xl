@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using DLE.NET.GameMine;
 
 namespace DLE.NET
 {
@@ -51,8 +50,8 @@ namespace DLE.NET
         // ------------------------------------------------------------------------
 
         public int Key { get; set; }
-        public IGameItem.ItemType ItemType { get; set; }
-        public IGameItem.EditType EditType { get; set; }
+        public uint ItemType { get; set; }
+        public uint EditType { get; set; }
         public IGameItem Parent { get; set; }
         public IGameItem Link { get; set; }
 
@@ -73,7 +72,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public void Clear ()
+        new public void Clear ()
         {
             base.Clear ();
             Status = 0;

@@ -352,6 +352,7 @@ namespace DLE.NET
         m_childFlags = 0;
         m_wallFlags = 0; 
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+            m_sides [i] = new Side ();
 	        m_sides [i].Setup (); 
 	        SetUV (i, 0, 0); 
 	        SetChild (i, -1);
@@ -373,7 +374,7 @@ namespace DLE.NET
 
             // copy side's four points into A
             for (i = 0; i < 4; i++)
-	            A [i] = DLE.Mine.Vertices [m_verts [GameTables.sideVertTable [nSide,i]]] as DoubleVector;
+	            A [i] = DLE.Vertices [m_verts [GameTables.sideVertTable [nSide,i]]] as DoubleVector;
 
             // subtract point 0 from all points in A to form B points
             for (i = 0; i < 4; i++) 
@@ -386,7 +387,7 @@ namespace DLE.NET
             sinAngle = Math.Sin (angle);
             cosAngle = Math.Cos (angle);
             for (i = 0; i < 4; i++) 
-	            C [i].Set (B [i].v.x, B [i].v.y * cosAngle + B [i].v.z * sinAngle, -B [i].v.y * sinAngle + B [i].v.z * cosAngle); 
+	            C [i] = new DoubleVector (B [i].v.x, B [i].v.y * cosAngle + B [i].v.z * sinAngle, -B [i].v.y * sinAngle + B [i].v.z * cosAngle); 
 
             // calculate angle to put point 1 on x axis by spinning on z - axis
             // then rotate C points on z - axis to form D points
@@ -395,14 +396,14 @@ namespace DLE.NET
             sinAngle = Math.Sin (angle);
             cosAngle = Math.Cos (angle);
             for (i = 0; i < 4; i++)
-	            D [i].Set (C [i].v.x * cosAngle + C [i].v.y * sinAngle, -C [i].v.x * sinAngle + C [i].v.y * cosAngle, C [i].v.z); 
+                D [i] = new DoubleVector (C [i].v.x * cosAngle + C [i].v.y * sinAngle, -C [i].v.x * sinAngle + C [i].v.y * cosAngle, C [i].v.z); 
 
             // calculate angle to put point 2 in x - y plane by spinning on x - axis
             // the rotate D points on x - axis to form E points
             // check to see if on x - axis already
             angle = Math.Atan2 (D [2].v.z, D [2].v.y); 
-            for (i = 0; i < 4; i++) 
-	            E [i].Set (D [i].v.x, D [i].v.y * Math.Cos (angle) + D [i].v.z * Math.Sin (angle), -D [i].v.y * Math.Sin (angle) + D [i].v.z * Math.Cos (angle)); 
+            for (i = 0; i < 4; i++)
+                E [i] = new DoubleVector (D [i].v.x, D [i].v.y * Math.Cos (angle) + D [i].v.z * Math.Sin (angle), -D [i].v.y * Math.Sin (angle) + D [i].v.z * Math.Cos (angle)); 
 
             // now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
             // set v to x axis and u to negative u axis to match default (u, v)

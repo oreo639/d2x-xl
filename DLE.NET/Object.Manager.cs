@@ -9,7 +9,7 @@ namespace DLE.NET
     {
         // ------------------------------------------------------------------------
 
-        public MineItemInfo m_info;
+        public MineItemInfo m_info = new MineItemInfo ();
 
         GameObject [] m_objects = new GameObject [GameMine.MAX_OBJECTS];
 
@@ -36,7 +36,7 @@ namespace DLE.NET
         public ObjectManager ()
         {
             Count = 0;
-            for (int i = 0; i < GameMine.MAX_WALLS; i++)
+            for (int i = 0; i < GameMine.MAX_OBJECTS; i++)
                 Objects [i] = new GameObject (i);
         }
 

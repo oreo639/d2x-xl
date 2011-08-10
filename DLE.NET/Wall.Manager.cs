@@ -9,7 +9,7 @@ namespace DLE.NET
     {
         // ------------------------------------------------------------------------
 
-        public MineItemInfo m_info;
+        public MineItemInfo m_info = new MineItemInfo ();
 
         Wall [] m_walls = new Wall [GameMine.MAX_WALLS];
 
@@ -44,7 +44,7 @@ namespace DLE.NET
 
         public Wall this [int i]
         {
-            get { return Walls [i]; }
+            get { return (i < 0) ? null : Walls [i]; }
             set { Walls [i] = value; }
         }
 

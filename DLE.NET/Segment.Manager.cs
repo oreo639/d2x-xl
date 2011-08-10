@@ -8,7 +8,7 @@ namespace DLE.NET
     {
         // ------------------------------------------------------------------------
 
-        public MineItemInfo m_info;
+        public MineItemInfo m_info = new MineItemInfo ();
 
         Segment [] m_segments = new Segment [GameMine.MAX_SEGMENTS];
 

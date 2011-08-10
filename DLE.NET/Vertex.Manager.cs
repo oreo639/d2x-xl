@@ -6,11 +6,11 @@ using System.IO;
 
 namespace DLE.NET
 {
-    class VertexManager
+    public partial class VertexManager
     {
         #region data
 
-        public MineItemInfo m_info;
+        public MineItemInfo m_info = new MineItemInfo ();
 
         public const int MAX_VERTICES_D1 = 2808; // descent 1 max # of vertices
         public const int MAX_VERTICES_D2 = (GameMine.MAX_SEGMENTS_D2 * 4 + 8); // descent 2 max # of vertices

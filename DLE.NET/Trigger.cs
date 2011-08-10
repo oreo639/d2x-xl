@@ -28,7 +28,23 @@ namespace DLE.NET
 
         public TargetList ()
         {
+            for (int i = 0; i < MAX_TARGETS; i++)
+                m_targets [i] = new SideKey ();
             Clear ();
+        }
+
+        // ------------------------------------------------------------------------
+
+        public SideKey this [int i]
+        {
+            get
+            {
+                return m_targets [i];
+            }
+            set
+            {
+                m_targets [i] = value;
+            }
         }
 
         // ------------------------------------------------------------------------
