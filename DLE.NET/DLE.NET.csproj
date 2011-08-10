@@ -137,7 +137,9 @@
     <Compile Include="Object.Manager.cs" />
     <Compile Include="PaletteManager.cs" />
     <Compile Include="Segment.Manager.cs" />
+    <Compile Include="Selection.cs" />
     <Compile Include="SideKey.cs" />
+    <Compile Include="Trigger.Manager.cs" />
     <Compile Include="Undo.Data.cs" />
     <Compile Include="Undo.Item.cs" />
     <Compile Include="Undo.Manager.cs" />

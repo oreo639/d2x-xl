@@ -17,6 +17,8 @@ namespace DLE.NET
         public static WallManager Walls { get { return wallManager; } }
         public static TriggerManager Triggers { get { return triggerManager; } }
         public static ObjectManager Objects { get { return objectManager; } }
+        public static Selection Current { get { return currentSelection; } }
+        public static Selection Other { get { return otherSelection; } }
 
         static GameMine theMine = new GameMine ();
         static Settings settings = new Settings ();
@@ -28,6 +30,8 @@ namespace DLE.NET
         public static WallManager wallManager = new WallManager ();
         public static TriggerManager triggerManager = new TriggerManager ();
         public static ObjectManager objectManager = new ObjectManager ();
+        public static Selection currentSelection = new Selection ();
+        public static Selection otherSelection = new Selection ();
 
         static public bool Modified { get; set; }
 

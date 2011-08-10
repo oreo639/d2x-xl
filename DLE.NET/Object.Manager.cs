@@ -44,7 +44,7 @@ namespace DLE.NET
 
         public GameObject this [int i]
         {
-            get { return Objects [i]; }
+            get { return (i < 0) ? null : Objects [i]; }
             set { Objects [i] = value; }
         }
 

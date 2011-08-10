@@ -44,8 +44,14 @@ namespace DLE.NET
 
         public Trigger this [int i]
         {
-            get { return Triggers [i]; }
-            set { Triggers [i] = value; }
+            get 
+            { 
+                return (i < 0) ? null : Triggers [i]; 
+            }
+            set 
+            { 
+                Triggers [i] = value; 
+            }
         }
 
         // ------------------------------------------------------------------------
