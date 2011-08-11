@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace DLE.NET
 {
@@ -182,6 +181,56 @@ namespace DLE.NET
         Segments [nSegment].Reset (nSide);
         DLE.Backup.End ();
         }
+
+        // ------------------------------------------------------------------------
+
+        public void SetLinesToDraw ()
+        {
+        for (short nSegment = 0; nSegment < Count; nSegment++) {
+            Segment seg = Segments [nSegment];
+	        seg.m_mapBitmask |= 0xFFF; 
+	        // if segment nSide has a child, clear bit for drawing line
+	        for (short nSide = 0; nSide < 6; nSide++) {
+		        if (seg.GetChild (nSide) > -1) { // -1 = no child,  - 2 = outside of world
+			        seg.m_mapBitmask &= (short) ~(1 << (GameTables.sideLineTable [nSide,0])); 
+			        seg.m_mapBitmask &= (short) ~(1 << (GameTables.sideLineTable [nSide,1])); 
+			        seg.m_mapBitmask &= (short) ~(1 << (GameTables.sideLineTable [nSide,2])); 
+			        seg.m_mapBitmask &= (short) ~(1 << (GameTables.sideLineTable [nSide,3])); 
+			        }
+		        }
+	        }
+        }
+
+        // ------------------------------------------------------------------------
+
+        public void CopyOtherSegment ()
+        {
+	        bool bChange = false;
+
+        if (DLE.Current.m_nSegment == DLE.Other.m_nSegment)
+	        return; 
+        short nSegment = DLE.Current.m_nSegment; 
+        Segment otherSeg = DLE.Other.Segment; 
+        DLE.Backup.Begin ((int) UndoData.UndoFlag.udSegments);
+        for (int nSide = 0; nSide < 6; nSide++)
+	        if (SetTextures (new SideKey (nSegment, nSide), otherSeg.m_sides [nSide].m_nBaseTex, otherSeg.m_sides [nSide].m_nOvlTex))
+		        bChange = true;
+        DLE.Backup.End ();
+        if (bChange)
+	        DLE.MineView.Refresh (); 
+        }
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
 
         // ------------------------------------------------------------------------
 

@@ -132,11 +132,13 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="KeyList.cs" />
+    <Compile Include="Light.Manager.cs" />
     <Compile Include="MineInfo.cs" />
     <Compile Include="MineView.cs" />
     <Compile Include="Object.Manager.cs" />
     <Compile Include="PaletteManager.cs" />
     <Compile Include="Segment.Manager.cs" />
+    <Compile Include="Segment.Manager.Textures.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="SideKey.cs" />
     <Compile Include="Trigger.Manager.cs" />
@@ -152,11 +154,11 @@
     <Compile Include="MissionTool.Designer.cs">
       <DependentUpon>MissionTool.cs</DependentUpon>
     </Compile>
-    <Compile Include="ObjectTool.cs">
+    <Compile Include="Object.Tool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ObjectTool.Designer.cs">
-      <DependentUpon>ObjectTool.cs</DependentUpon>
+    <Compile Include="Object.Tool.Designer.cs">
+      <DependentUpon>Object.Tool.cs</DependentUpon>
     </Compile>
     <Compile Include="PreferencesForm.cs">
       <SubType>Form</SubType>
@@ -186,25 +188,25 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Side.cs" />
     <Compile Include="Texture.cs" />
-    <Compile Include="TextureFilter.cs" />
-    <Compile Include="TextureFilterTool.cs">
+    <Compile Include="Texture.Filter.cs" />
+    <Compile Include="Texture.Filter.Tool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TextureFilterTool.Designer.cs">
-      <DependentUpon>TextureFilterTool.cs</DependentUpon>
+    <Compile Include="Texture.Filter.Tool.Designer.cs">
+      <DependentUpon>Texture.Filter.Tool.cs</DependentUpon>
     </Compile>
-    <Compile Include="TextureManager.cs" />
-    <Compile Include="TextureTool.cs">
+    <Compile Include="Texture.Manager.cs" />
+    <Compile Include="Texture.Tool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TextureTool.Designer.cs">
-      <DependentUpon>TextureTool.cs</DependentUpon>
+    <Compile Include="Texture.Tool.Designer.cs">
+      <DependentUpon>Texture.Tool.cs</DependentUpon>
     </Compile>
-    <Compile Include="TextureWindow.cs">
+    <Compile Include="Texture.Window.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TextureWindow.Designer.cs">
-      <DependentUpon>TextureWindow.cs</DependentUpon>
+    <Compile Include="Texture.Window.Designer.cs">
+      <DependentUpon>Texture.Window.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolWindow.cs">
       <SubType>Form</SubType>
@@ -212,11 +214,11 @@
     <Compile Include="ToolWindow.Designer.cs">
       <DependentUpon>ToolWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="LightTool.cs">
+    <Compile Include="Light.Tool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LightTool.Designer.cs">
-      <DependentUpon>LightTool.cs</DependentUpon>
+    <Compile Include="Light.Tool.Designer.cs">
+      <DependentUpon>Light.Tool.cs</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
@@ -234,21 +236,21 @@
     </Compile>
     <Compile Include="Trigger.cs" />
     <Compile Include="Trigger.Enums.cs" />
-    <Compile Include="TriggerTool.cs">
+    <Compile Include="Trigger.Tool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TriggerTool.Designer.cs">
-      <DependentUpon>TriggerTool.cs</DependentUpon>
+    <Compile Include="Trigger.Tool.Designer.cs">
+      <DependentUpon>Trigger.Tool.cs</DependentUpon>
     </Compile>
     <Compile Include="UVL.cs" />
     <Compile Include="Vertex.Manager.cs" />
     <Compile Include="Wall.cs" />
     <Compile Include="Wall.Manager.cs" />
-    <Compile Include="WallTool.cs">
+    <Compile Include="Wall.Tool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WallTool.Designer.cs">
-      <DependentUpon>WallTool.cs</DependentUpon>
+    <Compile Include="Wall.Tool.Designer.cs">
+      <DependentUpon>Wall.Tool.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="DiagnosisTool.resx">
       <DependentUpon>DiagnosisTool.cs</DependentUpon>
@@ -258,8 +260,8 @@
       <DependentUpon>EffectTool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LightTool.resx">
-      <DependentUpon>LightTool.cs</DependentUpon>
+    <EmbeddedResource Include="Light.Tool.resx">
+      <DependentUpon>Light.Tool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
@@ -270,8 +272,8 @@
       <DependentUpon>MissionTool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ObjectTool.resx">
-      <DependentUpon>ObjectTool.cs</DependentUpon>
+    <EmbeddedResource Include="Object.Tool.resx">
+      <DependentUpon>Object.Tool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PreferencesForm.resx">
@@ -295,28 +297,28 @@
       <DependentUpon>Segment.Tool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TextureFilterTool.resx">
-      <DependentUpon>TextureFilterTool.cs</DependentUpon>
+    <EmbeddedResource Include="Texture.Filter.Tool.resx">
+      <DependentUpon>Texture.Filter.Tool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TextureTool.resx">
-      <DependentUpon>TextureTool.cs</DependentUpon>
+    <EmbeddedResource Include="Texture.Tool.resx">
+      <DependentUpon>Texture.Tool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TextureWindow.resx">
-      <DependentUpon>TextureWindow.cs</DependentUpon>
+    <EmbeddedResource Include="Texture.Window.resx">
+      <DependentUpon>Texture.Window.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ToolWindow.resx">
       <DependentUpon>ToolWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TriggerTool.resx">
-      <DependentUpon>TriggerTool.cs</DependentUpon>
+    <EmbeddedResource Include="Trigger.Tool.resx">
+      <DependentUpon>Trigger.Tool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="WallTool.resx">
-      <DependentUpon>WallTool.cs</DependentUpon>
+    <EmbeddedResource Include="Wall.Tool.resx">
+      <DependentUpon>Wall.Tool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">

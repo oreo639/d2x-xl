@@ -12,8 +12,8 @@ namespace DLE.NET
 
     public class TextureManager
     {
-        public const int MAX_TEXTURES_D1 = 584;
-        public const int MAX_TEXTURES_D2 = 910;
+        public static int MAX_TEXTURES_D1 = 584;
+        public static int MAX_TEXTURES_D2 = 910;
 
         public int MaxTextures { get { return DLE.IsD1File ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2; } }
         public int Version { get { return DLE.IsD1File ? 0 : 1; } }

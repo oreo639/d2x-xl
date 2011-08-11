@@ -128,7 +128,15 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public bool SetTexture (ushort nNewBaseTex, ushort nNewOvlTex)
+        public void GetTextures (out short nBaseTex, out short nOvlTex)
+        {
+        nBaseTex = (short) m_nBaseTex;
+        nOvlTex = (short) (m_nOvlTex & 0x1FFF);
+        }
+
+        // ------------------------------------------------------------------------
+
+        public bool SetTextures (ushort nNewBaseTex, ushort nNewOvlTex)
         {
 	        bool bChange = false;
 

@@ -108,7 +108,7 @@ namespace DLE.NET
 	        }
 
         DLE.Backup.End ();
-        //DLE.MineView.Refresh ();
+        DLE.MineView.Refresh ();
         UpdateReactor ();
         }
 
