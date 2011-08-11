@@ -191,7 +191,30 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public bool DeleteVariableLight (SideKey key) 
+        {
+        DLE.Current.Get (key);
+        short index = VariableLight (key);
+        if (index == -1)
+	        return false;
+        DeleteVariableLight (index);
+        return true;
+        }
+
         // ------------------------------------------------------------------------
+
+        public void DeleteVariableLight (short index, bool bUndo = false) 
+        {
+        if (index > -1) {
+	        DLE.Backup.Begin ((int) UndoData.UndoFlag.udVariableLights);
+	        if (index < --Count) {
+                VariableLight temp = VariableLights [index];
+                VariableLights [index] = VariableLights [Count];
+                VariableLights [Count] = temp;
+                }
+	        DLE.Backup.End ();
+	        }
+        }
 
         // ------------------------------------------------------------------------
 

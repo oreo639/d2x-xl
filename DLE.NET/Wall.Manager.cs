@@ -131,7 +131,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void CheckForDoor (SideKey key) 
+        public void CheckForDoor (SideKey key) 
         {
         if (DLE.ExpertMode)
 	        return;
@@ -151,6 +151,22 @@ namespace DLE.NET
 			           Hint: To change the door animation,\n
 			           select 'Wall edit...' from the Tools\n
 			           menu and change the clip number.");
+        }
+
+        // ------------------------------------------------------------------------
+
+        public bool ClipFromTexture (SideKey key)
+        {
+        Wall wall = DLE.Segments.Wall (key);
+
+        if ((wall == null) || !wall.IsDoor)
+	        return true;
+
+        short nBaseTex, nOvlTex;
+
+        DLE.Segments.Textures (key, out nBaseTex, out nOvlTex);
+
+        return (wall.SetClip (nOvlTex) >= 0) || (wall.SetClip (nBaseTex) >= 0);
         }
 
         // ------------------------------------------------------------------------
