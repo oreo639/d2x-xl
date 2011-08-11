@@ -58,6 +58,7 @@
         public const int TRIGGER_LIMIT = MAX_TRIGGERS_D2;
 
         public const int MAX_OBJ_TRIGGERS = 254;
+        public const int MAX_REACTOR_TRIGGERS = 10;
         public const int MAX_TRIGGER_FLAGS = 12;
         public const int NO_TRIGGER = 255;
 

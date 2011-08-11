@@ -2,26 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace DLE.NET
 {
-    class ReactorTrigger : TriggerTarget, IGameItem {
+    class ReactorTrigger : TriggerTargets, IGameItem 
     {
-class CReactorTrigger : public CTriggerTargets, public CGameItem {
-	public:
+        // ------------------------------------------------------------------------
 
-		void Read (CFileManager* fp = 0, bool bFlag = false);
+		public void Read (BinaryReader fp = null, bool bFlag = false)
+        {
+        }
 
-		void Write (CFileManager* fp = 0, bool bFlag = false);
+        // ------------------------------------------------------------------------
 
-		virtual void Clear (void) { CTriggerTargets::Clear (); }
+		void Write (BinaryWriter fp = null, bool bFlag = false)
+        {
+        }
 
-		virtual CGameItem* Clone (void);
+        // ------------------------------------------------------------------------
 
-		virtual void Backup (eEditType editType = opModify);
+		void Clear () 
+        { 
+            base.Clear (); 
+        }
 
-		virtual CGameItem* Copy (CGameItem* destP);
-};
+        // ------------------------------------------------------------------------
 
     }
 }

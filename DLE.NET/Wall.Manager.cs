@@ -111,6 +111,16 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public Wall FindBySide (SideKey key, int i = 0)
+        {
+        for (; i < Count; i++)
+	        if (Walls [i] == key)
+		        return Walls [i];
+        return null;
+        }
+
+        // ------------------------------------------------------------------------
+
         public Wall FindByTrigger (short nTrigger, int i = 0)
         {
         for (; i < Count; i++)

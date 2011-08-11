@@ -10,8 +10,10 @@ namespace DLE.NET
         // ------------------------------------------------------------------------
 
         public MineItemInfo [] m_info = new MineItemInfo [2] {new MineItemInfo (), new MineItemInfo ()};
+        public MineItemInfo m_reactorInfo = new MineItemInfo ();
 
         Trigger [][] m_triggers = new Trigger [2][] {new Trigger [GameMine.MAX_TRIGGERS], new Trigger [GameMine.MAX_TRIGGERS]};
+        ReactorTrigger [] m_reactorTriggers = new ReactorTrigger [GameMine.MAX_REACTOR_TRIGGERS];
 
         // ------------------------------------------------------------------------
 
@@ -27,6 +29,12 @@ namespace DLE.NET
             set { m_info [1].count = value; }
         }
 
+        public int ReactorTriggerCount
+        {
+            get { return m_reactorInfo.count; }
+            set { m_reactorInfo.count = value; }
+        }
+
         public int FileOffset
         {
             get { return m_info [0].offset; }
@@ -38,6 +46,8 @@ namespace DLE.NET
         public Trigger [] WallTriggers { get { return m_triggers [0]; } }
 
         public Trigger [] ObjTriggers { get { return m_triggers [1]; } }
+
+        public ReactorTrigger [] ReactorTriggers { get { return m_reactorTriggers; } }
 
         // ------------------------------------------------------------------------
 
@@ -104,7 +114,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void DeleteTargets (SideKey key) 
+        public void DeleteTargets (SideKey key) 
         {
             DLE.Backup.Begin ((int) UndoData.UndoFlag.udTriggers);
             int i;
@@ -113,7 +123,25 @@ namespace DLE.NET
 
         for (i = ObjTriggerCount; i > 0; )
 	        if (ObjTriggers [--i].Delete (key) == 0) // no targets left
-		        DeleteFromObject (i);
+		        DeleteFromObject ((short) i);
+        DLE.Backup.End ();
+        }
+
+        // ------------------------------------------------------------------------
+
+        void DeleteFromObject (short nDelTrigger) 
+        {
+            if ((nDelTrigger < 0) || (nDelTrigger >= ObjTriggerCount))
+	            return;
+            DLE.Backup.Begin ((int) UndoData.UndoFlag.udTriggers);
+            if (nDelTrigger < --ObjTriggerCount)
+            {
+                Trigger temp = ObjTriggers [nDelTrigger];
+                ObjTriggers [nDelTrigger] = ObjTriggers [ObjTriggerCount];
+                ObjTriggers [ObjTriggerCount] = temp;
+                ObjTriggers [nDelTrigger].Key = nDelTrigger;
+                ObjTriggers [ObjTriggerCount].Key = ObjTriggerCount;
+            }
         DLE.Backup.End ();
         }
 
@@ -127,32 +155,34 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void UpdateReactor (void) 
+        public void UpdateReactor () 
         {
-          ReactorTrigger reactorTrigger = ReactorTriggers [0];	// only one reactor trigger per level
+            ReactorTrigger reactorTrigger = ReactorTriggers [0];	// only one reactor trigger per level
 
-        undoManager.Begin (udTriggers);
-        // remove items from list that do not point to a wall
-        for (short nTarget = 0; nTarget < reactorTrigger->Count (); nTarget++) {
-	        if (!wallManager.FindBySide ((*reactorTrigger) [nTarget]))
-		        reactorTrigger->Delete (nTarget);
-	        }
-        // add any exits to target list that are not already in it
-        for (CWallIterator wi; wi; wi++) {
-	        CWall* wallP = &(*wi);
-	        CTrigger* trigP = wallP->Trigger ();
-	        if (trigP == null)
-		        continue;
-	        bool bExit = trigP->IsExit (false);
-	        bool bFound = (reactorTrigger->Find (*wallP) >= 0);
-	        if (bFound == bExit)
-		        continue;
-	        if (bExit)
-		        reactorTrigger->Add (*wallP);
-	        else 
-		        reactorTrigger->Delete (*wallP);
-	        }
-        undoManager.End ();
+            DLE.Backup.Begin ((int) UndoData.UndoFlag.udTriggers);
+            // remove items from list that do not point to a wall
+            for (short nTarget = 0; nTarget < ReactorTriggerCount; nTarget++) {
+	            if (DLE.Walls.FindBySide (reactorTrigger [nTarget]) == null)
+		            reactorTrigger.Delete (nTarget);
+	            }
+            // add any exits to target list that are not already in it
+
+            for (int i = 0; i < DLE.Walls.Count; i++)
+            {
+                Wall wall = DLE.Walls [i];
+                Trigger trig = wall.Trigger;
+	            if (trig == null)
+		            continue;
+	            bool bExit = trig.IsExit (false);
+	            bool bFound = (reactorTrigger.Find (wall) >= 0);
+	            if (bFound == bExit)
+		            continue;
+	            if (bExit)
+		            reactorTrigger.Add (wall);
+	            else 
+		            reactorTrigger.Delete (wall);
+	            }
+            DLE.Backup.End ();
         }
 
         // ------------------------------------------------------------------------

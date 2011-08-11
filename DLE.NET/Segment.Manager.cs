@@ -156,7 +156,7 @@ namespace DLE.NET
         {
             Side [] sides = Segments [nSegment].m_sides;
             for (int i = 0; i < 6; i++)
-                DLE.Walls.Delete (sides [i].m_nWall);
+                DLE.Walls.Delete ((short) sides [i].m_nWall);
         }
 
         // ------------------------------------------------------------------------

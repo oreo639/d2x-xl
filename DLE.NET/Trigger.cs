@@ -11,26 +11,13 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
+        Flag m_flags;
         Type m_type;
         Properties m_props;
         short m_nObject;
         int m_value;
         int m_time;
         ushort m_nIndex;
-
-        // ------------------------------------------------------------------------
-
-        public SideKey this [int i]
-        {
-            get
-            {
-                return m_targets [i];
-            }
-            set
-            {
-                m_targets [i] = value;
-            }
-        }
 
         //------------------------------------------------------------------------------
 
@@ -126,6 +113,15 @@ namespace DLE.NET
 	        fp.Write (Count);
 	        }
         base.Write (fp);
+        }
+
+        // ------------------------------------------------------------------------
+
+        public bool IsExit (bool bSecret)
+        {
+            return DLE.IsD1File
+                     ? (m_flags & (Flag.EXIT | Flag.SECRET_EXIT)) != 0
+                     : (m_type == Type.EXIT) || (bSecret && (m_type == Type.SECRET_EXIT));
         }
 
         //------------------------------------------------------------------------
