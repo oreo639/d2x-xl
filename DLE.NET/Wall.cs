@@ -176,6 +176,39 @@ namespace DLE.NET
             m_nTrigger = (byte) nTrigger;
         }
 
+        //------------------------------------------------------------------------------
+
+        public bool IsDoor
+        {
+            get { return (m_type == Type.BLASTABLE) || (m_type == Type.DOOR); }
+        }
+
+        //------------------------------------------------------------------------------
+
+        public bool IsVisible
+        {
+            get { return (m_type != Type.OPEN); }
+        }
+
+        //------------------------------------------------------------------------------
+
+        public bool IsVariable
+        {
+            get
+            {
+                Trigger trig = Trigger;
+                if (trig == null)
+                    return false;
+                Trigger.Types trigType = trig.Type;
+                return (trigType == Trigger.Types.ILLUSION_OFF) ||
+                       (trigType == Trigger.Types.ILLUSION_ON) ||
+                       (trigType == Trigger.Types.CLOSE_WALL) ||
+                       (trigType == Trigger.Types.OPEN_WALL) ||
+                       (trigType == Trigger.Types.LIGHT_OFF) ||
+                       (trigType == Trigger.Types.LIGHT_ON);
+            }
+        }
+
         // ------------------------------------------------------------------------
 
     }

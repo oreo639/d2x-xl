@@ -100,6 +100,10 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public VariableLight[] VariableLights { get { return m_variableLights; } }
+
+        // ------------------------------------------------------------------------
+
         public int Count
         {
             get { return m_nCount; }
@@ -181,7 +185,7 @@ namespace DLE.NET
                 if (VariableLights [i] == key)
                     break;
             if (i > 0)
-                return Count () - i;
+                return (short) (Count - i);
             return -1;
         }
 

@@ -131,5 +131,29 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        void CheckForDoor (SideKey key) 
+        {
+        if (DLE.ExpertMode)
+	        return;
+
+        DLE.Current.Get (key);
+        Wall wall = DLE.Segments.Wall (key);
+
+        if (wall == null)
+         return;
+        if (!wall.IsDoor)
+	        return;
+
+        DLE.ErrorMsg (@"Changing the texture of a door only affects\n
+			           how the door will look before it is opened.\n
+			           You can use this trick to hide a door\n
+			           until it is used for the first time.\n\n
+			           Hint: To change the door animation,\n
+			           select 'Wall edit...' from the Tools\n
+			           menu and change the clip number.");
+        }
+
+        // ------------------------------------------------------------------------
+
     }
 }

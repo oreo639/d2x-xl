@@ -11,13 +11,23 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        Flag m_flags;
-        Type m_type;
+        Flags m_flags;
+        Types m_type;
         Properties m_props;
         short m_nObject;
         int m_value;
         int m_time;
         ushort m_nIndex;
+
+        //------------------------------------------------------------------------------
+
+        public Flags Flag { get { return m_flags; } }
+        public Types Type { get { return m_type; } }
+        public Properties Props { get { return m_props; } }
+        public short Object { get { return m_nObject; } }
+        public int Value { get { return m_value; } }
+        public int Time { get { return m_time; } }
+        public ushort Index { get { return m_nIndex; } }
 
         //------------------------------------------------------------------------------
 
@@ -30,13 +40,13 @@ namespace DLE.NET
 
         void Setup (short type, short props)
         {
-        m_type = (Type) type;
+        m_type = (Types) type;
         m_props = (Properties) props;
-        if (m_type == Type.SPEEDBOOST)
+        if (m_type == Types.SPEEDBOOST)
 	        m_value = 10;
-        else if ((m_type == Type.CHANGE_TEXTURE) || (m_type == Type.MASTER))
+        else if ((m_type == Types.CHANGE_TEXTURE) || (m_type == Types.MASTER))
 	        m_value = 0;
-        else if ((m_type == Type.MESSAGE) || (m_type == Type.SOUND))
+        else if ((m_type == Types.MESSAGE) || (m_type == Types.SOUND))
 	        m_value = 1;
         else 	
 	        m_value = FixConverter.I2X (5); // 5% shield or energy damage
@@ -63,19 +73,19 @@ namespace DLE.NET
         public void Read (BinaryReader fp, int version, bool bObjTrigger)
         {
         if (DLE.IsD2File) {
-	       m_type = (Type) fp.ReadByte ();
+	       m_type = (Types) fp.ReadByte ();
 	       m_props = (Properties) (bObjTrigger ? fp.ReadUInt16 () : fp.ReadByte ());
 	       Count = fp.ReadByte ();
 	       fp.ReadByte (); // skip byte
 	       m_value = fp.ReadInt32 ();
-	        if ((DLE.LevelVersion < 21) && (m_type == Type.EXIT))
+	        if ((DLE.LevelVersion < 21) && (m_type == Types.EXIT))
 		       m_value = 0;
-	        if ((version < 39) && (m_type == Type.MASTER))
+	        if ((version < 39) && (m_type == Types.MASTER))
 		       m_value = 0;
 	       m_time = fp.ReadInt32 ();
 	        }
         else {
-	       m_type = (Type) fp.ReadByte ();
+	       m_type = (Types) fp.ReadByte ();
 	       m_props = (Properties) fp.ReadInt16 ();
 	       m_value = fp.ReadInt32 ();
 	       m_time = fp.ReadInt32 ();
@@ -120,8 +130,8 @@ namespace DLE.NET
         public bool IsExit (bool bSecret)
         {
             return DLE.IsD1File
-                     ? (m_flags & (Flag.EXIT | Flag.SECRET_EXIT)) != 0
-                     : (m_type == Type.EXIT) || (bSecret && (m_type == Type.SECRET_EXIT));
+                     ? (m_flags & (Flags.EXIT | Flags.SECRET_EXIT)) != 0
+                     : (m_type == Types.EXIT) || (bSecret && (m_type == Types.SECRET_EXIT));
         }
 
         //------------------------------------------------------------------------

@@ -3,7 +3,7 @@ namespace DLE.NET
 {
     partial class Trigger
     {
-        enum Flag : ushort
+        public enum Flags : ushort
         {
         CONTROL_DOORS = 1,	// Control Trigger 
         SHIELD_DAMAGE = 2,	// Shield Damage Trigger 
@@ -20,7 +20,7 @@ namespace DLE.NET
         MAKE_ILLUSIONARY = 4096
         }
 
-        enum Type : byte
+        public enum Types : byte
         {
             OPEN_DOOR = 0,  // Open a door
             CLOSE_DOOR = 1,  // Close a door
@@ -61,7 +61,7 @@ namespace DLE.NET
             ENERGY_DRAIN = 101    // added to support d1 energy drain
         }
 
-        enum Properties : ushort
+        public enum Properties : ushort
         {
             // Descent 1
             CONTROL_DOORS = 1, // Control Trigger 

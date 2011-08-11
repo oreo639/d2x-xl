@@ -212,8 +212,8 @@ namespace DLE.NET
         short nSegment = DLE.Current.m_nSegment; 
         Segment otherSeg = DLE.Other.Segment; 
         DLE.Backup.Begin ((int) UndoData.UndoFlag.udSegments);
-        for (int nSide = 0; nSide < 6; nSide++)
-	        if (SetTextures (new SideKey (nSegment, nSide), otherSeg.m_sides [nSide].m_nBaseTex, otherSeg.m_sides [nSide].m_nOvlTex))
+        for (short nSide = 0; nSide < 6; nSide++)
+            if (SetTextures (new SideKey (nSegment, nSide), (short)otherSeg.m_sides [nSide].m_nBaseTex, (short)otherSeg.m_sides [nSide].m_nOvlTex))
 		        bChange = true;
         DLE.Backup.End ();
         if (bChange)

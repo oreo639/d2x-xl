@@ -48,6 +48,17 @@ namespace DLE.NET
 
         public static String[] descentPath = new String [2] { "", "" };
 
+        static bool m_bExpertMode = true;
+
+        public static bool ExpertMode
+        {
+            get { return m_bExpertMode; }
+            set { m_bExpertMode = value; }
+        }
+
+        public static void ErrorMsg (String msg)
+        {
+        }
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
