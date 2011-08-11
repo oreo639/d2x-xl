@@ -6,23 +6,25 @@ using System.IO;
 
 namespace DLE.NET
 {
-    class ReactorTrigger : TriggerTargets, IGameItem 
+    public class ReactorTrigger : TriggerTargets, IGameItem 
     {
+        public int Key { get; set; }
+
         // ------------------------------------------------------------------------
 
-		public void Read (BinaryReader fp = null, bool bFlag = false)
+		public void Read (BinaryReader fp = null, int version = 0, bool bFlag = false)
         {
         }
 
         // ------------------------------------------------------------------------
 
-		void Write (BinaryWriter fp = null, bool bFlag = false)
+        public void Write (BinaryWriter fp = null, int version = 0, bool bFlag = false)
         {
         }
 
         // ------------------------------------------------------------------------
 
-		void Clear () 
+		public void Clear () 
         { 
             base.Clear (); 
         }
