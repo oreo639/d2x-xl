@@ -37,7 +37,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public UVL (ushort u, ushort v, ushort l)
+        public UVL (ushort u = 0, ushort v = 0, ushort l = 0)
         {
             this.u = u;
             this.v = v;

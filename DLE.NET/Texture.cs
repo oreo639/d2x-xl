@@ -346,7 +346,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        double Scale (short nTexture)
+        public double Scale (short nTexture)
         {
             return (m_width > 0) ? m_width / 64.0 : 1.0;
         }
