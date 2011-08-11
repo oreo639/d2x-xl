@@ -100,22 +100,6 @@ namespace DLE.NET
         }
 
         // ------------------------------------------------------------------------
-        // recompute vertex indices of all segments after a vertex has been deleted
-        // and the last valid vertex has been moved to the deleted vertex' place:
-        // Each vertex index == nOldIndex will be set to nNewIndex
-
-        public void UpdateVertices (short nOldIndex, short nNewIndex)
-        {
-            for (int i = 0; i < Count; i++)
-            {
-                short [] verts = m_segments [i].m_verts;
-                for (int j = 0; j < 8; j++)
-                    if (verts [j] == nOldIndex)
-                        verts [j] = nNewIndex;
-            }
-        }
-
-        // ------------------------------------------------------------------------
 
         public Side OppositeSide (SideKey key, SideKey opp)
         {
@@ -160,8 +144,44 @@ namespace DLE.NET
         }
 
         // ------------------------------------------------------------------------
+        // recompute vertex indices of all segments after a vertex has been deleted
+        // and the last valid vertex has been moved to the deleted vertex' place:
+        // Each vertex index == nOldIndex will be set to nNewIndex
+
+        public void UpdateVertices (short nOldIndex, short nNewIndex)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                short [] verts = m_segments [i].m_verts;
+                for (int j = 0; j < 8; j++)
+                    if (verts [j] == nOldIndex)
+                        verts [j] = nNewIndex;
+            }
+        }
 
         // ------------------------------------------------------------------------
+
+        void UpdateWalls (short nOldWall, short nNewWall)
+        {
+        Segment seg = Segments [0];
+        for (int i = 0; i < Count; i++) {
+	        Side [] sides = Segments [i].m_sides;
+	        for (int j = 0; j < 6; j++)
+                if (sides [i].m_nWall >= (ushort) nOldWall)
+			        sides [i].m_nWall = (ushort) nNewWall;
+	        }
+        }
+
+        // ------------------------------------------------------------------------
+
+        void ResetSide (short nSegment, short nSide)
+        {
+        if (nSegment < 0 || nSegment >= Count) 
+	        return; 
+        DLE.Backup.Begin ((int) UndoData.UndoFlag.udSegments);
+        Segments [nSegment].Reset (nSide);
+        DLE.Backup.End ();
+        }
 
         // ------------------------------------------------------------------------
 

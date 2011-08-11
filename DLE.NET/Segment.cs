@@ -18,7 +18,7 @@ namespace DLE.NET
         public Property m_props;
         public sbyte m_nMatCen;			// which center segment is associated with, high bit set 
         public sbyte m_value;				// matcens: bitmask of producable robots, fuelcenters: energy given? --MK, 3/15/95 
-        public byte m_s2Flags;			// New for Descent 2
+        public byte m_flags;			// New for Descent 2
         public short [] m_damage = new short [2];
         public int m_staticLight;		// average static light in segment 
         public byte m_childFlags;			// bit0 to 5: children, bit6: unused, bit7: special 
@@ -120,7 +120,7 @@ namespace DLE.NET
             m_props = 0;
             m_nMatCen = -1;
             m_value = 0;
-            m_s2Flags = 0;
+            m_flags = 0;
             m_damage [0] = m_damage [1] = 0;
             m_staticLight = 0;
             m_childFlags = 0;
@@ -190,7 +190,7 @@ namespace DLE.NET
 	        m_nMatCen = -1;
 	        m_value = 0;
 	        }
-        m_s2Flags = 0;  
+        m_flags = 0;  
         if (nLevelType != 0) {
 	        if (nLevelVersion < 20)
 		        Upgrade ();
@@ -279,7 +279,7 @@ namespace DLE.NET
 	        fp.Write ((byte) m_function);
 	        fp.Write (m_nMatCen);
 	        fp.Write (m_value);
-	        fp.Write (m_s2Flags);
+	        fp.Write (m_flags);
 	        }
         if (nLevelType == 2) {
 	        fp.Write ((byte) m_props);
@@ -432,6 +432,27 @@ namespace DLE.NET
         for (short nSide = 0; nSide < 6; nSide++)
 	        if (m_sides [nSide].UpdateChild (nOldChild, nNewChild))	// no two sides can have the same child
 		        return;
+        }
+
+        //------------------------------------------------------------------------------
+
+        public void Reset (short nSide)
+        {
+        m_group = -1;
+        m_owner = -1;
+        m_function = 0;
+        m_value = -1;
+        m_nMatCen = -1;
+        m_wallFlags = 0;
+        m_flags = 0;
+        SetChild (nSide, -1); 
+        m_childFlags &= (byte) ~(1 << nSide); 
+        if (nSide < 0) {
+	        for (nSide = 0; nSide < 6; nSide++)
+		        m_sides [nSide].Reset ();
+	        }	
+        else
+	        m_sides [nSide].Reset ();
         }
 
         //------------------------------------------------------------------------------

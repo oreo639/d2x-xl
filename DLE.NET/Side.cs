@@ -193,5 +193,20 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public void Reset (void)
+        {
+        m_nBaseTex = 0; 
+        m_nOvlTex = 0; 
+        m_nWall = GameMine.NO_WALL;
+        double scale = DLE.Textures [DLE.FileType, m_nBaseTex].Scale (m_nBaseTex);
+        for (int i = 0; i < 4; i++) {
+	        m_uvls [i].u = (ushort) (GameTables.defaultUVLs [i].u / scale); 
+	        m_uvls [i].v = (ushort) (GameTables.defaultUVLs [i].v / scale); 
+	        m_uvls [i].l = (ushort) GameMine.DEFAULT_LIGHTING; 
+	        }
+        }
+
+        // ------------------------------------------------------------------------
+
     }
 }

@@ -112,5 +112,16 @@
             49, 50, 51, 52, 53, 54, 55, 56, 57
 	        };
 
-   }
+        //------------------------------------------------------------------------------
+
+         public static UVL [] defaultUVLs = new UVL [4] {
+	        new UVL ((ushort) 0x0000, (ushort)0x0000, (ushort)GameMine.DEFAULT_LIGHTING),
+	        new UVL ((ushort) 0x0000, (ushort)0x0800, (ushort)GameMine.DEFAULT_LIGHTING),
+	        new UVL ((ushort)-0x0800, (ushort)0x0800, (ushort)GameMine.DEFAULT_LIGHTING),
+	        new UVL ((ushort)-0x0800, (ushort)0x0000, (ushort)GameMine.DEFAULT_LIGHTING)
+        };
+
+        //------------------------------------------------------------------------------
+
+  }
 }
