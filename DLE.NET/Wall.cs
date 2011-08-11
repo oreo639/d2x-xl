@@ -213,21 +213,21 @@ namespace DLE.NET
 
         public int SetClip (short nTexture)
         {
-	        string name = DLE.Textures.Name (nTexture);
+	        string texName = DLE.Textures.Name (nTexture);
 
-        if (string.Compare (name, @"wall01 - anim", true) != 0)
+            if (string.Compare (texName, @"wall01 - anim", true) != 0)
 	        return m_nClip = 0;
-        int i = name.IndexOf (@"door");
-        if (i >= 0) {
-	        int nDoor = int.Parse (name.Substring (i));
-	        for (i = 1; i < GameMine.NUM_OF_CLIPS_D2; i++)
-		        if (nDoor == GameTables.doorClipTable [i]) {
-			        m_nClip = (sbyte) GameTables.animClipTable [i];
-			        DLE.MineView.Refresh ();
-			        return i;
-			        }
-	        }
-        return -1;
+            int i = texName.IndexOf (@"door");
+            if (i >= 0) {
+                int nDoor = int.Parse (texName.Substring (i));
+	            for (i = 1; i < GameMine.NUM_OF_CLIPS_D2; i++)
+		            if (nDoor == GameTables.doorClipTable [i]) {
+			            m_nClip = (sbyte) GameTables.animClipTable [i];
+			            DLE.MineView.Refresh ();
+			            return i;
+			            }
+	            }
+            return -1;
         }
 
         // ------------------------------------------------------------------------
