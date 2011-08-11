@@ -413,8 +413,8 @@ namespace DLE.NET
             double scale = 1.0; //textureManager.Textures () [m_fileType][sideP->m_nBaseTex].Scale (sideP->m_nBaseTex);
             for (i = 0; i < 4; i++) 
             {
-	            uvls [i].v = (ushort) ((y + FixConverter.D2X (E [i].v.x / 640)) / scale); 
-	            uvls [i].u = (ushort) ((x - FixConverter.D2X (E [i].v.y / 640)) / scale); 
+	            uvls [i].v = (short) ((y + FixConverter.D2X (E [i].v.x / 640)) / scale); 
+	            uvls [i].u = (short) ((x - FixConverter.D2X (E [i].v.y / 640)) / scale); 
 	        }
         }
 

@@ -14,19 +14,19 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void Read (BinaryReader fp, int nVersion, bool bFlag = false)
+        public void Read (BinaryReader fp, int nVersion, bool bFlag = false)
         {
         }
 
         //------------------------------------------------------------------------------
 
-        void Write (BinaryWriter fp, int nVersion, bool bFlag = false)
+        public void Write (BinaryWriter fp, int nVersion, bool bFlag = false)
         {
         }
 
         //------------------------------------------------------------------------------
 
-        void Clear ()
+        public void Clear ()
         {
             for (int i = 0; i < 4; i++)
                 m_vertLight [i] = 0;
@@ -34,7 +34,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        byte this [int i]
+        public byte this [int i]
         {
             get { return m_vertLight [i]; }
             set { m_vertLight [i] = value; }
@@ -43,6 +43,9 @@ namespace DLE.NET
         //------------------------------------------------------------------------------
 
     }
+
+    //------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------
 
     public class LightDeltaIndex : SideKey, IGameItem
     {
@@ -53,19 +56,19 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void Read (BinaryReader fp, int nVersion, bool bD2X = false)
+        public void Read (BinaryReader fp, int nVersion, bool bD2X = false)
         {
         }
 
         //------------------------------------------------------------------------------
 
-        void Write (BinaryWriter fp, int nVersion, bool bD2X = false)
+        public void Write (BinaryWriter fp, int nVersion, bool bD2X = false)
         {
         }
 
         //------------------------------------------------------------------------------
 
-        void Clear ()
+        new public void Clear ()
         {
             m_count = m_index = 0;
         }
@@ -73,6 +76,9 @@ namespace DLE.NET
         //------------------------------------------------------------------------------
 
     }
+
+    //------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------
 
     public class VariableLight : SideKey, IGameItem
     {
@@ -84,19 +90,19 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void Read (BinaryReader fp, int nVersion, bool bFlag = false)
+        public void Read (BinaryReader fp, int nVersion, bool bFlag = false)
         {
         }
 
         //------------------------------------------------------------------------------
 
-        void Write (BinaryWriter fp, int nVersion, bool bFlag = false)
+        public void Write (BinaryWriter fp, int nVersion, bool bFlag = false)
         {
         }
 
         //------------------------------------------------------------------------------
 
-        void Clear ()
+        public void Clear ()
         {
             m_mask = 0;
             m_timer = m_delay = 0;
@@ -104,15 +110,12 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void Setup (SideKey key, short time, short mask)
+        public void Setup (SideKey key, short time, short mask)
         {
             m_mask = (uint)mask;
             m_timer = (int)time;
         }
 
-        //------------------------------------------------------------------------------
-
-        //------------------------------------------------------------------------------
 
         //------------------------------------------------------------------------------
 

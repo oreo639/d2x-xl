@@ -8,15 +8,15 @@ namespace DLE.NET
     public partial class LightManager
     {
 
-        public static const int NUM_LIGHTS_D1 = 48;
-        public static const int NUM_LIGHTS_D2 = 85;
+        public const int NUM_LIGHTS_D1 = 48;
+        public const int NUM_LIGHTS_D2 = 85;
 
-        public static const int MAX_LIGHT_DELTA_INDICES_STD = 500;
-        public static const int MAX_LIGHT_DELTA_INDICES_D2X = 3000;
-        public static const int MAX_LIGHT_DELTA_VALUES_STD = 10000;
-        public static const int MAX_LIGHT_DELTA_VALUES_D2X = 50000;
-        public static const int MAX_VARIABLE_LIGHTS = 100;
-        public static const int LIGHT_DELTA_SCALE = 2048;	// Divide light to allow 3 bits integer, 5 bits fraction.
+        public const int MAX_LIGHT_DELTA_INDICES_STD = 500;
+        public const int MAX_LIGHT_DELTA_INDICES_D2X = 3000;
+        public const int MAX_LIGHT_DELTA_VALUES_STD = 10000;
+        public const int MAX_LIGHT_DELTA_VALUES_D2X = 50000;
+        public const int MAX_VARIABLE_LIGHTS = 100;
+        public const int LIGHT_DELTA_SCALE = 2048;	// Divide light to allow 3 bits integer, 5 bits fraction.
 
         //------------------------------------------------------------------------------
 
@@ -92,9 +92,9 @@ namespace DLE.NET
         LightDeltaIndex [] m_deltaIndex = new LightDeltaIndex [MAX_LIGHT_DELTA_INDICES_D2X];
         LightDeltaValue [] m_deltaValues = new LightDeltaValue [MAX_LIGHT_DELTA_VALUES_D2X];
 
-        Color [] m_faceColors = new Color [GameMine.SEGMENT_LIMIT * 6];
-        Color [] m_texColors = new Color [TextureManager.MAX_TEXTURES_D2];
-        Color [] m_vertexColors = new Color [GameMine.VERTEX_LIMIT];
+        GameColor [] m_faceColors = new GameColor [GameMine.SEGMENT_LIMIT * 6];
+        GameColor [] m_texColors = new GameColor [TextureManager.MAX_TEXTURES_D2];
+        GameColor [] m_vertexColors = new GameColor [GameMine.VERTEX_LIMIT];
 
         int m_nCount = 0;
 

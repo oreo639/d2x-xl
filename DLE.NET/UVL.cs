@@ -8,14 +8,15 @@ namespace DLE.NET
 {
     public class UVL
     {
-        public ushort u, v, l;
+        public short u, v;
+        public ushort l;
 
         //------------------------------------------------------------------------------
 
         public void Read (BinaryReader fp)
         {
-            u = fp.ReadUInt16 ();
-            v = fp.ReadUInt16 ();
+            u = fp.ReadInt16 ();
+            v = fp.ReadInt16 ();
             l = fp.ReadUInt16 ();
         }
 
@@ -32,12 +33,13 @@ namespace DLE.NET
 
         public void Clear ()
         {
-            u = v = l = 0;
+            u = v = 0;
+            l = 0;
         }
 
         //------------------------------------------------------------------------------
 
-        public UVL (ushort u = 0, ushort v = 0, ushort l = 0)
+        public UVL (short u = 0, short v = 0, ushort l = 0)
         {
             this.u = u;
             this.v = v;

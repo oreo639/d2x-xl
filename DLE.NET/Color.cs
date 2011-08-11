@@ -37,7 +37,7 @@ namespace DLE.NET
             this.index = index;
         }
 
-        public void Clear ()
+        new public void Clear ()
         {
             base.Clear ();
             index = 0;
@@ -48,7 +48,7 @@ namespace DLE.NET
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
 
-    public class Color : ColorRef, IGameItem
+    public class GameColor : ColorRef, IGameItem
     {
         public int Key { get; set; }
 

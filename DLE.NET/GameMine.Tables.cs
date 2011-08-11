@@ -124,10 +124,10 @@
         //------------------------------------------------------------------------------
 
          public static UVL [] defaultUVLs = new UVL [4] {
-	        new UVL ((ushort) 0x0000, (ushort)0x0000, (ushort)GameMine.DEFAULT_LIGHTING),
-	        new UVL ((ushort) 0x0000, (ushort)0x0800, (ushort)GameMine.DEFAULT_LIGHTING),
-	        new UVL ((ushort)-0x0800, (ushort)0x0800, (ushort)GameMine.DEFAULT_LIGHTING),
-	        new UVL ((ushort)-0x0800, (ushort)0x0000, (ushort)GameMine.DEFAULT_LIGHTING)
+	        new UVL ((short) 0x0000, (short)0x0000, (ushort)GameMine.DEFAULT_LIGHTING),
+	        new UVL ((short) 0x0000, (short)0x0800, (ushort)GameMine.DEFAULT_LIGHTING),
+	        new UVL ((short)-0x0800, (short)0x0800, (ushort)GameMine.DEFAULT_LIGHTING),
+	        new UVL ((short)-0x0800, (short)0x0000, (ushort)GameMine.DEFAULT_LIGHTING)
         };
 
         //------------------------------------------------------------------------------
