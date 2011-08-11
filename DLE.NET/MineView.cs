@@ -3,15 +3,6 @@ using System;
 
 namespace DLE.NET
 {
-    public class MineView
-    {
-    }
-}
-using System;
-using System.IO;
-
-namespace DLE.NET
-{
     public partial class MineView
     {
         // ------------------------------------------------------------------------

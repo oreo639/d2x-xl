@@ -255,7 +255,7 @@ namespace DLE.NET
         {
             byte [] rowSize = new byte [4096];
             byte [] rowData = new byte [4096];
-            BGR [] palette = DLE.paletteManager.Current ();
+            BGR [] palette = DLE.Palettes.Current ();
             byte palIndex, alpha;
 
             if (m_nFormat != 0)
@@ -329,7 +329,7 @@ namespace DLE.NET
             if (nVersion < 0)
 	            nVersion = DLE.IsD1File ? 0 : 1;
 
-            PigTexture info = DLE.textureManager.Info (nTexture);
+            PigTexture info = DLE.Textures.Info (nTexture);
             int nSize = info.BufSize ();
             if ((m_bmData != null) && ((m_width * m_height == nSize)))
 	            return 0; // already loaded
@@ -337,9 +337,9 @@ namespace DLE.NET
 	            return 1;
             using (BinaryReader fp = new BinaryReader (fs))
             {
-                fs.Seek (DLE.textureManager.Offset + info.offset, SeekOrigin.Begin);
+                fs.Seek (DLE.Textures.Offset + info.offset, SeekOrigin.Begin);
                 Load (fp, info);
-                m_bFrame = DLE.textureManager.Name (nTexture).Contains ("frame");
+                m_bFrame = DLE.Textures.Name (nTexture).Contains ("frame");
                 return 0;
             }
         }

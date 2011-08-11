@@ -102,8 +102,6 @@
         public const int MAX_WALL_FLAGS_D1 = 5;
         public const int MAX_WALL_FLAGS_D2 = 9;
         public const int WALL_FLAG_LIMIT = 9;
-        public const int NUM_LIGHTS_D1 = 48;
-        public const int NUM_LIGHTS_D2 = 85;
 
         public const int ASPECT_TOP = 3;
         public const int ASPECT_BOT = 5;

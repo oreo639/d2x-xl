@@ -78,9 +78,9 @@ namespace DLE.NET
                 
                 vertices [i] = Count + i;
             }
-            DLE.undoManager.Begin ();
+            DLE.Backup.Begin ();
             Count += count;
-            DLE.undoManager.End ();
+            DLE.Backup.End ();
             return count;
 
         }
@@ -89,14 +89,14 @@ namespace DLE.NET
 
         void Delete (int i, bool bUndo = true)
         {
-            DLE.undoManager.Begin ();
+            DLE.Backup.Begin ();
             Count--;
             if (i < Count)
             {
                 Vertices [i].Copy (Vertices [Count]);
                 DLE.Segments.UpdateVertices ((short)Count, (short)i);
             }
-            DLE.undoManager.End ();
+            DLE.Backup.End ();
         }
 
         // ------------------------------------------------------------------------

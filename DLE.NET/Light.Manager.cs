@@ -8,6 +8,16 @@ namespace DLE.NET
     public partial class LightManager
     {
 
+        public static const int NUM_LIGHTS_D1 = 48;
+        public static const int NUM_LIGHTS_D2 = 85;
+
+        public static const int MAX_LIGHT_DELTA_INDICES_STD = 500;
+        public static const int MAX_LIGHT_DELTA_INDICES_D2X = 3000;
+        public static const int MAX_LIGHT_DELTA_VALUES_STD = 10000;
+        public static const int MAX_LIGHT_DELTA_VALUES_D2X = 50000;
+        public static const int MAX_VARIABLE_LIGHTS = 100;
+        public static const int LIGHT_DELTA_SCALE = 2048;	// Divide light to allow 3 bits integer, 5 bits fraction.
+
         //------------------------------------------------------------------------------
 
         struct TextureLight 
@@ -24,7 +34,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        readonly TextureLight[] textureLightD1 = new TextureLight [GameMine.NUM_LIGHTS_D1] 
+        readonly TextureLight[] textureLightD1 = new TextureLight [NUM_LIGHTS_D1] 
         {
 	        new TextureLight (250, 0x00b333L), new TextureLight (251, 0x008000L), new TextureLight (252, 0x008000L), new TextureLight (253, 0x008000L),
 	        new TextureLight (264, 0x01547aL), new TextureLight (265, 0x014666L), new TextureLight (268, 0x014666L), new TextureLight (278, 0x014cccL),
@@ -40,7 +50,7 @@ namespace DLE.NET
 	        new TextureLight (367, 0x020000L), new TextureLight (368, 0x020000L), new TextureLight (369, 0x020000L), new TextureLight (370, 0x020000L)
         };
 
-        readonly TextureLight[] textureLightD2 = new TextureLight [GameMine.NUM_LIGHTS_D2] 
+        readonly TextureLight[] textureLightD2 = new TextureLight [NUM_LIGHTS_D2] 
         {
 	        new TextureLight (235, 0x012666L), new TextureLight (236, 0x00b5c2L), new TextureLight (237, 0x00b5c2L), new TextureLight (243, 0x00b5c2L),
 	        new TextureLight (244, 0x00b5c2L), new TextureLight (275, 0x01547aL), new TextureLight (276, 0x014666L), new TextureLight (278, 0x014666L),
@@ -75,20 +85,37 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public MineItemInfo m_info = new MineItemInfo ();
+        public MineItemInfo m_deltaIndexInfo = new MineItemInfo ();
+        public MineItemInfo m_deltaValueInfo = new MineItemInfo ();
+
+        VariableLight [] m_variableLights = new VariableLight [MAX_VARIABLE_LIGHTS];
+        LightDeltaIndex [] m_deltaIndex = new LightDeltaIndex [MAX_LIGHT_DELTA_INDICES_D2X];
+        LightDeltaValue [] m_deltaValues = new LightDeltaValue [MAX_LIGHT_DELTA_VALUES_D2X];
+
+        Color [] m_faceColors = new Color [GameMine.SEGMENT_LIMIT * 6];
+        Color [] m_texColors = new Color [TextureManager.MAX_TEXTURES_D2];
+        Color [] m_vertexColors = new Color [GameMine.VERTEX_LIMIT];
+
+        int m_nCount = 0;
 
         // ------------------------------------------------------------------------
 
         public int Count
         {
-            get { return m_info.count; }
-            set { m_info.count = value; }
+            get { return m_nCount; }
+            set { m_nCount = value; }
         }
 
-        public int FileOffset
+        public int DeltaIndexFileOffset
         {
-            get { return m_info.offset; }
-            set { m_info.offset = value; }
+            get { return m_deltaIndexInfo.offset; }
+            set { m_deltaIndexInfo.offset = value; }
+        }
+
+        public int DeltaValueFileOffset
+        {
+            get { return m_deltaValueInfo.offset; }
+            set { m_deltaValueInfo.offset = value; }
         }
 
         // ------------------------------------------------------------------------
@@ -148,10 +175,10 @@ namespace DLE.NET
         public short VariableLight (SideKey key) 
         {
             DLE.Current.Get (key);
-            VariableLight flP = VariableLight (0);
+            VariableLight flP = VariableLights [0];
             int i;
-            for (i = Count; i; i--, flP++)
-                if (*flP == key)
+            for (i = 0; i < Count; i++)
+                if (VariableLights [i] == key)
                     break;
             if (i > 0)
                 return Count () - i;

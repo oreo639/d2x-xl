@@ -100,6 +100,7 @@
     <Compile Include="AngleVector.cs" />
     <Compile Include="BitmapInfoHeader.cs" />
     <Compile Include="BufPtr.cs" />
+    <Compile Include="Color.cs" />
     <Compile Include="Customization\DockHelper.cs" />
     <Compile Include="DiagnosisTool.cs">
       <SubType>Form</SubType>
@@ -132,6 +133,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="KeyList.cs" />
+    <Compile Include="Light.cs" />
     <Compile Include="Light.Manager.cs" />
     <Compile Include="MineInfo.cs" />
     <Compile Include="MineView.cs" />
