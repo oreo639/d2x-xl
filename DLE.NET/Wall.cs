@@ -165,8 +165,15 @@ namespace DLE.NET
         {
             get
             {
-                return DLE.Triggers [m_nTrigger];
+                return DLE.Triggers.WallTriggers [m_nTrigger];
             }
+        }
+
+        // ------------------------------------------------------------------------
+
+        public void SetTrigger (short nTrigger)
+        {
+            m_nTrigger = (byte) nTrigger;
         }
 
         // ------------------------------------------------------------------------

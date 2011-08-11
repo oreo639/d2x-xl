@@ -14,7 +14,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public void Begin ()
+        public void Begin (int flags = 0)
         {
         }
 

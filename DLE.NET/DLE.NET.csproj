@@ -140,6 +140,8 @@
     <Compile Include="Selection.cs" />
     <Compile Include="SideKey.cs" />
     <Compile Include="Trigger.Manager.cs" />
+    <Compile Include="Trigger.Reactor.cs" />
+    <Compile Include="Trigger.Targets.cs" />
     <Compile Include="Undo.Data.cs" />
     <Compile Include="Undo.Item.cs" />
     <Compile Include="Undo.Manager.cs" />

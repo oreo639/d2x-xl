@@ -4,34 +4,19 @@ namespace DLE.NET
 {
     // ------------------------------------------------------------------------
 
-    #region TargetList
-    public class TargetList : SideKey
+    #region Trigger
+    public partial class Trigger : TriggerTargets, IGameItem
     {
-        public const short MAX_TARGETS = 10;
+        public int Key { get; set; }
 
-        short m_count;
+        //------------------------------------------------------------------------------
 
-        public short Count 
-        {
-            get
-            {
-                return m_count;
-            }
-            protected set
-            {
-               m_count = (value < 0) ? (short) 0 : (value > Trigger.MAX_TARGETS) ? Trigger.MAX_TARGETS : value;
-            }
-        }
-        public SideKey [] m_targets = new SideKey [MAX_TARGETS];
-
-        // ------------------------------------------------------------------------
-
-        public TargetList ()
-        {
-            for (int i = 0; i < MAX_TARGETS; i++)
-                m_targets [i] = new SideKey ();
-            Clear ();
-        }
+        Type m_type;
+        Properties m_props;
+        short m_nObject;
+        int m_value;
+        int m_time;
+        ushort m_nIndex;
 
         // ------------------------------------------------------------------------
 
@@ -46,122 +31,6 @@ namespace DLE.NET
                 m_targets [i] = value;
             }
         }
-
-        // ------------------------------------------------------------------------
-
-        public new void Clear () 
-        { 
-		    Count = 0;
-		    for (int i = 0; i < MAX_TARGETS; i++)
-			    m_targets [i].Clear ();
-            base.Clear ();
-		}
-
-        // ------------------------------------------------------------------------
-        // add a new trigger target
-        public short Add (SideKey key)
-        {
-            if (Count < m_targets.Length)
-                m_targets [Count] = key;
-            return Count++;
-        }
-
-        // ------------------------------------------------------------------------
-        // add a new trigger target
-        public short Add (short nSegment, short nSide)
-        {
-            return Add (new SideKey (nSegment, nSide));
-        }
-
-        // ------------------------------------------------------------------------
-        // delete trigger target no. i
-        public short Delete (int i = -1)
-        {
-            if ((Count > 0) && (i < --Count))
-            {
-                if (i < 0)
-                    i = Count - 1;
-                int l = Count - i;
-                for (int j = 0; j < l; j++)
-                    m_targets [j] = m_targets [j + 1];
-                m_targets [Count] = new SideKey ();
-            }
-            return Count;
-        }
-
-        // ------------------------------------------------------------------------
-
-        public short Pop () 
-        { 
-            return Delete (Count - 1); 
-        }
-
-        // ------------------------------------------------------------------------
-
-        public int Find (SideKey key) 
-        { 
-		    for (int i = 0; i < Count; i++)
-			    if (m_targets [i] == key)
-				    return i;
-		return -1;
-		}
-
-        // ------------------------------------------------------------------------
-
-        public int Find (short nSegment, short nSide) 
-        { 
-            return Find (new SideKey (nSegment, nSide)); 
-        }
-
-        // ------------------------------------------------------------------------
-
-        public SideKey Target (uint i)
-        {
-            return m_targets [i];
-        }
-
-        // ------------------------------------------------------------------------
-
-	    public int Read (BinaryReader fp) 
-        {
-		    int i;
-		    for (i = 0; i < MAX_TARGETS; i++)
-			    m_targets [i].m_nSegment = fp.ReadInt16 ();
-		    for (i = 0; i < MAX_TARGETS; i++)
-			    m_targets [i].m_nSide = fp.ReadInt16 ();
-		    return 1;
-		}
-
-        // ------------------------------------------------------------------------
-
-        public void Write (BinaryWriter fp) 
-        {
-		    int i;
-		    for (i = 0; i < MAX_TARGETS; i++)
-			    fp.Write (m_targets [i].m_nSegment);
-		    for (i = 0; i < MAX_TARGETS; i++)
-			    fp.Write (m_targets [i].m_nSide);
-		}
-
-        // ------------------------------------------------------------------------
-    }
-    #endregion
-
-    // ------------------------------------------------------------------------
-
-    #region Trigger
-    public partial class Trigger : TargetList, IGameItem
-    {
-        public int Key { get; set; }
-
-        //------------------------------------------------------------------------------
-
-        Type m_type;
-        Properties m_props;
-        short m_nObject;
-        int m_value;
-        int m_time;
-        ushort m_nIndex;
 
         //------------------------------------------------------------------------------
 

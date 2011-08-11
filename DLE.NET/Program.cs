@@ -11,7 +11,7 @@ namespace DLE.NET
         public static Settings Settings { get { return settings; } }
         public static TextureManager Textures { get { return textureManager; } }
         public static PaletteManager Palettes { get { return paletteManager; } }
-        public static UndoManager Undos { get { return undoManager; } }
+        public static UndoManager Backup { get { return undoManager; } }
         public static VertexManager Vertices { get { return vertexManager; } }
         public static SegmentManager Segments { get { return segmentManager; } }
         public static WallManager Walls { get { return wallManager; } }

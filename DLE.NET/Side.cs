@@ -161,7 +161,17 @@ namespace DLE.NET
 
         public Wall Wall
         {
-            get { return (m_nWall == GameMine.NO_WALL) ? null : DLE.Walls [m_nWall]; }
+            get 
+            { 
+                return (m_nWall == GameMine.NO_WALL) ? null : DLE.Walls [m_nWall]; 
+            }
+        }
+
+        // ------------------------------------------------------------------------
+
+        public void SetWall (short nWall)
+        {
+            m_nWall = (ushort) nWall;
         }
 
         // ------------------------------------------------------------------------

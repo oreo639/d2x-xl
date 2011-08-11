@@ -76,7 +76,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        DoubleVector CalcSideCenter (SideKey key)
+        public DoubleVector CalcSideCenter (SideKey key)
         {
         DLE.Current.Get (key);
 	    Segment seg = Segments [key.m_nSegment];
@@ -89,7 +89,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        DoubleVector CalcSideNormal (SideKey key)
+        public DoubleVector CalcSideNormal (SideKey key)
         {
             DLE.Current.Get (key);
             Segment seg = Segments [key.m_nSegment];
@@ -117,7 +117,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        Side OppositeSide (SideKey key, SideKey opp)
+        public Side OppositeSide (SideKey key, SideKey opp)
         {
         DLE.Current.Get (key); 
         short nChildSeg = Segments [key.m_nSegment].GetChild (key.m_nSide); 
@@ -132,6 +132,40 @@ namespace DLE.NET
 	        }
         return null; 
         }
+
+        // ------------------------------------------------------------------------
+
+        public bool IsWall (SideKey key)
+        {
+            DLE.Current.Get (key);
+            return (Segments [key.m_nSegment].GetChild (key.m_nSide) == -1) || (Wall (key) != null);
+        }
+
+        // ------------------------------------------------------------------------
+
+        public Wall OppositeWall (SideKey key)
+        {
+            DLE.Current.Get (key);
+            Side side = Side (key);
+            return (side == null) ? null : side.Wall;
+        }
+
+        // ------------------------------------------------------------------------
+
+        public void DeleteWalls (short nSegment)
+        {
+            Side [] sides = Segments [nSegment].m_sides;
+            for (int i = 0; i < 6; i++)
+                DLE.Walls.Delete (sides [i].m_nWall);
+        }
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
 
         // ------------------------------------------------------------------------
 
