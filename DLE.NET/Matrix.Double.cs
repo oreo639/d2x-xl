@@ -192,6 +192,100 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        void Rotate (double angle, char axis) 
+        {
+        double cosX = Math.Cos (angle);
+        double sinX = Math.Sin (angle);
+
+        DoubleMatrix mRot = new DoubleMatrix ();
+
+        switch (axis) {
+	        case 'x':
+		        // spin x
+		        //	1	0	0
+		        //	0	cos	sin
+		        //	0	-sin	cos
+		        //
+		        mRot.uVec.Set (uVec.v.x * cosX + fVec.v.x * sinX, 
+					           uVec.v.y * cosX + fVec.v.y * sinX,
+						       uVec.v.z * cosX + fVec.v.z * sinX);
+		        mRot.fVec.Set (fVec.v.x * cosX - uVec.v.x * sinX,
+							   fVec.v.y * cosX - uVec.v.y * sinX,
+							   fVec.v.z * cosX - uVec.v.z * sinX);
+		        uVec = mRot.uVec;
+		        fVec = mRot.fVec;
+		        break;
+
+	        case 'y':
+		        // spin y
+		        //	cos	0	-sin
+		        //	0	1	0
+		        //	sin	0	cos
+		        //
+		        mRot.rVec.Set (rVec.v.x * cosX - fVec.v.x * sinX, 
+							   rVec.v.y * cosX - fVec.v.y * sinX, 
+							   rVec.v.z * cosX - fVec.v.z * sinX);
+		        mRot.fVec.Set (rVec.v.x * sinX + fVec.v.x * cosX, 
+							   rVec.v.y * sinX + fVec.v.y * cosX,
+							   rVec.v.z * sinX + fVec.v.z * cosX);
+		        rVec = mRot.rVec;
+		        fVec = mRot.fVec;
+		        break;
+
+	        case 'z':
+		        // spin z
+		        //	cos	sin	0
+		        //	-sin	cos	0
+		        //	0	0	1
+		        mRot.rVec.Set (rVec.v.x * cosX + uVec.v.x * sinX,
+							   rVec.v.y * cosX + uVec.v.y * sinX,
+							   rVec.v.z * cosX + uVec.v.z * sinX);
+		        mRot.uVec.Set (uVec.v.x * cosX - rVec.v.x * sinX,
+							   uVec.v.y * cosX - rVec.v.y * sinX,
+							   uVec.v.z * cosX - rVec.v.z * sinX);
+		        rVec = mRot.rVec;
+		        uVec = mRot.uVec;
+		        break;
+	        }
+        }
+
+        // ------------------------------------------------------------------------
+
+        void Square2Quad (LongVector [] a) 
+        {
+        // infer "unity square" to "quad" prespective transformation
+        // see page 55-56 of Digital Image Warping by George Wolberg (3rd edition) 
+        double dx1 = a [1].x - a [2].x;
+        double dx2 = a [3].x - a [2].x;
+        double dx3 = a [0].x - a [1].x + a [2].x - a [3].x;
+        double dy1 = a [1].y - a [2].y;
+        double dy2 = a [3].y - a [2].y;
+        double dy3 = a [0].y - a [1].y + a [2].y - a [3].y;
+        double w = (dx1 * dy2 - dx2 * dy1);
+        if (w == 0.0) 
+	        w = 1.0;
+
+        rVec.v.z = (dx3 * dy2 - dx2 * dy3) / w;
+        uVec.v.z = (dx1 * dy3 - dx3 * dy1) / w;
+        rVec.v.x = a [1].x - a [0].x + rVec.v.z * a [1].x;
+        uVec.v.x = a [3].x - a [0].x + uVec.v.z * a [3].x;
+        fVec.v.x = a [0].x;
+        rVec.v.y = a [1].y - a [0].y + rVec.v.z * a [1].y;
+        uVec.v.y = a [3].y - a [0].y + uVec.v.z * a [3].y;
+        fVec.v.y = a [0].y;
+        fVec.v.z = 1;
+        }
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
         // ------------------------------------------------------------------------
 
         // ------------------------------------------------------------------------

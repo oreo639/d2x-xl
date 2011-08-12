@@ -97,7 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AngleVector.cs" />
+    <Compile Include="Vector.Angle.cs" />
     <Compile Include="BitmapInfoHeader.cs" />
     <Compile Include="BufPtr.cs" />
     <Compile Include="Color.cs" />
@@ -108,7 +108,7 @@
     <Compile Include="DiagnosisTool.Designer.cs">
       <DependentUpon>DiagnosisTool.cs</DependentUpon>
     </Compile>
-    <Compile Include="DoubleVector.cs" />
+    <Compile Include="Vector.Double.cs" />
     <Compile Include="EffectTool.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,7 +116,7 @@
       <DependentUpon>EffectTool.cs</DependentUpon>
     </Compile>
     <Compile Include="FixConverter.cs" />
-    <Compile Include="FixVector.cs" />
+    <Compile Include="Vector.Fix.cs" />
     <Compile Include="GameMine.Load.cs" />
     <Compile Include="IGameItem.cs" />
     <Compile Include="GameMine.Constants.cs" />
