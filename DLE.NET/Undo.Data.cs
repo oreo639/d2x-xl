@@ -7,7 +7,7 @@ namespace DLE.NET
 {
     class UndoData
     {
-        public enum UndoFlag : int
+        public enum UndoFlags : int
         {
 	        udVertices = 1,
 	        udSegments = 2,
@@ -54,7 +54,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-	    void Backup (UndoFlag dataFlags)
+	    void Backup (UndoFlags dataFlags)
         {
             //if ((dataFlags & UndoFlag.udVertices) != 0)
             //    m_vertices.Backup (vertexManager.Vertex (0));

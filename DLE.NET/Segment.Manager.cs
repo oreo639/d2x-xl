@@ -177,7 +177,7 @@ namespace DLE.NET
         {
         if (nSegment < 0 || nSegment >= Count) 
 	        return; 
-        DLE.Backup.Begin ((int) UndoData.UndoFlag.udSegments);
+        DLE.Backup.Begin (UndoData.UndoFlags.udSegments);
         Segments [nSegment].Reset (nSide);
         DLE.Backup.End ();
         }
@@ -211,9 +211,9 @@ namespace DLE.NET
 	        return; 
         short nSegment = DLE.Current.m_nSegment; 
         Segment otherSeg = DLE.Other.Segment; 
-        DLE.Backup.Begin ((int) UndoData.UndoFlag.udSegments);
+        DLE.Backup.Begin (UndoData.UndoFlags.udSegments);
         for (short nSide = 0; nSide < 6; nSide++)
-            if (SetTextures (new SideKey (nSegment, nSide), (short)otherSeg.m_sides [nSide].m_nBaseTex, (short)otherSeg.m_sides [nSide].m_nOvlTex))
+            if (SetTextures (new SideKey (nSegment, nSide), otherSeg.m_sides [nSide].m_nBaseTex, otherSeg.m_sides [nSide].m_nOvlTex))
 		        bChange = true;
         DLE.Backup.End ();
         if (bChange)
@@ -221,6 +221,39 @@ namespace DLE.NET
         }
 
         // ------------------------------------------------------------------------
+
+        int Fix ()
+        {
+            int errFlags = 0;
+
+            for (int i = 0; i < Count; i++)
+            {
+                Segment seg = Segments [i];
+                for (short nSide = 0; nSide < 6; nSide++)
+                {
+                    Side side = seg.m_sides [nSide];
+                    if ((side.m_nWall != GameMine.NO_WALL) && (side.m_nWall >= DLE.Walls.Count))
+                    {
+                        side.m_nWall = GameMine.NO_WALL;
+                        errFlags |= 1;
+                    }
+                    if ((seg.GetChild (nSide) < -2) || (seg.GetChild (nSide) > Count))
+                    {
+                        seg.SetChild (nSide, -1);
+                        errFlags |= 2;
+                    }
+                }
+                for (short nVertex = 0; nVertex < 8; nVertex++)
+                {
+                    if ((seg.m_verts [nVertex] < 0) || (seg.m_verts [nVertex] >= DLE.Vertices.Count))
+                    {
+                        seg.m_verts [nVertex] = 0;  // this will cause a bad looking picture
+                        errFlags |= 4;
+                    }
+                }
+            }
+            return errFlags;
+        }
 
         // ------------------------------------------------------------------------
 

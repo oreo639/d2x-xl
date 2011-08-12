@@ -186,7 +186,7 @@ namespace DLE.NET
 
         public bool IsTextured
         {
-            get { return (m_nChild == -1) || (m_nWall < DLE.Mine.Info.walls.count && DLE.Mine.Walls [m_nWall].m_type != Wall.Type.OPEN); }
+            get { return (m_nChild == -1) || (m_nWall < DLE.Mine.Info.walls.count && DLE.Mine.Walls [m_nWall].m_type != Wall.Types.OPEN); }
         }
 
         // ------------------------------------------------------------------------

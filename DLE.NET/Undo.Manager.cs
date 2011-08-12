@@ -14,7 +14,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public void Begin (int flags = 0)
+        public void Begin (UndoData.UndoFlags flags = 0)
         {
         }
 

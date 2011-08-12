@@ -79,7 +79,7 @@ namespace DLE.NET
             }
             nDelWall = (short) delWall.Key;
 
-            DLE.Backup.Begin ((int) (UndoData.UndoFlag.udSegments | UndoData.UndoFlag.udWalls | UndoData.UndoFlag.udTriggers));
+            DLE.Backup.Begin (UndoData.UndoFlags.udSegments | UndoData.UndoFlags.udWalls | UndoData.UndoFlags.udTriggers);
             // if trigger exists, remove it as well
             DLE.Triggers.DeleteFromWall (delWall.m_nTrigger);
             // remove references to the deleted wall
@@ -103,7 +103,7 @@ namespace DLE.NET
 	        Wall wall = FindByTrigger (nOldTrigger);
 
         if (wall != null) {
-	        DLE.Backup.Begin ((int) UndoData.UndoFlag.udWalls);
+	        DLE.Backup.Begin (UndoData.UndoFlags.udWalls);
 	        wall.SetTrigger (nNewTrigger);
 	        DLE.Backup.End ();
 	        }

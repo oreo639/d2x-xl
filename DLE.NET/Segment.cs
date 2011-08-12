@@ -340,7 +340,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void Setup ()
+        public void Setup ()
         {
 	        short i;
 
@@ -362,7 +362,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void SetUV (short nSide, short x, short y)
+        public void SetUV (short nSide, short x, short y)
         {
 	        DoubleVector[]	A = new DoubleVector [4], 
                             B = new DoubleVector [4], 

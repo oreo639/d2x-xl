@@ -206,7 +206,7 @@ namespace DLE.NET
         public void DeleteVariableLight (short index, bool bUndo = false) 
         {
         if (index > -1) {
-	        DLE.Backup.Begin ((int) UndoData.UndoFlag.udVariableLights);
+	        DLE.Backup.Begin (UndoData.UndoFlags.udVariableLights);
 	        if (index < --Count) {
                 VariableLight temp = VariableLights [index];
                 VariableLights [index] = VariableLights [Count];

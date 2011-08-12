@@ -135,6 +135,7 @@
     <Compile Include="KeyList.cs" />
     <Compile Include="Light.cs" />
     <Compile Include="Light.Manager.cs" />
+    <Compile Include="MathExtensions.cs" />
     <Compile Include="MineInfo.cs" />
     <Compile Include="MineView.cs" />
     <Compile Include="Object.Manager.cs" />
