@@ -4,7 +4,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using System.IO;
 using System.Drawing;
 
-namespace DLE.NET
+namespace DLEdotNET
 {
     public partial class MainWindow : Form
     {

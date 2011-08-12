@@ -1,6 +1,6 @@
 ﻿using WeifenLuo.WinFormsUI.Docking;
 
-namespace DLE.NET.Customization
+namespace DLEdotNET.Customization
 {
     internal class DockHelper
     {

@@ -1,4 +1,4 @@
-﻿namespace DLE.NET
+﻿namespace DLEdotNET
 {
     partial class MainWindow
     {
@@ -1733,7 +1733,7 @@
             // tbOpenFile
             // 
             this.tbOpenFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbOpenFile.Image = global::DLE.NET.Properties.Resources.openfile_16x16;
+            this.tbOpenFile.Image = global::DLEdotNET.Properties.Resources.openfile_16x16;
             this.tbOpenFile.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbOpenFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbOpenFile.Name = "tbOpenFile";
@@ -1743,7 +1743,7 @@
             // tbSaveFile
             // 
             this.tbSaveFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSaveFile.Image = global::DLE.NET.Properties.Resources.savefile_16x16;
+            this.tbSaveFile.Image = global::DLEdotNET.Properties.Resources.savefile_16x16;
             this.tbSaveFile.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbSaveFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbSaveFile.Name = "tbSaveFile";
@@ -1758,7 +1758,7 @@
             // tbCutBlock
             // 
             this.tbCutBlock.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbCutBlock.Image = global::DLE.NET.Properties.Resources.cut_16x16;
+            this.tbCutBlock.Image = global::DLEdotNET.Properties.Resources.cut_16x16;
             this.tbCutBlock.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbCutBlock.Name = "tbCutBlock";
             this.tbCutBlock.Size = new System.Drawing.Size(23, 23);
@@ -1767,7 +1767,7 @@
             // tbCopyBlock
             // 
             this.tbCopyBlock.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbCopyBlock.Image = global::DLE.NET.Properties.Resources.copy_16x16;
+            this.tbCopyBlock.Image = global::DLEdotNET.Properties.Resources.copy_16x16;
             this.tbCopyBlock.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbCopyBlock.Name = "tbCopyBlock";
             this.tbCopyBlock.Size = new System.Drawing.Size(23, 23);
@@ -1776,7 +1776,7 @@
             // tbPasteBlock
             // 
             this.tbPasteBlock.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbPasteBlock.Image = global::DLE.NET.Properties.Resources.paste_16x16;
+            this.tbPasteBlock.Image = global::DLEdotNET.Properties.Resources.paste_16x16;
             this.tbPasteBlock.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbPasteBlock.Name = "tbPasteBlock";
             this.tbPasteBlock.Size = new System.Drawing.Size(23, 23);
@@ -1785,7 +1785,7 @@
             // tbZoomIn
             // 
             this.tbZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbZoomIn.Image = global::DLE.NET.Properties.Resources.zoomin_16x16;
+            this.tbZoomIn.Image = global::DLEdotNET.Properties.Resources.zoomin_16x16;
             this.tbZoomIn.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbZoomIn.Name = "tbZoomIn";
@@ -1795,7 +1795,7 @@
             // tbZoomOut
             // 
             this.tbZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbZoomOut.Image = global::DLE.NET.Properties.Resources.zoomout_16x16;
+            this.tbZoomOut.Image = global::DLEdotNET.Properties.Resources.zoomout_16x16;
             this.tbZoomOut.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbZoomOut.Name = "tbZoomOut";
@@ -1805,7 +1805,7 @@
             // tbFitToView
             // 
             this.tbFitToView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbFitToView.Image = global::DLE.NET.Properties.Resources.nozoom_16x16;
+            this.tbFitToView.Image = global::DLEdotNET.Properties.Resources.nozoom_16x16;
             this.tbFitToView.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbFitToView.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbFitToView.Name = "tbFitToView";
@@ -1815,7 +1815,7 @@
             // tbRedraw
             // 
             this.tbRedraw.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbRedraw.Image = global::DLE.NET.Properties.Resources.refresh_16x16;
+            this.tbRedraw.Image = global::DLEdotNET.Properties.Resources.refresh_16x16;
             this.tbRedraw.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbRedraw.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbRedraw.Name = "tbRedraw";
@@ -1826,7 +1826,7 @@
             // tbMoveLeft
             // 
             this.tbMoveLeft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMoveLeft.Image = global::DLE.NET.Properties.Resources.moveleft_16x16;
+            this.tbMoveLeft.Image = global::DLEdotNET.Properties.Resources.moveleft_16x16;
             this.tbMoveLeft.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbMoveLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbMoveLeft.Name = "tbMoveLeft";
@@ -1836,7 +1836,7 @@
             // tbMoveRight
             // 
             this.tbMoveRight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMoveRight.Image = global::DLE.NET.Properties.Resources.moveright_16x16;
+            this.tbMoveRight.Image = global::DLEdotNET.Properties.Resources.moveright_16x16;
             this.tbMoveRight.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbMoveRight.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbMoveRight.Name = "tbMoveRight";
@@ -1846,7 +1846,7 @@
             // tbMoveUp
             // 
             this.tbMoveUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMoveUp.Image = global::DLE.NET.Properties.Resources.moveup_16x16;
+            this.tbMoveUp.Image = global::DLEdotNET.Properties.Resources.moveup_16x16;
             this.tbMoveUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbMoveUp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbMoveUp.Name = "tbMoveUp";
@@ -1856,7 +1856,7 @@
             // tbMoveDown
             // 
             this.tbMoveDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMoveDown.Image = global::DLE.NET.Properties.Resources.movedown_16x16;
+            this.tbMoveDown.Image = global::DLEdotNET.Properties.Resources.movedown_16x16;
             this.tbMoveDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbMoveDown.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbMoveDown.Name = "tbMoveDown";
@@ -1866,7 +1866,7 @@
             // tbYRotLeft
             // 
             this.tbYRotLeft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbYRotLeft.Image = global::DLE.NET.Properties.Resources.yrotright_16x16;
+            this.tbYRotLeft.Image = global::DLEdotNET.Properties.Resources.yrotright_16x16;
             this.tbYRotLeft.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbYRotLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbYRotLeft.Name = "tbYRotLeft";
@@ -1876,7 +1876,7 @@
             // tbYRotRight
             // 
             this.tbYRotRight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbYRotRight.Image = global::DLE.NET.Properties.Resources.yrotleft_16x16;
+            this.tbYRotRight.Image = global::DLEdotNET.Properties.Resources.yrotleft_16x16;
             this.tbYRotRight.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbYRotRight.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbYRotRight.Name = "tbYRotRight";
@@ -1886,7 +1886,7 @@
             // tbXRotUp
             // 
             this.tbXRotUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbXRotUp.Image = global::DLE.NET.Properties.Resources.xrotright_16x16;
+            this.tbXRotUp.Image = global::DLEdotNET.Properties.Resources.xrotright_16x16;
             this.tbXRotUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbXRotUp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbXRotUp.Name = "tbXRotUp";
@@ -1896,7 +1896,7 @@
             // tbXRotDown
             // 
             this.tbXRotDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbXRotDown.Image = global::DLE.NET.Properties.Resources.xrotleft_16x16;
+            this.tbXRotDown.Image = global::DLEdotNET.Properties.Resources.xrotleft_16x16;
             this.tbXRotDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbXRotDown.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbXRotDown.Name = "tbXRotDown";
@@ -1906,7 +1906,7 @@
             // tbZRotRight
             // 
             this.tbZRotRight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbZRotRight.Image = global::DLE.NET.Properties.Resources.zrotright_16x16;
+            this.tbZRotRight.Image = global::DLEdotNET.Properties.Resources.zrotright_16x16;
             this.tbZRotRight.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbZRotRight.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbZRotRight.Name = "tbZRotRight";
@@ -1916,7 +1916,7 @@
             // tbZRotLeft
             // 
             this.tbZRotLeft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbZRotLeft.Image = global::DLE.NET.Properties.Resources.zrotleft_16x16;
+            this.tbZRotLeft.Image = global::DLEdotNET.Properties.Resources.zrotleft_16x16;
             this.tbZRotLeft.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbZRotLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbZRotLeft.Name = "tbZRotLeft";
@@ -1948,7 +1948,7 @@
             // tbJoinLines
             // 
             this.tbJoinLines.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbJoinLines.Image = global::DLE.NET.Properties.Resources.joinlines_16x16;
+            this.tbJoinLines.Image = global::DLEdotNET.Properties.Resources.joinlines_16x16;
             this.tbJoinLines.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbJoinLines.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbJoinLines.Name = "tbJoinLines";
@@ -1959,7 +1959,7 @@
             // tbSplitLines
             // 
             this.tbSplitLines.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSplitLines.Image = global::DLE.NET.Properties.Resources.splitlines_16x16;
+            this.tbSplitLines.Image = global::DLEdotNET.Properties.Resources.splitlines_16x16;
             this.tbSplitLines.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbSplitLines.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbSplitLines.Name = "tbSplitLines";
@@ -1992,7 +1992,7 @@
             // tbAddStandardSeg
             // 
             this.tbAddStandardSeg.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbAddStandardSeg.Image = global::DLE.NET.Properties.Resources.segments_16x16;
+            this.tbAddStandardSeg.Image = global::DLEdotNET.Properties.Resources.segments_16x16;
             this.tbAddStandardSeg.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbAddStandardSeg.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbAddStandardSeg.Name = "tbAddStandardSeg";
@@ -2025,7 +2025,7 @@
             // tbPointMode
             // 
             this.tbPointMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbPointMode.Image = global::DLE.NET.Properties.Resources.point_16x16;
+            this.tbPointMode.Image = global::DLEdotNET.Properties.Resources.point_16x16;
             this.tbPointMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbPointMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbPointMode.Name = "tbPointMode";
@@ -2036,7 +2036,7 @@
             // tbLineMode
             // 
             this.tbLineMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbLineMode.Image = global::DLE.NET.Properties.Resources.line_16x16;
+            this.tbLineMode.Image = global::DLEdotNET.Properties.Resources.line_16x16;
             this.tbLineMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbLineMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbLineMode.Name = "tbLineMode";
@@ -2047,7 +2047,7 @@
             // tbSideMode
             // 
             this.tbSideMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSideMode.Image = global::DLE.NET.Properties.Resources.sides_16x16;
+            this.tbSideMode.Image = global::DLEdotNET.Properties.Resources.sides_16x16;
             this.tbSideMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbSideMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbSideMode.Name = "tbSideMode";
@@ -2058,7 +2058,7 @@
             // tbSegmentMode
             // 
             this.tbSegmentMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSegmentMode.Image = global::DLE.NET.Properties.Resources.segment_16x16;
+            this.tbSegmentMode.Image = global::DLEdotNET.Properties.Resources.segment_16x16;
             this.tbSegmentMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbSegmentMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbSegmentMode.Name = "tbSegmentMode";
@@ -2069,7 +2069,7 @@
             // tbObjectMode
             // 
             this.tbObjectMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbObjectMode.Image = global::DLE.NET.Properties.Resources.objects_16x16;
+            this.tbObjectMode.Image = global::DLEdotNET.Properties.Resources.objects_16x16;
             this.tbObjectMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbObjectMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbObjectMode.Name = "tbObjectMode";
@@ -2080,7 +2080,7 @@
             // tbBlockMode
             // 
             this.tbBlockMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbBlockMode.Image = global::DLE.NET.Properties.Resources.blockmode_16x16;
+            this.tbBlockMode.Image = global::DLEdotNET.Properties.Resources.blockmode_16x16;
             this.tbBlockMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbBlockMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbBlockMode.Name = "tbBlockMode";
@@ -2196,7 +2196,7 @@
             // tbSegmentTool
             // 
             this.tbSegmentTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSegmentTool.Image = global::DLE.NET.Properties.Resources.segmenttool_16x16;
+            this.tbSegmentTool.Image = global::DLEdotNET.Properties.Resources.segmenttool_16x16;
             this.tbSegmentTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbSegmentTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbSegmentTool.Name = "tbSegmentTool";
@@ -2208,7 +2208,7 @@
             // tbTextureTool
             // 
             this.tbTextureTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbTextureTool.Image = global::DLE.NET.Properties.Resources.texturetool_16x16;
+            this.tbTextureTool.Image = global::DLEdotNET.Properties.Resources.texturetool_16x16;
             this.tbTextureTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbTextureTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbTextureTool.Name = "tbTextureTool";
@@ -2220,7 +2220,7 @@
             // tbWallTool
             // 
             this.tbWallTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbWallTool.Image = global::DLE.NET.Properties.Resources.brokenwall_16x16;
+            this.tbWallTool.Image = global::DLEdotNET.Properties.Resources.brokenwall_16x16;
             this.tbWallTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbWallTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbWallTool.Name = "tbWallTool";
@@ -2232,7 +2232,7 @@
             // tbTriggerTool
             // 
             this.tbTriggerTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbTriggerTool.Image = global::DLE.NET.Properties.Resources.chainwheel_16x16;
+            this.tbTriggerTool.Image = global::DLEdotNET.Properties.Resources.chainwheel_16x16;
             this.tbTriggerTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbTriggerTool.Name = "tbTriggerTool";
             this.tbTriggerTool.Size = new System.Drawing.Size(23, 22);
@@ -2242,7 +2242,7 @@
             // tbEffectTool
             // 
             this.tbEffectTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbEffectTool.Image = global::DLE.NET.Properties.Resources.effecttool_16x16;
+            this.tbEffectTool.Image = global::DLEdotNET.Properties.Resources.effecttool_16x16;
             this.tbEffectTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbEffectTool.Name = "tbEffectTool";
             this.tbEffectTool.Size = new System.Drawing.Size(23, 22);
@@ -2252,7 +2252,7 @@
             // tbLightTool
             // 
             this.tbLightTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbLightTool.Image = global::DLE.NET.Properties.Resources.lighttool_16x16;
+            this.tbLightTool.Image = global::DLEdotNET.Properties.Resources.lighttool_16x16;
             this.tbLightTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbLightTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbLightTool.Name = "tbLightTool";
@@ -2264,7 +2264,7 @@
             // tbObjectTool
             // 
             this.tbObjectTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbObjectTool.Image = global::DLE.NET.Properties.Resources.objects_16x16;
+            this.tbObjectTool.Image = global::DLEdotNET.Properties.Resources.objects_16x16;
             this.tbObjectTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbObjectTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbObjectTool.Name = "tbObjectTool";
@@ -2285,7 +2285,7 @@
             // tbMissionTool
             // 
             this.tbMissionTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMissionTool.Image = global::DLE.NET.Properties.Resources.missiontool_16x16;
+            this.tbMissionTool.Image = global::DLEdotNET.Properties.Resources.missiontool_16x16;
             this.tbMissionTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbMissionTool.Name = "tbMissionTool";
             this.tbMissionTool.Size = new System.Drawing.Size(23, 22);
@@ -2295,7 +2295,7 @@
             // tbPreferences
             // 
             this.tbPreferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbPreferences.Image = global::DLE.NET.Properties.Resources.settings_16x16;
+            this.tbPreferences.Image = global::DLEdotNET.Properties.Resources.settings_16x16;
             this.tbPreferences.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbPreferences.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbPreferences.Name = "tbPreferences";
@@ -2306,7 +2306,7 @@
             // tbCheckMine
             // 
             this.tbCheckMine.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbCheckMine.Image = global::DLE.NET.Properties.Resources.diagnosis_16x16;
+            this.tbCheckMine.Image = global::DLEdotNET.Properties.Resources.diagnosis_16x16;
             this.tbCheckMine.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tbCheckMine.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbCheckMine.Name = "tbCheckMine";
@@ -2318,7 +2318,7 @@
             // tbTextureFilter
             // 
             this.tbTextureFilter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbTextureFilter.Image = global::DLE.NET.Properties.Resources.texturefilter_16x16;
+            this.tbTextureFilter.Image = global::DLEdotNET.Properties.Resources.texturefilter_16x16;
             this.tbTextureFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbTextureFilter.Name = "tbTextureFilter";
             this.tbTextureFilter.Size = new System.Drawing.Size(23, 20);

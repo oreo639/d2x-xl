@@ -1,5 +1,5 @@
 ﻿
-namespace DLE.NET
+namespace DLEdotNET
 {
     partial class Segment
     {

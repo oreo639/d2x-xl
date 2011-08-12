@@ -1,4 +1,4 @@
-﻿namespace DLE.NET
+﻿namespace DLEdotNET
 {
     public static class GameTables
     {

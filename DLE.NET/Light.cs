@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace DLE.NET
+namespace DLEdotNET
 {
     public class LightDeltaValue : SideKey, IGameItem
     {

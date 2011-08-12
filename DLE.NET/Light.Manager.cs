@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DLE.NET
+namespace DLEdotNET
 {
     public partial class LightManager
     {

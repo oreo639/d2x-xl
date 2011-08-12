@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace DLE.NET
+namespace DLEdotNET
 {
     public class MatCenter : IGameItem
     {

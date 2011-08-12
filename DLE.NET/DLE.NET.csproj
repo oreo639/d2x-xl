@@ -97,10 +97,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatCenter.cs" />
     <Compile Include="Matrix.Fix.cs" />
     <Compile Include="Segment.Manager.Add.cs" />
     <Compile Include="Segment.Manager.Join.cs" />
     <Compile Include="ToolView.cs" />
+    <Compile Include="TunnelMaker.cs" />
     <Compile Include="Vector.Angle.cs" />
     <Compile Include="BitmapInfoHeader.cs" />
     <Compile Include="BufPtr.cs" />

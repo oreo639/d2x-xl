@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System;
 
-namespace DLE.NET
+namespace DLEdotNET
 {
     public partial class TextureTool : ToolWindow
     {

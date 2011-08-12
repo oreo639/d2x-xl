@@ -1,4 +1,4 @@
-﻿namespace DLE.NET
+﻿namespace DLEdotNET
 {
     partial class ToolWindow
     {

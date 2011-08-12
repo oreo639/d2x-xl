@@ -1,6 +1,6 @@
 ﻿
 using System;
-namespace DLE.NET
+namespace DLEdotNET
 {
     public class TextureFilter
     {

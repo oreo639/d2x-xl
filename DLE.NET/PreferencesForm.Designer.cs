@@ -1,4 +1,4 @@
-﻿namespace DLE.NET
+﻿namespace DLEdotNET
 {
     partial class PreferencesForm
     {
@@ -152,7 +152,7 @@
             // 
             // browseForD1PIG
             // 
-            this.browseForD1PIG.Image = global::DLE.NET.Properties.Resources.openfile_16x16;
+            this.browseForD1PIG.Image = global::DLEdotNET.Properties.Resources.openfile_16x16;
             this.browseForD1PIG.Location = new System.Drawing.Point(292, 22);
             this.browseForD1PIG.Name = "browseForD1PIG";
             this.browseForD1PIG.Size = new System.Drawing.Size(24, 24);
@@ -161,7 +161,7 @@
             // 
             // browseForD2PIG
             // 
-            this.browseForD2PIG.Image = global::DLE.NET.Properties.Resources.openfile_16x16;
+            this.browseForD2PIG.Image = global::DLEdotNET.Properties.Resources.openfile_16x16;
             this.browseForD2PIG.Location = new System.Drawing.Point(292, 48);
             this.browseForD2PIG.Name = "browseForD2PIG";
             this.browseForD2PIG.Size = new System.Drawing.Size(24, 24);
@@ -187,7 +187,7 @@
             // 
             // browseForMissions
             // 
-            this.browseForMissions.Image = global::DLE.NET.Properties.Resources.openfile_16x16;
+            this.browseForMissions.Image = global::DLEdotNET.Properties.Resources.openfile_16x16;
             this.browseForMissions.Location = new System.Drawing.Point(292, 74);
             this.browseForMissions.Name = "browseForMissions";
             this.browseForMissions.Size = new System.Drawing.Size(24, 24);

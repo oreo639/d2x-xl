@@ -1,4 +1,4 @@
-﻿namespace DLE.NET
+﻿namespace DLEdotNET
 {
     partial class TextureTool
     {
@@ -278,7 +278,7 @@
             // 
             // selectRGB
             // 
-            this.selectRGB.Image = global::DLE.NET.Properties.Resources.truecolor_16x16;
+            this.selectRGB.Image = global::DLEdotNET.Properties.Resources.truecolor_16x16;
             this.selectRGB.Location = new System.Drawing.Point(269, 15);
             this.selectRGB.Name = "selectRGB";
             this.selectRGB.Size = new System.Drawing.Size(40, 24);
@@ -1025,7 +1025,7 @@
             // 
             // delDynLight
             // 
-            this.delDynLight.Image = global::DLE.NET.Properties.Resources.subtract_16x16;
+            this.delDynLight.Image = global::DLEdotNET.Properties.Resources.subtract_16x16;
             this.delDynLight.Location = new System.Drawing.Point(117, 100);
             this.delDynLight.Name = "delDynLight";
             this.delDynLight.Size = new System.Drawing.Size(24, 24);
@@ -1035,7 +1035,7 @@
             // 
             // addDynLight
             // 
-            this.addDynLight.Image = global::DLE.NET.Properties.Resources.add_16x16;
+            this.addDynLight.Image = global::DLEdotNET.Properties.Resources.add_16x16;
             this.addDynLight.Location = new System.Drawing.Point(31, 100);
             this.addDynLight.Name = "addDynLight";
             this.addDynLight.Size = new System.Drawing.Size(24, 24);
@@ -1337,7 +1337,7 @@
             // resetAlignment
             // 
             this.resetAlignment.BackColor = System.Drawing.Color.Transparent;
-            this.resetAlignment.Image = global::DLE.NET.Properties.Resources.resetblue_16x16;
+            this.resetAlignment.Image = global::DLEdotNET.Properties.Resources.resetblue_16x16;
             this.resetAlignment.Location = new System.Drawing.Point(196, 111);
             this.resetAlignment.Name = "resetAlignment";
             this.resetAlignment.Size = new System.Drawing.Size(24, 24);
@@ -1346,7 +1346,7 @@
             // 
             // resetMarked
             // 
-            this.resetMarked.Image = global::DLE.NET.Properties.Resources.resetred_16x16;
+            this.resetMarked.Image = global::DLEdotNET.Properties.Resources.resetred_16x16;
             this.resetMarked.Location = new System.Drawing.Point(219, 111);
             this.resetMarked.Name = "resetMarked";
             this.resetMarked.Size = new System.Drawing.Size(24, 24);
@@ -1355,7 +1355,7 @@
             // 
             // stretchToFit
             // 
-            this.stretchToFit.Image = global::DLE.NET.Properties.Resources.expand_16x16;
+            this.stretchToFit.Image = global::DLEdotNET.Properties.Resources.expand_16x16;
             this.stretchToFit.Location = new System.Drawing.Point(242, 111);
             this.stretchToFit.Name = "stretchToFit";
             this.stretchToFit.Size = new System.Drawing.Size(24, 24);
@@ -1364,7 +1364,7 @@
             // 
             // alignChildren
             // 
-            this.alignChildren.Image = global::DLE.NET.Properties.Resources.align_16x16;
+            this.alignChildren.Image = global::DLEdotNET.Properties.Resources.align_16x16;
             this.alignChildren.Location = new System.Drawing.Point(265, 111);
             this.alignChildren.Name = "alignChildren";
             this.alignChildren.Size = new System.Drawing.Size(24, 24);
@@ -1373,7 +1373,7 @@
             // 
             // button22
             // 
-            this.button22.Image = global::DLE.NET.Properties.Resources.alignall_16x16;
+            this.button22.Image = global::DLEdotNET.Properties.Resources.alignall_16x16;
             this.button22.Location = new System.Drawing.Point(288, 111);
             this.button22.Name = "button22";
             this.button22.Size = new System.Drawing.Size(24, 24);
@@ -1382,7 +1382,7 @@
             // 
             // button14
             // 
-            this.button14.Image = global::DLE.NET.Properties.Resources.zoomin_16x16;
+            this.button14.Image = global::DLEdotNET.Properties.Resources.zoomin_16x16;
             this.button14.Location = new System.Drawing.Point(196, 19);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(24, 24);
@@ -1391,7 +1391,7 @@
             // 
             // button15
             // 
-            this.button15.Image = global::DLE.NET.Properties.Resources.zoomout_16x16;
+            this.button15.Image = global::DLEdotNET.Properties.Resources.zoomout_16x16;
             this.button15.Location = new System.Drawing.Point(219, 19);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(24, 24);
@@ -1400,7 +1400,7 @@
             // 
             // alignRotLeft
             // 
-            this.alignRotLeft.Image = global::DLE.NET.Properties.Resources.yrotleft_16x16;
+            this.alignRotLeft.Image = global::DLEdotNET.Properties.Resources.yrotleft_16x16;
             this.alignRotLeft.Location = new System.Drawing.Point(242, 88);
             this.alignRotLeft.Name = "alignRotLeft";
             this.alignRotLeft.Size = new System.Drawing.Size(24, 24);
@@ -1409,7 +1409,7 @@
             // 
             // alignUp
             // 
-            this.alignUp.Image = global::DLE.NET.Properties.Resources.moveup_16x16;
+            this.alignUp.Image = global::DLEdotNET.Properties.Resources.moveup_16x16;
             this.alignUp.Location = new System.Drawing.Point(242, 65);
             this.alignUp.Name = "alignUp";
             this.alignUp.Size = new System.Drawing.Size(24, 24);
@@ -1418,7 +1418,7 @@
             // 
             // button12
             // 
-            this.button12.Image = global::DLE.NET.Properties.Resources.moveleft_16x16;
+            this.button12.Image = global::DLEdotNET.Properties.Resources.moveleft_16x16;
             this.button12.Location = new System.Drawing.Point(242, 42);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(24, 24);
@@ -1427,7 +1427,7 @@
             // 
             // flipHorizontal
             // 
-            this.flipHorizontal.Image = global::DLE.NET.Properties.Resources.fliphorz_16x16;
+            this.flipHorizontal.Image = global::DLEdotNET.Properties.Resources.fliphorz_16x16;
             this.flipHorizontal.Location = new System.Drawing.Point(242, 19);
             this.flipHorizontal.Name = "flipHorizontal";
             this.flipHorizontal.Size = new System.Drawing.Size(24, 24);
@@ -1436,7 +1436,7 @@
             // 
             // alignRotRight
             // 
-            this.alignRotRight.Image = global::DLE.NET.Properties.Resources.yrotright_16x16;
+            this.alignRotRight.Image = global::DLEdotNET.Properties.Resources.yrotright_16x16;
             this.alignRotRight.Location = new System.Drawing.Point(265, 88);
             this.alignRotRight.Name = "alignRotRight";
             this.alignRotRight.Size = new System.Drawing.Size(24, 24);
@@ -1445,7 +1445,7 @@
             // 
             // alignDown
             // 
-            this.alignDown.Image = global::DLE.NET.Properties.Resources.movedown_16x16;
+            this.alignDown.Image = global::DLEdotNET.Properties.Resources.movedown_16x16;
             this.alignDown.Location = new System.Drawing.Point(265, 65);
             this.alignDown.Name = "alignDown";
             this.alignDown.Size = new System.Drawing.Size(24, 24);
@@ -1454,7 +1454,7 @@
             // 
             // button8
             // 
-            this.button8.Image = global::DLE.NET.Properties.Resources.moveright_16x16;
+            this.button8.Image = global::DLEdotNET.Properties.Resources.moveright_16x16;
             this.button8.Location = new System.Drawing.Point(265, 42);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(24, 24);
@@ -1463,7 +1463,7 @@
             // 
             // flipVertical
             // 
-            this.flipVertical.Image = global::DLE.NET.Properties.Resources.flipvert_16x16;
+            this.flipVertical.Image = global::DLEdotNET.Properties.Resources.flipvert_16x16;
             this.flipVertical.Location = new System.Drawing.Point(265, 19);
             this.flipVertical.Name = "flipVertical";
             this.flipVertical.Size = new System.Drawing.Size(24, 24);
@@ -1472,7 +1472,7 @@
             // 
             // alignExpandVert
             // 
-            this.alignExpandVert.Image = global::DLE.NET.Properties.Resources.expandvert_16x16;
+            this.alignExpandVert.Image = global::DLEdotNET.Properties.Resources.expandvert_16x16;
             this.alignExpandVert.Location = new System.Drawing.Point(288, 65);
             this.alignExpandVert.Name = "alignExpandVert";
             this.alignExpandVert.Size = new System.Drawing.Size(24, 24);
@@ -1481,7 +1481,7 @@
             // 
             // alignExpandHorz
             // 
-            this.alignExpandHorz.Image = global::DLE.NET.Properties.Resources.expandhorz_16x16;
+            this.alignExpandHorz.Image = global::DLEdotNET.Properties.Resources.expandhorz_16x16;
             this.alignExpandHorz.Location = new System.Drawing.Point(288, 42);
             this.alignExpandHorz.Name = "alignExpandHorz";
             this.alignExpandHorz.Size = new System.Drawing.Size(24, 24);
