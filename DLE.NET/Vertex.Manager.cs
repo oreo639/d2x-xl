@@ -44,6 +44,8 @@ namespace DLE.NET
 
         public byte Status (int i = 0) { return m_vertices [i].Status; }
 
+        public void SetStatus (int i = 0, byte status = 0) { m_vertices [i].Status = status; }
+
         public bool Full { get { return Count >= GameMine.MAX_VERTICES; } }
 
         #endregion
@@ -86,21 +88,21 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Delete (int i, bool bUndo = true)
+        public void Delete (int i, bool bUndo = true)
         {
             DLE.Backup.Begin ();
             Count--;
             if (i < Count)
             {
                 Vertices [i].Copy (Vertices [Count]);
-                DLE.Segments.UpdateVertices ((short)Count, (short)i);
+                DLE.Segments.UpdateVertices ((ushort)Count, (ushort)i);
             }
             DLE.Backup.End ();
         }
 
         // ------------------------------------------------------------------------
 
-        void Read (FileStream fs)
+        public void Read (FileStream fs)
         {
             using (BinaryReader fp = new BinaryReader (fs))
             {
@@ -111,7 +113,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Write (FileStream fs)
+        public void Write (FileStream fs)
         {
             using (BinaryWriter fp = new BinaryWriter (fs))
             {
@@ -122,7 +124,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void MarkAll (byte mask = GameMine.MARKED_MASK)
+        public void MarkAll (byte mask = GameMine.MARKED_MASK)
         {
             for (int i = 0; i < Count; i++)
                 Vertices [i].Status |= mask;
@@ -130,7 +132,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void UnmarkAll (byte mask = GameMine.MARKED_MASK)
+        public void UnmarkAll (byte mask = GameMine.MARKED_MASK)
         {
             for (int i = 0; i < Count; i++)
                 Vertices [i].Status &= (byte) ~mask;
@@ -138,7 +140,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Clear ()
+        public void Clear ()
         {
             for (int i = 0; i < Count; i++)
                 Vertices [i].Clear ();
@@ -146,7 +148,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        DoubleVector GetCenter ()
+        public DoubleVector GetCenter ()
         {
             DoubleVector vMin = new DoubleVector (1e30, 1e30, 1e30);
             DoubleVector vMax = new DoubleVector (-1e30, -1e30, -1e30);
@@ -173,7 +175,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void SetCenter (DoubleVector offset)
+        public void SetCenter (DoubleVector offset)
         {
             for (int i = 0; i < Count; i++)
                 Vertices [i].Sub (offset);
@@ -181,7 +183,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        Vertex Find (DoubleVector coord)
+        public Vertex Find (DoubleVector coord)
         {
             for (int i = 0; i < Count; i++)
                 if (Vertices [i] == coord)

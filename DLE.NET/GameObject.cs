@@ -339,7 +339,7 @@ namespace DLE.NET
         {
           Vertex location = new Vertex ();
 
-        DLE.Backup.Begin (UndoData.UndoFlags.udObjects);
+        DLE.Backup.Begin (UndoData.Flags.udObjects);
         DLE.Segments.CalcCenter (location, nSegment);
         m_signature = 0;
         m_type = type;

@@ -151,7 +151,7 @@ namespace DLE.NET
 
         void Setup (SideKey key, ushort nWall, byte type, sbyte nClip, ushort nTexture, bool bRedefine) 
         {
-        DLE.Backup.Begin (UndoData.UndoFlags.udWalls);
+        DLE.Backup.Begin (UndoData.Flags.udWalls);
         // define new wallP
         SideKey sideKey = this as SideKey;
         sideKey = key;
@@ -231,7 +231,7 @@ namespace DLE.NET
             Side side = Side;
             sbyte nClip = m_nClip;
 
-            DLE.Backup.Begin (UndoData.UndoFlags.udWalls);
+            DLE.Backup.Begin (UndoData.Flags.udWalls);
             if (IsDoor)
             {
                 if (DLE.IsD1File)

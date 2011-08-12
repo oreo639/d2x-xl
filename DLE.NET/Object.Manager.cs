@@ -52,7 +52,7 @@ namespace DLE.NET
 
         public void UpdateSegments (short nOldSeg, short nNewSeg)
         {
-        DLE.Backup.Begin (UndoData.UndoFlags.udObjects);
+        DLE.Backup.Begin (UndoData.Flags.udObjects);
         for (int i = 0; i < Count; i++)
 	        if (Objects [i].m_nSegment == nOldSeg)
 		        Objects [i].m_nSegment = nNewSeg;

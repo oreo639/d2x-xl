@@ -20,6 +20,7 @@ namespace DLE.NET
         public static LightManager Lights { get { return m_lightManager; } }
         public static MineView MineView { get { return m_mineView; } }
         public static ToolView ToolView { get { return m_toolView; } }
+        public static TunnelMaker TunnelMaker { get { return m_tunnelMaker; } }
         public static Selection Current { get { return m_selections [0]; } }
         public static Selection Other { get { return m_selections [1]; } }
         public static Selection Selection (int i) { return m_selections [i]; }
@@ -35,6 +36,7 @@ namespace DLE.NET
         public static TriggerManager m_triggerManager = new TriggerManager ();
         public static ObjectManager m_objectManager = new ObjectManager ();
         public static LightManager m_lightManager = new LightManager ();
+        public static TunnelMaker m_tunnelMaker = new TunnelMaker ();
         public static Selection [] m_selections = new Selection [2] { new Selection (), new Selection () };
         public static MineView m_mineView = new MineView ();
         public static ToolView m_toolView = new ToolView ();

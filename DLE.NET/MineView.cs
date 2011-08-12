@@ -7,7 +7,7 @@ namespace DLE.NET
     {
         // ------------------------------------------------------------------------
 
-        public void Refresh ()
+        public void Refresh (bool bAll = false)
         {
         }
 

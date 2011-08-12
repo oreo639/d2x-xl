@@ -334,21 +334,21 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public DoubleVector CrossProduct (DoubleVector v0, DoubleVector v1) 
+        public static DoubleVector CrossProduct (DoubleVector v0, DoubleVector v1) 
         {
     	    return new DoubleVector (v0.v.y * v1.v.z - v0.v.z * v1.v.y, v0.v.z * v1.v.x - v0.v.x * v1.v.z, v0.v.x * v1.v.y - v0.v.y * v1.v.x);
 	    }
 
         // ------------------------------------------------------------------------
 
-        public DoubleVector Perpendicular (DoubleVector p0, DoubleVector p1, DoubleVector p2) 
+        public static DoubleVector Perpendicular (DoubleVector p0, DoubleVector p1, DoubleVector p2) 
         {
 	        return CrossProduct (p1 - p0, p2 - p1);
 	    }
 
         // ------------------------------------------------------------------------
 
-        public DoubleVector Normalize (DoubleVector v) 
+        public static DoubleVector Normalize (DoubleVector v) 
         { 
 	        double m = v.Mag ();
             if (m == 0.0)
@@ -360,14 +360,29 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public DoubleVector Normal (DoubleVector p0, DoubleVector p1, DoubleVector p2) 
+        public DoubleVector Normalize ()
+        {
+            double m = Mag ();
+            if (m == 0.0)
+                Set (0.0, 0.0, 0.0);
+            else
+            {
+                DoubleVector v = this as DoubleVector;
+                v /= m;
+            }
+            return this;
+        }
+
+        // ------------------------------------------------------------------------
+
+        public static DoubleVector Normal (DoubleVector p0, DoubleVector p1, DoubleVector p2) 
         {
 	        return Normalize (CrossProduct (p1 - p0, p2 - p0));
 	    }
 
         // ------------------------------------------------------------------------
 
-        public double Normal (DoubleVector normal, DoubleVector p0, DoubleVector p1, DoubleVector p2) 
+        public static double Normal (DoubleVector normal, DoubleVector p0, DoubleVector p1, DoubleVector p2) 
         {
 	        normal = CrossProduct (p1 - p0, p2 - p0);
 	        double m = normal.Mag ();
@@ -378,66 +393,28 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public int Dot (FixVector v0, FixVector v1) 
-        {
-    	    return (int) ((((double) v0.v.x * (double) v1.v.x + (double) v0.v.y * (double) v1.v.y + (double) v0.v.z * (double) v1.v.z)) / 65536.0);
-	    }
-
-        // ------------------------------------------------------------------------
-
-        public FixVector Min (FixVector v0, FixVector v1) 
-        {
-	        return new FixVector (Math.Min (v0.v.x, v1.v.x), Math.Min (v0.v.y, v1.v.y), Math.Min (v0.v.z, v1.v.z));
-	    }
-
-        // ------------------------------------------------------------------------
-
-        public FixVector Max (FixVector v0, FixVector v1) 
-        {
-	        return new FixVector (Math.Max (v0.v.x, v1.v.x), Math.Max (v0.v.y, v1.v.y), Math.Max (v0.v.z, v1.v.z));
-	    }
-
-        // ------------------------------------------------------------------------
-
-        public double Distance (FixVector p0, FixVector p1) 
-        {
-	        FixVector v = p0 - p1;
-	        return FixConverter.D2X (new DoubleVector (v).Mag ());
-	    }
-
-        // ------------------------------------------------------------------------
-
-        public FixVector Average (FixVector p0, FixVector p1) 
-        {
-	        FixVector v = p0 + p1;
-	        v /= FixConverter.I2X (2);
-	        return v;
-	    }
-
-        // ------------------------------------------------------------------------
-
-        public double Dot (DoubleVector v0, DoubleVector v1) 
+        public static double Dot (DoubleVector v0, DoubleVector v1) 
         {
     	    return (double) v0.v.x * (double) v1.v.x + (double) v0.v.y * (double) v1.v.y + (double) v0.v.z * (double) v1.v.z;
 	    }
 
         // ------------------------------------------------------------------------
 
-        public DoubleVector Min (DoubleVector v0, DoubleVector v1) 
+        public static DoubleVector Min (DoubleVector v0, DoubleVector v1) 
         {
 	        return new DoubleVector (Math.Min (v0.v.x, v1.v.x), Math.Min (v0.v.y, v1.v.y), Math.Min (v0.v.z, v1.v.z));
 	    }
 
         // ------------------------------------------------------------------------
 
-        public DoubleVector Max (DoubleVector v0, DoubleVector v1) 
+        public static DoubleVector Max (DoubleVector v0, DoubleVector v1) 
         {
 	        return new DoubleVector (Math.Max (v0.v.x, v1.v.x), Math.Max (v0.v.y, v1.v.y), Math.Max (v0.v.z, v1.v.z));
 	    }
 
         // ------------------------------------------------------------------------
 
-        public double Distance (DoubleVector p0, DoubleVector p1) 
+        public static double Distance (DoubleVector p0, DoubleVector p1) 
         {
 	        DoubleVector v = p0 - p1;
 	        return v.Mag ();
@@ -445,7 +422,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public DoubleVector Average (DoubleVector p0, DoubleVector p1) 
+        public static DoubleVector Average (DoubleVector p0, DoubleVector p1) 
         {
     	    DoubleVector v = p0 + p1;
 	        v /= 2.0;

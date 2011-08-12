@@ -84,6 +84,13 @@ namespace DLE.NET
             m_nWall = 0;
             m_nBaseTex = 0;
             m_nOvlTex = 0;
+            ClearUVL ();
+        }
+
+        // ------------------------------------------------------------------------
+
+        public void ClearUVL ()
+        {
             for (int i = 0; i < m_uvls.Length; i++)
                 m_uvls [i].Clear ();
         }

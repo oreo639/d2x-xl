@@ -94,14 +94,14 @@ namespace DLE.NET
         if (delTrig == null)
 	        return;
 
-        DLE.Backup.Begin (UndoData.UndoFlags.udTriggers);
+        DLE.Backup.Begin (UndoData.Flags.udTriggers);
         DLE.Walls.UpdateTrigger (nDelTrigger, GameMine.NO_TRIGGER);
 
         if (nDelTrigger < --WallTriggerCount) {
 	        delTrig = WallTriggers [WallTriggerCount];
 	        Wall wall = DLE.Walls.FindByTrigger ((short) WallTriggerCount);
 	        if (wall != null) {
-		        DLE.Backup.Begin (UndoData.UndoFlags.udWalls);
+		        DLE.Backup.Begin (UndoData.Flags.udWalls);
 		        wall.m_nTrigger = (byte) nDelTrigger;
 		        DLE.Backup.End ();
 		        }
@@ -116,7 +116,7 @@ namespace DLE.NET
 
         public void DeleteTargets (SideKey key) 
         {
-            DLE.Backup.Begin (UndoData.UndoFlags.udTriggers);
+            DLE.Backup.Begin (UndoData.Flags.udTriggers);
             int i;
             for (i = 0; i < WallTriggerCount; i++)
                 WallTriggers [i].Delete (key);
@@ -133,7 +133,7 @@ namespace DLE.NET
         {
             if ((nDelTrigger < 0) || (nDelTrigger >= ObjTriggerCount))
 	            return;
-            DLE.Backup.Begin (UndoData.UndoFlags.udTriggers);
+            DLE.Backup.Begin (UndoData.Flags.udTriggers);
             if (nDelTrigger < --ObjTriggerCount)
             {
                 Trigger temp = ObjTriggers [nDelTrigger];
@@ -159,7 +159,7 @@ namespace DLE.NET
         {
             ReactorTrigger reactorTrigger = ReactorTriggers [0];	// only one reactor trigger per level
 
-            DLE.Backup.Begin (UndoData.UndoFlags.udTriggers);
+            DLE.Backup.Begin (UndoData.Flags.udTriggers);
             // remove items from list that do not point to a wall
             for (short nTarget = 0; nTarget < ReactorTriggerCount; nTarget++) {
 	            if (DLE.Walls.FindBySide (reactorTrigger [nTarget]) == null)

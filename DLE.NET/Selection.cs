@@ -10,9 +10,9 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        short m_nLine = GameMine.DEFAULT_LINE;
-        short m_nPoint = GameMine.DEFAULT_POINT;
-        short m_nObject = GameMine.DEFAULT_OBJECT;
+        public short m_nLine = GameMine.DEFAULT_LINE;
+        public short m_nPoint = GameMine.DEFAULT_POINT;
+        public short m_nObject = GameMine.DEFAULT_OBJECT;
 
         // ------------------------------------------------------------------------
 

@@ -226,7 +226,7 @@ namespace DLE.NET
 
         // read vertex numbers (16 bytes)
         for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
-	        m_verts [i] = fp.ReadInt16 ();
+	        m_verts [i] = fp.ReadUInt16 ();
 
         if (nLevelVersion == 0)
 	        ReadExtras (fp, nLevelType, nLevelVersion, (m_childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
