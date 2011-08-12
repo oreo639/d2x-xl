@@ -14,12 +14,16 @@ namespace DLE.NET
 
 		public void Read (BinaryReader fp = null, int version = 0, bool bFlag = false)
         {
+            Count = fp.ReadInt16 ();
+            base.Read (fp);
         }
 
         // ------------------------------------------------------------------------
 
         public void Write (BinaryWriter fp = null, int version = 0, bool bFlag = false)
         {
+            fp.Write (Count);
+            base.Write (fp);
         }
 
         // ------------------------------------------------------------------------
