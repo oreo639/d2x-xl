@@ -76,6 +76,13 @@ namespace DLE.NET
             v.z = z;
         }
 
+        public void Set (DoubleVector other)
+        {
+            v.x = other.v.x;
+            v.y = other.v.y;
+            v.z = other.v.z;
+        }
+
         public void Clear ()
         {
             Set (0, 0, 0);
