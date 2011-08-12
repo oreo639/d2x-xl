@@ -300,28 +300,28 @@ namespace DLE.NET
             }
 
             // If parameter cannot be cast to Point return false.
-            DoubleVector p = obj as DoubleVector;
-            if ((System.Object) p == null)
+            DoubleVector other = obj as DoubleVector;
+            if ((System.Object) other == null)
             {
                 return false;
             }
 
             // Return true if the fields match:
-            return (v.x == p.v.x) && (v.y == p.v.y) && (v.z == p.v.z);
+            return (v.x == other.v.x) && (v.y == other.v.y) && (v.z == other.v.z);
         }
 
         // ------------------------------------------------------------------------
 
-        public bool Equals (DoubleVector p)
+        public bool Equals (DoubleVector other)
         {
             // If parameter is null return false:
-            if ((object)p == null)
+            if ((object)other == null)
             {
                 return false;
             }
 
             // Return true if the fields match:
-            return (v.x == p.v.x) && (v.y == p.v.y) && (v.z == p.v.z);
+            return (v.x == other.v.x) && (v.y == other.v.y) && (v.z == other.v.z);
         }
 
         // ------------------------------------------------------------------------

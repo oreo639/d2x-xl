@@ -97,6 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Matrix.Fix.cs" />
     <Compile Include="Vector.Angle.cs" />
     <Compile Include="BitmapInfoHeader.cs" />
     <Compile Include="BufPtr.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Undo.Data.cs" />
     <Compile Include="Undo.Item.cs" />
     <Compile Include="Undo.Manager.cs" />
+    <Compile Include="Vector.Long.cs" />
     <Compile Include="Vertex.cs" />
     <Compile Include="MissionTool.cs">
       <SubType>Form</SubType>

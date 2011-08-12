@@ -67,7 +67,7 @@ namespace DLE.NET
 
         #region initializers
 
-        void Clear ()
+        public void Clear ()
         {
             rVec.Set (1.0, 0.0, 0.0);
             uVec.Set (0.0, 1.0, 0.0);
@@ -76,7 +76,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Set (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3)
+        public void Set (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3)
         {
             rVec.Set (x1, y1, z1);
             uVec.Set (x2, y2, z2);
@@ -85,7 +85,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        DoubleMatrix Set (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh)
+        public DoubleMatrix Set (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh)
         {
         double sbsh = sinb * sinh;
         double cbch = cosb * cosh;
@@ -104,7 +104,7 @@ namespace DLE.NET
 
         #region operations
 
-        DoubleMatrix Mul (DoubleMatrix other) 
+        public DoubleMatrix Mul (DoubleMatrix other) 
         {
 	        DoubleVector v = new DoubleVector ();
 	        DoubleMatrix m = new DoubleMatrix ();
@@ -126,7 +126,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        double Det () 
+        public double Det () 
         {
             return rVec.v.x * (fVec.v.y * uVec.v.z - uVec.v.y * fVec.v.z) +
 		           uVec.v.x * (rVec.v.y * fVec.v.z - fVec.v.y * rVec.v.z) +
@@ -135,7 +135,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        DoubleMatrix Inverse () 
+        public DoubleMatrix Inverse () 
         {
 	        DoubleMatrix m = new DoubleMatrix ();
 
@@ -158,7 +158,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        DoubleMatrix Adjoint () 
+        public DoubleMatrix Adjoint () 
         {
 	        DoubleMatrix m = new DoubleMatrix ();
 
@@ -176,7 +176,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        DoubleMatrix Transpose (DoubleMatrix dest, DoubleMatrix src)
+        public DoubleMatrix Transpose (DoubleMatrix dest, DoubleMatrix src)
         {
             dest.rVec.v.x = src.rVec.v.x;
             dest.uVec.v.x = src.rVec.v.y;
@@ -192,7 +192,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Rotate (double angle, char axis) 
+        public void Rotate (double angle, char axis) 
         {
         double cosX = Math.Cos (angle);
         double sinX = Math.Sin (angle);
@@ -251,50 +251,110 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Square2Quad (LongVector [] a) 
+        public void Square2Quad (LongVector [] a) 
         {
-        // infer "unity square" to "quad" prespective transformation
-        // see page 55-56 of Digital Image Warping by George Wolberg (3rd edition) 
-        double dx1 = a [1].x - a [2].x;
-        double dx2 = a [3].x - a [2].x;
-        double dx3 = a [0].x - a [1].x + a [2].x - a [3].x;
-        double dy1 = a [1].y - a [2].y;
-        double dy2 = a [3].y - a [2].y;
-        double dy3 = a [0].y - a [1].y + a [2].y - a [3].y;
-        double w = (dx1 * dy2 - dx2 * dy1);
-        if (w == 0.0) 
-	        w = 1.0;
+            // infer "unity square" to "quad" prespective transformation
+            // see page 55-56 of Digital Image Warping by George Wolberg (3rd edition) 
+            double dx1 = a [1].x - a [2].x;
+            double dx2 = a [3].x - a [2].x;
+            double dx3 = a [0].x - a [1].x + a [2].x - a [3].x;
+            double dy1 = a [1].y - a [2].y;
+            double dy2 = a [3].y - a [2].y;
+            double dy3 = a [0].y - a [1].y + a [2].y - a [3].y;
+            double w = (dx1 * dy2 - dx2 * dy1);
+            if (w == 0.0) 
+	            w = 1.0;
 
-        rVec.v.z = (dx3 * dy2 - dx2 * dy3) / w;
-        uVec.v.z = (dx1 * dy3 - dx3 * dy1) / w;
-        rVec.v.x = a [1].x - a [0].x + rVec.v.z * a [1].x;
-        uVec.v.x = a [3].x - a [0].x + uVec.v.z * a [3].x;
-        fVec.v.x = a [0].x;
-        rVec.v.y = a [1].y - a [0].y + rVec.v.z * a [1].y;
-        uVec.v.y = a [3].y - a [0].y + uVec.v.z * a [3].y;
-        fVec.v.y = a [0].y;
-        fVec.v.z = 1;
+            rVec.v.z = (dx3 * dy2 - dx2 * dy3) / w;
+            uVec.v.z = (dx1 * dy3 - dx3 * dy1) / w;
+            rVec.v.x = a [1].x - a [0].x + rVec.v.z * a [1].x;
+            uVec.v.x = a [3].x - a [0].x + uVec.v.z * a [3].x;
+            fVec.v.x = a [0].x;
+            rVec.v.y = a [1].y - a [0].y + rVec.v.z * a [1].y;
+            uVec.v.y = a [3].y - a [0].y + uVec.v.z * a [3].y;
+            fVec.v.y = a [0].y;
+            fVec.v.z = 1;
         }
 
         // ------------------------------------------------------------------------
 
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
+        public void Scale (double scale) 
+        {
+            Mul (new DoubleMatrix (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 1.0));
+        }
 
         #endregion
+
+        // ------------------------------------------------------------------------
+
+        #region operators
+
+        // ------------------------------------------------------------------------
+
+        public static DoubleMatrix operator * (DoubleMatrix a, DoubleMatrix b)
+        {
+            return a.Mul (b);
+        }
+
+        public static bool operator == (DoubleMatrix v1, DoubleMatrix v2)
+        {
+            return (v1.rVec == v2.rVec) && (v1.uVec == v2.uVec) && (v1.fVec == v2.fVec);
+        }
+
+        public static bool operator != (DoubleMatrix v1, DoubleMatrix v2)
+        {
+            return (v1.rVec != v2.rVec) || (v1.uVec != v2.uVec) || (v1.fVec != v2.fVec);
+        }
+
+        #endregion
+
+        // ------------------------------------------------------------------------
+
+        #region Equality functions
+
+        public override bool Equals (System.Object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+            {
+                return false;
+            }
+
+            // If parameter cannot be cast to Point return false.
+            DoubleMatrix other = obj as DoubleMatrix;
+            if ((System.Object)other == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return (rVec == other.rVec) && (uVec == other.uVec) && (fVec == other.fVec);
+        }
+
+        // ------------------------------------------------------------------------
+
+        public bool Equals (DoubleMatrix other)
+        {
+            // If parameter is null return false:
+            if ((object)other == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return (rVec == other.rVec) && (uVec == other.uVec) && (fVec == other.fVec);
+        }
+
+        // ------------------------------------------------------------------------
+
+        public override int GetHashCode ()
+        {
+            return rVec.GetHashCode () ^ uVec.GetHashCode () ^ fVec.GetHashCode ();
+        }
+
+        #endregion
+
+        // ------------------------------------------------------------------------
 
     }
 }
