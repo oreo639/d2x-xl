@@ -17,6 +17,11 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public int Count (int nClass)
+        {
+            return m_info [nClass].count;
+        }
+
         public int WallTriggerCount
         {
             get { return m_info [0].count; }

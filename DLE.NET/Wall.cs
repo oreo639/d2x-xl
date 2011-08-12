@@ -147,6 +147,8 @@ namespace DLE.NET
 
         public Trigger Trigger { get { return DLE.Triggers.WallTriggers [m_nTrigger]; } }
 
+        public Types Type { get { return m_type; } }
+
         // ------------------------------------------------------------------------
 
         void Setup (SideKey key, ushort nWall, byte type, sbyte nClip, ushort nTexture, bool bRedefine) 

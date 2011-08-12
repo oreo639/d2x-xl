@@ -7,7 +7,9 @@ namespace DLE.NET
     {
         // ------------------------------------------------------------------------
 
-        public MineItemInfo m_info = new MineItemInfo ();
+        public MineItemInfo m_segmentInfo = new MineItemInfo ();
+        public MineItemInfo [] m_matCenInfo = new MineItemInfo [2] { new MineItemInfo (), new MineItemInfo () };
+        MatCenter [][] m_matCenters = new MatCenter [2][] {new MatCenter [GameMine.MAX_MATCENS_D2], new MatCenter [GameMine.MAX_MATCENS_D2]};
 
         Segment [] m_segments = new Segment [GameMine.MAX_SEGMENTS];
 
@@ -15,14 +17,36 @@ namespace DLE.NET
 
         public int Count
         {
-            get { return m_info.count; }
-            set { m_info.count = value; }
+            get { return m_segmentInfo.count; }
+            set { m_segmentInfo.count = value; }
         }
 
         public int FileOffset
         {
-            get { return m_info.offset; }
-            set { m_info.offset = value; }
+            get { return m_segmentInfo.offset; }
+            set { m_segmentInfo.offset = value; }
+        }
+
+        // ------------------------------------------------------------------------
+
+        public MatCenter[] RobotMakers
+        {
+            get { return m_matCenters [0]; }
+        }
+
+        public MatCenter RobotMaker (int i = 0)
+        {
+            return RobotMakers [i];
+        }
+
+        public MatCenter [] EquipMakers
+        {
+            get { return m_matCenters [1]; }
+        }
+
+        public MatCenter EquipMaker (int i = 0)
+        {
+            return EquipMakers [i];
         }
 
         // ------------------------------------------------------------------------

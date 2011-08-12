@@ -5,6 +5,8 @@ namespace DLE.NET
 {
     public partial class MineView
     {
+        int m_nDelayRefresh = 0;
+
         // ------------------------------------------------------------------------
 
         public void Refresh (bool bAll = false)
@@ -12,6 +14,14 @@ namespace DLE.NET
         }
 
         // ------------------------------------------------------------------------
+
+	    public void DelayRefresh (bool bDelay) 
+        {
+		    if (bDelay)
+			    m_nDelayRefresh++;
+		    else if (m_nDelayRefresh > 0)
+			    m_nDelayRefresh--;
+		}
 
         // ------------------------------------------------------------------------
 

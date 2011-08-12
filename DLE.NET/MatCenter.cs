@@ -4,6 +4,8 @@ namespace DLE.NET
 {
     public class MatCenter : IGameItem
     {
+        public int Key { get; set; }
+
         // ------------------------------------------------------------------------
 
 	    public int[]  m_objFlags = new int [2]; // Up to 32 different Descent 1 robots 
@@ -41,6 +43,16 @@ namespace DLE.NET
         {
             Clear ();
         }
+
+        // ------------------------------------------------------------------------
+
+	    public void Setup (short nSegment, short nIndex, int nFlags) 
+        {
+		    Clear ();
+		    m_nSegment = nSegment;
+		    m_objFlags [0] = nFlags;
+		    m_nFuelCen = nIndex;
+		}
 
         // ------------------------------------------------------------------------
 
