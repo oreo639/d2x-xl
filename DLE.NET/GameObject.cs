@@ -6,9 +6,9 @@ namespace DLE.NET
 
     public struct ObjectContents
     {
-        public byte type;
-        public byte id;
-        public byte count;
+        public byte type = 0;
+        public byte id = 0;
+        public byte count = 0;
     }
 
     // ------------------------------------------------------------------------
@@ -37,6 +37,11 @@ namespace DLE.NET
         {
             pos.Sub (v);
             lastPos.Sub (v);
+        }
+
+        public ObjectLocation ()
+        {
+            Clear ();
         }
     }
 
@@ -308,15 +313,14 @@ namespace DLE.NET
         RenderTypes m_renderType; //  how this object renders 
         Flags m_flags; // misc flags 
         byte m_multiplayer; // object only available in multiplayer games 
-        short m_segnum; // segment number containing object 
+        short m_nSegment; // segment number containing object 
         FixVector m_pos; // absolute x,y,z coordinate of center of object 
         FixMatrix m_orient; // orientation of object in world 
         int m_size; // 3d size of object - for collision detection 
         int m_shields; // Starts at maximum, when <0, object dies.. 
         FixVector m_lastPos; // where object was last frame 
-        char m_containsType; //  Type of object this object contains (eg, spider contains powerup) 
-        char m_containsId; //  ID of object this object contains (eg, id = blue type = key) 
-        char m_containsCount; // number of objects of type:id this object contains 
+        ObjectLocation m_location = new ObjectLocation ();
+        ObjectContents m_contents = new ObjectContents { };
 
         MType m_mType;
         CType m_cType;
@@ -333,13 +337,12 @@ namespace DLE.NET
 
         void Create (Types type, short nSegment) 
         {
-          Vertex location;
+          Vertex location = new Vertex ();
 
         DLE.Backup.Begin (UndoData.UndoFlags.udObjects);
         DLE.Segments.CalcCenter (location, nSegment);
-        Clear ();
         m_signature = 0;
-        mType = type;
+        m_type = type;
         m_id = (type == Types.WEAPON) ? Ids.SMALLMINE : 0;
         m_controlType = ControlTypes.NONE; /* player 0 only */
         m_movementType = MovementTypes.PHYSICS;
@@ -347,13 +350,13 @@ namespace DLE.NET
         m_flags = 0;
         m_nSegment = DLE.Current.m_nSegment;
         m_location.pos = location;
-        m_location.orient.rVec.Set (I2X (1), 0, 0);
-        m_location.orient.uVec.Set (0, I2X (1), 0);
-        m_location.orient.fVec.Set (0, 0, I2X (1));
+        m_location.orient.rVec.Set (FixConverter.I2X (1), 0, 0);
+        m_location.orient.uVec.Set (0, FixConverter.I2X (1), 0);
+        m_location.orient.fVec.Set (0, 0, FixConverter.I2X (1));
         m_size = GameMine.PLAYER_SIZE;
         m_shields = GameMine.DEFAULT_SHIELD;
-        rType.polyModelInfo.nModel = GameMine.PLAYER_CLIP_NUMBER;
-        rType.polyModelInfo.nOverrideTexture = -1;
+        m_rType.polyModelInfo.nModel = GameMine.PLAYER_CLIP_NUMBER;
+        m_rType.polyModelInfo.nTextureOverride = -1;
         m_contents.type = 0;
         m_contents.id = 0;
         m_contents.count = 0;

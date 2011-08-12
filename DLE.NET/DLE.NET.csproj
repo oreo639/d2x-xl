@@ -248,6 +248,7 @@
     <Compile Include="UVL.cs" />
     <Compile Include="Vertex.Manager.cs" />
     <Compile Include="Wall.cs" />
+    <Compile Include="Wall.Door.cs" />
     <Compile Include="Wall.Manager.cs" />
     <Compile Include="Wall.Tool.cs">
       <SubType>Form</SubType>
