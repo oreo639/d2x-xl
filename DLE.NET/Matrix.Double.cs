@@ -13,6 +13,7 @@ namespace DLE.NET
         public DoubleVector fVec = new DoubleVector ();
 
         // ------------------------------------------------------------------------
+
         #region c'tors
 
         DoubleMatrix ()
@@ -64,6 +65,8 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        #region initializers
+
         void Clear ()
         {
             rVec.Set (1.0, 0.0, 0.0);
@@ -95,11 +98,109 @@ namespace DLE.NET
         return this;
         }
 
+        #endregion
+
+        // ------------------------------------------------------------------------
+
+        #region operations
+
+        DoubleMatrix Mul (DoubleMatrix other) 
+        {
+	        DoubleVector v = new DoubleVector ();
+	        DoubleMatrix m = new DoubleMatrix ();
+
+            v.Set (other.rVec.v.x, other.uVec.v.x, other.fVec.v.x);
+            m.rVec.v.x = v ^ rVec;
+            m.uVec.v.x = v ^ uVec;
+            m.fVec.v.x = v ^ fVec;
+            v.Set (other.rVec.v.y, other.uVec.v.y, other.fVec.v.y);
+            m.rVec.v.y = v ^ rVec;
+            m.uVec.v.y = v ^ uVec;
+            m.fVec.v.y = v ^ fVec;
+            v.Set (other.rVec.v.z, other.uVec.v.z, other.fVec.v.z);
+            m.rVec.v.z = v ^ rVec;
+            m.uVec.v.z = v ^ uVec;
+            m.fVec.v.z = v ^ fVec;
+            return m;
+        }
+
+        // ------------------------------------------------------------------------
+
+        double Det () 
+        {
+            return rVec.v.x * (fVec.v.y * uVec.v.z - uVec.v.y * fVec.v.z) +
+		           uVec.v.x * (rVec.v.y * fVec.v.z - fVec.v.y * rVec.v.z) +
+		           fVec.v.x * (uVec.v.y * rVec.v.z - rVec.v.y * uVec.v.z);
+        }
+
+        // ------------------------------------------------------------------------
+
+        DoubleMatrix Inverse () 
+        {
+	        DoubleMatrix m = new DoubleMatrix ();
+
+            double det = Det ();
+            if (det != 0.0) {
+	            m.rVec.v.x = (fVec.v.y * uVec.v.z - uVec.v.y * fVec.v.z) / det;
+	            m.rVec.v.y = (rVec.v.y * fVec.v.z - fVec.v.y * rVec.v.z) / det;
+	            m.rVec.v.z = (uVec.v.y * rVec.v.z - rVec.v.y * uVec.v.z) / det;
+
+	            m.uVec.v.x = (uVec.v.x * fVec.v.z - fVec.v.x * uVec.v.z) / det;
+	            m.uVec.v.y = (fVec.v.x * rVec.v.z - rVec.v.x * fVec.v.z) / det;
+	            m.uVec.v.z = (rVec.v.x * uVec.v.z - uVec.v.x * rVec.v.z) / det;
+
+	            m.fVec.v.x = (fVec.v.x * uVec.v.y - uVec.v.x * fVec.v.y) / det;
+	            m.fVec.v.y = (rVec.v.x * fVec.v.y - fVec.v.x * rVec.v.y) / det;
+	            m.fVec.v.z = (uVec.v.x * rVec.v.y - rVec.v.x * uVec.v.y) / det;
+	            }
+            return m;
+        }
+
+        // ------------------------------------------------------------------------
+
+        DoubleMatrix Adjoint () 
+        {
+	        DoubleMatrix m = new DoubleMatrix ();
+
+            m.rVec.v.x = uVec.v.y * fVec.v.z - uVec.v.z * fVec.v.y;
+            m.rVec.v.y = rVec.v.z * fVec.v.y - rVec.v.y * fVec.v.z;
+            m.rVec.v.z = rVec.v.y * uVec.v.z - rVec.v.z * uVec.v.y;
+            m.uVec.v.x = uVec.v.z * fVec.v.x - uVec.v.x * fVec.v.z;
+            m.uVec.v.y = rVec.v.x * fVec.v.z - rVec.v.z * fVec.v.x;
+            m.uVec.v.z = rVec.v.z * uVec.v.x - rVec.v.x * uVec.v.z;
+            m.fVec.v.x = uVec.v.x * fVec.v.y - uVec.v.y * fVec.v.x;
+            m.fVec.v.y = rVec.v.y * fVec.v.x - rVec.v.x * fVec.v.y;
+            m.fVec.v.z = rVec.v.x * uVec.v.y - rVec.v.y * uVec.v.x;
+            return m;
+        }
+
+        // ------------------------------------------------------------------------
+
+        DoubleMatrix Transpose (DoubleMatrix dest, DoubleMatrix src)
+        {
+            dest.rVec.v.x = src.rVec.v.x;
+            dest.uVec.v.x = src.rVec.v.y;
+            dest.fVec.v.x = src.rVec.v.z;
+            dest.rVec.v.y = src.uVec.v.x;
+            dest.uVec.v.y = src.uVec.v.y;
+            dest.fVec.v.y = src.uVec.v.z;
+            dest.rVec.v.z = src.fVec.v.x;
+            dest.uVec.v.z = src.fVec.v.y;
+            dest.fVec.v.z = src.fVec.v.z;
+            return dest;
+        }
+
+        // ------------------------------------------------------------------------
+
         // ------------------------------------------------------------------------
 
         // ------------------------------------------------------------------------
 
         // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        #endregion
 
     }
 }
