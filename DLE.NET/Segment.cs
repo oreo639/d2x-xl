@@ -13,9 +13,9 @@ namespace DLE.NET
         public const int MAX_SIDES_PER_SEGMENT = 6;
         public const int MAX_VERTICES_PER_SEGMENT = 8;
 
-        public short [] m_verts = new short [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
-        public Function m_function;			// special property of a segment (such as damaging, trigger, etc.) 
-        public Property m_props;
+        public ushort [] m_verts = new ushort [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
+        public Functions m_function;			// special property of a segment (such as damaging, trigger, etc.) 
+        public Properties m_props;
         public sbyte m_nMatCen;			// which center segment is associated with, high bit set 
         public sbyte m_value;				// matcens: bitmask of producable robots, fuelcenters: energy given? --MK, 3/15/95 
         public byte m_flags;			// New for Descent 2
@@ -31,46 +31,46 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        Function[] segFuncFromType = new Function[(int) Type.COUNT_D2]
+        Functions[] segFuncFromType = new Functions[(int) Type.COUNT_D2]
         {
-	        Function.NONE,
-	        Function.FUELCEN,
-	        Function.REPAIRCEN,
-	        Function.CONTROLCEN,
-	        Function.ROBOTMAKER,
-	        Function.GOAL_BLUE,
-	        Function.GOAL_RED,
-	        Function.NONE,
-	        Function.NONE,
-	        Function.TEAM_BLUE,
-	        Function.TEAM_RED,
-	        Function.SPEEDBOOST,
-	        Function.NONE,
-	        Function.NONE,
-	        Function.SKYBOX,
-	        Function.EQUIPMAKER,
-	        Function.NONE
+	        Functions.NONE,
+	        Functions.FUELCEN,
+	        Functions.REPAIRCEN,
+	        Functions.CONTROLCEN,
+	        Functions.ROBOTMAKER,
+	        Functions.GOAL_BLUE,
+	        Functions.GOAL_RED,
+	        Functions.NONE,
+	        Functions.NONE,
+	        Functions.TEAM_BLUE,
+	        Functions.TEAM_RED,
+	        Functions.SPEEDBOOST,
+	        Functions.NONE,
+	        Functions.NONE,
+	        Functions.SKYBOX,
+	        Functions.EQUIPMAKER,
+	        Functions.NONE
 	    };
 
-        Property [] segPropsFromType = new Property [(int)Type.COUNT_D2] 
+        Properties [] segPropsFromType = new Properties [(int)Type.COUNT_D2] 
         {
-	        Property.NONE,
-	        Property.NONE,
-	        Property.NONE,
-	        Property.NONE,
-	        Property.NONE,
-	        Property.NONE,
-	        Property.NONE,
-	        Property.WATER,
-	        Property.LAVA,
-	        Property.NONE,
-	        Property.NONE,
-	        Property.NONE,
-	        Property.BLOCKED,
-	        Property.NODAMAGE,
-	        Property.BLOCKED,
-	        Property.NONE,
-	        Property.OUTDOORS
+	        Properties.NONE,
+	        Properties.NONE,
+	        Properties.NONE,
+	        Properties.NONE,
+	        Properties.NONE,
+	        Properties.NONE,
+	        Properties.NONE,
+	        Properties.WATER,
+	        Properties.LAVA,
+	        Properties.NONE,
+	        Properties.NONE,
+	        Properties.NONE,
+	        Properties.BLOCKED,
+	        Properties.NODAMAGE,
+	        Properties.BLOCKED,
+	        Properties.NONE,
+	        Properties.OUTDOORS
         };
         private int i;
 
@@ -87,9 +87,9 @@ namespace DLE.NET
         public void Read (BinaryReader fp, int version = 0, bool bFlag = false)
         {
             for (int i = 0; i < m_verts.Length; i++)
-                m_verts [i] = fp.ReadInt16 ();
-            m_function = (Function) fp.ReadByte ();
-            m_props = (Property) fp.ReadByte ();
+                m_verts [i] = fp.ReadUInt16 ();
+            m_function = (Functions) fp.ReadByte ();
+            m_props = (Properties) fp.ReadByte ();
             m_nMatCen = fp.ReadSByte ();
             m_value = fp.ReadSByte ();
             m_damage [0] = fp.ReadInt16 ();
@@ -180,7 +180,7 @@ namespace DLE.NET
         void ReadExtras (BinaryReader fp, int nLevelType, int nLevelVersion, bool bExtras)
         {
         if (bExtras) {
-	        m_function = (Function) fp.ReadByte ();
+	        m_function = (Functions) fp.ReadByte ();
 	        m_nMatCen = fp.ReadSByte ();
 	        m_value = fp.ReadSByte ();
 	        fp.ReadSByte ();
@@ -195,7 +195,7 @@ namespace DLE.NET
 	        if (nLevelVersion < 20)
 		        Upgrade ();
 	        else {
-		        m_props = (Property) fp.ReadByte ();
+		        m_props = (Properties) fp.ReadByte ();
 		        m_damage [0] = fp.ReadInt16 ();
 		        m_damage [1] = fp.ReadInt16 ();
 		        }
@@ -323,8 +323,8 @@ namespace DLE.NET
 	        fp.Write (m_verts [i]);
 
         // write special info (0 to 4 bytes)
-        if ((m_function == Function.ROBOTMAKER) && (m_nMatCen == -1)) {
-	        m_function = Function.NONE;
+        if ((m_function == Functions.ROBOTMAKER) && (m_nMatCen == -1)) {
+	        m_function = Functions.NONE;
 	        m_value = 0;
 	        m_childFlags = (byte) ((int) m_childFlags & ~(1 << MAX_SIDES_PER_SEGMENT));
 	        }

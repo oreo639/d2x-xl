@@ -27,7 +27,7 @@ namespace DLE.NET
             COUNT_D2 = 17 // Descent 2 only
         }
 
-        public enum Function : byte
+        public enum Functions : byte
         {
             NONE = 0,
             FUELCEN = 1,
@@ -44,7 +44,7 @@ namespace DLE.NET
             COUNT = 12
         }
 
-        public enum Property : byte
+        public enum Properties : byte
         {
             NONE = 0,
             WATER = 1,

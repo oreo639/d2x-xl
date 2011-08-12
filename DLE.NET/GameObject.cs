@@ -305,26 +305,26 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        short m_signature; // reduced size to save memory 
-        Types m_type; // what type of object this is... robot, weapon, hostage, powerup, fireball 
-        Ids m_id; // which form of object...which powerup, robot, etc. 
-        ControlTypes m_controlType; // how this object is controlled 
-        MovementTypes m_movementType; // how this object moves 
-        RenderTypes m_renderType; //  how this object renders 
-        Flags m_flags; // misc flags 
-        byte m_multiplayer; // object only available in multiplayer games 
-        short m_nSegment; // segment number containing object 
-        FixVector m_pos; // absolute x,y,z coordinate of center of object 
-        FixMatrix m_orient; // orientation of object in world 
-        int m_size; // 3d size of object - for collision detection 
-        int m_shields; // Starts at maximum, when <0, object dies.. 
-        FixVector m_lastPos; // where object was last frame 
-        ObjectLocation m_location = new ObjectLocation ();
-        ObjectContents m_contents = new ObjectContents { };
+        public short m_signature; // reduced size to save memory 
+        public Types m_type; // what type of object this is... robot, weapon, hostage, powerup, fireball 
+        public Ids m_id; // which form of object...which powerup, robot, etc. 
+        public ControlTypes m_controlType; // how this object is controlled 
+        public MovementTypes m_movementType; // how this object moves 
+        public RenderTypes m_renderType; //  how this object renders 
+        public Flags m_flags; // misc flags 
+        public byte m_multiplayer; // object only available in multiplayer games 
+        public short m_nSegment; // segment number containing object 
+        public FixVector m_pos; // absolute x,y,z coordinate of center of object 
+        public FixMatrix m_orient; // orientation of object in world 
+        public int m_size; // 3d size of object - for collision detection 
+        public int m_shields; // Starts at maximum, when <0, object dies.. 
+        public FixVector m_lastPos; // where object was last frame 
+        public ObjectLocation m_location = new ObjectLocation ();
+        public ObjectContents m_contents = new ObjectContents { };
 
-        MType m_mType = new MType ();
-        CType m_cType  = new CType ();
-        RType m_rType = new RType ();
+        public MType m_mType = new MType ();
+        public CType m_cType = new CType ();
+        public RType m_rType = new RType ();
 
          // ------------------------------------------------------------------------
 

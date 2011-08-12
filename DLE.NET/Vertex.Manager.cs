@@ -69,14 +69,13 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public int Add (int [] vertices, ushort count = 1, bool bUndo = true)
+        public int Add (ushort [] vertices, ushort count = 1, bool bUndo = true)
         {
             if (Count + count > GameMine.MAX_VERTICES)
                 return 0;
             for (ushort i = 0; i < count; i++)
             {
-                
-                vertices [i] = Count + i;
+                vertices [i] = (ushort) (Count + i);
             }
             DLE.Backup.Begin ();
             Count += count;

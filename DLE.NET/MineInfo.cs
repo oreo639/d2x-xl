@@ -50,6 +50,7 @@ namespace DLE.NET
 		    fp.Write (offset);
 		    fp.Write (size);
 		}
+
     }
 
     //------------------------------------------------------------------------------
@@ -86,6 +87,18 @@ namespace DLE.NET
 		    fp.Write (count);
 		    fp.Write (size);
 		}
+
+        public bool Restore (BinaryReader fp)
+        {
+            if (offset < 0)
+            {
+                count = 0;
+                return false;
+            }
+            fp.BaseStream.Seek (offset, SeekOrigin.Begin);
+            return true;
+        }
+
     }
 
     //------------------------------------------------------------------------------

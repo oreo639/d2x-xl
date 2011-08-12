@@ -220,7 +220,7 @@ namespace DLE.NET
         m_controllingTrigger = 0;
 
         // set uvls of new texture
-        DLE.Segments.Segments [key.m_nSegment].SetUV (key.m_nSide, 0, 0);
+        DLE.Segments [key.m_nSegment].SetUV (key.m_nSide, 0, 0);
         DLE.Backup.End ();
         }
 

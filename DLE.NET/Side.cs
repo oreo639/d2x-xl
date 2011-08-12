@@ -24,6 +24,12 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public Segment Child { get { return (m_nChild < 0) ? null : DLE.Segments [(int) m_nChild]; } }
+
+        public Wall Wall { get { return (m_nWall == GameMine.NO_WALL) ? null : DLE.Walls [(int)m_nWall]; } }
+
+        // ------------------------------------------------------------------------
+
         public void Setup ()
         {
             m_nWall = GameMine.NO_WALL;
@@ -163,16 +169,6 @@ namespace DLE.NET
         //if (bChange)
         //    LoadTextures ();
         return bChange;
-        }
-
-        // ------------------------------------------------------------------------
-
-        public Wall Wall
-        {
-            get 
-            { 
-                return (m_nWall == GameMine.NO_WALL) ? null : DLE.Walls [m_nWall]; 
-            }
         }
 
         // ------------------------------------------------------------------------
