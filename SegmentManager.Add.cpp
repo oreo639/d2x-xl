@@ -176,7 +176,7 @@ short CSegmentManager::Create (short nSegment, bool bCreate, byte nFunction, sho
 if ((szError != null) && DLE.IsD1File ()) {
 	if (!bExpertMode)
 		ErrorMsg (szError);
-	return false;
+	return 0;
 	}
 
 undoManager.Begin (udSegments);

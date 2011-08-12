@@ -758,7 +758,7 @@ void CTextureTool::OnAlignAll (void)
 	short			nSegment, 
 					nSide = current->m_nSide,
 					nChildLine = 3;
-	double		sangle, cangle, angle, length; 
+	double		sAngle, cAngle, angle, length; 
 
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
@@ -777,17 +777,17 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.
 		continue;
 	if (nSegment != current->m_nSegment) {
 		segmentManager.Segment (nSegment)->SetUV (nSide, 0, 0);
-		sangle = atan3 (sideP->m_info.uvls [(nChildLine + 1) & 3].v - sideP->m_info.uvls [nChildLine].v, 
+		sAngle = atan3 (sideP->m_info.uvls [(nChildLine + 1) & 3].v - sideP->m_info.uvls [nChildLine].v, 
 							 sideP->m_info.uvls [(nChildLine + 1) & 3].u - sideP->m_info.uvls [nChildLine].u); 
-		cangle = atan3 (childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) & 3].v, 
+		cAngle = atan3 (childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) & 3].v, 
 							 childSideP->m_info.uvls [nChildLine].u - childSideP->m_info.uvls [(nChildLine + 1) & 3].u); 
-		// now rotate childs (u, v) coords around child_point1 (cangle - sangle)
+		// now rotate childs (u, v) coords around child_point1 (cAngle - sAngle)
 		int i;
 		for (i = 0; i < 4; i++) {
 			angle = atan3 (childSideP->m_info.uvls [i].v, childSideP->m_info.uvls [i].u); 
 			length = sqrt ((double)childSideP->m_info.uvls [i].u * (double) childSideP->m_info.uvls [i].u +
 								(double)childSideP->m_info.uvls [i].v * (double) childSideP->m_info.uvls [i].v); 
-			angle -= (cangle - sangle); 
+			angle -= (cAngle - sAngle); 
 			childSideP->m_info.uvls [i].u = (short) (length * cos (angle)); 
 			childSideP->m_info.uvls [i].v = (short) (length * sin (angle)); 
 			}

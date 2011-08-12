@@ -377,7 +377,7 @@ public:
 	inline void DelayRefresh (bool bDelay) {
 		if (bDelay)
 			m_nDelayRefresh++;
-		else if (m_nDelayRefresh)
+		else if (m_nDelayRefresh > 0)
 			m_nDelayRefresh--;
 		}
 	inline bool DelayRefresh (void) { return m_nDelayRefresh > 0; }

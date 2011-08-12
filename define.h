@@ -254,8 +254,6 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 #define MAX_POLY 6
 
 #define PI	3.141592653589793240
-#define TWOPI (2*PI)
-#define RAD2DEG (180/PI)
 
 inline double Radians (double a) { return a * (PI / 180.0); }
 inline double Degrees (double a) { return a * (180.0 / PI); }
@@ -431,7 +429,7 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define WALL_CLOSED			5	// Wall.  Used for transparent walls. 
 #define WALL_OVERLAY			6 	// Goes over an actual solid side.  For triggers (Descent 2)
 #define WALL_CLOAKED			7 	// Can see it, and see through it  (Descent 2)
-#define WALL_COLORED	8
+#define WALL_COLORED			8
 
 // Various wall flags. 
 #define WALL_BLASTED				1  	// Blasted out wall. 

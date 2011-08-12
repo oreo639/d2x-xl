@@ -51,7 +51,7 @@ int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOn
 	short			nChildSide, nChildLine; 
 	short			nChildPoint0, nChildPoint1, nChildVert0, nChildVert1; 
 	short			u0, v0; 
-	double		sangle, cangle, angle, length; 
+	double		sAngle, cAngle, angle, length; 
 
 	static int sideChildTable [6][4] = {
 		{4, 3, 5, 1}, //{5, 1, 4, 3}, 
@@ -118,16 +118,16 @@ for (nLine = 0; nLine < 4; nLine++) {
 				u0 = childSideP->m_info.uvls [(nChildLine + 1) % 4].u - sideP->m_info.uvls [nLine].u; 
 				v0 = childSideP->m_info.uvls [(nChildLine + 1) % 4].v - sideP->m_info.uvls [nLine].v; 
 				// find the angle formed by the two lines
-				sangle = atan3(sideP->m_info.uvls [(nLine + 1) % 4].v - sideP->m_info.uvls [nLine].v, 
+				sAngle = atan3(sideP->m_info.uvls [(nLine + 1) % 4].v - sideP->m_info.uvls [nLine].v, 
 									sideP->m_info.uvls [(nLine + 1) % 4].u - sideP->m_info.uvls [nLine].u); 
-				cangle = atan3(childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) % 4].v, 
+				cAngle = atan3(childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) % 4].v, 
 									childSideP->m_info.uvls [nChildLine].u - childSideP->m_info.uvls [(nChildLine + 1) % 4].u); 
-				// now rotate childs (u, v) coords around child_point1 (cangle - sangle)
+				// now rotate childs (u, v) coords around child_point1 (cAngle - sAngle)
 				for (i = 0; i < 4; i++) {
 					angle = atan3(childSideP->m_info.uvls [i].v, childSideP->m_info.uvls [i].u); 
 					length = sqrt((double) childSideP->m_info.uvls [i].u * (double) childSideP->m_info.uvls [i].u +
 									  (double) childSideP->m_info.uvls [i].v * (double) childSideP->m_info.uvls [i].v); 
-					angle -= (cangle - sangle); 
+					angle -= (cAngle - sAngle); 
 					childSideP->m_info.uvls [i].u = (short)(length * cos (angle)); 
 					childSideP->m_info.uvls [i].v = (short)(length * sin (angle)); 
 					}
@@ -147,38 +147,26 @@ for (nLine = 0; nLine < 4; nLine++) {
 					return_code = nChildSide; 
 				}
 			if (bAlign2nd && sideP->m_info.nOvlTex && childSideP->m_info.nOvlTex) {
-				int r;
-				switch (sideP->m_info.nOvlTex & 0xC000) {
-					case 0:
-						r = 0;
-						break;
-					case 0xC000:
-						r = 1;
-						break;
-					case 0x8000:
-						r = 2;
-						break;
-					case 0x4000:
-						r = 3;
-						break;
-					}
-				int h = (int) (Degrees (fabs (angle)) / 90 + 0.5); 
+				int r, h = sideP->m_info.nOvlTex & 0xC000;
+				if (h == 0xC000)
+					r = 1;
+				else if (h == 0x8000)
+					r = 2;
+				else if (h == 0x4000)
+					r = 3;
+				else
+					r = 0;
+				angle = atan3(childSideP->m_info.uvls [0].v, childSideP->m_info.uvls [0].u); 
+				h = (int) (Degrees (fabs (angle)) / 90 + 0.5); 
 //				h +=(nChildLine + nLine + 2) % 4; //(nChildLine > nLine) ? nChildLine - nLine : nLine - nChildLine;
 				h = (h + r) % 4;
 				childSideP->m_info.nOvlTex &= ~0xC000;
-				switch (h) {
-					case 0:
-						break;
-					case 1:
-						childSideP->m_info.nOvlTex |= 0xC000;
-						break;
-					case 2:
-						childSideP->m_info.nOvlTex |= 0x8000;
-						break;
-					case 3:
-						childSideP->m_info.nOvlTex |= 0x4000;
-						break;
-					}
+				if (h == 1)
+					childSideP->m_info.nOvlTex |= 0xC000;
+				else if (h == 2)
+					childSideP->m_info.nOvlTex |= 0x8000;
+				else if (h == 3)
+					childSideP->m_info.nOvlTex |= 0x4000;
 				}
 			break;
 			}

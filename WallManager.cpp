@@ -176,7 +176,7 @@ triggerManager.UpdateReactor ();
 
 CWall *CWallManager::FindBySide (CSideKey key, int i)
 {
-for (int i = 0; i < WallCount (); i++)
+for (; i < WallCount (); i++)
 	if (m_walls [i] == key)
 		return &m_walls [i];
 return null;

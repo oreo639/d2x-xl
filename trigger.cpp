@@ -231,26 +231,34 @@ Id () = undoManager.Backup (this, editType);
 
 void CReactorTrigger::Read (CFileManager* fp, bool bFlag)
 {
+m_count = char (fp->ReadInt16 ());
+#if 1
+this->CTriggerTargets::Read (fp);
+#else
 	int	i;
 
-m_count = char (fp->ReadInt16 ());
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	m_targets [i].m_nSegment = fp->ReadInt16 ();
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	m_targets [i].m_nSide = fp->ReadInt16 ();
+#endif
 }
 
 //------------------------------------------------------------------------------
 
 void CReactorTrigger::Write (CFileManager* fp, bool bFlag)
 {
+fp->Write (m_count);
+#if 1
+this->CTriggerTargets::Write (fp);
+#else
 	int	i;
 
-fp->Write (m_count);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	fp->Write (m_targets [i].m_nSegment);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	fp->Write (m_targets [i].m_nSide);
+#endif
 }
 
 // -----------------------------------------------------------------------------

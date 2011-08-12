@@ -19,7 +19,6 @@ bool CSegmentManager::Link (short nSegment1, short nSide1, short nSegment2, shor
 {
 	short			i, j; 
 	CVertex		v1 [4], v2 [4]; 
-	short			fail;
 	tVertMatch	match [4]; 
 
 CSegment* seg1 = Segment (nSegment1); 
@@ -37,7 +36,6 @@ for (i = 0; i < 4; i++) {
 }
 
 // check to see if all 4 vertices match exactly one of each of the 4 other segment's vertices
-fail = 0;   // assume test will pass for now
 for (i = 0; i < 4; i++)
 	for (j = 0; j < 4; j++)
 		if (fabs (v1 [i].v.x - v2 [j].v.x) < margin &&
@@ -107,7 +105,6 @@ for (i = 0; i < 4; i++) {
 	}
 undoManager.End ();
 }
-
 
 // ----------------------------------------------------------------------------- 
 // Mine - Joinpoints
