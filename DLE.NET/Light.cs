@@ -26,7 +26,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public void Clear ()
+        public new void Clear ()
         {
             for (int i = 0; i < 4; i++)
                 m_vertLight [i] = 0;
@@ -102,7 +102,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public void Clear ()
+        public new void Clear ()
         {
             m_mask = 0;
             m_timer = m_delay = 0;

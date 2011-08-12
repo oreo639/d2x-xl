@@ -6,9 +6,9 @@ namespace DLE.NET
 
     public struct ObjectContents
     {
-        public byte type = 0;
-        public byte id = 0;
-        public byte count = 0;
+        public byte type;
+        public byte id;
+        public byte count;
     }
 
     // ------------------------------------------------------------------------
@@ -16,9 +16,9 @@ namespace DLE.NET
 
     public class ObjectLocation
     {
-        public Vertex pos;
-        public Vertex lastPos;
-        public DoubleMatrix orient;
+        public Vertex pos = new Vertex ();
+        public Vertex lastPos = new Vertex ();
+        public DoubleMatrix orient = new DoubleMatrix ();
 
         public void Clear ()
         {
@@ -322,9 +322,9 @@ namespace DLE.NET
         ObjectLocation m_location = new ObjectLocation ();
         ObjectContents m_contents = new ObjectContents { };
 
-        MType m_mType;
-        CType m_cType;
-        RType m_rType;
+        MType m_mType = new MType ();
+        CType m_cType  = new CType ();
+        RType m_rType = new RType ();
 
          // ------------------------------------------------------------------------
 

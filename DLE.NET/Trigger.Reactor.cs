@@ -28,7 +28,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-		public void Clear () 
+        public new void Clear () 
         { 
             base.Clear (); 
         }

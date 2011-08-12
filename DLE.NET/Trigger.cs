@@ -11,13 +11,13 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        Flags m_flags;
-        Types m_type;
-        Properties m_props;
-        short m_nObject;
-        int m_value;
-        int m_time;
-        ushort m_nIndex;
+        Flags m_flags = 0;
+        Types m_type = 0;
+        Properties m_props = 0;
+        short m_nObject = -1;
+        int m_value = 0;
+        int m_time = 0;
+        ushort m_nIndex = 0;
 
         //------------------------------------------------------------------------------
 

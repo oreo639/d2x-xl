@@ -2,7 +2,7 @@
 
 namespace DLE.NET
 {
-    struct tAngleVector
+    public struct tAngleVector
     {
         public short p, b, h;
 
@@ -21,7 +21,7 @@ namespace DLE.NET
         }
     }
 
-    class AngleVector
+    public class AngleVector
     {
         public tAngleVector v;
 

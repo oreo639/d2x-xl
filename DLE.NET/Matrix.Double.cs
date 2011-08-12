@@ -16,21 +16,21 @@ namespace DLE.NET
 
         #region c'tors
 
-        DoubleMatrix ()
+        public DoubleMatrix ()
         {
             Clear ();
         }
 
         // ------------------------------------------------------------------------
 
-        DoubleMatrix (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3)
+        public DoubleMatrix (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3)
         {
             Set (x1, y1, z1, x2, y2, z2, x3, y3, z3);
         }
 
         // ------------------------------------------------------------------------
 
-        DoubleMatrix (DoubleVector r, DoubleVector u, DoubleVector f)
+        public DoubleMatrix (DoubleVector r, DoubleVector u, DoubleVector f)
         {
             rVec.Set (r);
             uVec.Set (u);
@@ -39,7 +39,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        DoubleMatrix (DoubleMatrix m)
+        public DoubleMatrix (DoubleMatrix m)
         {
             rVec.Set (m.rVec);
             uVec.Set (m.uVec);
@@ -48,14 +48,14 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        DoubleMatrix (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh)
+        public DoubleMatrix (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh)
         {
             Set (sinp, cosp, sinb, cosb, sinh, cosh);
         }
 
         // ------------------------------------------------------------------------
 
-        DoubleMatrix (AngleVector a)
+        public DoubleMatrix (AngleVector a)
         {
         }
 

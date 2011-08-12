@@ -7,6 +7,8 @@ namespace DLE.NET
 {
     public static class FixConverter
     {
+        public const int scale = 65536;
+
         public static double Round (double value, double round = 1.0)
         {
             return (value >= 0) ? value + round / 2.0 : value - round / 2.0;
@@ -14,12 +16,12 @@ namespace DLE.NET
 
         public static int I2X (int n)
         {
-            return (n * 65536);
+            return (n * scale);
         }
 
         public static int X2I (int n)
         {
-            return (n / 65536);
+            return (n / scale);
         }
 
         public static int D2X (double n)

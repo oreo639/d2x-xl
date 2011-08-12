@@ -80,7 +80,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public IGameItem Clone ()
+        public new IGameItem Clone ()
         {
             return new Vertex (this);
         }

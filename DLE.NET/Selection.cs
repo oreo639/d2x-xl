@@ -57,7 +57,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public Segment Segment 
+        public new Segment Segment 
         { 
             get 
             { 

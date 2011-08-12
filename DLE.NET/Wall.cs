@@ -47,8 +47,8 @@ namespace DLE.NET
 
 
 
-        public const int HITPOINTS = FixConverter.I2X (100);
-        public const int DOOR_INTERVAL = FixConverter.I2X (5);
+        public const int HITPOINTS = 100 * FixConverter.scale;
+        public const int DOOR_INTERVAL = 5 * FixConverter.scale;
 
         //------------------------------------------------------------------------------
 

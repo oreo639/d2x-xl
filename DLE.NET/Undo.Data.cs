@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DLE.NET
 {
-    class UndoData
+    public class UndoData
     {
         public enum UndoFlags : int
         {
@@ -25,15 +25,15 @@ namespace DLE.NET
         }
 
 
-       	UndoItem<Vertex>			m_vertices;
-	    UndoItem<Segment>			m_segments;
+       	UndoItem<Vertex>			m_vertices = new UndoItem<Vertex> ();
+	    UndoItem<Segment>			m_segments = new UndoItem<Segment> ();
         //UndoItem<MatCenter>			m_robotMakers;
         //UndoItem<MatCenter>			m_equipMakers;
-	    UndoItem<Wall>				m_walls;
+	    UndoItem<Wall>				m_walls = new UndoItem<Wall> ();
         //UndoItem<Door>				m_doors;
 	    UndoItem<Trigger>[]			m_triggers = new UndoItem<Trigger> [2];
         //UndoItem<ReactorTrigger>	m_reactorTriggers;
-	    UndoItem<GameObject>		m_objects;
+	    UndoItem<GameObject>		m_objects = new UndoItem<GameObject> ();
         //UndoItem<RobotInfo>			m_robotInfo;
         //UndoItem<LightDeltaIndex>	m_deltaIndices;
         //UndoItem<LightDeltaValue>	m_deltaValues;
