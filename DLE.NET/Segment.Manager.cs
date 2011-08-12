@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-
+﻿
 namespace DLE.NET
 {
     public partial class SegmentManager
