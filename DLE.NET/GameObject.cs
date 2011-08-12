@@ -1,5 +1,5 @@
 ﻿
-namespace DLEdotNET
+namespace DLE.NET
 {
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
@@ -227,7 +227,7 @@ namespace DLEdotNET
 
          // ------------------------------------------------------------------------
 
-        enum ControlTypes : byte
+        public enum ControlTypes : byte
         {
             NONE = 0, // doesn't move (or change movement) 
             AI = 1, // driven by AI 

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System;
 
-namespace DLEdotNET
+namespace DLE.NET
 {
     public partial class MineView
     {

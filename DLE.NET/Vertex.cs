@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace DLEdotNET
+namespace DLE.NET
 {
     public class Vertex : DoubleVector, IGameItem, IComparable<Vertex>
     {

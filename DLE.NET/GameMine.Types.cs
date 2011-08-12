@@ -26,7 +26,7 @@ class APOINT
     short x, y, z;
 }
 
-namespace DLEdotNET
+namespace DLE.NET
 {
     public partial class GameMine
     {

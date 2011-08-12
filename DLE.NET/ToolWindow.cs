@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace DLEdotNET
+namespace DLE.NET
 {
     public partial class ToolWindow : DockContent
     {

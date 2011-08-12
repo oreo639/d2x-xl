@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
 
-namespace DLEdotNET
+namespace DLE.NET
 {
     public class GraphicsPanel : Panel
     {

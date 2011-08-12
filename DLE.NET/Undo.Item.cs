@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DLEdotNET
+namespace DLE.NET
 {
     public class UndoItem<T>
     {

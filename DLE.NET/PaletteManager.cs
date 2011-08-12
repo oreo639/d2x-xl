@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
 using System.Resources;
 
-namespace DLEdotNET
+namespace DLE.NET
 {
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
@@ -339,7 +339,7 @@ namespace DLEdotNET
         if (DLE.IsD1File)
 	        return Properties.Resources.palette;
 
-        ResourceManager resMan = new ResourceManager ("DLEdotNET.Properties.Resources", typeof (Properties.Resources).Assembly);
+        ResourceManager resMan = new ResourceManager ("DLE.NET.Properties.Resources", typeof (Properties.Resources).Assembly);
 
         String filename = Path.GetFileName (DLE.descentPath [1]);
         foreach (String s in m_palResNames)

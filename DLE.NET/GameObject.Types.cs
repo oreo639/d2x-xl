@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace DLEdotNET
+namespace DLE.NET
 {
     public partial class GameObject
     {

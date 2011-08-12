@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace DLEdotNET
+namespace DLE.NET
 {
     public partial class Segment : IGameItem
     {
