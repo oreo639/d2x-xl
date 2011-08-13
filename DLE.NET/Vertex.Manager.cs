@@ -193,7 +193,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public void DeleteUnused (void)
+        public void DeleteUnused ()
         {
         UnmarkAll (GameMine.NEW_MASK);
         // mark all used verts

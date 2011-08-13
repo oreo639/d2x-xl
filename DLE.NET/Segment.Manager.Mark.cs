@@ -9,7 +9,7 @@ namespace DLE.NET
     {
         // -----------------------------------------------------------------------------
 
-        public void UnmarkAll (byte mask)
+        public void MarkAll (byte mask)
         {
             for (int i = 0; i < Count; i++)
             {

@@ -8,8 +8,8 @@ namespace DLE.NET
     public class SecretExit
     {
 
-		public int nSegment;
-		public DoubleMatrix orient;
+		public int nSegment = 0;
+		public DoubleMatrix orient = new DoubleMatrix ();
 
         // ------------------------------------------------------------------------
 

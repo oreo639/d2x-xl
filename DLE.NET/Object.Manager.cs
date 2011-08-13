@@ -12,6 +12,9 @@ namespace DLE.NET
         public MineItemInfo m_info = new MineItemInfo ();
 
         GameObject [] m_objects = new GameObject [GameMine.MAX_OBJECTS];
+        SecretExit m_secretExit = new SecretExit ();
+
+        public bool m_bSortObjects = true;
 
         // ------------------------------------------------------------------------
 
@@ -25,6 +28,18 @@ namespace DLE.NET
         {
             get { return m_info.offset; }
             set { m_info.offset = value; }
+        }
+
+        public int SecretSegment
+        {
+            get { return m_secretExit.nSegment; }
+            set { m_secretExit.nSegment = value; }
+        }
+
+        public DoubleMatrix SecretOrient
+        {
+            get { return m_secretExit.orient; }
+            set { m_secretExit.orient.Set (value); }
         }
 
         // ------------------------------------------------------------------------
