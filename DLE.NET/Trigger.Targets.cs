@@ -154,7 +154,9 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public SideKey Target (uint i)
+        public SideKey [] Targets { get { return m_targets; } }
+
+        public SideKey Target (uint i = 0)
         {
             return m_targets [i];
         }

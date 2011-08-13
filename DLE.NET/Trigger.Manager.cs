@@ -192,5 +192,73 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public void DeleteObjTriggers (short nObject) 
+        {
+        DLE.Backup.Begin (UndoData.Flags.udTriggers);
+        for (short i = (short) (ObjTriggerCount - 1); i >= 0; i--)
+	        if (ObjTriggers [i].Object == nObject)
+		        DeleteFromObject (i);
+        DLE.Backup.End ();
+        }
+
+        // ------------------------------------------------------------------------
+
+        public void RenumberObjTriggers ()
+        {
+	            int	i;
+
+            DLE.Backup.Begin (UndoData.Flags.udTriggers);
+            for (i = ObjTriggerCount - 1; i >= 0; i--)
+                ObjTriggers [i].Object = DLE.Objects.Index (DLE.Objects.FindBySig (ObjTriggers [i].Object));
+            for (i = ObjTriggerCount - 1; i >= 0; i--)
+            {
+	            if (ObjTriggers [i].Object < 0)
+		            DeleteFromObject ((short) i);
+	        }
+            SortObjTriggers ();
+            DLE.Backup.End ();
+        }
+
+        // ------------------------------------------------------------------------
+
+        public void RenumberTargetObjs ()
+        {
+        DLE.Backup.Begin (UndoData.Flags.udTriggers);
+        for (int i = ObjTriggerCount - 1; i >= 0; i--) 
+        {
+            Trigger trig = ObjTriggers [i];
+	        SideKey[] targets = ObjTriggers [i].Targets;
+            int h = 0;
+	        for (int j = 0; j < trig.Count; j++) {
+		        if (targets [h].m_nSide >= 0) // trigger target is geometry
+			        h++;
+		        else {
+			        GameObject obj = DLE.Objects.FindBySig (targets [h].m_nSegment);
+			        if (obj == null)
+				        trig.Delete (j--);
+			        else
+				        targets [h++].SegNum = DLE.Objects.Index (obj);
+			        }
+		        }
+	        }
+        DLE.Backup.End ();
+        }
+
+        // ------------------------------------------------------------------------
+
+        void SortObjTriggers ()
+        {
+	        int	h = ObjTriggerCount;
+
+        if (h > 1) {
+	        DLE.Backup.Begin (UndoData.Flags.udTriggers);
+	        for (ushort i = 0; i < h; i++)
+		        Array.Sort (ObjTriggers);
+	        DLE.Backup.End ();
+	        }
+        }
+
+        // ------------------------------------------------------------------------
+
     }
 }

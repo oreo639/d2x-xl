@@ -5,7 +5,7 @@ namespace DLE.NET
     // ------------------------------------------------------------------------
 
     #region Trigger
-    public partial class Trigger : TriggerTargets, IGameItem
+    public partial class Trigger : TriggerTargets, IGameItem, IComparable
     {
         public int Key { get; set; }
 
@@ -21,19 +21,66 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public Flags Flag { get { return m_flags; } }
-        public Types Type { get { return m_type; } }
-        public Properties Props { get { return m_props; } }
-        public short Object { get { return m_nObject; } }
-        public int Value { get { return m_value; } }
-        public int Time { get { return m_time; } }
-        public ushort Index { get { return m_nIndex; } }
+        public Flags Flag 
+        { 
+            get { return m_flags; } 
+            set { m_flags = value; } 
+        }
+        
+        public Types Type 
+        { 
+            get { return m_type; } 
+            set { m_type = value; } 
+        }
+        
+        public Properties Props 
+        { 
+            get { return m_props; } 
+            set { m_props = value; } 
+        }
+        
+        public short Object 
+        { 
+            get { return m_nObject; }
+            set { m_nObject = value; }
+        }
+
+        public int Value 
+        { 
+            get { return m_value; } 
+            set { m_value = value; } 
+        }
+        
+        public int Time 
+        { 
+            get { return m_time; } 
+            set { m_time = value; }
+        }
+
+        public ushort Index 
+        { 
+            get { return m_nIndex; } 
+            set { m_nIndex = value; } 
+        }
 
         //------------------------------------------------------------------------------
 
         public Trigger (int key = 0)
         {
             Key = key;
+        }
+
+        //------------------------------------------------------------------------------
+
+        public Trigger (Trigger other)
+        {
+            Flag = other.Flag;
+            Type = other.Type;
+            Props = other.Props;
+            Object = other.Object;
+            Value = other.Value;
+            Time = other.Time;
+            Index = other.Index;
         }
 
         //------------------------------------------------------------------------------
@@ -132,6 +179,23 @@ namespace DLE.NET
             return DLE.IsD1File
                      ? (m_flags & (Flags.EXIT | Flags.SECRET_EXIT)) != 0
                      : (m_type == Types.EXIT) || (bSecret && (m_type == Types.SECRET_EXIT));
+        }
+
+        //------------------------------------------------------------------------
+
+        public int CompareTo (object obj)
+        {
+            Trigger other = obj as Trigger;
+            short i = this.Object;
+            short m = other.Object;
+
+            if (i < m)
+                return -1;
+            if (i > m)
+                return 1;
+            i = (short)this.Type;
+            m = (short)other.Type;
+            return (i < m) ? -1 : (i > m) ? 1 : 0;
         }
 
         //------------------------------------------------------------------------

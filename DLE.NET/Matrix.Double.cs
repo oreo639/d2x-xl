@@ -76,6 +76,15 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public void Set (DoubleMatrix other)
+        {
+            rVec.Set (other.rVec);
+            uVec.Set (other.uVec);
+            fVec.Set (other.fVec);
+        }
+
+        // ------------------------------------------------------------------------
+
         public void Set (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3)
         {
             rVec.Set (x1, y1, z1);
