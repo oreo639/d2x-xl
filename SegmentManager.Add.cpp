@@ -654,10 +654,7 @@ for (short i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	}
 
 	// delete any Objects () within segment
-for (short i = objectManager.Count (); i >= 0; i--) {
-	if (objectManager.Object (i)->m_info.nSegment == nDelSeg)
-		objectManager.Delete (i); 
-	}
+objectManager.DeleteSegmentObjects (nDelSeg);
 
 // delete any control segP with this segment
 for (short i = triggerManager.ReactorTriggerCount (); i > 0; )

@@ -67,6 +67,8 @@ class CObjectManager {
 
 		void Delete (short nDelObj = -1, bool bUndo = true);
 
+		void DeleteSegmentObjects (short nSegment);
+
 		CGameObject* FindBySeg (short nSegment, short i = 0);
 
 		CGameObject* FindBySig (short nSignature);

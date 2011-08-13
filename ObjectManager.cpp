@@ -276,6 +276,15 @@ undoManager.End ();
 
 // -----------------------------------------------------------------------------
 
+void ObjectManager::DeleteSegmentObjects (short nSegment)
+{
+for (short i = Count (); i >= 0; i--) {
+	if (Object (i)->m_info.nSegment == nSegment)
+		Delete (i); 
+	}
+
+// -----------------------------------------------------------------------------
+
 void CObjectManager::Move (CGameObject * objP)
 {
 #if 0
