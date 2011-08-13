@@ -28,6 +28,18 @@ namespace DLE.NET
 
         public Wall Wall { get { return (m_nWall == GameMine.NO_WALL) ? null : DLE.Walls [(int)m_nWall]; } }
 
+        public ushort BaseTex
+        {
+            get { return m_nBaseTex; }
+            set { m_nBaseTex = value; }
+        }
+
+        public ushort OvlTex
+        {
+            get { return m_nOvlTex; }
+            set { m_nOvlTex = value; }
+        }
+
         // ------------------------------------------------------------------------
 
         public void Setup ()

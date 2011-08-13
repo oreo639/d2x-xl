@@ -136,7 +136,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Fix (short nSegment)
+        public void Fix (short nSegment)
         {
             if (m_nSegment != nSegment)
                 return;

@@ -457,5 +457,25 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
+        public void Mark (byte mask = GameMine.MARKED_MASK)
+        {
+            m_flags |= mask;
+        }
+
+        public void Unmark (byte mask = GameMine.MARKED_MASK)
+        {
+            m_flags &= (byte)~mask;
+        }
+
+        //------------------------------------------------------------------------------
+
+        public UVL [] Uvls (short nSide)
+        {
+            return m_sides [nSide].m_uvls;
+        }
+
+
+        //------------------------------------------------------------------------------
+
     }
 }

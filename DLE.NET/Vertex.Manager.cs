@@ -193,6 +193,22 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public void DeleteUnused (void)
+        {
+        UnmarkAll (GameMine.NEW_MASK);
+        // mark all used verts
+        DLE.Segments.MarkAll (GameMine.NEW_MASK);
+        DLE.Backup.Begin (UndoData.Flags.udVertices);
+        for (int i = Count - 1; i >= 0; i--)
+        {
+            if ((Vertices [i].Status & GameMine.NEW_MASK) != 0)
+		        Delete (i); 
+	        }
+        DLE.Backup.End ();
+        }
+
+        // ------------------------------------------------------------------------
+
         #endregion
     }
 }
