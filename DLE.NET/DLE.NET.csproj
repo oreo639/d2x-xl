@@ -99,6 +99,7 @@
   <ItemGroup>
     <Compile Include="MatCenter.cs" />
     <Compile Include="Matrix.Fix.cs" />
+    <Compile Include="Object.SecretExit.cs" />
     <Compile Include="Segment.Manager.Add.cs" />
     <Compile Include="Segment.Manager.Join.cs" />
     <Compile Include="Segment.Manager.Mark.cs" />
