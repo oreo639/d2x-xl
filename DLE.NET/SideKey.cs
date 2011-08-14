@@ -58,6 +58,22 @@ namespace DLE.NET
 
         #region operators
 
+        // ------------------------------------------------------------------------
+
+        public static bool operator < (SideKey k1, SideKey k2)
+        {
+            return (k1.m_nSegment < k2.m_nSegment) || ((k1.m_nSegment == k2.m_nSegment) && (k1.m_nSide < k2.m_nSide));
+        }
+
+        // ------------------------------------------------------------------------
+
+        public static bool operator > (SideKey k1, SideKey k2)
+        {
+            return (k1.m_nSegment > k2.m_nSegment) || ((k1.m_nSegment == k2.m_nSegment) && (k1.m_nSide > k2.m_nSide));
+        }
+
+        // ------------------------------------------------------------------------
+
         public static bool operator == (SideKey k1, SideKey k2) 
         { 
             return (k1.m_nSegment == k2.m_nSegment) && (k1.m_nSide == k2.m_nSide); 

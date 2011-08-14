@@ -94,6 +94,8 @@ namespace DLE.NET
         GameColor [] m_texColors = new GameColor [TextureManager.MAX_TEXTURES_D2];
         GameColor [] m_vertexColors = new GameColor [GameMine.VERTEX_LIMIT];
 
+        int [] m_lightMap = new int [TextureManager.MAX_TEXTURES_D2];
+
         int m_nCount = 0;
         bool m_bUseTexColors = true;
 
@@ -107,6 +109,18 @@ namespace DLE.NET
         {
             get { return m_nCount; }
             set { m_nCount = value; }
+        }
+
+        public int DeltaIndexCount
+        {
+            get { return m_deltaIndexInfo.count; }
+            set { m_deltaIndexInfo.count = value; }
+        }
+
+        public int DeltaValueCount
+        {
+            get { return m_deltaValueInfo.count; }
+            set { m_deltaValueInfo.count = value; }
         }
 
         public int DeltaIndexFileOffset
@@ -127,10 +141,10 @@ namespace DLE.NET
             set { m_bUseTexColors = value; }
         }
 
-
         // ------------------------------------------------------------------------
 
-        int [] m_lightMap = new int [TextureManager.MAX_TEXTURES_D2];
+        public LightDeltaIndex [] DeltaIndex { get { return m_deltaIndex; } }
+        public LightDeltaValue [] DeltaValue { get { return m_deltaValues; } }
 
         // ------------------------------------------------------------------------
 
@@ -397,7 +411,77 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        void SortDeltaIndex (int left, int right)
+        {
+	        int	    l = left,
+			        r = right,
+			        m = (left + right) / 2;
+	        short	mSeg = DeltaIndex [m].m_nSegment, 
+			        mSide = DeltaIndex [m].m_nSide;
+	        SideKey mKey = new SideKey (mSeg, mSide);
+
+        do {
+	        while (DeltaIndex [l] < mKey)
+		        l++;
+	        while (DeltaIndex [r] > mKey) {
+		        r--;
+		        }
+	        if (l <= r) {
+                if (l < r)
+                {
+                    LightDeltaIndex t = DeltaIndex [l];
+                    DeltaIndex [l] = DeltaIndex [r];
+                    DeltaIndex [r] = t;
+                }
+		        l++;
+		        r--;
+		        }
+	        } while (l <= r);
+        if (right > l)
+           SortDeltaIndex (l, right);
+        if (r > left)
+           SortDeltaIndex (left, r);
+        }
+
         // ------------------------------------------------------------------------
+
+        public void SortDeltaIndex () 
+        { 
+        for (int i = 0; i < DeltaIndexCount; i++)
+	        DeltaIndex [i].Key = i;
+        SortDeltaIndex (0, DeltaIndexCount - 1); 
+        }
+
+        // ------------------------------------------------------------------------
+
+        void UnsortDeltaIndex (int left, int right)
+        {
+	        int	l = left,
+			    r = right,
+			    m = (left + right) / 2;
+	        int	mKey = DeltaIndex [m].Key;
+
+        do {
+	        while (DeltaIndex [l].Key < mKey)
+		        l++;
+	        while (DeltaIndex [r].Key > mKey)
+		        r--;
+	        if (l <= r) {
+		        if (l < r)
+                {
+                    LightDeltaIndex t = DeltaIndex [l];
+                    DeltaIndex [l] = DeltaIndex [r];
+                    DeltaIndex [r] = t;
+                }
+                l++;
+		        r--;
+		        }
+	        } while (l <= r);
+        if (right > l)
+           UnsortDeltaIndex (l, right);
+        if (r > left)
+           UnsortDeltaIndex (left, r);
+        }
 
         // ------------------------------------------------------------------------
 
