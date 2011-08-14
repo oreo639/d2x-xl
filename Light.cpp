@@ -84,7 +84,7 @@ CSideKey::Clear ();
 
 //------------------------------------------------------------------------------
 
-void CVariableLight::Setup (CSideKey key, short time, short mask)
+void CVariableLight::Setup (CSideKey key, int time, uint mask)
 {
 m_nSegment = key.m_nSegment;
 m_nSide = key.m_nSide;

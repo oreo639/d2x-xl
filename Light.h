@@ -105,7 +105,7 @@ public:
 	
 	void Clear (void);
 	
-	void Setup (CSideKey key, short time, short mask);
+	void Setup (CSideKey key, int time, uint mask);
 
 	virtual CGameItem* Copy (CGameItem* destP);
 
