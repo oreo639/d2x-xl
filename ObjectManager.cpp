@@ -276,9 +276,9 @@ undoManager.End ();
 
 // -----------------------------------------------------------------------------
 
-void ObjectManager::DeleteSegmentObjects (short nSegment)
+void CObjectManager::DeleteSegmentObjects (short nSegment)
 {
-for (short i = Count (); i >= 0; i--) {
+for (short i = Count (); i >= 0; i--)
 	if (Object (i)->m_info.nSegment == nSegment)
 		Delete (i); 
 	}
