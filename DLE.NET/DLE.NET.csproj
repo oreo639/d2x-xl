@@ -128,7 +128,6 @@
     <Compile Include="GameMine.Load.cs" />
     <Compile Include="IGameItem.cs" />
     <Compile Include="GameMine.Constants.cs" />
-    <Compile Include="GameMine.Convert.cs" />
     <Compile Include="GameMine.cs" />
     <Compile Include="GameMine.Enums.cs" />
     <Compile Include="GameMine.GlobalData.cs" />
