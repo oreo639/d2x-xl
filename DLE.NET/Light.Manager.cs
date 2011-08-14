@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
+using System.Runtime.InteropServices;
 
 namespace DLE.NET
 {
@@ -97,6 +95,7 @@ namespace DLE.NET
         GameColor [] m_vertexColors = new GameColor [GameMine.VERTEX_LIMIT];
 
         int m_nCount = 0;
+        bool m_bUseTexColors = true;
 
         // ------------------------------------------------------------------------
 
@@ -121,6 +120,13 @@ namespace DLE.NET
             get { return m_deltaValueInfo.offset; }
             set { m_deltaValueInfo.offset = value; }
         }
+
+        public bool UseTexColors
+        {
+            get { return m_bUseTexColors; }
+            set { m_bUseTexColors = value; }
+        }
+
 
         // ------------------------------------------------------------------------
 
@@ -191,6 +197,56 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        VariableLight AddVariableLight (short index = -1) 
+        {
+        if (Count >= MAX_VARIABLE_LIGHTS) {
+	        if (!DLE.ExpertMode && (index < 0)) {
+		        DLE.ErrorMsg (string.Format ("Maximum number of variable lights ({0}) have already been added", MAX_VARIABLE_LIGHTS));
+		        }
+	        return null;
+	        }
+
+        short nBaseTex, nOvlTex;
+        DLE.Current.Side.GetTextures (out nBaseTex, out nOvlTex);
+        if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
+	        if (!DLE.ExpertMode && (index < 0))
+		        DLE.ErrorMsg (@"Blinking lights can only be added to a side\n
+					          that has a light emitting texture.\n
+					          Hint: You can use the texture tool's brightness control\n
+					          to make any texture emit light.");
+	        return null;
+	        }
+
+        if (index < 0)
+	        index = (short)Count;
+        Count++;
+        return VariableLights [index];
+        }
+
+        // ------------------------------------------------------------------------
+
+        short AddVariableLight (SideKey key, uint mask, int time) 
+        {
+        DLE.Current.Get (key);
+        if (VariableLight (key) != -1) {
+	        if (!DLE.ExpertMode)
+		        DLE.ErrorMsg (@"There is already a variable light on this side");
+	        return -1;
+	        }
+        // we are adding a new variable light
+        DLE.Backup.Begin (UndoData.Flags.udVariableLights);
+        VariableLight light = AddVariableLight ();
+        if (light == null) {
+	        DLE.Backup.End ();
+	        return -1;
+	        }
+        light.Setup (key, time, mask);
+        DLE.Backup.End ();
+        return (short) Count;
+        }
+
+        // ------------------------------------------------------------------------
+
         public bool DeleteVariableLight (SideKey key) 
         {
         DLE.Current.Get (key);
@@ -218,7 +274,126 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public GameColor GetTexColor (short nTexture, bool bIsTranspWall)	
+		{ 
+            return UseTexColors && (bIsTranspWall || (IsLight (nTexture) != -1)) ? m_texColors [nTexture] : null; 
+        }
+
         // ------------------------------------------------------------------------
+
+		public GameColor FaceColor (short nSegment, short nSide = 0) 
+        { 
+            return m_faceColors [nSegment * 6 + nSide]; 
+        }
+
+        // ------------------------------------------------------------------------
+
+        public GameColor LightColor (SideKey key, bool bUseTexColors) 
+        { 
+        DLE.Current.Get (key);
+        if (bUseTexColors && UseTexColors) {
+	        short nBaseTex, nOvlTex;
+	        DLE.Segments.Textures (key, out nBaseTex, out nOvlTex);
+	        GameColor color;
+	        if (nOvlTex > 0) {
+		        color = GetTexColor (nOvlTex, false);
+		        if (color != null)
+			        return color;
+		        }
+	        Wall wall = DLE.Segments.Wall (key);
+	        color = GetTexColor (nBaseTex, (wall != null) && wall.IsTransparent);
+	        if (color != null)
+		        return color;
+	        }	
+        return FaceColor (key.m_nSegment, key.m_nSide); 
+        }
+
+        // ------------------------------------------------------------------------
+
+        public int FindLight (int nTexture, TextureLight [] texLight, int nLights)
+        {
+	        int	l = 0;
+	        int	r = nLights - 1;
+	        int	m, t;
+
+        while (l <= r) {
+	        m = (l + r) / 2;
+	        t = texLight [m].nBaseTex;
+	        if (nTexture > t)
+		        l = m + 1;
+	        else if (nTexture < t)
+		        r = m - 1;
+	        else
+		        return m;
+	        }
+        return -1;
+        }
+
+        // ------------------------------------------------------------------------
+
+        public void CreateLightMap ()
+        {
+            LoadDefaults ();
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool HasCustomLightMap
+        {
+            get
+            {
+                using (MemoryStream resource = new MemoryStream (DLE.IsD1File ? Properties.Resources.lightMapD1 : Properties.Resources.lightMapD2))
+                {
+                    using (BinaryReader reader = new BinaryReader (resource))
+                    {
+                        for (int i = 0; i < m_lightMap.Length; i++)
+                        {
+                            if (m_lightMap [i] != reader.ReadInt32 ())
+                                return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool HasCustomLightColors
+        {
+            get
+            {
+                using (MemoryStream resource = new MemoryStream (DLE.IsD1File ? Properties.Resources.texColorsD1 : Properties.Resources.texColorsD2))
+                {
+                    using (BinaryReader reader = new BinaryReader (resource))
+                    {
+                        GameColor color = new GameColor ();
+                        for (int i = 0; i < m_texColors.Length; i++)
+                        {
+                            color.Read (reader, 0);
+                            if (m_texColors [i] != color)
+                                return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+
+        // ------------------------------------------------------------------------
+
+        short LoadDefaults ()
+        {
+            using (MemoryStream resource = new MemoryStream (DLE.IsD1File ? Properties.Resources.texColorsD1 : Properties.Resources.texColorsD2))
+            {
+                using (BinaryReader reader = new BinaryReader (resource))
+                {
+                    for (int i = 0; i < m_texColors.Length; i++)
+                        m_texColors [i].Read (reader, 0);
+                }
+            }
+        return 1;
+        }
 
         // ------------------------------------------------------------------------
 

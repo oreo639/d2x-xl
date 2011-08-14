@@ -367,6 +367,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Data\rc_data1.bin" />
+    <None Include="Resources\descent.clr" />
     <None Include="Resources\Levels\newlevel.mn2" />
     <None Include="Resources\Levels\newlevel.msn" />
     <None Include="Resources\Palettes\alien1.256" />

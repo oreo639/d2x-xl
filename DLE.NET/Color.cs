@@ -17,6 +17,13 @@ namespace DLE.NET
             b = blue;
         }
 
+        public void Set (double red, double green, double blue)
+        {
+            r = red;
+            g = green;
+            b = blue;
+        }
+
         public void Clear ()
         {
             r = g = b = 0.0;
@@ -56,19 +63,31 @@ namespace DLE.NET
 
         public void Read (BinaryReader fp, int nVersion, bool bD2X = false)
         {
+            index = fp.ReadByte ();
+            Set ((double)fp.ReadInt32 () / (double)0x7fffffff, (double)fp.ReadInt32 () / (double)0x7fffffff, (double)fp.ReadInt32 () / (double)0x7fffffff);
         }
 
         //-------------------------------------------------------------------------
 
         public void Write (BinaryWriter fp, int nVersion, bool bD2X = false)
         {
+            fp.Write (index);
+            fp.Write ((int) (r * (double) 0x7fffffff));
+            fp.Write ((int) (g * (double) 0x7fffffff));
+            fp.Write ((int) (b * (double) 0x7fffffff));
         }
 
         //-------------------------------------------------------------------------
 
-        byte Red { get { return (byte) (r * 255); } }
-        byte Green { get { return (byte) (g * 255); } }
-        byte Blue { get { return (byte)(b * 255); } }
+        public byte Red { get { return (byte)(r * 255); } }
+        public byte Green { get { return (byte)(g * 255); } }
+        public byte Blue { get { return (byte)(b * 255); } }
+
+        public byte Index
+        {
+            get { return index; }
+            set { index = value; }
+        }
 
         //-------------------------------------------------------------------------
 

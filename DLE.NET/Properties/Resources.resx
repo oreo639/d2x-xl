@@ -289,7 +289,7 @@
   <data name="truecolor_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Bitmaps\truecolor-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="alien2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="alien2_256" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Palettes\alien2.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="rotate" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -328,7 +328,7 @@
   <data name="brokenwall_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Bitmaps\brokenwall-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="tnames" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="texNamesD1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data\tnames.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="texture" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -337,19 +337,19 @@
   <data name="ice" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Palettes\ice.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="alien11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="alien1_pal" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Palettes\alien1.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="descent1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="lightMapD1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data\descent.lgt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="texturetool" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Bitmaps\texturetool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="descent2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="texColorsD2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data\descent2.clr;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="descent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="texColorsD1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data\descent.clr;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="zrotleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -418,7 +418,7 @@
   <data name="refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Bitmaps\refresh-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="alien21" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="alien2_pal" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Palettes\alien2.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="sidemode" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -439,7 +439,7 @@
   <data name="credits" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Palettes\credits.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="descent21" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="lightMapD2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data\descent2.lgt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="water1" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -565,7 +565,7 @@
   <data name="point_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Bitmaps\point-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="tnames2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="texNamesD2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data\tnames2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="splitpoints" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -616,7 +616,7 @@
   <data name="walltool" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Bitmaps\walltool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="alien1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="alien1_256" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Palettes\alien1.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="zoomout_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">

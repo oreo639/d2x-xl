@@ -110,10 +110,10 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public void Setup (SideKey key, short time, short mask)
+        public void Setup (SideKey key, int time, uint mask)
         {
-            m_mask = (uint)mask;
-            m_timer = (int)time;
+            m_mask = mask;
+            m_timer = time;
         }
 
 

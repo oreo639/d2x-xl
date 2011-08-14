@@ -119,7 +119,7 @@ namespace DLE.NET
 
         void LoadNames (int nVersion)
         {
-            using (MemoryStream resource = new MemoryStream ((nVersion == 0) ? Properties.Resources.tnames : Properties.Resources.tnames2))
+            using (MemoryStream resource = new MemoryStream ((nVersion == 0) ? Properties.Resources.texNamesD1 : Properties.Resources.texNamesD2))
             {
                 using (StreamReader reader = new StreamReader (resource))
                 {

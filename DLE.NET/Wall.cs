@@ -151,6 +151,40 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+		public bool IsTransparent 
+        { 
+            get { return m_type == Types.COLORED; }
+        }
+
+		public bool IsCloaked 
+        {
+            get { return m_type == Types.CLOAKED; }
+        }
+
+		public bool IsIllusion 
+        {
+            get { return m_type == Types.ILLUSION; }
+        }
+
+		public bool IsClosed 
+        {
+            get { return m_type == Types.CLOSED; }
+        }
+
+        public byte Alpha
+        {
+            get
+            {
+                if (IsTransparent)
+                    return (byte) ((m_hps == 0) ? 128 : FixConverter.X2I (255 * m_hps));
+                if (IsCloaked || IsIllusion || IsClosed)
+                    return (byte) (255 * (31 - m_cloakValue % 32) / 31);
+                return 255;
+            }
+        }
+		
+        // ------------------------------------------------------------------------
+
         void Setup (SideKey key, ushort nWall, byte type, sbyte nClip, ushort nTexture, bool bRedefine) 
         {
         DLE.Backup.Begin (UndoData.Flags.udWalls);
