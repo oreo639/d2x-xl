@@ -6,15 +6,13 @@ namespace DLE.NET
     {
         #region data
 
-        public MineItemInfo m_info = new MineItemInfo ();
-
         public const int MAX_VERTICES_D1 = 2808; // descent 1 max # of vertices
         public const int MAX_VERTICES_D2 = (GameMine.MAX_SEGMENTS_D2 * 4 + 8); // descent 2 max # of vertices
         public const int VERTEX_LIMIT = (GameMine.SEGMENT_LIMIT * 4 + 8); // descent 2 max # of vertices
 
         public int MaxVertices { get { return DLE.IsD1File ? MAX_VERTICES_D1 : DLE.IsStdLevel ? MAX_VERTICES_D2 : VERTEX_LIMIT; } }
 
-        Vertex [] m_vertices = new Vertex [GameMine.MAX_VERTICES];
+        GameArray<Vertex> m_vertices = new GameArray<Vertex> (GameMine.MAX_VERTICES);
 
         #endregion
 
@@ -22,19 +20,21 @@ namespace DLE.NET
 
         #region helper functions
 
+        public MineItemInfo Info { get { return m_vertices.Info; } }
+
         public int Count 
         { 
-            get { return m_info.count; } 
-            set { m_info.count = value; } 
+            get { return Info.count; } 
+            set { Info.count = value; } 
         }
 
         public int FileOffset
         {
-            get { return m_info.offset; }
-            set { m_info.offset = value; }
+            get { return m_vertices.FileOffset; }
+            set { m_vertices.FileOffset = value; }
         }
 
-        public Vertex [] Vertices { get { return m_vertices; } }
+        public Vertex [] Vertices { get { return m_vertices.Data; } }
 
         public Vertex Vertex (int i) { return m_vertices [i]; }
 
@@ -67,16 +67,37 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public void Swap (int i, int j)
+        {
+            m_vertices.Swap (i, j);
+        }
+
+        // ------------------------------------------------------------------------
+
+        public int Add (out ushort vertex)
+        {
+            if (Count >= GameMine.MAX_VERTICES)
+            {
+                unchecked
+                {
+                    vertex = (ushort)-1;
+                }
+                return 0;
+                }
+            Vertices [Count].Status = 0;
+            vertex = (ushort) Count++;
+            return 1;
+        }
+
+        // ------------------------------------------------------------------------
+
         public int Add (ushort [] vertices, ushort count = 1, bool bUndo = true)
         {
             if (Count + count > GameMine.MAX_VERTICES)
                 return 0;
-            for (ushort i = 0; i < count; i++)
-            {
-                vertices [i] = (ushort) (Count + i);
-            }
             DLE.Backup.Begin ();
-            Count += count;
+            for (ushort i = 0; i < count; i++)
+                Add (out vertices [i]);
             DLE.Backup.End ();
             return count;
 

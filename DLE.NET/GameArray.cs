@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DLE.NET
 {
-    public class GameArray <T> where T : IGameItem, IComparable, new()
+    public class GameArray <T> where T : IGameItem, IComparable<T>, new()
     {
         // ------------------------------------------------------------------------
 
@@ -19,30 +19,54 @@ namespace DLE.NET
 
         public MineItemInfo Info { get { return m_info; } }
 
-        public int Count { get { return Info.count; } }
+        public int Count 
+        { 
+            get { return Info.count; } 
+            set { Info.count = value; } 
+        }
+
+        public int FileOffset
+        {
+            get { return Info.offset; }
+            set { Info.offset = value; }
+        }
 
         // ------------------------------------------------------------------------
 
-        public GameArray () { }
+        public T this [int i]
+        {
+            get { return Data [i]; }
+            set { Data [i] = value; }
+        }
+
+        // ------------------------------------------------------------------------
+
+        public GameArray (int length = 0) 
+        {
+            Create (length);
+        }
 
         // ------------------------------------------------------------------------
 
         public bool Create (int length)
         {
-            m_data = new T [length];
-            if (m_data == null)
-                return false;
-            for (int i = 0; i < length; i++)
+            if (length > 0)
             {
-                m_data [i] = new T ();
-                if (m_data [i] == null)
-                {
-                    m_data = null;
+                m_data = new T [length];
+                if (m_data == null)
                     return false;
+                for (int i = 0; i < length; i++)
+                {
+                    m_data [i] = new T ();
+                    if (m_data [i] == null)
+                    {
+                        m_data = null;
+                        return false;
+                    }
+                    m_data [i].Key = i;
                 }
-                m_data [i].Key = i;
+                m_length = length;
             }
-            m_length = length;
             return true;
         }
 
@@ -67,15 +91,15 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public void QuickSort ()
+        public void Sort ()
         {
             if (Info.count > 1)
-                Sort (0, Info.count - 1);
+                QuickSort (0, Info.count - 1);
         }
 
         // ------------------------------------------------------------------------
 
-        public void Sort (int left, int right)
+        public void QuickSort (int left, int right)
         {
             int l = left, r = right;
             T m = m_data [(left + right) / 2];
@@ -98,9 +122,9 @@ namespace DLE.NET
                 }
             } while (l <= r);
             if (left < r)
-                Sort (left, r);
+                QuickSort (left, r);
             if (l < right)
-                Sort (l, right);
+                QuickSort (l, right);
         }
 
         // ------------------------------------------------------------------------

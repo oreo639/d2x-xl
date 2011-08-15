@@ -62,9 +62,14 @@ namespace DLE.NET
             set { m_bExpertMode = value; }
         }
 
+        public static void InfoMsg (String msg)
+        {
+        }
+
         public static void ErrorMsg (String msg)
         {
         }
+
         public static int QueryMsg (String msg)
         {
             return 1;

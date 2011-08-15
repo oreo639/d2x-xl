@@ -3,7 +3,7 @@ using System.IO;
 
 namespace DLE.NET
 {
-    public partial class Segment : IGameItem
+    public partial class Segment : IGameItem, IComparable<Segment>
     {
 
         public int Key { get; set; }
@@ -72,11 +72,18 @@ namespace DLE.NET
 	        Properties.NONE,
 	        Properties.OUTDOORS
         };
-        private int i;
 
         //------------------------------------------------------------------------------
 
-        public Segment (int key = 0)
+        public Segment ()
+        {
+            Key = 0;
+            Setup ();
+        }
+
+        //------------------------------------------------------------------------------
+
+        public Segment (int key)
         {
             Key = key;
             Setup ();
@@ -528,6 +535,13 @@ namespace DLE.NET
             return m_sides [nSide].m_uvls;
         }
 
+
+        // ------------------------------------------------------------------------
+
+        public int CompareTo (Segment other)
+        {
+            return (Key < other.Key) ? -1 : (Key > other.Key) ? 1 : 0;
+        }
 
         //------------------------------------------------------------------------------
 
