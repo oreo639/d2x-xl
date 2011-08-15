@@ -99,6 +99,12 @@ namespace DLE.NET
             return true;
         }
 
+        public bool Setup (BinaryWriter fp) 
+        {
+            offset = (int) ((count == 0) ? -1 : fp.BaseStream.Position);
+            return offset >= 0;
+        }
+
     }
 
     //------------------------------------------------------------------------------

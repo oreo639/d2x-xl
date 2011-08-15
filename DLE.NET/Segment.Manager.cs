@@ -27,6 +27,8 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public MatCenter [][] MatCenters { get { return m_matCenters; } }
+
         public MatCenter[] RobotMakers
         {
             get { return m_matCenters [0]; }
@@ -46,6 +48,16 @@ namespace DLE.NET
         {
             return EquipMakers [i];
         }
+
+        // ------------------------------------------------------------------------
+
+		public int MatCenCount (short nClass) { return m_matCenInfo [nClass].count; }
+
+        public void SetMatCenCount (short nClass, int nCount) { m_matCenInfo [nClass].count = nCount; }
+
+        public int RobotMakerCount { get { return MatCenCount (0); } }
+
+        public int EquipMakerCount { get { return MatCenCount (1); } }
 
         // ------------------------------------------------------------------------
 

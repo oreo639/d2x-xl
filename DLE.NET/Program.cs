@@ -49,6 +49,8 @@ namespace DLE.NET
         public static bool IsD2XLevel { get { return theMine.LevelVersion >= 9; } }
         public static int FileType { get { return (int) theMine.FileType; } }
         public static int LevelVersion { get { return theMine.LevelVersion; } }
+       	public static int LevelType { get { return IsD2XLevel ? 2 : IsD2File ? 1 : 0; } }
+
 
         public static String[] descentPath = new String [2] { "", "" };
 

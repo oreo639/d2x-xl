@@ -248,6 +248,37 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
+        public void ReadExtras (BinaryReader fp, bool bExtras)
+        {
+            if (bExtras)
+            {
+                m_function = (Segment.Functions)fp.ReadSByte ();
+                m_nMatCen = fp.ReadSByte ();
+                m_value = fp.ReadSByte ();
+                fp.ReadSByte ();
+            }
+            else
+            {
+                m_function = 0;
+                m_nMatCen = -1;
+                m_value = 0;
+            }
+            if (DLE.LevelType != 0)
+            {
+                if (DLE.LevelVersion < 20)
+                    Upgrade ();
+                else
+                {
+                    m_props = (Segment.Properties)fp.ReadSByte ();
+                    m_damage [0] = fp.ReadInt16 ();
+                    m_damage [1] = fp.ReadInt16 ();
+                }
+            }
+            m_staticLight = (DLE.LevelType == 0) ? (int)fp.ReadInt16 () : fp.ReadInt32 ();
+        }
+
+        //------------------------------------------------------------------------------
+
         byte WriteWalls (BinaryWriter fp, int nLevelVersion)
         {
 	        int	i;
@@ -336,6 +367,29 @@ namespace DLE.NET
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
 	        if ((GetChild (i) == -1) || ((m_wallFlags & (1 << i)) != 0))
 		        m_sides [i].Write (fp);
+        }
+
+        //------------------------------------------------------------------------------
+
+        public void WriteExtras (BinaryWriter fp, bool bExtras)
+        {
+            if (bExtras)
+            {
+                fp.Write ((byte)m_function);
+                fp.Write (m_nMatCen);
+                fp.Write (m_value);
+                fp.Write ((byte)0); // s2Flags
+            }
+            if (DLE.LevelType == 2)
+            {
+                fp.Write ((byte)m_props);
+                fp.Write (m_damage [0]);
+                fp.Write (m_damage [1]);
+            }
+            if (DLE.LevelType == 0)
+                fp.Write ((short)m_staticLight);
+            else
+                fp.Write (m_staticLight);
         }
 
         //------------------------------------------------------------------------------
