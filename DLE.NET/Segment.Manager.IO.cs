@@ -16,7 +16,7 @@ namespace DLE.NET
 
         public void ReadSegments (BinaryReader fp)
         {
-        if (m_segmentInfo.Restore (fp)) {
+        if (Info.Restore (fp)) {
 	        int i;
             Segment s = new Segment ();
 
@@ -39,8 +39,8 @@ namespace DLE.NET
 
         void WriteSegments (BinaryWriter fp)
         {
-        if (m_segmentInfo.Setup (fp)) {
-	        m_segmentInfo.offset = (int) fp.BaseStream.Position;
+        if (Info.Setup (fp)) {
+	        Info.offset = (int) fp.BaseStream.Position;
 
 	        for (int i = 0; i < Count; i++)
 		        Segments [i].Write (fp);
@@ -59,7 +59,7 @@ namespace DLE.NET
 	        MatCenter m = new MatCenter ();
 	        for (int i = 0; i < MatCenCount (nClass); i++) {
 		        if (i < GameMine.MAX_MATCENS)
-			        MatCenters [nClass][i].Read (fp);
+			        MatCenters (nClass)[i].Read (fp);
 		        else 
 			        m.Read (fp);
 		        }
@@ -76,7 +76,7 @@ namespace DLE.NET
 	        m_matCenInfo [nClass].size = (DLE.IsD1File && (nClass == 0)) ? 16 : 20; 
 	        m_matCenInfo [nClass].offset = (int) fp.BaseStream.Position;
 	        for (int i = 0; i < MatCenCount (nClass); i++)
-		        MatCenters [nClass][i].Write (fp);
+		        MatCenters (nClass)[i].Write (fp);
 	        }
         }
 

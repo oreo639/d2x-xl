@@ -3,7 +3,7 @@ using System;
 
 namespace DLE.NET
 {
-    public class MatCenter : IGameItem, IComparable
+    public class MatCenter : IGameItem, IComparable<MatCenter>
     {
         public int Key { get; set; }
 
@@ -71,7 +71,18 @@ namespace DLE.NET
 
         public int CompareTo (object obj)
         {
+            if (obj == null)
+                return 0;
             MatCenter other = obj as MatCenter;
+            if (other == null)
+                return 0;
+            return CompareTo (other);
+        }
+
+        //------------------------------------------------------------------------
+
+        public int CompareTo (MatCenter other)
+        {
             short i = this.m_nSegment;
             short m = other.m_nSegment;
 
