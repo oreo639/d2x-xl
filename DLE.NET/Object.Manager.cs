@@ -5,9 +5,7 @@ namespace DLE.NET
     {
         // ------------------------------------------------------------------------
 
-        public MineItemInfo m_info = new MineItemInfo ();
-
-        GameObject [] m_objects = new GameObject [GameMine.MAX_OBJECTS];
+        GameArray<GameObject> m_objects = new GameArray<GameObject> (GameMine.MAX_OBJECTS);
         SecretExit m_secretExit = new SecretExit ();
 
         public bool m_bSortObjects = true;
@@ -16,14 +14,14 @@ namespace DLE.NET
 
         public int Count
         {
-            get { return m_info.count; }
-            set { m_info.count = value; }
+            get { return m_objects.Count; }
+            set { m_objects.Count = value; }
         }
 
         public int FileOffset
         {
-            get { return m_info.offset; }
-            set { m_info.offset = value; }
+            get { return m_objects.FileOffset; }
+            set { m_objects.FileOffset = value; }
         }
 
         public int SecretSegment
@@ -40,7 +38,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public GameObject [] Objects { get { return m_objects; } }
+        public GameObject [] Objects { get { return m_objects.Data; } }
 
         // ------------------------------------------------------------------------
 

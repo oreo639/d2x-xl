@@ -86,7 +86,7 @@ namespace DLE.NET
         public MineItemInfo m_deltaIndexInfo = new MineItemInfo ();
         public MineItemInfo m_deltaValueInfo = new MineItemInfo ();
 
-        VariableLight [] m_variableLights = new VariableLight [MAX_VARIABLE_LIGHTS];
+        GameArray<VariableLight> m_variableLights = new GameArray<VariableLight> (MAX_VARIABLE_LIGHTS);
         LightDeltaIndex [] m_deltaIndex = new LightDeltaIndex [MAX_LIGHT_DELTA_INDICES_D2X];
         LightDeltaValue [] m_deltaValues = new LightDeltaValue [MAX_LIGHT_DELTA_VALUES_D2X];
 
@@ -101,7 +101,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public VariableLight[] VariableLights { get { return m_variableLights; } }
+        public VariableLight[] VariableLights { get { return m_variableLights.Data; } }
 
         // ------------------------------------------------------------------------
 
@@ -275,13 +275,11 @@ namespace DLE.NET
 
         public void DeleteVariableLight (short index, bool bUndo = false) 
         {
-        if (index > -1) {
+        if (index > -1) 
+        {
 	        DLE.Backup.Begin (UndoData.Flags.udVariableLights);
-	        if (index < --Count) {
-                VariableLight temp = VariableLights [index];
-                VariableLights [index] = VariableLights [Count];
-                VariableLights [Count] = temp;
-                }
+	        if (index < --Count) 
+                m_variableLights.Swap (index, Count);
 	        DLE.Backup.End ();
 	        }
         }

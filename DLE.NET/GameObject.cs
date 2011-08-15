@@ -1,4 +1,5 @@
 ﻿
+using System;
 namespace DLE.NET
 {
     // ------------------------------------------------------------------------
@@ -48,7 +49,7 @@ namespace DLE.NET
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    public partial class GameObject
+    public partial class GameObject : IGameItem, IComparable<GameObject>
     {
         public int Key { get; set; }
 
@@ -328,12 +329,28 @@ namespace DLE.NET
 
          // ------------------------------------------------------------------------
 
-        public GameObject (int key = 0)
+        public GameObject ()
+        {
+            Key = 0;
+        }
+
+        public GameObject (int key)
         {
             Key = key;
         }
 
-         // ------------------------------------------------------------------------
+        //------------------------------------------------------------------------
+
+        public int CompareTo (object obj)
+        {
+            GameObject other = obj as GameObject;
+            short i = this.m_nSegment;
+            short m = other.m_nSegment;
+
+            return (i < m) ? -1 : (i > m) ? 1 : 0;
+        }
+
+        // ------------------------------------------------------------------------
 
         void Create (Types type, short nSegment) 
         {

@@ -5,29 +5,36 @@ namespace DLE.NET
     {
         // ------------------------------------------------------------------------
 
-        public MineItemInfo [] m_info = new MineItemInfo [2] {new MineItemInfo (), new MineItemInfo ()};
         public MineItemInfo m_reactorInfo = new MineItemInfo ();
 
-        Trigger [][] m_triggers = new Trigger [2][] {new Trigger [GameMine.MAX_TRIGGERS], new Trigger [GameMine.MAX_TRIGGERS]};
+        GameArray<Trigger> [] m_triggers = new GameArray<Trigger> [2] { new GameArray<Trigger> (GameMine.MAX_TRIGGERS), new GameArray<Trigger> (GameMine.MAX_TRIGGERS) };
         ReactorTrigger [] m_reactorTriggers = new ReactorTrigger [GameMine.MAX_REACTOR_TRIGGERS];
+
+        // ------------------------------------------------------------------------
+
+        public Trigger [] WallTriggers { get { return m_triggers [0].Data; } }
+
+        public Trigger [] ObjTriggers { get { return m_triggers [1].Data; } }
+
+        public ReactorTrigger [] ReactorTriggers { get { return m_reactorTriggers; } }
 
         // ------------------------------------------------------------------------
 
         public int Count (int nClass)
         {
-            return m_info [nClass].count;
+            return m_triggers [nClass].Count;
         }
 
         public int WallTriggerCount
         {
-            get { return m_info [0].count; }
-            set { m_info [0].count = value; }
+            get { return m_triggers [0].Count; }
+            set { m_triggers [0].Count = value; }
         }
 
         public int ObjTriggerCount
         {
-            get { return m_info [1].count; }
-            set { m_info [1].count = value; }
+            get { return m_triggers [1].Count; }
+            set { m_triggers [1].Count = value; }
         }
 
         public int ReactorTriggerCount
@@ -38,17 +45,9 @@ namespace DLE.NET
 
         public int FileOffset
         {
-            get { return m_info [0].offset; }
-            set { m_info [0].offset = value; }
+            get { return m_triggers [0].FileOffset; }
+            set { m_triggers [0].FileOffset = value; }
         }
-
-        // ------------------------------------------------------------------------
-
-        public Trigger [] WallTriggers { get { return m_triggers [0]; } }
-
-        public Trigger [] ObjTriggers { get { return m_triggers [1]; } }
-
-        public ReactorTrigger [] ReactorTriggers { get { return m_reactorTriggers; } }
 
         // ------------------------------------------------------------------------
 
@@ -136,14 +135,8 @@ namespace DLE.NET
 	            return;
             DLE.Backup.Begin (UndoData.Flags.udTriggers);
             if (nDelTrigger < --ObjTriggerCount)
-            {
-                Trigger temp = ObjTriggers [nDelTrigger];
-                ObjTriggers [nDelTrigger] = ObjTriggers [ObjTriggerCount];
-                ObjTriggers [ObjTriggerCount] = temp;
-                ObjTriggers [nDelTrigger].Key = nDelTrigger;
-                ObjTriggers [ObjTriggerCount].Key = ObjTriggerCount;
-            }
-        DLE.Backup.End ();
+                m_triggers [1].Swap (nDelTrigger, ObjTriggerCount);
+            DLE.Backup.End ();
         }
 
         // ------------------------------------------------------------------------
@@ -248,8 +241,7 @@ namespace DLE.NET
 
         if (h > 1) {
 	        DLE.Backup.Begin (UndoData.Flags.udTriggers);
-            QuickSort<Trigger> qs = new QuickSort<Trigger> (ObjTriggers);
-            qs.Sort (0, h - 1);
+            m_triggers [1].Sort ();
 	        DLE.Backup.End ();
 	        }
         }

@@ -6,7 +6,7 @@ namespace DLE.NET
     // ------------------------------------------------------------------------
 
     #region Trigger
-    public partial class Trigger : TriggerTargets, IGameItem, IComparable
+    public partial class Trigger : TriggerTargets, IGameItem, IComparable<Trigger>
     {
         public int Key { get; set; }
 
@@ -66,7 +66,14 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public Trigger (int key = 0)
+        public Trigger ()
+        {
+            Key = 0;
+        }
+
+        //------------------------------------------------------------------------------
+
+        public Trigger (int key)
         {
             Key = key;
         }

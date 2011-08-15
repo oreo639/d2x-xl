@@ -80,7 +80,7 @@ namespace DLE.NET
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
 
-    public class VariableLight : SideKey, IGameItem
+    public class VariableLight : SideKey, IGameItem, IComparable<VariableLight>
     {
         public int Key { get; set; }
 
@@ -116,6 +116,16 @@ namespace DLE.NET
             m_timer = time;
         }
 
+        //------------------------------------------------------------------------
+
+        public int CompareTo (object obj)
+        {
+            VariableLight other = obj as VariableLight;
+            int i = this.Key;
+            int m = other.Key;
+
+            return (i < m) ? -1 : (i > m) ? 1 : 0;
+        }
 
         //------------------------------------------------------------------------------
 
