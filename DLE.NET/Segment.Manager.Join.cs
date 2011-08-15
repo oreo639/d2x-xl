@@ -54,9 +54,9 @@ namespace DLE.NET
         // check to see if all 4 vertices match exactly one of each of the 4 other segment's vertices
         for (i = 0; i < 4; i++)
 	        for (j = 0; j < 4; j++)
-		        if ((Math.Abs (v1 [i].v.x - v2 [j].v.x) < margin &&
-			        Math.Abs (v1 [i].v.y - v2 [j].v.y) < margin &&
-			         Math.Abs (v1 [i].v.z - v2 [j].v.z) < margin))
+		        if ((Math.Abs (v1 [i].v.x - v2 [j].v.x) < margin) &&
+			        (Math.Abs (v1 [i].v.y - v2 [j].v.y) < margin) &&
+			        (Math.Abs (v1 [i].v.z - v2 [j].v.z) < margin))
 			        if (match [j].i != -1) // if this vertex already matched another vertex then abort
 				        return false; 
 			        else

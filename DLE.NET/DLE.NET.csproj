@@ -106,7 +106,7 @@
     <Compile Include="Segment.Manager.Join.cs" />
     <Compile Include="Segment.Manager.Mark.cs" />
     <Compile Include="Segment.Manager.MatCenters.cs" />
-    <Compile Include="SegmentManager.Join.cs" />
+    <Compile Include="Segment.Manager.Split.cs" />
     <Compile Include="ToolView.cs" />
     <Compile Include="TunnelMaker.cs" />
     <Compile Include="Vector.Angle.cs" />

@@ -65,6 +65,10 @@ namespace DLE.NET
         public static void ErrorMsg (String msg)
         {
         }
+        public static int QueryMsg (String msg)
+        {
+            return 1;
+        }
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
