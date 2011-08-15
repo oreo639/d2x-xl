@@ -239,7 +239,7 @@ void CObjectManager::Delete (short nDelObj, bool bUndo)
 {
 if (Count () == 0) {
 	if (!bExpertMode)
-		ErrorMsg ("There are no Object () in the mine.");
+		ErrorMsg ("There are no objects in the mine.");
 	return;
 	}
 if (Count () == 1) {
