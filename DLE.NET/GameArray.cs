@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DLE.NET
 {
@@ -94,7 +91,12 @@ namespace DLE.NET
         public void Sort ()
         {
             if (Info.count > 1)
+            {
+                // using generic QuickSort class inside generic class
+                //QuickSort<T> sorter = new QuickSort<T> (Data);
+                //sorter.Sort (0, Info.count - 1);
                 QuickSort (0, Info.count - 1);
+            }
         }
 
         // ------------------------------------------------------------------------

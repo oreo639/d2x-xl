@@ -82,7 +82,7 @@ namespace DLE.NET
         {
         if (Count == 0) {
 	        if (!DLE.ExpertMode)
-		        DLE.ErrorMsg (@"There are no Object () in the mine.");
+		        DLE.ErrorMsg (@"There are no objects in the mine.");
 	        return;
 	        }
         if (Count == 1) {

@@ -2,16 +2,16 @@
 
 namespace DLE.NET
 {
-    public class QuickSort <T> where T:IComparable
+    public class QuickSort <T> where T:IComparable<T>
     {
 
         // ------------------------------------------------------------------------
 
-        T [] data;
+        T [] data = null;
 
         // ------------------------------------------------------------------------
 
-        public QuickSort (T [] data)
+         public QuickSort (T [] data)
         {
             this.data = data;
         }
