@@ -328,7 +328,15 @@ namespace DLE.NET
         public CType m_cType = new CType ();
         public RType m_rType = new RType ();
 
-         // ------------------------------------------------------------------------
+        // ------------------------------------------------------------------------
+
+        public Vertex Position
+        {
+            get { return m_location.pos; }
+            set { m_location.pos.Set (value); }
+        }
+
+        // ------------------------------------------------------------------------
 
         public GameObject ()
         {
@@ -383,10 +391,8 @@ namespace DLE.NET
 
         void Create (Types type, short nSegment) 
         {
-          Vertex location = new Vertex ();
-
         DLE.Backup.Begin (UndoData.Flags.udObjects);
-        DLE.Segments.CalcCenter (location, nSegment);
+        
         m_signature = 0;
         m_type = type;
         m_id = (type == Types.WEAPON) ? Ids.SMALLMINE : 0;
@@ -395,7 +401,7 @@ namespace DLE.NET
         m_renderType = RenderTypes.POLYOBJ;
         m_flags = 0;
         m_nSegment = DLE.Current.m_nSegment;
-        m_location.pos = location;
+        Position = DLE.Segments.CalcCenter (nSegment);
         m_location.orient.rVec.Set (FixConverter.I2X (1), 0, 0);
         m_location.orient.uVec.Set (0, FixConverter.I2X (1), 0);
         m_location.orient.fVec.Set (0, 0, FixConverter.I2X (1));

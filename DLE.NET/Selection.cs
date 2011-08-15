@@ -108,7 +108,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        Trigger Trigger ()
+        public Trigger Trigger ()
         {
             Wall wall = Wall;
             return (wall == null) ? null : wall.Trigger;
@@ -116,7 +116,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        GameObject GameObject
+        public GameObject GameObject
         {
             get
             {

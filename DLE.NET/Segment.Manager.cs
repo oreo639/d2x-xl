@@ -61,9 +61,9 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public Vertex CalcCenter (Vertex center, short nSegment)
+        public Vertex CalcCenter (short nSegment)
         {
-            center.Clear ();
+            Vertex center = new Vertex (0.0, 0.0, 0.0);
             Segment seg = Segments [nSegment];
             for (int i = 0; i < 8; i++)
                 center.Add (seg.Vertex (i));

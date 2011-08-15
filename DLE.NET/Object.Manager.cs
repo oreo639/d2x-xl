@@ -1,4 +1,5 @@
 ﻿
+using System.IO;
 namespace DLE.NET
 {
     public partial class ObjectManager
@@ -11,6 +12,11 @@ namespace DLE.NET
         public bool m_bSortObjects = true;
 
         // ------------------------------------------------------------------------
+
+        public MineItemInfo Info
+        {
+            get { return m_objects.Info; }
+        }
 
         public int Count
         {
@@ -153,19 +159,79 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        // ------------------------------------------------------------------------
+        public void Move (GameObject obj)
+        {
+        DLE.Backup.Begin (UndoData.Flags.udObjects);
+        if (obj == null)
+	        obj = DLE.Current.GameObject;
+        if (Index (obj) == Count)
+	        SecretSegment = DLE.Current.m_nSegment;
+        else {
+	        obj.Position = DLE.Segments.CalcCenter (DLE.Current.m_nSegment);
+	        // bump position over if this is not the first object in the segment
+	        int i, count = 0;
+	        for (i = 0; i < Count; i++)
+		        if (Objects [i].m_nSegment == DLE.Current.m_nSegment)
+			        count++;
+	        i = ((count & 1) != 0) ? -count : count;
+	        obj.Position.v.y += 2 * i;
+	        obj.m_location.lastPos.v.y += 2 * i;
+	        obj.m_nSegment = DLE.Current.m_nSegment;
+	        DLE.MineView.Refresh (false);
+	        }
+        DLE.Backup.End ();
+        }
 
         // ------------------------------------------------------------------------
 
-        // ------------------------------------------------------------------------
+        void Read (BinaryReader fp)
+        {
+            if (Info.Restore (fp))
+            {
+                GameObject o = new GameObject ();
+
+                for (short i = 0; i < Count; i++)
+                {
+                    if (i < GameMine.MAX_OBJECTS)
+                    {
+                        Objects [i].Read (fp, 0);
+                        Objects [i].Key = i;
+                    }
+                    else
+                    {
+                        o.Read (fp, 0);
+                    }
+                }
+            }
+        }
 
         // ------------------------------------------------------------------------
 
-        // ------------------------------------------------------------------------
+        void Write (BinaryWriter fp)
+        {
+            if (Info.Setup (fp))
+            {
+                Info.size = 0x108;
+                for (short i = 0; i < Count; i++)
+                    Objects [i].Write (fp, 0);
+            }
+        }
 
         // ------------------------------------------------------------------------
 
+        void Clear ()
+        {
+        for (short i = 0; i < Count; i++)
+	        Objects [i].Clear ();
+        }
+
         // ------------------------------------------------------------------------
+
+        void SetCenter (DoubleVector v)
+        {
+        for (short i = 0; i < Count; i++)
+	        m_objects [i].m_location.Sub (v);
+        }
 
         // ------------------------------------------------------------------------
 
