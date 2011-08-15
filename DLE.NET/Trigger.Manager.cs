@@ -252,8 +252,8 @@ namespace DLE.NET
 
         if (h > 1) {
 	        DLE.Backup.Begin (UndoData.Flags.udTriggers);
-	        for (ushort i = 0; i < h; i++)
-		        Array.Sort (ObjTriggers);
+            QuickSort<Trigger> qs = new QuickSort<Trigger> (ObjTriggers);
+            qs.Sort (0, h - 1);
 	        DLE.Backup.End ();
 	        }
         }

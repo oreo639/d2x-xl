@@ -1,8 +1,9 @@
 ﻿using System.IO;
+using System;
 
 namespace DLE.NET
 {
-    public class MatCenter : IGameItem
+    public class MatCenter : IGameItem, IComparable
     {
         public int Key { get; set; }
 
@@ -64,6 +65,17 @@ namespace DLE.NET
         public static bool operator > (MatCenter m1, MatCenter m2)
         {
             return m1.m_nSegment > m2.m_nSegment;
+        }
+
+        //------------------------------------------------------------------------
+
+        public int CompareTo (object obj)
+        {
+            MatCenter other = obj as MatCenter;
+            short i = this.m_nSegment;
+            short m = other.m_nSegment;
+
+            return (i < m) ? -1 : (i > m) ? 1 : 0;
         }
 
         // ------------------------------------------------------------------------
