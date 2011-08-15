@@ -37,7 +37,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public new void Clear ()
+        public void Clear ()
         {
             m_nParts = 0;
             m_nFrontWall [0] = m_nFrontWall [1] = m_nBackWall [0] = m_nBackWall [1] = 0;

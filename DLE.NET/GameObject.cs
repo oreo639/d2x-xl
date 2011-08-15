@@ -1,5 +1,6 @@
-﻿
-using System;
+﻿using System;
+using System.IO;
+
 namespace DLE.NET
 {
     // ------------------------------------------------------------------------
@@ -343,11 +344,39 @@ namespace DLE.NET
 
         public int CompareTo (object obj)
         {
+            if (obj == null)
+                return 0;
             GameObject other = obj as GameObject;
-            short i = this.m_nSegment;
-            short m = other.m_nSegment;
+            if (other == null)
+                return 0;
+            return CompareTo (other);
+        }
 
+        //------------------------------------------------------------------------
+
+        public int CompareTo (GameObject other)
+        {
+            Types i = this.m_type;
+            Types m = other.m_type;
             return (i < m) ? -1 : (i > m) ? 1 : 0;
+        }
+
+        //------------------------------------------------------------------------------
+
+        public void Read (BinaryReader fp, int nVersion, bool bFlag = false)
+        {
+        }
+
+        //------------------------------------------------------------------------------
+
+        public void Write (BinaryWriter fp, int nVersion, bool bFlag = false)
+        {
+        }
+
+        // ------------------------------------------------------------------------
+
+        public void Clear ()
+        {
         }
 
         // ------------------------------------------------------------------------

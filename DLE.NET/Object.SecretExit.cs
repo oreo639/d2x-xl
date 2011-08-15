@@ -34,6 +34,22 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public override bool Equals (System.Object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+                return false;
+            // If parameter cannot be cast to Point return false.
+            SecretExit other = obj as SecretExit;
+            if ((System.Object)other == null)
+                return false;
+
+            // Return true if the fields match:
+            return (nSegment == other.nSegment) && (orient == other.orient);
+        }
+
+        // ------------------------------------------------------------------------
+
         public bool Equals (SecretExit other)
         {
             // If parameter is null return false:

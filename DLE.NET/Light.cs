@@ -120,7 +120,18 @@ namespace DLE.NET
 
         public int CompareTo (object obj)
         {
+            if (obj == null)
+                return 0;
             VariableLight other = obj as VariableLight;
+            if (other == null)
+                return 0;
+            return CompareTo (other);
+        }
+
+        //------------------------------------------------------------------------
+
+        public int CompareTo (VariableLight other)
+        {
             int i = this.Key;
             int m = other.Key;
 

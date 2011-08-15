@@ -193,7 +193,18 @@ namespace DLE.NET
 
         public int CompareTo (object obj)
         {
+            if (obj == null)
+                return 0;
             Trigger other = obj as Trigger;
+            if (other == null)
+                return 0;
+            return CompareTo (other);
+        }
+
+        //------------------------------------------------------------------------
+
+        public int CompareTo (Trigger other)
+        {
             short i = this.Object;
             short m = other.Object;
 

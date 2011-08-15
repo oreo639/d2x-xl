@@ -18,7 +18,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        struct TextureLight 
+        public class TextureLight 
         {
             public int  nBaseTex;
             public long light;
