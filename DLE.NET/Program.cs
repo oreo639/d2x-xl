@@ -61,6 +61,11 @@ namespace DLE.NET
 
         public static string [] m_descentPath = new string [2] { "", "" };
 
+        public static string[] DescentPath
+        {
+            get { return m_descentPath; }
+        }
+
         static bool m_bExpertMode = true;
 
         public static bool ExpertMode

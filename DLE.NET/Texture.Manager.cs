@@ -168,7 +168,7 @@ namespace DLE.NET
 
         FileStream OpenPigFile ()
         {
-            String filename  = DLE.descentPath [Version];
+            String filename  = DLE.DescentPath [Version];
             if (!filename.Contains (".pig"))
                 filename += "groupa.pig";
             FileStream fs = File.OpenRead (filename);
@@ -190,7 +190,7 @@ namespace DLE.NET
         {
         if (nVersion < 0) {
 	        nVersion = Version;
-	        m_pigFiles [nVersion] = DLE.descentPath [nVersion];
+	        m_pigFiles [nVersion] = DLE.DescentPath [nVersion];
             m_paletteName = DLE.Palettes.Name;
 	        m_info [nVersion] = null;
 	        }

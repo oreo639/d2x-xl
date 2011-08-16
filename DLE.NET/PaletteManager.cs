@@ -341,7 +341,7 @@ namespace DLE.NET
 
         ResourceManager resMan = new ResourceManager ("DLE.NET.Properties.Resources", typeof (Properties.Resources).Assembly);
 
-        String filename = Path.GetFileName (DLE.descentPath [1]);
+        String filename = Path.GetFileName (DLE.DescentPath [1]);
         foreach (String s in m_palResNames)
             if (s == filename)
             {

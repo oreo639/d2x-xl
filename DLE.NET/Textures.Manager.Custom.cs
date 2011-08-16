@@ -9,7 +9,7 @@ namespace DLE.NET
 
     //------------------------------------------------------------------------------
 
-    int ReadPog (BinaryReader fp, long nFileSize) 
+        int ReadPog (BinaryReader fp, long nFileSize) 
     {
         PigHeader pigFileInfo = new PigHeader (1);
         PigTexture pigTexInfo = new PigTexture (1);
@@ -207,8 +207,6 @@ namespace DLE.NET
 	    uint			textureCount = 0, nOffset = 0;
 	    int				nVersion = DLE.FileType;
 	    int				nId, i, h = DLE.Textures.MaxTextures;
-	    ExtraTexture	extraTex;
-	    Texture		    tex;
 
     if (DLE.IsD1File) {
 	    DLE.ErrorMsg (@"Descent 1 does not support custom textures.");
@@ -226,7 +224,8 @@ namespace DLE.NET
     for (i = 0; i < h; i++)
 	    if (Textures [i].m_bCustom)
 		    pigFileInfo.nTextures++;
-    for (extraTex = m_extra; extraTex; extraTex = extraTex.m_next)
+
+    foreach (Texture extraTex in m_extra)
 	    pigFileInfo.nTextures++;
     pigFileInfo.Write (fp);
 
@@ -237,8 +236,8 @@ namespace DLE.NET
             fp.Write (m_index [1] [i]);
     }
 
-    for (extraTex = m_extra; extraTex; extraTex = extraTex.m_next)
-	    fp.Write (extraTex.m_index);
+    foreach (Texture extraTex in m_extra)
+        fp.Write (extraTex.m_nIndex);
 
     // write texture headers
     nId = 0;
@@ -246,7 +245,7 @@ namespace DLE.NET
     {
         if (Textures [i].m_bCustom)
             nOffset = WriteCustomTextureHeader (fp, tex, nId++, nOffset);
-        for (extraTex = m_extra; extraTex; extraTex = extraTex.m_next)
+        foreach (Texture extraTex in m_extra)
             nOffset = WriteCustomTextureHeader (fp, extraTex, nId++, nOffset);
     }
 
@@ -262,9 +261,9 @@ namespace DLE.NET
         }
     }
 
-    for (extraTex = m_extra; extraTex; extraTex = extraTex.m_next)
+    foreach (Texture extraTex in m_extra)
 	    if (0 > WriteCustomTexture (fp, extraTex))
-		    WriteCustomTextureHeader (fp, tex); // need to rewrite to reflect changed texture type in header data
+		    WriteCustomTextureHeader (fp, extraTex); // need to rewrite to reflect changed texture type in header data
 
     return 0;
     }
