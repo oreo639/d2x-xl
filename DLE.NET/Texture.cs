@@ -132,9 +132,9 @@ namespace DLE.NET
             fp.Write (offset);
         }
 
-        public int BufSize ()
+        public uint BufSize ()
         {
-            return (int)width * (int)height;
+            return (uint)width * (uint)height;
         }
     }
 
@@ -176,7 +176,7 @@ namespace DLE.NET
 
         //-----------------------------------------------------------------------------
 
-        bool Allocate (int nSize, int nTexture)
+        public bool Allocate (uint nSize)
         {
             if ((m_bmData != null) && ((m_width * m_height != nSize)))
                 Release ();
@@ -248,7 +248,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void Load (BinaryReader fp, PigTexture info)
+        public void Load (BinaryReader fp, PigTexture info)
         {
             byte [] rowSize = new byte [4096];
             byte [] rowData = new byte [4096];
@@ -327,10 +327,10 @@ namespace DLE.NET
 	            nVersion = DLE.IsD1File ? 0 : 1;
 
             PigTexture info = DLE.Textures.Info (nTexture);
-            int nSize = info.BufSize ();
+            uint nSize = info.BufSize ();
             if ((m_bmData != null) && ((m_width * m_height == nSize)))
 	            return 0; // already loaded
-            if (!Allocate (nSize, nTexture))
+            if (!Allocate (nSize))
 	            return 1;
             using (BinaryReader fp = new BinaryReader (fs))
             {

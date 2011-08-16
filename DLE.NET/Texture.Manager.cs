@@ -525,7 +525,7 @@ namespace DLE.NET
 	        Release (Version, false, true);
 	        int nRemoved = nCustom - CustomCount;
             String message = nRemoved + " custom textures " + ((nRemoved == 1) ? "was" : "were") + " removed";
-            //INFOMSG (message);
+            //DLE.InfoMsg (message);
             if (nRemoved > 0)
 		        DLE.Modified = true;
 	        }

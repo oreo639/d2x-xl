@@ -32,7 +32,7 @@ namespace DLE.NET
 	        DLE.Walls.CheckForDoor (key); 
         DLE.Backup.End (); 
         //sprintf_s (message, sizeof (message), "side has textures %d, %d", side.m_nBaseTex & 0x1fff, side.m_nOvlTex & 0x1fff); 
-        //INFOMSG (message); 
+        //DLE.InfoMsg (message); 
         return true;
         }
 

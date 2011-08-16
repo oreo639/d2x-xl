@@ -7,6 +7,8 @@ namespace DLE.NET
 {
     public static class DLE
     {
+        //------------------------------------------------------------------------------
+
         public static GameMine Mine { get { return theMine; } }
         public static Settings Settings { get { return settings; } }
         public static TextureManager Textures { get { return m_textureManager; } }
@@ -24,7 +26,9 @@ namespace DLE.NET
         public static Selection Current { get { return m_selections [0]; } }
         public static Selection Other { get { return m_selections [1]; } }
         public static Selection Selection (int i) { return m_selections [i]; }
-        
+
+        //------------------------------------------------------------------------------
+
         static GameMine theMine = new GameMine ();
         static Settings settings = new Settings ();
         public static TextureManager m_textureManager = new TextureManager ();
@@ -41,6 +45,8 @@ namespace DLE.NET
         public static MineView m_mineView = new MineView ();
         public static ToolView m_toolView = new ToolView ();
 
+        //------------------------------------------------------------------------------
+
         static public bool Modified { get; set; }
 
         public static bool IsD1File { get { return theMine.FileType == GameMine.GameFileType.RDL; } }
@@ -52,7 +58,9 @@ namespace DLE.NET
        	public static int LevelType { get { return IsD2XLevel ? 2 : IsD2File ? 1 : 0; } }
 
 
-        public static String[] descentPath = new String [2] { "", "" };
+        //------------------------------------------------------------------------------
+
+        public static String [] descentPath = new String [2] { "", "" };
 
         static bool m_bExpertMode = true;
 
@@ -62,6 +70,8 @@ namespace DLE.NET
             set { m_bExpertMode = value; }
         }
 
+        //------------------------------------------------------------------------------
+
         public static void InfoMsg (String msg)
         {
         }
@@ -70,10 +80,17 @@ namespace DLE.NET
         {
         }
 
+        public static void DebugMsg (String msg)
+        {
+        }
+
         public static int QueryMsg (String msg)
         {
             return 1;
         }
+
+        //------------------------------------------------------------------------------
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

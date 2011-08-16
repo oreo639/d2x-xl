@@ -15,7 +15,7 @@ namespace DLE.NET
     //    if (CreateNewLevel (mf)) 
     //        fp = &mf;
     //    else {
-    //        lightManager.CreateLightMap ();
+    //        DLE.Lights.CreateLightMap ();
     //        CFileManager::SplitPath (IsD1File () ? descentPath [0] : missionPath, m_startFolder, null, null);
     //        char filename [256];
     //        sprintf_s (filename, sizeof (filename), IsD1File () ? "%new.rdl" : "%snew.rl2", m_startFolder);
@@ -59,8 +59,8 @@ namespace DLE.NET
     //if (LevelIsOutdated ()) {
     //    DLE.Backup.Lock ();
     //    if (LevelVersion () < 15) {
-    //        segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
-    //        triggerManager.ObjTriggerCount () = 0;
+    //        DLE.Segments.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
+    //        DLE.Triggers.ObjTriggerCount () = 0;
     //        }
     //    UpdateLevelVersion ();
     //    DLE.Backup.Unlock ();
@@ -81,15 +81,15 @@ namespace DLE.NET
 
     //short LoadMineSigAndType (CFileManager* fp)
     //{
-    //int sig = fp->ReadInt32 ();
+    //int sig = fp.ReadInt32 ();
     //if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
     //    ErrorMsg ("Signature value incorrect.");
-    //    fp->Close ();
+    //    fp.Close ();
     //    return 1;
     //    }
 
     //// read version
-    //SetLevelVersion (fp->ReadInt32 ());
+    //SetLevelVersion (fp.ReadInt32 ());
     //if (LevelVersion () == 1) {
     //    SetFileType (RDL_FILE);
     //    }
@@ -99,7 +99,7 @@ namespace DLE.NET
     //else {
     //    sprintf_s (message, sizeof (message),  "Version %d unknown. Cannot load this level.", LevelVersion ());
     //    ErrorMsg (message);
-    //    fp->Close ();
+    //    fp.Close ();
     //    return 1;
     //    }
     //return 0;
@@ -111,13 +111,13 @@ namespace DLE.NET
     //{
     //if (IsD2File ()) {
     //    if (LevelVersion () >= 8) {
-    //        fp->ReadInt16 ();
-    //        fp->ReadInt16 ();
-    //        fp->ReadInt16 ();
-    //        fp->ReadSByte ();
+    //        fp.ReadInt16 ();
+    //        fp.ReadInt16 ();
+    //        fp.ReadInt16 ();
+    //        fp.ReadSByte ();
     //        }
     //    // read palette file name
-    //    paletteManager.LoadName (fp);
+    //    DLE.Palettes.LoadName (fp);
     //    // try to find new pig file in same directory as Current () pig file
     //    // 1) cut off old name
     //    if (!bCreate) {
@@ -131,13 +131,13 @@ namespace DLE.NET
     //                *path = null;
     //                }
     //            // paste on new *.pig name
-    //            strcat_s (descentPath [1], sizeof (descentPath [1]), paletteManager.Name ());
+    //            strcat_s (descentPath [1], sizeof (descentPath [1]), DLE.Palettes.Name ());
     //            _strlwr_s (descentPath [1], sizeof (descentPath [1]));
     //            }
     //        }
     //    }
     //else
-    //    paletteManager.SetName ("descent.pig");
+    //    DLE.Palettes.SetName ("descent.pig");
     //}
 
     //// -----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ namespace DLE.NET
     //m_changesMade = 0;
 
     ////	CFileManager fp;
-    ////if (fp->Open (filename, "rb")) {
+    ////if (fp.Open (filename, "rb")) {
     ////	sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
     ////	ErrorMsg (message);
     ////	return -1;
@@ -157,56 +157,56 @@ namespace DLE.NET
     //    return -1;
     //ClearMineData ();
     //// read mine data offset
-    //int mineDataOffset = fp->ReadInt32 ();
+    //int mineDataOffset = fp.ReadInt32 ();
     //// read game data offset
-    //int gameDataOffset = fp->ReadInt32 ();
+    //int gameDataOffset = fp.ReadInt32 ();
     //LoadPaletteName (fp, bCreate);
 
     //// read descent 2 reactor information
     //if (IsD2File ()) {
-    //    ReactorTime () = fp->ReadInt32 (); // base control center explosion time
-    //    ReactorStrength () = fp->ReadInt32 (); // reactor strength
-    //    lightManager.ReadVariableLights (fp);
+    //    ReactorTime () = fp.ReadInt32 (); // base control center explosion time
+    //    ReactorStrength () = fp.ReadInt32 (); // reactor strength
+    //    DLE.Lights.ReadVariableLights (fp);
     //    // read secret segment number
-    //    SecretSegment () = fp->ReadInt32 ();
+    //    SecretSegment () = fp.ReadInt32 ();
     //    // read secret segment orientation?
-    //    fp->Read (SecretOrient ());
+    //    fp.Read (SecretOrient ());
     //    }
 
-    //fp->Seek (mineDataOffset, SEEK_SET);
+    //fp.Seek (mineDataOffset, SEEK_SET);
     //if (LoadMineGeometry (fp, bCreate) != 0) {
     //    ErrorMsg ("Error loading mine data");
-    //    fp->Close ();
+    //    fp.Close ();
     //    return(2);
     //    }
 
-    //fp->Seek (gameDataOffset, SEEK_SET);
+    //fp.Seek (gameDataOffset, SEEK_SET);
     //if (LoadGameItems (fp, bCreate) != 0) {
     //    ErrorMsg ("Error loading game data");
     //    // reset "howmany"
-    //    objectManager.ResetInfo ();
-    //    wallManager.ResetInfo ();
-    //    triggerManager.ResetInfo ();
-    //    segmentManager.ResetInfo ();
-    //    lightManager.ResetInfo ();
-    //    fp->Close ();
+    //    DLE.Objects.ResetInfo ();
+    //    DLE.Walls.ResetInfo ();
+    //    DLE.Triggers.ResetInfo ();
+    //    DLE.Segments.ResetInfo ();
+    //    DLE.Lights.ResetInfo ();
+    //    fp.Close ();
     //    return 3;
     //    }
 
     //if (!(bLoadFromHog || bCreate)) {
-    //    paletteManager.Reload ();
-    //    textureManager.Reload (textureManager.Version ());
+    //    DLE.Palettes.Reload ();
+    //    DLE.Textures.Reload (DLE.Textures.Version ());
     //    if (IsD2File ()) {
     //        char filename [256];
-    //        strcpy_s (filename, sizeof (filename), fp->Name ());
+    //        strcpy_s (filename, sizeof (filename), fp.Name ());
     //        char* ps = strstr (filename, ".");
     //        if (ps)
     //            strcpy_s (ps, 256 - (ps - filename), ".pog");
     //        else
     //            strcat_s (filename, 256, ".pog");
-    //        if (!fp->Open (filename, "rb")) {
-    //            textureManager.ReadPog (*fp, fp->Size ());
-    //            fp->Close ();
+    //        if (!fp.Open (filename, "rb")) {
+    //            DLE.Textures.ReadPog (*fp, fp.Size ());
+    //            fp.Close ();
     //            }
     //        robotManager.ReadHAM (null);
     //        if (IsD2File ()) {
@@ -237,16 +237,16 @@ namespace DLE.NET
     //            strcpy_s (filename, 256 - (ps - filename), ".hxm");
     //        else
     //            strcat_s (filename, 256, ".hxm");
-    //        if (!fp->Open (filename, "rb")) {
+    //        if (!fp.Open (filename, "rb")) {
     //            robotManager.ReadHXM (*fp, -1);
-    //            fp->Close ();
+    //            fp.Close ();
     //            }
     //        }
     //    }
-    //objectManager.Sort ();
-    //DLE.MainFrame ()->SetSelectMode (eSelectSide);
-    //current->Reset ();
-    //other->Reset ();
+    //DLE.Objects.Sort ();
+    //DLE.MainFrame ().SetSelectMode (eSelectSide);
+    //current.Reset ();
+    //other.Reset ();
     //return 0;
     //}
 
@@ -259,10 +259,10 @@ namespace DLE.NET
     //short LoadMineGeometry (CFileManager* fp, bool bCreate)
     //{
     //// read version (1 byte)
-    //byte version = fp->ReadByte ();
+    //byte version = fp.ReadByte ();
 
     //// read number of vertices (2 bytes)
-    //ushort nVertices = fp->ReadUInt16 ();
+    //ushort nVertices = fp.ReadUInt16 ();
     //if (nVertices > VERTEX_LIMIT) {
     //    sprintf_s (message, sizeof (message),  "Too many vertices (%d)", nVertices);
     //    ErrorMsg (message);
@@ -272,7 +272,7 @@ namespace DLE.NET
     //    ErrorMsg ("Warning: Too many vertices for this level version");
 
     //// read number of Segments () (2 bytes)
-    //ushort nSegments = fp->ReadUInt16 ();
+    //ushort nSegments = fp.ReadUInt16 ();
     //if (nSegments > SEGMENT_LIMIT) {
     //    sprintf_s (message, sizeof (message), "Too many Segments (%d)", nSegments);
     //    ErrorMsg (message);
@@ -281,25 +281,25 @@ namespace DLE.NET
     //if (IsD1File () ? nSegments > MAX_SEGMENTS_D1 : IsStdLevel () && (nSegments > MAX_SEGMENTS_D2))
     //    ErrorMsg ("Warning: Too many Segments for this level version");
 
-    //objectManager.ResetInfo ();
-    //wallManager.ResetInfo ();
-    //triggerManager.ResetInfo ();
-    //segmentManager.ResetInfo ();
-    //lightManager.ResetInfo ();
+    //DLE.Objects.ResetInfo ();
+    //DLE.Walls.ResetInfo ();
+    //DLE.Triggers.ResetInfo ();
+    //DLE.Segments.ResetInfo ();
+    //DLE.Lights.ResetInfo ();
 
     //vertexManager.Count = nVertices;
-    //vertexManager.FileOffset () = fp->Tell ();
+    //vertexManager.FileOffset () = fp.Tell ();
     //vertexManager.Read (fp);
 
-    //segmentManager.Count = nSegments;
-    //segmentManager.FileOffset () = fp->Tell ();
-    //segmentManager.ReadSegments (fp);
+    //DLE.Segments.Count = nSegments;
+    //DLE.Segments.FileOffset () = fp.Tell ();
+    //DLE.Segments.ReadSegments (fp);
 
-    //lightManager.ReadColors (*fp);
+    //DLE.Lights.ReadColors (*fp);
 
-    //if (objectManager.Count > MAX_OBJECTS) {
+    //if (DLE.Objects.Count > MAX_OBJECTS) {
     //    sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
-    //                 objectManager.Count, MAX_OBJECTS);
+    //                 DLE.Objects.Count, MAX_OBJECTS);
     //    ErrorMsg (message);
     //    }
     //return 0;
@@ -324,7 +324,7 @@ namespace DLE.NET
     //    m_currentLevelName [0] = 0;
     //else {  /*load mine filename */
     //    for (char *p = m_currentLevelName; ; p++) {
-    //        *p = fp->ReadChar ();
+    //        *p = fp.ReadChar ();
     //        if (*p== '\n')
     //            *p = 0;
     //        if (*p == 0)
@@ -332,14 +332,14 @@ namespace DLE.NET
     //        }
     //    }
 
-    //objectManager.Read (fp);
-    //wallManager.Read (fp);
-    //triggerManager.Read (fp);
-    //triggerManager.ReadReactor (fp);
-    //segmentManager.ReadRobotMakers (fp);
-    //lightManager.ReadLightDeltas (fp);
+    //DLE.Objects.Read (fp);
+    //DLE.Walls.Read (fp);
+    //DLE.Triggers.Read (fp);
+    //DLE.Triggers.ReadReactor (fp);
+    //DLE.Segments.ReadRobotMakers (fp);
+    //DLE.Lights.ReadLightDeltas (fp);
     //if (!DLE.IsD1File ())
-    //    segmentManager.ReadEquipMakers (fp);
+    //    DLE.Segments.ReadEquipMakers (fp);
     //return 0;
     //}
 
