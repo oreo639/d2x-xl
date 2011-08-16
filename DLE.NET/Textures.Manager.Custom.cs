@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace DLE.NET
 {
@@ -36,7 +37,7 @@ namespace DLE.NET
 	    return 1;
 	    }
     //Release ();
-    DLE.DebugMsg (string.Format (@"Pog manager: Reading {0} custom textures", pigFileInfo.nTextures));
+    DLE.DebugMsg (string.Format (@"Pog manager: Reading {0:d} custom textures", pigFileInfo.nTextures));
     xlatTbl = new ushort [pigFileInfo.nTextures];
     if (xlatTbl == null)
 	    return 5;
@@ -97,10 +98,10 @@ namespace DLE.NET
 		    tex.m_bCustom = true;
 	    }
     if (nUnknownTextures > 0) {
-	    DLE.DebugMsg (string.Format (@"Pog manager: {0} unknown textures found.", nUnknownTextures));
+	    DLE.DebugMsg (string.Format (@"Pog manager: {0:d} unknown textures found.", nUnknownTextures));
 	    }
     if (nMissingTextures > 0) {
-	    DLE.DebugMsg (string.Format (@"Pog manager: {0] textures missing (Pog file may be damaged).", nMissingTextures));
+	    DLE.DebugMsg (string.Format (@"Pog manager: {0:d} textures missing (Pog file may be damaged).", nMissingTextures));
 	    }
 
     //DLE.MainFrame.Progress.DestroyWindow ();
@@ -108,6 +109,42 @@ namespace DLE.NET
     }
 
     //------------------------------------------------------------------------------
+
+    uint WriteCustomTextureHeader (BinaryWriter fp, Texture tex, int nId, uint nOffset)
+    {
+	    PigTexture pigTexInfo = new PigTexture (1);
+	    uint pos = 0xFFFFFFFF;
+
+    if (nId >= 0) {
+	    tex.m_id = nId;
+	    tex.m_offset = nOffset;
+	    }
+    else {
+	    pos = (uint) fp.BaseStream.Position;
+	    nId = tex.m_id;
+	    fp.BaseStream.Position = (long) (nOffset = tex.m_offset);
+	    }
+
+    pigTexInfo.name = string.Format (@"POG{0:0000}", nId);
+    pigTexInfo.Setup (1, (ushort)tex.m_width, (ushort)tex.m_height, (byte) ((tex.m_nFormat != 0) ? 0x80 : 0), nOffset);
+
+    // check for transparency and super transparency
+    if (tex.m_nFormat == 0)
+	    if (tex.Buffer != null) 
+        {
+		    for (uint j = 0, h = tex.Size; j < h; j++) 
+            {
+			    if (tex.Index [j] == 255) 
+				    pigTexInfo.flags |= (byte) global::DLE.NET.Texture.Flags.TRANSPARENT;
+                if (tex.Index [j] == 254)
+                    pigTexInfo.flags |= (byte)global::DLE.NET.Texture.Flags.SUPER_TRANSPARENT;
+			}
+	    }
+    pigTexInfo.Write (fp);
+    if (pos != 0xFFFFFFFF)
+	    fp.BaseStream.Position = (long) pos;
+    return (uint) (nOffset + ((tex.m_nFormat != 0) ? tex.Size * Marshal.SizeOf (tex.Buffer [0]) : tex.Size));
+    }
 
     //------------------------------------------------------------------------------
 

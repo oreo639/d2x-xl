@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace DLE.NET
 {
@@ -46,7 +47,7 @@ namespace DLE.NET
     {
         public ushort whExtra;     // bits 0-3 width, bits 4-7 height
 
-        public byte [] name;
+        public string name;
         public byte dflags;      // this is only important for large bitmaps like the cockpit
         public ushort width;
         public ushort height;
@@ -62,7 +63,7 @@ namespace DLE.NET
             Version = version;
         }
 
-        void Setup (int nVersion, ushort w = 0, ushort h = 0, byte f = 0, uint o = 0)
+        public void Setup (int nVersion, ushort w = 0, ushort h = 0, byte f = 0, uint o = 0)
         {
             Version = nVersion;
             width = w;
@@ -101,7 +102,8 @@ namespace DLE.NET
         {
             if (nVersion >= 0)
                 Version = nVersion;
-            name = fp.ReadBytes (name.Length);
+
+            name = System.Text.Encoding.ASCII.GetString (fp.ReadBytes (8));
             dflags = fp.ReadByte ();
             width = (ushort)fp.ReadByte ();
             height = (ushort)fp.ReadByte ();
@@ -109,7 +111,7 @@ namespace DLE.NET
                 whExtra = (ushort)fp.ReadByte ();     // bits 0-3 width, bits 4-7 height
             else
             {
-                name [7] = 0;
+                name = "";
                 whExtra = 0;
             }
             flags = fp.ReadByte ();
@@ -153,36 +155,63 @@ namespace DLE.NET
 
     public class Texture
     {
-        public BGRA [] m_bmData;
+        public enum Flags : byte
+        {
+            TRANSPARENT = 1,
+            SUPER_TRANSPARENT = 2,
+            NO_LIGHTING = 4,
+            RLE = 8,
+            PAGED_OUT = 16,
+            RLE_BIG = 32
+        }
+
+        //----------------------------------------------------------------------------
+
+        [StructLayout (LayoutKind.Explicit)]
+        public struct BitmapData
+        {
+            [FieldOffset (0)]
+            public BGRA [] m_color;
+            [FieldOffset (0)]
+            public byte [] m_index;
+        }
+
+        public BitmapData m_bmData = new BitmapData ();
         public BGRA [] m_override;
-        public uint m_width = 0, m_height = 0, m_size = 0;
+        public uint m_width = 0, m_height = 0, m_size = 0, m_offset = 0;
+        public int m_id = -1;
         public bool m_bCustom = false, m_bExtData = false, m_bFrame = false, m_bUsed = false, m_bValid = false;
         public byte m_nFormat = 0;	// 0: Bitmap, 1: TGA (RGB)
         public ushort m_nIndex = 0;
 
-        public BGRA [] Buffer { get { return m_bmData; } }
+        public BGRA [] Buffer 
+        { 
+            get { return m_bmData.m_color; } 
+            set { m_bmData.m_color = value; } 
+        }
+        public byte [] Index { get { return m_bmData.m_index; } }
         public uint Width { get { return m_width; } }
         public uint Height { get { return m_height; } }
         public uint Size { get { return Width * Height; } }
 
         //----------------------------------------------------------------------------
 
-        public Texture (BGRA[] dataP = null)
+        public Texture (BGRA[] data = null)
         {
             Clear ();
-            m_bmData = dataP;
-            m_bExtData = (dataP != null);
+            Buffer = data;
+            m_bExtData = (data != null);
         }
 
         //-----------------------------------------------------------------------------
 
         public bool Allocate (uint nSize)
         {
-            if ((m_bmData != null) && ((m_width * m_height != nSize)))
+            if ((Buffer != null) && ((m_width * m_height != nSize)))
                 Release ();
-            if (m_bmData == null)
-                m_bmData = new BGRA [nSize];
-            return (m_bmData != null);
+            if (Buffer == null)
+                Buffer = new BGRA [nSize];
+            return (Buffer != null);
         }
 
         //------------------------------------------------------------------------------
@@ -190,7 +219,7 @@ namespace DLE.NET
         public void Release ()
         {
             if (!m_bExtData)
-                m_bmData = null;
+                Buffer = null;
         }
 
         //------------------------------------------------------------------------------
@@ -214,13 +243,13 @@ namespace DLE.NET
 
         void Allocate (uint nSize, ushort nTexture)
         {
-            if ((m_bmData != null) && (m_width * m_height != nSize))
+            if ((Buffer != null) && (m_width * m_height != nSize))
 	            Release ();
-            if (m_bmData == null)
+            if (Buffer == null)
             {
                 try
                 {
-                    m_bmData = new BGRA [m_size];
+                    Buffer = new BGRA [m_size];
                 }
                 catch (InsufficientMemoryException)
                 {
@@ -241,7 +270,7 @@ namespace DLE.NET
 		        uint k = Size - Width - i;
 		        for (uint x = 0; x < Width; x++) 
                 {
-			        bmIndex [k + x] = DLE.Palettes.ClosestColor (m_bmData [i + x]);
+			        bmIndex [k + x] = DLE.Palettes.ClosestColor (Buffer [i + x]);
 		        }
 	        }
         }
@@ -259,10 +288,10 @@ namespace DLE.NET
             {
                 for (uint i = 0; i < m_size; i++)
                 {
-                    m_bmData [i].r = fp.ReadByte ();
-                    m_bmData [i].g = fp.ReadByte ();
-                    m_bmData [i].b = fp.ReadByte ();
-                    m_bmData [i].a = fp.ReadByte ();
+                    Buffer [i].r = fp.ReadByte ();
+                    Buffer [i].g = fp.ReadByte ();
+                    Buffer [i].b = fp.ReadByte ();
+                    Buffer [i].a = fp.ReadByte ();
                 }
                 //texP->m_info.bValid = TGA2Bitmap (texP->m_info.bmData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
             }
@@ -287,14 +316,14 @@ namespace DLE.NET
                             {
                                 if (x < info.width)
                                 {
-                                    m_bmData [y * info.width + x].Assign (palette [palIndex], alpha);
+                                    Buffer [y * info.width + x].Assign (palette [palIndex], alpha);
                                     x++;
                                 }
                             }
                         }
                         else
                         {
-                            m_bmData [y * info.width + x].Assign (palette [palIndex], (byte) ((palIndex < 254) ? 255 : 0));
+                            Buffer [y * info.width + x].Assign (palette [palIndex], (byte) ((palIndex < 254) ? 255 : 0));
                             x++;
                         }
                     }
@@ -308,9 +337,9 @@ namespace DLE.NET
                     {
 			            int h = y * info.width + x;
 			            palIndex = fp.ReadByte ();
-			            m_bmData [h].Assign (palette [palIndex]);
+			            Buffer [h].Assign (palette [palIndex]);
                         if (palIndex < 254)
-                            m_bmData [h].a = 0; // transparent
+                            Buffer [h].a = 0; // transparent
 			        }
                 }
             }
@@ -328,7 +357,7 @@ namespace DLE.NET
 
             PigTexture info = DLE.Textures.Info (nTexture);
             uint nSize = info.BufSize ();
-            if ((m_bmData != null) && ((m_width * m_height == nSize)))
+            if ((Buffer != null) && ((m_width * m_height == nSize)))
 	            return 0; // already loaded
             if (!Allocate (nSize))
 	            return 1;

@@ -88,16 +88,5 @@
             MIRROR = 2,
             N_CUBE_MODES = 3
         }
-
-
-        public enum TextureFlag : int
-        {
-            TRANSPARENT = 1,
-            SUPER_TRANSPARENT = 2,
-            NO_LIGHTING = 4,
-            RLE = 8,
-            PAGED_OUT = 16,
-            RLE_BIG = 32
-        }
     }
 }
