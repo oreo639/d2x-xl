@@ -261,7 +261,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void ComputeIndex (byte [] bmIndex)
+        public void ComputeIndex (byte [] bmIndex)
         {
 	        BGR[] palette = DLE.Palettes.Current ();
 
