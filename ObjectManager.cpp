@@ -19,7 +19,7 @@ CGameObject* CObjectManager::FindBySig (short nSignature)
 {
 	CGameObject* objP = Object (0);
 
-for (short i = objectManager.Count (); i; i--, objP++)
+for (short i = Count (); i; i--, objP++)
 	if (objP->m_info.signature == nSignature)
 		return objP;
 return null;
@@ -295,15 +295,15 @@ if (QueryMsg ("Are you sure you want to move the\n"
 undoManager.Begin (udObjects);
 if (objP == null)
 	objP = current->Object ();
-if (objectManager.Index (objP) == objectManager.Count ())
-	objectManager.SecretSegment () = current->m_nSegment;
+if (Index (objP) == Count ())
+	SecretSegment () = current->m_nSegment;
 else {
 	CVertex center;
 	objP->Position () = segmentManager.CalcCenter (center, current->m_nSegment);
 	// bump position over if this is not the first object in the segment
 	int i, count = 0;
-	for (i = 0; i < objectManager.Count (); i++)
-		if (objectManager.Object (i)->Info ().nSegment == current->m_nSegment)
+	for (i = 0; i < Count (); i++)
+		if (Object (i)->Info ().nSegment == current->m_nSegment)
 			count++;
 	i = (count & 1) ? -count : count;
 	objP->Position ().v.y += 2 * i;

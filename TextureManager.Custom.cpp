@@ -262,7 +262,7 @@ if (DLE.IsD1File ()) {
 
 textureCount = m_nTextures [1];
 
-sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",m_startFolder );
+sprintf_s (message, sizeof (message), "%s\\dle_temp.pog", m_startFolder);
 
 // write file  header
 pigFileInfo.nId = 0x474f5044L; /* 'DPOG' */
@@ -301,7 +301,7 @@ for (i = 0, texP = Textures (nVersion); i < h; i++, texP++)
 
 for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	if (0 > WriteCustomTexture (fp, extraTexP))
-		WriteCustomTextureHeader (fp, texP); // need to rewrite to reflect changed texture type in header data
+		WriteCustomTextureHeader (fp, extraTexP); // need to rewrite to reflect changed texture type in header data
 
 return 0;
 }
