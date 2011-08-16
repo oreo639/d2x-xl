@@ -244,7 +244,7 @@ namespace DLE.NET
     for (i = 0; i < h; i++)
     {
         if (Textures [i].m_bCustom)
-            nOffset = WriteCustomTextureHeader (fp, tex, nId++, nOffset);
+            nOffset = WriteCustomTextureHeader (fp, Textures [i], nId++, nOffset);
         foreach (Texture extraTex in m_extra)
             nOffset = WriteCustomTextureHeader (fp, extraTex, nId++, nOffset);
     }
@@ -256,8 +256,8 @@ namespace DLE.NET
     {
         if (Textures [i].m_bCustom)
         {
-            if (0 > WriteCustomTexture (fp, tex))
-                WriteCustomTextureHeader (fp, tex); // need to rewrite to reflect changed texture type in header data
+            if (0 > WriteCustomTexture (fp, Textures [i]))
+                WriteCustomTextureHeader (fp, Textures [i]); // need to rewrite to reflect changed texture type in header data
         }
     }
 
