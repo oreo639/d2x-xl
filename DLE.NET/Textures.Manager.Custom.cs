@@ -119,7 +119,7 @@ namespace DLE.NET
 
     //------------------------------------------------------------------------------
 
-    uint WriteCustomTextureHeader (BinaryWriter fp, Texture tex, int nId, uint nOffset)
+    uint WriteCustomTextureHeader (BinaryWriter fp, Texture tex, int nId = -1, uint nOffset = 0)
     {
         PigTexture pigTexInfo = new PigTexture (1);
         uint pos = 0xFFFFFFFF;
@@ -200,6 +200,74 @@ namespace DLE.NET
     }
 
     //------------------------------------------------------------------------------
+
+    public int CreatePog (BinaryWriter fp) 
+    {
+	    PigHeader		pigFileInfo  = new PigHeader (1);
+	    uint			textureCount = 0, nOffset = 0;
+	    int				nVersion = DLE.FileType;
+	    int				nId, i, h = DLE.Textures.MaxTextures;
+	    ExtraTexture	extraTex;
+	    Texture		    tex;
+
+    if (DLE.IsD1File) {
+	    DLE.ErrorMsg (@"Descent 1 does not support custom textures.");
+	    return 1;
+	    }
+
+    textureCount = m_nTextures [1];
+
+    string message = string.Format (DLE.StartFolder + "\\dle_temp.pog");
+
+    // write file  header
+    pigFileInfo.nId = (uint) 0x474f5044L; /* 'DPOG' */
+    pigFileInfo.nVersion = 1;
+    pigFileInfo.nTextures = 0;
+    for (i = 0; i < h; i++)
+	    if (Textures [i].m_bCustom)
+		    pigFileInfo.nTextures++;
+    for (extraTex = m_extra; extraTex; extraTex = extraTex.m_next)
+	    pigFileInfo.nTextures++;
+    pigFileInfo.Write (fp);
+
+    // write list of textures
+    for (i = 0; i < h; i++)
+    {
+        if (Textures [i].m_bCustom)
+            fp.Write (m_index [1] [i]);
+    }
+
+    for (extraTex = m_extra; extraTex; extraTex = extraTex.m_next)
+	    fp.Write (extraTex.m_index);
+
+    // write texture headers
+    nId = 0;
+    for (i = 0; i < h; i++)
+    {
+        if (Textures [i].m_bCustom)
+            nOffset = WriteCustomTextureHeader (fp, tex, nId++, nOffset);
+        for (extraTex = m_extra; extraTex; extraTex = extraTex.m_next)
+            nOffset = WriteCustomTextureHeader (fp, extraTex, nId++, nOffset);
+    }
+
+
+    DLE.DebugMsg (string.Format (@"Pog manager: Saving {0} custom textures", pigFileInfo.nTextures));
+
+    for (i = 0; i < h; i++)
+    {
+        if (Textures [i].m_bCustom)
+        {
+            if (0 > WriteCustomTexture (fp, tex))
+                WriteCustomTextureHeader (fp, tex); // need to rewrite to reflect changed texture type in header data
+        }
+    }
+
+    for (extraTex = m_extra; extraTex; extraTex = extraTex.m_next)
+	    if (0 > WriteCustomTexture (fp, extraTex))
+		    WriteCustomTextureHeader (fp, tex); // need to rewrite to reflect changed texture type in header data
+
+    return 0;
+    }
 
     //------------------------------------------------------------------------------
 

@@ -37,6 +37,21 @@ namespace DLE.NET
                 nSounds = fp.ReadUInt32 ();
             }
         }
+
+	    public void Write (BinaryWriter fp) 
+        {
+            if (nVersion == 1)
+            {
+                fp.Write (nId);
+                fp.Write (nVersion);
+                fp.Write (nTextures);
+            }
+            else
+            {
+                fp.Write (nTextures);
+                fp.Write (nSounds);
+            }
+        }
     }
 
     //------------------------------------------------------------------------------

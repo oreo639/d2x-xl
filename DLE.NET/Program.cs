@@ -57,10 +57,9 @@ namespace DLE.NET
         public static int LevelVersion { get { return theMine.LevelVersion; } }
        	public static int LevelType { get { return IsD2XLevel ? 2 : IsD2File ? 1 : 0; } }
 
-
         //------------------------------------------------------------------------------
 
-        public static String [] descentPath = new String [2] { "", "" };
+        public static string [] m_descentPath = new string [2] { "", "" };
 
         static bool m_bExpertMode = true;
 
@@ -70,21 +69,29 @@ namespace DLE.NET
             set { m_bExpertMode = value; }
         }
 
+        static string m_startFolder = "";
+
+        public static string StartFolder
+        {
+            get { return m_startFolder; }
+            set { m_startFolder = value; }
+        }
+
         //------------------------------------------------------------------------------
 
-        public static void InfoMsg (String msg)
+        public static void InfoMsg (string msg)
         {
         }
 
-        public static void ErrorMsg (String msg)
+        public static void ErrorMsg (string msg)
         {
         }
 
-        public static void DebugMsg (String msg)
+        public static void DebugMsg (string msg)
         {
         }
 
-        public static int QueryMsg (String msg)
+        public static int QueryMsg (string msg)
         {
             return 1;
         }

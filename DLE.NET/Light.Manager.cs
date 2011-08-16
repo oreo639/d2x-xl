@@ -32,7 +32,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        readonly TextureLight[] textureLightD1 = new TextureLight [NUM_LIGHTS_D1] 
+        const TextureLight[] textureLightD1 = new TextureLight [NUM_LIGHTS_D1] 
         {
 	        new TextureLight (250, 0x00b333L), new TextureLight (251, 0x008000L), new TextureLight (252, 0x008000L), new TextureLight (253, 0x008000L),
 	        new TextureLight (264, 0x01547aL), new TextureLight (265, 0x014666L), new TextureLight (268, 0x014666L), new TextureLight (278, 0x014cccL),
@@ -48,7 +48,7 @@ namespace DLE.NET
 	        new TextureLight (367, 0x020000L), new TextureLight (368, 0x020000L), new TextureLight (369, 0x020000L), new TextureLight (370, 0x020000L)
         };
 
-        readonly TextureLight[] textureLightD2 = new TextureLight [NUM_LIGHTS_D2] 
+        const TextureLight[] textureLightD2 = new TextureLight [NUM_LIGHTS_D2] 
         {
 	        new TextureLight (235, 0x012666L), new TextureLight (236, 0x00b5c2L), new TextureLight (237, 0x00b5c2L), new TextureLight (243, 0x00b5c2L),
 	        new TextureLight (244, 0x00b5c2L), new TextureLight (275, 0x01547aL), new TextureLight (276, 0x014666L), new TextureLight (278, 0x014666L),
