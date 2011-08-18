@@ -244,23 +244,23 @@ namespace DLE.NET
 		        seg.m_wallFlags = (byte) byteBuf;
 		        switch (seg.m_function) {
 			        case Segment.Functions.FUELCEN:
-				        if (!DLE.Segments.CreateFuelCenter (nSegment, Segment.Functions.FUELCEN, false, false))
+				        if (DLE.Segments.CreateFuelCenter (nSegment, Segment.Functions.FUELCEN, false, false) == 0)
 					        seg.m_function = 0;
 				        break;
 			        case Segment.Functions.REPAIRCEN:
-				        if (!DLE.Segments.CreateFuelCenter (nSegment, Segment.Functions.REPAIRCEN, false, false))
+				        if (DLE.Segments.CreateFuelCenter (nSegment, Segment.Functions.REPAIRCEN, false, false) == 0)
 					        seg.m_function = 0;
 				        break;
 			        case Segment.Functions.ROBOTMAKER:
-				        if (!DLE.Segments.CreateRobotMaker (nSegment, false, false))
+				        if (DLE.Segments.CreateRobotMaker (nSegment, false, false) == 0)
 					        seg.m_function = 0;
 				        break;
 			        case Segment.Functions.EQUIPMAKER:
-				        if (!DLE.Segments.CreateEquipMaker (nSegment, false, false))
+				        if (DLE.Segments.CreateEquipMaker (nSegment, false, false) == 0)
 					        seg.m_function = 0;
 				        break;
 			        case Segment.Functions.REACTOR:
-				        if (!DLE.Segments.CreateReactor (nSegment, false, false))
+				        if (DLE.Segments.CreateReactor (nSegment, false, false) == 0)
 					        seg.m_function = 0;
 				        break;
 			        default:

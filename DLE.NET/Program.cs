@@ -51,6 +51,7 @@ namespace DLE.NET
 
         public static bool IsD1File { get { return theMine.FileType == GameMine.GameFileType.RDL; } }
         public static bool IsD2File { get { return theMine.FileType != GameMine.GameFileType.RDL; } }
+        public static bool IsD2XFile { get { return (theMine.FileType != GameMine.GameFileType.RDL) && IsD2XLevel; } }
         public static bool IsStdLevel { get { return theMine.LevelVersion < 9; } }
         public static bool IsD2XLevel { get { return theMine.LevelVersion >= 9; } }
         public static int FileType { get { return (int) theMine.FileType; } }

@@ -32,7 +32,7 @@ namespace DLE.NET
             NONE = 0,
             FUELCEN = 1,
             REPAIRCEN = 2,
-            CONTROLCEN = 3,
+            REACTOR = 3,
             ROBOTMAKER = 4,
             GOAL_BLUE = 5,
             GOAL_RED = 6,

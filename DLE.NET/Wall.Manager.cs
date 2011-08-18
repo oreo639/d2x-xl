@@ -174,6 +174,14 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public Wall OppositeWall (short nSegment, short nSide)
+        {
+        Side side = DLE.Segments.OppositeSide (null, new SideKey (nSegment, nSide));
+        return (side == null) ? null : side.Wall;
+        }
+
+        // ------------------------------------------------------------------------
+
         public void UpdateTrigger (short nOldTrigger, short nNewTrigger)
         {
 	        Wall wall = FindByTrigger (nOldTrigger);

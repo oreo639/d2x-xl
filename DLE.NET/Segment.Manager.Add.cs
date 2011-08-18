@@ -646,7 +646,61 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        short CreateFuelCenter (short nSegment = -1, Segment.Functions nType = Segment.Functions.FUELCEN, bool bCreate = true, bool bSetDefTextures = true) 
+        bool CreateEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
+        {
+            if (!DLE.IsD2XFile)
+            {
+                DLE.ErrorMsg (@"Equipment makers are only available in D2X-XL levels.");
+                return false;
+            }
+            return CreateMatCen (nSegment, bCreate, Segment.Functions.EQUIPMAKER, bSetDefTextures, EquipMakers, m_matCenInfo [1], @"Maximum number of equipment makers reached");
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool CreateRobotMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
+        {
+            return CreateMatCen (nSegment, bCreate, Segment.Functions.ROBOTMAKER, bSetDefTextures, RobotMakers, m_matCenInfo [0], @"Maximum number of robot makers reached");
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool CreateReactor (short nSegment, bool bCreate, bool bSetDefTextures) 
+        {
+            return 0 <= Create (nSegment, bCreate, Segment.Functions.REACTOR, (short) (bSetDefTextures ? DLE.IsD1File ? 10 : 357 : -1), @"Flag goals are not available in Descent 1.");
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, Segment.Functions nType, short nTexture) 
+        {
+            return 0 <= Create (nSegment, bCreate, nType, (short) (bSetDefTextures ? nTexture : -1), @"Flag goals are not available in Descent 1.");
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, Segment.Functions nType, short nTexture) 
+        {
+            return 0 <= Create (nSegment, bCreate, nType, (short) (bSetDefTextures ? nTexture : -1), @"Team start positions are not available in Descent 1.");
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool CreateSkybox (short nSegment, bool bCreate) 
+        {
+            return 0 <= Create (nSegment, bCreate, Segment.Functions.SKYBOX, -1, @"Skyboxes are not available in Descent 1.");
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool CreateSpeedBoost (short nSegment, bool bCreate) 
+        {
+            return 0 <= Create (nSegment, bCreate, Segment.Functions.SPEEDBOOST, -1, @"Speed boost segments are not available in Descent 1.");
+        }
+
+        // ------------------------------------------------------------------------
+
+        public short CreateFuelCenter (short nSegment = -1, Segment.Functions nType = Segment.Functions.FUELCEN, bool bCreate = true, bool bSetDefTextures = true) 
         {
         // count number of fuel centers
         int nFuelCen = FuelCenterCount;
