@@ -130,7 +130,7 @@ namespace DLE.NET
         public byte m_state;            // Opening, closing, etc. 
         public byte m_nTrigger;         // Which trigger is associated with the wall. 
         public sbyte m_nClip;            // Which  animation associated with the wall.  
-        public byte m_keys;             // which keys are required 
+        public KeyTypes m_keys;             // which keys are required 
         public sbyte m_controllingTrigger; // trigger targetting this wall. A bit pointless since a wall can be targetted by several triggers
         public sbyte m_cloakValue;	    // if this wall is cloaked, the fade value
 
@@ -298,7 +298,7 @@ namespace DLE.NET
             m_state = fp.ReadByte ();         
             m_nTrigger = fp.ReadByte ();       
             m_nClip = fp.ReadSByte ();      
-            m_keys = fp.ReadByte ();          
+            m_keys = (KeyTypes) fp.ReadByte ();          
             m_controllingTrigger = fp.ReadSByte ();
             m_cloakValue = fp.ReadSByte ();
         }
@@ -319,7 +319,7 @@ namespace DLE.NET
             fp.Write (m_state);         
             fp.Write (m_nTrigger);       
             fp.Write (m_nClip);      
-            fp.Write (m_keys);          
+            fp.Write ((byte) m_keys);          
             fp.Write (m_controllingTrigger);
             fp.Write (m_cloakValue);
         }

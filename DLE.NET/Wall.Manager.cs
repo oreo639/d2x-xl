@@ -70,7 +70,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        ushort Add (bool bUndo) 
+        public ushort Add () 
         { 
         if (!HaveResources ())
 	        return GameMine.NO_WALL;
@@ -94,7 +94,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        Wall Create (SideKey key, Wall.Types type, ushort flags, byte keys, sbyte nClip, ushort nTexture) 
+        public Wall Create (SideKey key, Wall.Types type, ushort flags, Wall.KeyTypes keys, sbyte nClip, short nTexture) 
         {
         if (!HaveResources (key))
 	        return null;
@@ -129,7 +129,7 @@ namespace DLE.NET
         DLE.Backup.Begin (UndoData.Flags.udSegments | UndoData.Flags.udWalls);
         side.SetWall ((short) nWall);
         Wall wall = Walls [nWall];
-        wall.Setup (key, nWall, type, nClip, nTexture, false);
+        wall.Setup (key, nWall, type, nClip, (ushort) nTexture, false);
         wall.Key = nWall;
         wall.m_flags = flags;
         wall.m_keys = keys;

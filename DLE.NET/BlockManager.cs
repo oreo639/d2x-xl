@@ -119,6 +119,8 @@ namespace DLE.NET
 	        // invert segment number so its children can be children can be fixed later
 	        seg.Key = -seg.Key - 1;
 
+            Wall w = new Wall ();
+            Trigger t = new Trigger ();
 	        // read in side information 
 	        for (short nSide = 0; nSide < 6; nSide++) {
     	        Side side = seg.m_sides [nSide];
@@ -136,35 +138,33 @@ namespace DLE.NET
 		        for (i = 0; i < 4; i++)
 			        scanRes = fscanf_s (fp, "    uvls %hd %hd %hd\n", 
 									          side.m_uvls [i].u, side.m_uvls [i].v, side.m_uvls [i].l);
-		        if (bExtBlkFmt) {
+		        if (DLE.ExtBlkFmt) {
 			        scanRes = fscanf_s (fp, "    wall %hd\n", side.m_nWall);
-			        if (side.m_nWall != NO_WALL) {
-				        CWall w;
-				        CTrigger t;
+			        if (side.m_nWall != GameMine.NO_WALL) {
 				        w.Clear ();
 				        t.Clear ();
 				        scanRes = fscanf_s (fp, "        segment %hd\n", w.m_nSegment);
 				        scanRes = fscanf_s (fp, "        side %hd\n", w.m_nSide);
-				        scanRes = fscanf_s (fp, "        hps %d\n", w.Info ().hps);
+				        scanRes = fscanf_s (fp, "        hps %d\n", w.m_hps);
 				        scanRes = fscanf_s (fp, "        type %d\n", byteBuf);
-				        w.Info ().type = (byte) byteBuf;
-				        scanRes = fscanf_s (fp, "        flags %hd\n", w.Info ().flags);
+				        w.m_type = (Wall.Types) byteBuf;
+				        scanRes = fscanf_s (fp, "        flags %hd\n", w.m_flags);
 				        scanRes = fscanf_s (fp, "        state %d\n", byteBuf);
-				        w.Info ().state = (byte) byteBuf;
+				        w.m_state = (byte) byteBuf;
 				        scanRes = fscanf_s (fp, "        clip %d\n", byteBuf);
-				        w.Info ().nClip = (byte) byteBuf;
+				        w.m_nClip = (sbyte) byteBuf;
 				        scanRes = fscanf_s (fp, "        keys %d\n", byteBuf);
-				        w.Info ().keys = (byte) byteBuf;
+				        w.m_keys = (Wall.KeyTypes) byteBuf;
 				        scanRes = fscanf_s (fp, "        cloak %d\n", byteBuf);
-				        w.Info ().cloakValue = (byte) byteBuf;
+				        w.m_cloakValue = (sbyte) byteBuf;
 				        scanRes = fscanf_s (fp, "        trigger %d\n", byteBuf);
-				        w.Info ().nTrigger = (byte) byteBuf;
-				        if ((w.Info ().nTrigger >= 0)  (w.Info ().nTrigger < GameMine.MAX_TRIGGERS)) {
+				        w.m_nTrigger = (byte) byteBuf;
+				        if ((w.m_nTrigger >= 0) && (w.m_nTrigger < GameMine.MAX_TRIGGERS)) {
 					        scanRes = fscanf_s (fp, "			    type %d\n", byteBuf);
-					        t.Info ().type = (byte) byteBuf;
-					        scanRes = fscanf_s (fp, "			    flags %hd\n", t.Info ().flags);
-					        scanRes = fscanf_s (fp, "			    value %d\n", t.Info ().value);
-					        scanRes = fscanf_s (fp, "			    timer %d\n", t.Info ().time);
+					        t.Type = (Trigger.Types) byteBuf;
+					        scanRes = fscanf_s (fp, "			    flags %hd\n", t.Flag);
+					        scanRes = fscanf_s (fp, "			    value %d\n", t.Value);
+					        scanRes = fscanf_s (fp, "			    timer %d\n", t.Time);
 					        scanRes = fscanf_s (fp, "			    count %hd\n", t.Count);
 					        for (i = 0; i < t.Count; i++) {
 						        scanRes = fscanf_s (fp, "			        segment %hd\n", t [i].m_nSegment);
@@ -172,18 +172,18 @@ namespace DLE.NET
 						        }
 					        }
 				        if (DLE.Walls.HaveResources ()) {
-					        if ((w.Info ().nTrigger >= 0)  (w.Info ().nTrigger < GameMine.MAX_TRIGGERS)) {
+					        if ((w.m_nTrigger >= 0) && (w.m_nTrigger < GameMine.MAX_TRIGGERS)) {
 						        if (!DLE.Triggers.HaveResources ())
-							        w.Info ().nTrigger = GameMine.NO_TRIGGER;
+							        w.m_nTrigger = GameMine.NO_TRIGGER;
 						        else {
-							        w.Info ().nTrigger = (byte) DLE.Triggers.Add ();
-							        Trigger trig = DLE.Triggers [w.Info ().nTrigger];
+							        w.m_nTrigger = (byte) DLE.Triggers.Add ();
+							        Trigger trig = DLE.Triggers [0, w.m_nTrigger];
 							        trig.MemberWiseCopy (t);
                                     newTriggers.Add (trig);
 							        ++nNewTriggers;
 							        }
 						        }
-					        side.m_nWall = DLE.Walls.Add (false);
+					        side.m_nWall = DLE.Walls.Add ();
 					        w.m_nSegment = nSegment;
 					        DLE.Walls [side.m_nWall].MemberwiseCopy (w);
 					        ++nNewWalls;
@@ -194,7 +194,7 @@ namespace DLE.NET
 
 	        short [] children = new short [6];
 	        scanRes = fscanf_s (fp, "  children %hd %hd %hd %hd %hd %hd\n", 
-				         children + 0, children + 1, children + 2, children + 3, children + 4, children + 5, children + 6);
+				      children [0], children [1], children [2], children [3], children [4], children [5], children [6]);
 	        for (i = 0; i < 6; i++)
 		        seg.SetChild ((short) i, children [i]);
 	        // read in vertices
@@ -225,7 +225,7 @@ namespace DLE.NET
 			        DLE.Vertices.Add (out nVertex);
 			        DLE.Vertices [nVertex].Status  |= GameMine.NEW_MASK;
 			        seg.m_verts [i] = nVertex;
-			        DLE.Vertices [nVertex] = v;
+			        DLE.Vertices [nVertex].Set (v);
 			        }
 		        DLE.Vertices [nVertex].Status |= GameMine.MARKED_MASK;
 		        }
@@ -235,9 +235,9 @@ namespace DLE.NET
 	        if (bExtBlkFmt) {
 		        scanRes = fscanf_s (fp, "  special %d\n", seg.m_function);
 		        scanRes = fscanf_s (fp, "  matcen_num %d\n", byteBuf);
-		        seg.m_nMatCen = (byte) byteBuf;
+		        seg.m_nMatCen = (sbyte) byteBuf;
 		        scanRes = fscanf_s (fp, "  value %d\n", byteBuf);
-		        seg.m_value = (byte) byteBuf;
+		        seg.m_value = (sbyte) byteBuf;
 		        scanRes = fscanf_s (fp, "  child_bitmask %d\n", byteBuf);
 		        seg.m_childFlags = (byte) byteBuf;
 		        scanRes = fscanf_s (fp, "  wall_bitmask %d\n", byteBuf);
@@ -252,15 +252,15 @@ namespace DLE.NET
 					        seg.m_function = 0;
 				        break;
 			        case Segment.Functions.ROBOTMAKER:
-				        if (DLE.Segments.CreateRobotMaker (nSegment, false, false) == 0)
+				        if (!DLE.Segments.CreateRobotMaker (nSegment, false, false))
 					        seg.m_function = 0;
 				        break;
 			        case Segment.Functions.EQUIPMAKER:
-				        if (DLE.Segments.CreateEquipMaker (nSegment, false, false) == 0)
+				        if (!DLE.Segments.CreateEquipMaker (nSegment, false, false))
 					        seg.m_function = 0;
 				        break;
 			        case Segment.Functions.REACTOR:
-				        if (DLE.Segments.CreateReactor (nSegment, false, false) == 0)
+				        if (!DLE.Segments.CreateReactor (nSegment, false, false))
 					        seg.m_function = 0;
 				        break;
 			        default:
@@ -286,10 +286,10 @@ namespace DLE.NET
         foreach (Trigger trig in newTriggers)
         {
 	        for (j = 0; j < trig.Count; j++) {
-		        if (trig.Segment (j) >= 0)
-			        trig.Segment (j) = m_xlatSegNum [trig.Segment (j)];
+		        if (trig [j].m_nSegment >= 0)
+			        trig [j].m_nSegment = m_xlatSegNum [trig [j].m_nSegment];
 		        else if (trig.Count == 1) {
-			        DLE.Triggers.Delete (trig.Key);
+			        DLE.Triggers.Delete ((short) trig.Key);
 			        i--;
 			        }
 		        else {

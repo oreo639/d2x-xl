@@ -75,6 +75,14 @@ namespace DLE.NET
             set { m_bExpertMode = value; }
         }
 
+        static bool m_bExtBlkFmt = true;
+
+        public static bool ExtBlkFmt
+        {
+            get { return m_bExtBlkFmt; }
+            set { m_bExtBlkFmt = value; }
+        }
+
         static string m_startFolder = "";
 
         public static string StartFolder

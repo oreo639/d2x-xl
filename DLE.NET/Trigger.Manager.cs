@@ -98,6 +98,25 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public short Add () 
+        { 
+        if (!HaveResources ())
+	        return GameMine.NO_TRIGGER; 
+        return (short) WallTriggerCount++;
+        }
+
+        // ------------------------------------------------------------------------
+
+		public void Delete (short nDelTrigger) 
+        {
+			if (nDelTrigger < 0)
+				DeleteFromObject ((short) (-nDelTrigger - 1));
+			else
+				DeleteFromWall (nDelTrigger);
+		}
+
+        // ------------------------------------------------------------------------
+
         public void DeleteFromWall (short nDelTrigger) 
         {
         if (nDelTrigger == GameMine.NO_TRIGGER)
