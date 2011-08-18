@@ -70,6 +70,15 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        ushort Add (bool bUndo) 
+        { 
+        if (!HaveResources ())
+	        return GameMine.NO_WALL;
+        return (ushort) Count++;
+        }
+
+        // ------------------------------------------------------------------------
+
         void Remove (short nDelWall)
         {
             if (nDelWall < --Count)

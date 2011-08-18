@@ -77,14 +77,14 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        bool Full 
+        public bool Full 
         {
             get { return Count (0) >= GameMine.MAX_TRIGGERS; }
         }
 
         // ------------------------------------------------------------------------
 
-        bool HaveResources ()
+        public bool HaveResources ()
         {
         if (!DLE.Walls.HaveResources ())
 	        return false;

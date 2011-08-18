@@ -5,7 +5,7 @@ namespace DLE.NET
     {
         // ------------------------------------------------------------------------
 
-        GameArray<MatCenter> [] m_matCenters = new GameArray<MatCenter> [2] { new GameArray<MatCenter> (GameMine.MAX_MATCENS_D2), new GameArray<MatCenter> (GameMine.MAX_MATCENS_D2) };
+        GameArray<MatCenter> [] m_matCenters = new GameArray<MatCenter> [2] { new GameArray<MatCenter> (GameMine.MAX_NUM_MATCENS_D2), new GameArray<MatCenter> (GameMine.MAX_NUM_MATCENS_D2) };
 
         public MatCenter [] MatCenters (int nClass)
         {

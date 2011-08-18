@@ -68,8 +68,10 @@
 
         public const int MAX_DOORS = 1;
         public const int MAX_CONTROL_CENTER_TRIGGERS = 10;
-        public const int MAX_MATCENS_D1 = 20;
-        public const int MAX_MATCENS_D2 = 100;
+        public const int MAX_NUM_MATCENS_D1 = 20;
+        public const int MAX_NUM_MATCENS_D2 = 100;
+        public const int MAX_NUM_RECHARGERS_D2 = 70;
+        public const int MAX_NUM_RECHARGERS_D2X = 500;
         public const int MAX_WALL_SWITCHES = 50;
         public const int MAX_WALL_LINKS = 100;
         public const int MAX_NUM_FUELCENS_D2 = 70;
@@ -160,9 +162,11 @@
         public static ushort NO_WALL { get { return MAX_WALLS; } }
         public static ushort MAX_TRIGGERS { get { return (ushort)((DLE.IsD1File || (DLE.LevelVersion < 12)) ? MAX_TRIGGERS_D1 : MAX_TRIGGERS_D2); } }
         public static ushort MAX_PLAYERS { get { return (ushort)(DLE.IsStdLevel ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X); } }
-        public static ushort MAX_MATCENS { get { return (ushort)((DLE.IsD1File || (DLE.LevelVersion < 12)) ? MAX_MATCENS_D1 : MAX_MATCENS_D2); } }
+        public static ushort MAX_MATCENS { get { return (ushort)((DLE.IsD1File || (DLE.LevelVersion < 12)) ? MAX_NUM_MATCENS_D1 : MAX_NUM_MATCENS_D2); } }
         public static ushort MAX_FUELCENS { get { return (ushort)((DLE.IsD1File || (DLE.LevelVersion < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X); } }
         public static ushort MAX_REPAIRCENS { get { return (ushort)((DLE.IsD1File || (DLE.LevelVersion < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X); } }
+        public static ushort MAX_NUM_RECHARGERS { get { return (ushort) ((DLE.theMine == null) ? MAX_NUM_RECHARGERS_D2X : (DLE.IsD1File || (DLE.LevelVersion < 12)) ? MAX_NUM_RECHARGERS_D2 : MAX_NUM_RECHARGERS_D2X); } }
+
         public static ushort PLAYER_CLIP_NUMBER { get { return (ushort)(DLE.IsD1File ? PLAYER_CLIP_NUMBER_D1 : PLAYER_CLIP_NUMBER_D2); } }
         public static ushort COOP_CLIP_NUMBER { get { return (ushort)(DLE.IsD1File ? COOP_CLIP_NUMBER_D1 : COOP_CLIP_NUMBER_D2); } }
         public static ushort REACTOR_CLIP_NUMBER { get { return (ushort)(DLE.IsD1File ? REACTOR_CLIP_NUMBER_D1 : REACTOR_CLIP_NUMBER_D2); } }

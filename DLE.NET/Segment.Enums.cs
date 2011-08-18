@@ -8,7 +8,7 @@ namespace DLE.NET
             NONE = 0,
             FUELCEN = 1,
             REPAIRCEN = 2,
-            CONTROLCEN = 3,
+            REACTOR = 3,
             ROBOTMAKER = 4,
             COUNT_D1 = 5,
 

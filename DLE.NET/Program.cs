@@ -29,8 +29,8 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        static GameMine theMine = new GameMine ();
-        static Settings settings = new Settings ();
+        public static GameMine theMine = new GameMine ();
+        public static Settings settings = new Settings ();
         public static TextureManager m_textureManager = new TextureManager ();
         public static PaletteManager m_paletteManager = new PaletteManager ();
         public static UndoManager m_undoManager = new UndoManager ();

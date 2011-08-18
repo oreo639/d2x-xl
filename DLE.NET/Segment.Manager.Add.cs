@@ -629,6 +629,56 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        int FuelCenterCount
+        {
+            get
+            {
+                int nFuelCens = 0;
+                for (int i = 0; i < Count; i++)
+                {
+                    Segment.Functions function = Segments [i].m_function;
+                    if ((function == Segment.Functions.FUELCEN) || (function == Segment.Functions.REPAIRCEN))
+                        nFuelCens++;
+                }
+                return nFuelCens;
+            }
+        }
+
+        // ------------------------------------------------------------------------
+
+        short CreateFuelCenter (short nSegment = -1, Segment.Functions nType = Segment.Functions.FUELCEN, bool bCreate = true, bool bSetDefTextures = true) 
+        {
+        // count number of fuel centers
+        int nFuelCen = FuelCenterCount;
+        if (nFuelCen >= GameMine.MAX_NUM_RECHARGERS) {
+	        DLE.ErrorMsg ("Maximum number of fuel centers reached.");
+	        return 0;
+	        }
+
+        Segment seg = Segments [0];
+
+        DLE.Backup.Begin (UndoData.Flags.udSegments);
+        if (nType == Segment.Functions.REPAIRCEN)
+	        nSegment = Create (nSegment, bCreate, nType, (short) (bSetDefTextures ? 433 : -1), @"Repair centers are not available in Descent 1.");
+        else {
+	        short nLastSeg = DLE.Current.m_nSegment;
+	        nSegment = Create (nSegment, bCreate, nType, (short) (bSetDefTextures ? DLE.IsD1File ? 322 : 333 : -1));
+	        if (nSegment < 0)
+		        return -1;
+	        if (bSetDefTextures) { // add energy spark walls to fuel center sides
+		        DLE.Current.m_nSegment = nLastSeg;
+		        if (DLE.Walls.Create (DLE.Current, global::DLE.NET.Wall.Types.ILLUSION, 0, global::DLE.NET.Wall.KeyTypes.NONE, -1, -1) != null) {
+			        SideKey opp = new SideKey ();
+			        if (OppositeSide (null, opp) != null)
+                        DLE.Walls.Create (opp, global::DLE.NET.Wall.Types.ILLUSION, 0, global::DLE.NET.Wall.KeyTypes.NONE, -1, -1);
+			        }
+		        DLE.Current.m_nSegment = nSegment;
+		        }
+	        }
+        DLE.Backup.End ();
+        return nSegment;
+        }
+
         // ------------------------------------------------------------------------
 
         // ------------------------------------------------------------------------

@@ -67,7 +67,7 @@ namespace DLE.NET
 	        DoubleVector	xAxis = new DoubleVector (), yAxis = new DoubleVector (), zAxis = new DoubleVector (), origin = new DoubleVector ();
 	        short			nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	        int				byteBuf; // needed for scanning byte values
-	        Trigger			newTriggers = null;
+	        List<Trigger>	newTriggers = new List<Trigger> ();
 	
         m_oldSegments = m_newSegments = null;
         // remember number of vertices for later
@@ -77,14 +77,14 @@ namespace DLE.NET
         SetupTransformation (m, origin);
         // now take the determinant
         xAxis.Set (m.uVec.v.y * m.fVec.v.z - m.fVec.v.y * m.uVec.v.z, 
-			          m.fVec.v.y * m.rVec.v.z - m.rVec.v.y * m.fVec.v.z, 
-			          m.rVec.v.y * m.uVec.v.z - m.uVec.v.y * m.rVec.v.z);
+			       m.fVec.v.y * m.rVec.v.z - m.rVec.v.y * m.fVec.v.z, 
+			       m.rVec.v.y * m.uVec.v.z - m.uVec.v.y * m.rVec.v.z);
         yAxis.Set (m.fVec.v.x * m.uVec.v.z - m.uVec.v.x * m.fVec.v.z, 
-			          m.rVec.v.x * m.fVec.v.z - m.fVec.v.x * m.rVec.v.z,
-			          m.uVec.v.x * m.rVec.v.z - m.rVec.v.x * m.uVec.v.z);
+			       m.rVec.v.x * m.fVec.v.z - m.fVec.v.x * m.rVec.v.z,
+			       m.uVec.v.x * m.rVec.v.z - m.rVec.v.x * m.uVec.v.z);
         zAxis.Set (m.uVec.v.x * m.fVec.v.y - m.fVec.v.x * m.uVec.v.y,
-			          m.fVec.v.x * m.rVec.v.y - m.rVec.v.x * m.fVec.v.y,
-			          m.rVec.v.x * m.uVec.v.y - m.uVec.v.x * m.rVec.v.y);
+			       m.fVec.v.x * m.rVec.v.y - m.rVec.v.x * m.fVec.v.y,
+			       m.rVec.v.x * m.uVec.v.y - m.uVec.v.x * m.rVec.v.y);
 
         nNewSegs = 0;
         for (i = 0; i < m_xlatSegNum.Length; i++)
@@ -104,7 +104,8 @@ namespace DLE.NET
 		        return nNewSegs;
 		        }
 	        short nSegment = DLE.Segments.Add ();
-	        if (nSegment < 0) {
+	        if (nSegment < 0) 
+            {
 		        DLE.Backup.End ();
 		        DLE.ErrorMsg ("No more free segments");
 		        return nNewSegs;
@@ -177,29 +178,25 @@ namespace DLE.NET
 						        else {
 							        w.Info ().nTrigger = (byte) DLE.Triggers.Add ();
 							        Trigger trig = DLE.Triggers [w.Info ().nTrigger];
-							        trig. = t;
-							        trigP.Backup (opAdd);
-							        trigP.SetLink (newTriggers);
-							        newTriggers = trigP;
+							        trig.MemberWiseCopy (t);
+                                    newTriggers.Add (trig);
 							        ++nNewTriggers;
 							        }
 						        }
 					        side.m_nWall = DLE.Walls.Add (false);
 					        w.m_nSegment = nSegment;
-					        CWall* wallP = DLE.Walls.Wall (side.m_nWall);
-					        *wallP = w;
-					        wallP.Backup (opAdd);
+					        DLE.Walls [side.m_nWall].MemberwiseCopy (w);
 					        ++nNewWalls;
 					        }
 				        }
 			        }
 		        }
 
-	        short children [6];
+	        short [] children = new short [6];
 	        scanRes = fscanf_s (fp, "  children %hd %hd %hd %hd %hd %hd\n", 
 				         children + 0, children + 1, children + 2, children + 3, children + 4, children + 5, children + 6);
 	        for (i = 0; i < 6; i++)
-		        seg.SetChild (i, children [i]);
+		        seg.SetChild ((short) i, children [i]);
 	        // read in vertices
 	        byte bShared = 0;
 	        for (i = 0; i < 8; i++) {
@@ -212,28 +209,25 @@ namespace DLE.NET
 			        }
 		        // each vertex relative to the origin has a x', y', and z' component
 		        // adjust vertices relative to origin
-		        CDoubleVector v;
-		        v.Set (X2D (x), X2D (y), X2D (z));
+                DoubleVector v = new DoubleVector (FixConverter.X2D (x), FixConverter.X2D (y), FixConverter.X2D (z));
 		        v.Set (v ^ xAxis, v ^ yAxis, v ^ zAxis);
-		        v += origin;
+		        v.Add (origin);
 		        // add a new vertex
 		        // if this is the same as another vertex, then use that vertex number instead
-		        CVertex* vertP = DLE.Vertices.Find (v);
+		        Vertex vert = DLE.Vertices.Find (v);
 		        ushort nVertex;
-		        if (vertP != null) {
-			        nVertex = seg.m_verts [i] = DLE.Vertices.Index (vertP);
-			        bShared |= 1 << i;
+		        if (vert != null) {
+			        nVertex = seg.m_verts [i] = (ushort) vert.Key;
+			        bShared |= (byte) (1 << i);
 			        }
 		        // else make a new vertex
 		        else  {
-			        nVertex;
-			        DLE.Vertices.Add (nVertex);
-			        DLE.Vertices.Status (nVertex) |= NEW_MASK;
+			        DLE.Vertices.Add (out nVertex);
+			        DLE.Vertices [nVertex].Status  |= GameMine.NEW_MASK;
 			        seg.m_verts [i] = nVertex;
-			        *DLE.Vertices.Vertex (nVertex) = v;
-			        DLE.Vertices.Vertex (nVertex).Backup ();
+			        DLE.Vertices [nVertex] = v;
 			        }
-		        DLE.Vertices.Status (nVertex) |= MARKED_MASK;
+		        DLE.Vertices [nVertex].Status |= GameMine.MARKED_MASK;
 		        }
 
 	        // mark vertices
@@ -249,23 +243,23 @@ namespace DLE.NET
 		        scanRes = fscanf_s (fp, "  wall_bitmask %d\n", byteBuf);
 		        seg.m_wallFlags = (byte) byteBuf;
 		        switch (seg.m_function) {
-			        case SEGMENT_FUNC_FUELCEN:
-				        if (!DLE.Segments.CreateFuelCenter (nSegment, SEGMENT_FUNC_FUELCEN, false, false))
+			        case Segment.Functions.FUELCEN:
+				        if (!DLE.Segments.CreateFuelCenter (nSegment, Segment.Functions.FUELCEN, false, false))
 					        seg.m_function = 0;
 				        break;
-			        case SEGMENT_FUNC_REPAIRCEN:
-				        if (!DLE.Segments.CreateFuelCenter (nSegment, SEGMENT_FUNC_REPAIRCEN, false, false))
+			        case Segment.Functions.REPAIRCEN:
+				        if (!DLE.Segments.CreateFuelCenter (nSegment, Segment.Functions.REPAIRCEN, false, false))
 					        seg.m_function = 0;
 				        break;
-			        case SEGMENT_FUNC_ROBOTMAKER:
+			        case Segment.Functions.ROBOTMAKER:
 				        if (!DLE.Segments.CreateRobotMaker (nSegment, false, false))
 					        seg.m_function = 0;
 				        break;
-			        case SEGMENT_FUNC_EQUIPMAKER:
+			        case Segment.Functions.EQUIPMAKER:
 				        if (!DLE.Segments.CreateEquipMaker (nSegment, false, false))
 					        seg.m_function = 0;
 				        break;
-			        case SEGMENT_FUNC_REACTOR:
+			        case Segment.Functions.REACTOR:
 				        if (!DLE.Segments.CreateReactor (nSegment, false, false))
 					        seg.m_function = 0;
 				        break;
@@ -278,40 +272,35 @@ namespace DLE.NET
 		        seg.m_nMatCen = -1;
 		        seg.m_value = -1;
 		        }
-	        seg.Mark (MARKED_MASK); // no other bits
+	        seg.Mark (GameMine.MARKED_MASK); // no other bits
 	        // calculate childFlags
 	        seg.m_childFlags = 0;
-	        for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-		        if (seg.Child (i) >= 0)
-			        seg.m_childFlags |= (1 << i);
+	        for (i = 0; i < 6; i++) {
+		        if (seg.GetChild ((short) i) >= 0)
+			        seg.m_childFlags |= (byte) (1 << i);
 		        }
-	        seg.Backup ();
 	        nNewSegs++;
 	        }
 
 
-        while (newTriggers != null) {
-	        CTrigger* trigP = newTriggers;
-	        newTriggers = dynamic_cast<CTrigger*> (trigP.Link ());
-	        for (j = 0; j < trigP.Count; j++) {
-		        if (trigP.Segment (j) >= 0)
-			        trigP.Segment (j) = m_xlatSegNum [trigP.Segment (j)];
-		        else if (trigP.Count == 1) {
-			        DLE.Triggers.Delete (DLE.Triggers.Index (trigP));
+        foreach (Trigger trig in newTriggers)
+        {
+	        for (j = 0; j < trig.Count; j++) {
+		        if (trig.Segment (j) >= 0)
+			        trig.Segment (j) = m_xlatSegNum [trig.Segment (j)];
+		        else if (trig.Count == 1) {
+			        DLE.Triggers.Delete (trig.Key);
 			        i--;
 			        }
 		        else {
-			        trigP.Delete (j);
+			        trig.Delete (j);
 			        }
 		        }
 	        }
 
         DLE.Backup.End ();
-        sprintf_s (message, sizeof (message),
-			        " Block tool: %d blocks, %d walls, %d triggers pasted.", 
-			        nNewSegs, nNewWalls, nNewTriggers);
-        DEBUGMSG (message);
-        return (nNewSegs);
+        DLE.DebugMsg (string.Format (@"Block tool: {0} blocks, {1} walls, {2} triggers pasted.", nNewSegs, nNewWalls, nNewTriggers));
+        return nNewSegs;
         }
 
         // ------------------------------------------------------------------------
