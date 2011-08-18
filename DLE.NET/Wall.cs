@@ -185,7 +185,7 @@ namespace DLE.NET
 		
         // ------------------------------------------------------------------------
 
-        void Setup (SideKey key, ushort nWall, byte type, sbyte nClip, ushort nTexture, bool bRedefine) 
+        public void Setup (SideKey key, ushort nWall, Types type, sbyte nClip, ushort nTexture, bool bRedefine) 
         {
         DLE.Backup.Begin (UndoData.Flags.udWalls);
         // define new wallP

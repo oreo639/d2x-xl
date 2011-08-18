@@ -13,7 +13,9 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public Segment Segment { get { return m_segment; } }
+        public Segment Segment { get { return DLE.Segments [m_nSegment]; } }
+
+        public Side Side { get { return Segment.m_sides [m_nSide]; } }
 
         // ------------------------------------------------------------------------
 

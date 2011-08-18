@@ -89,8 +89,56 @@ namespace DLE.NET
                 Walls [nDelWall].Key = nDelWall;
                 Walls [Count].Key = Count;
             }
-    	DLE.Segments.Side (Walls [nDelWall]).SetWall (nDelWall);
-	}
+        	DLE.Segments.Side (Walls [nDelWall]).SetWall (nDelWall);
+    	}
+
+        // ------------------------------------------------------------------------
+
+        Wall Create (SideKey key, Wall.Types type, ushort flags, byte keys, sbyte nClip, ushort nTexture) 
+        {
+        if (!HaveResources (key))
+	        return null;
+
+        DLE.Current.Get (key);
+
+        Segment seg = key.Segment;
+        Side side = key.Side;
+
+        // if wall is an overlay, make sure there is no child
+        short nChild = seg.GetChild (key.m_nSide);
+        if (type < 0)
+	        type = (nChild == -1) ? Wall.Types.OVERLAY : Wall.Types.OPEN;
+
+        if (type == Wall.Types.OVERLAY) {
+	        if (nChild != -1) {
+		        DLE.ErrorMsg (@"Switches can only be put on solid sides.");
+		        return null;
+		        }
+	        }
+        else {
+	        // otherwise make sure there is a child
+	        if (nChild == -1) {
+		        DLE.ErrorMsg (@"This side must be attached to an other segment before a wall can be added.");
+		        return null;
+		        }
+	        }
+
+        ushort nWall = (ushort) Count;
+
+        // link wall to segment/side
+        DLE.Backup.Begin (UndoData.Flags.udSegments | UndoData.Flags.udWalls);
+        side.SetWall ((short) nWall);
+        Wall wall = Walls [nWall];
+        wall.Setup (key, nWall, type, nClip, nTexture, false);
+        wall.Key = nWall;
+        wall.m_flags = flags;
+        wall.m_keys = keys;
+        // update number of Walls () in mine
+        Count++;
+        DLE.Backup.End ();
+        //DLE.MineView ().Refresh ();
+        return wall;
+        }
 
         // ------------------------------------------------------------------------
 
