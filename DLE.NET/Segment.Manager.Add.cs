@@ -22,7 +22,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        short Add ()
+        public short Add ()
         {
             if (Full)
                 return -1;
@@ -31,7 +31,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Remove (short nDelSeg)
+        public void Remove (short nDelSeg)
         {
             if (nDelSeg < --Count)
             {

@@ -77,6 +77,27 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        bool Full 
+        {
+            get { return Count (0) >= GameMine.MAX_TRIGGERS; }
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool HaveResources ()
+        {
+        if (!DLE.Walls.HaveResources ())
+	        return false;
+        if (Full) 
+        {
+	        DLE.ErrorMsg ("Maximum number of triggers reached");
+	        return false;
+	        }
+        return true;
+        }
+
+        // ------------------------------------------------------------------------
+
         public void DeleteFromWall (short nDelTrigger) 
         {
         if (nDelTrigger == GameMine.NO_TRIGGER)

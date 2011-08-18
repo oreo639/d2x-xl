@@ -47,6 +47,29 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public bool Full
+        {
+            get { return Count >= GameMine.MAX_WALLS; }
+        }
+
+        // ------------------------------------------------------------------------
+
+        public bool HaveResources (SideKey key = null)
+        {
+        Wall wall = DLE.Segments.Wall (key);
+        if (wall != null) {
+	        DLE.ErrorMsg ("There is already a wall on this side");
+	        return false;
+	        }
+        if (Full) {
+	        DLE.ErrorMsg ("Maximum number of walls reached");
+	        return false;
+	        }
+        return true;
+        }
+
+        // ------------------------------------------------------------------------
+
         void Remove (short nDelWall)
         {
             if (nDelWall < --Count)

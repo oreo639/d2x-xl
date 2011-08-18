@@ -1,0 +1,332 @@
+﻿using System.IO;
+using System.Collections.Generic;
+
+namespace DLE.NET
+{
+    public class BlockManager
+    {
+        // ------------------------------------------------------------------------
+
+        string m_filename = "";
+        List<Segment> m_oldSegments = new List<Segment> ();
+        List<Segment> m_newSegments = new List<Segment> ();
+        short [] m_xlatSegNum = new short [GameMine.SEGMENT_LIMIT];
+
+        // ------------------------------------------------------------------------
+
+        int CurrentPoint (int i)
+        {
+            return (DLE.Current.m_nPoint + i) % 4;
+        }
+
+        // ------------------------------------------------------------------------
+
+        static readonly string BLOCKOP_HINT =
+            @"The block of cubes will be saved relative to the current segment.\n
+            Later, when you paste the block, it will be placed relative to\n
+            the current segment at that time.  You can change the current side\n
+            and the current point to affect the relative direction and\n
+            rotation of the block.\n
+            \n
+            Would you like to proceed?";
+
+        // ------------------------------------------------------------------------
+
+        void SetupTransformation (DoubleMatrix m, DoubleVector o)
+        {
+        ushort[] verts = DLE.Current.Segment.m_verts;
+        o = DLE.Vertices.Vertex (verts [GameTables.sideVertTable [DLE.Current.m_nSide,CurrentPoint(0)]]);
+        // set x'
+        m.rVec.Set (DLE.Vertices [verts [GameTables.sideVertTable [DLE.Current.m_nSide, CurrentPoint (1)]]]);
+        m.rVec.Sub (o);
+        // calculate y'
+        Vertex v = new Vertex (DLE.Vertices [verts [GameTables.sideVertTable [DLE.Current.m_nSide,CurrentPoint(3)]]]);
+        v.Sub (o);
+        m.uVec = DoubleVector.CrossProduct (m.rVec, v);
+        m.fVec = DoubleVector.CrossProduct (m.rVec, m.uVec);
+        m.rVec.Normalize ();
+        m.uVec.Normalize ();
+        m.fVec.Normalize ();
+        }
+
+        // ------------------------------------------------------------------------
+        // Read ()
+        //
+        // ACTION - Reads a segment's information in text form from a file.  Adds
+        //          new vertices if non-identical one does not exist.  Aborts if
+        //	    MAX_VERTICES is hit.
+        //
+        // Change - Now reads verts relative to current side
+        // ------------------------------------------------------------------------
+
+        short Read (BinaryReader fp) 
+        {
+	        int				i, j, scanRes;
+	        int 			origVertCount;
+	        DoubleMatrix	m = new DoubleMatrix ();
+	        DoubleVector	xAxis = new DoubleVector (), yAxis = new DoubleVector (), zAxis = new DoubleVector (), origin = new DoubleVector ();
+	        short			nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
+	        int				byteBuf; // needed for scanning byte values
+	        Trigger			newTriggers = null;
+	
+        m_oldSegments = m_newSegments = null;
+        // remember number of vertices for later
+        origVertCount = DLE.Vertices.Count;
+
+        // set origin
+        SetupTransformation (m, origin);
+        // now take the determinant
+        xAxis.Set (m.uVec.v.y * m.fVec.v.z - m.fVec.v.y * m.uVec.v.z, 
+			          m.fVec.v.y * m.rVec.v.z - m.rVec.v.y * m.fVec.v.z, 
+			          m.rVec.v.y * m.uVec.v.z - m.uVec.v.y * m.rVec.v.z);
+        yAxis.Set (m.fVec.v.x * m.uVec.v.z - m.uVec.v.x * m.fVec.v.z, 
+			          m.rVec.v.x * m.fVec.v.z - m.fVec.v.x * m.rVec.v.z,
+			          m.uVec.v.x * m.rVec.v.z - m.rVec.v.x * m.uVec.v.z);
+        zAxis.Set (m.uVec.v.x * m.fVec.v.y - m.fVec.v.x * m.uVec.v.y,
+			          m.fVec.v.x * m.rVec.v.y - m.rVec.v.x * m.fVec.v.y,
+			          m.rVec.v.x * m.uVec.v.y - m.uVec.v.x * m.rVec.v.y);
+
+        nNewSegs = 0;
+        for (i = 0; i < m_xlatSegNum.Length; i++)
+            m_xlatSegNum [i] = -1;
+
+        for (i = 0, j = DLE.Segments.Count; i < j; i++) 
+	        m_oldSegments.Add (DLE.Segments [i]);
+
+        DLE.Backup.Begin (UndoData.Flags.udAll);
+        while (!fp.EoF ()) {
+	        //DLE.MainFrame.Progress.SetPos (fp.BaseStream.Position);
+        // abort if there are not at least 8 vertices free
+	        if (GameMine.MAX_VERTICES - DLE.Vertices.Count < 8)
+            {
+		        DLE.Backup.End ();
+		        DLE.ErrorMsg ("No more free vertices");
+		        return nNewSegs;
+		        }
+	        short nSegment = DLE.Segments.Add ();
+	        if (nSegment < 0) {
+		        DLE.Backup.End ();
+		        DLE.ErrorMsg ("No more free segments");
+		        return nNewSegs;
+		        }
+	        Segment seg = DLE.Segments [nSegment];
+            m_newSegments.Add (seg);
+	        seg.m_owner = -1;
+	        seg.m_group = -1;
+	        scanRes = fscanf_s (fp, "segment %d\n", seg.Key);
+	        m_xlatSegNum [seg.Key] = nSegment;
+	        // invert segment number so its children can be children can be fixed later
+	        seg.Key = -seg.Key - 1;
+
+	        // read in side information 
+	        for (short nSide = 0; nSide < 6; nSide++) {
+    	        Side side = seg.m_sides [nSide];
+		        short test;
+		        scanRes = fscanf_s (fp, "  side %hd\n", test);
+		        if (test != nSide) 
+                {
+			        DLE.Backup.End ();
+			        DLE.ErrorMsg ("Invalid side number read");
+			        return (0);
+			        }
+		        side.m_nWall = GameMine.NO_WALL;
+		        scanRes = fscanf_s (fp, "    tmap_num %hd\n", side.m_nBaseTex);
+		        scanRes = fscanf_s (fp, "    tmap_num2 %hd\n", side.m_nOvlTex);
+		        for (i = 0; i < 4; i++)
+			        scanRes = fscanf_s (fp, "    uvls %hd %hd %hd\n", 
+									          side.m_uvls [i].u, side.m_uvls [i].v, side.m_uvls [i].l);
+		        if (bExtBlkFmt) {
+			        scanRes = fscanf_s (fp, "    wall %hd\n", side.m_nWall);
+			        if (side.m_nWall != NO_WALL) {
+				        CWall w;
+				        CTrigger t;
+				        w.Clear ();
+				        t.Clear ();
+				        scanRes = fscanf_s (fp, "        segment %hd\n", w.m_nSegment);
+				        scanRes = fscanf_s (fp, "        side %hd\n", w.m_nSide);
+				        scanRes = fscanf_s (fp, "        hps %d\n", w.Info ().hps);
+				        scanRes = fscanf_s (fp, "        type %d\n", byteBuf);
+				        w.Info ().type = (byte) byteBuf;
+				        scanRes = fscanf_s (fp, "        flags %hd\n", w.Info ().flags);
+				        scanRes = fscanf_s (fp, "        state %d\n", byteBuf);
+				        w.Info ().state = (byte) byteBuf;
+				        scanRes = fscanf_s (fp, "        clip %d\n", byteBuf);
+				        w.Info ().nClip = (byte) byteBuf;
+				        scanRes = fscanf_s (fp, "        keys %d\n", byteBuf);
+				        w.Info ().keys = (byte) byteBuf;
+				        scanRes = fscanf_s (fp, "        cloak %d\n", byteBuf);
+				        w.Info ().cloakValue = (byte) byteBuf;
+				        scanRes = fscanf_s (fp, "        trigger %d\n", byteBuf);
+				        w.Info ().nTrigger = (byte) byteBuf;
+				        if ((w.Info ().nTrigger >= 0)  (w.Info ().nTrigger < GameMine.MAX_TRIGGERS)) {
+					        scanRes = fscanf_s (fp, "			    type %d\n", byteBuf);
+					        t.Info ().type = (byte) byteBuf;
+					        scanRes = fscanf_s (fp, "			    flags %hd\n", t.Info ().flags);
+					        scanRes = fscanf_s (fp, "			    value %d\n", t.Info ().value);
+					        scanRes = fscanf_s (fp, "			    timer %d\n", t.Info ().time);
+					        scanRes = fscanf_s (fp, "			    count %hd\n", t.Count);
+					        for (i = 0; i < t.Count; i++) {
+						        scanRes = fscanf_s (fp, "			        segment %hd\n", t [i].m_nSegment);
+						        scanRes = fscanf_s (fp, "			        side %hd\n", t [i].m_nSide);
+						        }
+					        }
+				        if (DLE.Walls.HaveResources ()) {
+					        if ((w.Info ().nTrigger >= 0)  (w.Info ().nTrigger < GameMine.MAX_TRIGGERS)) {
+						        if (!DLE.Triggers.HaveResources ())
+							        w.Info ().nTrigger = GameMine.NO_TRIGGER;
+						        else {
+							        w.Info ().nTrigger = (byte) DLE.Triggers.Add ();
+							        Trigger trig = DLE.Triggers [w.Info ().nTrigger];
+							        trig. = t;
+							        trigP.Backup (opAdd);
+							        trigP.SetLink (newTriggers);
+							        newTriggers = trigP;
+							        ++nNewTriggers;
+							        }
+						        }
+					        side.m_nWall = DLE.Walls.Add (false);
+					        w.m_nSegment = nSegment;
+					        CWall* wallP = DLE.Walls.Wall (side.m_nWall);
+					        *wallP = w;
+					        wallP.Backup (opAdd);
+					        ++nNewWalls;
+					        }
+				        }
+			        }
+		        }
+
+	        short children [6];
+	        scanRes = fscanf_s (fp, "  children %hd %hd %hd %hd %hd %hd\n", 
+				         children + 0, children + 1, children + 2, children + 3, children + 4, children + 5, children + 6);
+	        for (i = 0; i < 6; i++)
+		        seg.SetChild (i, children [i]);
+	        // read in vertices
+	        byte bShared = 0;
+	        for (i = 0; i < 8; i++) {
+		        int x, y, z, test;
+		        scanRes = fscanf_s (fp, "  vms_vector %d %d %d %d\n", test, x, y, z);
+		        if (test != i) {
+			        DLE.Backup.End ();
+			        DLE.ErrorMsg ("Invalid vertex number read");
+			        return (0);
+			        }
+		        // each vertex relative to the origin has a x', y', and z' component
+		        // adjust vertices relative to origin
+		        CDoubleVector v;
+		        v.Set (X2D (x), X2D (y), X2D (z));
+		        v.Set (v ^ xAxis, v ^ yAxis, v ^ zAxis);
+		        v += origin;
+		        // add a new vertex
+		        // if this is the same as another vertex, then use that vertex number instead
+		        CVertex* vertP = DLE.Vertices.Find (v);
+		        ushort nVertex;
+		        if (vertP != null) {
+			        nVertex = seg.m_verts [i] = DLE.Vertices.Index (vertP);
+			        bShared |= 1 << i;
+			        }
+		        // else make a new vertex
+		        else  {
+			        nVertex;
+			        DLE.Vertices.Add (nVertex);
+			        DLE.Vertices.Status (nVertex) |= NEW_MASK;
+			        seg.m_verts [i] = nVertex;
+			        *DLE.Vertices.Vertex (nVertex) = v;
+			        DLE.Vertices.Vertex (nVertex).Backup ();
+			        }
+		        DLE.Vertices.Status (nVertex) |= MARKED_MASK;
+		        }
+
+	        // mark vertices
+	        scanRes = fscanf_s (fp, "  static_light %d\n", seg.m_staticLight);
+	        if (bExtBlkFmt) {
+		        scanRes = fscanf_s (fp, "  special %d\n", seg.m_function);
+		        scanRes = fscanf_s (fp, "  matcen_num %d\n", byteBuf);
+		        seg.m_nMatCen = (byte) byteBuf;
+		        scanRes = fscanf_s (fp, "  value %d\n", byteBuf);
+		        seg.m_value = (byte) byteBuf;
+		        scanRes = fscanf_s (fp, "  child_bitmask %d\n", byteBuf);
+		        seg.m_childFlags = (byte) byteBuf;
+		        scanRes = fscanf_s (fp, "  wall_bitmask %d\n", byteBuf);
+		        seg.m_wallFlags = (byte) byteBuf;
+		        switch (seg.m_function) {
+			        case SEGMENT_FUNC_FUELCEN:
+				        if (!DLE.Segments.CreateFuelCenter (nSegment, SEGMENT_FUNC_FUELCEN, false, false))
+					        seg.m_function = 0;
+				        break;
+			        case SEGMENT_FUNC_REPAIRCEN:
+				        if (!DLE.Segments.CreateFuelCenter (nSegment, SEGMENT_FUNC_REPAIRCEN, false, false))
+					        seg.m_function = 0;
+				        break;
+			        case SEGMENT_FUNC_ROBOTMAKER:
+				        if (!DLE.Segments.CreateRobotMaker (nSegment, false, false))
+					        seg.m_function = 0;
+				        break;
+			        case SEGMENT_FUNC_EQUIPMAKER:
+				        if (!DLE.Segments.CreateEquipMaker (nSegment, false, false))
+					        seg.m_function = 0;
+				        break;
+			        case SEGMENT_FUNC_REACTOR:
+				        if (!DLE.Segments.CreateReactor (nSegment, false, false))
+					        seg.m_function = 0;
+				        break;
+			        default:
+				        break;
+			        }
+		        }
+	        else {
+		        seg.m_function = 0;
+		        seg.m_nMatCen = -1;
+		        seg.m_value = -1;
+		        }
+	        seg.Mark (MARKED_MASK); // no other bits
+	        // calculate childFlags
+	        seg.m_childFlags = 0;
+	        for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+		        if (seg.Child (i) >= 0)
+			        seg.m_childFlags |= (1 << i);
+		        }
+	        seg.Backup ();
+	        nNewSegs++;
+	        }
+
+
+        while (newTriggers != null) {
+	        CTrigger* trigP = newTriggers;
+	        newTriggers = dynamic_cast<CTrigger*> (trigP.Link ());
+	        for (j = 0; j < trigP.Count; j++) {
+		        if (trigP.Segment (j) >= 0)
+			        trigP.Segment (j) = m_xlatSegNum [trigP.Segment (j)];
+		        else if (trigP.Count == 1) {
+			        DLE.Triggers.Delete (DLE.Triggers.Index (trigP));
+			        i--;
+			        }
+		        else {
+			        trigP.Delete (j);
+			        }
+		        }
+	        }
+
+        DLE.Backup.End ();
+        sprintf_s (message, sizeof (message),
+			        " Block tool: %d blocks, %d walls, %d triggers pasted.", 
+			        nNewSegs, nNewWalls, nNewTriggers);
+        DEBUGMSG (message);
+        return (nNewSegs);
+        }
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+        // ------------------------------------------------------------------------
+
+    }
+}

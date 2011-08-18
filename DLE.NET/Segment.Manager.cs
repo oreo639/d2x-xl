@@ -53,9 +53,12 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public Wall Wall (SideKey key)
+        public Wall Wall (SideKey key = null)
         {
-            DLE.Current.Get (key);
+            if (key == null)
+                key = DLE.Current as SideKey;
+            else
+                DLE.Current.Get (key);
             return Side (key).Wall;
         }
 

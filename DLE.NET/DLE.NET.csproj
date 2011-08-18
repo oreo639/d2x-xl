@@ -97,6 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockManager.cs" />
     <Compile Include="GameArray.cs" />
     <Compile Include="MatCenter.cs" />
     <Compile Include="Matrix.Fix.cs" />
