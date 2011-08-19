@@ -59,7 +59,7 @@ namespace DLE.NET
         // Change - Now reads verts relative to current side
         // ------------------------------------------------------------------------
 
-        short Read (BinaryReader fp) 
+        short Read (StreamReader fp) 
         {
 	        int				i, j, scanRes;
 	        int 			origVertCount;
@@ -68,6 +68,8 @@ namespace DLE.NET
 	        short			nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	        int				byteBuf; // needed for scanning byte values
 	        List<Trigger>	newTriggers = new List<Trigger> ();
+            Wall w;
+            Trigger t;
 	
         m_oldSegments = m_newSegments = null;
         // remember number of vertices for later
@@ -94,7 +96,9 @@ namespace DLE.NET
 	        m_oldSegments.Add (DLE.Segments [i]);
 
         DLE.Backup.Begin (UndoData.Flags.udAll);
-        while (!fp.EoF ()) {
+
+        string lineBuf;
+        while ((lineBuf = fp.ReadLine ()) != null) {
 	        //DLE.MainFrame.Progress.SetPos (fp.BaseStream.Position);
         // abort if there are not at least 8 vertices free
 	        if (GameMine.MAX_VERTICES - DLE.Vertices.Count < 8)
@@ -119,8 +123,6 @@ namespace DLE.NET
 	        // invert segment number so its children can be children can be fixed later
 	        seg.Key = -seg.Key - 1;
 
-            Wall w = new Wall ();
-            Trigger t = new Trigger ();
 	        // read in side information 
 	        for (short nSide = 0; nSide < 6; nSide++) {
     	        Side side = seg.m_sides [nSide];
@@ -141,8 +143,8 @@ namespace DLE.NET
 		        if (DLE.ExtBlkFmt) {
 			        scanRes = fscanf_s (fp, "    wall %hd\n", side.m_nWall);
 			        if (side.m_nWall != GameMine.NO_WALL) {
+                        w = new Wall ();
 				        w.Clear ();
-				        t.Clear ();
 				        scanRes = fscanf_s (fp, "        segment %hd\n", w.m_nSegment);
 				        scanRes = fscanf_s (fp, "        side %hd\n", w.m_nSide);
 				        scanRes = fscanf_s (fp, "        hps %d\n", w.m_hps);
@@ -160,6 +162,8 @@ namespace DLE.NET
 				        scanRes = fscanf_s (fp, "        trigger %d\n", byteBuf);
 				        w.m_nTrigger = (byte) byteBuf;
 				        if ((w.m_nTrigger >= 0) && (w.m_nTrigger < GameMine.MAX_TRIGGERS)) {
+                            t = new Trigger ();
+                            t.Clear ();
 					        scanRes = fscanf_s (fp, "			    type %d\n", byteBuf);
 					        t.Type = (Trigger.Types) byteBuf;
 					        scanRes = fscanf_s (fp, "			    flags %hd\n", t.Flag);
@@ -177,15 +181,14 @@ namespace DLE.NET
 							        w.m_nTrigger = GameMine.NO_TRIGGER;
 						        else {
 							        w.m_nTrigger = (byte) DLE.Triggers.Add ();
-							        Trigger trig = DLE.Triggers [0, w.m_nTrigger];
-							        trig.MemberWiseCopy (t);
-                                    newTriggers.Add (trig);
+							        DLE.Triggers [0, w.m_nTrigger] = t;
+                                    newTriggers.Add (t);
 							        ++nNewTriggers;
 							        }
 						        }
 					        side.m_nWall = DLE.Walls.Add ();
 					        w.m_nSegment = nSegment;
-					        DLE.Walls [side.m_nWall].MemberwiseCopy (w);
+					        DLE.Walls [side.m_nWall] = w;
 					        ++nNewWalls;
 					        }
 				        }
