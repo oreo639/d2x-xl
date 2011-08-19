@@ -51,7 +51,7 @@ namespace DLE.NET
 
         public int ReadXML (XmlNode parent, int id)
         {
-            XmlNode node = parent.SelectSingleNode (string.Format (@"UVL{0}", i));
+            XmlNode node = parent.SelectSingleNode (string.Format (@"UVL{0}", id));
             if (node == null)
                 return 0;
             u = Convert.ToInt16 (node.Attributes ["U"]);

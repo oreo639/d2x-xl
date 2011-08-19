@@ -37,7 +37,7 @@ namespace DLE.NET
 	        Functions.NONE,
 	        Functions.FUELCEN,
 	        Functions.REPAIRCEN,
-	        Functions.CONTROLCEN,
+	        Functions.REACTOR,
 	        Functions.ROBOTMAKER,
 	        Functions.GOAL_BLUE,
 	        Functions.GOAL_RED,
@@ -546,11 +546,23 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public int ReadXML (XmlNode parent, int id, DoubleVector xAxis, DoubleVector yAxis, DoubleVector zAxis, DoubleVector origin)
+        public int ReadXML (XmlNode parent, int id, int nSegment, DoubleVector xAxis, DoubleVector yAxis, DoubleVector zAxis, DoubleVector origin)
         {
             XmlNode node = parent.SelectSingleNode (string.Format (@"Segment{0}", id));
             if (node == null)
                 return -1;
+
+            // invert segment number so its children can be children can be fixed later
+            m_owner = -1;
+            m_group = -1;
+            Key = -Convert.ToInt32 (node.Attributes ["Key"].InnerText) - 1;
+            // read in side information 
+            for (short nSide = 0; nSide < 6; nSide++)
+            {
+                if (m_sides [nSide].ReadXML (node, nSide) < 0)
+                    return 0;
+            }
+
 
             for (short i = 0; i < 6; i++)
                 SetChild (i, Convert.ToInt16 (node.Attributes [string.Format (@"Child{0}", i)]));
