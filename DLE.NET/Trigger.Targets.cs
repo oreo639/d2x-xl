@@ -189,15 +189,38 @@ namespace DLE.NET
 
         public int ReadXML (XmlNode parent)
         {
-            Count = Convert.ToInt16 (parent.Attributes ["Count"]);
+            XmlNode node = parent.SelectSingleNode (string.Format (@"TargetList"));
+            Count = Convert.ToInt16 (node.SelectSingleNode ("Count").InnerText);
             for (int i = 0; i < Count; i++)
             {
-                XmlNode node = parent.SelectSingleNode (string.Format (@"Target{0}", i+1));
-                if (node == null)
+                XmlNode target = parent.SelectSingleNode (string.Format (@"Target{0}", i));
+                if (target == null)
                     return 0;
-                m_targets [i].m_nSegment = Convert.ToInt16 (node.Attributes ["Segment"].InnerText);
-                m_targets [i].m_nSide = Convert.ToInt16 (node.Attributes ["Side"].InnerText);
+                m_targets [i].m_nSegment = Convert.ToInt16 (target.Attributes ["Segment"].InnerText);
+                m_targets [i].m_nSide = Convert.ToInt16 (target.Attributes ["Side"].InnerText);
             }
+            return 1;
+        }
+
+        // ------------------------------------------------------------------------
+
+        public int WriteXML (XmlDocument doc, XmlElement parent, int id)
+        {
+            XmlElement node = doc.CreateElement (@"Trigger");
+            parent.AppendChild (node);
+
+            XmlElement attr = doc.CreateElement ("Count");
+            attr.InnerText = Count.ToString ();
+            node.AppendChild (attr);
+
+            for (int i = 0; i < Count; i++)
+            {
+                XmlElement target = doc.CreateElement (string.Format (@"Target{0}", i));
+                target.SetAttribute ("Segment", m_targets [i].m_nSegment.ToString ());
+                target.SetAttribute ("Side", m_targets [i].m_nSide.ToString ());
+                node.AppendChild (target);
+            }
+
             return 1;
         }
 

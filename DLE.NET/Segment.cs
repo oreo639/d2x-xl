@@ -663,42 +663,20 @@ namespace DLE.NET
             XmlElement node = doc.CreateElement (string.Format (@"Segment{0}", id));
             parent.AppendChild (node);
 
-            XmlElement elem = doc.CreateElement ("Key");
-            elem.InnerText = Key.ToString ();
-            node.AppendChild (elem);
-
-            elem = doc.CreateElement ("StaticLight");
-            elem.InnerText = m_staticLight.ToString ();
-            node.AppendChild (elem);
+            node.Add (doc, parent, "Key", Key.ToString ());
+            node.Add (doc, parent, "StaticLight", m_staticLight.ToString ());
 
             for (short i = 0; i < 6; i++)
-            {
-                elem = doc.CreateElement (string.Format (@"Child{0}", i));
-                elem.InnerText = GetChild (i).ToString ();
-                node.AppendChild (elem);
-            }
+                node.Add (doc, parent, string.Format (@"Child{0}", i), GetChild (i).ToString ());
 
             if (DLE.ExtBlkFmt)
             {
-                elem = doc.CreateElement ("Function");
-                elem.InnerText = m_function.ToString ();
-                node.AppendChild (elem);
-
-                elem = doc.CreateElement ("MatCen");
-                elem.InnerText = m_nMatCen.ToString ();
-                node.AppendChild (elem);
-
-                elem = doc.CreateElement ("Value");
-                elem.InnerText = m_value.ToString ();
-                node.AppendChild (elem);
-
-                elem = doc.CreateElement ("ChildFlags");
-                elem.InnerText = m_childFlags.ToString ();
-                node.AppendChild (elem);
-
-                elem = doc.CreateElement ("WallFlags");
-                elem.InnerText = m_wallFlags.ToString ();
-                node.AppendChild (elem);
+                node.Add (doc, parent, "Key", Key.ToString ());
+                node.Add (doc, parent, "Function", m_function.ToString ());
+                node.Add (doc, parent, "MatCen", m_nMatCen.ToString ());
+                node.Add (doc, parent, "Value", m_value.ToString ());
+                node.Add (doc, parent, "ChildFlags", m_childFlags.ToString ());
+                node.Add (doc, parent, "WallFlags", m_wallFlags.ToString ());
             }
 
             for (short i = 0; i < 6; i++)

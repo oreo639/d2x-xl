@@ -416,16 +416,16 @@ namespace DLE.NET
                 return 0;
 
             Clear ();
-            m_nSegment = Convert.ToInt16 (node.Attributes ["Segment"].InnerText);
-            m_nSide = Convert.ToInt16 (node.Attributes ["Side"].InnerText);
-            m_hps = Convert.ToInt32 (node.Attributes ["HPS"].InnerText);
-            m_type = (Wall.Types)Convert.ToByte (node.Attributes ["Type"].InnerText);
-            m_flags = Convert.ToUInt16 (node.Attributes ["Flags"].InnerText);
-            m_state = Convert.ToByte (node.Attributes ["State"].InnerText);
-            m_nClip = Convert.ToSByte (node.Attributes ["State"].InnerText);
-            m_keys = (Wall.KeyTypes)Convert.ToByte (node.Attributes ["KeyType"].InnerText);
-            m_cloakValue = Convert.ToSByte (node.Attributes ["Cloak"].InnerText);
-            m_nTrigger = Convert.ToByte (node.Attributes ["Cloak"].InnerText);
+            m_nSegment = Convert.ToInt16 (node.SelectSingleNode ("Segment").InnerText);
+            m_nSide = Convert.ToInt16 (node.SelectSingleNode ("Side").InnerText);
+            m_hps = Convert.ToInt32 (node.SelectSingleNode ("HPS").InnerText);
+            m_type = (Wall.Types)Convert.ToByte (node.SelectSingleNode ("Type").InnerText);
+            m_flags = Convert.ToUInt16 (node.SelectSingleNode ("Flags").InnerText);
+            m_state = Convert.ToByte (node.SelectSingleNode ("State").InnerText);
+            m_nClip = Convert.ToSByte (node.SelectSingleNode ("Clip").InnerText);
+            m_keys = (Wall.KeyTypes)Convert.ToByte (node.SelectSingleNode ("KeyType").InnerText);
+            m_cloakValue = Convert.ToSByte (node.SelectSingleNode ("Cloak").InnerText);
+            m_nTrigger = Convert.ToByte (node.SelectSingleNode ("Trigger").InnerText);
 
             if (m_nTrigger != GameMine.NO_TRIGGER)
             {
@@ -443,17 +443,26 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        // ------------------------------------------------------------------------
+        public int WriteXML (XmlDocument doc, XmlElement parent, int id)
+        {
+            XmlElement node = doc.CreateElement (string.Format (@"Wall{0}", id));
+            parent.AppendChild (node);
 
-        // ------------------------------------------------------------------------
+            node.Add (doc, parent, "Segment", m_nSegment.ToString ());
+            node.Add (doc, parent, "Side", m_nSide.ToString ());
+            node.Add (doc, parent, "HPS", m_hps.ToString ());
+            node.Add (doc, parent, "Type", m_type.ToString ());
+            node.Add (doc, parent, "Flags", m_flags.ToString ());
+            node.Add (doc, parent, "State", m_state.ToString ());
+            node.Add (doc, parent, "Clip", m_nClip.ToString ());
+            node.Add (doc, parent, "Keys", m_keys.ToString ());
+            node.Add (doc, parent, "Cloak", m_cloakValue.ToString ());
+            node.Add (doc, parent, "Trigger", m_nTrigger.ToString ());
+            if (m_nTrigger != GameMine.NO_TRIGGER)
+                Trigger.WriteXML (doc, node, m_nTrigger);
 
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
-
-        // ------------------------------------------------------------------------
+            return 1;
+        }
 
         // ------------------------------------------------------------------------
 

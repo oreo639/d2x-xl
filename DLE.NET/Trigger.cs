@@ -228,14 +228,29 @@ namespace DLE.NET
             if (node == null)
                 return 0;
             Clear ();
-            Type = (Types)Convert.ToByte (node.Attributes ["Type"].InnerText);
-            Flag = (Flags)Convert.ToUInt16 (node.Attributes ["Flag"].InnerText);
-            Value = Convert.ToInt32 (node.Attributes ["Value"].InnerText);
-            Time = Convert.ToInt32 (node.Attributes ["Time"].InnerText);
+            Type = (Types)Convert.ToByte (node.SelectSingleNode ("Type").InnerText);
+            Flag = (Flags)Convert.ToUInt16 (node.SelectSingleNode ("Flag").InnerText);
+            Value = Convert.ToInt32 (node.SelectSingleNode ("Value").InnerText);
+            Time = Convert.ToInt32 (node.SelectSingleNode ("Time").InnerText);
             int i = base.ReadXML (node);
             if (i != 1)
                 return i;
             return DLE.Triggers.HaveResources () ? 1 : 0;
+        }
+
+        //------------------------------------------------------------------------
+
+        public int WriteXML (XmlDocument doc, XmlElement parent, int id)
+        {
+            XmlElement node = doc.CreateElement (string.Format (@"Trigger{0}", id));
+            parent.AppendChild (node);
+
+            node.Add (doc, parent, "Type", Type.ToString ());
+            node.Add (doc, parent, "Flag", Flag.ToString ());
+            node.Add (doc, parent, "Value", Value.ToString ());
+            node.Add (doc, parent, "Time", Time.ToString ());
+            base.WriteXML (doc, node, 0);
+            return 1;
         }
 
         //------------------------------------------------------------------------
