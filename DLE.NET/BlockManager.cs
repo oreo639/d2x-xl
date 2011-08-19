@@ -71,7 +71,8 @@ namespace DLE.NET
             List<Trigger> newTriggers = new List<Trigger> ();
             XmlNode rootNode;
 
-            m_oldSegments = m_newSegments = null;
+            m_oldSegments.Clear ();
+            m_newSegments.Clear ();
             // remember number of vertices for later
             origVertCount = DLE.Vertices.Count;
 
