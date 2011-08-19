@@ -10,7 +10,7 @@ namespace DLE.NET
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
 
-    public class TextureManager
+    public partial class TextureManager
     {
         public static int MAX_TEXTURES_D1 = 584;
         public static int MAX_TEXTURES_D2 = 910;
