@@ -658,7 +658,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public int WriteXML (XmlDocument doc, XmlElement parent, int id)
+        public int WriteXML (XmlDocument doc, XmlElement parent, int id, DoubleVector origin, DoubleMatrix rotation)
         {
             XmlElement node = doc.CreateElement (string.Format (@"Segment{0}", id));
             parent.AppendChild (node);
@@ -669,9 +669,19 @@ namespace DLE.NET
             for (short i = 0; i < 6; i++)
                 node.Add (doc, parent, string.Format (@"Child{0}", i), GetChild (i).ToString ());
 
+            DoubleVector v = new DoubleVector ();
+            for (short i = 0; i < 8; i++)
+            {
+                v.Set (DLE.Vertices [m_verts [i]]);
+                v.Sub (origin);
+                XmlElement vertex = doc.CreateElement (string.Format (@"Vertex{0}", i));
+                vertex.SetAttribute ("X", FixConverter.D2X (v ^ rotation.rVec).ToString ());
+                vertex.SetAttribute ("Y", FixConverter.D2X (v ^ rotation.uVec).ToString ());
+                vertex.SetAttribute ("Z", FixConverter.D2X (v ^ rotation.fVec).ToString ());
+            }
+
             if (DLE.ExtBlkFmt)
             {
-                node.Add (doc, parent, "Key", Key.ToString ());
                 node.Add (doc, parent, "Function", m_function.ToString ());
                 node.Add (doc, parent, "MatCen", m_nMatCen.ToString ());
                 node.Add (doc, parent, "Value", m_value.ToString ());
