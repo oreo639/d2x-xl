@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Xml;
 
 namespace DLE.NET
 {
@@ -429,6 +430,26 @@ namespace DLE.NET
 	        return v;
 	    }
 
+        // ------------------------------------------------------------------------
+
+        public int ReadXML (XmlNode parent, int id)
+        {
+            XmlNode node = parent.SelectSingleNode (string.Format (@"Vertex{0}", id));
+            if (node == null)
+                return -1;
+            int key = Convert.ToInt32 (node.Attributes ["Key"]);
+            if (key != id)
+            {
+                DLE.Backup.End ();
+                DLE.ErrorMsg ("Invalid vertex number read");
+                return -1;
+            }
+            int x = Convert.ToInt32 (node.Attributes ["X"]);
+            int y = Convert.ToInt32 (node.Attributes ["Y"]);
+            int z = Convert.ToInt32 (node.Attributes ["Z"]);
+            Set (FixConverter.X2D (x), FixConverter.X2D (y), FixConverter.X2D (z));
+            return 1;
+        }
 
         // ------------------------------------------------------------------------
 

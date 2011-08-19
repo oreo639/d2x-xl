@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Xml;
 
 namespace DLE.NET
 {
@@ -541,6 +542,99 @@ namespace DLE.NET
         public int CompareTo (Segment other)
         {
             return (Key < other.Key) ? -1 : (Key > other.Key) ? 1 : 0;
+        }
+
+        //------------------------------------------------------------------------------
+
+        public int ReadXML (XmlNode parent, int id, DoubleVector xAxis, DoubleVector yAxis, DoubleVector zAxis, DoubleVector origin)
+        {
+            XmlNode node = parent.SelectSingleNode (string.Format (@"Segment{0}", id));
+            if (node == null)
+                return -1;
+
+            for (short i = 0; i < 6; i++)
+                SetChild (i, Convert.ToInt16 (node.Attributes [string.Format (@"Child{0}", i)]));
+
+            byte bShared = 0;
+            DoubleVector v = new DoubleVector ();
+            for (short i = 0; i < 8; i++)
+            {
+                if (v.ReadXML (node, id) < 1)
+                    return -1;
+                // each vertex relative to the origin has a x', y', and z' component
+                // adjust vertices relative to origin
+                v.Set (v ^ xAxis, v ^ yAxis, v ^ zAxis);
+                v.Add (origin);
+                // add a new vertex
+                // if this is the same as another vertex, then use that vertex number instead
+                Vertex vert = DLE.Vertices.Find (v);
+                ushort nVertex;
+                if (vert != null)
+                {
+                    nVertex = m_verts [i] = (ushort)vert.Key;
+                    bShared |= (byte)(1 << i);
+                }
+                // else make a new vertex
+                else
+                {
+                    DLE.Vertices.Add (out nVertex);
+                    DLE.Vertices [nVertex].Status |= GameMine.NEW_MASK;
+                    m_verts [i] = nVertex;
+                    DLE.Vertices [nVertex].Set (v);
+                }
+                DLE.Vertices [nVertex].Status |= GameMine.MARKED_MASK;
+            }
+
+            // mark vertices
+            m_staticLight = Convert.ToInt32 (node.Attributes ["StaticLight"]);
+            if (DLE.ExtBlkFmt)
+            {
+                m_function = (Functions) Convert.ToSByte (node.Attributes ["Function"]);
+                m_nMatCen = Convert.ToSByte (node.Attributes ["MatCen"]);
+                m_value = Convert.ToSByte (node.Attributes ["Value"]);
+                m_childFlags = Convert.ToByte (node.Attributes ["ChildFlags"]);
+                m_wallFlags = Convert.ToByte (node.Attributes ["WallFlags"]);
+                switch (m_function)
+                {
+                    case Segment.Functions.FUELCEN:
+                        if (DLE.Segments.CreateFuelCenter ((short)id, Segment.Functions.FUELCEN, false, false) == 0)
+                            m_function = 0;
+                        break;
+                    case Segment.Functions.REPAIRCEN:
+                        if (DLE.Segments.CreateFuelCenter ((short)id, Segment.Functions.REPAIRCEN, false, false) == 0)
+                            m_function = 0;
+                        break;
+                    case Segment.Functions.ROBOTMAKER:
+                        if (!DLE.Segments.CreateRobotMaker ((short)id, false, false))
+                            m_function = 0;
+                        break;
+                    case Segment.Functions.EQUIPMAKER:
+                        if (!DLE.Segments.CreateEquipMaker ((short)id, false, false))
+                            m_function = 0;
+                        break;
+                    case Segment.Functions.REACTOR:
+                        if (!DLE.Segments.CreateReactor ((short)id, false, false))
+                            m_function = 0;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                m_function = 0;
+                m_nMatCen = -1;
+                m_value = -1;
+            }
+            Mark (GameMine.MARKED_MASK); // no other bits
+            // calculate childFlags
+            m_childFlags = 0;
+            for (short i = 0; i < 6; i++)
+            {
+                if (GetChild (i) >= 0)
+                    m_childFlags |= (byte)(1 << i);
+            }
+            return 1;
         }
 
         //------------------------------------------------------------------------------

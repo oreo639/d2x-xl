@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using System.Collections.Generic;
+using System.Xml;
+using System;
 
 namespace DLE.NET
 {
@@ -59,17 +61,16 @@ namespace DLE.NET
         // Change - Now reads verts relative to current side
         // ------------------------------------------------------------------------
 
-        short Read (StreamReader fp) 
+        short Read (XmlDocument block) 
         {
-	        int				i, j, scanRes;
-	        int 			origVertCount;
-	        DoubleMatrix	m = new DoubleMatrix ();
-	        DoubleVector	xAxis = new DoubleVector (), yAxis = new DoubleVector (), zAxis = new DoubleVector (), origin = new DoubleVector ();
-	        short			nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
-	        int				byteBuf; // needed for scanning byte values
-	        List<Trigger>	newTriggers = new List<Trigger> ();
-            Wall w;
-            Trigger t;
+            int i, j, scanRes;
+            int origVertCount;
+            DoubleMatrix m = new DoubleMatrix ();
+            DoubleVector xAxis = new DoubleVector (), yAxis = new DoubleVector (), zAxis = new DoubleVector (), origin = new DoubleVector ();
+            short nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
+            int byteBuf; // needed for scanning byte values
+            List<Trigger> newTriggers = new List<Trigger> ();
+            XmlNode rootNode, segNode;
 	
         m_oldSegments = m_newSegments = null;
         // remember number of vertices for later
@@ -97,10 +98,11 @@ namespace DLE.NET
 
         DLE.Backup.Begin (UndoData.Flags.udAll);
 
-        string lineBuf;
-        while ((lineBuf = fp.ReadLine ()) != null) {
+        rootNode = block.SelectSingleNode ("Segments");
+        while ((segNode = rootNode.SelectSingleNode (string.Format (@"Segment{0}", nNewSegs + 1))) != null)
+        {
 	        //DLE.MainFrame.Progress.SetPos (fp.BaseStream.Position);
-        // abort if there are not at least 8 vertices free
+            // abort if there are not at least 8 vertices free
 	        if (GameMine.MAX_VERTICES - DLE.Vertices.Count < 8)
             {
 		        DLE.Backup.End ();
@@ -118,7 +120,7 @@ namespace DLE.NET
             m_newSegments.Add (seg);
 	        seg.m_owner = -1;
 	        seg.m_group = -1;
-	        scanRes = fscanf_s (fp, "segment %d\n", seg.Key);
+            seg.Key = Convert.ToInt32 (segNode.Attributes ["Key"].InnerText);
 	        m_xlatSegNum [seg.Key] = nSegment;
 	        // invert segment number so its children can be children can be fixed later
 	        seg.Key = -seg.Key - 1;
@@ -126,78 +128,20 @@ namespace DLE.NET
 	        // read in side information 
 	        for (short nSide = 0; nSide < 6; nSide++) {
     	        Side side = seg.m_sides [nSide];
-		        short test;
-		        scanRes = fscanf_s (fp, "  side %hd\n", test);
-		        if (test != nSide) 
+                if (side.ReadXML (segNode, nSide) < 0)
+                    return 0;
+                Wall w = side.Wall;
+                if (w != null)
                 {
-			        DLE.Backup.End ();
-			        DLE.ErrorMsg ("Invalid side number read");
-			        return (0);
-			        }
-		        side.m_nWall = GameMine.NO_WALL;
-		        scanRes = fscanf_s (fp, "    tmap_num %hd\n", side.m_nBaseTex);
-		        scanRes = fscanf_s (fp, "    tmap_num2 %hd\n", side.m_nOvlTex);
-		        for (i = 0; i < 4; i++)
-			        scanRes = fscanf_s (fp, "    uvls %hd %hd %hd\n", 
-									          side.m_uvls [i].u, side.m_uvls [i].v, side.m_uvls [i].l);
-		        if (DLE.ExtBlkFmt) {
-			        scanRes = fscanf_s (fp, "    wall %hd\n", side.m_nWall);
-			        if (side.m_nWall != GameMine.NO_WALL) {
-                        w = new Wall ();
-				        w.Clear ();
-				        scanRes = fscanf_s (fp, "        segment %hd\n", w.m_nSegment);
-				        scanRes = fscanf_s (fp, "        side %hd\n", w.m_nSide);
-				        scanRes = fscanf_s (fp, "        hps %d\n", w.m_hps);
-				        scanRes = fscanf_s (fp, "        type %d\n", byteBuf);
-				        w.m_type = (Wall.Types) byteBuf;
-				        scanRes = fscanf_s (fp, "        flags %hd\n", w.m_flags);
-				        scanRes = fscanf_s (fp, "        state %d\n", byteBuf);
-				        w.m_state = (byte) byteBuf;
-				        scanRes = fscanf_s (fp, "        clip %d\n", byteBuf);
-				        w.m_nClip = (sbyte) byteBuf;
-				        scanRes = fscanf_s (fp, "        keys %d\n", byteBuf);
-				        w.m_keys = (Wall.KeyTypes) byteBuf;
-				        scanRes = fscanf_s (fp, "        cloak %d\n", byteBuf);
-				        w.m_cloakValue = (sbyte) byteBuf;
-				        scanRes = fscanf_s (fp, "        trigger %d\n", byteBuf);
-				        w.m_nTrigger = (byte) byteBuf;
-				        if ((w.m_nTrigger >= 0) && (w.m_nTrigger < GameMine.MAX_TRIGGERS)) {
-                            t = new Trigger ();
-                            t.Clear ();
-					        scanRes = fscanf_s (fp, "			    type %d\n", byteBuf);
-					        t.Type = (Trigger.Types) byteBuf;
-					        scanRes = fscanf_s (fp, "			    flags %hd\n", t.Flag);
-					        scanRes = fscanf_s (fp, "			    value %d\n", t.Value);
-					        scanRes = fscanf_s (fp, "			    timer %d\n", t.Time);
-					        scanRes = fscanf_s (fp, "			    count %hd\n", t.Count);
-					        for (i = 0; i < t.Count; i++) {
-						        scanRes = fscanf_s (fp, "			        segment %hd\n", t [i].m_nSegment);
-						        scanRes = fscanf_s (fp, "			        side %hd\n", t [i].m_nSide);
-						        }
-					        }
-				        if (DLE.Walls.HaveResources ()) {
-					        if ((w.m_nTrigger >= 0) && (w.m_nTrigger < GameMine.MAX_TRIGGERS)) {
-						        if (!DLE.Triggers.HaveResources ())
-							        w.m_nTrigger = GameMine.NO_TRIGGER;
-						        else {
-							        w.m_nTrigger = (byte) DLE.Triggers.Add ();
-							        DLE.Triggers [0, w.m_nTrigger] = t;
-                                    newTriggers.Add (t);
-							        ++nNewTriggers;
-							        }
-						        }
-					        side.m_nWall = DLE.Walls.Add ();
-					        w.m_nSegment = nSegment;
-					        DLE.Walls [side.m_nWall] = w;
-					        ++nNewWalls;
-					        }
-				        }
-			        }
-		        }
+                    w.m_nSegment = nSegment;
+                    Trigger t = w.Trigger;
+                    if (t != null)
+                    {
+                        newTriggers.Add (t);
+                        ++nNewTriggers;
+                    }
 
-	        short [] children = new short [6];
-	        scanRes = fscanf_s (fp, "  children %hd %hd %hd %hd %hd %hd\n", 
-				      children [0], children [1], children [2], children [3], children [4], children [5], children [6]);
+
 	        for (i = 0; i < 6; i++)
 		        seg.SetChild ((short) i, children [i]);
 	        // read in vertices
@@ -235,7 +179,7 @@ namespace DLE.NET
 
 	        // mark vertices
 	        scanRes = fscanf_s (fp, "  static_light %d\n", seg.m_staticLight);
-	        if (bExtBlkFmt) {
+	        if (DLE.ExtBlkFmt) {
 		        scanRes = fscanf_s (fp, "  special %d\n", seg.m_function);
 		        scanRes = fscanf_s (fp, "  matcen_num %d\n", byteBuf);
 		        seg.m_nMatCen = (sbyte) byteBuf;

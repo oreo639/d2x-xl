@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Xml;
 
 namespace DLE.NET
 {
@@ -182,6 +183,22 @@ namespace DLE.NET
                 fp.Write (m_targets [i].m_nSegment);
             for (i = 0; i < MAX_TARGETS; i++)
                 fp.Write (m_targets [i].m_nSide);
+        }
+
+        // ------------------------------------------------------------------------
+
+        public int ReadXML (XmlNode parent)
+        {
+            Count = Convert.ToInt16 (parent.Attributes ["Count"]);
+            for (int i = 0; i < Count; i++)
+            {
+                XmlNode node = parent.SelectSingleNode (string.Format (@"Target{0}", i+1));
+                if (node == null)
+                    return 0;
+                m_targets [i].m_nSegment = Convert.ToInt16 (node.Attributes ["Segment"]);
+                m_targets [i].m_nSide = Convert.ToInt16 (node.Attributes ["Side"]);
+            }
+            return 1;
         }
 
         // ------------------------------------------------------------------------

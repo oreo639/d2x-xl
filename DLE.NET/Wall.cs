@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Xml;
 
 namespace DLE.NET
 {
@@ -405,6 +406,40 @@ namespace DLE.NET
         }
 
         // ------------------------------------------------------------------------
+
+        public int ReadXML (XmlNode parent, int id)
+        {
+            if (id == GameMine.NO_WALL)
+                return -1;
+            XmlNode node = parent.SelectSingleNode (string.Format (@"Wall{0}", id));
+            if (node == null)
+                return 0;
+
+            Clear ();
+            m_nSegment = Convert.ToInt16 (node.Attributes ["Segment"]);
+            m_nSide = Convert.ToInt16 (node.Attributes ["Side"]);
+            m_hps = Convert.ToInt32 (node.Attributes ["HPS"]);
+            m_type = (Wall.Types)Convert.ToByte (node.Attributes ["Type"]);
+            m_flags = Convert.ToUInt16 (node.Attributes ["Flags"]);
+            m_state = Convert.ToByte (node.Attributes ["State"]);
+            m_nClip = Convert.ToSByte (node.Attributes ["State"]);
+            m_keys = (Wall.KeyTypes)Convert.ToByte (node.Attributes ["KeyType"]);
+            m_cloakValue = Convert.ToSByte (node.Attributes ["Cloak"]);
+            m_nTrigger = Convert.ToByte (node.Attributes ["Cloak"]);
+
+            if (m_nTrigger != GameMine.NO_TRIGGER)
+            {
+                Trigger t = new Trigger ();
+                t.ReadXML (node, m_nTrigger);
+                if (m_nTrigger < GameMine.MAX_TRIGGERS)
+                {
+                    m_nTrigger = (byte)DLE.Triggers.Add ();
+                    if (m_nTrigger != GameMine.NO_TRIGGER)
+                        DLE.Triggers [0, m_nTrigger] = t;
+                }
+            }
+            return 1;
+        }
 
         // ------------------------------------------------------------------------
 

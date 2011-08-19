@@ -1,6 +1,7 @@
 ﻿
 using System.IO;
 using System;
+using System.Xml;
 namespace DLE.NET
 {
     // ------------------------------------------------------------------------
@@ -215,6 +216,26 @@ namespace DLE.NET
             i = (short)this.Type;
             m = (short)other.Type;
             return (i < m) ? -1 : (i > m) ? 1 : 0;
+        }
+
+        //------------------------------------------------------------------------
+
+        public int ReadXML (XmlNode parent, int id)
+        {
+            if (id >= GameMine.MAX_TRIGGERS)
+                return -1;
+            XmlNode node = parent.SelectSingleNode (string.Format (@"Trigger{0}", id));
+            if (node == null)
+                return 0;
+            Clear ();
+            Type = (Types)Convert.ToByte (node.Attributes ["Type"]);
+            Flag = (Flags)Convert.ToUInt16 (node.Attributes ["Flag"]);
+            Value = Convert.ToInt32 (node.Attributes ["Value"]);
+            Time = Convert.ToInt32 (node.Attributes ["Time"]);
+            int i = base.ReadXML (node);
+            if (i != 1)
+                return i;
+            return DLE.Triggers.HaveResources () ? 1 : 0;
         }
 
         //------------------------------------------------------------------------

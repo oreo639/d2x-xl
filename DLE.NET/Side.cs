@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Xml;
 
 namespace DLE.NET
 {
@@ -20,13 +21,25 @@ namespace DLE.NET
         public ushort m_nWall;		        // (was short) Index into Walls array, which wall (probably door) is on this side 
         public ushort m_nBaseTex;	        // Index into array of textures specified in bitmaps.bin 
         public ushort m_nOvlTex;		    // Index, as above, texture which gets overlaid on nBaseTex 
-        public UVL[] m_uvls = new UVL [4];    // CUVL coordinates at each point 
+        public UVL[] m_uvls = new UVL [4];    // UVL coordinates at each point 
 
         // ------------------------------------------------------------------------
 
         public Segment Child { get { return (m_nChild < 0) ? null : DLE.Segments [(int) m_nChild]; } }
 
-        public Wall Wall { get { return (m_nWall == GameMine.NO_WALL) ? null : DLE.Walls [(int)m_nWall]; } }
+        public Wall Wall 
+        { 
+            get { return (m_nWall == GameMine.NO_WALL) ? null : DLE.Walls [(int)m_nWall]; } 
+        }
+
+        public Trigger Trigger
+        {
+            get 
+            {
+                Wall wall = Wall;
+                return (wall == null) ? null : Wall.Trigger;
+            }
+        }
 
         public ushort BaseTex
         {
@@ -227,6 +240,38 @@ namespace DLE.NET
 	        m_uvls [i].v = (short) (GameTables.defaultUVLs [i].v / scale); 
 	        m_uvls [i].l = (ushort) GameMine.DEFAULT_LIGHTING; 
 	        }
+        }
+
+        // ------------------------------------------------------------------------
+
+        public int ReadXML (XmlNode parent, int id)
+        {
+            XmlNode node = parent.SelectSingleNode (string.Format (@"Side{0}", id));
+            if (node == null)
+                return -1;
+            short key = Convert.ToInt16 (node.Attributes ["Key"]);
+            if (key != id)
+            {
+                DLE.Backup.End ();
+                DLE.ErrorMsg ("Invalid side number read");
+                return -1;
+            }
+            m_nWall = GameMine.NO_WALL;
+            m_nBaseTex = (ushort)Convert.ToInt16 (node.Attributes ["BaseTex"]);
+            m_nOvlTex = (ushort)Convert.ToInt16 (node.Attributes ["OvlTex"]);
+            for (int i = 0; i < 4; i++)
+                m_uvls [i].ReadXML (node, i);
+            if (!DLE.ExtBlkFmt)
+                return 1;
+            m_nWall = (ushort)Convert.ToInt16 (node.Attributes ["Wall"]);
+            Wall w = new Wall ();
+            w.ReadXML (node, m_nWall);
+            m_nWall = DLE.Walls.Add ();
+            if (m_nWall != GameMine.NO_WALL)
+                DLE.Walls [m_nWall] = w;
+            else
+                DLE.Triggers.Delete (w.m_nTrigger);
+            return 1;
         }
 
         // ------------------------------------------------------------------------

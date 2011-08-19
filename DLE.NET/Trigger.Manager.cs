@@ -109,10 +109,13 @@ namespace DLE.NET
 
 		public void Delete (short nDelTrigger) 
         {
-			if (nDelTrigger < 0)
-				DeleteFromObject ((short) (-nDelTrigger - 1));
-			else
-				DeleteFromWall (nDelTrigger);
+            if (nDelTrigger != GameMine.NO_TRIGGER)
+            {
+                if (nDelTrigger < 0)
+                    DeleteFromObject ((short)(-nDelTrigger - 1));
+                else
+                    DeleteFromWall (nDelTrigger);
+            }
 		}
 
         // ------------------------------------------------------------------------

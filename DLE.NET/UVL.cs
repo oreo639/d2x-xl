@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Xml;
 
 namespace DLE.NET
 {
-    public class UVL
+    public struct UVL
     {
         public short u, v;
         public ushort l;
@@ -44,6 +45,19 @@ namespace DLE.NET
             this.u = u;
             this.v = v;
             this.l = l;
+        }
+
+        //------------------------------------------------------------------------------
+
+        public int ReadXML (XmlNode parent, int id)
+        {
+            XmlNode node = parent.SelectSingleNode (string.Format (@"UVL{0}", i));
+            if (node == null)
+                return 0;
+            u = Convert.ToInt16 (node.Attributes ["U"]);
+            v = Convert.ToInt16 (node.Attributes ["V"]);
+            l = Convert.ToUInt16 (node.Attributes ["L"]);
+            return 1;
         }
 
         //------------------------------------------------------------------------------
