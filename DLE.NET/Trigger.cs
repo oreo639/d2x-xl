@@ -228,10 +228,10 @@ namespace DLE.NET
             if (node == null)
                 return 0;
             Clear ();
-            Type = (Types)node.ToByte ("Type"));
-            Flag = (Flags)node.ToUShort ("Flag"));
-            Value = node.ToInt ("Value"));
-            Time = node.ToInt ("Time"));
+            Type = (Types)node.ToByte ("Type");
+            Flag = (Flags)node.ToUShort ("Flag");
+            Value = node.ToInt ("Value");
+            Time = node.ToInt ("Time");
             int i = base.ReadXML (node);
             if (i != 1)
                 return i;
