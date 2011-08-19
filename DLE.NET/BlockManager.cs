@@ -177,6 +177,98 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        public void Write () 
+        {
+	        short			i, j;
+	        Vertex			origin = new Vertex ();
+	        DoubleMatrix	m = new DoubleMatrix ();
+	        DoubleVector	v = new DoubleVector ();
+	        ushort			nVertex;
+
+        // set origin
+        SetupTransformation (m, origin);
+
+        for (int nSegment = 0; nSegment < DLE.Segments.Count; nSegment++) 
+        {
+	        //DLE.MainFrame ().Progress ().StepIt ();
+	        Segment seg = DLE.Segments [nSegment];
+	        if (seg.IsMarked ()) {
+		        fprintf (fp.File (), "segment %d\n", nSegment);
+		        for (short nSide = 0; nSide < 6; nSide++) 
+                {
+                    Side side = seg.m_sides [nSide];
+                    fprintf (fp.File (), "  side %d\n", i);
+			        fprintf (fp.File (), "    tmap_num %d\n",side.m_nBaseTex);
+			        fprintf (fp.File (), "    tmap_num2 %d\n",side.m_nOvlTex);
+			        for (j = 0; j < 4; j++) {
+				        fprintf (fp.File (), "    uvls %d %d %d\n",
+							        side.m_uvls [j].u, side.m_uvls [j].v, side.m_uvls [j].l);
+				        }
+			        if (DLE.ExtBlkFmt) {
+				        fprintf (fp.File (), "    wall %d\n", side.m_nWall);
+				        if (side.m_nWall != GameMine.NO_WALL) {
+					        Wall wall = side.Wall;
+					        fprintf (fp.File (), "        segment %d\n", wall.m_nSegment);
+					        fprintf (fp.File (), "        side %d\n", wall.m_nSide);
+					        fprintf (fp.File (), "        hps %d\n", wall.m_hps);
+					        fprintf (fp.File (), "        type %d\n", wall.Type);
+					        fprintf (fp.File (), "        flags %d\n", wall.m_flags);
+					        fprintf (fp.File (), "        state %d\n", wall.m_state);
+					        fprintf (fp.File (), "        clip %d\n", wall.m_nClip);
+					        fprintf (fp.File (), "        keys %d\n", wall.m_keys);
+					        fprintf (fp.File (), "        cloak %d\n", wall.m_cloakValue);
+					        if (wall.m_nTrigger == GameMine.NO_TRIGGER)
+						        fprintf (fp.File (), "        trigger %u\n", GameMine.NO_TRIGGER);
+					        else {
+						        Trigger trig = wall.Trigger;
+						        int iTarget, count = 0;
+						        // count trigger targets in marked area
+						        for (iTarget = 0; iTarget < trig.Count; iTarget++)
+							        if (DLE.Segments [trig [iTarget].m_nSegment].IsMarked ())
+								        count++;
+						        fprintf (fp.File (), "        trigger %d\n", wall.m_nTrigger);
+						        fprintf (fp.File (), "			    type %d\n", trig.Type);
+						        fprintf (fp.File (), "			    flags %d\n", trig.Flag);
+						        fprintf (fp.File (), "			    value %d\n", trig.Value);
+						        fprintf (fp.File (), "			    timer %d\n", trig.Time);
+						        fprintf (fp.File (), "			    count %d\n", count);
+						        for (iTarget = 0; iTarget < trig.Count; iTarget++)
+							        if (DLE.Segments [trig [iTarget].m_nSegment].IsMarked ()) {
+								        fprintf (fp.File (), "			        segment %d\n", trig [iTarget].m_nSegment);
+								        fprintf (fp.File (), "			        side %d\n", trig [iTarget].m_nSide);
+								        }
+						        }
+					        }
+				        }
+			        }
+		        fprintf (fp.File (), "  children");
+		        for (i = 0; i < 6; i++) {
+			        short nChild = seg.GetChild (i);
+			        fprintf (fp.File (), " %d", ((nChild < 0) || !DLE.Segments [nChild].IsMarked ()) ? -1 : nChild);
+			        }
+		        fprintf (fp.File (), "\n");
+		        // save vertices
+		        for (i = 0; i < 8; i++) {
+			        // each vertex relative to the origin has a x', y', and z' component
+			        // which is a constant (k) times the axis
+			        // k = (B*A)/(A*A) where B is the vertex relative to the origin
+			        //                       A is the axis unit vertex (always 1)
+			        nVertex = seg.m_verts [i];
+			        v.Set (DLE.Vertices [nVertex]);
+                    v.Sub (origin);
+                    fprintf (fp.File (), "  vms_vector %d %d %d %d\n", i, FixConverter.D2X (v ^ m.rVec), FixConverter.D2X (v ^ m.uVec), FixConverter.D2X (v ^ m.fVec));
+			        }
+		        fprintf (fp.File (), "  static_light %d\n",seg.m_staticLight);
+		        if (DLE.ExtBlkFmt) {
+			        fprintf (fp.File (), "  special %d\n", seg.m_function);
+			        fprintf (fp.File (), "  matcen_num %d\n", seg.m_nMatCen);
+			        fprintf (fp.File (), "  value %d\n", seg.m_value);
+			        fprintf (fp.File (), "  child_bitmask %d\n", seg.m_childFlags);
+			        fprintf (fp.File (), "  wall_bitmask %d\n", seg.m_wallFlags);
+			        }
+		        }
+	        }
+        }
         // ------------------------------------------------------------------------
 
         // ------------------------------------------------------------------------
