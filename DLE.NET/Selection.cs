@@ -88,7 +88,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public Side Side
+        new public Side Side
         {
             get 
             {
