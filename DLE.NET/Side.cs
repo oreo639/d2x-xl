@@ -258,13 +258,13 @@ namespace DLE.NET
                 return -1;
             }
             m_nWall = GameMine.NO_WALL;
-            m_nBaseTex = (ushort)Convert.ToInt16 (node.SelectSingleNode ("BaseTex").InnerText);
-            m_nOvlTex = (ushort)Convert.ToInt16 (node.SelectSingleNode ("OvlTex").InnerText);
+            m_nBaseTex = node.ToUShort ("BaseTex");
+            m_nOvlTex = node.ToUShort ("OvlTex");
             for (int i = 0; i < 4; i++)
                 m_uvls [i].ReadXML (node, i);
             if (!DLE.ExtBlkFmt)
                 return 1;
-            m_nWall = (ushort)Convert.ToInt16 (node.SelectSingleNode ("Wall").InnerText);
+            m_nWall = node.ToUShort ("Wall");
             if (m_nWall != GameMine.NO_WALL)
             {
                 Wall w = new Wall ();

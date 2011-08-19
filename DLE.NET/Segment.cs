@@ -562,7 +562,7 @@ namespace DLE.NET
             // invert segment number so its children can be children can be fixed later
             m_owner = -1;
             m_group = -1;
-            Key = -Convert.ToInt32 (node.Attributes ["Key"].InnerText) - 1;
+            Key = -node.ToInt ("Key") - 1;
             // read in side information 
             for (short nSide = 0; nSide < 6; nSide++)
             {
@@ -572,7 +572,7 @@ namespace DLE.NET
 
 
             for (short i = 0; i < 6; i++)
-                SetChild (i, Convert.ToInt16 (node.Attributes [string.Format (@"Child{0}", i)].InnerText));
+                SetChild (i, node.ToShort (string.Format (@"Child{0}", i)));
 
             byte bShared = 0;
             DoubleVector v = new DoubleVector ();
@@ -605,14 +605,14 @@ namespace DLE.NET
             }
 
             // mark vertices
-            m_staticLight = Convert.ToInt32 (node.Attributes ["StaticLight"].InnerText);
+            m_staticLight = node.ToInt ("StaticLight");
             if (DLE.ExtBlkFmt)
             {
-                m_function = (Functions)Convert.ToSByte (node.Attributes ["Function"].InnerText);
-                m_nMatCen = Convert.ToSByte (node.Attributes ["MatCen"].InnerText);
-                m_value = Convert.ToSByte (node.Attributes ["Value"].InnerText);
-                m_childFlags = Convert.ToByte (node.Attributes ["ChildFlags"].InnerText);
-                m_wallFlags = Convert.ToByte (node.Attributes ["WallFlags"].InnerText);
+                m_function = (Functions)node.ToSByte ("Function");
+                m_nMatCen = node.ToSByte ("MatCen");
+                m_value = node.ToSByte ("Value");
+                m_childFlags = node.ToByte ("ChildFlags");
+                m_wallFlags = node.ToByte ("WallFlags");
                 switch (m_function)
                 {
                     case Segment.Functions.FUELCEN:
