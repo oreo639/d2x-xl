@@ -534,7 +534,7 @@ namespace DLE.NET
         public bool IsMarked (byte mask = GameMine.MARKED_MASK)
         {
             return (m_flags & mask) != 0;
-        }
+            }
 
         //------------------------------------------------------------------------------
 
@@ -572,7 +572,7 @@ namespace DLE.NET
 
 
             for (short i = 0; i < 6; i++)
-                SetChild (i, Convert.ToInt16 (node.Attributes [string.Format (@"Child{0}", i)]));
+                SetChild (i, Convert.ToInt16 (node.Attributes [string.Format (@"Child{0}", i)].InnerText));
 
             byte bShared = 0;
             DoubleVector v = new DoubleVector ();
@@ -605,14 +605,14 @@ namespace DLE.NET
             }
 
             // mark vertices
-            m_staticLight = Convert.ToInt32 (node.Attributes ["StaticLight"]);
+            m_staticLight = Convert.ToInt32 (node.Attributes ["StaticLight"].InnerText);
             if (DLE.ExtBlkFmt)
             {
-                m_function = (Functions) Convert.ToSByte (node.Attributes ["Function"]);
-                m_nMatCen = Convert.ToSByte (node.Attributes ["MatCen"]);
-                m_value = Convert.ToSByte (node.Attributes ["Value"]);
-                m_childFlags = Convert.ToByte (node.Attributes ["ChildFlags"]);
-                m_wallFlags = Convert.ToByte (node.Attributes ["WallFlags"]);
+                m_function = (Functions)Convert.ToSByte (node.Attributes ["Function"].InnerText);
+                m_nMatCen = Convert.ToSByte (node.Attributes ["MatCen"].InnerText);
+                m_value = Convert.ToSByte (node.Attributes ["Value"].InnerText);
+                m_childFlags = Convert.ToByte (node.Attributes ["ChildFlags"].InnerText);
+                m_wallFlags = Convert.ToByte (node.Attributes ["WallFlags"].InnerText);
                 switch (m_function)
                 {
                     case Segment.Functions.FUELCEN:
@@ -653,6 +653,57 @@ namespace DLE.NET
                 if (GetChild (i) >= 0)
                     m_childFlags |= (byte)(1 << i);
             }
+            return 1;
+        }
+
+        //------------------------------------------------------------------------------
+
+        public int WriteXML (XmlDocument doc, XmlElement parent, int id)
+        {
+            XmlElement node = doc.CreateElement (string.Format (@"Segment{0}", id));
+            parent.AppendChild (node);
+
+            XmlElement elem = doc.CreateElement ("Key");
+            elem.InnerText = Key.ToString ();
+            node.AppendChild (elem);
+
+            elem = doc.CreateElement ("StaticLight");
+            elem.InnerText = m_staticLight.ToString ();
+            node.AppendChild (elem);
+
+            for (short i = 0; i < 6; i++)
+            {
+                elem = doc.CreateElement (string.Format (@"Child{0}", i));
+                elem.InnerText = GetChild (i).ToString ();
+                node.AppendChild (elem);
+            }
+
+            if (DLE.ExtBlkFmt)
+            {
+                elem = doc.CreateElement ("Function");
+                elem.InnerText = m_function.ToString ();
+                node.AppendChild (elem);
+
+                elem = doc.CreateElement ("MatCen");
+                elem.InnerText = m_nMatCen.ToString ();
+                node.AppendChild (elem);
+
+                elem = doc.CreateElement ("Value");
+                elem.InnerText = m_value.ToString ();
+                node.AppendChild (elem);
+
+                elem = doc.CreateElement ("ChildFlags");
+                elem.InnerText = m_childFlags.ToString ();
+                node.AppendChild (elem);
+
+                elem = doc.CreateElement ("WallFlags");
+                elem.InnerText = m_wallFlags.ToString ();
+                node.AppendChild (elem);
+            }
+
+            for (short i = 0; i < 6; i++)
+                m_sides [i].WriteXML (doc, node, i);
+
             return 1;
         }
 

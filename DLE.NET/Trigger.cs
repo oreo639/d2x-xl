@@ -228,10 +228,10 @@ namespace DLE.NET
             if (node == null)
                 return 0;
             Clear ();
-            Type = (Types)Convert.ToByte (node.Attributes ["Type"]);
-            Flag = (Flags)Convert.ToUInt16 (node.Attributes ["Flag"]);
-            Value = Convert.ToInt32 (node.Attributes ["Value"]);
-            Time = Convert.ToInt32 (node.Attributes ["Time"]);
+            Type = (Types)Convert.ToByte (node.Attributes ["Type"].InnerText);
+            Flag = (Flags)Convert.ToUInt16 (node.Attributes ["Flag"].InnerText);
+            Value = Convert.ToInt32 (node.Attributes ["Value"].InnerText);
+            Time = Convert.ToInt32 (node.Attributes ["Time"].InnerText);
             int i = base.ReadXML (node);
             if (i != 1)
                 return i;

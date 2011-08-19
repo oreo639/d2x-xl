@@ -179,11 +179,12 @@ namespace DLE.NET
 
         public void Write () 
         {
-	        short			i, j;
 	        Vertex			origin = new Vertex ();
 	        DoubleMatrix	m = new DoubleMatrix ();
 	        DoubleVector	v = new DoubleVector ();
-	        ushort			nVertex;
+
+            XmlDocument doc = new XmlDocument ();
+            XmlElement root = doc.CreateElement ("Block");
 
         // set origin
         SetupTransformation (m, origin);
@@ -193,6 +194,7 @@ namespace DLE.NET
 	        //DLE.MainFrame ().Progress ().StepIt ();
 	        Segment seg = DLE.Segments [nSegment];
 	        if (seg.IsMarked ()) {
+                seg.WriteXML (doc, root, nSegment);
 		        fprintf (fp.File (), "segment %d\n", nSegment);
 		        for (short nSide = 0; nSide < 6; nSide++) 
                 {
@@ -200,9 +202,9 @@ namespace DLE.NET
                     fprintf (fp.File (), "  side %d\n", i);
 			        fprintf (fp.File (), "    tmap_num %d\n",side.m_nBaseTex);
 			        fprintf (fp.File (), "    tmap_num2 %d\n",side.m_nOvlTex);
-			        for (j = 0; j < 4; j++) {
+			        for (int i = 0; i < 4; i++) {
 				        fprintf (fp.File (), "    uvls %d %d %d\n",
-							        side.m_uvls [j].u, side.m_uvls [j].v, side.m_uvls [j].l);
+							        side.m_uvls [i].u, side.m_uvls [i].v, side.m_uvls [i].l);
 				        }
 			        if (DLE.ExtBlkFmt) {
 				        fprintf (fp.File (), "    wall %d\n", side.m_nWall);
@@ -253,7 +255,7 @@ namespace DLE.NET
 			        // which is a constant (k) times the axis
 			        // k = (B*A)/(A*A) where B is the vertex relative to the origin
 			        //                       A is the axis unit vertex (always 1)
-			        nVertex = seg.m_verts [i];
+			        ushort nVertex = seg.m_verts [i];
 			        v.Set (DLE.Vertices [nVertex]);
                     v.Sub (origin);
                     fprintf (fp.File (), "  vms_vector %d %d %d %d\n", i, FixConverter.D2X (v ^ m.rVec), FixConverter.D2X (v ^ m.uVec), FixConverter.D2X (v ^ m.fVec));

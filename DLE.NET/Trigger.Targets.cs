@@ -195,8 +195,8 @@ namespace DLE.NET
                 XmlNode node = parent.SelectSingleNode (string.Format (@"Target{0}", i+1));
                 if (node == null)
                     return 0;
-                m_targets [i].m_nSegment = Convert.ToInt16 (node.Attributes ["Segment"]);
-                m_targets [i].m_nSide = Convert.ToInt16 (node.Attributes ["Side"]);
+                m_targets [i].m_nSegment = Convert.ToInt16 (node.Attributes ["Segment"].InnerText);
+                m_targets [i].m_nSide = Convert.ToInt16 (node.Attributes ["Side"].InnerText);
             }
             return 1;
         }

@@ -62,5 +62,28 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
+        public int WriteXML (XmlDocument doc, XmlElement parent, int id)
+        {
+            XmlElement node = doc.CreateElement (string.Format (@"UVL{0}", id));
+            parent.AppendChild (node);
+
+            XmlElement elem = doc.CreateElement ("U");
+            elem.InnerText = u.ToString ();
+            node.AppendChild (elem);
+
+            elem = doc.CreateElement ("V");
+            elem.InnerText = v.ToString ();
+            node.AppendChild (elem);
+
+            elem = doc.CreateElement ("L");
+            elem.InnerText = l.ToString ();
+            node.AppendChild (elem);
+
+            return 1;
+        }
+
+
+        //------------------------------------------------------------------------------
+
     }
 }

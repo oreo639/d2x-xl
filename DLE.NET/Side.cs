@@ -106,7 +106,7 @@ namespace DLE.NET
         public void Clear ()
         {
             m_nChild = 0;
-            m_nWall = 0;
+            m_nWall = GameMine.NO_WALL;
             m_nBaseTex = 0;
             m_nOvlTex = 0;
             ClearUVL ();
@@ -249,7 +249,8 @@ namespace DLE.NET
             XmlNode node = parent.SelectSingleNode (string.Format (@"Side{0}", id));
             if (node == null)
                 return -1;
-            short key = Convert.ToInt16 (node.Attributes ["Key"]);
+            Clear ();
+            short key = Convert.ToInt16 (node.Attributes ["Key"].InnerText);
             if (key != id)
             {
                 DLE.Backup.End ();
@@ -257,20 +258,48 @@ namespace DLE.NET
                 return -1;
             }
             m_nWall = GameMine.NO_WALL;
-            m_nBaseTex = (ushort)Convert.ToInt16 (node.Attributes ["BaseTex"]);
-            m_nOvlTex = (ushort)Convert.ToInt16 (node.Attributes ["OvlTex"]);
+            m_nBaseTex = (ushort)Convert.ToInt16 (node.Attributes ["BaseTex"].InnerText);
+            m_nOvlTex = (ushort)Convert.ToInt16 (node.Attributes ["OvlTex"].InnerText);
             for (int i = 0; i < 4; i++)
                 m_uvls [i].ReadXML (node, i);
             if (!DLE.ExtBlkFmt)
                 return 1;
-            m_nWall = (ushort)Convert.ToInt16 (node.Attributes ["Wall"]);
-            Wall w = new Wall ();
-            w.ReadXML (node, m_nWall);
-            m_nWall = DLE.Walls.Add ();
+            m_nWall = (ushort)Convert.ToInt16 (node.Attributes ["Wall"].InnerText);
             if (m_nWall != GameMine.NO_WALL)
+            {
+                Wall w = new Wall ();
+                w.ReadXML (node, m_nWall);
+                m_nWall = DLE.Walls.Add ();
                 DLE.Walls [m_nWall] = w;
-            else
-                DLE.Triggers.Delete (w.m_nTrigger);
+            }
+            return 1;
+        }
+
+        // ------------------------------------------------------------------------
+
+        public int WriteXML (XmlDocument doc, XmlElement parent, int id)
+        {
+            XmlElement node = doc.CreateElement (string.Format (@"Side{0}", id));
+            parent.AppendChild (node);
+
+            XmlElement elem = doc.CreateElement ("Key");
+            elem.InnerText = Key.ToString ();
+            node.AppendChild (elem);
+
+            elem = doc.CreateElement ("BaseTex");
+            elem.InnerText = m_nBaseTex.ToString ();
+            node.AppendChild (elem);
+
+            elem = doc.CreateElement ("OvlTex");
+            elem.InnerText = m_nOvlTex.ToString ();
+            node.AppendChild (elem);
+
+            elem = doc.CreateElement ("Wall");
+            elem.InnerText = m_nWall.ToString ();
+            node.AppendChild (elem);
+
+            for (int i = 0; i < 4; i++)
+                m_uvls [i].WriteXML (doc, node, i);
             return 1;
         }
 

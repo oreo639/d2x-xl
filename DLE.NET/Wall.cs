@@ -336,7 +336,7 @@ namespace DLE.NET
             m_type = 0;
             m_flags = 0;
             m_state = 0;
-            m_nTrigger = 0;
+            m_nTrigger = GameMine.NO_TRIGGER;
             m_nClip = 0;
             m_keys = 0;
             m_controllingTrigger = 0;
@@ -416,16 +416,16 @@ namespace DLE.NET
                 return 0;
 
             Clear ();
-            m_nSegment = Convert.ToInt16 (node.Attributes ["Segment"]);
-            m_nSide = Convert.ToInt16 (node.Attributes ["Side"]);
-            m_hps = Convert.ToInt32 (node.Attributes ["HPS"]);
-            m_type = (Wall.Types)Convert.ToByte (node.Attributes ["Type"]);
-            m_flags = Convert.ToUInt16 (node.Attributes ["Flags"]);
-            m_state = Convert.ToByte (node.Attributes ["State"]);
-            m_nClip = Convert.ToSByte (node.Attributes ["State"]);
-            m_keys = (Wall.KeyTypes)Convert.ToByte (node.Attributes ["KeyType"]);
-            m_cloakValue = Convert.ToSByte (node.Attributes ["Cloak"]);
-            m_nTrigger = Convert.ToByte (node.Attributes ["Cloak"]);
+            m_nSegment = Convert.ToInt16 (node.Attributes ["Segment"].InnerText);
+            m_nSide = Convert.ToInt16 (node.Attributes ["Side"].InnerText);
+            m_hps = Convert.ToInt32 (node.Attributes ["HPS"].InnerText);
+            m_type = (Wall.Types)Convert.ToByte (node.Attributes ["Type"].InnerText);
+            m_flags = Convert.ToUInt16 (node.Attributes ["Flags"].InnerText);
+            m_state = Convert.ToByte (node.Attributes ["State"].InnerText);
+            m_nClip = Convert.ToSByte (node.Attributes ["State"].InnerText);
+            m_keys = (Wall.KeyTypes)Convert.ToByte (node.Attributes ["KeyType"].InnerText);
+            m_cloakValue = Convert.ToSByte (node.Attributes ["Cloak"].InnerText);
+            m_nTrigger = Convert.ToByte (node.Attributes ["Cloak"].InnerText);
 
             if (m_nTrigger != GameMine.NO_TRIGGER)
             {
