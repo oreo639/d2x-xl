@@ -159,7 +159,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public void Move (GameObject obj)
+        public void Move (GameObject obj, short nSegment = -1)
         {
         DLE.Backup.Begin (UndoData.Flags.udObjects);
         if (obj == null)
@@ -167,16 +167,18 @@ namespace DLE.NET
         if (Index (obj) == Count)
 	        SecretSegment = DLE.Current.m_nSegment;
         else {
-	        obj.Position = DLE.Segments.CalcCenter (DLE.Current.m_nSegment);
+            if (nSegment < 0)
+                nSegment = DLE.Current.m_nSegment;
+	        obj.Position = DLE.Segments.CalcCenter (nSegment);
 	        // bump position over if this is not the first object in the segment
 	        int i, count = 0;
 	        for (i = 0; i < Count; i++)
-		        if (Objects [i].m_nSegment == DLE.Current.m_nSegment)
+		        if (Objects [i].m_nSegment == nSegment)
 			        count++;
 	        i = ((count & 1) != 0) ? -count : count;
 	        obj.Position.v.y += 2 * i;
 	        obj.m_location.lastPos.v.y += 2 * i;
-	        obj.m_nSegment = DLE.Current.m_nSegment;
+	        obj.m_nSegment = nSegment;
 	        DLE.MineView.Refresh (false);
 	        }
         DLE.Backup.End ();

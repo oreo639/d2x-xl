@@ -234,36 +234,17 @@ namespace DLE.NET
         m_filename = filename;
         //DLE.MainFrame.InitProgress (DLE.Segments.Count);
         //DLE.MainFrame.Progress ().DestroyWindow ();
-
+        
         DLE.Backup.Begin (UndoData.Flags.udAll);
         //DLE.MainFrame.InitProgress (DLE.Segments.Count);
         if (bDelete)
+            Delete ();
+        else
         {
-            for (short nSegment = (short)(DLE.Segments.Count - 1); nSegment >= 0; nSegment--)
-            {
-                Segment seg = DLE.Segments [nSegment];
-                //DLE.MainFrame.Progress ().StepIt ();
-                if (seg.IsMarked ())
-                {
-                    if (DLE.Segments.Count <= 1)
-                        break;
-                    DLE.Segments.Delete (nSegment); // delete segP w/o asking "are you sure"
-                }
-            }
+            DLE.DebugMsg (string.Format (@"Block tool: {0} segments copied to '{2}' relative to current side.", count, filename));
+            DLE.Segments.SetLinesToDraw ();
+            DLE.MineView.Refresh ();
         }
-        //DLE.MainFrame.Progress ().DestroyWindow ();
-        DLE.Backup.End ();
-        DLE.DebugMsg (string.Format (@"Block tool: {0} segments {1} to '{2}' relative to current side.", count, bDelete ? @"cut" : @"copied", filename));
-          // wrap back then forward to make sure segment is valid
-        if (bDelete)
-        {
-            DLE.Current.m_nSegment = GameMine.Wrap (DLE.Current.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
-            DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
-            DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
-            DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
-        }
-        DLE.Segments.SetLinesToDraw ();
-        DLE.MineView.Refresh ();
         }
 
         // ------------------------------------------------------------------------
@@ -393,46 +374,56 @@ namespace DLE.NET
 
         public void Delete ()
         {
-        short nSegment, count;
+            short nSegment, count;
 
-        if (DLE.TunnelMaker.Active) 
-	        return;
-        // make sure some cubes are marked
-        count = DLE.Segments.MarkedCount ();
-        if (count == 0) {
-	        DLE.ErrorMsg (@"No block marked.\n\nUse 'M' or shift left mouse button\nto mark one or more cubes.");
-	        return;
-	        }
+            if (DLE.TunnelMaker.Active)
+                return;
+            // make sure some cubes are marked
+            count = DLE.Segments.MarkedCount ();
+            if (count == 0)
+            {
+                DLE.ErrorMsg (@"No block marked.\n\nUse 'M' or shift left mouse button\nto mark one or more cubes.");
+                return;
+            }
 
-        DLE.Backup.Begin (UndoData.Flags.udAll);
-        DLE.MineView.DelayRefresh (true);
+            DLE.Backup.Begin (UndoData.Flags.udAll);
+            DLE.MineView.DelayRefresh (true);
 
-        // delete segmentManager.Segment () from last to first because segmentManager.Count ()
-        // is effected for each deletion.  When all segmentManager.Segment () are marked
-        // the segmentManager.Count () will be decremented for each nSegment in loop.
-        if (DLE.QueryMsg (@"Are you sure you want to delete the marked cubes?") != 1/*IDYES*/)
-	        return;
+            // delete segmentManager.Segment () from last to first because segmentManager.Count ()
+            // is effected for each deletion.  When all segmentManager.Segment () are marked
+            // the segmentManager.Count () will be decremented for each nSegment in loop.
+            if (DLE.QueryMsg (@"Are you sure you want to delete the marked cubes?") != 1/*IDYES*/)
+                return;
 
-        //DLE.MainFrame.InitProgress (DLE.Segments.Count);
-        for (nSegment = (short) (DLE.Segments.Count - 1); nSegment >= 0; nSegment--) {
-	        //DLE.MainFrame.Progress ().StepIt ();
-	        if (DLE.Segments [nSegment].IsMarked ()) {
-		        if (DLE.Segments.Count <= 1)
-			        break;
-		        if (DLE.Objects [0].m_nSegment != nSegment)
-			        DLE.Segments.Delete (nSegment, false); // delete segP w/o asking "are you sure"
-		        }
-	        }
-        DLE.Vertices.DeleteUnused ();
-        //DLE.MainFrame.Progress ().DestroyWindow ();
-        // wrap back then forward to make sure segment is valid
-        DLE.Current.m_nSegment = GameMine.Wrap (DLE.Current.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
-        DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
-        DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
-        DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
-        DLE.Backup.End ();
-        DLE.MineView.DelayRefresh (false);
-        DLE.MineView.Refresh ();
+            //DLE.MainFrame.InitProgress (DLE.Segments.Count);
+            for (nSegment = (short)(DLE.Segments.Count - 1); nSegment >= 0; nSegment--)
+            {
+                //DLE.MainFrame.Progress ().StepIt ();
+                if (DLE.Segments [nSegment].IsMarked ())
+                {
+                    if (DLE.Segments.Count <= 1)
+                        break;
+                    if (DLE.Objects [0].m_nSegment == nSegment)
+                    {
+                        short nNewSeg = (short)((nSegment < (short)(DLE.Segments.Count - 1)) ? nSegment + 1 : (nSegment > 0) ? nSegment - 1 : -1);
+                        if (nNewSeg == -1)
+                            continue;
+                        DLE.Objects.Move (DLE.Objects [0], nNewSeg);
+                    }
+                    DLE.Segments.Delete (nSegment, false); // delete segP w/o asking "are you sure"
+                }
+            }
+            DLE.Vertices.DeleteUnused ();
+            //DLE.MainFrame.Progress ().DestroyWindow ();
+            // wrap back then forward to make sure segment is valid
+            DLE.Current.m_nSegment = GameMine.Wrap (DLE.Current.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
+            DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
+            DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
+            DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
+            DLE.Backup.End ();
+            DLE.Segments.SetLinesToDraw ();
+            DLE.MineView.DelayRefresh (false);
+            DLE.MineView.Refresh ();
         }
 
         // ------------------------------------------------------------------------
