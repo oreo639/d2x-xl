@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 using System;
+using System.Windows.Forms;
 
 namespace DLE.NET
 {
@@ -197,6 +198,80 @@ namespace DLE.NET
         }
 
         // ------------------------------------------------------------------------
+
+        void Cut ()
+        {
+        if (DLE.TunnelMaker.Active) 
+	        return;
+
+          // make sure some cubes are marked
+        short count = DLE.Segments.MarkedCount;
+        if (count == 0) {
+	        DLE.ErrorMsg (@"No block marked.\n\n""Use 'M' or shift left mouse button\n""to mark one or more cubes.");
+	        return;
+	        }
+
+        if (!DLE.ExpertMode /*&& DLE.Query2Msg(BLOCKOP_HINT, MB_YESNO) != IDYES*/)
+	        return;
+
+        string filename = "";
+        OpenFileDialog d = new OpenFileDialog ();
+        d.Title = "Load settings";
+        d.InitialDirectory = ".";
+        d.Filter = DLE.ExtBlkFmt ? "Extended block file (*.blx)|*.blx" : "Block file (*.blk)|*.blk";
+        d.FileName = m_filename;
+        d.CheckFileExists = false;
+        d.CheckPathExists = true;
+        if (d.ShowDialog () != DialogResult.OK)
+            return;
+        filename = d.FileName.ToLower ();
+        DLE.ExtBlkFmt = filename.Substring (filename.Length - 4, 4) == ".blx";
+
+        try
+        {
+            using (FileStream stream = new FileStream (filename, System.IO.FileMode.CreateNew))
+            {
+                using (StreamReader fp = new StreamReader (stream))
+                {
+                }
+            }
+        }
+        finally
+        {
+            DLE.ErrorMsg (@"Unable to open block file");
+            return;
+        }
+        //undoManager.UpdateBuffer(0);
+        strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick paste
+        fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
+        DLE.MainFrame ()->InitProgress (DLE.Segments.Count ());
+        Write (fp);
+        DLE.MainFrame ()->Progress ().DestroyWindow ();
+
+        undoManager.Begin (udAll);
+        DLE.MainFrame ()->InitProgress (DLE.Segments.Count ());
+        CSegment *segP = DLE.Segments.Segment (DLE.Segments.Count ());
+        for (short nSegment = DLE.Segments.Count () - 1; nSegment; nSegment--) {
+	        DLE.MainFrame ()->Progress ().StepIt ();
+            if ((--segP)->IsMarked ()) {
+		        if (DLE.Segments.Count () <= 1)
+			        break;
+		        DLE.Segments.Delete (nSegment); // delete segP w/o asking "are you sure"
+		        }
+	        }
+        DLE.MainFrame ()->Progress ().DestroyWindow ();
+        undoManager.End ();
+        fp.Close ();
+        sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, filename);
+        DEBUGMSG (message);
+          // wrap back then forward to make sure segment is valid
+        Wrap (selections [0].m_nSegment, -1, 0, DLE.Segments.Count () - 1);
+        Wrap (selections [1].m_nSegment, 1, 0, DLE.Segments.Count () - 1);
+        Wrap (selections [1].m_nSegment, -1, 0, DLE.Segments.Count () - 1);
+        Wrap (selections [1].m_nSegment, 1, 0, DLE.Segments.Count () - 1);
+        DLE.Segments.SetLinesToDraw ();
+        DLE.MineView ()->Refresh ();
+        }
 
         // ------------------------------------------------------------------------
 

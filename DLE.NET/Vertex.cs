@@ -123,7 +123,7 @@ namespace DLE.NET
         #region members
 
         public void Mark (byte mask = GameMine.MARKED_MASK) { Status |= mask; }
-        public void Unark (byte mask = GameMine.MARKED_MASK) { Status &= (byte) ~ (int) mask; }
+        public void Unmark (byte mask = GameMine.MARKED_MASK) { Status &= (byte) ~ (int) mask; }
         public bool IsMarked (byte mask = GameMine.MARKED_MASK) { return (Status & mask) != 0; }
 
         #endregion

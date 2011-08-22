@@ -110,6 +110,11 @@ namespace DLE.NET
             return 1;
         }
 
+        public static int Query2Msg (string msg, int id)
+        {
+            return 1;
+        }
+
         //------------------------------------------------------------------------------
 
         /// <summary>
