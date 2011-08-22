@@ -143,6 +143,13 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
+        public bool HasChild (short nSide)
+        {
+            return (m_childFlags & (byte)(1 << nSide)) != 0;
+        }
+
+        //------------------------------------------------------------------------------
+
         public short GetChild (short nSide)
         {
             return m_sides [nSide].m_nChild;

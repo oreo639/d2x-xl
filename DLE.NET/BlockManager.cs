@@ -62,7 +62,7 @@ namespace DLE.NET
         // Change - Now reads verts relative to current side
         // ------------------------------------------------------------------------
 
-        short Read (XmlDocument block) 
+        short Read (XmlNode rootNode) 
         {
             int i, j;
             int origVertCount;
@@ -70,7 +70,6 @@ namespace DLE.NET
             DoubleVector xAxis = new DoubleVector (), yAxis = new DoubleVector (), zAxis = new DoubleVector (), origin = new DoubleVector ();
             short nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0;
             List<Trigger> newTriggers = new List<Trigger> ();
-            XmlNode rootNode;
 
             m_oldSegments.Clear ();
             m_newSegments.Clear ();
@@ -98,8 +97,6 @@ namespace DLE.NET
                 m_oldSegments.Add (DLE.Segments [i]);
 
             DLE.Backup.Begin (UndoData.Flags.udAll);
-
-            rootNode = block.SelectSingleNode ("Segments");
 
             Segment s = new Segment ();
             while (true)
@@ -131,6 +128,7 @@ namespace DLE.NET
                     break;
                 }
 
+                nNewSegs++;
                 m_newSegments.Add (seg);
                 m_xlatSegNum [-seg.Key - 1] = nSegment;
 
@@ -148,7 +146,6 @@ namespace DLE.NET
                             ++nNewTriggers;
                         }
                     }
-                    nNewSegs++;
                 }
 
 
@@ -184,7 +181,7 @@ namespace DLE.NET
             DoubleMatrix rotation = new DoubleMatrix ();
 
             XmlDocument doc = new XmlDocument ();
-            XmlElement root = doc.CreateElement (DLE.ExtBlkFmt ? @"Extended Block" : @"Block");
+            XmlElement root = doc.CreateElement (DLE.ExtBlkFmt ? @"ExtendedBlock" : @"Block");
 
             // set origin
             SetupTransformation (rotation, origin);
@@ -200,7 +197,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Cut ()
+        public void Copy (string filename = "", bool bDelete = false)
         {
         if (DLE.TunnelMaker.Active) 
 	        return;
@@ -215,17 +212,20 @@ namespace DLE.NET
         if (!DLE.ExpertMode /*&& DLE.Query2Msg(BLOCKOP_HINT, MB_YESNO) != IDYES*/)
 	        return;
 
-        string filename = "";
-        OpenFileDialog d = new OpenFileDialog ();
-        d.Title = "Load settings";
-        d.InitialDirectory = ".";
-        d.Filter = DLE.ExtBlkFmt ? "Extended block file (*.blx)|*.blx" : "Block file (*.blk)|*.blk";
-        d.FileName = m_filename;
-        d.CheckFileExists = false;
-        d.CheckPathExists = true;
-        if (d.ShowDialog () != DialogResult.OK)
-            return;
-        filename = d.FileName.ToLower ();
+        if (filename == "")
+        {
+            OpenFileDialog d = new OpenFileDialog ();
+            d.Title = "Load settings";
+            d.InitialDirectory = ".";
+            d.Filter = DLE.ExtBlkFmt ? "Extended block file (*.blx)|*.blx" : "Block file (*.blk)|*.blk";
+            d.FileName = m_filename;
+            d.CheckFileExists = false;
+            d.CheckPathExists = true;
+            if (d.ShowDialog () != DialogResult.OK)
+                return;
+        filename = d.FileName;
+        }
+        filename = filename.ToLower ();
         DLE.ExtBlkFmt = filename.Substring (filename.Length - 4, 4) == ".blx";
         Write ();
 
@@ -236,32 +236,116 @@ namespace DLE.NET
 
         DLE.Backup.Begin (UndoData.Flags.udAll);
         //DLE.MainFrame.InitProgress (DLE.Segments.Count);
-        for (short nSegment = (short)(DLE.Segments.Count - 1); nSegment >= 0; nSegment--)
+        if (bDelete)
         {
-            Segment seg = DLE.Segments [nSegment];
-            //DLE.MainFrame.Progress ().StepIt ();
-            if (seg.IsMarked ())
+            for (short nSegment = (short)(DLE.Segments.Count - 1); nSegment >= 0; nSegment--)
             {
-                if (DLE.Segments.Count <= 1)
-                    break;
-                DLE.Segments.Delete (nSegment); // delete segP w/o asking "are you sure"
+                Segment seg = DLE.Segments [nSegment];
+                //DLE.MainFrame.Progress ().StepIt ();
+                if (seg.IsMarked ())
+                {
+                    if (DLE.Segments.Count <= 1)
+                        break;
+                    DLE.Segments.Delete (nSegment); // delete segP w/o asking "are you sure"
+                }
             }
         }
         //DLE.MainFrame.Progress ().DestroyWindow ();
         DLE.Backup.End ();
-        DLE.DebugMsg (string.Format (@"Block tool: {0} segments cut to '{1}' relative to current side.", count, filename));
+        DLE.DebugMsg (string.Format (@"Block tool: {0} segments {1} to '{2}' relative to current side.", count, bDelete ? @"cut" : @"copied", filename));
           // wrap back then forward to make sure segment is valid
-        DLE.Current.m_nSegment = GameMine.Wrap (DLE.Current.m_nSegment, -1, 0, (short) (DLE.Segments.Count - 1));
-        DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
-        DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
-        DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
+        if (bDelete)
+        {
+            DLE.Current.m_nSegment = GameMine.Wrap (DLE.Current.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
+            DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
+            DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
+            DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
+        }
         DLE.Segments.SetLinesToDraw ();
         DLE.MineView.Refresh ();
         }
 
         // ------------------------------------------------------------------------
 
+        public void Cut ()
+        {
+            Copy ("", true);
+        }
+
         // ------------------------------------------------------------------------
+
+        int Read (string filename) 
+        {
+            XmlDocument doc = new XmlDocument ();
+            XmlNode rootNode;
+
+            doc.Load (filename);
+            if ((rootNode = doc.SelectSingleNode (@"Block")) != null)
+                DLE.ExtBlkFmt = false;
+            else if ((rootNode = doc.SelectSingleNode (@"ExtendedBlock")) != null)
+                DLE.ExtBlkFmt = true;
+            else
+            {
+                DLE.ErrorMsg (@"This is not a block file.");
+                return 2;
+            }
+
+        // set up all seg_numbers (makes sure there are no negative seg_numbers)
+        DLE.Backup.Begin (UndoData.Flags.udAll);
+        DLE.MineView.DelayRefresh (true);
+        for (short nSegment = 0; nSegment < GameMine.MAX_SEGMENTS; nSegment++) 
+            {
+            Segment seg = DLE.Segments [nSegment];
+	        seg.Key = nSegment;
+	        seg.Unmark ();
+	        }
+
+        // unmark all vertices
+        for (ushort nVertex = 0; nVertex < DLE.Vertices.MaxVertices; nVertex++)
+            DLE.Vertices [nVertex].Unmark (GameMine.MARKED_MASK | GameMine.NEW_MASK);
+
+        //DLE.MainFrame.InitProgress (fp.Length ());
+        short count = Read (rootNode);
+        //DLE.MainFrame.Progress ().DestroyWindow ();
+
+        // int up the new segmentManager.Segment () children
+        foreach (Segment newSeg in m_newSegments)
+        {
+	        // if child has a segment number that was just inserted, set it to the
+	        //  segment's offset number, otherwise set it to -1
+	        for (short nSide = 0; nSide < 6; nSide++) 
+            {
+		        if (newSeg.HasChild (nSide)) // has a child in the block
+			        newSeg.SetChild (nSide, m_xlatSegNum [newSeg.GetChild (nSide)]);
+		        else {
+			        Vertex v1 = DLE.Vertices [(newSeg.m_verts [GameTables.sideVertTable [nSide,0]]];
+			        foreach (Segment oldSeg in m_oldSegments) 
+                    {
+				        for (short nChildSide = 0; nChildSide < 6; nChildSide++) {
+					        for (short nChildVertex = 0; nChildVertex < 4; nChildVertex++) {
+						        Vertex v2 = DLE.Vertices [oldSeg.m_verts [GameTables.sideVertTable [nChildSide,nChildVertex]]];
+						        if ((Math.Abs (v1.v.x - v2.v.x) < 160.0) && (Math.Abs (v1.v.y - v2.v.y) < 160.0) && (Math.Abs (v1.v.z - v2.v.z) < 160.0)) {
+							        DLE.Segments.Link ((short) newSeg.Key, nSide, (short) oldSeg.Key, nChildSide, 3.0);
+							        break;
+							        }
+						        }
+					        } 
+				        }
+			        }
+		        }
+	        }
+        // clear all new vertices as such
+        for (ushort nVertex = 0; nVertex < GameMine.MAX_VERTICES; nVertex++)
+	        DLE.Vertices [nVertex].Unmark (GameMine.NEW_MASK);
+        // now set all seg_numbers
+        for (short nSegment = 0; nSegment < DLE.Segments.Count; nSegment++)
+            DLE.Segments [nSegment].Key = nSegment;
+        DLE.MineView.Refresh ();
+        DLE.Backup.End ();
+        DLE.MineView.DelayRefresh (false);
+        DLE.MineView.Refresh ();
+        return 0;
+        }
 
         // ------------------------------------------------------------------------
 
