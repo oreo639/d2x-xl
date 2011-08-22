@@ -274,7 +274,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        int Read (string filename) 
+        int Load (string filename) 
         {
             XmlDocument doc = new XmlDocument ();
             XmlNode rootNode;
@@ -290,61 +290,65 @@ namespace DLE.NET
                 return 2;
             }
 
-        // set up all seg_numbers (makes sure there are no negative seg_numbers)
-        DLE.Backup.Begin (UndoData.Flags.udAll);
-        DLE.MineView.DelayRefresh (true);
-        for (short nSegment = 0; nSegment < GameMine.MAX_SEGMENTS; nSegment++) 
+            // set up all seg_numbers (makes sure there are no negative seg_numbers)
+            DLE.Backup.Begin (UndoData.Flags.udAll);
+            DLE.MineView.DelayRefresh (true);
+            for (short nSegment = 0; nSegment < GameMine.MAX_SEGMENTS; nSegment++)
             {
-            Segment seg = DLE.Segments [nSegment];
-	        seg.Key = nSegment;
-	        seg.Unmark ();
-	        }
+                Segment seg = DLE.Segments [nSegment];
+                seg.Key = nSegment;
+                seg.Unmark ();
+            }
 
-        // unmark all vertices
-        for (ushort nVertex = 0; nVertex < DLE.Vertices.MaxVertices; nVertex++)
-            DLE.Vertices [nVertex].Unmark (GameMine.MARKED_MASK | GameMine.NEW_MASK);
+            // unmark all vertices
+            for (ushort nVertex = 0; nVertex < DLE.Vertices.MaxVertices; nVertex++)
+                DLE.Vertices [nVertex].Unmark (GameMine.MARKED_MASK | GameMine.NEW_MASK);
 
-        //DLE.MainFrame.InitProgress (fp.Length ());
-        short count = Read (rootNode);
-        //DLE.MainFrame.Progress ().DestroyWindow ();
+            //DLE.MainFrame.InitProgress (fp.Length ());
+            short count = Read (rootNode);
+            //DLE.MainFrame.Progress ().DestroyWindow ();
 
-        // int up the new segmentManager.Segment () children
-        foreach (Segment newSeg in m_newSegments)
-        {
-	        // if child has a segment number that was just inserted, set it to the
-	        //  segment's offset number, otherwise set it to -1
-	        for (short nSide = 0; nSide < 6; nSide++) 
+            // int up the new segmentManager.Segment () children
+            foreach (Segment newSeg in m_newSegments)
             {
-		        if (newSeg.HasChild (nSide)) // has a child in the block
-			        newSeg.SetChild (nSide, m_xlatSegNum [newSeg.GetChild (nSide)]);
-		        else {
-			        Vertex v1 = DLE.Vertices [(newSeg.m_verts [GameTables.sideVertTable [nSide,0]]];
-			        foreach (Segment oldSeg in m_oldSegments) 
+                // if child has a segment number that was just inserted, set it to the
+                //  segment's offset number, otherwise set it to -1
+                for (short nSide = 0; nSide < 6; nSide++)
+                {
+                    if (newSeg.HasChild (nSide)) // has a child in the block
+                        newSeg.SetChild (nSide, m_xlatSegNum [newSeg.GetChild (nSide)]);
+                    else
                     {
-				        for (short nChildSide = 0; nChildSide < 6; nChildSide++) {
-					        for (short nChildVertex = 0; nChildVertex < 4; nChildVertex++) {
-						        Vertex v2 = DLE.Vertices [oldSeg.m_verts [GameTables.sideVertTable [nChildSide,nChildVertex]]];
-						        if ((Math.Abs (v1.v.x - v2.v.x) < 160.0) && (Math.Abs (v1.v.y - v2.v.y) < 160.0) && (Math.Abs (v1.v.z - v2.v.z) < 160.0)) {
-							        DLE.Segments.Link ((short) newSeg.Key, nSide, (short) oldSeg.Key, nChildSide, 3.0);
-							        break;
-							        }
-						        }
-					        } 
-				        }
-			        }
-		        }
-	        }
-        // clear all new vertices as such
-        for (ushort nVertex = 0; nVertex < GameMine.MAX_VERTICES; nVertex++)
-	        DLE.Vertices [nVertex].Unmark (GameMine.NEW_MASK);
-        // now set all seg_numbers
-        for (short nSegment = 0; nSegment < DLE.Segments.Count; nSegment++)
-            DLE.Segments [nSegment].Key = nSegment;
-        DLE.MineView.Refresh ();
-        DLE.Backup.End ();
-        DLE.MineView.DelayRefresh (false);
-        DLE.MineView.Refresh ();
-        return 0;
+                        Vertex v1 = DLE.Vertices [newSeg.m_verts [GameTables.sideVertTable [nSide, 0]]];
+                        foreach (Segment oldSeg in m_oldSegments)
+                        {
+                            for (short nChildSide = 0; nChildSide < 6; nChildSide++)
+                            {
+                                for (short nChildVertex = 0; nChildVertex < 4; nChildVertex++)
+                                {
+                                    Vertex v2 = DLE.Vertices [oldSeg.m_verts [GameTables.sideVertTable [nChildSide, nChildVertex]]];
+                                    if ((Math.Abs (v1.v.x - v2.v.x) < 160.0) && (Math.Abs (v1.v.y - v2.v.y) < 160.0) && (Math.Abs (v1.v.z - v2.v.z) < 160.0))
+                                    {
+                                        DLE.Segments.Link ((short)newSeg.Key, nSide, (short)oldSeg.Key, nChildSide, 3.0);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // clear all new vertices as such
+            for (ushort nVertex = 0; nVertex < GameMine.MAX_VERTICES; nVertex++)
+                DLE.Vertices [nVertex].Unmark (GameMine.NEW_MASK);
+            // now set all seg_numbers
+            for (short nSegment = 0; nSegment < DLE.Segments.Count; nSegment++)
+                DLE.Segments [nSegment].Key = nSegment;
+            DLE.MineView.Refresh ();
+            DLE.Backup.End ();
+            DLE.MineView.DelayRefresh (false);
+            DLE.MineView.Refresh ();
+            return 0;
         }
 
         // ------------------------------------------------------------------------
