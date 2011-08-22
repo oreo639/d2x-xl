@@ -184,7 +184,7 @@ namespace DLE.NET
             DoubleMatrix rotation = new DoubleMatrix ();
 
             XmlDocument doc = new XmlDocument ();
-            XmlElement root = doc.CreateElement ("Block");
+            XmlElement root = doc.CreateElement (DLE.ExtBlkFmt ? @"Extended Block" : @"Block");
 
             // set origin
             SetupTransformation (rotation, origin);
@@ -195,6 +195,7 @@ namespace DLE.NET
                 if (DLE.Segments [nSegment].IsMarked ())
                     DLE.Segments [nSegment].WriteXML (doc, root, nSegment, origin, rotation);
             }
+            doc.Save (m_filename);
         }
 
         // ------------------------------------------------------------------------
@@ -226,41 +227,29 @@ namespace DLE.NET
             return;
         filename = d.FileName.ToLower ();
         DLE.ExtBlkFmt = filename.Substring (filename.Length - 4, 4) == ".blx";
+        Write ();
 
-        try
+        //undoManager.UpdateBuffer(0);
+        m_filename = filename;
+        //DLE.MainFrame.InitProgress (DLE.Segments.Count);
+        //DLE.MainFrame.Progress ().DestroyWindow ();
+
+        DLE.Backup.Begin (UndoData.Flags.udAll);
+        //DLE.MainFrame.InitProgress (DLE.Segments.Count);
+        for (short nSegment = (short)(DLE.Segments.Count - 1); nSegment >= 0; nSegment--)
         {
-            using (FileStream stream = new FileStream (filename, System.IO.FileMode.CreateNew))
+            Segment seg = DLE.Segments [nSegment];
+            //DLE.MainFrame.Progress ().StepIt ();
+            if (seg.IsMarked ())
             {
-                using (StreamReader fp = new StreamReader (stream))
-                {
-                    //undoManager.UpdateBuffer(0);
-                    m_filename = filename;
-                    //DLE.MainFrame.InitProgress (DLE.Segments.Count);
-                    //DLE.MainFrame.Progress ().DestroyWindow ();
-
-                    DLE.Backup.Begin (UndoData.Flags.udAll);
-                    //DLE.MainFrame.InitProgress (DLE.Segments.Count);
-                    for (short nSegment = (short)(DLE.Segments.Count - 1); nSegment >= 0; nSegment--)
-                    {
-                        Segment seg = DLE.Segments [nSegment];
-                        //DLE.MainFrame.Progress ().StepIt ();
-                        if (seg.IsMarked ())
-                        {
-                            if (DLE.Segments.Count <= 1)
-                                break;
-                            DLE.Segments.Delete (nSegment); // delete segP w/o asking "are you sure"
-                        }
-                    }
-                    //DLE.MainFrame.Progress ().DestroyWindow ();
-                    DLE.Backup.End ();
-                }
+                if (DLE.Segments.Count <= 1)
+                    break;
+                DLE.Segments.Delete (nSegment); // delete segP w/o asking "are you sure"
             }
         }
-        finally
-        {
-            DLE.ErrorMsg (@"Unable to open block file");
-        }
-        DLE.DebugMsg (string.Format (@"Block tool: {0} blocks cut to '{1}' relative to current side.", count, filename));
+        //DLE.MainFrame.Progress ().DestroyWindow ();
+        DLE.Backup.End ();
+        DLE.DebugMsg (string.Format (@"Block tool: {0} segments cut to '{1}' relative to current side.", count, filename));
           // wrap back then forward to make sure segment is valid
         DLE.Current.m_nSegment = GameMine.Wrap (DLE.Current.m_nSegment, -1, 0, (short) (DLE.Segments.Count - 1));
         DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
