@@ -569,7 +569,7 @@ namespace DLE.NET
             // invert segment number so its children can be children can be fixed later
             m_owner = -1;
             m_group = -1;
-            Key = -node.ToInt ("Key") - 1;
+            Key = node.ToInt ("Key");
             // read in side information 
             for (short nSide = 0; nSide < 6; nSide++)
             {

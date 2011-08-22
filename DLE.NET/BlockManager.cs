@@ -130,7 +130,8 @@ namespace DLE.NET
 
                 nNewSegs++;
                 m_newSegments.Add (seg);
-                m_xlatSegNum [-seg.Key - 1] = nSegment;
+                m_xlatSegNum [seg.Key] = nSegment;
+                seg.Key = nSegment;
 
                 for (short nSide = 0; nSide < 6; nSide++)
                 {
