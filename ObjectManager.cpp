@@ -285,7 +285,7 @@ for (short i = Count (); i >= 0; i--)
 
 // -----------------------------------------------------------------------------
 
-void CObjectManager::Move (CGameObject * objP)
+void CObjectManager::Move (CGameObject * objP, int nSegment)
 {
 #if 0
 if (QueryMsg ("Are you sure you want to move the\n"
@@ -299,16 +299,18 @@ if (Index (objP) == Count ())
 	SecretSegment () = current->m_nSegment;
 else {
 	CVertex center;
-	objP->Position () = segmentManager.CalcCenter (center, current->m_nSegment);
+	if (nSegment < 0)
+		nSegment = current->m_nSegment;
+	objP->Position () = segmentManager.CalcCenter (center, nSegment);
 	// bump position over if this is not the first object in the segment
 	int i, count = 0;
 	for (i = 0; i < Count (); i++)
-		if (Object (i)->Info ().nSegment == current->m_nSegment)
+		if (Object (i)->Info ().nSegment == nSegment)
 			count++;
 	i = (count & 1) ? -count : count;
 	objP->Position ().v.y += 2 * i;
 	objP->m_location.lastPos.v.y += 2 * i;
-	objP->Info ().nSegment = current->m_nSegment;
+	objP->Info ().nSegment = nSegment;
 	DLE.MineView ()->Refresh (false);
 	}
 undoManager.End ();

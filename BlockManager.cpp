@@ -22,7 +22,7 @@ char *BLOCKOP_HINT =
 
 //------------------------------------------------------------------------------
 
-void CBlockManager::MakeTransformation (CDoubleMatrix& m, CDoubleVector& o)
+void CBlockManager::SetupTransformation (CDoubleMatrix& m, CDoubleVector& o)
 {
 ushort* verts = current->Segment ()->m_info.verts;
 byte* sideVerts = sideVertTable [current->m_nSide];
@@ -54,7 +54,7 @@ short CBlockManager::Read (CFileManager& fp)
 	short				origVertCount;
 	CDoubleMatrix	m;
 	CDoubleVector	xAxis, yAxis, zAxis, origin;
-	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
+	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0;
 	int				byteBuf; // needed for scanning byte values
 	CTrigger			* newTriggers = null;
 	
@@ -63,7 +63,7 @@ m_oldSegments = m_newSegments = null;
 origVertCount = vertexManager.Count ();
 
 // set origin
-MakeTransformation (m, origin);
+SetupTransformation (m, origin);
 // now take the determinant
 xAxis.Set (m.uVec.v.y * m.fVec.v.z - m.fVec.v.y * m.uVec.v.z, 
 			  m.fVec.v.y * m.rVec.v.z - m.rVec.v.y * m.fVec.v.z, 
@@ -382,7 +382,7 @@ void CBlockManager::Write (CFileManager& fp)
 	short				nVertex;
 
 // set origin
-MakeTransformation (m, origin);
+SetupTransformation (m, origin);
 
 CSegment* segP = segmentManager.Segment (0);
 for (CSegmentIterator si; si; si++) {
@@ -467,7 +467,7 @@ for (CSegmentIterator si; si; si++) {
 
 //------------------------------------------------------------------------------
 
-void CBlockManager::Cut (void)
+void CBlockManager::Copy (char* filename, bool bDelete)
 {
 if (tunnelMaker.Active ()) 
 	return;
@@ -482,15 +482,20 @@ if (count == 0) {
 if (!bExpertMode && Query2Msg(BLOCKOP_HINT,MB_YESNO) != IDYES)
 	return;
 
- char szFile [256] = "\0";
-if (!BrowseForFile (FALSE, 
-	                 bExtBlkFmt ? "blx" : "blk", szFile, 
-						  "Block file|*.blk|"
-						  "Extended block file|*.blx|"
-						  "All Files|*.*||",
-						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
-						  DLE.MainFrame ()))
-	return;
+char szFile [256];
+if (filename && *filename)
+	strcpy_s (szFile, sizeof (szFile), filename);
+else {
+	char szFile [256] = "\0";
+	if (!BrowseForFile (FALSE, 
+							  bExtBlkFmt ? "blx" : "blk", szFile, 
+							  "Block file|*.blk|"
+							  "Extended block file|*.blx|"
+							  "All Files|*.*||",
+							  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
+							  DLE.MainFrame ()))
+		return;
+	}	
 _strlwr_s (szFile, sizeof (szFile));
 bExtBlkFmt = strstr (szFile, ".blx") != null;
 
@@ -505,79 +510,24 @@ fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 Write (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
-
-undoManager.Begin (udAll);
-DLE.MainFrame ()->InitProgress (segmentManager.Count ());
-CSegment *segP = segmentManager.Segment (segmentManager.Count ());
-for (short nSegment = segmentManager.Count () - 1; nSegment; nSegment--) {
-	DLE.MainFrame ()->Progress ().StepIt ();
-    if ((--segP)->IsMarked ()) {
-		if (segmentManager.Count () <= 1)
-			break;
-		segmentManager.Delete (nSegment); // delete segP w/o asking "are you sure"
-		}
-	}
-DLE.MainFrame ()->Progress ().DestroyWindow ();
-undoManager.End ();
 fp.Close ();
-sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
-DEBUGMSG (message);
+
+if (bDelete)
+	Delete ();
+else {
+	sprintf_s (message, sizeof (message), " Block tool: %d blocks copied to '%s' relative to current side.", count, szFile);
+	DEBUGMSG (message);
   // wrap back then forward to make sure segment is valid
-Wrap (selections [0].m_nSegment, -1, 0, segmentManager.Count () - 1);
-Wrap (selections [1].m_nSegment, 1, 0, segmentManager.Count () - 1);
-Wrap (selections [1].m_nSegment, -1, 0, segmentManager.Count () - 1);
-Wrap (selections [1].m_nSegment, 1, 0, segmentManager.Count () - 1);
-segmentManager.SetLinesToDraw ();
-DLE.MineView ()->Refresh ();
+	segmentManager.SetLinesToDraw ();
+	DLE.MineView ()->Refresh ();
+	}
 }
 
 //------------------------------------------------------------------------------
 
-void CBlockManager::Copy (char *filename)
+void CBlockManager::Cut (void)
 {
-  CFileManager fp;
-  char szFile [256] = "\0";
-  short count = segmentManager.MarkedCount ();
-
-// make sure some cubes are marked
-if (count == 0) {
-	ErrorMsg ("No block marked.\n\n""Use 'M' or shift left mouse button\n""to mark one or more cubes.");
-	return;
-	}
-
-if (!bExpertMode && Query2Msg (BLOCKOP_HINT,MB_YESNO) != IDYES)
-	return;
-if (filename && *filename)
-	strcpy_s (szFile, sizeof (szFile), filename);
-else {
-	strcpy_s (szFile, sizeof (szFile), m_filename);
-	if (!BrowseForFile (FALSE, 
-	                 bExtBlkFmt ? "blx" : "blk", szFile, 
-						  "Block file|*.blk|"
-						  "Extended block file|*.blx|"
-						  "All Files|*.*||",
-						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
-						  DLE.MainFrame ()))
-		return;
-	}
-_strlwr_s (szFile, sizeof (szFile));
-bExtBlkFmt = strstr (szFile, ".blx") != null;
-if (fp.Open (szFile, "w")) {
-	sprintf_s (message, sizeof (message), "Unable to open block file '%s'", szFile);
-	ErrorMsg (message);
-	return;
-	}
-//  undoManager.UpdateBuffer(0);
-strcpy_s (m_filename, sizeof (m_filename), szFile); // remember fp for quick paste
-fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
-DLE.MainFrame ()->InitProgress (segmentManager.MarkedCount ());
-Write (fp);
-DLE.MainFrame ()->Progress ().DestroyWindow ();
-fp.Close ();
-sprintf_s (message, sizeof (message), " Block tool: %d blocks copied to '%s' relative to current side.", count, szFile);
-DEBUGMSG (message);
-segmentManager.SetLinesToDraw ();
-DLE.MineView ()->Refresh ();
+Copy (NULL, true);
 }
 
 //------------------------------------------------------------------------------
@@ -729,8 +679,13 @@ for (nSegment = segmentManager.Count () - 1; nSegment >= 0; nSegment--) {
 	if (segmentManager.Segment (nSegment)->IsMarked ()) {
 		if (segmentManager.Count () <= 1)
 			break;
-		if (objectManager.Object (0)->m_info.nSegment != nSegment)
-			segmentManager.Delete (nSegment, false); // delete segP w/o asking "are you sure"
+		if (objectManager.Object (0)->m_info.nSegment == nSegment) {
+			short nNewSeg = (nSegment < segmentManager.Count() - 1) ? nSegment + 1 : (nSegment > 0) ? nSegment - 1 : -1;
+			if (nNewSeg < 0)
+				continue;
+			objectManager.Move (objectManager.Object (0), nNewSeg);
+			}
+		segmentManager.Delete (nSegment, false); // delete segP w/o asking "are you sure"
 		}
 	}
 vertexManager.DeleteUnused ();
@@ -741,6 +696,7 @@ Wrap (selections [0].m_nSegment, 1, 0, segmentManager.Count () - 1);
 Wrap (selections [1].m_nSegment, -1, 0, segmentManager.Count () - 1);
 Wrap (selections [1].m_nSegment, 1, 0, segmentManager.Count () - 1);
 undoManager.End ();
+segmentManager.SetLinesToDraw ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 }

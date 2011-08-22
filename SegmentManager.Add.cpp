@@ -304,7 +304,7 @@ short CSegmentManager::CreateFuelCenter (short nSegment, byte nType, bool bCreat
 int nFuelCen = FuelCenterCount ();
 if (nFuelCen >= MAX_NUM_RECHARGERS) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
-	return false;
+	return 0;
 	}
 
 CSegment *segP = Segment (0);

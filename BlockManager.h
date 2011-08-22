@@ -13,7 +13,7 @@ class CBlockManager {
 	public:
 		void Cut (void);
 		
-		void Copy (char *filename = null);
+		void Copy (char *filename = null, bool bDelete = false);
 		
 		void Paste (void);
 		
@@ -24,7 +24,7 @@ class CBlockManager {
 		void Delete (void);
 
 	private:
-		void MakeTransformation (CDoubleMatrix& m, CDoubleVector& o);
+		void SetupTransformation (CDoubleMatrix& m, CDoubleVector& o);
 		
 		short Read (CFileManager& fp);
 		

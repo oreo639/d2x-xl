@@ -89,7 +89,7 @@ class CObjectManager {
 
 		bool Create (byte newType, short nSegment = -1);
 
-		void Move (CGameObject * objP = null);
+		void Move (CGameObject * objP = null, int nSegment = -1);
 
 		inline void ReadInfo (CFileManager* fp) { m_info.Read (fp); }
 
