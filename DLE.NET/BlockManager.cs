@@ -275,6 +275,27 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        void Paste () 
+        {
+        if (DLE.TunnelMaker.Active) 
+	        return;
+
+        OpenFileDialog d = new OpenFileDialog ();
+        d.Title = "Load settings";
+        d.InitialDirectory = ".";
+        d.Filter = DLE.ExtBlkFmt ? "Extended block file (*.blx)|*.blx" : "Block file (*.blk)|*.blk";
+        d.FileName = m_filename;
+        d.CheckFileExists = true;
+        d.CheckPathExists = true;
+        if (d.ShowDialog () != DialogResult.OK)
+            return;
+      
+        if (Load (d.FileName.ToLower ()) == 0)
+	        DLE.MineView.SelectMode = MineView.SelectModes.Block;
+        }
+
+        // ------------------------------------------------------------------------
+
         int Load (string filename) 
         {
             XmlDocument doc = new XmlDocument ();
@@ -354,7 +375,65 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
+        void QuickPaste ()
+        {
+        if (m_filename == "") 
+        {
+	        Paste ();
+	        return;
+	    }
+
+        if (DLE.TunnelMaker.Active) 
+	        return;
+        if (Load (m_filename) == 0)
+	        DLE.MineView.SelectMode = MineView.SelectModes.Block;
+        }
+
         // ------------------------------------------------------------------------
+
+        public void Delete ()
+        {
+        short nSegment, count;
+
+        if (DLE.TunnelMaker.Active) 
+	        return;
+        // make sure some cubes are marked
+        count = DLE.Segments.MarkedCount ();
+        if (count == 0) {
+	        DLE.ErrorMsg (@"No block marked.\n\nUse 'M' or shift left mouse button\nto mark one or more cubes.");
+	        return;
+	        }
+
+        DLE.Backup.Begin (UndoData.Flags.udAll);
+        DLE.MineView.DelayRefresh (true);
+
+        // delete segmentManager.Segment () from last to first because segmentManager.Count ()
+        // is effected for each deletion.  When all segmentManager.Segment () are marked
+        // the segmentManager.Count () will be decremented for each nSegment in loop.
+        if (DLE.QueryMsg (@"Are you sure you want to delete the marked cubes?") != 1/*IDYES*/)
+	        return;
+
+        //DLE.MainFrame.InitProgress (DLE.Segments.Count);
+        for (nSegment = (short) (DLE.Segments.Count - 1); nSegment >= 0; nSegment--) {
+	        //DLE.MainFrame.Progress ().StepIt ();
+	        if (DLE.Segments [nSegment].IsMarked ()) {
+		        if (DLE.Segments.Count <= 1)
+			        break;
+		        if (DLE.Objects [0].m_nSegment != nSegment)
+			        DLE.Segments.Delete (nSegment, false); // delete segP w/o asking "are you sure"
+		        }
+	        }
+        DLE.Vertices.DeleteUnused ();
+        //DLE.MainFrame.Progress ().DestroyWindow ();
+        // wrap back then forward to make sure segment is valid
+        DLE.Current.m_nSegment = GameMine.Wrap (DLE.Current.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
+        DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
+        DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, -1, 0, (short)(DLE.Segments.Count - 1));
+        DLE.Other.m_nSegment = GameMine.Wrap (DLE.Other.m_nSegment, 1, 0, (short)(DLE.Segments.Count - 1));
+        DLE.Backup.End ();
+        DLE.MineView.DelayRefresh (false);
+        DLE.MineView.Refresh ();
+        }
 
         // ------------------------------------------------------------------------
 

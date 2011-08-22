@@ -14,7 +14,8 @@ namespace DLE.NET
             Point,
             Side,
             Line,
-            Segment
+            Segment,
+            Block
         }
 
         // ------------------------------------------------------------------------
