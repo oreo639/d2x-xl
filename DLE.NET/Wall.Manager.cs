@@ -136,7 +136,7 @@ namespace DLE.NET
         // update number of Walls () in mine
         Count++;
         DLE.Backup.End ();
-        //DLE.MineView ().Refresh ();
+        DLE.MineView.Refresh ();
         return wall;
         }
 

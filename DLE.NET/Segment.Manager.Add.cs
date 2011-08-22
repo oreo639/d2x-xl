@@ -534,7 +534,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Delete (short nDelSeg, bool bDeleteVerts)
+        public void Delete (short nDelSeg = -1, bool bDeleteVerts = true)
         {
             if (Count < 2)
                 return;

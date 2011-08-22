@@ -62,7 +62,7 @@ namespace DLE.NET
 
         // -----------------------------------------------------------------------------
 
-        public short MarkedCount (bool bCheck)
+        public short MarkedCount (bool bCheck = false)
         {
         short nCount = 0;
         for (int i = 0; i < Count; i++)
@@ -156,7 +156,7 @@ namespace DLE.NET
                 for (short j = 0; j < 8; j++)
                     seg.Vertex (j).Mark (mask);
             }
-            //DLE.MineView.Refresh (); 
+            DLE.MineView.Refresh (); 
         }
 
         // -----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ namespace DLE.NET
                 for (short j = 0; j < 8; j++)
                     seg.Vertex (j).Unmark (mask);
             }
-            //DLE.MineView.Refresh (); 
+            DLE.MineView.Refresh (); 
         }
 
         // -----------------------------------------------------------------------------
