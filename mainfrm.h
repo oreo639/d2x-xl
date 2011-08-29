@@ -189,6 +189,7 @@ public:
 	void DockToolBars (bool bToolBar, bool bEditBar);
 
 	void ConvertMine (int nVersion);
+	void AdjustMine (int nVersion);
 
 	bool EditGeoFwd (void);
 	bool EditGeoUp (void);

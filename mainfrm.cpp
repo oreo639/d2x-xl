@@ -1586,6 +1586,19 @@ ToolView ()->DiagTool ()->OnCheckMine ();
 }
 
 
+void CMainFrame::AdjustMine (int nVersion) 
+{
+if (nVersion < 3) {
+	segmentManager.DeleteD2X ();
+	triggerManager.DeleteD2X ();
+	wallManager.DeleteD2X ();
+	objectManager.DeleteD2X ();
+	}
+if (nVersion < 2)
+	objectManager.DeleteVertigo ();
+}
+
+
 void CMainFrame::ConvertMine (int nVersion) 
 {
 	CConvertDlg	d;
@@ -1605,6 +1618,7 @@ if (DLE.IsD1File ()) {
 
 if (nVersion == 1) {
 	if (DLE.LevelVersion () != 7) {	
+		AdjustMine (1);
 		theMine->SetLevelVersion (7);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Standard level")
@@ -1618,6 +1632,7 @@ if (nVersion == 1) {
 
 if (nVersion == 2) {
 	if (DLE.LevelVersion () < 8) {
+		AdjustMine (2);
 		theMine->SetLevelVersion (8);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Vertigo level")

@@ -215,7 +215,7 @@ return errFlags;
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::RemoveD2X (void)
+void CSegmentManager::DeleteD2X (void)
 {
 while (Count () > MAX_SEGMENTS_D2)
 	Delete (Count () - 1);
