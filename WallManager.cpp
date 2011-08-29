@@ -549,6 +549,15 @@ ErrorMsg ("Changing the texture of a door only affects\n"
 
 //------------------------------------------------------------------------------
 
+void CWallManager::DeleteD2X (void)
+{
+for (int i = Count () - 1; i >= 0; i--)
+	if (m_walls [i].IsD2X ())
+		Delete (i);
+}
+
+//------------------------------------------------------------------------------
+
 int CWallManager::Fix (void)
 {
 int errFlags = 0;

@@ -307,6 +307,8 @@ class CSegmentManager {
 
 		void Undefine (short nSegment);
 
+		void RemoveD2X (void);
+
 #if USE_FREELIST
 		inline bool Full (void) { return m_free.Empty (); }
 #else

@@ -173,6 +173,8 @@ class CWallManager {
 
 		void CheckForDoor (CSideKey key);
 
+		void DeleteD2X (void);
+
 		CWallManager () {
 			ResetInfo ();
 			Clear ();

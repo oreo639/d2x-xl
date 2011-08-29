@@ -107,6 +107,8 @@ class CObjectManager {
 
 		void UpdateSegments (short nOldSeg, short nNewSeg);
 
+		void DeleteD2X (void);
+
 	private:
 		int Compare (CGameObject& pi, CGameObject& pm);
 };

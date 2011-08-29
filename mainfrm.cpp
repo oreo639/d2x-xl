@@ -1604,7 +1604,8 @@ if (DLE.IsD1File ()) {
 	}
 
 if (nVersion == 1) {
-	if (DLE.LevelVersion () != 7) {	theMine->SetLevelVersion (7);
+	if (DLE.LevelVersion () != 7) {	
+		theMine->SetLevelVersion (7);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Standard level")
 		else

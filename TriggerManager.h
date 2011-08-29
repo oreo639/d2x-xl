@@ -208,6 +208,8 @@ class CTriggerManager {
 
 		void DeleteFromObject (short nDelTrigger);
 
+		void DeleteD2X (void);
+
 	private:
 		int CmpObjTriggers (CTrigger& pi, CTrigger& pm);
 

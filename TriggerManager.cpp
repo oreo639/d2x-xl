@@ -681,3 +681,14 @@ return AddDoorTrigger (WALL_OVERLAY, WALL_WALL_SWITCH, TT_UNLOCK_DOOR);
 }
 
 // -----------------------------------------------------------------------------
+
+void CTriggerManager::DeleteD2X (void)
+{
+for (int i = Count (0) - 1; i >= 0; i--) {
+	Delete (-i - 1); // delete all object triggers
+	if (m_triggers [0][--i].IsD2X ())
+		Delete (i);
+	}
+}
+
+// -----------------------------------------------------------------------------
