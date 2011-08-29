@@ -1588,6 +1588,7 @@ ToolView ()->DiagTool ()->OnCheckMine ();
 
 void CMainFrame::AdjustMine (int nVersion) 
 {
+DLE.MineView ()->DelayRefresh (true);
 if (nVersion < 3) {
 	segmentManager.DeleteD2X ();
 	triggerManager.DeleteD2X ();
@@ -1596,6 +1597,8 @@ if (nVersion < 3) {
 	}
 if (nVersion < 2)
 	objectManager.DeleteVertigo ();
+DLE.MineView ()->DelayRefresh (false);
+DLE.MineView ()->Refresh ();
 }
 
 
