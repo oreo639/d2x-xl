@@ -109,6 +109,8 @@ class CObjectManager {
 
 		void DeleteD2X (void);
 
+		void DeleteVertigo (void);
+
 	private:
 		int Compare (CGameObject& pi, CGameObject& pm);
 };

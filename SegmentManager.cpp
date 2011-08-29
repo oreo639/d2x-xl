@@ -222,7 +222,7 @@ while (Count () > MAX_SEGMENTS_D2)
 for (int i = 0; i < Count (); i++) {
 	if (m_segments [i].IsD2X ()) {
 		Undefine (i);
-		m_segments [i].props = 0;
+		m_segments [i].m_info.props = 0;
 		}
 	}
 }
