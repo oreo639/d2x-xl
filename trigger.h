@@ -98,6 +98,8 @@ class CTrigger : public CTriggerTargets, public CGameItem {
 
 		bool IsExit (bool bSecret = true);
 
+		inline bool IsD2X (void) { return m_info.type >= TT_TELEPORT; }
+
 		inline const bool operator< (const CTrigger& other) {
 			return (m_info.nObject < other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type < other.m_info.type)); 
 			}

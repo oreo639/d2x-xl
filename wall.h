@@ -70,6 +70,8 @@ class CWall : public CSideKey, public CGameItem {
 
 		inline bool IsClosed (void) { return m_info.type == WALL_CLOSED; }
 
+		inline bool IsD2X (void) { return m_info.type >= WALL_COLORED; }
+
 		inline byte Alpha (void) { 
 			if (IsTransparent ())
 				return (m_info.hps == 0) ? 128 : X2I (255 * m_info.hps); 

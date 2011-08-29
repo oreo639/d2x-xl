@@ -307,13 +307,13 @@ for (i = 0; i < segmentManager.EquipMakerCount (); i++) {
 for (i = 0, objP = objectManager.Object (0); i < objectManager.Count (); i++, objP++) {
 // int clip numbers for poly Objects () (except robots)
 	switch (objP->Type ()) {
-		case OBJ_PLAYER   : // the player on the console
+		case OBJ_PLAYER: // the player on the console
 			objP->rType.polyModelInfo.nModel = D2_PLAYER_CLIP_NUMBER;
 			break;
-		case OBJ_CNTRLCEN : // the control center
+		case OBJ_CNTRLCEN: // the control center
 			objP->rType.polyModelInfo.nModel = D2_REACTOR_CLIP_NUMBER;
 			break;
-		case OBJ_COOP     : // a cooperative player object
+		case OBJ_COOP: // a cooperative player object
 			objP->rType.polyModelInfo.nModel = D2_COOP_CLIP_NUMBER;
 			break;
 		}

@@ -390,6 +390,8 @@ class CGameObject : public CGameItem {
 			m_location.Clear ();
 			}
 		
+		inline bool IsD2X (void) { return m_info.type >= OBJ_CAMBOT; }
+
 		virtual CGameItem* Clone (void);
 
 		virtual void Backup (eEditType editType = opModify);

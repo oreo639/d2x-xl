@@ -153,6 +153,8 @@ public:
 
 	inline bool IsMarked (byte mask = MARKED_MASK) { return (m_info.flags & mask) != 0; }
 
+	inline bool IsD2X (void) { return (m_info.function >= SEGMENT_FUNC_TEAM_BLUE) || (m_info.props != 0); }
+
 	inline CSide _const_ & operator[] (uint i) _const_ { return m_sides [i]; }
 
 	CSegment () : CGameItem (itSegment) {}
