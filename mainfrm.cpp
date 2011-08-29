@@ -1588,7 +1588,6 @@ ToolView ()->DiagTool ()->OnCheckMine ();
 
 void CMainFrame::AdjustMine (int nVersion) 
 {
-undoManager.Begin (udAll);
 DLE.MineView ()->DelayRefresh (true);
 if (nVersion < 3) {
 	segmentManager.DeleteD2X ();
@@ -1600,7 +1599,6 @@ if (nVersion < 2)
 	objectManager.DeleteVertigo ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
-undoManager.End ();
 }
 
 
@@ -1628,7 +1626,7 @@ if (nVersion == 1) {
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Standard level")
 		else
-			ErrorMsg ("Mine converted to a Standard level.\n\nWarning - You should now remove all Vertigo and D2X-XL objects.");
+			ErrorMsg ("Mine converted to a Standard level.\n\nAll Vertigo and D2X-XL level elements have been removed.");
 		segmentManager.UpdateWalls (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
 		triggerManager.ObjTriggerCount () = 0;
 		}
@@ -1642,7 +1640,7 @@ if (nVersion == 2) {
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Vertigo level")
 		else
-			ErrorMsg ("Mine converted to a Vertigo level.");
+			ErrorMsg ("Mine converted to a Vertigo level.\n\nAll D2X-XL level elements have been removed.");
 		segmentManager.UpdateWalls (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
 		triggerManager.ObjTriggerCount () = 0;
 		}
