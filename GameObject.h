@@ -392,6 +392,8 @@ class CGameObject : public CGameItem {
 		
 		inline bool IsD2X (void) { return m_info.type >= OBJ_CAMBOT; }
 
+		inline bool IsVertigo (void) { return (m_info.type == OBJ_ROBOT) && (m_info.id > N_ROBOT_TYPES_D2); }
+
 		virtual CGameItem* Clone (void);
 
 		virtual void Backup (eEditType editType = opModify);

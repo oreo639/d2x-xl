@@ -379,7 +379,15 @@ void CObjectManager::DeleteD2X (void)
 for (short i = Count () - 1; i >= 0; i--)
 	if (m_objects [i].IsD2X ())
 		Delete (i);
+}
 
+// -----------------------------------------------------------------------------
+
+void CObjectManager::DeleteVertigo (void)
+{
+for (short i = Count () - 1; i >= 0; i--)
+	if (m_objects [i].IsVertigo ())
+		Delete (i);
 }
 
 // -----------------------------------------------------------------------------
