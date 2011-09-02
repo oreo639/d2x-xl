@@ -95,7 +95,7 @@ SetLevelVersion (fp->ReadInt32 ());
 if (LevelVersion () == 1) {
 	SetFileType (RDL_FILE);
 	}
-else if ((LevelVersion () >= 6L) && (LevelVersion () <= 21L)) {
+else if ((LevelVersion () >= 6L) && (LevelVersion () <= LEVEL_VERSION)) {
 	SetFileType (RL2_FILE);
 	}
 else {
