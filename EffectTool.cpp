@@ -185,7 +185,8 @@ else if (objP->Id () == LIGHTNING_ID) {
 	objP->rType.lightningInfo.nDelay = DDX_Int (pDX, IDC_LIGHTNING_DELAY, objP->rType.lightningInfo.nDelay);
 	objP->rType.lightningInfo.nLength = DDX_Int (pDX, IDC_LIGHTNING_LENGTH, objP->rType.lightningInfo.nLength);
 	objP->rType.lightningInfo.nAmplitude = DDX_Int (pDX, IDC_LIGHTNING_AMPLITUDE, objP->rType.lightningInfo.nAmplitude);
-	objP->rType.lightningInfo.nSteps = DDX_Int (pDX, IDC_LIGHTNING_SPEED, objP->rType.lightningInfo.nSteps);
+	objP->rType.lightningInfo.nFrames = DDX_Int (pDX, IDC_LIGHTNING_SPEED, objP->rType.lightningInfo.nFrames);
+	objP->rType.lightningInfo.nWidth = DDX_Int (pDX, IDC_LIGHTNING_WIDTH, objP->rType.lightningInfo.nWidth);
 	objP->rType.lightningInfo.nAngle = DDX_Int (pDX, IDC_LIGHTNING_ANGLE, objP->rType.lightningInfo.nAngle);
 	objP->rType.lightningInfo.nOffset = DDX_Int (pDX, IDC_LIGHTNING_OFFSET, objP->rType.lightningInfo.nOffset);
 	int i;

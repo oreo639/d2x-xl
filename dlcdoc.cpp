@@ -264,8 +264,7 @@ if (d.DoModal () == IDOK) {
 			break;
 		case 3:
 			theMine->UpdateLevelVersion ();
-			segmentManager.UpdateWalls (MAX_WALLS_D2, WALL_LIMIT
-				);
+			segmentManager.UpdateWalls (MAX_WALLS_D2, WALL_LIMIT);
 		}
 	*m_szSubFile = '\0';
 	strcpy_s (theMine->LevelName (), theMine->LevelNameSize (), newLevelName);

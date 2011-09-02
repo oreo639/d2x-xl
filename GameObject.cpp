@@ -563,7 +563,7 @@ for (int i = 0; i < 4; i++)
 	color [i] = fp->ReadSByte ();
 nSide = fp->ReadSByte ();
 nType = (DLE.FileVersion () < 18) ? 0 : fp->ReadSByte ();
-bEnabled = (DLE.FileVersion () < 19) ? 1 : fp->ReadSByte ();
+bEnabled = (DLE.LevelVersion () < 19) ? 1 : fp->ReadSByte ();
 }
 
 // ------------------------------------------------------------------------
@@ -597,7 +597,8 @@ nId = fp->ReadInt16 ();
 nTarget = fp->ReadInt16 ();
 nNodes = fp->ReadInt16 ();
 nChildren = fp->ReadInt16 ();
-nSteps = fp->ReadInt16 ();
+nFrames = fp->ReadInt16 ();
+nWidth = (DLE.LevelVersion () < 22) ? 3 : fp->ReadByte ();
 nAngle = fp->ReadSByte ();
 nStyle = fp->ReadSByte ();
 nSmoothe = fp->ReadSByte ();
@@ -608,7 +609,7 @@ bRandom = fp->ReadSByte ();
 bInPlane = fp->ReadSByte ();
 for (int i = 0; i < 4; i++)
 	color [i] = fp->ReadSByte ();
-bEnabled = (DLE.FileVersion () < 19) ? 1 : fp->ReadSByte ();
+bEnabled = (DLE.LevelVersion () < 19) ? 1 : fp->ReadSByte ();
 }
 
 // ------------------------------------------------------------------------
@@ -625,7 +626,8 @@ fp->Write (nId);
 fp->Write (nTarget);
 fp->Write (nNodes);
 fp->Write (nChildren);
-fp->Write (nSteps);
+fp->Write (nFrames);
+fp->Write (nWidth);
 fp->Write (nAngle);
 fp->Write (nStyle);
 fp->Write (nSmoothe);
@@ -645,7 +647,7 @@ void CSoundInfo::Read (CFileManager* fp)
 {
 fp->Read (szFilename, 1, sizeof (szFilename));
 nVolume = fp->ReadInt32 ();
-bEnabled = (DLE.FileVersion () < 19) ? 1 : fp->ReadSByte ();
+bEnabled = (DLE.LevelVersion () < 19) ? 1 : fp->ReadSByte ();
 }
 // ------------------------------------------------------------------------
 

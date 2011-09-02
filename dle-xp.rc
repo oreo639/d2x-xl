@@ -2656,22 +2656,23 @@ BEGIN
     EDITTEXT        IDC_SMOKE_SIDE,137,72,36,12,ES_CENTER
     COMBOBOX        IDC_SMOKE_TYPE,138,90,48,66,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&add",IDC_SMOKE_ADD,123,108,51,12
-    EDITTEXT        IDC_LIGHTNING_ID,243,16,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_TARGET,243,28,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_BOLTS,243,40,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_NODES,243,52,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_CHILDREN,243,64,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_LIFE,243,76,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_DELAY,243,88,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_LENGTH,243,100,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_AMPLITUDE,327,16,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_SPEED,327,28,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_OFFSET,327,40,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_ANGLE,327,52,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_RED,327,64,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_GREEN,327,76,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_BLUE,327,88,36,12,ES_CENTER
-    EDITTEXT        IDC_LIGHTNING_ALPHA,327,100,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_ID,243,10,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_TARGET,243,22,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_BOLTS,243,34,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_NODES,243,46,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_CHILDREN,243,58,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_LIFE,243,70,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_DELAY,243,82,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_LENGTH,243,94,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_WIDTH,243,106,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_AMPLITUDE,327,10,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_SPEED,327,22,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_OFFSET,327,34,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_ANGLE,327,46,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_RED,327,58,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_GREEN,327,70,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_BLUE,327,82,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_ALPHA,327,94,36,12,ES_CENTER
     CONTROL         "smoothe",IDC_LIGHTNING_SMOOTHE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,397,16,43,10
     CONTROL         "clamp",IDC_LIGHTNING_CLAMP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,397,26,35,10
     CONTROL         "plasma",IDC_LIGHTNING_PLASMA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,397,35,38,9
@@ -2697,29 +2698,29 @@ BEGIN
     RTEXT           "drift:",IDC_STATIC,18,75,31,8
     RTEXT           "brightness:",IDC_STATIC,12,90,37,8
     GROUPBOX        "lightning data",IDC_STATIC,193,0,263,124,BS_RIGHT
-    RTEXT           "life time:",IDC_STATIC,214,79,26,8
-    LTEXT           "ms",IDC_STATIC,281,78,12,8
-    RTEXT           "length:",IDC_STATIC,219,103,22,8
-    LTEXT           "units",IDC_STATIC,281,102,18,8
-    RTEXT           "amplitude:",IDC_STATIC,291,19,33,8
-    LTEXT           "units",IDC_STATIC,365,18,18,8
-    RTEXT           "nodes:",IDC_STATIC,218,55,22,8
-    RTEXT           "bolts:",IDC_STATIC,222,43,18,8
-    RTEXT           "speed:",IDC_STATIC,303,31,22,8
-    RTEXT           "children:",IDC_STATIC,212,67,28,8
-    RTEXT           "id:",IDC_STATIC,232,19,8,8
-    RTEXT           "target:",IDC_STATIC,219,31,21,8
-    RTEXT           "spawn delay:",IDC_STATIC,199,91,42,8
-    LTEXT           "ms",IDC_STATIC,281,90,12,8
-    RTEXT           "offset:",IDC_STATIC,305,42,20,8
-    RTEXT           "angle:",IDC_STATIC,305,54,20,8
-    RTEXT           "red:",IDC_STATIC,311,67,13,8
-    RTEXT           "green:",IDC_STATIC,305,79,21,8
-    RTEXT           "blue:",IDC_STATIC,309,90,16,8
-    RTEXT           "alpha:",IDC_STATIC,305,102,20,8
+    RTEXT           "life time:",IDC_STATIC,214,73,26,8
+    LTEXT           "ms",IDC_STATIC,281,72,12,8
+    RTEXT           "length:",IDC_STATIC,219,97,22,8
+    LTEXT           "units",IDC_STATIC,281,96,18,8
+    RTEXT           "amplitude:",IDC_STATIC,291,13,33,8
+    LTEXT           "units",IDC_STATIC,365,12,18,8
+    RTEXT           "nodes:",IDC_STATIC,218,49,22,8
+    RTEXT           "bolts:",IDC_STATIC,222,37,18,8
+    RTEXT           "frames:",IDC_STATIC,301,25,24,8
+    RTEXT           "children:",IDC_STATIC,212,61,28,8
+    RTEXT           "id:",IDC_STATIC,232,13,8,8
+    RTEXT           "target:",IDC_STATIC,219,25,21,8
+    RTEXT           "spawn delay:",IDC_STATIC,199,85,42,8
+    LTEXT           "ms",IDC_STATIC,281,84,12,8
+    RTEXT           "offset:",IDC_STATIC,305,36,20,8
+    RTEXT           "angle:",IDC_STATIC,305,48,20,8
+    RTEXT           "red:",IDC_STATIC,311,61,13,8
+    RTEXT           "green:",IDC_STATIC,305,73,21,8
+    RTEXT           "blue:",IDC_STATIC,309,84,16,8
+    RTEXT           "alpha:",IDC_STATIC,305,96,20,8
     GROUPBOX        "effect objects",IDC_STATIC,461,65,149,59,BS_RIGHT
     RTEXT           "style:",IDC_STATIC,377,89,17,8
-    LTEXT           "deg",IDC_STATIC,365,54,18,8
+    LTEXT           "deg",IDC_STATIC,365,48,18,8
     RTEXT           "red:",IDC_STATIC,122,23,13,8
     RTEXT           "green:",IDC_STATIC,116,35,21,8
     RTEXT           "blue:",IDC_STATIC,120,46,16,8
@@ -2730,6 +2731,7 @@ BEGIN
     LTEXT           ".wav",IDC_STATIC,590,17,16,8
     LTEXT           "sound file:",IDC_STATIC,465,18,33,8
     RTEXT           "volume:",IDC_STATIC,464,32,34,8
+    RTEXT           "width:",IDC_STATIC,219,108,20,8
 END
 
 IDD_EFFECTDATA2 DIALOGEX 0, 0, 222, 389
@@ -2758,6 +2760,7 @@ BEGIN
     EDITTEXT        IDC_LIGHTNING_LIFE,61,192,36,12,ES_CENTER
     EDITTEXT        IDC_LIGHTNING_DELAY,61,204,36,12,ES_CENTER
     EDITTEXT        IDC_LIGHTNING_LENGTH,61,216,36,12,ES_CENTER
+    EDITTEXT        IDC_LIGHTNING_WIDTH,61,228,36,12,ES_CENTER
     EDITTEXT        IDC_LIGHTNING_AMPLITUDE,145,132,36,12,ES_CENTER
     EDITTEXT        IDC_LIGHTNING_SPEED,145,144,36,12,ES_CENTER
     EDITTEXT        IDC_LIGHTNING_OFFSET,145,156,36,12,ES_CENTER
@@ -2798,7 +2801,7 @@ BEGIN
     LTEXT           "units",IDC_STATIC,183,134,18,8
     RTEXT           "nodes:",IDC_STATIC,36,171,22,8
     RTEXT           "bolts:",IDC_STATIC,40,159,18,8
-    RTEXT           "speed:",IDC_STATIC,121,147,22,8
+    RTEXT           "frames:",IDC_STATIC,119,147,24,8
     RTEXT           "children:",IDC_STATIC,30,183,28,8
     RTEXT           "id:",IDC_STATIC,50,135,8,8
     RTEXT           "target:",IDC_STATIC,37,147,21,8
@@ -2824,6 +2827,7 @@ BEGIN
     LTEXT           ".wav",IDC_STATIC,183,300,16,8
     LTEXT           "sound file:",IDC_STATIC,19,300,33,8
     RTEXT           "volume:",IDC_STATIC,17,316,34,8
+    RTEXT           "width:",IDC_STATIC,37,231,20,8
 END
 
 
@@ -6109,8 +6113,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,70,0
- PRODUCTVERSION 1,8,70,0
+ FILEVERSION 1,8,71,0
+ PRODUCTVERSION 1,8,71,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6126,13 +6130,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor XP [30 aug 2011]"
-            VALUE "FileVersion", "1, 8, 70, 0"
+            VALUE "FileDescription", "Descent Level Editor XP [2 sep 2011]"
+            VALUE "FileVersion", "1, 8, 71, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2011 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 8, 70, 0"
+            VALUE "ProductVersion", "1, 8, 71, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6159,7 +6163,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.8.70\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.8.71\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

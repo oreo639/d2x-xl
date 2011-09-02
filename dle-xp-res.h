@@ -677,21 +677,22 @@
 #define IDC_LIGHTNING_LIFE              11706
 #define IDC_LIGHTNING_DELAY             11707
 #define IDC_LIGHTNING_LENGTH            11708
-#define IDC_LIGHTNING_AMPLITUDE         11709
-#define IDC_LIGHTNING_SPEED             11710
-#define IDC_LIGHTNING_ANGLE             11711
-#define IDC_LIGHTNING_OFFSET            11712
-#define IDC_LIGHTNING_RED					 11713
-#define IDC_LIGHTNING_GREEN				 11714
-#define IDC_LIGHTNING_BLUE					 11715
-#define IDC_LIGHTNING_ALPHA				 11716
-#define IDC_LIGHTNING_SMOOTHE           11717
-#define IDC_LIGHTNING_CLAMP             11718
-#define IDC_LIGHTNING_PLASMA            11719
-#define IDC_LIGHTNING_SOUND             11720
-#define IDC_LIGHTNING_RANDOM            11721
-#define IDC_LIGHTNING_INPLANE           11722
-#define IDC_LIGHTNING_STYLE				 11723
+#define IDC_LIGHTNING_WIDTH             11709
+#define IDC_LIGHTNING_AMPLITUDE         11710
+#define IDC_LIGHTNING_SPEED             11711
+#define IDC_LIGHTNING_ANGLE             11712
+#define IDC_LIGHTNING_OFFSET            11713
+#define IDC_LIGHTNING_RED					 11714
+#define IDC_LIGHTNING_GREEN				 11715
+#define IDC_LIGHTNING_BLUE					 11716
+#define IDC_LIGHTNING_ALPHA				 11717
+#define IDC_LIGHTNING_SMOOTHE           11718
+#define IDC_LIGHTNING_CLAMP             11719
+#define IDC_LIGHTNING_PLASMA            11720
+#define IDC_LIGHTNING_SOUND             11721
+#define IDC_LIGHTNING_RANDOM            11722
+#define IDC_LIGHTNING_INPLANE           11723
+#define IDC_LIGHTNING_STYLE				 11724
 
 #define IDC_LIGHTNING_ADD               11749
 

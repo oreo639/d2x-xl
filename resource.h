@@ -2,6 +2,9 @@
 // Microsoft Visual C++ generated include file.
 // Used by dle-xp.rc
 //
+#define IDC_LIGHTNING_LENGTH2           11724
+#define IDC_LIGHTNING_WIDTH             11724
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

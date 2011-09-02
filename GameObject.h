@@ -247,7 +247,8 @@ public:
 	short			nTarget;
 	short			nNodes;
 	short			nChildren;
-	short			nSteps;
+	short			nFrames;
+	byte			nWidth;
 	byte			nAngle;
 	byte			nStyle;
 	byte			nSmoothe;
