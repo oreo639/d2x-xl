@@ -41,6 +41,9 @@ BEGIN_MESSAGE_MAP (CEffectTool, CToolDlg)
 	ON_EN_KILLFOCUS (IDC_LIGHTNING_BLUE, OnEdit)
 	ON_EN_KILLFOCUS (IDC_LIGHTNING_ALPHA, OnEdit)
 	ON_EN_KILLFOCUS (IDC_SOUND_FILE, OnEdit)
+	ON_EN_KILLFOCUS (IDC_WAYPOINT_ID, OnEdit)
+	ON_EN_KILLFOCUS (IDC_WAYPOINT_SUCC, OnEdit)
+	ON_EN_KILLFOCUS (IDC_WAYPOINT_SPEED, OnEdit)
 	ON_BN_CLICKED (IDC_LIGHTNING_SMOOTHE, OnEdit)
 	ON_BN_CLICKED (IDC_LIGHTNING_CLAMP, OnEdit)
 	ON_BN_CLICKED (IDC_LIGHTNING_SOUND, OnEdit)
@@ -107,6 +110,8 @@ for (i = 0; i < objectManager.Count (); i++, objP++) {
 		sprintf_s (szEffect, sizeof (szEffect), "Lightning %d (%d)", objP->rType.lightningInfo.nId, i);
 	else if (objP->Id () == SOUND_ID)
 		sprintf_s (szEffect, sizeof (szEffect), "Sound (%d)", i);
+	else if (objP->Id () == WAYPOINT_ID)
+		sprintf_s (szEffect, sizeof (szEffect), "Waypoint (%d)", i);
 	else
 		continue;
 	index = cbEffects->AddString (szEffect);
@@ -178,7 +183,7 @@ if (objP->Id () == SMOKE_ID) {
 else if (objP->Id () == LIGHTNING_ID) {
 	objP->rType.lightningInfo.nId = DDX_Int (pDX, IDC_LIGHTNING_ID, objP->rType.lightningInfo.nId);
 	objP->rType.lightningInfo.nTarget = DDX_Int (pDX, IDC_LIGHTNING_TARGET, objP->rType.lightningInfo.nTarget);
-	objP->rType.lightningInfo.nLightnings = DDX_Int (pDX, IDC_LIGHTNING_BOLTS, objP->rType.lightningInfo.nLightnings);
+	objP->rType.lightningInfo.nBolts = DDX_Int (pDX, IDC_LIGHTNING_BOLTS, objP->rType.lightningInfo.nBolts);
 	objP->rType.lightningInfo.nNodes = DDX_Int (pDX, IDC_LIGHTNING_NODES, objP->rType.lightningInfo.nNodes);
 	objP->rType.lightningInfo.nChildren = DDX_Int (pDX, IDC_LIGHTNING_CHILDREN, objP->rType.lightningInfo.nChildren);
 	objP->rType.lightningInfo.nLife = DDX_Int (pDX, IDC_LIGHTNING_LIFE, objP->rType.lightningInfo.nLife);
@@ -189,6 +194,7 @@ else if (objP->Id () == LIGHTNING_ID) {
 	objP->rType.lightningInfo.nWidth = DDX_Int (pDX, IDC_LIGHTNING_WIDTH, objP->rType.lightningInfo.nWidth);
 	objP->rType.lightningInfo.nAngle = DDX_Int (pDX, IDC_LIGHTNING_ANGLE, objP->rType.lightningInfo.nAngle);
 	objP->rType.lightningInfo.nOffset = DDX_Int (pDX, IDC_LIGHTNING_OFFSET, objP->rType.lightningInfo.nOffset);
+	objP->rType.lightningInfo.nWaypoint = DDX_Int (pDX, IDC_LIGHTNING_WAYPOINT, objP->rType.lightningInfo.nWaypoint);
 	int i;
 	for (i = 0; i < 4; i++)
 		DDX_Text (pDX, IDC_LIGHTNING_RED + i, objP->rType.lightningInfo.color [i]);
@@ -210,6 +216,11 @@ else if (objP->Id () == SOUND_ID) {
 	objP->rType.soundInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rType.soundInfo.bEnabled);
 	DDX_Text (pDX, IDC_SOUND_FILE, objP->rType.soundInfo.szFilename, sizeof (objP->rType.soundInfo.szFilename));
 	DDX_Slider (pDX, IDC_SOUND_VOLUME, objP->rType.soundInfo.nVolume);
+	}
+else if (objP->Id () == SOUND_ID) {
+	objP->rType.waypointInfo.nId = DDX_Int (pDX, IDC_WAYPOINT_ID, objP->rType.waypointInfo.nId);
+	objP->rType.waypointInfo.nSuccessor = DDX_Int (pDX, IDC_WAYPOINT_SUCC, objP->rType.waypointInfo.nSuccessor);
+	objP->rType.waypointInfo.nSpeed = DDX_Int (pDX, IDC_WAYPOINT_SPEED, objP->rType.waypointInfo.nSpeed);
 	}
 }
 

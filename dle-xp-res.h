@@ -686,15 +686,15 @@
 #define IDC_LIGHTNING_GREEN				 11715
 #define IDC_LIGHTNING_BLUE					 11716
 #define IDC_LIGHTNING_ALPHA				 11717
-#define IDC_LIGHTNING_SMOOTHE           11718
-#define IDC_LIGHTNING_CLAMP             11719
-#define IDC_LIGHTNING_PLASMA            11720
-#define IDC_LIGHTNING_SOUND             11721
-#define IDC_LIGHTNING_RANDOM            11722
-#define IDC_LIGHTNING_INPLANE           11723
-#define IDC_LIGHTNING_STYLE				 11724
-
-#define IDC_LIGHTNING_ADD               11749
+#define IDC_LIGHTNING_WAYPOINT          11718
+#define IDC_LIGHTNING_SMOOTHE           11719
+#define IDC_LIGHTNING_CLAMP             11720
+#define IDC_LIGHTNING_PLASMA            11721
+#define IDC_LIGHTNING_SOUND             11722
+#define IDC_LIGHTNING_RANDOM            11723
+#define IDC_LIGHTNING_INPLANE           11724
+#define IDC_LIGHTNING_STYLE				 11725
+#define IDC_LIGHTNING_ADD               11726
 
 #define IDC_SMOKE_LIFE                  11750
 #define IDC_SMOKE_SIZE                  11751
@@ -713,6 +713,11 @@
 #define IDC_SOUND_FILE						 11763
 #define IDC_SOUND_VOLUME					 11764
 #define IDC_SOUND_ADD						 11765
+
+#define IDC_WAYPOINT_ID						 11770
+#define IDC_WAYPOINT_SUCC					 11771
+#define IDC_WAYPOINT_SPEED					 11772
+#define IDC_WAYPOINT_ADD                11773
 
 #define IDC_EFFECT_OBJECTS					 11795
 #define IDC_EFFECT_COPY						 11796

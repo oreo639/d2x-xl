@@ -242,7 +242,8 @@ public:
 	int			nLength;
 	int			nAmplitude;
 	int			nOffset;
-	short			nLightnings;
+	int			nWaypoint;
+	short			nBolts;
 	short			nId;
 	short			nTarget;
 	short			nNodes;
@@ -275,6 +276,15 @@ public:
 	void Read (CFileManager* fp);
 	void Write (CFileManager* fp);
 };
+
+//------------------------------------------------------------------------
+
+class CWaypointInfo {
+public:
+	int			nId;
+	int			nSuccessor;
+	int			nSpeed;
+	};
 
 //------------------------------------------------------------------------
 
@@ -352,11 +362,12 @@ class CGameObject : public CGameItem {
 
 		// render info, determined by RENDER_TYPE 
 		union {
-			CObjPolyModelInfo	polyModelInfo;     //polygon model 
-			CObjVClipInfo		vClipInfo;    //vclip 
+			CObjPolyModelInfo	polyModelInfo; //polygon model 
+			CObjVClipInfo		vClipInfo;		//vclip 
 			CSmokeInfo			smokeInfo;
 			CLightningInfo		lightningInfo;
 			CSoundInfo			soundInfo;
+			CWaypointInfo		waypointInfo;
 			} rType;
 
 		// CGameObject () { memset (this, 0, sizeof (*this)); }

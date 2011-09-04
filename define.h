@@ -489,6 +489,7 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define SMOKE_ID				0
 #define LIGHTNING_ID			1
 #define SOUND_ID				2
+#define WAYPOINT_ID			3
 
 //Result types 
 #define RESULT_NOTHING  0 // Ignore this collision 
