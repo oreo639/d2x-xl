@@ -2,6 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by dle-xp.rc
 //
+#define IDC_EFFECT_ENABLED2             11801
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

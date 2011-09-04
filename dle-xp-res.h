@@ -717,7 +717,8 @@
 #define IDC_WAYPOINT_ID						 11770
 #define IDC_WAYPOINT_SUCC					 11771
 #define IDC_WAYPOINT_SPEED					 11772
-#define IDC_WAYPOINT_ADD                11773
+#define IDC_WAYPOINT_BOUNCE				 11773
+#define IDC_WAYPOINT_ADD                11774
 
 #define IDC_EFFECT_OBJECTS					 11795
 #define IDC_EFFECT_COPY						 11796

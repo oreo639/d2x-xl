@@ -531,6 +531,7 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define RT_SMOKE			11
 #define RT_LIGHTNING    12
 #define RT_SOUND			13
+#define RT_WAYPOINT		14
 
 //misc object flags 
 #define OF_EXPLODING       1  //this object is exploding 

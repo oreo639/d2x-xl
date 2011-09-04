@@ -284,6 +284,9 @@ public:
 	int			nId;
 	int			nSuccessor;
 	int			nSpeed;
+
+	void Read (CFileManager* fp);
+	void Write (CFileManager* fp);
 	};
 
 //------------------------------------------------------------------------

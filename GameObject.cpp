@@ -592,7 +592,7 @@ nDelay = fp->ReadInt32 ();
 nLength = fp->ReadInt32 ();
 nAmplitude = fp->ReadInt32 ();
 nOffset = fp->ReadInt32 ();
-nWaypoint = (DLE.LevelVersion () < 23) ? -1 : fp->ReadInt ();
+nWaypoint = (DLE.LevelVersion () < 23) ? -1 : fp->ReadInt32 ();
 nBolts = fp->ReadInt16 ();
 nId = fp->ReadInt16 ();
 nTarget = fp->ReadInt16 ();
@@ -658,6 +658,24 @@ void CSoundInfo::Write (CFileManager* fp)
 fp->Write (szFilename, 1, sizeof (szFilename));
 fp->Write (nVolume);
 fp->Write (bEnabled);
+}
+
+// ------------------------------------------------------------------------
+
+void CWaypointInfo::Read (CFileManager* fp)
+{
+nId = fp->ReadInt32 ();
+nSuccessor = fp->ReadInt32 ();
+nSpeed = fp->ReadInt32 ();
+}
+
+// ------------------------------------------------------------------------
+
+void CWaypointInfo::Write (CFileManager* fp)
+{
+fp->Write (nId);
+fp->Write (nSuccessor);
+fp->Write (nSpeed);
 }
 
 // ------------------------------------------------------------------------
@@ -748,6 +766,9 @@ switch (m_info.renderType) {
 		break;
 	case RT_SOUND:
 		rType.soundInfo.Read (fp);
+		break;
+	case RT_WAYPOINT:
+		rType.waypointInfo.Read (fp);
 		break;
 	default:
 	break;
@@ -846,6 +867,9 @@ switch (m_info.renderType) {
 		break;
 	case RT_SOUND:
 		rType.soundInfo.Write (fp);
+		break;
+	case RT_WAYPOINT:
+		rType.waypointInfo.Write (fp);
 		break;
 	default:
 		break;
