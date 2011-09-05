@@ -219,9 +219,9 @@ else if (objP->Id () == SOUND_ID) {
 	DDX_Slider (pDX, IDC_SOUND_VOLUME, objP->rType.soundInfo.nVolume);
 	}
 else if (objP->Id () == WAYPOINT_ID) {
-	objP->cType.wayPointInfo.nId = DDX_Int (pDX, IDC_WAYPOINT_ID, objP->rType.wayPointInfo.nId);
-	objP->cType.wayPointInfo.nSuccessor = DDX_Int (pDX, IDC_WAYPOINT_SUCC, objP->rType.wayPointInfo.nSuccessor);
-	objP->cType.wayPointInfo.nSpeed = DDX_Int (pDX, IDC_WAYPOINT_SPEED, objP->rType.wayPointInfo.nSpeed);
+	objP->cType.wayPointInfo.nId = DDX_Int (pDX, IDC_WAYPOINT_ID, objP->cType.wayPointInfo.nId);
+	objP->cType.wayPointInfo.nSuccessor = DDX_Int (pDX, IDC_WAYPOINT_SUCC, objP->cType.wayPointInfo.nSuccessor);
+	objP->cType.wayPointInfo.nSpeed = DDX_Int (pDX, IDC_WAYPOINT_SPEED, objP->cType.wayPointInfo.nSpeed);
 	}
 }
 
