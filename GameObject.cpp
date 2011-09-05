@@ -736,6 +736,9 @@ switch (m_info.controlType) {
 		break;
 	case CT_CNTRLCEN:
 		break;
+	case CT_WAYPOINT:
+		cType.wayPointInfo.Read (fp);
+		break;
 	case CT_MORPH:
 	case CT_FLYTHROUGH:
 	case CT_REPAIRCEN:
@@ -766,9 +769,6 @@ switch (m_info.renderType) {
 		break;
 	case RT_SOUND:
 		rType.soundInfo.Read (fp);
-		break;
-	case RT_WAYPOINT:
-		rType.waypointInfo.Read (fp);
 		break;
 	default:
 	break;
@@ -837,6 +837,9 @@ switch (m_info.controlType) {
 		break;
 	case CT_CNTRLCEN:
 		break;
+	case CT_WAYPOINT:
+		cType.wayPointInfo.Write (fp);
+		break;
 	case CT_MORPH:
 	case CT_FLYTHROUGH:
 	case CT_REPAIRCEN:
@@ -867,9 +870,6 @@ switch (m_info.renderType) {
 		break;
 	case RT_SOUND:
 		rType.soundInfo.Write (fp);
-		break;
-	case RT_WAYPOINT:
-		rType.waypointInfo.Write (fp);
 		break;
 	default:
 		break;

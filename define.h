@@ -510,6 +510,7 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define CT_LIGHT      14  //doesn't actually do anything 
 #define CT_REMOTE     15  //controlled by another net player 
 #define CT_CNTRLCEN   16  //the control center/main reactor  
+#define CT_WAYPOINT	 17
 
 //Movement types 
 #define MT_NONE       0  //doesn't move 
@@ -531,7 +532,6 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define RT_SMOKE			11
 #define RT_LIGHTNING    12
 #define RT_SOUND			13
-#define RT_WAYPOINT		14
 
 //misc object flags 
 #define OF_EXPLODING       1  //this object is exploding 

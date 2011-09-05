@@ -524,6 +524,7 @@ class CEffectTool : public CToolDlg
 		afx_msg void OnAddSmoke ();
 		afx_msg void OnAddLightning ();
 		afx_msg void OnAddSound ();
+		afx_msg void OnAddWayPoint ();
 		afx_msg void OnDelete ();
 		afx_msg void OnCopy ();
 		afx_msg void OnPaste ();

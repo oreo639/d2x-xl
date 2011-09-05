@@ -53,6 +53,7 @@ BEGIN_MESSAGE_MAP (CEffectTool, CToolDlg)
 	ON_BN_CLICKED (IDC_SMOKE_ADD, OnAddSmoke)
 	ON_BN_CLICKED (IDC_LIGHTNING_ADD, OnAddLightning)
 	ON_BN_CLICKED (IDC_SOUND_ADD, OnAddSound)
+	ON_BN_CLICKED (IDC_WAYPOINT_ADD, OnAddWayPoint)
 	ON_BN_CLICKED (IDC_EFFECT_ENABLED, OnEdit)
 	ON_BN_CLICKED (IDC_EFFECT_DELETE, OnDelete)
 	ON_BN_CLICKED (IDC_EFFECT_COPY, OnCopy)
@@ -217,10 +218,10 @@ else if (objP->Id () == SOUND_ID) {
 	DDX_Text (pDX, IDC_SOUND_FILE, objP->rType.soundInfo.szFilename, sizeof (objP->rType.soundInfo.szFilename));
 	DDX_Slider (pDX, IDC_SOUND_VOLUME, objP->rType.soundInfo.nVolume);
 	}
-else if (objP->Id () == SOUND_ID) {
-	objP->rType.waypointInfo.nId = DDX_Int (pDX, IDC_WAYPOINT_ID, objP->rType.waypointInfo.nId);
-	objP->rType.waypointInfo.nSuccessor = DDX_Int (pDX, IDC_WAYPOINT_SUCC, objP->rType.waypointInfo.nSuccessor);
-	objP->rType.waypointInfo.nSpeed = DDX_Int (pDX, IDC_WAYPOINT_SPEED, objP->rType.waypointInfo.nSpeed);
+else if (objP->Id () == WAYPOINT_ID) {
+	objP->cType.wayPointInfo.nId = DDX_Int (pDX, IDC_WAYPOINT_ID, objP->rType.wayPointInfo.nId);
+	objP->cType.wayPointInfo.nSuccessor = DDX_Int (pDX, IDC_WAYPOINT_SUCC, objP->rType.wayPointInfo.nSuccessor);
+	objP->cType.wayPointInfo.nSpeed = DDX_Int (pDX, IDC_WAYPOINT_SPEED, objP->rType.wayPointInfo.nSpeed);
 	}
 }
 
@@ -323,6 +324,24 @@ objP->Id () = SOUND_ID;
 objP->m_info.renderType = RT_SOUND;
 *objP->rType.soundInfo.szFilename = '\0';
 objP->rType.soundInfo.nVolume = 10;
+Refresh ();
+DLE.MineView ()->Refresh ();
+}
+
+//------------------------------------------------------------------------
+
+void CEffectTool::OnAddWayPoint ()
+{
+if (!AddEffect ())
+	return;
+CGameObject *objP = current->Object ();
+objP->Type () = OBJ_EFFECT;
+objP->Id () = WAYPOINT_ID;
+objP->m_info.controlType = CT_WAYPOINT;
+objP->m_info.renderType = RT_NONE;
+objP->cType.wayPointInfo.nId = 0;
+objP->cType.wayPointInfo.nSuccessor = 0;
+objP->cType.wayPointInfo.nSpeed = 20;
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
