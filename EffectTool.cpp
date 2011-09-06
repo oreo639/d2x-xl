@@ -195,7 +195,7 @@ else if (objP->Id () == LIGHTNING_ID) {
 	objP->rType.lightningInfo.nWidth = DDX_Int (pDX, IDC_LIGHTNING_WIDTH, objP->rType.lightningInfo.nWidth);
 	objP->rType.lightningInfo.nAngle = DDX_Int (pDX, IDC_LIGHTNING_ANGLE, objP->rType.lightningInfo.nAngle);
 	objP->rType.lightningInfo.nOffset = DDX_Int (pDX, IDC_LIGHTNING_OFFSET, objP->rType.lightningInfo.nOffset);
-	objP->rType.lightningInfo.nWaypoint = DDX_Int (pDX, IDC_LIGHTNING_WAYPOINT, objP->rType.lightningInfo.nWaypoint);
+	objP->rType.lightningInfo.nWayPoint = DDX_Int (pDX, IDC_LIGHTNING_WAYPOINT, objP->rType.lightningInfo.nWayPoint);
 	int i;
 	for (i = 0; i < 4; i++)
 		DDX_Text (pDX, IDC_LIGHTNING_RED + i, objP->rType.lightningInfo.color [i]);
@@ -291,6 +291,8 @@ if (!AddEffect ())
 CGameObject *objP = current->Object ();
 objP->Type () = OBJ_EFFECT;
 objP->Id () = SMOKE_ID;
+objP->m_info.movementType = MT_NONE;
+objP->m_info.controlType = CT_NONE;
 objP->m_info.renderType = RT_SMOKE;
 memset (&objP->rType.smokeInfo, 0, sizeof (objP->rType.smokeInfo));
 Refresh ();
@@ -306,8 +308,11 @@ if (!AddEffect ())
 CGameObject *objP = current->Object ();
 objP->Type () = OBJ_EFFECT;
 objP->Id () = LIGHTNING_ID;
+objP->m_info.movementType = MT_NONE;
+objP->m_info.controlType = CT_NONE;
 objP->m_info.renderType = RT_LIGHTNING;
 memset (&objP->rType.lightningInfo, 0, sizeof (objP->rType.lightningInfo));
+objP->rType.lightningInfo.nWayPoint = -1;
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -321,6 +326,8 @@ if (!AddEffect ())
 CGameObject *objP = current->Object ();
 objP->Type () = OBJ_EFFECT;
 objP->Id () = SOUND_ID;
+objP->m_info.movementType = MT_NONE;
+objP->m_info.controlType = CT_NONE;
 objP->m_info.renderType = RT_SOUND;
 *objP->rType.soundInfo.szFilename = '\0';
 objP->rType.soundInfo.nVolume = 10;
@@ -337,6 +344,7 @@ if (!AddEffect ())
 CGameObject *objP = current->Object ();
 objP->Type () = OBJ_EFFECT;
 objP->Id () = WAYPOINT_ID;
+objP->m_info.movementType = MT_NONE;
 objP->m_info.controlType = CT_WAYPOINT;
 objP->m_info.renderType = RT_NONE;
 objP->cType.wayPointInfo.nId = 0;

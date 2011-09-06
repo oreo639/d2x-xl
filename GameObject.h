@@ -242,7 +242,7 @@ public:
 	int			nLength;
 	int			nAmplitude;
 	int			nOffset;
-	int			nWaypoint;
+	int			nWayPoint;
 	short			nBolts;
 	short			nId;
 	short			nTarget;
