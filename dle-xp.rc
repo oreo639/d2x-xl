@@ -6133,8 +6133,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,8,71,0
- PRODUCTVERSION 1,8,71,0
+ FILEVERSION 1,8,72,0
+ PRODUCTVERSION 1,8,72,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6151,12 +6151,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
             VALUE "FileDescription", "Descent Level Editor XP [2 sep 2011]"
-            VALUE "FileVersion", "1, 8, 71, 0"
+            VALUE "FileVersion", "1, 8, 72, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2011 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 8, 71, 0"
+            VALUE "ProductVersion", "1, 8, 72, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6183,7 +6183,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.8.71\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.8.72\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 
