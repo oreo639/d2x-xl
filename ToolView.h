@@ -494,6 +494,7 @@ class CEffectTool : public CToolDlg
 		CSmokeInfo			m_smoke;
 		CLightningInfo		m_lightning;
 		CSoundInfo			m_sound;
+		CWayPointInfo		m_wayPoint;
 		int					m_nBufferId;
 
 		CEffectTool (CPropertySheet *pParent = null);

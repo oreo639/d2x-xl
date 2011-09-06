@@ -279,7 +279,7 @@ public:
 
 //------------------------------------------------------------------------
 
-class CWaypointInfo {
+class CWayPointInfo {
 public:
 	int			nId;
 	int			nSuccessor;
@@ -361,7 +361,7 @@ class CGameObject : public CGameItem {
 			CObjAIInfo			aiInfo;
 			CObjLightInfo     lightInfo;  //why put this here?  Didn't know what else to do with it. 
 			CObjPowerupInfo   powerupInfo;
-			CWaypointInfo		wayPointInfo;
+			CWayPointInfo		wayPointInfo;
 			} cType;
 
 		// render info, determined by RENDER_TYPE 

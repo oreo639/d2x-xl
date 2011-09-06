@@ -662,7 +662,7 @@ fp->Write (bEnabled);
 
 // ------------------------------------------------------------------------
 
-void CWaypointInfo::Read (CFileManager* fp)
+void CWayPointInfo::Read (CFileManager* fp)
 {
 nId = fp->ReadInt32 ();
 nSuccessor = fp->ReadInt32 ();
@@ -671,7 +671,7 @@ nSpeed = fp->ReadInt32 ();
 
 // ------------------------------------------------------------------------
 
-void CWaypointInfo::Write (CFileManager* fp)
+void CWayPointInfo::Write (CFileManager* fp)
 {
 fp->Write (nId);
 fp->Write (nSuccessor);

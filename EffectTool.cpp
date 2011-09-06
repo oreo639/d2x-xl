@@ -393,6 +393,8 @@ else if (m_nBufferId == LIGHTNING_ID)
 	m_lightning = objP->rType.lightningInfo;
 else if (m_nBufferId == SOUND_ID)
 	m_sound = objP->rType.soundInfo;
+else if (objP->Id () == WAYPOINT_ID)
+	m_wayPoint = objP->cType.wayPointInfo;
 }
 
 //------------------------------------------------------------------------
@@ -414,6 +416,8 @@ else if (objP->Id () == LIGHTNING_ID)
 	objP->rType.lightningInfo = m_lightning;
 else if (objP->Id () == SOUND_ID)
 	objP->rType.soundInfo = m_sound;
+else if (objP->Id () == WAYPOINT_ID)
+	objP->cType.wayPointInfo = m_wayPoint;
 Refresh ();
 }
 
@@ -437,6 +441,8 @@ for (i = objectManager.Count (); i; i--, objP++)
 			objP->rType.lightningInfo = m_lightning;
 		else if (m_nBufferId == SOUND_ID)
 			objP->rType.soundInfo = m_sound;
+		else if (m_nBufferId == WAYPOINT_ID)
+			objP->cType.wayPointInfo = m_wayPoint;
 Refresh ();
 }
 
