@@ -486,7 +486,7 @@ char szFile [256];
 if (filename && *filename)
 	strcpy_s (szFile, sizeof (szFile), filename);
 else {
-	char szFile [256] = "\0";
+	szFile [0] = '\0';
 	if (!BrowseForFile (FALSE, 
 							  bExtBlkFmt ? "blx" : "blk", szFile, 
 							  "Block file|*.blk|"

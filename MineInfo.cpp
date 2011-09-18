@@ -121,8 +121,8 @@ links.Write (fp);
 triggerManager.WriteReactorInfo (fp);
 segmentManager.WriteRobotMakerInfo (fp);
 lightManager.WriteLightDeltaInfo (fp);
+segmentManager.WriteEquipMakerInfo (fp);
 if (fileInfo.size < 0) {
-	segmentManager.WriteEquipMakerInfo (fp);
 	fileInfo.size = fp->Tell () - startPos;
 	long endPos = fp->Tell ();
 	fp->Seek (startPos);
