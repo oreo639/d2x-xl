@@ -1627,7 +1627,7 @@ if (nVersion == 1) {
 			INFOMSG (" Mine converted to a Standard level")
 		else
 			ErrorMsg ("Mine converted to a Standard level.\n\nAll Vertigo and D2X-XL level elements have been removed.");
-		segmentManager.UpdateWalls (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
+		segmentManager.UpdateWalls (WALL_LIMIT, MAX_WALLS_D2 + 1);
 		triggerManager.ObjTriggerCount () = 0;
 		}
 	return;
@@ -1641,7 +1641,7 @@ if (nVersion == 2) {
 			INFOMSG (" Mine converted to a Vertigo level")
 		else
 			ErrorMsg ("Mine converted to a Vertigo level.\n\nAll D2X-XL level elements have been removed.");
-		segmentManager.UpdateWalls (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
+		segmentManager.UpdateWalls (WALL_LIMIT, MAX_WALLS_D2 + 1);
 		triggerManager.ObjTriggerCount () = 0;
 		}
 	return;
@@ -1654,7 +1654,7 @@ if (nVersion == 3) {
 			INFOMSG (" Mine converted to a D2X-XL level")
 		else
 			ErrorMsg ("Mine converted to a D2X-XL level.");
-		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
+		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT);
 		triggerManager.ObjTriggerCount () = 0;
 		}
 	}

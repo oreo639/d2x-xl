@@ -61,7 +61,7 @@ if (i != 0)
 if (LevelIsOutdated ()) {
 	undoManager.Lock ();
 	if (LevelVersion () < 15) {
-		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
+		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT);
 		triggerManager.ObjTriggerCount () = 0;
 		}
 	UpdateLevelVersion ();

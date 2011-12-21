@@ -27,7 +27,7 @@ if (LevelVersion () < 7 && IsD2File ()) {
 }
 if ((IsD2XLevel ()) && (LevelIsOutdated ())) {
 	UpdateLevelVersion ();
-	segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
+	segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT);
 	}
 
 // write version
