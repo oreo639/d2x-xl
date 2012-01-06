@@ -100,6 +100,17 @@ undoManager.End ();
 }
 
 //---------------------------------------------------------------------------------
+// When lighting a mine, DLE-XP will take each light in the mine, walk from it up
+// <render depth> segments away, lighting all segments it reaches. For each of these
+// segments, it will compute the brightness and color of each side's four corners,
+// generating 24 light values. Segments adjacent to those reached by a given light
+// will not receive any contribution from that light. This will lead to sharp light
+// borders, since each segment's lights stores its own light values, this disregarding
+// that they may share the same vertex. CalcAverageCornerLight fixes this by determining
+// the highest brightness any side corner related to a given vertex has and assigning
+// that value to all side corners related to that vertex.
+
+#define USE_AVG_LIGHT 0
 
 typedef struct tAvgCornerLight {
 	ushort	light;
@@ -119,6 +130,10 @@ undoManager.Begin (udSegments);
 //#pragma omp for
 	for (CSegmentIterator si; si; si++) {
 		CSegment *segP = &(*si);
+#if DBG
+		if (segP - segmentManager.Segments ().Buffer () == nDbgSeg)
+			nDbgSeg = nDbgSeg;
+#endif
 		for (int nPoint = 0; nPoint < 8; nPoint++) {
 			int nVertex = segP->m_info.verts [nPoint];
 			if (bAll || (vertexManager.Status (nVertex) & MARKED_MASK)) {
@@ -126,9 +141,18 @@ undoManager.Begin (udSegments);
 					CSide* sideP = &segP->m_sides [pointSideTable [nPoint][i]];
 					if (sideP->IsVisible ()) {
 						int nCorner = pointCornerTable [nPoint][i];
+#if DBG
+						if (nVertex == nDbgVertex)
+							nDbgVertex = nDbgVertex;
+#endif
+#if USE_AVG_LIGHT
+						maxBrightness [nVertex].light += (ushort) sideP->m_info.uvls [nCorner].l;
+						maxBrightness [nVertex].count++;
+#else
 						if (maxBrightness [nVertex].light < (ushort) sideP->m_info.uvls [nCorner].l)
 							maxBrightness [nVertex].light = (ushort) sideP->m_info.uvls [nCorner].l;
 						maxBrightness [nVertex].count++;
+#endif
 						}
 					}
 				}
@@ -149,6 +173,11 @@ undoManager.Begin (udSegments);
 							segP->Backup ();
 							bUndo = true;
 							}
+#if USE_AVG_LIGHT
+						if (maxBrightness [nVertex].count > 0)
+							sideP->m_info.uvls [pointCornerTable [nPoint][i]].l = maxBrightness [nVertex].light / maxBrightness [nVertex].count;
+						else
+#endif
 						sideP->m_info.uvls [pointCornerTable [nPoint][i]].l = maxBrightness [nVertex].light;
 						}
 					}

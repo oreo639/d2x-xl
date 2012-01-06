@@ -140,7 +140,7 @@ return (wallP == null) ? null : wallP->Trigger ();
 
 bool CSide::IsVisible (void)
 {
-return (m_info.nChild == -1) || wallManager.IsVisible (m_info.nWall);
+return ((short) m_info.nChild == -1) || wallManager.IsVisible (m_info.nWall);
 }
 
 // -----------------------------------------------------------------------------
