@@ -254,9 +254,9 @@ byte CPaletteManager::ClosestColor (CBGR& color)
 {
 	CBGR* palette = Current ();
 	uint delta, closestDelta = 0x7fffffff;
-	byte i, closestIndex = 0;
+	byte closestIndex = 0;
 
-for (i = 0; i < 256; i++) {
+for (int i = 0; i < 256; i++) {
 	delta = color.Delta (palette[i]);
 	if (delta < closestDelta) {
 		if (delta == 0)
