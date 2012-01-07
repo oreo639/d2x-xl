@@ -85,7 +85,7 @@ return true;
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CMineInfo::Read (CFileManager* fp) 
+void CMineInfo::Read (CFileManager* fp, bool bIsD2XLevel) 
 {
 fileInfo.Read (fp);
 fp->Read (mineFilename, 1, sizeof (mineFilename));
@@ -99,13 +99,13 @@ links.Read (fp);
 triggerManager.ReadReactorInfo (fp);
 segmentManager.ReadRobotMakerInfo (fp);
 lightManager.ReadLightDeltaInfo (fp);
-if (fileInfo.size > 143)
+if (bIsD2XLevel)
 	segmentManager.ReadEquipMakerInfo (fp);
 }
 
 // -----------------------------------------------------------------------------
 
-void CMineInfo::Write (CFileManager* fp) 
+void CMineInfo::Write (CFileManager* fp, bool bIsD2XLevel) 
 {
 	long startPos = fp->Tell ();
 
@@ -121,7 +121,8 @@ links.Write (fp);
 triggerManager.WriteReactorInfo (fp);
 segmentManager.WriteRobotMakerInfo (fp);
 lightManager.WriteLightDeltaInfo (fp);
-segmentManager.WriteEquipMakerInfo (fp);
+if (bIsD2XLevel)
+	segmentManager.WriteEquipMakerInfo (fp);
 if (fileInfo.size < 0) {
 	fileInfo.size = fp->Tell () - startPos;
 	long endPos = fp->Tell ();

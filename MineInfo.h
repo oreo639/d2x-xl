@@ -56,8 +56,8 @@ public:
 	int					level;
 	CPlayerItemInfo	player;
 
-	void Read (CFileManager* fp);
-	void Write (CFileManager* fp);
+	void Read (CFileManager* fp, bool bIsD2XLevel);
+	void Write (CFileManager* fp, bool bIsD2XLevel);
 };
 
 // -----------------------------------------------------------------------------

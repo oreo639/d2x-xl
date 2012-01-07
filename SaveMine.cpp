@@ -25,7 +25,7 @@ fp.WriteInt32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L'); // signature
 if (LevelVersion () < 7 && IsD2File ()) {
 	SetLevelVersion (7);
 }
-if ((IsD2XLevel ()) && (LevelIsOutdated ())) {
+if (IsD2XLevel () && LevelIsOutdated ()) {
 	UpdateLevelVersion ();
 	segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT);
 	}
@@ -176,7 +176,7 @@ else {
 	}
 
 int startOffset = fp->Tell ();
-Info ().Write (fp);
+Info ().Write (fp, IsD2XLevel ());
 if (Info ().fileInfo.version >= 14) // save mine file name
 	fp->Write (m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
 if (IsD2File ())
@@ -218,7 +218,7 @@ if (IsD2File ()) {
 	}
 
 fp->Seek (startOffset, SEEK_SET);
-Info ().Write (fp);
+Info ().Write (fp, IsD2XLevel ());
 fp->Seek (0, SEEK_END);
 return 0;
 }

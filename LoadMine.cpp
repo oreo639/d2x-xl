@@ -318,7 +318,7 @@ return 0;
 short CMine::LoadGameItems (CFileManager* fp, bool bCreate) 
 {
 // Check signature
-Info ().Read (fp);
+Info ().Read (fp, IsD2XLevel ());
 if (FileInfo ().signature != 0x6705) {
 	ErrorMsg ("Game data signature incorrect");
 	return -1;
