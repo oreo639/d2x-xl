@@ -250,21 +250,39 @@ else {
 
 //------------------------------------------------------------------------------
 
+#define USE_CLUT 1
+
 byte CPaletteManager::ClosestColor (CBGR& color)
 {
+
 	CBGR* palette = Current ();
 	uint delta, closestDelta = 0x7fffffff;
 	byte closestIndex = 0;
 
+#if USE_CLUT
+static CBGR* clutPalette = null;
+if (clutPalette != palette) {
+	clutPalette = palette;
+	ResetCLUT ();
+	}
+int l = (int) color.r + ((int) color.g << 8) + ((int) color.b << 16);
+uint f = 1 << (l & 31);
+if ((m_clutValid [l / 32] & f) != 0)
+	return m_clut [l];
+#endif
 for (int i = 0; i < 256; i++) {
-	delta = color.Delta (palette[i]);
+	delta = color.Delta (palette [i]);
 	if (delta < closestDelta) {
-		if (delta == 0)
-			return i;
 		closestIndex = i;
+		if (delta == 0)
+			break;
 		closestDelta = delta;
 		}
 	}
+#if USE_CLUT
+m_clut [l] = closestIndex;
+m_clutValid [l / 32] |= f;
+#endif
 return closestIndex;
 }
 

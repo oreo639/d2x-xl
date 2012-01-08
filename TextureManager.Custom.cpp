@@ -135,7 +135,9 @@ else {
 	fp.Seek (nOffset = texP->m_info.offset);
 	}
 
-sprintf_s (pigTexInfo.name, sizeof (pigTexInfo.name), "POG%04d", nId);
+char name [9];
+sprintf_s (name, sizeof (name), "POG%04d", nId);
+memcpy (pigTexInfo.name, name, sizeof (pigTexInfo.name));
 #if 1
 pigTexInfo.Setup (1, texP->m_info.width, texP->m_info.height, texP->m_info.nFormat ? 0x80 : 0, nOffset);
 #else
@@ -260,6 +262,7 @@ if (DLE.IsD1File ()) {
 	return 1;
 	}
 
+paletteManager.ResetCLUT ();
 textureCount = m_nTextures [1];
 
 sprintf_s (message, sizeof (message), "%s\\dle_temp.pog", m_startFolder);

@@ -27,6 +27,8 @@ class CPaletteManager {
 		CBGR				m_default [256];	
 		CBGR				m_superTransp;
 		byte				m_fadeTables [34 * 256];
+		byte				m_clut [0xFFFFFF]; // RGB -> palette
+		uint				m_clutValid [0xFFFFFF / 32];
 		tBMIInfo			m_bmi;
 		CPalette*		m_render;
 		LPLOGPALETTE	m_dlcLog;
@@ -80,6 +82,8 @@ class CPaletteManager {
 		CPaletteManager () : m_bHaveDefault (false), m_bHaveCustom (false) { *m_name = '\0'; }
 
 		~CPaletteManager () { Release (); }
+
+		inline void ResetCLUT (void) { memset (m_clutValid, 0, sizeof (m_clutValid)); }
 
 	private:
 		const char* SelectResource (void);
