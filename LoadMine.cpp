@@ -37,7 +37,7 @@ return bCreate ? 1 : 0;
 
 // -----------------------------------------------------------------------------
 
-short CMine::Backup (const char* filename)
+void CMine::Backup (const char* filename)
 {
 	CFileManager	fp;
 	char				pszBackup1 [256], pszBackup2 [256];
