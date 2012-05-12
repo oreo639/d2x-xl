@@ -1093,16 +1093,16 @@ switch (nType) {
 		lightManager.WriteColorMap (fTmp);
 		break;
 	case 2:
-		i = paletteManager.SaveCustom (&fTmp);
+		nResult = paletteManager.SaveCustom (&fTmp);
 		break;
 	case 3:
-		i = textureManager.CreatePog (fTmp);
+		nResult = textureManager.CreatePog (fTmp);
 		break;
 	case 4:
-		i = robotManager.WriteHXM (fTmp);
+		nResult = robotManager.WriteHXM (fTmp);
 		break;
 	default:
-		i = 0;
+		nResult = 0;
 		break;
 	}
 fTmp.Close ();

@@ -43,7 +43,7 @@ if (fp == null) {
 	if (fp->Open (szFile, "rb")) {
 		sprintf_s (message, sizeof (message), " Ham manager: Cannot open robot file <%s>.", szFile);
 		DEBUGMSG (message);
-		return 1;
+		return 0;
 		}
 	}
 
@@ -59,7 +59,7 @@ if (type == NORMAL_HAM)  {
 	if (id != MAKESIG (d2HamSig)) {//0x214d4148L) {
 		sprintf_s (message, sizeof (message), "Not a D2 HAM file (%s)", fp->Name ());
 		ErrorMsg (message);
-	    return 1;
+	    return 0;
 		}
 	fp->ReadInt32 (); // version (0x00000007)
 	t = fp->ReadInt32 ();
@@ -80,7 +80,7 @@ else if (type == EXTENDED_HAM)  {
 	if (id != MAKESIG (d2xHamSig)) {//0x214d4148L) {
 		sprintf_s (message, sizeof (message), "Not a D2X HAM file (%s)", fp->Name ());
 		ErrorMsg (message);
-	    return 1;
+	    return 0;
 		}
 	fp->ReadInt32 (); //skip version
 	t = fp->ReadInt32 (); //skip weapon count
@@ -119,103 +119,11 @@ if (t > MAX_POLYGON_MODELS) {
 	sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",
 				t, fp->Name (), MAX_POLYGON_MODELS - N_POLYGON_MODELS_D2);
 	ErrorMsg (message);
-	return 1;
+	return 0;
 	}
-#if ALLOCATE_POLYMODELS
-  // read joint information
-  t = fp->ReadInt32 ();
-  t0 = (type == NORMAL_HAM) ? 0: N_ROBOT_JOINTS_D2;
-  N_robot_joints = t0 + t;
-  if (N_robot_joints > MAX_ROBOT_JOINTS) {
-    sprintf_s (message, sizeof (message), "Too many robot joints (%d) in <%s>.  Max is %d.",
-					t, fp->Name (), MAX_ROBOT_JOINTS - N_ROBOT_JOINTS_D2);
-    ErrorMsg (message);
-    goto abort;
-  }
-  fread( &Robot_joints[t0], sizeof (JOINTPOS), t );
-
-  // skip weapon and powerup data
-  if (type == NORMAL_HAM) {
-    t = fp->ReadInt32 ();
-    fp->Seek (sizeof (WEAPON_INFO) * t, SEEK_CUR);
-    t = fp->ReadInt32 ();
-    fp->Seek (sizeof (POWERUP_TYPE_INFO) * t, SEEK_CUR);
-  }
-
-  // read poly model data
-  t = fp->ReadInt32 ();
-  t0 = (type == NORMAL_HAM) ? 0: N_POLYGON_MODELS_D2;
-  N_polygon_models = t0 + t;
-  if (N_polygon_models > MAX_POLYGON_MODELS) {
-    sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",
-					t, fp->Name (), MAX_POLYGON_MODELS - N_POLYGON_MODELS_D2);
-    ErrorMsg (message);
-    goto abort;
-  }
-
-  short i;
-
-  for (i=t0; i<t0+t; i++ ) {
-    // free poly data memory if already allocated
-    if (Polygon_models[i]->model_data != null ) {
-      free((void *)Polygon_models[i]->model_data);
-    }
-    fread(Polygon_models[i], sizeof (tPolyModel), 1 );
-    fread(&Polygon_model, sizeof (tPolyModel), 1 );
-  }
-  for (i=t0; i<t0+t; i++ ) {
-    Polygon_models[i]->model_data = (ubyte *) malloc((int)Polygon_models[i]->model_dataSize);
-
-    if (Polygon_models[i]->model_data == null ) {
-      ErrorMsg ("Could not allocate memory for polymodel data");
-      goto abort;
-    }
-    fread( Polygon_models[i]->model_data, sizeof (ubyte), (short)Polygon_models[i]->model_dataSize );
-//    g3_init_polygon_model(Polygon_models[i].model_data);
-  }
-
-  // extended hog writes over normal hogs dying models instead of adding new ones
-  fread( &Dying_modelnums[t0], sizeof (int), t );
-  fread( &Dead_modelnums[t0], sizeof (int), t );
-
-  // skip gague data
-  if (type == NORMAL_HAM) {
-    t = fp->ReadInt32 ();
-    fp->Seek (sizeof (ushort) * t, SEEK_CUR); // lores gague
-    fp->Seek (sizeof (ushort) * t, SEEK_CUR); // hires gague
-  }
-
-  // read object bitmap data
-  // NOTE: this overwrites D2 object bitmap indices instead of adding more bitmap texture indices.  
-  // I believe that D2 writes all 600 indices even though it doesn't use all of them.
-  t = fp->ReadInt32 ();
-  t0 = (type == NORMAL_HAM) ? 0: N_OBJBITMAPS_D2;
-  if (type == NORMAL_HAM) {
-    N_object_bitmaps  = t0 + t;  // only update this if we are reading Descent2.ham file
-  }
-  if (t+t0 > MAX_OBJ_BITMAPS) {
-    sprintf_s (message, sizeof (message), "Too many object bitmaps (%d) in <%s>.  Max is %d.",
-					t, fp->Name (), MAX_OBJ_BITMAPS - N_OBJBITMAPS_D2);
-    ErrorMsg (message);
-    goto abort;
-  }
-  fread( &ObjBitmaps[t0], sizeof (ushort), t );
-
-  if (type == EXTENDED_HAM) {
-    t = fp->ReadInt32 ();
-    t0 = (type == NORMAL_HAM) ? 0: N_OBJBITMAPPTRS_D2;
-    if (t+t0 > MAX_OBJ_BITMAPS) {
-      sprintf_s (message, sizeof (message), "Too many object bitmaps pointer (%d) in <%s>.  Max is %d.",
-					  t, fp->Name (), MAX_OBJ_BITMAPS - N_OBJBITMAPPTRS_D2);
-      ErrorMsg (message);
-      goto abort;
-    }
-  }
-  fread(&ObjBitmapPtrs[t0], sizeof (ushort), t );
-#endif
 
 fp->Close ();
-return 0;
+return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -227,7 +135,7 @@ int CRobotManager::ReadHXM (CFileManager& fp, long size)
 
 if (!fp.File ()) {
 	ErrorMsg ("Invalid file handle for reading HXM data.");
-	return 1;
+	return 0;
 	}
 
 long p = fp.Tell ();
@@ -237,7 +145,7 @@ uint id;
 id = fp.ReadInt32 (); // "HXM!"
 if (id != 0x21584d48L) {
 	ErrorMsg ("Not a HXM file");
-	return 1;
+	return 0;
 	}
 
 if (m_hxmExtraData) {
@@ -254,7 +162,7 @@ for (j = 0; j < n; j++) {
 	if ((i < 0) || (i >= (int) m_nRobotTypes)) {
 		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].", i, m_nRobotTypes - 1);
 		ErrorMsg (message);
-		return 1;
+		return 0;
 		}
 	rInfo.Read (&fp);
 	// compare this to existing data
@@ -269,15 +177,15 @@ if (m_hxmExtraDataSize > 0) {
 	m_hxmExtraData = new ubyte [m_hxmExtraDataSize];
 	if (m_hxmExtraData == null) {
 		ErrorMsg ("Couldn'n allocate extra data from hxm file.\nThis data will be lost when saving the level!");
-		return 1;
+		return 0;
 		}
 	if (fp.Read (m_hxmExtraData, m_hxmExtraDataSize, 1) != 1) {
 		ErrorMsg ("Couldn'n read extra data from hxm file.\nThis data will be lost when saving the level!");
-		return 1;
+		return 0;
 		}
 	modelManager.ReadCustomModelData (m_hxmExtraData, m_hxmExtraDataSize);
 	}
-return 0;
+return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -290,11 +198,11 @@ for (i = 0, t = 0; i < m_nRobotTypes; i++)
 	if (IsCustomRobot (i))
 		t++;
 if ((t == 0) && (m_hxmExtraDataSize == 0))
-	return 0;
+	return 1;
 
 if (!fp.File ()) {
 	ErrorMsg ("Invalid file handle for writing HXM data.");
-	return 1;
+	return 0;
 	}
 
 fp.WriteInt32 (0x21584d48);	// "HXM!"
@@ -324,8 +232,7 @@ if (t) {
 	sprintf_s (message, sizeof (message)," Hxm manager: Saving %d custom robots",t);
 	DEBUGMSG (message);
 	}
-fp.Close ();
-return 0;
+return fp.Close ();
 }
 
 //------------------------------------------------------------------------------

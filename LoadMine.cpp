@@ -256,7 +256,7 @@ if (!(bLoadFromHog || bCreate)) {
 					ErrorMsg ("Could not open HOG file.");
 				else {
 					if (0 < hfp.Seek (nOffset + lh.Size (), SEEK_SET))
-						m_bVertigo = robotManager.ReadHAM (&hfp, EXTENDED_HAM) == 0;
+						m_bVertigo = robotManager.ReadHAM (&hfp, EXTENDED_HAM) != 0;
 					hfp.Close ();
 					}
 				}

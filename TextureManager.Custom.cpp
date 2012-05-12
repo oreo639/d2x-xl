@@ -281,7 +281,7 @@ if (!textureManager.Available ())
 
 if (DLE.IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
-	return 1;
+	return 0;
 	}
 
 paletteManager.ResetCLUT ();
@@ -344,7 +344,7 @@ for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	if (0 > WriteCustomTexture (fp, extraTexP))
 		WriteCustomTextureHeader (fp, extraTexP); // need to rewrite to reflect changed texture type in header data
 #endif
-return 0;
+return 1;
 }
 
 //------------------------------------------------------------------------------
