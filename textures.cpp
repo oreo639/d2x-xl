@@ -79,7 +79,7 @@ if (bShowTexture) {
 	// check pig file
 	if (nOffset [bDescent1] == 0) {
 		strcpy_s (szFile, sizeof (szFile), (bDescent1) ? descentFolder [0] : descentFolder [1]);
-		if (fp.Open (szFile, "rb"))
+		if (!fp.Open (szFile, "rb"))
 			nOffset [bDescent1] = -1;  // pig file not found
 		else {
 			fp.Seek (0, SEEK_SET);
@@ -434,7 +434,7 @@ bool CTexture::LoadTGA (char* pszFile)
 {
 	CFileManager fp;
 
-if (fp.Open (pszFile, "rb"))
+if (!fp.Open (pszFile, "rb"))
 	return false;
 bool bSuccess = LoadTGA (fp);
 fp.Close ();

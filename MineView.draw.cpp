@@ -1053,7 +1053,7 @@ else {
 	}
 
 double d = ViewMatrix ()->Distance (objP->Position ());
-if (textureManager.Available (1) && objP->HasPolyModel () && !modelManager.Setup (objP, m_renderer, DC ()) && 
+if (textureManager.Available (1) && objP->HasPolyModel () && modelManager.Setup (objP, m_renderer, DC ()) && 
 	 ((nObject == current->m_nObject) || (/*Perspective () &&*/ (d <= MODEL_DISPLAY_LIMIT)))) {
 	SelectObjectPen (objP, bClear);
 	if (objP->DrawArrow (Renderer (), -1)) { // only render if fully visible (check using the arrow representation)

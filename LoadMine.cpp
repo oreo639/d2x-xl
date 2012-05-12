@@ -19,7 +19,7 @@ if (fp == null) {
 		CFileManager::SplitPath (IsD1File () ? descentFolder [0] : missionFolder, m_startFolder, null, null);
 		char filename [256];
 		sprintf_s (filename, sizeof (filename), IsD1File () ? "%new.rdl" : "%snew.rl2", m_startFolder);
-		if (df.Open (filename, "rb")) {
+		if (!df.Open (filename, "rb")) {
 			sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
 			ErrorMsg (message);
 			return -1;
@@ -62,7 +62,7 @@ fp.Copy (filename, pszBackup1);
 short CMine::Load (const char* filename)
 {
 CMemoryFile	fp;
-return fp.Open (filename, "rb") ? Load (null, false) : Load (&fp, false);
+return fp.Open (filename, "rb") ? Load (&fp, false) : Load (null, false);
 }
 
 // -----------------------------------------------------------------------------
@@ -252,7 +252,7 @@ if (!(bLoadFromHog || bCreate)) {
 				if (p = strstr (szHamFile, "data"))
 					*p = '\0';
 				strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
-				if (hfp.Open (szHogFile, "rb"))
+				if (!hfp.Open (szHogFile, "rb"))
 					ErrorMsg ("Could not open HOG file.");
 				else {
 					if (0 < hfp.Seek (nOffset + lh.Size (), SEEK_SET))

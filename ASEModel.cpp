@@ -795,7 +795,7 @@ int CModel::SaveBinary (const char* pszFolder, const short nModel)
 char szFile [256];
 sprintf (szFile, "%s\\model%3d.bin", pszFolder, nModel);
 
-if (fp.Open (szFile, "wb"))
+if (!fp.Open (szFile, "wb"))
 	return 0;
 fp.WriteInt32 (MODEL_DATA_VERSION);
 fp.Write (m_nModel);
@@ -872,7 +872,7 @@ time_t tBIN = fp.Date (szFile);
 if (tASE > tBIN)
 	return 0;
 
-if (fp.Open (szFile, "rb"))
+if (!fp.Open (szFile, "rb"))
 	return 0;
 h = fp.ReadInt32 ();
 if (h != MODEL_DATA_VERSION) {
@@ -964,10 +964,9 @@ catch(...) {
 	Destroy ();
 	}
 #endif
-if (fp.Open (szFile, "rb")) {
+if (!fp.Open (szFile, "rb")) 
 	return 0;
-	}
-
+	
 m_folder = pszFolder;
 bErrMsg = 0;
 aseFile = &fp;

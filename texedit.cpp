@@ -812,7 +812,7 @@ void CTextureEdit::OnLoad ()
 if (GetOpenFileName (&ofn)) {
 	if (strchr (ofn.lpstrFile, '.'))
 		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strchr (ofn.lpstrFile, '.') + 1, 3);
-	if (fp.Open (ofn.lpstrFile, "rb")) {
+	if (!fp.Open (ofn.lpstrFile, "rb")) {
 		ErrorMsg ("Could not open texture file.");
 		goto errorExit;
 		}
@@ -906,7 +906,7 @@ ofn.nMaxFile = sizeof (szFile);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 if (GetSaveFileName (&ofn)) {
 	_strlwr_s (ofn.lpstrFile, sizeof (szFile));
-	if (fp.Open (ofn.lpstrFile, "wb")) {
+	if (!fp.Open (ofn.lpstrFile, "wb")) {
 		ErrorMsg ("Could not create texture file.");
 		return;
 		}

@@ -11,11 +11,11 @@ if (segmentManager.Overflow ()) {
 		ErrorMsg ("Warning: Too many segments and vertices for this level version!");
 	else
 		ErrorMsg ("Warning: Too many segments for this level version!");
-	//return 1;
+	//return 0;
 	}
 else if (vertexManager.Overflow ()) {
 	ErrorMsg ("Warning: Too many vertices for this level version!");
-	//return 1;
+	//return 0;
 	}
 
 	CFileManager	fp;
@@ -25,8 +25,8 @@ else if (vertexManager.Overflow ()) {
 
 UpdateCenter ();
 strcpy_s (filename, sizeof (filename), szFile);
-if (fp.Open (filename, "w+b"))
-	return 1;
+if (!fp.Open (filename, "w+b"))
+	return 0;
 
 m_changesMade = 0;
 // write file signature
@@ -88,7 +88,7 @@ mineDataOffset = fp.Tell ();
 if (0 > (mineErr = SaveMineGeometry (&fp))) {
 	fp.Close ();
 	ErrorMsg ("Error saving mine data");
-	return(2);
+	return -2;
 	}
 
 // save game data
@@ -96,7 +96,7 @@ gameDataOffset = fp.Tell ();
 if (0 > (gameErr = SaveGameItems (&fp))) {
 	fp.Close ();
 	ErrorMsg ("Error saving game data");
-	return(3);
+	return -3;
 	}
 
 // save hostage data
@@ -118,7 +118,7 @@ if (textureManager.HasCustomTextures () && !bSaveToHog) {
 		strcpy_s (ps, sizeof (filename) - (ps - filename), ".pog");
 	else
 		strcat_s (filename, sizeof (filename), ".pog");
-	if (!fp.Open (filename, "wb")) {
+	if (fp.Open (filename, "wb")) {
 		textureManager.CreatePog (fp);
 		fp.Close ();
 		}
@@ -130,10 +130,10 @@ if (robotManager.HasCustomRobots () && !bSaveToHog) {
 		strcpy_s (ps, sizeof (filename) - (ps - filename), ".hxm");
 	else
 		strcat_s (filename, sizeof (filename), ".hxm");
-	if (!fp.Open (filename, "wb"))
+	if (fp.Open (filename, "wb"))
 		robotManager.WriteHXM (fp);
 	}
-return 0;
+return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -162,7 +162,7 @@ segmentManager.WriteSegments (fp);
 // for Descent 2, save special info here
 if (LevelVersion () >= 9)
 	lightManager.WriteColors (*fp);
-return 0;
+return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -211,7 +211,7 @@ else {
 CResource res;
 ubyte* savePofNames = res.Load (IsD1File () ? IDR_POF_NAMES1 : IDR_POF_NAMES2);
 if (savePofNames == null)
-	return 1;
+	return 0;
 fp->Write (savePofNames, nSavePofNames, 13); // 13 characters each
 
 Info ().player.offset = fp->Tell ();
@@ -232,7 +232,7 @@ if (IsD2File ()) {
 fp->Seek (startOffset, SEEK_SET);
 Info ().Write (fp, IsD2XLevel ());
 fp->Seek (0, SEEK_END);
-return 0;
+return 1;
 }
 
 // --------------------------------------------------------------------------

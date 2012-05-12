@@ -589,7 +589,7 @@ else
 	strcat (szFile, m_bExtended ? ".blx" : ".blk");
 
 CFileManager fp;
-if (fp.Open (szFile, "w")) {
+if (!fp.Open (szFile, "w")) {
 	ErrorMsg ("Unable to open block file");
 	return;
 	}
@@ -647,7 +647,7 @@ int CBlockManager::Read (char *filename)
 	CFileManager fp;
 
 _strlwr_s (filename, 256);
-if (fp.Open (filename, "r")) {
+if (!fp.Open (filename, "r")) {
 	ErrorMsg ("Unable to open block file");
 	return 1;
 	}	

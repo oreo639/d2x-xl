@@ -69,10 +69,10 @@ modelManager.m_object = objP;
 m_nModel = Model ();
 
 if (m_nModel < 0)
-	return 1;
+	return 0;
 
 if (m_polyModels [0][m_nModel].m_info.renderData || m_polyModels [1][m_nModel].m_info.renderData || (m_renderModels [m_nModel].m_nModel >= 0))
-	return 0;
+	return 1;
 
 char filename[256];
 
@@ -95,9 +95,9 @@ if (bVertigo)
 	strcpy_s (filename, sizeof (filename), "..\\missions\\d2x.hog");
 else
 	strcat_s (filename, sizeof (filename), "descent2.ham");
-if (ReadModelData (filename, bVertigo ? "d2x.ham" : "", bCustom || bVertigo))
-	return 1;
-return 0;
+if (!ReadModelData (filename, bVertigo ? "d2x.ham" : "", bCustom || bVertigo))
+	return 0;
+return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -119,15 +119,15 @@ int CModelManager::ReadModelData (char* filename, char *szSubFile, bool bCustom)
 {
 	CFileManager fp;
 
-if (fp.Open (filename, "rb"))
-	return 1;
+if (!fp.Open (filename, "rb"))
+	return 0;
 
 	uint	id;
 	uint	i, n;
 
 if (bCustom) {
 	if (0 > hogManager->ReadSignature (&fp))
-		return 1;
+		return 0;
 
 	CLevelHeader lh;
 	long position;
@@ -137,13 +137,13 @@ if (bCustom) {
 		fp.Seek (position, SEEK_SET);
 		if (!lh.Read (&fp)) {
 			fp.Close ();
-			return 1;
+			return 0;
 			}
 		if (!strcmp (lh.Name (), szSubFile)) {
 			id = fp.ReadInt32 ();	  					   
 			if (id != 0x5848414DL) {
 				fp.Close ();
-				return 1;
+				return 0;
 				}
 			fp.ReadInt32 ();											
 			n = fp.ReadInt32 ();										
@@ -167,7 +167,7 @@ else {
 	id = fp.ReadInt32 ();	  					   
 	if (id != 0x214d4148L) {
 		fp.Close ();
-		return 1;
+		return 0;
 		}
 	fp.ReadInt32 ();                              
 	n = fp.ReadUInt32 ();                         
@@ -208,7 +208,7 @@ else {
 	fp.Read (m_modelTextureIndex [0], sizeof (ushort), n);
 	}
 fp.Close ();
-return 0;
+return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -216,7 +216,7 @@ return 0;
 void CModelManager::ReadCustomModelData (ubyte* buffer, long bufSize)
 {
 CMemoryFile mf;
-if (!mf.Open (buffer, bufSize)) {
+if (mf.Open (buffer, bufSize)) {
 	uint n, i, j;
 	
 	memcpy (m_textureIndex [1], m_textureIndex [0], sizeof (m_textureIndex [1]));

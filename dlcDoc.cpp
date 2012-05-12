@@ -396,7 +396,7 @@ return (err == 0);
 //BOOL CDlcDoc::OnSaveDocument (LPCTSTR lpszPathName) 
 bool CDlcDoc::SaveFile (bool bSaveAs) 
 {
-	int err = 0;
+	int result = 0;
 
 DLE.ToolView ()->Refresh ();
 //textureManager.CountCustomTextures ();
@@ -411,15 +411,15 @@ if (!*m_szFile) {
 if (bSaveAs && !BrowseForFile (m_szFile, FALSE))
 	return false;
 if (strstr (m_szFile, ".hog"))
-	err = SaveToHog (m_szFile, m_szSubFile, bSaveAs);
+	result = SaveToHog (m_szFile, m_szSubFile, bSaveAs);
 else
-	err = theMine->Save (m_szFile);
-SetModifiedFlag (err != 0);
-if (!err) {
+	result = theMine->Save (m_szFile);
+SetModifiedFlag (result == 0);
+if (result) {
 	UpdateCaption ();
 	AfxGetApp ()->AddToRecentFileList (m_szFile);
 	}
-return (err == 0);
+return result != 0;
 }
 
 //------------------------------------------------------------------------------

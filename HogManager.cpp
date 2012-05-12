@@ -428,7 +428,7 @@ else {
 	if (0 > (index = GetFileData (-1, &size, &offset)))
 		return false;
 	}
-if (fSrc.Open (pszFile, "rb")) {
+if (!fSrc.Open (pszFile, "rb")) {
 	ErrorMsg ("Unable to load requested level.");
 	return false;
 	}
@@ -542,7 +542,7 @@ if (FindFilename (szNewName) >= 0) {
 	return;
 	}
 CFileManager fp;
-if (fp.Open (m_pszFile, "r+b")) {
+if (!fp.Open (m_pszFile, "r+b")) {
 	ErrorMsg ("Could not open HOG file.");
 	return;
 	}
@@ -620,13 +620,13 @@ if (!GetOpenFileName (&ofn))
 	return;
 
 CFileManager fDest;
-if (fDest.Open (m_pszFile, "ab")) {
+if (!fDest.Open (m_pszFile, "ab")) {
 	ErrorMsg ("Could not open destination HOG file for import.");
 	return;
 	}
 
 CFileManager fSrc;
-if (fSrc.Open (szFile, "rb")) {
+if (!fSrc.Open (szFile, "rb")) {
 	ErrorMsg ("Could not open source file for import.");
 	return;
 	}
@@ -718,7 +718,7 @@ if (!DLE.ExpertMode ()) {
 fileno = GetFileData (deleteIndex, &size, &offset);
 int nFiles = plb->GetCount ();
 // open hog fp for modification
-if (fp.Open (m_pszFile, "r+b")) {
+if (!fp.Open (m_pszFile, "r+b")) {
 	ErrorMsg ("Could not open hog fp.");
 	return;
 	}
@@ -760,7 +760,7 @@ int CHogManager::ReadData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bO
 	CFileManager fp;
 
 ::ClearFileList (plb);
-if (fp.Open (pszFile, "rb")) {
+if (!fp.Open (pszFile, "rb")) {
 	sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)", pszFile);
 	ErrorMsg (message);
 	return -1;
@@ -877,12 +877,12 @@ return false;
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size) 
 {
 CFileManager fSrc;
-if (fSrc.Open (pszSrc, "rb")) {
+if (!fSrc.Open (pszSrc, "rb")) {
 	ErrorMsg ("Could not open HOG file.");
 	return false;
 	}
 CFileManager fDest;
-if (fDest.Open (pszDest, "wb")) {
+if (!fDest.Open (pszDest, "wb")) {
 	ErrorMsg ("Could not create export file.");
 	return false;
 	}
@@ -1031,10 +1031,10 @@ int WriteSubFile (CFileManager& fDest, char *szSrc, char *szLevel)
 	CFileManager	fSrc;
 	size_t			nBytes;
 
-if (fSrc.Open (szSrc, "rb")) {
+if (!fSrc.Open (szSrc, "rb")) {
 	sprintf_s (message, sizeof (message), "Unable to open temporary file:\n%s",szSrc);
 	ErrorMsg (message);
-	return -1;
+	return 0;
 	}
 // write szLevel (13 chars, null filled)
 CLevelHeader lh (DLE.IsD2XLevel ());
@@ -1082,9 +1082,9 @@ int WriteCustomFile (CFileManager&fp, const int nType, const char* szFolder, con
 
 CFileManager::SplitPath (szFolder, szTmp, null, null);
 sprintf_s (szTmp, sizeof (szTmp), "%sdle_temp%s", szFolder, extensions [nType]);
-if (fTmp.Open (szTmp, "wb"))
-	return 1;
-int i = 0;
+if (!fTmp.Open (szTmp, "wb"))
+	return 0;
+int nResult = 1;
 switch (nType) {
 	case 0:
 		lightManager.WriteLightMap (fTmp);
@@ -1102,16 +1102,16 @@ switch (nType) {
 		i = robotManager.WriteHXM (fTmp);
 		break;
 	default:
-		i = 1;
+		i = 0;
 		break;
 	}
 fTmp.Close ();
-if (!i) {
+if (nResult) {
 	sprintf_s (szDest, sizeof (szDest), "%s%s", szFile, extensions [nType]);
-	i = WriteSubFile (fp, szTmp, szDest);
+	nResult = WriteSubFile (fp, szTmp, szDest) > 0;
 	}
 CFileManager::Delete (szTmp);
-return i;
+return nResult;
 }
 
 //--------------------------------------------------------------------------------
@@ -1156,10 +1156,10 @@ int CreateHogFile (char* rdlFilename, char* hogFilename, char* szSubFile, bool b
 	int				custom_textures = 0;
 
 // create HOG file which contains szTmp.rdl, szTmp.txb, and dlebrief.txb");
-if (fp.Open (hogFilename, "wb")) {
+if (!fp.Open (hogFilename, "wb")) {
 	sprintf_s (message, sizeof (message), "Unable to create HOG file:\n%s", hogFilename);
 	ErrorMsg (message);
-	return 1;
+	return 0;
 	}
 // write fp type
 WriteHogHeader (fp);
@@ -1199,7 +1199,7 @@ WriteCustomFiles (fp, szFolder, szFile, true);
 
 fp.Close ();
 MakeMissionFile (hogFilename, szSubFile, custom_textures, custom_robots, bSaveAs);
-return 0;
+return 1;
 }
 
 //==========================================================================
@@ -1218,7 +1218,7 @@ if (!*szSubFile || psz) {
 	CLevelHeader lh (DLE.IsD2XLevel ());
 	CInputDialog dlg (DLE.MainFrame (), "Name mine", "Enter file name:", szSubFile, lh.NameSize () - 4);
 	if (dlg.DoModal () != IDOK)
-		return 1;
+		return 0;
 	LPSTR ext = strrchr (szSubFile, '.');
 	if (ext)
 		*ext = '\0';
@@ -1250,7 +1250,7 @@ CFileManager fp;
 CFileManager::SplitPath (szHogFile, szFolder, null, null);
 int bOtherFilesFound = 0;
 int bIdenticalLevelFound = 0;
-if (fp.Open (szHogFile, "r+b")) {
+if (!fp.Open (szHogFile, "r+b")) {
 	strcat_s (szFolder, sizeof (szFolder), "dle_temp.rdl");
 	theMine->Save (szFolder);
 	return CreateHogFile (szFolder, szHogFile, szSubFile, true);
@@ -1284,7 +1284,7 @@ if (!bOtherFilesFound)
 	bQuickSave = 1;
 else if (bIdenticalLevelFound) {
 	if (QueryMsg ("Overwrite old level with same name?") != IDYES)
-		return 1;
+		return 0;
 	}
 else {
 	// otherwise, if save fp was not found,
@@ -1311,17 +1311,17 @@ CFileManager::SplitPath (szSubFile, null, szFile, null);
 szFile [8] = null;
 _strlwr_s (szFile, sizeof (szFile));
 
-if (fp.Open (szHogFile, "r+b")) {
+if (!fp.Open (szHogFile, "r+b")) {
 	ErrorMsg ("Destination HOG file not found or inaccessible.");
-	return 1;
+	return 0;
 	}
 DeleteLevelSubFiles (fp, szFile);
 fp.Close ();
 // now append sub-files to the end of the HOG file
 
-if (fp.Open (szHogFile, "ab")) {
+if (!fp.Open (szHogFile, "ab")) {
 	ErrorMsg ("Could not open destination HOG file for save.");
-	return 1;
+	return 0;
 	}
 fp.Seek (0, SEEK_END);
 sprintf_s (szTmp, sizeof (szTmp), "%sdle_temp.rdl", szFolder);
@@ -1332,7 +1332,7 @@ CFileManager::Delete (szTmp);
 WriteCustomFiles (fp, szFolder, szFile);
 
 fp.Close ();
-return 0;
+return 1;
 }
 
 //------------------------------------------------------------------------------

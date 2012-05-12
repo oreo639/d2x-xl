@@ -68,7 +68,7 @@ m_buffer = buffer;
 m_info.size = bufSize;
 m_info.position = 0;
 m_bLocalBuffer = false;
-return (m_buffer == null);
+return (m_buffer != null);
 }
 
 // ----------------------------------------------------------------------------
@@ -205,7 +205,7 @@ if (m_buffer != null) {
 	}
 m_info.size = 0;
 m_info.position = -1;
-return 0;
+return 1;
 }
 
 // ----------------------------------------------------------------------------

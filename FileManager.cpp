@@ -200,13 +200,13 @@ int CFileManager::Open (const char *filename, const char *mode)
 {
 m_info.file = null;
 if (!(filename && *filename))
-	return 1;
+	return 0;
 if (fopen_s (&m_info.file, filename, mode))
-	return 1;
+	return 0;
 m_info.position = Tell ();
 m_info.size = ffilelength (m_info.file);
 m_info.name = const_cast<char*> (filename);
-return 0;
+return 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -364,7 +364,7 @@ int CFileManager::Close (bool bReset)
 
 if (!m_info.file)
 	return 0;
-result = fclose (m_info.file);
+result = !fclose (m_info.file);
 m_info.file = null;
 if (bReset) {
 	m_info.size = 0;
@@ -541,7 +541,7 @@ int CFileManager::Copy (const char *pszSrc, const char *pszDest)
 	INT8	buffer [COPY_BUF_SIZE];
 	CFileManager	cf;
 
-if (cf.Open (pszDest, "wb"))
+if (!cf.Open (pszDest, "wb"))
 	return -1;
 if (Open (pszSrc, "rb"))
 	return -2;
@@ -557,11 +557,11 @@ while (!EoF ()) {
 		return -2;
 	}
 	}
-if (Close ()) {
+if (!Close ()) {
 	cf.Close ();
 	return -3;
 	}
-if (cf.Close ())
+if (!cf.Close ())
 	return -4;
 return 0;
 }
