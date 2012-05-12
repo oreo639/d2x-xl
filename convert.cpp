@@ -932,6 +932,9 @@ for (i = 0; i < triggerManager.WallTriggerCount (); i++, trigP++) {
 	trigP->Type () = 0;
 	}
 
+#if 0 
+// the following code will remove all segments exceeding the maximum segment count for Descent 1 levels and
+// as well as all excess walls and triggers
 if (0 < (h = segmentManager.Count () - MAX_SEGMENTS_D1)) {
 	for (short nSegment = segmentManager.Count () - 1; nSegment >= 0; nSegment--) {
 		if (segmentManager.IsExit (nSegment))
@@ -998,6 +1001,7 @@ for (i = 0; i < wallManager.WallCount (); i++, wallP++) {
 	wallP->Info ().controllingTrigger = 0;
 	wallP->Info ().cloakValue = 0;
 	}
+#endif
 
 CSegment* segP = segmentManager.Segment (0);
 char** names = textureManager.m_names [1];
