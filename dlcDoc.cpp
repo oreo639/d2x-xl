@@ -354,6 +354,7 @@ if (strstr (pszFile, ".hog")) {
 		if (hogManager->DoModal () != IDOK)
 			return FALSE;
 		}
+	theMine->Backup (pszFile);
 	if (pszFile != m_szFile)
 		strcpy_s (m_szFile, sizeof (m_szFile), szFile);
 	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);

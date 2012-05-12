@@ -37,6 +37,25 @@ return bCreate ? 1 : 0;
 
 // -----------------------------------------------------------------------------
 
+short CMine::Backup (const char* filename)
+{
+	CFileManager	fp;
+	char				pszBackup1 [256], pszBackup2 [256];
+
+strcpy (pszBackup1, filename);
+char* ps = strrchr (pszBackup1, '.');
+if (ps)
+	*ps = '\0';
+strcpy (pszBackup2, pszBackup1);
+strcat (pszBackup1, ".bak.1");
+strcat (pszBackup2, ".bak.2");
+if (fp.Exist (pszBackup1))
+	fp.Copy (pszBackup1, pszBackup2);
+fp.Copy (filename, pszBackup1);
+}
+
+// -----------------------------------------------------------------------------
+
 short CMine::Load (const char* filename)
 {
 CMemoryFile	fp;

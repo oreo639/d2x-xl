@@ -106,6 +106,8 @@ class CMine {
 
 		inline CDoubleMatrix& SecretOrient (void) { return objectManager.SecretOrient (); }
 
+		short Backup (const char *filename);
+
 		short Load (const char *filename = "");
 
 		short Load (CFileManager* fp, bool bLoadFromHog);
