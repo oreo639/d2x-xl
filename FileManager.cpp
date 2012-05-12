@@ -101,11 +101,7 @@ FILE* CFileManager::GetFileHandle (const char *filename, const char *mode)
 {
 	FILE	*fp;
 
-if (fopen_s (&fp, filename, mode)) {
-	fclose (fp);
-	fp = null;
-	}
-return fp;
+return fopen_s (&fp, filename, mode) ? null : fp;
 }
 
 // ----------------------------------------------------------------------------
@@ -136,13 +132,11 @@ return nFileError;
 
 int CFileManager::Exist (const char *filename) 
 {
-	FILE *fp;
+	FILE *fp = GetFileHandle (filename, "rb");
 
-if ((fp = GetFileHandle (filename, "rb"))) { // Check for non-hogP file first...
-	fclose (fp);
-	return 1;
-	}
-return 0;
+if (!fp)
+	return 0;
+return 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -158,16 +152,20 @@ int CFileManager::Delete (const char *filename)
 
 // ----------------------------------------------------------------------------
 // Rename a file.
-int CFileManager::Rename (const char *oldname, const char *newname, const char *folder)
+int CFileManager::Rename (const char *oldName, const char *newName, const char *folder)
 {
-	char	fno [FILENAME_LEN], fnn [FILENAME_LEN];
+if (folder) {
+	char	fnOld [FILENAME_LEN], fnNew [FILENAME_LEN];
 
-sprintf_s (fno, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", oldname);
-sprintf_s (fnn, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", newname);
+	sprintf_s (fnOld, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", oldName);
+	sprintf_s (fnNew, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", newName);
+	oldName = fnOld;
+	newName = fnNew;
+	}
 #ifndef _WIN32_WCE
-	return rename (fno, fnn);
+return rename (oldName, newName);
 #else
-	return !MoveFile (fno, fnn);
+return !MoveFile (oldName, newName);
 #endif
 }
 

@@ -152,7 +152,7 @@ class CFileManager {
 
 		static int Exist (const char *filename);	// Returns true if file exists on disk (1) or in hog (2).
 		static int Delete (const char *filename);
-		static int Rename (const char *oldname, const char *newname, const char *folder);
+		static int Rename (const char *oldname, const char *newname, const char *folder = null);
 		static int MkDir (const char *pathname);
 		static FILE* GetFileHandle (const char *filename, const char *mode);
 		static void SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt);

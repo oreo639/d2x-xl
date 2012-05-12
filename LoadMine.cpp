@@ -49,8 +49,11 @@ if (ps)
 strcpy (pszBackup2, pszBackup1);
 strcat (pszBackup1, ".bak.1");
 strcat (pszBackup2, ".bak.2");
-if (fp.Exist (pszBackup1))
-	fp.Copy (pszBackup1, pszBackup2);
+if (fp.Exist (pszBackup1)) {
+	if (fp.Exist (pszBackup2)) 
+		fp.Delete (pszBackup2);
+	fp.Rename (pszBackup1, pszBackup2);
+	}
 fp.Copy (filename, pszBackup1);
 }
 
