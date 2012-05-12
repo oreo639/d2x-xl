@@ -5,7 +5,7 @@
 
 bool CSegmentManager::Full (void) 
 { 
-return Count () >= MAX_SEGMENTS; 
+return Count () >= SEGMENT_LIMIT; 
 }
 
 // ----------------------------------------------------------------------------- 
@@ -22,7 +22,7 @@ return (short) nSegment;
 
 #else //USE_FREELIST
 
-if (Count () >= MAX_SEGMENTS)
+if (Count () >= SEGMENT_LIMIT)
 	return -1;
 m_segments [Count ()].Reset ();
 return Count ()++;
@@ -77,6 +77,9 @@ if (Full ()) {
 	}
 if (vertexManager.Full ()) {
 	ErrorMsg ("Cannot add a new segment because\nthe maximum number of vertices has been reached."); 
+	return -1;
+	}
+if ((Count () == MAX_SEGMENTS - 1) && (QueryMsg ("Adding more segments will exceed\nthe maximum segment count for this level type.\nAre you sure you want to continue?") != IDYES)) {
 	return -1;
 	}
 

@@ -670,7 +670,7 @@ strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick
 undoManager.Begin (udAll);
 DLE.MineView ()->DelayRefresh (true);
 CSegment* segP = segmentManager.Segment (0);
-for (short nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
+for (short nSegment = 0; nSegment < SEGMENT_LIMIT; nSegment++, segP++) {
 	segP->Index () = nSegment;
 	segP->Unmark ();
 	}

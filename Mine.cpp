@@ -281,7 +281,7 @@ void CMine::ClearMineData ()
 
 // initialize Segments ()
 CSegment *segP = segmentManager.Segment (0);
-for (i = 0; i < MAX_SEGMENTS; i++, segP++)
+for (i = 0; i < SEGMENT_LIMIT; i++, segP++)
 	segP->Unmark ();
 segmentManager.Count () = 0;
 // initialize vertices

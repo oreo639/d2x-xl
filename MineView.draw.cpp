@@ -960,7 +960,7 @@ for (h = tunnelMaker.Length () * 4, i = 0; i < h; i++) {
 	vertexManager [--j].Transform (ViewMatrix ());
 	vertexManager [--j].Project (ViewMatrix ());
 	}
-CSegment *segP = segmentManager.Segment (MAX_SEGMENTS - 1);
+CSegment *segP = segmentManager.Segment (SEGMENT_LIMIT - 1);
 renderer.BeginRender (renderer.Type () == 0);
 renderer.SelectPen (penBlue + 1);
 for (i = 0; i < tunnelMaker.Length (); i++, segP--)

@@ -209,8 +209,8 @@ plc.SetItemText (6, 1, ItemText (objectManager.Count ()));
 for (i = 0; i < 10; i++)
 	plc.SetItemText (7 + i, 1, ItemText (m_nObjects [i]));
 plc.SetItemText (17, 1, ItemText (CountTextures ()));
-plc.SetItemText (0, 2, ItemText (MAX_SEGMENTS));
-plc.SetItemText (1, 2, ItemText (MAX_VERTICES));
+plc.SetItemText (0, 2, ItemText (SEGMENT_LIMIT));
+plc.SetItemText (1, 2, ItemText (VERTEX_LIMIT));
 plc.SetItemText (2, 2, ItemText (MAX_MATCENS));
 plc.SetItemText (3, 2, ItemText (MAX_NUM_RECHARGERS));
 plc.SetItemText (4, 2, ItemText (MAX_WALLS));

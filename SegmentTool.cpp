@@ -248,8 +248,8 @@ CSegment *segP = current->Segment ();
 // enable/disable "end of exit tunnel" button
 EndOfExit ()->EnableWindow (segP->ChildId (m_nSide) < 0);
 // enable/disable add segment button
-GetDlgItem (IDC_SEGMENT_ADD)->EnableWindow ((segmentManager.Count () < MAX_SEGMENTS) &&
-													  (vertexManager.Count () < MAX_VERTICES - 4) &&
+GetDlgItem (IDC_SEGMENT_ADD)->EnableWindow ((segmentManager.Count () < SEGMENT_LIMIT) &&
+													  (vertexManager.Count () < VERTEX_LIMIT - 4) &&
 													  (segP->ChildId (m_nSide) < 0));
 GetDlgItem (IDC_SEGMENT_DEL)->EnableWindow (segmentManager.Count () > 1);
 // enable/disable add robot button

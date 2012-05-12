@@ -889,7 +889,7 @@ CSideKey CTextureTool::FindAdjacentSide (CSideKey side, short nLine, short depth
 CSideKey noResult (-1, -1);
 // depth check - fail-safe recursion limit
 if (depth == -1)
-	depth = MAX_SEGMENTS;
+	depth = SEGMENT_LIMIT;
 else if (depth <= 0)
 	return noResult;
 if ((side.m_nSegment < 0) || (side.m_nSegment >= segmentManager.Count ()))

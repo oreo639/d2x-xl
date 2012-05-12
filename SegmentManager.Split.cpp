@@ -325,7 +325,7 @@ if (centerSegP->m_nShape) {
 	return false;
 	}
 
-if (Count () >= MAX_SEGMENTS - 6) {
+if (Count () >= SEGMENT_LIMIT - 6) {
 	ErrorMsg ("Cannot split this segment because\nthe maximum number of segments would be exceeded."); 
 	return false;
 	}
@@ -523,7 +523,7 @@ if (rootSegP->m_nShape) {
 	CVertex		segCenter;
 	short			nOldSegments = Count ();
 
-if (nOldSegments >= MAX_SEGMENTS - 7) {
+if (nOldSegments >= SEGMENT_LIMIT - 7) {
 	ErrorMsg ("Cannot split this segment because\nthe maximum number of segments would be exceeded."); 
 	return false;
 	}

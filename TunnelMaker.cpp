@@ -321,12 +321,10 @@ double		length;
 int			i;
 
 if (!m_bActive) {
-	m_nMaxSegments = MAX_SEGMENTS - segmentManager.Count ();
+	m_nMaxSegments = SEGMENT_LIMIT - segmentManager.Count ();
 	if (m_nMaxSegments > MAX_TUNNEL_SEGMENTS)
 		m_nMaxSegments = MAX_TUNNEL_SEGMENTS;
 	else if (m_nMaxSegments < 3) {
-//	if ((vertexManager.Count () + 3 /*MAX_TUNNEL_SEGMENTS*/ * 4 > MAX_VERTICES) ||
-//		 (segmentManager.Count () + 3 /*MAX_TUNNEL_SEGMENTS*/ > MAX_SEGMENTS)) {
 		ErrorMsg ("Insufficient number of free vertices and/or segments\nto use the segment generator.");
 		return;
 		}

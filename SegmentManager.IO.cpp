@@ -56,7 +56,7 @@ void CSegmentManager::WriteSegments (CFileManager* fp)
 if (m_segmentInfo.Setup (fp)) {
 	m_segmentInfo.offset = fp->Tell ();
 
-	int j = (Count () < MAX_SEGMENTS) ? Count () : MAX_SEGMENTS;
+	int j = Count ();
 	for (int i = 0; i < j; i++) {
 #ifdef _DEBUG
 		if (i == nDbgSeg)
