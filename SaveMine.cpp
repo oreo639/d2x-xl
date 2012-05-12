@@ -7,12 +7,15 @@
 short CMine::Save (const char * szFile, bool bSaveToHog)
 {
 if (segmentManager.Overflow ()) {
-	ErrorMsg ("Warning: Too many segments for this level version");
-	return 1;
+	if (vertexManager.Overflow ()) 
+		ErrorMsg ("Warning: Too many segments and vertices for this level version!");
+	else
+		ErrorMsg ("Warning: Too many segments for this level version!");
+	//return 1;
 	}
-if (vertexManager.Overflow ()) {
-	ErrorMsg ("Warning: Too many vertices for this level version");
-	return 1;
+else if (vertexManager.Overflow ()) {
+	ErrorMsg ("Warning: Too many vertices for this level version!");
+	//return 1;
 	}
 
 	CFileManager	fp;
