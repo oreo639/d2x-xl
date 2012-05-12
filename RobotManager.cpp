@@ -40,7 +40,7 @@ if (fp == null) {
 		CFileManager::SplitPath (descentFolder [0], szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent.ham");
 		}
-	if (fp->Open (szFile, "rb")) {
+	if (!fp->Open (szFile, "rb")) {
 		sprintf_s (message, sizeof (message), " Ham manager: Cannot open robot file <%s>.", szFile);
 		DEBUGMSG (message);
 		return 0;

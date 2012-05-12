@@ -232,7 +232,7 @@ if (!(bLoadFromHog || bCreate)) {
 			strcpy_s (ps, 256 - (ps - filename), ".pog");
 		else
 			strcat_s (filename, 256, ".pog");
-		if (!fp->Open (filename, "rb")) {
+		if (fp->Open (filename, "rb")) {
 			textureManager.ReadPog (*fp, fp->Size ());
 			fp->Close ();
 			}
@@ -266,7 +266,7 @@ if (!(bLoadFromHog || bCreate)) {
 			strcpy_s (filename, 256 - (ps - filename), ".hxm");
 		else
 			strcat_s (filename, 256, ".hxm");
-		if (!fp->Open (filename, "rb")) {
+		if (fp->Open (filename, "rb")) {
 			robotManager.ReadHXM (*fp, -1);
 			fp->Close ();
 			}

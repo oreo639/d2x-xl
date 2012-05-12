@@ -142,7 +142,7 @@ else
 	strcpy_s (filename, sizeof (filename), descentFolder [nVersion]);
 if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
-if (fp->Open (filename, "rb")) {
+if (!fp->Open (filename, "rb")) {
 	delete fp;
 	m_bAvailable [nVersion] = false;
 	return null;

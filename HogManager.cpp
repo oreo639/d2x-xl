@@ -830,7 +830,7 @@ if (fp != null)
 	fp->Seek (0);
 else {
 	fp = &_fp;
-	if (fp->Open (pszFile, "rb")) {
+	if (!fp->Open (pszFile, "rb")) {
 		if (bVerbose) {
 			sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)\n(%s)", pszFile, strerror (errno));
 			ErrorMsg (message);
