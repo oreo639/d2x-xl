@@ -101,7 +101,7 @@ FILE* CFileManager::GetFileHandle (const char *filename, const char *mode)
 {
 	FILE	*fp;
 
-if (!fopen_s (&fp, filename, mode)) {
+if (fopen_s (&fp, filename, mode)) {
 	fclose (fp);
 	fp = null;
 	}
@@ -543,9 +543,9 @@ int CFileManager::Copy (const char *pszSrc, const char *pszDest)
 	INT8	buffer [COPY_BUF_SIZE];
 	CFileManager	cf;
 
-if (!cf.Open (pszDest, "wb"))
+if (cf.Open (pszDest, "wb"))
 	return -1;
-if (!Open (pszSrc, "rb"))
+if (Open (pszSrc, "rb"))
 	return -2;
 while (!EoF ()) {
 	int nRead = (int) Read (buffer, 1, COPY_BUF_SIZE);
