@@ -1164,11 +1164,11 @@ objectManager.SecretSegment () = 0L;
 
 objectManager.SecretOrient ().Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 DLE.MineView ()->ResetView (true);
-
+#if 0
 sprintf_s (szMsg, sizeof (szMsg), 
 			  "%d segments have been deleted\n%d walls have been deleted\n%d triggers have been deleted\n%d objects have been deleted\n%d contained objects have been deleted",
 			  nDeleted [0], nDeleted [1], nDeleted [2], nDeleted [3], nDeleted [4]);
-
+#endif
 if (szMsg)
 	ErrorMsg (szMsg);
 }
