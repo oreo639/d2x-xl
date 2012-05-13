@@ -161,7 +161,7 @@ glEnableClientState (GL_VERTEX_ARRAY);
 glBindBufferARB (GL_ARRAY_BUFFER_ARB, m_vboDataHandle);
 glNormalPointer (GL_FLOAT, 0, VBO_OFFSET (m_nFaceVerts * sizeof (CFloatVector)));
 glColorPointer (4, GL_FLOAT, 0, VBO_OFFSET (m_nFaceVerts * 2 * sizeof (CFloatVector)));
-glTexCoordPointer (2, GL_FLOAT, 0, VBO_OFFSET (m_nFaceVerts * (2 * sizeof (CFloatVector) + sizeof (rgbaColorf))));
+glTexCoordPointer (2, GL_DOUBLE, 0, VBO_OFFSET (m_nFaceVerts * (2 * sizeof (CFloatVector) + sizeof (rgbaColorf))));
 glVertexPointer (3, GL_FLOAT, 0, VBO_OFFSET (0));
 glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, m_vboIndexHandle);
 
