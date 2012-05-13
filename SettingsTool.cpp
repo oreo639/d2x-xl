@@ -108,7 +108,7 @@ m_rotateRates [1] = (double) PI / 64.0;
 m_rotateRates [0] = (double) PI / 128.0;
 m_iRotateRate = 4;
 m_bDepthTest = 1;
-m_nRenderer = 1;
+m_nRenderer = -1;
 m_nPerspective = 0;
 
 LoadAppSettings (true);
@@ -516,7 +516,8 @@ if (strcmp (missionFolder, m_missionFolder)) {
 if (!bUpdate)
 	DLE.MineView ()->DelayRefresh (true);
 else if (bUpdate < 0) {
-	DLE.MineView ()->SetRenderer (-m_nRenderer);
+	DLE.MineView ()->SetRenderer (m_nRenderer);
+	m_nRenderer = abs (m_nRenderer);
 	DLE.MineView ()->SetPerspective (m_nPerspective);
 	DLE.MineView ()->SetViewDist (m_nViewDist);
 	DLE.MineView ()->SetDepthTest (m_bDepthTest != 0);

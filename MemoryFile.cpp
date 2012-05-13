@@ -44,12 +44,12 @@ return true;
 
 int CMemoryFile::Open (const char *filename, const char *mode) 
 {
-if (CFileManager::Open (filename, mode))
-	return 1;
+if (!CFileManager::Open (filename, mode))
+	return 0;
 
 if (!Create (m_info.size)) {
 	Close ();
-	return 1;
+	return 0;
 	}
 
 if (CFileManager::Read (m_buffer, 1, m_info.size) != m_info.size)
@@ -57,7 +57,7 @@ if (CFileManager::Read (m_buffer, 1, m_info.size) != m_info.size)
 
 CFileManager::Close (false);
 m_info.position = 0;
-return (m_buffer == null);
+return (m_buffer != null);
 }
 
 // ----------------------------------------------------------------------------
