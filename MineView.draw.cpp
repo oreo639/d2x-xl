@@ -1052,9 +1052,8 @@ else {
 	objP->Position () = segmentManager.CalcCenter (center, nSegment); // define objP->position
 	}
 
-double d = ViewMatrix ()->Distance (objP->Position ());
-if (textureManager.Available (1) && objP->HasPolyModel () && modelManager.Setup (objP, m_renderer, DC ()) && 
-	 ((nObject == current->m_nObject) || (/*Perspective () &&*/ (d <= MODEL_DISPLAY_LIMIT)))) {
+double d = (ViewOption (eViewTexturedWireFrame) || ViewOption (eViewTextured)) ? ViewMatrix ()->Distance (objP->Position ()) : 1e30;
+if (textureManager.Available (1) && objP->HasPolyModel () && modelManager.Setup (objP, m_renderer, DC ()) && ((nObject == current->m_nObject) || (d <= MODEL_DISPLAY_LIMIT))) {
 	SelectObjectPen (objP, bClear);
 	if (objP->DrawArrow (Renderer (), -1)) { // only render if fully visible (check using the arrow representation)
 		if (bClear)
