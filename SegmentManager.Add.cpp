@@ -680,7 +680,7 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::RemoveProducerter (CSegment* segP, CObjectProducer* producers, CMineItemInfo& info, int nFunction)
+void CSegmentManager::RemoveProducer (CSegment* segP, CObjectProducer* producers, CMineItemInfo& info, int nFunction)
 {
 if (info.count > 0) {
 	// fill in deleted matcen
@@ -727,9 +727,9 @@ void CSegmentManager::Undefine (short nSegment)
 segP->Backup ();
 nSegment = Index (segP);
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
-	RemoveProducerter (segP, RobotMaker (0), m_producerInfo [0], SEGMENT_FUNC_ROBOTMAKER);
+	RemoveProducer (segP, RobotMaker (0), m_producerInfo [0], SEGMENT_FUNC_ROBOTMAKER);
 else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 
-	RemoveProducerter (segP, EquipMaker (0), m_producerInfo [1], SEGMENT_FUNC_EQUIPMAKER);
+	RemoveProducer (segP, EquipMaker (0), m_producerInfo [1], SEGMENT_FUNC_EQUIPMAKER);
 else if (segP->m_info.function == SEGMENT_FUNC_PRODUCER) { //remove all fuel cell walls
 	undoManager.Begin (udSegments);
 	CSide *sideP = segP->m_sides;

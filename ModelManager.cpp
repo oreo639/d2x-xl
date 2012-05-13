@@ -249,6 +249,7 @@ if (mf.Open (buffer, bufSize)) {
 void CModelManager::ReadMod (char* pszFolder)
 {
 for (int i = 0; i < MAX_POLYGON_MODELS; i++) {
+	DLE.MainFrame ()->Progress ().StepIt ();
 	if (m_polyModels [1][i].m_info.renderData || (m_aseModels [i].m_nModel >= 0))
 		continue; // already have a custom model
 	if (m_aseModels [i].Read (pszFolder, i))
@@ -261,10 +262,12 @@ for (int i = 0; i < MAX_POLYGON_MODELS; i++) {
 void CModelManager::LoadMod (void)
 {
 if (DLE.MakeModFolders ("models")) {
+	DLE.MainFrame ()->InitProgress (2 * MAX_POLYGON_MODELS);
 	// first read the level specific textures
 	ReadMod (DLE.m_modFolders [0]);
 	// then read the mission wide textures
 	ReadMod (DLE.m_modFolders [1]);
+	DLE.MainFrame ()->Progress ().DestroyWindow ();
 	}
 }
 

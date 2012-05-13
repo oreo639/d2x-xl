@@ -355,6 +355,7 @@ void CTextureManager::ReadMod (char* pszFolder)
 	int  h = MaxTextures ();
 
 for (int i = 0; i < h; i++) {
+	DLE.MainFrame ()->Progress ().StepIt ();
 	CTexture* texP = Texture (i);
 #ifdef _DEBUG
 	if (i == nDbgTexture)
@@ -372,10 +373,12 @@ for (int i = 0; i < h; i++) {
 void CTextureManager::LoadMod (void)
 {
 if (DLE.MakeModFolders ("textures")) {
+	DLE.MainFrame ()->InitProgress (2 * MaxTextures ());
 	// first read the level specific textures
 	ReadMod (DLE.m_modFolders [0]);
 	// then read the mission wide textures
 	ReadMod (DLE.m_modFolders [1]);
+	DLE.MainFrame ()->Progress ().DestroyWindow ();
 	}
 }
 

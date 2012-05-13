@@ -365,7 +365,7 @@ class CSegmentManager {
 
 		bool FindNearbySide (CSideKey thisKey, CSideKey& otherKey, short& thisPoint, short& otherPoint, tVertMatch* match);
 
-		void RemoveProducerter (CSegment* segP, CObjectProducer* producers, CMineItemInfo& info, int nFunction);
+		void RemoveProducer (CSegment* segP, CObjectProducer* producers, CMineItemInfo& info, int nFunction);
 
 		bool CreateProducer (short nSegment, bool bCreate, ubyte nType, bool bSetDefTextures, CObjectProducer* producers, CMineItemInfo& info, char* szError);
 
