@@ -618,18 +618,25 @@ if (CommonVertices (nOtherSeg) < 4)
 	CSegment* otherP = segmentManager.Segment (nOtherSeg);
 
 for (short nSide = 0; nSide < 6; nSide++) {
-	CSide* sideP = Side (0);
+	CSide* sideP = Side (nSide);
+	ushort vertices [4];
+	for (short i = 0; i < 4; i++) 
+		vertices [i] = m_info.vertexIds [sideP->m_vertexIdIndex [i]];
 	for (nOtherSide = 0; nOtherSide < 6; nOtherSide++, sideP++) {
 		short nCommon = 0;
 		CSide* otherSideP = otherP->Side (nOtherSide);
 		for (short i = 0; i < 4; i++) {
-			ushort nVertex = VertexId (sideP->VertexIdIndex (i));
-			for (short j = 0; j < 4; j++) {
-				if (otherP->VertexId (otherSideP->VertexIdIndex (j)) == nVertex) {
+			ushort nVertex = vertices [i];
+			short j = 0;
+			for (; j < 4; j++) {
+				if (otherP->m_info.vertexIds [otherSideP->m_vertexIdIndex [j]] == nVertex) {
 					if (++nCommon == 4)
 						return nSide;
+					break;
 					}
 				}
+			if (j == 4)
+				break;
 			}
 		}
 	}
@@ -673,7 +680,7 @@ return vertexManager.Vertex (VertexId (nSide, nIndex));
 
 CSegment* CSegment::Child (short nSide) _const_ 
 { 
-return (m_sides [nSide].m_info.nChild < 0) ? null : segmentManager.Segment (m_sides [nSide].m_info.nChild); 
+return (short (m_sides [nSide].m_info.nChild) < 0) ? null : segmentManager.Segment (m_sides [nSide].m_info.nChild); 
 }
 
 // -----------------------------------------------------------------------------

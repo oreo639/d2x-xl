@@ -568,33 +568,35 @@ for (ubyte nCorner = 0; nCorner < 8; nCorner++) {
 	short nSegment = nSplitSegs [nCorner];
 	CSegment* segP = Segment (nSegment);
 	ushort nBasePoint = rootSeg.VertexId (nCorner);
-	memset (segP->m_info.vertexIds, 0xFF, sizeof (segP->m_info.vertexIds));
+	ushort vertexIds [8];
+	memset (vertexIds, 0xFF, sizeof (segP->m_info.vertexIds));
 
 	ushort nVertex;
 	for (short i = 0; i < 3; i++) {
 		short nEdge = EdgeIndex (nCorner, adjacentPointTable [nCorner][i]);
 		nVertex = (nEdge < 0) ? 0 : 1;
 		nEdge = abs (nEdge) - 1;
-		segP->SetVertexId (edgeVertexTable [nEdge][nVertex], nNewVerts [7 + nEdge]);
+		vertexIds [edgeVertexTable [nEdge][nVertex]] = nNewVerts [7 + nEdge];
 		if (!i)
-			segP->SetVertexId (edgeVertexTable [nEdge][!nVertex], nBasePoint);
+			vertexIds [edgeVertexTable [nEdge][!nVertex]] = nBasePoint;
 		}
 
 	for (short i = 0; i < 2; i++) {
 		for (short j = i + 1; j < 3; j++) {
 			short nSide, nPoint = FindCornerByPoints (nCorner, adjacentPointTable [nCorner][i], adjacentPointTable [nCorner][j], nSide);
-			segP->SetVertexId (nPoint, nNewVerts [1 + nSide]);
+			vertexIds [nPoint] = nNewVerts [1 + nSide];
 			}
 		}
 
 	short i;
 	for (i = 0; i < 8; i++)
-		if (segP->VertexId (i) == 0xFFFF) {
-			segP->SetVertexId (i, nNewVerts [0]);
+		if (vertexIds [i] == 0xFFFF) {
+			vertexIds [i] = nNewVerts [0];
 			break;
 			}
 
 	if (nSegment == nRootSeg) {
+		memcpy (segP->m_info.vertexIds, vertexIds, sizeof (vertexIds));
 		for (short j = 0; j < 3; j++) 
 			segP->Side (adjacentSideTable [i][j])->DeleteWall ();
 		}
@@ -602,6 +604,7 @@ for (ubyte nCorner = 0; nCorner < 8; nCorner++) {
 		segP->Setup ();
 		segP->Function () = rootSeg.Function ();
 		segP->Props () = rootSeg.Props ();
+		memcpy (segP->m_info.vertexIds, vertexIds, sizeof (vertexIds));
 		}
 
 	short nBaseTex, nOvlTex;
