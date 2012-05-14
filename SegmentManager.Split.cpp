@@ -313,11 +313,10 @@ return true;
 
 bool CSegmentManager::SplitIn7 (void)
 {
-	CSegment*	centerSegP = current->Segment (), *segP, *childSegP;
+	CSegment*	centerSegP = current->Segment ();
 	short			nCenterSeg = segmentManager.Index (centerSegP);
 	short			nNewSegs [6];
 	ushort		nNewVerts [8];
-	ushort		vertexIds [8];
 	CVertex		segCenter;
 	bool			bVertDone [8];
 
@@ -344,48 +343,19 @@ for (short j = 0; j < 8; j++)
 
 // create the surrounding segments
 CSide* sideP = centerSegP->Side (0);
-for (short nSide = 0; nSide < 6; nSide++) {
+for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 	nNewSegs [nSide] = Add ();
 	short nSegment = nNewSegs [nSide];
 	CSegment* segP = Segment (nSegment);
-	short nOppSide = oppSideTable [nSide];
-	for (ushort nVertex = 0; nVertex < 4; nVertex++) {
-		ushort j, i = sideP->m_vertexIdIndex [nVertex];
-		vertexIds [i] = centerSegP->m_info.vertexIds [i];
-		if ((nSide & 1) || (nSide >= 4)) {
-			i = edgeVertexTable [sideEdgeTable [nSide][0]][0];
-			j = edgeVertexTable [sideEdgeTable [nOppSide][2]][0];
-			vertexIds [j] = nNewVerts [i];
-			i = edgeVertexTable [sideEdgeTable [nSide][0]][1];
-			j = edgeVertexTable [sideEdgeTable [nOppSide][2]][1];
-			vertexIds [j] = nNewVerts [i];
-			i = edgeVertexTable [sideEdgeTable [nSide][2]][0];
-			j = edgeVertexTable [sideEdgeTable [nOppSide][0]][0];
-			vertexIds [j] = nNewVerts [i];
-			i = edgeVertexTable [sideEdgeTable [nSide][2]][1];
-			j = edgeVertexTable [sideEdgeTable [nOppSide][0]][1];
-			vertexIds [j] = nNewVerts [i];
-			}
-		else {
-			i = edgeVertexTable [sideEdgeTable [nSide][0]][0];
-			j = edgeVertexTable [sideEdgeTable [nOppSide][2]][1];
-			vertexIds [j] = nNewVerts [i];
-			i = edgeVertexTable [sideEdgeTable [nSide][0]][1];
-			j = edgeVertexTable [sideEdgeTable [nOppSide][2]][0];
-			vertexIds [j] = nNewVerts [i];
-			i = edgeVertexTable [sideEdgeTable [nSide][2]][0];
-			j = edgeVertexTable [sideEdgeTable [nOppSide][0]][1];
-			vertexIds [j] = nNewVerts [i];
-			i = edgeVertexTable [sideEdgeTable [nSide][2]][1];
-			j = edgeVertexTable [sideEdgeTable [nOppSide][0]][0];
-			vertexIds [j] = nNewVerts [i];
-			}
-		}
+	ubyte oppVertexIdIndex [4];
 	segP->Setup ();
-	memcpy (segP->m_info.vertexIds, vertexIds, sizeof (vertexIds));
+	memcpy (segP->m_info.vertexIds, centerSegP->m_info.vertexIds, sizeof (segP->m_info.vertexIds));
+	centerSegP->CreateOppVertexIndex (nSide, oppVertexIdIndex);
+	for (ushort nVertex = 0; nVertex < 4; nVertex++)
+		segP->m_info.vertexIds [oppVertexIdIndex [nVertex]] = nNewVerts [sideP->m_vertexIdIndex [nVertex]];
 	if ((segP->SetChild (nSide, centerSegP->ChildId (nSide))) > -1) 
 		Segment (segP->ChildId (nSide))->ReplaceChild (nCenterSeg, nSegment);
-	segP->SetChild (nOppSide, nCenterSeg);
+	segP->SetChild (oppSideTable [nSide], nCenterSeg);
 	centerSegP->SetChild (nSide, nSegment);
 	CWall* wallP = centerSegP->m_sides [nSide].Wall ();
 	if (wallP == null)
@@ -398,17 +368,17 @@ for (short nSide = 0; nSide < 6; nSide++) {
 	}
 // relocate center segment vertex indices
 //memcpy (centerSegP->m_info.vertexIds, nNewVerts, sizeof (nNewVerts));
-#if 0
+#if 1
 // join adjacent sides of the segments surrounding the center segment
 // don't process 6th segment as this is handled by processing the 1st one already
 for (short nSegment = 0; nSegment < 5; nSegment++) {
-	segP = Segment (nNewSegs [nSegment]);
+	CSegment* segP = Segment (nNewSegs [nSegment]);
 	CSide* sideP = segP->Side (0);
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (segP->ChildId (nSide) >= 0)
 			continue;
 		for (short nChildSeg = nSegment + 1; nChildSeg < 6; nChildSeg++) {
-			childSegP = Segment (nNewSegs [nChildSeg]);
+			CSegment* childSegP = Segment (nNewSegs [nChildSeg]);
 			CSide* childSideP = childSegP->Side (0);
 			for (short nChildSide = 0; nChildSide < 6; nChildSide++, childSideP++) {
 				if (childSegP->ChildId (nChildSide) >= 0)
