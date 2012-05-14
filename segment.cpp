@@ -610,14 +610,14 @@ return -1;
 
 // -----------------------------------------------------------------------------
 
-short CSegment::CommonSide (short nSide, ushort vertices)
+short CSegment::CommonSide (short nSide, ushort* vertices)
 {
 ubyte* vertexIdIndex = Side (nSide)->m_vertexIdIndex;
 short nCommon = 0;
 for (short i = 0; i < 4; i++) {
 	ushort nVertex = vertices [i];
 	short j = 0;
-	for (; k < 4; j++) {
+	for (; j < 4; j++) {
 		if (m_info.vertexIds [vertexIdIndex [j]] == nVertex) {
 			if (++nCommon == 4)
 				return 1;
@@ -638,7 +638,8 @@ ushort vertices [4];
 if (CommonVertices (nOtherSeg, 4, vertices) < 4)
 	return -1;
 
-for (short nSide = 0; nSide < 6; nSide++) 
+short nSide = 0;
+for (; nSide < 6; nSide++) 
 	if (CommonSide (nSide, vertices))
 		break;
 if (nSide == 6)

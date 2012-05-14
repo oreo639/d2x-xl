@@ -250,7 +250,7 @@ public:
 
 	short CommonSides (short nOtherSeg, short& nOtherSide);
 
-	short CommonSide (short nSide, ushort vertices);
+	short CommonSide (short nSide, ushort* vertices);
 
 	short VertexIndex (short nVertexId);
 

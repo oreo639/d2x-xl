@@ -317,6 +317,7 @@ bool CSegmentManager::SplitIn7 (void)
 	short			nCenterSeg = segmentManager.Index (centerSegP);
 	short			nNewSegs [6];
 	ushort		nNewVerts [8];
+	ushort		vertexIds [8];
 	CVertex		segCenter;
 	bool			bVertDone [8];
 
@@ -338,19 +339,11 @@ CalcCenter (segCenter, Index (centerSegP));
 // compute center segment vertices
 memset (bVertDone, 0, sizeof (bVertDone));
 
-CSide* sideP = centerSegP->Side (0);
-for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-	for (ushort nVertex = 0; nVertex < 4; nVertex++) {
-		short j = sideP->m_vertexIdIndex [nVertex];
-		if (bVertDone [j])
-			continue;
-		bVertDone [j] = true;
-		*vertexManager.Vertex (nNewVerts [j]) = Average (*centerSegP->Vertex (j), segCenter);
-		}
-	}
+for (short j = 0; j < 8; j++)
+	*vertexManager.Vertex (nNewVerts [j]) = Average (*centerSegP->Vertex (j), segCenter);
 
 // create the surrounding segments
-sideP = centerSegP->Side (0);
+CSide* sideP = centerSegP->Side (0);
 for (short nSide = 0; nSide < 6; nSide++) {
 	nNewSegs [nSide] = Add ();
 	short nSegment = nNewSegs [nSide];
@@ -358,37 +351,38 @@ for (short nSide = 0; nSide < 6; nSide++) {
 	short nOppSide = oppSideTable [nSide];
 	for (ushort nVertex = 0; nVertex < 4; nVertex++) {
 		ushort j, i = sideP->m_vertexIdIndex [nVertex];
-		segP->m_info.vertexIds [i] = centerSegP->m_info.vertexIds [i];
+		vertexIds [i] = centerSegP->m_info.vertexIds [i];
 		if ((nSide & 1) || (nSide >= 4)) {
 			i = edgeVertexTable [sideEdgeTable [nSide][0]][0];
 			j = edgeVertexTable [sideEdgeTable [nOppSide][2]][0];
-			segP->m_info.vertexIds [j] = nNewVerts [i];
+			vertexIds [j] = nNewVerts [i];
 			i = edgeVertexTable [sideEdgeTable [nSide][0]][1];
 			j = edgeVertexTable [sideEdgeTable [nOppSide][2]][1];
-			segP->m_info.vertexIds [j] = nNewVerts [i];
+			vertexIds [j] = nNewVerts [i];
 			i = edgeVertexTable [sideEdgeTable [nSide][2]][0];
 			j = edgeVertexTable [sideEdgeTable [nOppSide][0]][0];
-			segP->m_info.vertexIds [j] = nNewVerts [i];
+			vertexIds [j] = nNewVerts [i];
 			i = edgeVertexTable [sideEdgeTable [nSide][2]][1];
 			j = edgeVertexTable [sideEdgeTable [nOppSide][0]][1];
-			segP->m_info.vertexIds [j] = nNewVerts [i];
+			vertexIds [j] = nNewVerts [i];
 			}
 		else {
 			i = edgeVertexTable [sideEdgeTable [nSide][0]][0];
 			j = edgeVertexTable [sideEdgeTable [nOppSide][2]][1];
-			segP->m_info.vertexIds [j] = nNewVerts [i];
+			vertexIds [j] = nNewVerts [i];
 			i = edgeVertexTable [sideEdgeTable [nSide][0]][1];
 			j = edgeVertexTable [sideEdgeTable [nOppSide][2]][0];
-			segP->m_info.vertexIds [j] = nNewVerts [i];
+			vertexIds [j] = nNewVerts [i];
 			i = edgeVertexTable [sideEdgeTable [nSide][2]][0];
 			j = edgeVertexTable [sideEdgeTable [nOppSide][0]][1];
-			segP->m_info.vertexIds [j] = nNewVerts [i];
+			vertexIds [j] = nNewVerts [i];
 			i = edgeVertexTable [sideEdgeTable [nSide][2]][1];
 			j = edgeVertexTable [sideEdgeTable [nOppSide][0]][0];
-			segP->m_info.vertexIds [j] = nNewVerts [i];
+			vertexIds [j] = nNewVerts [i];
 			}
 		}
 	segP->Setup ();
+	memcpy (segP->m_info.vertexIds, vertexIds, sizeof (vertexIds));
 	if ((segP->SetChild (nSide, centerSegP->ChildId (nSide))) > -1) 
 		Segment (segP->ChildId (nSide))->ReplaceChild (nCenterSeg, nSegment);
 	segP->SetChild (nOppSide, nCenterSeg);
@@ -403,17 +397,8 @@ for (short nSide = 0; nSide < 6; nSide++) {
 		}
 	}
 // relocate center segment vertex indices
-memset (bVertDone, 0, sizeof (bVertDone));
-sideP = centerSegP->Side (0);
-for (short nSide = 0; nSide < 6; nSide++) {
-	for (ushort nVertex = 0; nVertex < 4; nVertex++) {
-		ushort i = sideP->m_vertexIdIndex [nVertex];
-		if (bVertDone [i])
-			continue;
-		bVertDone [i] = true;
-		centerSegP->m_info.vertexIds [i] = nNewVerts [i];
-		}
-	}
+//memcpy (centerSegP->m_info.vertexIds, nNewVerts, sizeof (nNewVerts));
+#if 0
 // join adjacent sides of the segments surrounding the center segment
 // don't process 6th segment as this is handled by processing the 1st one already
 for (short nSegment = 0; nSegment < 5; nSegment++) {
@@ -447,7 +432,7 @@ for (short nSegment = 0; nSegment < 5; nSegment++) {
 			}
 		}
 	}
-
+#endif
 undoManager.End ();
 DLE.MineView ()->Refresh ();
 return true;
