@@ -511,6 +511,7 @@ _strlwr_s (m_missionFolder, sizeof (m_missionFolder));
 if (strcmp (missionFolder, m_missionFolder)) {
 	strcpy_s (missionFolder, sizeof (missionFolder), m_missionFolder);
 	WritePrivateProfileString ("DLE-XP", "levelsDirectory", missionFolder, INIFILE);
+	SetCurrentDirectory (missionFolder);
 	}
 
 if (!bUpdate)

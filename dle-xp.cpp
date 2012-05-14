@@ -269,6 +269,7 @@ BOOL CDLE::InitInstance()
 		GetDocument ()->OpenFile (false, cmdInfo.m_strFileName.GetBuffer (256), null /*"*"*/);
 	if (ToolView ()->SettingsTool ())
 		ToolView ()->SettingsTool ()->SetAppSettings (-1);
+	SetCurrentDirectory (missionFolder);
 	MineView ()->DelayRefresh (false);
 	//DLE.GetDocument ()->SetModifiedFlag (1); // allow saving right away
 	//MineView ()->Refresh ();

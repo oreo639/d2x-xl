@@ -2452,17 +2452,39 @@
     <None Include="..\Resource\palettes\Water.256">
       <Filter>Data Files</Filter>
     </None>
-    <None Include="..\resource\bitmaps\arrow.tga" />
-    <None Include="..\resource\bitmaps\icon-bubbles.tga" />
-    <None Include="..\resource\bitmaps\icon-fire.tga" />
-    <None Include="..\resource\bitmaps\icon-light.tga" />
-    <None Include="..\resource\bitmaps\icon-lightning.tga" />
-    <None Include="..\resource\bitmaps\icon-rain.tga" />
-    <None Include="..\resource\bitmaps\icon-smoke.tga" />
-    <None Include="..\resource\bitmaps\icon-snow.tga" />
-    <None Include="..\resource\bitmaps\icon-sound.tga" />
-    <None Include="..\resource\bitmaps\icon-waypoint.tga" />
-    <None Include="..\resource\bitmaps\icon-circle.tga" />
+    <None Include="..\resource\bitmaps\arrow.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-waypoint.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-bubbles.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-circle.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-fire.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-light.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-lightning.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-rain.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-smoke.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-snow.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\icon-sound.tga">
+      <Filter>UI\Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="..\..\..\Websites\Descent\dle-history.html">
