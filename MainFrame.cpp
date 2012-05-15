@@ -52,6 +52,7 @@ m_toolMode = 1;
 m_textureMode = 1;
 m_mineZoom = 0;
 nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, DLE.IniFile ());
+bCommonToolPanes = GetPrivateProfileInt ("DLE-XP", "CommonToolPanes", 0, DLE.IniFile ());
 #if EDITBAR
 m_bEditorTB = 1;
 #else
@@ -279,42 +280,42 @@ if (!m_splitter1.CreateStatic (this, 1, 2, WS_CHILD | WS_VISIBLE | WS_BORDER))
 GetClientRect (rc);
 rc.InflateRect (-2, -2);
 if (nLayout == 1) {
-	context.m_pNewViewClass = RUNTIME_CLASS (CToolView);
-	m_splitter1.CreateView (0, 0, RUNTIME_CLASS (CToolView), CSize (CX_TOOLS_HORZ, rc.Height ()), &context);
-	m_splitter1.SetRowInfo (0, CY_TOOLS_HORZ, 0);
-	m_splitter1.SetColumnInfo (0, CX_TOOLS_HORZ, 0);
-	m_splitter1.SetColumnInfo (1, rc.Width () - CX_TOOLS_HORZ, 16);
-	m_splitter2.CreateStatic (&m_splitter1, 2, 1, WS_CHILD | WS_VISIBLE | WS_BORDER, m_splitter1.IdFromRowCol (0, 1));
-	context.m_pNewViewClass = RUNTIME_CLASS (CMineView);
-	m_splitter2.CreateView (0, 0, RUNTIME_CLASS (CMineView), CSize (rc.Width (), rc.Height ()), &context);
-	context.m_pNewViewClass = RUNTIME_CLASS (CTextureView);
-	m_splitter2.CreateView (1, 0, RUNTIME_CLASS (CTextureView), CSize (rc.Width (), 0), &context);
-	m_splitter2.SetRowInfo (0, rc.Height () - CY_TEXTURES, 16);
-	m_splitter2.SetRowInfo (1, CY_TEXTURES, 16);
-	m_splitter2.SetColumnInfo (0, rc.Width (), 0);
-	SetActiveView ((CView*) m_splitter2.GetPane (0,0)); 
-	m_toolView = (CToolView *) m_splitter1.GetPane (0,0);
-	m_mineView = (CMineView *) m_splitter2.GetPane (0,0);
-	m_textureView = (CTextureView *) m_splitter2.GetPane (1,0);
-	}
-else if (nLayout == 3) {
-	m_splitter1.CreateView (0, 1, RUNTIME_CLASS (CMineView), CSize (rc.Width () - CX_TOOLS_VERT, rc.Height ()), &context);
-	m_splitter1.SetRowInfo (0, rc.Height (), 16);
-	m_splitter1.SetColumnInfo (0, CX_TOOLS_VERT, 16);
-	m_splitter1.SetColumnInfo (1, rc.Width () - CX_TOOLS_VERT, 16);
-	context.m_pNewViewClass = RUNTIME_CLASS (CMineView);
-	m_splitter2.CreateStatic (&m_splitter1, 2, 1, WS_CHILD | WS_VISIBLE | WS_BORDER, m_splitter1.IdFromRowCol (0, 0));
-	context.m_pNewViewClass = RUNTIME_CLASS (CToolView);
-	m_splitter2.CreateView (0, 0, RUNTIME_CLASS (CToolView), CSize (CX_TOOLS_VERT, CY_TOOLS_VERT), &context);
-	context.m_pNewViewClass = RUNTIME_CLASS (CTextureView);
-	m_splitter2.CreateView (1, 0, RUNTIME_CLASS (CTextureView), CSize (CX_TOOLS_VERT, rc.Height () - CY_TOOLS_VERT), &context);
-	m_splitter2.SetRowInfo (0, CY_TOOLS_VERT, CY_TOOLS_VERT);
-	m_splitter2.SetRowInfo (1, rc.Height () - CY_TOOLS_VERT, 16);
-	m_splitter2.SetColumnInfo (0, CX_TOOLS_VERT + GetSystemMetrics (SM_CXBORDER), 0);
-	m_toolView = (CToolView *) m_splitter2.GetPane (0,0);
-	m_mineView = (CMineView *) m_splitter1.GetPane (0,1);
-	m_textureView = (CTextureView *) m_splitter2.GetPane (1,0);
-	SetActiveView ((CView*) m_splitter1.GetPane (0,1)); 
+	if (bCommonToolPanes) {
+		m_splitter1.CreateView (0, 1, RUNTIME_CLASS (CMineView), CSize (rc.Width () - CX_TOOLS_VERT, rc.Height ()), &context);
+		m_splitter1.SetRowInfo (0, rc.Height (), 16);
+		m_splitter1.SetColumnInfo (0, CX_TOOLS_VERT, 16);
+		m_splitter1.SetColumnInfo (1, rc.Width () - CX_TOOLS_VERT, 16);
+		context.m_pNewViewClass = RUNTIME_CLASS (CMineView);
+		m_splitter2.CreateStatic (&m_splitter1, 2, 1, WS_CHILD | WS_VISIBLE | WS_BORDER, m_splitter1.IdFromRowCol (0, 0));
+		context.m_pNewViewClass = RUNTIME_CLASS (CToolView);
+		m_splitter2.CreateView (0, 0, RUNTIME_CLASS (CToolView), CSize (CX_TOOLS_VERT, CY_TOOLS_VERT), &context);
+		context.m_pNewViewClass = RUNTIME_CLASS (CTextureView);
+		m_splitter2.CreateView (1, 0, RUNTIME_CLASS (CTextureView), CSize (CX_TOOLS_VERT, rc.Height () - CY_TOOLS_VERT), &context);
+		m_splitter2.SetRowInfo (0, CY_TOOLS_VERT, CY_TOOLS_VERT);
+		m_splitter2.SetRowInfo (1, rc.Height () - CY_TOOLS_VERT, 16);
+		m_splitter2.SetColumnInfo (0, CX_TOOLS_VERT + GetSystemMetrics (SM_CXBORDER), 0);
+		m_mineView = (CMineView *) m_splitter1.GetPane (0,1);
+		m_toolView = (CToolView *) m_splitter2.GetPane (0,0);
+		m_textureView = (CTextureView *) m_splitter2.GetPane (1,0);
+		}
+	else {
+		context.m_pNewViewClass = RUNTIME_CLASS (CToolView);
+		m_splitter1.CreateView (0, 0, RUNTIME_CLASS (CToolView), CSize (CX_TOOLS_HORZ, rc.Height ()), &context);
+		m_splitter1.SetRowInfo (0, CY_TOOLS_HORZ, 0);
+		m_splitter1.SetColumnInfo (0, CX_TOOLS_HORZ, 0);
+		m_splitter1.SetColumnInfo (1, rc.Width () - CX_TOOLS_HORZ, 16);
+		m_splitter2.CreateStatic (&m_splitter1, 2, 1, WS_CHILD | WS_VISIBLE | WS_BORDER, m_splitter1.IdFromRowCol (0, 1));
+		context.m_pNewViewClass = RUNTIME_CLASS (CMineView);
+		m_splitter2.CreateView (0, 0, RUNTIME_CLASS (CMineView), CSize (rc.Width (), rc.Height ()), &context);
+		context.m_pNewViewClass = RUNTIME_CLASS (CTextureView);
+		m_splitter2.CreateView (1, 0, RUNTIME_CLASS (CTextureView), CSize (rc.Width (), 0), &context);
+		m_splitter2.SetRowInfo (0, rc.Height () - CY_TEXTURES, 16);
+		m_splitter2.SetRowInfo (1, CY_TEXTURES, 16);
+		m_splitter2.SetColumnInfo (0, rc.Width (), 0);
+		m_toolView = (CToolView *) m_splitter1.GetPane (0,0);
+		m_mineView = (CMineView *) m_splitter2.GetPane (0,0);
+		m_textureView = (CTextureView *) m_splitter2.GetPane (1,0);
+		}
 	}
 else {
 	context.m_pNewViewClass = RUNTIME_CLASS (CTextureView);
@@ -347,6 +348,7 @@ else {
 		m_toolView = (CToolView *) m_splitter2.GetPane (1,0);
 		}
 	}
+SetActiveView ((CView*) m_mineView); 
 return TRUE;
 }
 
@@ -376,7 +378,7 @@ if (nLayout != 0) {
 			ToolPane ()->GetWindowRect (rcTools);
 		if (rcTools.Width () <= 0) 
 			return; // tool pane minimized
-		if (nLayout == 3) {
+		if (bCommonToolPanes) {
 			m_splitter1.SetColumnInfo (0, CX_TOOLS_VERT + GetSystemMetrics (SM_CXVSCROLL), 0);
 			m_splitter1.SetColumnInfo (1, rcTotal.Width () - CX_TOOLS_VERT, 0);
 			m_splitter2.SetRowInfo (0, CY_TOOLS_VERT, CY_TOOLS_VERT);

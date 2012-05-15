@@ -20,6 +20,7 @@
 #endif
 
 int nLayout = 1;
+int bCommonToolPanes = 0;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

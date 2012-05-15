@@ -247,7 +247,7 @@ DDX_Check (pDX, IDC_PREFS_VIEW_DEPTHTEST, m_bDepthTest);
 DDX_Check (pDX, IDC_PREFS_EXPERTMODE, m_bExpertMode);
 DDX_Check (pDX, IDC_PREFS_SPLASHSCREEN, m_bSplashScreen);
 DDX_Text (pDX, IDC_PREFS_UNDO, m_nMaxUndo);
-DDX_Radio (pDX, IDC_PREFS_LAYOUT0, nLayout);
+DDX_Radio (pDX, IDC_PREFS_LAYOUT0, bCommonToolPanes ? 2 : nLayout);
 DDX_Radio (pDX, IDC_PREFS_RENDERER_3RD_PERSON, m_nPerspective);
 DDX_Check (pDX, IDC_PREFS_USETEXCOLORS, m_bApplyFaceLightSettingsGlobally);
 if (pDX->m_bSaveAndValidate)
@@ -651,7 +651,11 @@ OnOK ();
 
 void CSettingsTool::SetLayout (int nLayout)
 {
-WritePrivateProfileInt ("Layout", nLayout);
+if (nLayout == 3)
+	WritePrivateProfileInt ("Layout", 1);
+else
+	WritePrivateProfileInt ("Layout", nLayout);
+WritePrivateProfileInt ("SingleToolPane", nLayout == 3);
 }
 
 //------------------------------------------------------------------------------
