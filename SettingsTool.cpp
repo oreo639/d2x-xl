@@ -62,6 +62,7 @@ BEGIN_MESSAGE_MAP(CSettingsTool, CToolDlg)
 	ON_BN_CLICKED (IDC_PREFS_LAYOUT0, OnLayout0)
 	ON_BN_CLICKED (IDC_PREFS_LAYOUT1, OnLayout1)
 	ON_BN_CLICKED (IDC_PREFS_LAYOUT2, OnLayout2)
+	ON_BN_CLICKED (IDC_PREFS_LAYOUT3, OnLayout3)
 	ON_BN_CLICKED (IDC_PREFS_RENDERER_1ST_PERSON, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_RENDERER_3RD_PERSON, OnOK)
 	//ON_BN_CLICKED (IDC_PREFS_RENDERER_PERSPECTIVE, OnOK)
@@ -660,6 +661,8 @@ void CSettingsTool::OnLayout0 (void) { SetLayout (0); }
 void CSettingsTool::OnLayout1 (void) { SetLayout (1); }
 
 void CSettingsTool::OnLayout2 (void) { SetLayout (2); }
+
+void CSettingsTool::OnLayout3 (void) { SetLayout (3); }
 
 //------------------------------------------------------------------------------
 

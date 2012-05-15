@@ -1668,6 +1668,7 @@ class CSettingsTool : public CToolDlg
 		afx_msg void OnLayout0 (void);
 		afx_msg void OnLayout1 (void);
 		afx_msg void OnLayout2 (void);
+		afx_msg void OnLayout3 (void);
 		afx_msg void OnRenderer (int nRenderer);
 		afx_msg void OnRendererSW (void);
 		afx_msg void OnRendererGL (void);
