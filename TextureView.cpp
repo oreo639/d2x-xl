@@ -52,7 +52,7 @@ m_iconSize.cy = 64 / scale;
 m_iconSpace.cx = m_iconSize.cx + 6;
 m_iconSpace.cy = m_iconSize.cy + 6;
 m_viewFlags = 0;
-m_filter.Filter () = GetPrivateProfileInt ("DLE-XP", "TextureFilter", 0xFFFFFFFF, INIFILE);
+m_filter.Filter () = GetPrivateProfileInt ("DLE-XP", "TextureFilter", 0xFFFFFFFF, DLE.IniFile ());
 m_bShowAll = TRUE;
 m_bDelayRefresh = false;
 };

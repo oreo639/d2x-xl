@@ -157,11 +157,11 @@ LoadAppSettings (false);
 //m_bDepthTest = DLE.MineView ()->DepthTest ();
 //m_bSortObjects = objectManager ().SortObjects ();
 
-//m_bDepthTest = GetPrivateProfileInt ("DLE-XP", "DepthTest", m_bDepthTest, INIFILE);
-//m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, INIFILE);
-//m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, INIFILE);
-//m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, INIFILE);
-//m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", DLE_MAX_UNDOS, INIFILE);
+//m_bDepthTest = GetPrivateProfileInt ("DLE-XP", "DepthTest", m_bDepthTest, DLE.IniFile ());
+//m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, DLE.IniFile ());
+//m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, DLE.IniFile ());
+//m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, DLE.IniFile ());
+//m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", DLE_MAX_UNDOS, DLE.IniFile ());
 
 m_rotateRate.Init (this, IDC_PREFS_ROTATE_RATE_SLIDER, IDC_PREFS_ROTATE_RATE_SPINNER, -IDT_PREFS_ROTATE_RATE, 0, 8);
 m_rotateRate.SetFormatter (FormatRotateRate);
@@ -308,7 +308,7 @@ void CSettingsTool::WritePrivateProfileInt (LPSTR szKey, int nValue)
 	char	szValue [20];
 
 sprintf_s (szValue, sizeof (szValue), "%d", nValue);
-WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
+WritePrivateProfileString ("DLE-XP", szKey, szValue, DLE.IniFile ());
 }
 
 //------------------------------------------------------------------------------
@@ -318,7 +318,7 @@ void CSettingsTool::WritePrivateProfileDouble (LPSTR szKey, double nValue)
 	char	szValue [100];
 
 sprintf_s (szValue, sizeof (szValue), "%1.3f", nValue);
-WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
+WritePrivateProfileString ("DLE-XP", szKey, szValue, DLE.IniFile ());
 }
 
 //------------------------------------------------------------------------------
@@ -360,16 +360,16 @@ m_bSplashScreen = DLE.SplashScreen ();
 void CSettingsTool::LoadAppSettings (bool bInitialize)
 {
 if (bInitialize) {
-	GetPrivateProfileString ("DLE-XP", "DescentDirectory", descentFolder [0], descentFolder [0], sizeof (descentFolder [0]), INIFILE);
+	GetPrivateProfileString ("DLE-XP", "DescentDirectory", descentFolder [0], descentFolder [0], sizeof (descentFolder [0]), DLE.IniFile ());
 	strcpy_s (m_d1Folder, sizeof (m_d1Folder), descentFolder [0]);
 	CompletePath (m_d1Folder, "descent.pig", ".pig");
-	GetPrivateProfileString ("DLE-XP", "Descent2Directory", descentFolder [1], descentFolder [1], sizeof (descentFolder [1]), INIFILE);
+	GetPrivateProfileString ("DLE-XP", "Descent2Directory", descentFolder [1], descentFolder [1], sizeof (descentFolder [1]), DLE.IniFile ());
 	strcpy_s (m_d2Folder, sizeof (m_d2Folder), descentFolder [1]);
 	CompletePath (m_d2Folder, "groupa.pig", ".pig");
-	GetPrivateProfileString ("DLE-XP", "LevelsDirectory", missionFolder, missionFolder, sizeof (missionFolder), INIFILE);
+	GetPrivateProfileString ("DLE-XP", "LevelsDirectory", missionFolder, missionFolder, sizeof (missionFolder), DLE.IniFile ());
 	strcpy_s (m_missionFolder, sizeof (m_missionFolder), missionFolder);
 	CompletePath (m_missionFolder, "descent2.hog", ".hog");
-	GetPrivateProfileString ("DLE-XP", "PlayerProfile", szPlayerProfile, szPlayerProfile, sizeof (szPlayerProfile), INIFILE);
+	GetPrivateProfileString ("DLE-XP", "PlayerProfile", szPlayerProfile, szPlayerProfile, sizeof (szPlayerProfile), DLE.IniFile ());
 	strcpy (modFolder, descentFolder [1]);
 	char* ps = strstr (modFolder, "data");
 	if (ps)
@@ -377,14 +377,14 @@ if (bInitialize) {
 	else
 		strcat (modFolder, "mods");
 
-	m_depthPerception = GetPrivateProfileInt ("DLE-XP", "DepthPerception", 2, INIFILE);
-	m_iRotateRate = GetPrivateProfileInt ("DLE-XP", "RotateRate", 4, INIFILE);
+	m_depthPerception = GetPrivateProfileInt ("DLE-XP", "DepthPerception", 2, DLE.IniFile ());
+	m_iRotateRate = GetPrivateProfileInt ("DLE-XP", "RotateRate", 4, DLE.IniFile ());
 
 	char	szMoveRate [100];
 
-	GetPrivateProfileString ("DLE-XP", "MoveRate", "1", szMoveRate, sizeof (szMoveRate), INIFILE);
+	GetPrivateProfileString ("DLE-XP", "MoveRate", "1", szMoveRate, sizeof (szMoveRate), DLE.IniFile ());
 	m_moveRate [0] = Clamp ((double) atof (szMoveRate), 0.001, 1000.0);
-	GetPrivateProfileString ("DLE-XP", "ViewMoveRate", "1", szMoveRate, sizeof (szMoveRate), INIFILE);
+	GetPrivateProfileString ("DLE-XP", "ViewMoveRate", "1", szMoveRate, sizeof (szMoveRate), DLE.IniFile ());
 	m_moveRate [1] = Clamp ((double) atof (szMoveRate), 0.001, 1000.0);
 	}
 
@@ -393,19 +393,19 @@ if (bInitialize) {
 *descentFolder [1] = '\0';
 #endif
 
-m_bExpertMode = GetPrivateProfileInt ("DLE-XP", "ExpertMode", 1, INIFILE);
-m_bSplashScreen = GetPrivateProfileInt ("DLE-XP", "SplashScreen", 1, INIFILE);
-m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, INIFILE);
-m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, INIFILE);
-m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, INIFILE);
-//m_bApplyFaceLightSettingsGlobally = GetPrivateProfileInt ("DLE-XP", "ApplyFaceLightSettingsGlobally", m_bApplyFaceLightSettingsGlobally, INIFILE);
-m_bSortObjects = GetPrivateProfileInt ("DLE-XP", "SortObjects", m_bSortObjects, INIFILE);
-m_bDepthTest = GetPrivateProfileInt ("DLE-XP", "DepthTest", m_bDepthTest, INIFILE);
-m_nViewDist = GetPrivateProfileInt ("DLE-XP", "ViewDistance", 0, INIFILE);
-//m_nRenderer = GetPrivateProfileInt ("DLE-XP", "Renderer", 0, INIFILE);
-m_nPerspective = GetPrivateProfileInt ("DLE-XP", "Perspective", 0, INIFILE);
-m_nMineCenter = GetPrivateProfileInt ("DLE-XP", "MineCenter", 0, INIFILE);
-m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", DLE_MAX_UNDOS, INIFILE);
+m_bExpertMode = GetPrivateProfileInt ("DLE-XP", "ExpertMode", 1, DLE.IniFile ());
+m_bSplashScreen = GetPrivateProfileInt ("DLE-XP", "SplashScreen", 1, DLE.IniFile ());
+m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, DLE.IniFile ());
+m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, DLE.IniFile ());
+m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, DLE.IniFile ());
+//m_bApplyFaceLightSettingsGlobally = GetPrivateProfileInt ("DLE-XP", "ApplyFaceLightSettingsGlobally", m_bApplyFaceLightSettingsGlobally, DLE.IniFile ());
+m_bSortObjects = GetPrivateProfileInt ("DLE-XP", "SortObjects", m_bSortObjects, DLE.IniFile ());
+m_bDepthTest = GetPrivateProfileInt ("DLE-XP", "DepthTest", m_bDepthTest, DLE.IniFile ());
+m_nViewDist = GetPrivateProfileInt ("DLE-XP", "ViewDistance", 0, DLE.IniFile ());
+//m_nRenderer = GetPrivateProfileInt ("DLE-XP", "Renderer", 0, DLE.IniFile ());
+m_nPerspective = GetPrivateProfileInt ("DLE-XP", "Perspective", 0, DLE.IniFile ());
+m_nMineCenter = GetPrivateProfileInt ("DLE-XP", "MineCenter", 0, DLE.IniFile ());
+m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", DLE_MAX_UNDOS, DLE.IniFile ());
 }
 
 //------------------------------------------------------------------------------
@@ -416,11 +416,11 @@ void CSettingsTool::SaveAppSettings (bool bSaveFolders)
 
 GetAppSettings (bSaveFolders);
 if (bSaveFolders) {
-	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descentFolder [0], INIFILE);
-	WritePrivateProfileString ("DLE-XP", "Descent2Directory", descentFolder [1], INIFILE);
-	WritePrivateProfileString ("DLE-XP", "levelsDirectory", missionFolder, INIFILE);
+	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descentFolder [0], DLE.IniFile ());
+	WritePrivateProfileString ("DLE-XP", "Descent2Directory", descentFolder [1], DLE.IniFile ());
+	WritePrivateProfileString ("DLE-XP", "levelsDirectory", missionFolder, DLE.IniFile ());
 	}
-WritePrivateProfileString ("DLE-XP", "PlayerProfile", szPlayerProfile, INIFILE);
+WritePrivateProfileString ("DLE-XP", "PlayerProfile", szPlayerProfile, DLE.IniFile ());
 //WritePrivateProfileInt ("Renderer", m_nRenderer);
 WritePrivateProfileInt ("Perspective", m_nPerspective);
 WritePrivateProfileInt ("DepthPerception", m_depthPerception);
@@ -487,7 +487,7 @@ if (m_bInvalid)
 _strlwr_s (m_d1Folder, sizeof (m_d1Folder));
 if (strcmp (descentFolder [0], m_d1Folder)) {
 	strcpy_s (descentFolder [0], sizeof (descentFolder [0]), m_d1Folder);
-	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descentFolder [0], INIFILE);
+	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descentFolder [0], DLE.IniFile ());
 	ReloadTextures (0);
 	}
 
@@ -502,7 +502,7 @@ if (strcmp (descentFolder [1], m_d2Folder)) {
 		bChangePig = false;
 	if (bChangePig) {
 		strcpy_s (descentFolder [1], sizeof (descentFolder [1]), m_d2Folder);
-		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descentFolder [1], INIFILE);
+		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descentFolder [1], DLE.IniFile ());
 		ReloadTextures (1);
 		}
 	}
@@ -510,7 +510,7 @@ if (strcmp (descentFolder [1], m_d2Folder)) {
 _strlwr_s (m_missionFolder, sizeof (m_missionFolder));
 if (strcmp (missionFolder, m_missionFolder)) {
 	strcpy_s (missionFolder, sizeof (missionFolder), m_missionFolder);
-	WritePrivateProfileString ("DLE-XP", "levelsDirectory", missionFolder, INIFILE);
+	WritePrivateProfileString ("DLE-XP", "levelsDirectory", missionFolder, DLE.IniFile ());
 	SetCurrentDirectory (missionFolder);
 	}
 

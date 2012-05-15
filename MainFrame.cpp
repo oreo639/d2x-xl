@@ -51,7 +51,7 @@ m_texPaneWidth = -1;
 m_toolMode = 1;
 m_textureMode = 1;
 m_mineZoom = 0;
-nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, INIFILE);
+nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, DLE.IniFile ());
 #if EDITBAR
 m_bEditorTB = 1;
 #else

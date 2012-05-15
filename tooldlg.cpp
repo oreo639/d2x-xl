@@ -144,7 +144,7 @@ if (nLayout == 2) {
 	if(m_hWnd != NULL) {
 		char szId [20];
 		sprintf (szId, "Dialog%d", m_nId);
-		m_bVisible = GetPrivateProfileInt ("DLE-XP", szId, 0, INIFILE) != 0;
+		m_bVisible = GetPrivateProfileInt ("DLE-XP", szId, 0, DLE.IniFile ()) != 0;
 		LONG lStyle = GetWindowLong (m_hWnd, GWL_STYLE);
 		lStyle &= ~(WS_CHILD | WS_DISABLED);   
 		lStyle |= WS_POPUP | WS_SYSMENU;
@@ -191,11 +191,11 @@ else {
 
 		char szId [20];
 		sprintf (szId, "Dialog%d", m_nId);
-		m_bVisible = GetPrivateProfileInt ("DLE-XP", szId, 0, INIFILE) != 0;
+		m_bVisible = GetPrivateProfileInt ("DLE-XP", szId, 0, DLE.IniFile ()) != 0;
 		sprintf (szId, "xDialog%d", m_nId);
-		int nXPos = GetPrivateProfileInt ("DLE-XP", szId, 0, INIFILE);
+		int nXPos = GetPrivateProfileInt ("DLE-XP", szId, 0, DLE.IniFile ());
 		sprintf (szId, "yDialog%d", m_nId);
-		int nYPos = GetPrivateProfileInt ("DLE-XP", szId, 0, INIFILE);
+		int nYPos = GetPrivateProfileInt ("DLE-XP", szId, 0, DLE.IniFile ());
 
 		if ((nXPos | nYPos) == 0) {
 			nXPos = rectFrame.left + (rectFrame.Width () / 2) - (rectDlg.Width () / 2);

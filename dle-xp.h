@@ -37,8 +37,9 @@ public:
 	int					m_bExpertMode;
 	int					m_bMaximized;
 	char					m_modFolders [3][256];
-
-
+	char					m_appFolder [256];
+	char					m_iniFile [256];
+	
 	CDLE();
 
 	inline CMainFrame *MainFrame () { return (CMainFrame *) m_pMainWnd; }
@@ -92,6 +93,8 @@ public:
 	void LoadLayout ();
 
 	bool MakeModFolders (char* szSubFolder);
+
+	inline char* IniFile (void) { return m_iniFile; }
 
 // Overrides
 	// ClassWizard generated virtual function overrides

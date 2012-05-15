@@ -27,8 +27,8 @@ if (m_bEditorTB) {
 		MineView ()->GetClientRect (rc1);
 		MineView ()->ClientToScreen (rc1);
 		m_pEditTool->GetWindowRect (rc2);
-		rc0.left = GetPrivateProfileInt ("DLE-XP", "xEditTB", 0, INIFILE);
-		rc0.top = GetPrivateProfileInt ("DLE-XP", "yEditTB", 0, INIFILE);
+		rc0.left = GetPrivateProfileInt ("DLE-XP", "xEditTB", 0, DLE.IniFile ());
+		rc0.top = GetPrivateProfileInt ("DLE-XP", "yEditTB", 0, DLE.IniFile ());
 		if (rc0.left < 0)
 			rc0.left = 0;
 		else if (rc0.left > rc1.right)
