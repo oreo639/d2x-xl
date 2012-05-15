@@ -478,9 +478,10 @@ strcpy (szMission, hogManager->MissionName ());
 char* pszMission = strrchr (szMission, '.');
 if (pszMission)
 	*pszMission = '\0';
-if (!(pszMission = strrchr (szMission, '\\')))
-	pszMission = strrchr (szMission, ':');
-sprintf (m_modFolders [1], "%s\\%s\\%s", modFolder, pszMission ? pszMission + 1 : szMission, szSubFolder);
+if (!((pszMission = strrchr (szMission, '\\')) || (pszMission = strrchr (szMission, ':'))))
+	pszMission = szMission;
+sprintf (m_modFolders [2], "%s\\%s\\", modFolder, pszMission ? pszMission + 1 : pszMission);
+sprintf (m_modFolders [1], "%s%s", m_modFolders [2], szSubFolder);
 
 strcpy (szLevel, hogManager->LevelName ());
 char* pszName = strrchr (szLevel, '.');
@@ -492,7 +493,8 @@ if (!*szLevel)
 int nLevel = DLE.ToolView ()->MissionTool ()->LevelNumber (szLevel);
 if (!nLevel)
 	return false;
-sprintf (m_modFolders [0], "%s\\%s\\%s\\level%02d", modFolder, pszMission, szSubFolder, nLevel);
+sprintf (m_modFolders [0], "%s%s\\level%02d", m_modFolders [2], szSubFolder, nLevel);
+strcat (m_modFolders [2], pszMission);
 return true;
 }
 

@@ -235,6 +235,9 @@ if (mf.Open (buffer, bufSize)) {
 #endif
 		m_polyModels [1][i].Read (&mf);
 		m_polyModels [1][i].Read (&mf, true);
+#ifdef NDEBUG
+		m_polyModels [1][i].m_bCustom = 1;
+#else
 		if ((m_polyModels [0][i].m_info.dataSize != m_polyModels [1][i].m_info.dataSize) ||
 			memcmp (m_polyModels [0][i].m_info.renderData, m_polyModels [1][i].m_info.renderData, m_polyModels [0][i].m_info.dataSize))
 			m_polyModels [1][i].m_bCustom = 1;
@@ -242,6 +245,7 @@ if (mf.Open (buffer, bufSize)) {
 			m_polyModels [0][i].Release ();
 			m_polyModels [0][i].Clear ();
 			}
+#endif
 		mf.Seek (2 * sizeof (int), SEEK_CUR);
 		}
 	n = mf.ReadUInt32 ();                         
@@ -282,6 +286,9 @@ void CModelManager::LoadMod (void)
 {
 if (DLE.MakeModFolders ("models")) {
 	DLE.MainFrame ()->InitProgress (2 * MAX_POLYGON_MODELS);
+	char szFile [256];
+	sprintf (szFile, "%s.hxm", DLE.m_modFolders [2]);
+	robotManager.ReadHXM (szFile);
 	// first read the level specific textures
 	ReadMod (DLE.m_modFolders [0]);
 	// then read the mission wide textures

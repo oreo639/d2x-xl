@@ -36,7 +36,7 @@ public:
 	int					m_bSplashScreen;
 	int					m_bExpertMode;
 	int					m_bMaximized;
-	char					m_modFolders [2][256];
+	char					m_modFolders [3][256];
 
 
 	CDLE();

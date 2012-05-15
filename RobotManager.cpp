@@ -190,6 +190,19 @@ return 1;
 
 //------------------------------------------------------------------------------
 
+int CRobotManager::ReadHXM (const char* filename) 
+{
+	CFileManager fp;
+
+if (!fp.Open (filename, "rb")) 
+	return 1;
+int nResult = ReadHXM (fp, fp.Size ());
+fp.Close ();
+return nResult;
+}
+
+//------------------------------------------------------------------------------
+
 int CRobotManager::WriteHXM (CFileManager& fp) 
 {
 	int i, t;

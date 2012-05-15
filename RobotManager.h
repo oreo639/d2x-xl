@@ -54,6 +54,8 @@ class CRobotManager {
 		int WriteHXM (CFileManager& fp); 
 
 		int ReadHXM (CFileManager& fp, long size); 
+
+		int ReadHXM (const char* filename); 
 	};
 
 extern CRobotManager robotManager;
