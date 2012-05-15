@@ -744,7 +744,7 @@ void CTextureTool::OnAlignAll (void)
 	short		nSegment, 
 				nSide = current->m_nSide,
 				nChildLine = 3;
-	double	sAngle, cAngle, angle, length; 
+	double	sAngle, cAngle, angle; 
 
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
@@ -770,14 +770,9 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.
 		cAngle = atan3 (childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) % sideP->VertexCount ()].v, 
 							 childSideP->m_info.uvls [nChildLine].u - childSideP->m_info.uvls [(nChildLine + 1) % sideP->VertexCount ()].u); 
 		// now rotate childs (u, v) coords around child_point1 (cAngle - sAngle)
-		for (int i = 0; i < childSideP->VertexCount (); i++) {
-			angle = atan3 (childSideP->m_info.uvls [i].v, childSideP->m_info.uvls [i].u); 
-			length = sqrt (childSideP->m_info.uvls [i].u * childSideP->m_info.uvls [i].u +
-								childSideP->m_info.uvls [i].v * childSideP->m_info.uvls [i].v); 
-			angle -= (cAngle - sAngle); 
-			childSideP->m_info.uvls [i].u = length * cos (angle); 
-			childSideP->m_info.uvls [i].v = length * sin (angle); 
-			}
+		angle = cAngle - sAngle;
+		for (int i = 0; i < childSideP->VertexCount (); i++) 
+			childSideP->m_info.uvls [i].Rotate (angle); 
 		}
 	AlignChildren (nSegment, nSide, false, false);
 	}

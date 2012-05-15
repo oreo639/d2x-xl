@@ -22,7 +22,7 @@ short CSide::faceCounts [4] = {2, 1, 0, 0};
 void CUVL::Rotate (double angle)
 {
 if ((u != 0.0) || (v != 0.0)) {
-	double radius = sqrt (u * u + v * v);
+	double radius = Mag ();
 	// add rotation
 	double a = atan3 (v, u) - angle;	
 	// convert back to rectangular coordinates

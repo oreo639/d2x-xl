@@ -69,9 +69,9 @@ short			nChildEdgeCount = childSideP->VertexCount ();
 
 short			i; 
 short			nEdge, nChildEdge; 
-short			vert0, vert1, nChildVert0, nChildVert1; 
+ushort		vert0, vert1, nChildVert0, nChildVert1; 
 double		u0, v0; 
-double		sAngle, cAngle, angle, length; 
+double		sAngle, cAngle, angle; 
 
 // ignore children with no texture
 if (!IsWall (CSideKey (nChildSeg, nChildSide)))
@@ -120,25 +120,20 @@ if (bAlign1st) {
 	cAngle = atan3 (childSideP->m_info.uvls [nChildEdge].v - childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].v, 
 					 	 childSideP->m_info.uvls [nChildEdge].u - childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].u); 
 	// now rotate childs (u, v) coords around child_point1 (cAngle - sAngle)
-	for (i = 0; i < nChildEdgeCount; i++) {
-		angle = atan3 (childSideP->m_info.uvls [i].v, childSideP->m_info.uvls [i].u); 
-		length = sqrt (childSideP->m_info.uvls [i].u * childSideP->m_info.uvls [i].u +
-						   childSideP->m_info.uvls [i].v * childSideP->m_info.uvls [i].v); 
-		angle -= (cAngle - sAngle); 
-		childSideP->m_info.uvls [i].u = length * cos (angle); 
-		childSideP->m_info.uvls [i].v = length * sin (angle); 
-		}
+	double angle = cAngle - sAngle;
+	for (i = 0; i < nChildEdgeCount; i++) 
+		childSideP->m_info.uvls [i].Rotate (angle); 
 	// now translate all the childs (u, v) coords to parent point0
 	for (i = 0; i < nChildEdgeCount; i++) {
 		childSideP->m_info.uvls [i].u -= u0; 
 		childSideP->m_info.uvls [i].v -= v0; 
 		}
 	// modulo points by 0x800 (== 64 pixels)
-	u0 = childSideP->m_info.uvls [0].u / 0x800; 
-	v0 = childSideP->m_info.uvls [0].v / 0x800; 
+	u0 = childSideP->m_info.uvls [0].u; 
+	v0 = childSideP->m_info.uvls [0].v; 
 	for (i = 0; i < 4; i++) {
-		childSideP->m_info.uvls [i].u -= u0*0x800; 
-		childSideP->m_info.uvls [i].v -= v0*0x800; 
+		childSideP->m_info.uvls [i].u -= u0; 
+		childSideP->m_info.uvls [i].v -= v0; 
 		}
 	}
 if (bAlign2nd && sideP->OvlTex (0) && childSideP->OvlTex (0)) {
