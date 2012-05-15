@@ -796,7 +796,7 @@ glEnd ();
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::TexturedPolygon (CTexture* texP, tTexCoord2d* texCoords, rgbColor* color, CVertex* vertices, int nVertices, ushort* index)
+void CRendererGL::TexturedPolygon (CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index)
 {
 	static tTexCoord2d defaultTexCoords [4] = {{0.0, 0.0}, {0.0, 1.0}, {1.0, 1.0}, {1.0, 0.0}};
 
@@ -822,7 +822,7 @@ glDisable (GL_TEXTURE_2D);
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColor* color, CVertex* vertices, int nVertices, ushort* index)
+void CRendererGL::TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index)
 {
 TexturedPolygon (nTexture ? textureManager.Texture (nTexture) : null, texCoords, color, vertices, nVertices, index);
 }
@@ -831,7 +831,7 @@ TexturedPolygon (nTexture ? textureManager.Texture (nTexture) : null, texCoords,
 
 void CRendererGL::Sprite (CTexture* texP, CVertex center, double width, double height, bool bAlways)
 {
-	static rgbColor color = {1.0, 1.0, 1.0};
+	static rgbColord color = {1.0, 1.0, 1.0};
 	static ushort index [4] = {0, 1, 2, 3};
 
 	CVertex vertices [4];

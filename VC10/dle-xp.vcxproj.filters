@@ -259,6 +259,9 @@
     <ClInclude Include="..\WallManager.h">
       <Filter>Managers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\OOFModel.h">
+      <Filter>Items\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp">
@@ -587,6 +590,9 @@
     </ClCompile>
     <ClCompile Include="..\WallManager.cpp">
       <Filter>Managers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OOFModel.cpp">
+      <Filter>Items\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

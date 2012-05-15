@@ -241,8 +241,8 @@ class CRenderer {
 		virtual void PolyLine (CVertex* vertices, int nVertices) = 0;
 		virtual void Polygon (CVertex* vertices, int nVertices) = 0;
 		virtual void Polygon (CVertex* vertices, int nVertices, ushort* index) = 0;
-		virtual void TexturedPolygon (CTexture* texP, tTexCoord2d* texCoords, rgbColor* color, CVertex* vertices, int nVertices, ushort* index) = 0;
-		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColor* color, CVertex* vertices, int nVertices, ushort* index) = 0;
+		virtual void TexturedPolygon (CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) = 0;
+		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) = 0;
 		virtual void Sprite (CTexture* texP, CVertex center, double width, double height, bool bAlways = false) = 0;
 
 		virtual int Type (void) = 0;
@@ -302,8 +302,8 @@ class CRendererSW : public CRenderer {
 		virtual void PolyLine (CVertex* vertices, int nVertices) {}
 		virtual void Polygon (CVertex* vertices, int nVertices) {}
 		virtual void Polygon (CVertex* vertices, int nVertices, ushort* index) {}
-		virtual void TexturedPolygon (CTexture* texP, tTexCoord2d* texCoords, rgbColor* color, CVertex* vertices, int nVertices, ushort* index) {}
-		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColor* color, CVertex* vertices, int nVertices, ushort* index) {}
+		virtual void TexturedPolygon (CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) {}
+		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) {}
 		virtual void Sprite (CTexture* texP, CVertex center, double width, double height, bool bAlways = false) {}
 
 		virtual CPen* SelectObject (CPen* pen) { return m_pDC->SelectObject (pen); }
@@ -384,8 +384,8 @@ class CRendererGL : public CRenderer {
 		virtual void PolyLine (CVertex* vertices, int nVertices);
 		virtual void Polygon (CVertex* vertices, int nVertices);
 		virtual void Polygon (CVertex* vertices, int nVertices, ushort* index);
-		virtual void TexturedPolygon (CTexture* textP, tTexCoord2d* texCoords, rgbColor* color, CVertex* vertices, int nVertices, ushort* index);
-		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColor* color, CVertex* vertices, int nVertices, ushort* index);
+		virtual void TexturedPolygon (CTexture* textP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index);
+		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index);
 		virtual void Sprite (CTexture* texP, CVertex center, double width, double height, bool bAlways = false);
 
 		virtual CPen* SelectObject (CPen* pen) { return pen; }

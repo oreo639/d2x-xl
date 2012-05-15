@@ -486,7 +486,7 @@ return modelManager.Animation (rType.animationInfo.nAnimation)->frames [0];
 
 bool CGameObject::DrawSprite (CRenderer& renderer)
 {
-	static rgbColor color = {1.0, 1.0, 1.0};
+	static rgbColord color = {1.0, 1.0, 1.0};
 	static ushort index [4] = {0, 1, 2, 3};
 
 #if 0

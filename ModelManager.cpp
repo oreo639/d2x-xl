@@ -299,7 +299,7 @@ for (int i = start; i < end; i++) {
 
 //------------------------------------------------------------------------------
 
-void CModelManager::Polygon (ushort* index, int nVertices, tTexCoord2d* texCoords, rgbColor* color, short nTexture)
+void CModelManager::Polygon (ushort* index, int nVertices, tTexCoord2d* texCoords, rgbColord* color, short nTexture)
 { 
 if (m_renderer->Type ()) {
 	m_renderer->TexturedPolygon (nTexture, texCoords, color, m_screenPoly, nVertices, index);

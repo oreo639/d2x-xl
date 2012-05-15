@@ -81,7 +81,7 @@ public:
 	CVertex		offset;
 	CVertex		normal;
 	short			nTexture;
-	rgbColor		color;
+	rgbColord		color;
 	ushort		nGlow;
 	ushort		index [MAX_POLYMODEL_POLY_POINTS];
 	tTexCoord2d	texCoords [MAX_POLYMODEL_POLY_POINTS];
@@ -151,7 +151,7 @@ class CModelManager {
 
 		void SetPoints (int start, int end);
 
-		void Polygon (ushort* index, int nVertices, tTexCoord2d* texCoords, rgbColor* color, short nTexture);
+		void Polygon (ushort* index, int nVertices, tTexCoord2d* texCoords, rgbColord* color, short nTexture);
 
 		inline tAnimationInfo* Animation (int i) { return (i < MAX_ANIMATIONS) ? &m_animations [i] : null; }
 

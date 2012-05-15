@@ -550,6 +550,7 @@
     <ClInclude Include="..\dle-xp.h" />
     <ClInclude Include="..\MainFrame.h" />
     <ClInclude Include="..\mineview.h" />
+    <ClInclude Include="..\OOFModel.h" />
     <ClInclude Include="..\Parser.h" />
     <ClInclude Include="..\renderer.h" />
     <ClInclude Include="..\StdAfx.h" />
@@ -704,6 +705,7 @@
     <ClCompile Include="..\ObjectTool.Death.cpp" />
     <ClCompile Include="..\ObjectTool.Physics.cpp" />
     <ClCompile Include="..\ObjectTool.Sound.cpp" />
+    <ClCompile Include="..\OOFModel.cpp" />
     <ClCompile Include="..\ReactorTool.cpp" />
     <ClCompile Include="..\SegmentTool.cpp" />
     <ClCompile Include="..\SettingsTool.cpp" />

@@ -130,8 +130,12 @@ public:
 // -----------------------------------------------------------------------------
 
 typedef struct rgbColor {
-	double	r, g, b;
-} rgbColor;
+	ubyte	r, g, b;
+} rgbColord;
+
+typedef struct rgbColord {
+	double r, g, b;
+} rgbColord;
 
 typedef struct rgbColorf {
 	float	r, g, b;
@@ -145,7 +149,7 @@ typedef struct rgbaColorf {
 
 typedef struct tColor {
 	ubyte		index;
-	rgbColor	color;
+	rgbColord	color;
 } tColor;
 
 // -----------------------------------------------------------------------------

@@ -124,41 +124,6 @@ return NULL;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-#if 0
-int ASE_ReleaseTextures (void)
-{
-	CModel*	modelP;
-	int		bCustom, i;
-
-PrintLog (1, "releasing ASE model textures\n");
-for (bCustom = 0; bCustom < 2; bCustom++)
-	for (i = gameData.models.nHiresModels, modelP = gameData.models.aseModels [bCustom].Buffer (); i; i--, modelP++)
-		modelP->ReleaseTextures ();
-PrintLog (-1);
-return 0;
-}
-
-//------------------------------------------------------------------------------
-
-int ASE_ReloadTextures (void)
-{
-	CModel*	modelP;
-	int		bCustom, i;
-
-PrintLog (1, "reloading ASE model textures\n");
-for (bCustom = 0; bCustom < 2; bCustom++)
-	for (i = gameData.models.nHiresModels, modelP = gameData.models.aseModels [bCustom].Buffer (); i; i--, modelP++)
-		if (!modelP->ReloadTextures ()) {
-			PrintLog (-1);
-			return 0;
-			}
-PrintLog (-1);
-return 1;
-}
-#endif
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 
 void CSubModel::Init (void)
 {
