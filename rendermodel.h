@@ -7,6 +7,7 @@
 #include "mine.h"
 #include "dle-xp.h"
 #include "asemodel.h"
+#include "oofmodel.h"
 
 namespace RenderModel {
 
@@ -176,14 +177,17 @@ class CModel {
 		static int CmpVerts (const CFloatVector* pv, const CFloatVector* pm);
 
 		int BuildFromASE (ASE::CModel& aseModel);
+		int BuildFromOOF (OOF::CModel& oofModel);
 		int BuildFromPOF (int nModel, CPolyModel& polyModel, CDynamicArray<CTexture*>& modelTextures, CFloatVector* objColorP);
 
 		int Render (CViewMatrix* view, CGameObject* objP, int nGunId = 0, int nBombId = 0, int nMissileId = 0, int nMissiles = 4);
 
 	private:
-		void CountASEModelItems (ASE::CModel& aseModelP);
-		void GetASEModelItems (int nModel, ASE::CModel& aseModelP, float fScale);
+		void CountASEModelItems (ASE::CModel& aseModel);
+		void GetASEModelItems (int nModel, ASE::CModel& aseModel, float fScale);
 
+		void CountOOFModelItems (OOF::CModel& oofModel);
+		void GetOOFModelItems (int nModel, OOF::CModel& oofModel, float fScale);
 
 		void AssignPOFFaces (void);
 		int CountPOFModelItems (void* modelDataP, ushort* pnSubModels, ushort* pnVerts, ushort* pnFaces, ushort* pnFaceVerts);

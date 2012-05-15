@@ -706,6 +706,7 @@
     <ClCompile Include="..\ObjectTool.Physics.cpp" />
     <ClCompile Include="..\ObjectTool.Sound.cpp" />
     <ClCompile Include="..\OOFModel.cpp" />
+    <ClCompile Include="..\OOFRenderModel.cpp" />
     <ClCompile Include="..\ReactorTool.cpp" />
     <ClCompile Include="..\SegmentTool.cpp" />
     <ClCompile Include="..\SettingsTool.cpp" />

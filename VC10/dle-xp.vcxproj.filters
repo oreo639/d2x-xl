@@ -594,6 +594,9 @@
     <ClCompile Include="..\OOFModel.cpp">
       <Filter>Items\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\OOFRenderModel.cpp">
+      <Filter>Items\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\dle-xp.rc">
