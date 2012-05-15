@@ -33,6 +33,7 @@ class CTextureView : public CWnd {
 		BOOL				m_bShowAll;
 		bool				m_bDelayRefresh;
 		CTextureFilter	m_filter;
+		CSize				m_paneSize;
 
 		CTextureView ();
 		~CTextureView ();
@@ -61,8 +62,8 @@ class CTextureView : public CWnd {
 				Refresh ();
 				}
 			}
-		inline uint GetViewFlags ()
-			{ return m_viewFlags; }
+		inline CSize& PaneSize () { return m_paneSize; }
+		inline uint GetViewFlags () { return m_viewFlags; }
 		inline bool ShowAll ()
 			{ return m_bShowAll && (m_filter.Filter () == 0xFFFFFFFF); }
 		inline uint& TextureFilter (void) { return m_filter.Filter (); }

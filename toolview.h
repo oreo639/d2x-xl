@@ -1700,7 +1700,7 @@ class CToolView : public CWnd {
 		int				m_scrollRange [2];
 		int				m_scrollPage [2];
 		int				m_scrollOffs [2];
-		CSize				m_toolSize;
+		CSize				m_paneSize;
 		BOOL				m_bHScroll;
 		BOOL				m_bVScroll;
 		BOOL				m_bRecalcLayout;
@@ -1741,8 +1741,7 @@ class CToolView : public CWnd {
 		void RecalcLayout (int nToolMode = -1, int nTextureMode = -1);
 		void MoveWindow (int x, int y, int nWidth, int nHeight, BOOL bRepaint = TRUE);
 		void MoveWindow (LPCRECT lpRect, BOOL bRepaint = TRUE);
-		inline CSize& ToolSize ()
-			{ return m_toolSize; }
+		inline CSize& PaneSize () { return m_paneSize; }
 		void SetActive (int nPage);
 		inline void EditTexture () { SetActive (0); }
 		inline void EditSegment () { SetActive (1); }

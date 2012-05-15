@@ -77,7 +77,9 @@ public:
 
 	inline CWnd *ToolPane (void) { return MainFrame ()->ToolPane (); }
 
-	inline CSize& ToolSize (void) { return ToolView ()->ToolSize (); }
+	inline CSize& ToolPaneSize (void) { return ToolView ()->PaneSize (); }
+
+	inline CSize& TexturePaneSize (void) { return TextureView ()->PaneSize (); }
 
 	inline int& SplashScreen (void) { return m_bSplashScreen; }
 
