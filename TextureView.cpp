@@ -32,6 +32,7 @@ IMPLEMENT_DYNCREATE(CTextureView, CWnd)
 BEGIN_MESSAGE_MAP(CTextureView, CWnd)
 //	ON_WM_CREATE()
 	ON_WM_PAINT()
+	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONDOWN()
@@ -237,6 +238,8 @@ CHECKMINE;
 
 if (!textureManager.Available ())
 	return;
+if (DLE.MainFrame ())
+	DLE.MainFrame ()->RecalcLayout ();
 
 	CRect rect;
 	GetClientRect(rect);
@@ -403,6 +406,13 @@ if (nPos < 0)
 SetScrollPos (SB_VERT, nPos, TRUE);
 Refresh ();
 return 0;
+}
+
+								/*---------------------------*/
+
+void CTextureView::OnSize (UINT nType, int cx, int cy)
+{
+CWnd::Invalidate (1);
 }
 
 								/*---------------------------*/

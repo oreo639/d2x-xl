@@ -42,6 +42,7 @@ class CTextureView : public CWnd {
 		int QCmpTexFilters (int nTxt, int mTxt, uint mf, uint mf2);
 		afx_msg BOOL OnEraseBkgnd (CDC* pDC);
 		afx_msg void OnPaint ();
+		afx_msg void OnSize (UINT nType, int cx, int cy);
 		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 		afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 		afx_msg void OnVScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);

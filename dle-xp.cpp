@@ -406,7 +406,7 @@ CHECKMINE;
 
 MainFrame ()->m_toolMode = GetPrivateProfileInt ("DLE-XP", "ToolMode", 1, DLE.IniFile ());
 MainFrame ()->m_textureMode = GetPrivateProfileInt ("DLE-XP", "TextureMode", 1, DLE.IniFile ());
-MainFrame ()->m_paneMode = ((MainFrame ()->m_toolMode == 2) && (MainFrame ()->m_textureMode == 2)) ? 2 : 0;
+MainFrame ()->m_paneMode = ((MainFrame ()->m_toolMode == 1) && (MainFrame ()->m_textureMode == 1)) ? 1 : 0;
 if (ToolView ()->DiagTool ())
 	ToolView ()->DiagTool ()->m_bAutoFixBugs = GetPrivateProfileInt ("DLE-XP", "AutoFixBugs", 1, DLE.IniFile ());
 rc.left = GetPrivateProfileInt ("DLE-XP", "xWin", 0, DLE.IniFile ());

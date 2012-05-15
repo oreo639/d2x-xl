@@ -221,7 +221,7 @@ if (m_paneMode) {
 void CMainFrame::ShowTools ()
 {
 RecalcLayout (1,1);
-if (m_paneMode == 2)
+if (m_paneMode == 1)
 	ResetMineZoom ();
 m_paneMode = 0;
 }
@@ -339,7 +339,7 @@ MineView ()->Refresh ();
 void CMainFrame::OnToggleViews () 
 {
 if (nLayout < 2) {
-	if (m_paneMode == 2) {
+	if (m_paneMode == 1) {
 		RecalcLayout (0,0);
 		m_paneMode = 0;
 		m_toolBar.SetButtonInfo (44, ID_VIEW_TOGGLEVIEWS, TBBS_BUTTON, 38);
@@ -347,7 +347,7 @@ if (nLayout < 2) {
 		}
 	else {
 		RecalcLayout (1,1);
-		m_paneMode = 2;
+		m_paneMode = 1;
 		m_toolBar.SetButtonInfo (44, ID_VIEW_TOGGLEVIEWS, TBBS_BUTTON, 39);
 		//m_mineZoom = MineView ()->ZoomIn (2);
 		}
@@ -572,7 +572,7 @@ blockManager.Extended () = !blockManager.Extended ();
 
 void CMainFrame::OnUpdateToggleViews (CCmdUI* pCmdUI)
 {
-pCmdUI->SetCheck (m_paneMode == 2);
+pCmdUI->SetCheck (m_paneMode == 1);
 }
 
 void CMainFrame::OnUpdateToggleTexPane (CCmdUI* pCmdUI)

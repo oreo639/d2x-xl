@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP(CToolView, CWnd)
 	ON_WM_ERASEBKGND ()
 	ON_WM_HSCROLL ()
 	ON_WM_VSCROLL ()
+	ON_WM_SIZE ()
 	ON_COMMAND(ID_SEL_PREV_TAB, OnSelectPrevTab)
 	ON_COMMAND(ID_SEL_NEXT_TAB, OnSelectNextTab)
 END_MESSAGE_MAP()
@@ -274,6 +275,13 @@ void CToolView::OnDestroy (void)
 CWnd::OnDestroy ();
 if (m_pTools)
 	m_pTools->DestroyWindow ();
+}
+
+								/*---------------------------*/
+
+void CToolView::OnSize (UINT nType, int cx, int cy)
+{
+CWnd::Invalidate (1);
 }
 
 								/*---------------------------*/
