@@ -27,8 +27,46 @@ using namespace OOF;
 //------------------------------------------------------------------------------
 
 static int nIndent = 0;
-static int bLogOOF = 0;
-extern  FILE *fLog;
+
+//------------------------------------------------------------------------------
+
+inline float fsqr (float x)
+{
+return x * x;
+}
+
+//------------------------------------------------------------------------------
+
+float OOF_Centroid (CFloatVector *pvCentroid, CFloatVector vSrc[], int nv)
+{
+	CFloatVector	vNormal, vCenter;
+	float				fTotalArea;
+	int				i;
+
+pvCentroid->Clear ();
+
+// First figure out the total area of this polygon
+vNormal = Perpendicular (vSrc [0], vSrc [1], vSrc [2]);
+fTotalArea = vNormal.Mag () * 0.5f;
+for (i = 2; i < nv - 1; i++) {
+	vNormal = Perpendicular (vSrc [0], vSrc [i], vSrc [i + 1]);
+	fTotalArea += vNormal.Mag () / 2;
+	}
+// Now figure out how much weight each triangle represents to the overall polygon
+vNormal = Perpendicular (vSrc [0], vSrc [1], vSrc [2]);
+float fArea = vNormal.Mag () * 0.5f;
+// Get the center of the first polygon
+vCenter = vSrc [0] + vSrc [1] + vSrc [2];
+*pvCentroid += vCenter / (3.0f * fTotalArea / fArea);
+// Now do the same for the rest
+for (i = 2; i < nv - 1; i++) {
+	vNormal = Perpendicular (vSrc [0], vSrc [i], vSrc [i + 1]);
+	fArea = vNormal.Mag () * 0.5f;
+	vCenter = vSrc [0] + vSrc [i] + vSrc [i + 1];
+	*pvCentroid +=  vCenter / (3.0f * fTotalArea / fArea);
+	}
+return fTotalArea;
+}
 
 //------------------------------------------------------------------------------
 
@@ -94,8 +132,6 @@ if (!(i = OOF_ReadInt (fp, "nList")))
 if (!list.Create (i))
 	return -1;
 for (i = 0; i < list.Length (); i++) {
-	if (bLogOOF)
-		sprintf (szId, "list [%d]", i);
 	list [i] = OOF_ReadInt (fp, szId);
 	}
 return list.Length ();
@@ -175,8 +211,6 @@ if (!list.Create (nVerts))
 	return false;
 
 for (int i = 0; i < nVerts; i++) {
-	if (bLogOOF)
-		sprintf (szId, "vertList [%d]", i);
 	OOF_ReadVector (fp, list + i, szId);
 	OOF_GetMinMax (list + i, pvMin, pvMax);
 	}
@@ -1121,8 +1155,6 @@ if (m_nVerts) {
 		if (po->m_nVersion < 2300) 
 			m_pfAlpha [i] = 1.0f;
 		else {
-			if (bLogOOF)
-				sprintf (szId, "fAlphaP [%d]", i);
 			m_pfAlpha [i] = OOF_ReadFloat (fp, szId);
 			if	(m_pfAlpha [i] < 0.99)
 				po->m_nFlags |= OOF_PMF_ALPHA;
