@@ -129,6 +129,7 @@ class CModelManager {
 #if _DEBUG
 		CStaticArray< CPolyModel, MAX_POLYGON_MODELS > m_polyModels [2];
 		CStaticArray< ASE::CModel, MAX_POLYGON_MODELS > m_aseModels;
+		CStaticArray< OOF::CModel, MAX_POLYGON_MODELS > m_oofModels;
 		CStaticArray< RenderModel::CModel, MAX_POLYGON_MODELS > m_renderModels;
 #else
 		CPolyModel	m_polyModels [2][MAX_POLYGON_MODELS];
