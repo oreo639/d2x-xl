@@ -104,7 +104,7 @@ double angle;
 
 if (bAlign1st) {
 	CUVL uv;
-	// now translate all the childs (u, v) coords so child_point1 is at zero
+	// now translate all the childs (u, v) coords so the reference point is at zero
 	uv = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount]; 
 	for (i = 0; i < nChildEdgeCount; i++)
 		childSideP->m_info.uvls [i] -= uv; 
@@ -121,9 +121,6 @@ if (bAlign1st) {
 		childSideP->m_info.uvls [i].Rotate (angle); 
 	// now translate all the childs (u, v) coords to parent point0
 	for (i = 0; i < nChildEdgeCount; i++)
-		childSideP->m_info.uvls [i] -= uv; 
-	uv = childSideP->m_info.uvls [0];
-	for (i = 0; i < nChildEdgeCount; i++) 
 		childSideP->m_info.uvls [i] -= uv; 
 	}
 if (bAlign2nd && sideP->OvlTex (0) && childSideP->OvlTex (0)) {

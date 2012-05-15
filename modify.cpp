@@ -414,13 +414,13 @@ switch (m_selectMode) {
 				}
 		center = Average (maxPoint, minPoint);
 		undoManager.Begin (udVertices | udSegments);
-		vertexP = vertexManager.Vertex (0);
 		//double scale = (20.0 + delta) / 20.0;
 		if (delta < 0.0)
 			delta = 1.0 - sqrt (3.0) / Distance (minPoint, maxPoint) * DLE.MineView ()->MineMoveRate ();
 		else
 			delta = 1.0 + sqrt (3.0) / Distance (minPoint, maxPoint) * DLE.MineView ()->MineMoveRate ();
 		j = vertexManager.Count ();
+		vertexP = vertexManager.Vertex (0);
 		for (i = 0; i < j; i++, vertexP++)
 			if (vertexP->IsMarked ()) {
 				CVertex v = *vertexP;
@@ -430,9 +430,11 @@ switch (m_selectMode) {
 				v -= *vertexP;
 				vertexP->SetDelta (v);
 				}
+		vertexP = vertexManager.Vertex (0);
 		for (i = 0; i < j; i++, vertexP++)
 			if (vertexP->IsMarked ())
 				segmentManager.UpdateTexCoords (i, false);
+		vertexP = vertexManager.Vertex (0);
 		for (i = 0; i < j; i++, vertexP++)
 			if (vertexP->IsMarked ()) {
 				vertexP->Move ();
