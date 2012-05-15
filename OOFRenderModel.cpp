@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
-#include "error.h"
 
+#include "mine.h"
 #include "dle-xp.h"
 #include "OOFModel.h"
 #include "RenderModel.h"
@@ -10,7 +10,7 @@ using namespace RenderModel;
 
 //------------------------------------------------------------------------------
 
-void CModel::CountOOFModelItems (OOF::CModel *oofModel)
+void CModel::CountOOFModelItems (OOF::CModel& oofModel)
 {
 	OOF::CSubModel*	pso;
 	OOF::CFace*			pf;
@@ -77,7 +77,7 @@ for (i = oofModel.m_nSubModels, pso = oofModel.m_subModels.Buffer (), psm = m_su
 		pfv = pof->m_vertices;
 		h = pfv->m_nIndex;
 		if (nModel > 200) {
-			vNormal = Normal (*pso->m_vertices [pfv [0].m_nIndex], *pso->m_vertices [pfv [1].m_nIndex], *pso->m_vertices [pfv [2].m_nIndex]);
+			vNormal = Normal (pso->m_vertices [pfv [0].m_nIndex], pso->m_vertices [pfv [1].m_nIndex], pso->m_vertices [pfv [2].m_nIndex]);
 			}
 		else
 			vNormal = pof->m_vNormal;
@@ -116,9 +116,6 @@ for (i = oofModel.m_nSubModels, pso = oofModel.m_subModels.Buffer (), psm = m_su
 
 int CModel::BuildFromOOF (OOF::CModel& oofModel)
 {
-	CBitmap*			bmP;
-	int				i;
-
 CountOOFModelItems (oofModel);
 if (!Create ())
 	return 0;

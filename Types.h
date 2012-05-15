@@ -131,7 +131,7 @@ public:
 
 typedef struct rgbColor {
 	ubyte	r, g, b;
-} rgbColord;
+} rgbColor;
 
 typedef struct rgbColord {
 	double r, g, b;

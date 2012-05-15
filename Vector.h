@@ -153,7 +153,7 @@ public:
 	CFloatVector (tFloatVector& _v) { v.x = _v.x, v.y = _v.y, v.z = _v.z; }
 	explicit CFloatVector (CDoubleVector& _v); 
 	void Set (float x, float y, float z) { v.x = x, v.y = y, v.z = z; }
-	void Clear (void) { Clear (); }
+	void Clear (void) { Set (0.0, 0.0, 0.0); }
 
 inline const bool operator== (const CFloatVector other);
 inline float& CFloatVector::operator[] (const size_t i);

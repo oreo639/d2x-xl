@@ -133,6 +133,7 @@ class CModelManager {
 #else
 		CPolyModel	m_polyModels [2][MAX_POLYGON_MODELS];
 		ASE::CModel m_aseModels [MAX_POLYGON_MODELS];
+		OOF::CModel m_oofModels [MAX_POLYGON_MODELS];
 		RenderModel::CModel m_renderModels [MAX_POLYGON_MODELS];
 #endif
 

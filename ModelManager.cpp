@@ -108,6 +108,7 @@ CPolyModel* modelP = &m_polyModels [1][0];
 for (int i = 0; i < MAX_POLYGON_MODELS; i++, modelP++) {
 	m_renderModels [i].Destroy ();
 	m_aseModels [i].Destroy ();
+	m_oofModels [i].Destroy ();
 	modelP->Release ();
 	modelP->Clear ();
 	}
@@ -254,6 +255,8 @@ for (int i = 0; i < MAX_POLYGON_MODELS; i++) {
 		continue; // already have a custom model
 	if (m_aseModels [i].Read (pszFolder, i))
 		m_renderModels [i].BuildFromASE (m_aseModels [i]);
+	else if (m_oofModels [i].Read (pszFolder, i))
+		m_renderModels [i].BuildFromOOF (m_oofModels [i]);
 	}
 }
 

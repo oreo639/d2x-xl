@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "mine.h"
 #include "dle-xp.h"
 #include "OOFModel.h"
 
@@ -15,11 +16,11 @@ using namespace OOF;
 #define OOF_MEM_OPT	1
 
 #ifdef __unix
-#	ifndef stricmp
-#		define	stricmp	strcasecmp
+#	ifndef _stricmp
+#		define	_stricmp	strcasecmp
 #	endif
-#	ifndef strnicmp
-#		define	strnicmp	strncasecmp
+#	ifndef _strnicmp
+#		define	_strnicmp	strncasecmp
 #	endif
 #endif
 
@@ -31,48 +32,48 @@ extern  FILE *fLog;
 
 //------------------------------------------------------------------------------
 
-static sbyte OOF_ReadByte (CFileManager& cf, const char *pszIdent)
+static sbyte OOF_ReadByte (CFileManager& fp, const char *pszIdent)
 {
-sbyte b = cf.ReadUByte ();
+sbyte b = fp.ReadUByte ();
 return b;
 }
 
 //------------------------------------------------------------------------------
 
-static int OOF_ReadInt (CFileManager& cf, const char *pszIdent)
+static int OOF_ReadInt (CFileManager& fp, const char *pszIdent)
 {
-int i = cf.ReadInt32 ();
+int i = fp.ReadInt32 ();
 return i;
 }
 
 //------------------------------------------------------------------------------
 
-static float OOF_ReadFloat (CFileManager& cf, const char *pszIdent)
+static float OOF_ReadFloat (CFileManager& fp, const char *pszIdent)
 {
-float f = cf.ReadFloat ();
+float f = fp.ReadFloat ();
 return f;
 }
 
 //------------------------------------------------------------------------------
 
-static void OOF_ReadVector (CFileManager& cf, CFloatVector *pv, const char *pszIdent)
+static void OOF_ReadVector (CFileManager& fp, CFloatVector *pv, const char *pszIdent)
 {
-pv->v.x = cf.ReadFloat ();
-pv->v.y = cf.ReadFloat ();
-pv->v.z = cf.ReadFloat ();
+pv->v.x = fp.ReadFloat ();
+pv->v.y = fp.ReadFloat ();
+pv->v.z = fp.ReadFloat ();
 }
 
 //------------------------------------------------------------------------------
 
-static char *OOF_ReadString (CFileManager& cf, const char *pszIdent)
+static char *OOF_ReadString (CFileManager& fp, const char *pszIdent)
 {
 	char	*psz;
 	int	l;
 
-l = OOF_ReadInt (cf, "string length");
+l = OOF_ReadInt (fp, "string length");
 if (!(psz = new char [l + 1]))
 	return NULL;
-if (!l || cf.Read (psz, l, 1)) {
+if (!l || fp.Read (psz, l, 1)) {
 	psz [l] = '\0';
 	return psz;
 	}
@@ -82,20 +83,20 @@ return NULL;
 
 //------------------------------------------------------------------------------
 
-static int OOF_ReadIntList (CFileManager& cf, CDynamicArray<int>& list)
+static int OOF_ReadIntList (CFileManager& fp, CDynamicArray<int>& list)
 {
 	uint	i;
 	char	szId [20] = "";
 
 list.Destroy ();
-if (!(i = OOF_ReadInt (cf, "nList"))) 
+if (!(i = OOF_ReadInt (fp, "nList"))) 
 	return 0;
 if (!list.Create (i))
 	return -1;
 for (i = 0; i < list.Length (); i++) {
 	if (bLogOOF)
 		sprintf (szId, "list [%d]", i);
-	list [i] = OOF_ReadInt (cf, szId);
+	list [i] = OOF_ReadInt (fp, szId);
 	}
 return list.Length ();
 }
@@ -165,7 +166,7 @@ if (pvMin && pvMax) {
 
 //------------------------------------------------------------------------------
 
-static bool OOF_ReadVertList (CFileManager& cf, CDynamicArray<CFloatVector>& list, int nVerts, CFloatVector *pvMin, CFloatVector *pvMax)
+static bool OOF_ReadVertList (CFileManager& fp, CDynamicArray<CFloatVector>& list, int nVerts, CFloatVector *pvMin, CFloatVector *pvMax)
 {
 	char	szId [20] = "";
 
@@ -176,7 +177,7 @@ if (!list.Create (nVerts))
 for (int i = 0; i < nVerts; i++) {
 	if (bLogOOF)
 		sprintf (szId, "vertList [%d]", i);
-	OOF_ReadVector (cf, list + i, szId);
+	OOF_ReadVector (fp, list + i, szId);
 	OOF_GetMinMax (list + i, pvMin, pvMax);
 	}
 return true;
@@ -193,13 +194,13 @@ m_nLastFrame = 0;
 
 //------------------------------------------------------------------------------
 
-int OOF::CFrameInfo::Read (CFileManager& cf, CModel* po, int bTimed)
+int OOF::CFrameInfo::Read (CFileManager& fp, CModel* po, int bTimed)
 {
 nIndent += 2;
 if (bTimed) {
-	m_nFrames = OOF_ReadInt (cf, "nFrames");
-	m_nFirstFrame = OOF_ReadInt (cf, "nFirstFrame");
-	m_nLastFrame = OOF_ReadInt (cf, "nLastFrame");
+	m_nFrames = OOF_ReadInt (fp, "nFrames");
+	m_nFirstFrame = OOF_ReadInt (fp, "nFirstFrame");
+	m_nLastFrame = OOF_ReadInt (fp, "nLastFrame");
 	if (po->m_frameInfo.m_nFirstFrame > m_nFirstFrame)
 		po->m_frameInfo.m_nFirstFrame = m_nFirstFrame;
 	if (po->m_frameInfo.m_nLastFrame < m_nLastFrame)
@@ -213,17 +214,17 @@ return 1;
 
 //------------------------------------------------------------------------------
 
-int CRotFrame::Read (CFileManager& cf, int bTimed)
+int CRotFrame::Read (CFileManager& fp, int bTimed)
 {
 	float	fMag;
 
 nIndent += 2;
 if (bTimed)
-	m_nStartTime = OOF_ReadInt (cf, "nStartTime");
-OOF_ReadVector (cf, &m_vAxis, "vAxis");
+	m_nStartTime = OOF_ReadInt (fp, "nStartTime");
+OOF_ReadVector (fp, &m_vAxis, "vAxis");
 if (0 < (fMag = m_vAxis.Mag ()))
 	m_vAxis /= fMag;
-m_nAngle = OOF_ReadInt (cf, "nAngle");
+m_nAngle = OOF_ReadInt (fp, "nAngle");
 nIndent -= 2;
 return 1;
 }
@@ -262,9 +263,9 @@ CAnim::Destroy ();
 
 //------------------------------------------------------------------------------
 
-int CRotAnim::Read (CFileManager& cf, CModel* po, int bTimed)
+int CRotAnim::Read (CFileManager& fp, CModel* po, int bTimed)
 {
-if (!this->CFrameInfo::Read (cf, po, bTimed))
+if (!this->CFrameInfo::Read (fp, po, bTimed))
 	return 0;
 if (!m_frames.Create (m_nFrames))
 	return 0;
@@ -277,7 +278,7 @@ if (bTimed &&
 	}
 if (m_nTicks)
 	for (int i = 0; i < m_nFrames; i++)
-		if (!m_frames [i].Read (cf, bTimed)) {
+		if (!m_frames [i].Read (fp, bTimed)) {
 			Destroy ();
 			return 0;
 			}
@@ -343,12 +344,12 @@ for (i = m_frames.Length (), pf = m_frames.Buffer (); i; i--, pf++) {
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-int CPosFrame::Read (CFileManager& cf, int bTimed)
+int CPosFrame::Read (CFileManager& fp, int bTimed)
 {
 nIndent += 2;
 if (bTimed)
-	m_nStartTime = OOF_ReadInt (cf, "nStartTime");
-OOF_ReadVector (cf, &m_vPos, "vPos");
+	m_nStartTime = OOF_ReadInt (fp, "nStartTime");
+OOF_ReadVector (fp, &m_vPos, "vPos");
 nIndent -= 2;
 return 1;
 }
@@ -363,9 +364,9 @@ CAnim::Destroy ();
 
 //------------------------------------------------------------------------------
 
-int CPosAnim::Read (CFileManager& cf, CModel* po, int bTimed)
+int CPosAnim::Read (CFileManager& fp, CModel* po, int bTimed)
 {
-if (!this->CFrameInfo::Read (cf, po, bTimed))
+if (!this->CFrameInfo::Read (fp, po, bTimed))
 	return 0;
 if (bTimed &&
 	 (m_nTicks = m_nLastFrame - m_nFirstFrame) &&
@@ -379,7 +380,7 @@ if (!m_frames.Create (m_nFrames)) {
 	}
 m_frames.Clear (0);
 for (int i = 0; i < m_nFrames; i++)
-	if (!m_frames [i].Read (cf, bTimed)) {	
+	if (!m_frames [i].Read (fp, bTimed)) {	
 		Destroy ();
 		return 0;
 		}
@@ -405,60 +406,60 @@ m_pszProps = NULL;
 
 //------------------------------------------------------------------------------
 
-int CSpecialPoint::Read (CFileManager& cf)
+int CSpecialPoint::Read (CFileManager& fp)
 {
 Init ();
 nIndent += 2;
-if (!(m_pszName = OOF_ReadString (cf, "pszName"))) {
+if (!(m_pszName = OOF_ReadString (fp, "pszName"))) {
 	nIndent -= 2;
 	return 0;
 	}
-if (!(m_pszProps = OOF_ReadString (cf, "pszProps"))) {
+if (!(m_pszProps = OOF_ReadString (fp, "pszProps"))) {
 	nIndent -= 2;
 	return 0;
 	}
-OOF_ReadVector (cf, &m_vPos, "vPos");
-m_fRadius = OOF_ReadFloat (cf, "fRadius");
+OOF_ReadVector (fp, &m_vPos, "vPos");
+m_fRadius = OOF_ReadFloat (fp, "fRadius");
 nIndent -= 2;
 return 1;
 }
 
 //------------------------------------------------------------------------------
 
-int CSpecialList::Read (CFileManager& cf)
+int CSpecialList::Read (CFileManager& fp)
 {
 	uint	i;
 
-i = OOF_ReadInt (cf, "nVerts");
+i = OOF_ReadInt (fp, "nVerts");
 if (!i)
 	return 1;
 if (!Create (i))
 	return 0;
 for (i = 0; i < Length (); i++)
-	(*this) [i].Read (cf);
+	(*this) [i].Read (fp);
 return 1;
 }
 
 //------------------------------------------------------------------------------
 
-int OOF::CPoint::Read (CFileManager& cf, int bParent)
+int OOF::CPoint::Read (CFileManager& fp, int bParent)
 {
 nIndent += 2;
-m_nParent = bParent ? OOF_ReadInt (cf, "nParent") : 0;
-OOF_ReadVector (cf, &m_vPos, "vPos");
-OOF_ReadVector (cf, &m_vDir, "vDir");
+m_nParent = bParent ? OOF_ReadInt (fp, "nParent") : 0;
+OOF_ReadVector (fp, &m_vPos, "vPos");
+OOF_ReadVector (fp, &m_vDir, "vDir");
 nIndent -= 2;
 return 1;
 }
 
 //------------------------------------------------------------------------------
 
-int CPointList::Read (CFileManager& cf, int bParent, int nSize)
+int CPointList::Read (CFileManager& fp, int bParent, int nSize)
 {
 	int	i;
 
 nIndent += 2;
-i = OOF_ReadInt (cf, "nPoints");
+i = OOF_ReadInt (fp, "nPoints");
 if (nSize < i)
 	nSize = i;
 if (!Create (i)) {
@@ -466,7 +467,7 @@ if (!Create (i)) {
 	return 0;
 	}
 for (i = 0; i < static_cast<int> (Length ()); i++)
-	if (!(*this) [i].Read (cf, bParent)) {
+	if (!(*this) [i].Read (fp, bParent)) {
 		Destroy ();
 		nIndent -= 2;
 		return 0;
@@ -477,18 +478,18 @@ return 1;
 
 //------------------------------------------------------------------------------
 
-int CAttachList::Read (CFileManager& cf)
+int CAttachList::Read (CFileManager& fp)
 {
 	int	i;
 
 nIndent += 2;
-i = OOF_ReadInt (cf, "nPoints");
+i = OOF_ReadInt (fp, "nPoints");
 if (!Create (i)) {
 	nIndent -= 2;
 	return 0;
 	}
 for (i = 0; i < static_cast<int> (Length ()); i++)
-	if (!(*this) [i].CPoint::Read (cf, 1)) {
+	if (!(*this) [i].CPoint::Read (fp, 1)) {
 		Destroy ();
 		nIndent -= 2;
 		return 0;
@@ -499,28 +500,28 @@ return 1;
 
 //------------------------------------------------------------------------------
 
-int CAttachPoint::Read (CFileManager& cf)
+int CAttachPoint::Read (CFileManager& fp)
 {
-OOF_ReadVector (cf, &m_vu, "vu");	//actually ignored
-OOF_ReadVector (cf, &m_vu, "vu");
+OOF_ReadVector (fp, &m_vu, "vu");	//actually ignored
+OOF_ReadVector (fp, &m_vu, "vu");
 m_bu = 1;
 return 1;
 }
 
 //------------------------------------------------------------------------------
 
-int CAttachList::ReadNormals (CFileManager& cf)
+int CAttachList::ReadNormals (CFileManager& fp)
 {
 	uint	i;
 
 nIndent += 2;
-i = OOF_ReadInt (cf, "nPoints");
+i = OOF_ReadInt (fp, "nPoints");
 if (i != Length ()) {
 	nIndent -= 2;
 	return 0;
 	}
 for (i = 0; i < Length (); i++)
-	(*this).Read (cf);
+	(*this).Read (fp);
 nIndent -= 2;
 return 1;
 }
@@ -545,15 +546,15 @@ m_turretIndex.Destroy ();
 
 //------------------------------------------------------------------------------
 
-int CBattery::Read (CFileManager& cf)
+int CBattery::Read (CFileManager& fp)
 {
 nIndent += 2;
-if (0 > (m_nVerts = OOF_ReadIntList (cf, m_vertIndex))) {
+if (0 > (m_nVerts = OOF_ReadIntList (fp, m_vertIndex))) {
 	nIndent -= 2;
 	Destroy ();
 	return 0;
 	}
-if (0 > (m_nTurrets = OOF_ReadIntList (cf, m_turretIndex))) {
+if (0 > (m_nTurrets = OOF_ReadIntList (fp, m_turretIndex))) {
 	nIndent -= 2;
 	Destroy ();
 	return 0;
@@ -566,12 +567,12 @@ return 1;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-int CArmament::Read (CFileManager& cf)
+int CArmament::Read (CFileManager& fp)
 {
 	int	l;
 
 nIndent += 2;
-if (!(l = OOF_ReadInt (cf, "nBatts"))) {
+if (!(l = OOF_ReadInt (fp, "nBatts"))) {
 	nIndent -= 2;
 	return 1;
 	}
@@ -581,7 +582,7 @@ if (!Create (l)) {
 	return 0;
 	}
 for (int i = 0; i < l; i++)
-	if (!m_data.buffer [i].Read (cf)) {
+	if (!m_data.buffer [i].Read (fp)) {
 		Destroy ();
 		nIndent -= 2;
 		return 0;
@@ -594,12 +595,12 @@ return 1;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-int CFaceVert::Read (CFileManager& cf, int bFlipV)
+int CFaceVert::Read (CFileManager& fp, int bFlipV)
 {
 nIndent += 2;
-m_nIndex = OOF_ReadInt (cf, "nIndex");
-m_fu = OOF_ReadFloat (cf, "fu");
-m_fv = OOF_ReadFloat (cf, "fv");
+m_nIndex = OOF_ReadInt (fp, "nIndex");
+m_fu = OOF_ReadFloat (fp, "fu");
+m_fv = OOF_ReadFloat (fp, "fv");
 if (bFlipV)
 	m_fv = -m_fv;
 nIndent -= 2;
@@ -636,27 +637,27 @@ return &m_vRotNormal;
 
 //------------------------------------------------------------------------------
 
-int CFace::Read (CFileManager& cf, CSubModel *pso, CFaceVert *pfv, int bFlipV)
+int CFace::Read (CFileManager& fp, CSubModel *pso, CFaceVert *pfv, int bFlipV)
 {
 	int	i, v0 = 0;
 	CEdge	e;
 
 nIndent += 2;
-OOF_ReadVector (cf, &m_vNormal, "vNormal");
+OOF_ReadVector (fp, &m_vNormal, "vNormal");
 #if 0
 m_vNormal.x = -m_vNormal.x;
 m_vNormal.y = -m_vNormal.y;
 m_vNormal.z = -m_vNormal.z;
 #endif
-m_nVerts = OOF_ReadInt (cf, "nVerts");
-m_bTextured = OOF_ReadInt (cf, "bTextured");
+m_nVerts = OOF_ReadInt (fp, "nVerts");
+m_bTextured = OOF_ReadInt (fp, "bTextured");
 if (m_bTextured) {
-	m_texProps.nTexId = OOF_ReadInt (cf, "texProps.nTexId");
+	m_texProps.nTexId = OOF_ReadInt (fp, "texProps.nTexId");
 	}
 else {
-	m_texProps.color.r = OOF_ReadByte (cf, "texProps.color.r");
-	m_texProps.color.g = OOF_ReadByte (cf, "texProps.color.g");
-	m_texProps.color.b = OOF_ReadByte (cf, "texProps.color.b");
+	m_texProps.color.r = OOF_ReadByte (fp, "texProps.color.r");
+	m_texProps.color.g = OOF_ReadByte (fp, "texProps.color.g");
+	m_texProps.color.b = OOF_ReadByte (fp, "texProps.color.b");
 	}
 #if OOF_MEM_OPT
 if (pfv) {
@@ -670,7 +671,7 @@ if (pfv) {
 	OOF_InitMinMax (&m_vMin, &m_vMax);
 	e.m_v1 [0] = -1;
 	for (i = 0; i < m_nVerts; i++)
-		if (!m_vertices [i].Read (cf, bFlipV)) {
+		if (!m_vertices [i].Read (fp, bFlipV)) {
 			nIndent -= 2;
 			return 0;
 			}
@@ -688,10 +689,10 @@ if (pfv) {
 #if OOF_MEM_OPT
 	}
 else
-	cf.Seek (m_nVerts * sizeof (CFaceVert), SEEK_CUR);
+	fp.Seek (m_nVerts * sizeof (CFaceVert), SEEK_CUR);
 #endif
-m_fBoundingLength = OOF_ReadFloat (cf, "fBoundingLength");
-m_fBoundingWidth = OOF_ReadFloat (cf, "fBoundingWidth");
+m_fBoundingLength = OOF_ReadFloat (fp, "fBoundingLength");
+m_fBoundingWidth = OOF_ReadFloat (fp, "fBoundingWidth");
 nIndent -= 2;
 return m_nVerts;
 }
@@ -908,7 +909,7 @@ else
 
 // now act on the command/data pair
 
-if (!stricmp (command,"$rotate=")) { // constant rotation for a subobject
+if (!_stricmp (command, "$rotate=")) { // constant rotation for a subobject
 	float spinrate = (float) atof( data);
 	if ((spinrate <= 0) || (spinrate > 20))
 		return;		// bad data
@@ -917,27 +918,27 @@ if (!stricmp (command,"$rotate=")) { // constant rotation for a subobject
 	return;
 	}
 
-if (!strnicmp (command,"$jitter",7)) {	// this subobject is a jittery CObject
+if (!_strnicmp (command, "$jitter", 7)) {	// this subobject is a jittery CObject
 	m_nFlags |= OOF_SOF_JITTER;
 	return;
 	}
 
-if (!strnicmp (command,"$shell",6)) { // this subobject is a door shell
+if (!_strnicmp (command, "$shell", 6)) { // this subobject is a door shell
 	m_nFlags |= OOF_SOF_SHELL;
 	return;
 	}
 
-if (!strnicmp (command,"$facing",7)) { // this subobject always faces you
+if (!_strnicmp (command, "$facing", 7)) { // this subobject always faces you
 	m_nFlags |= OOF_SOF_FACING;
 	return;
 	}
 
-if (!strnicmp (command,"$frontface",10)) { // this subobject is a door front
+if (!_strnicmp (command, "$frontface", 10)) { // this subobject is a door front
 	m_nFlags |= OOF_SOF_FRONTFACE;
 	return;
 	}
 
-if (!stricmp (command,"$glow=")) {
+if (!_stricmp (command, "$glow=")) {
 	float r,g,b;
 	float size;
 
@@ -951,7 +952,7 @@ if (!stricmp (command,"$glow=")) {
 	return;
 	}
 
-if (!stricmp (command,"$thruster=")) {
+if (!_stricmp (command, "$thruster=")) {
 	float r,g,b;
 	float size;
 
@@ -965,7 +966,7 @@ if (!stricmp (command,"$thruster=")) {
 	return;
 	}
 
-if (!stricmp (command,"$fov=")) {
+if (!_stricmp (command, "$fov=")) {
 	float fov_angle;
 	float turret_spr;
 	float reactionTime;
@@ -990,57 +991,57 @@ if (!stricmp (command,"$fov=")) {
 	return;
 	}
 
-if (!stricmp (command,"$monitor01")) { // this subobject is a monitor
+if (!_stricmp (command, "$monitor01")) { // this subobject is a monitor
 	m_nFlags |= OOF_SOF_MONITOR1;
 	return;
 	}
 
-if (!stricmp (command,"$monitor02")) { // this subobject is a 2nd monitor
+if (!_stricmp (command, "$monitor02")) { // this subobject is a 2nd monitor
 	m_nFlags |= OOF_SOF_MONITOR2;
 	return;
 	}
 
-if (!stricmp (command,"$monitor03")) { // this subobject is a 3rd monitor
+if (!_stricmp (command, "$monitor03")) { // this subobject is a 3rd monitor
 	m_nFlags |= OOF_SOF_MONITOR3;
 	return;
 	}
 
-if (!stricmp (command,"$monitor04")) { // this subobject is a 4th monitor
+if (!_stricmp (command, "$monitor04")) { // this subobject is a 4th monitor
 	m_nFlags |= OOF_SOF_MONITOR4;
 	return;
 	}
 
-if (!stricmp (command,"$monitor05")) { // this subobject is a 4th monitor
+if (!_stricmp (command, "$monitor05")) { // this subobject is a 4th monitor
 	m_nFlags |= OOF_SOF_MONITOR5;
 	return;
 	}
 
-if (!stricmp (command,"$monitor06")) { // this subobject is a 4th monitor
+if (!_stricmp (command, "$monitor06")) { // this subobject is a 4th monitor
 	m_nFlags |= OOF_SOF_MONITOR6;
 	return;
 	}
 
-if (!stricmp (command,"$monitor07")) { // this subobject is a 4th monitor
+if (!_stricmp (command, "$monitor07")) { // this subobject is a 4th monitor
 	m_nFlags |= OOF_SOF_MONITOR7;
 	return;
 	}
 
-if (!stricmp (command,"$monitor08")) { // this subobject is a 4th monitor
+if (!_stricmp (command, "$monitor08")) { // this subobject is a 4th monitor
 	m_nFlags |= OOF_SOF_MONITOR8;
 	return;
 	}
 
-if (!stricmp (command,"$viewer")) { // this subobject is a viewer
+if (!_stricmp (command, "$viewer")) { // this subobject is a viewer
 	m_nFlags |= OOF_SOF_VIEWER;
 	return;
 	}
 
-if (!stricmp (command,"$layer")) { // this subobject is a layer to be drawn after original CObject.
+if (!_stricmp (command, "$layer")) { // this subobject is a layer to be drawn after original CObject.
 	m_nFlags |= OOF_SOF_LAYER;
 	return;
 	}
 
-if (!stricmp (command,"$custom")) { // this subobject has custom textures/colors
+if (!_stricmp (command, "$custom")) { // this subobject has custom textures/colors
 	m_nFlags |= OOF_SOF_CUSTOM;
 	return;
 	}
@@ -1048,7 +1049,7 @@ if (!stricmp (command,"$custom")) { // this subobject has custom textures/colors
 
 //------------------------------------------------------------------------------
 
-int CSubModel::Read (CFileManager& cf, CModel* po, int bFlipV)
+int CSubModel::Read (CFileManager& fp, CModel* po, int bFlipV)
 {
 	int				h, i;
 #if OOF_MEM_OPT
@@ -1058,38 +1059,38 @@ int CSubModel::Read (CFileManager& cf, CModel* po, int bFlipV)
 
 nIndent += 2;
 Init ();
-m_nIndex = OOF_ReadInt (cf, "nIndex");
+m_nIndex = OOF_ReadInt (fp, "nIndex");
 if (m_nIndex >= OOF_MAX_SUBOBJECTS) {
 	nIndent -= 2;
 	return 0;
 	}
-m_nParent = OOF_ReadInt (cf, "nParent");
-OOF_ReadVector (cf, &m_vNormal, "vNormal");
-m_fd = OOF_ReadFloat (cf, "fd");
-OOF_ReadVector (cf, &m_vPlaneVert, "vPlaneVert");
-OOF_ReadVector (cf, &m_vOffset, "vOffset");
-m_fRadius = OOF_ReadFloat (cf, "fRadius");
-m_nTreeOffset = OOF_ReadInt (cf, "nTreeOffset");
-m_nDataOffset = OOF_ReadInt (cf, "nDataOffset");
+m_nParent = OOF_ReadInt (fp, "nParent");
+OOF_ReadVector (fp, &m_vNormal, "vNormal");
+m_fd = OOF_ReadFloat (fp, "fd");
+OOF_ReadVector (fp, &m_vPlaneVert, "vPlaneVert");
+OOF_ReadVector (fp, &m_vOffset, "vOffset");
+m_fRadius = OOF_ReadFloat (fp, "fRadius");
+m_nTreeOffset = OOF_ReadInt (fp, "nTreeOffset");
+m_nDataOffset = OOF_ReadInt (fp, "nDataOffset");
 if (po->m_nVersion > 1805)
-	OOF_ReadVector (cf, &m_vCenter, "vCenter");
-if (!(m_pszName = OOF_ReadString (cf, "pszName"))) {
+	OOF_ReadVector (fp, &m_vCenter, "vCenter");
+if (!(m_pszName = OOF_ReadString (fp, "pszName"))) {
 	Destroy ();
 	return 0;
 	}
-if (!(m_pszProps = OOF_ReadString (cf, "pszProps"))) {
+if (!(m_pszProps = OOF_ReadString (fp, "pszProps"))) {
 	Destroy ();
 	return 0;
 	}
 SetProps (m_pszProps);
-m_nMovementType = OOF_ReadInt (cf, "nMovementType");
-m_nMovementAxis = OOF_ReadInt (cf, "nMovementAxis");
+m_nMovementType = OOF_ReadInt (fp, "nMovementType");
+m_nMovementAxis = OOF_ReadInt (fp, "nMovementAxis");
 m_fsLists = NULL;
-if ((m_nFSLists = OOF_ReadInt (cf, "nFSLists")))
-	cf.Seek (m_nFSLists * sizeof (int), SEEK_CUR);
-m_nVerts = OOF_ReadInt (cf, "nVerts");
+if ((m_nFSLists = OOF_ReadInt (fp, "nFSLists")))
+	fp.Seek (m_nFSLists * sizeof (int), SEEK_CUR);
+m_nVerts = OOF_ReadInt (fp, "nVerts");
 if (m_nVerts) {
-	if (!OOF_ReadVertList (cf, m_vertices, m_nVerts, &m_vMin, &m_vMax)) {
+	if (!OOF_ReadVertList (fp, m_vertices, m_nVerts, &m_vMin, &m_vMax)) {
 		Destroy ();
 		nIndent -= 2;
 		return 0;
@@ -1106,7 +1107,7 @@ if (m_nVerts) {
 		return 0;
 		}
 	m_vertColors.Clear (0);
-	if (!(OOF_ReadVertList (cf, m_normals, m_nVerts, NULL, NULL))) {
+	if (!(OOF_ReadVertList (fp, m_normals, m_nVerts, NULL, NULL))) {
 		nIndent -= 2;
 		Destroy ();
 		return 0;
@@ -1122,22 +1123,22 @@ if (m_nVerts) {
 		else {
 			if (bLogOOF)
 				sprintf (szId, "fAlphaP [%d]", i);
-			m_pfAlpha [i] = OOF_ReadFloat (cf, szId);
+			m_pfAlpha [i] = OOF_ReadFloat (fp, szId);
 			if	(m_pfAlpha [i] < 0.99)
 				po->m_nFlags |= OOF_PMF_ALPHA;
 			}
 	}
-m_faces.m_nFaces = OOF_ReadInt (cf, "nFaces");
+m_faces.m_nFaces = OOF_ReadInt (fp, "nFaces");
 if (!m_faces.m_list.Create (m_faces.m_nFaces)) {
 	Destroy ();
 	nIndent -= 2;
 	return 0;
 	}
 #if OOF_MEM_OPT
-nPos = (int) cf.Tell ();
+nPos = (int) fp.Tell ();
 m_edges.m_nEdges = 0;
 for (bReadData = 0; bReadData < 2; bReadData++) {
-	cf.Seek (nPos, SEEK_SET);
+	fp.Seek (nPos, SEEK_SET);
 	if (bReadData) {
 		if (!m_faces.m_vertices.Create (nFaceVerts)) {
 			Destroy ();
@@ -1153,7 +1154,7 @@ for (bReadData = 0; bReadData < 2; bReadData++) {
 		m_edges.m_nEdges = 0;
 		}
 	for (i = 0, nFaceVerts = 0; i < m_faces.m_nFaces; i++) {
-		if (!(h = m_faces.m_list [i].Read (cf, this, bReadData ? m_faces.m_vertices + nFaceVerts : NULL, bFlipV))) {
+		if (!(h = m_faces.m_list [i].Read (fp, this, bReadData ? m_faces.m_vertices + nFaceVerts : NULL, bFlipV))) {
 			Destroy ();
 			nIndent -= 2;
 			return 0;
@@ -1163,7 +1164,7 @@ for (bReadData = 0; bReadData < 2; bReadData++) {
 	}
 #else
 for (i = 0; i < m_faces.m_nFaces; i++)
-	if (!OOF_ReadFace (cf, &so, m_faces.faces + i, NULL, bFlipV)) {
+	if (!OOF_ReadFace (fp, &so, m_faces.faces + i, NULL, bFlipV)) {
 		nIndent -= 2;
 		Destroy ();
 		return 0;
@@ -1200,20 +1201,20 @@ return 0;
 
 //------------------------------------------------------------------------------
 
-int CModel::ReadTextures (CFileManager& cf)
+int CModel::ReadTextures (CFileManager& fp)
 {
 	int			i;
 	char*			pszName;
 
 nIndent += 2;
-int nBitmaps = OOF_ReadInt (cf, "nBitmaps");
+int nBitmaps = OOF_ReadInt (fp, "nBitmaps");
 if (!(m_textures.Create (nBitmaps))) {
 	nIndent -= 2;
 	FreeTextures ();
 	return 0;
 	}
 for (i = 0; i < m_textures.Count (); i++) {
-	if (!(pszName = OOF_ReadString (cf, "texture"))) {
+	if (!(pszName = OOF_ReadString (fp, "texture"))) {
 		nIndent -= 2;
 		FreeTextures ();
 		return 0;
@@ -1267,20 +1268,20 @@ m_nModel = -1;
 
 //------------------------------------------------------------------------------
 
-int CModel::ReadInfo (CFileManager& cf)
+int CModel::ReadInfo (CFileManager& fp)
 {
 nIndent += 2;
-m_nSubModels = OOF_ReadInt (cf, "nSubModels");
+m_nSubModels = OOF_ReadInt (fp, "nSubModels");
 if (m_nSubModels >= OOF_MAX_SUBOBJECTS) {
 	nIndent -= 2;
 	return 0;
 	}
-m_fMaxRadius = OOF_ReadFloat (cf, "fMaxRadius");
-OOF_ReadVector (cf, &m_vMin, "vMin");
-OOF_ReadVector (cf, &m_vMax, "vMax");
-m_nDetailLevels = OOF_ReadInt (cf, "nDetailLevels");
+m_fMaxRadius = OOF_ReadFloat (fp, "fMaxRadius");
+OOF_ReadVector (fp, &m_vMin, "vMin");
+OOF_ReadVector (fp, &m_vMax, "vMax");
+m_nDetailLevels = OOF_ReadInt (fp, "nDetailLevels");
 nIndent -= 2;
-cf.Seek (m_nDetailLevels * sizeof (int), SEEK_CUR);
+fp.Seek (m_nDetailLevels * sizeof (int), SEEK_CUR);
 if (!m_subModels.Create (m_nSubModels))
 	return 0;
 return 1;
@@ -1413,7 +1414,7 @@ for (i = m_nSubModels, pso = m_subModels.Buffer (); i; i--, pso++) {
 
 		for (j = 0; j < pf->m_nVerts; j++)
 			v [j] = pso->m_vertices [pf->m_vertices [j].m_nIndex];
-		pso->m_glowInfo.m_vNormal = CFloatVector::Normal (v [0], v [1], v [2]);
+		pso->m_glowInfo.m_vNormal = Normal (v [0], v [1], v [2]);
 		m_nFlags |= OOF_PMF_FACING;	// Set this so we know when to draw
 		}
 	}
@@ -1465,7 +1466,7 @@ int CModel::Read (const char* pszFolder, const short nModel)
 if (m_nModel >= 0)
 	return 0;
 
-	CFileManager	cf;
+	CFileManager	fp;
 	char				fileId [4];
 	int				i, nLength, nFrames, nSubModels, bTimed = 0;
 
@@ -1486,19 +1487,19 @@ m_folder = pszFolder;
 
 nIndent = 0;
 
-if (!cf.Read (fileId, sizeof (fileId), 1)) {
-	cf.Close ();
+if (!fp.Read (fileId, sizeof (fileId), 1)) {
+	fp.Close ();
 	return 0;
 	}
 if (strncmp (fileId, "PSPO", 4)) {
-	cf.Close ();
+	fp.Close ();
 	return 0;
 	}
 Init ();
 
 m_nModel = nModel;
 
-m_nVersion = OOF_ReadInt (cf, "nVersion");
+m_nVersion = OOF_ReadInt (fp, "nVersion");
 if (m_nVersion >= 2100)
 	m_nFlags |= OOF_PMF_LIGHTMAP_RES;
 if (m_nVersion >= 22) {
@@ -1509,31 +1510,31 @@ if (m_nVersion >= 22) {
 	}
 nSubModels = 0;
 
-while (!cf.EoF ()) {
+while (!fp.EoF ()) {
 	char chunkID [4];
 
-	if (!cf.Read (chunkID, sizeof (chunkID), 1)) {
-		cf.Close ();
+	if (!fp.Read (chunkID, sizeof (chunkID), 1)) {
+		fp.Close ();
 		return 0;
 		}
-	nLength = OOF_ReadInt (cf, "nLength");
+	nLength = OOF_ReadInt (fp, "nLength");
 	switch (ListType (chunkID)) {
 		case 0:
-			if (!ReadTextures (cf)) {
+			if (!ReadTextures (fp)) {
 				Destroy ();
 				return 0;
 				}
 			break;
 
 		case 1:
-			if (!ReadInfo (cf)) {
+			if (!ReadInfo (fp)) {
 				Destroy ();
 				return 0;
 				}
 			break;
 
 		case 2:
-			if (!m_subModels [nSubModels].Read (cf, this, 1)) {
+			if (!m_subModels [nSubModels].Read (fp, this, 1)) {
 				Destroy ();
 				return 0;
 				}
@@ -1541,21 +1542,21 @@ while (!cf.EoF ()) {
 			break;
 
 		case 3:
-			if (!m_gunPoints.Read (cf, m_nVersion >= 1908, MAX_GUNS)) {
+			if (!m_gunPoints.Read (fp, m_nVersion >= 1908, MAX_GUNS)) {
 				Destroy ();
 				return 0;
 				}
 			break;
 
 		case 4:
-			if (!m_specialPoints.Read (cf)) {
+			if (!m_specialPoints.Read (fp)) {
 				Destroy ();
 				return 0;
 				}
 			break;
 
 		case 5:
-			if (!m_attachPoints.Read (cf)) {
+			if (!m_attachPoints.Read (fp)) {
 				Destroy ();
 				return 0;
 				}
@@ -1564,9 +1565,9 @@ while (!cf.EoF ()) {
 		case 6:
 			nFrames = m_frameInfo.m_nFrames;
 			if (!bTimed)
-				m_frameInfo.m_nFrames = OOF_ReadInt (cf, "nFrames");
+				m_frameInfo.m_nFrames = OOF_ReadInt (fp, "nFrames");
 			for (i = 0; i < m_nSubModels; i++)
-				if (!m_subModels [i].m_posAnim.Read (cf, this, bTimed)) {
+				if (!m_subModels [i].m_posAnim.Read (fp, this, bTimed)) {
 					Destroy ();
 					return 0;
 					}
@@ -1578,9 +1579,9 @@ while (!cf.EoF ()) {
 		case 8:
 			nFrames = m_frameInfo.m_nFrames;
 			if (!bTimed)
-				m_frameInfo.m_nFrames = OOF_ReadInt (cf, "nFrames");
+				m_frameInfo.m_nFrames = OOF_ReadInt (fp, "nFrames");
 			for (i = 0; i < m_nSubModels; i++)
-				if (!m_subModels [i].m_rotAnim.Read (cf, this, bTimed)) {
+				if (!m_subModels [i].m_rotAnim.Read (fp, this, bTimed)) {
 					Destroy ();
 					return 0;
 					}
@@ -1589,25 +1590,25 @@ while (!cf.EoF ()) {
 			break;
 
 		case 9:
-			if (!m_armament.Read (cf)) {
+			if (!m_armament.Read (fp)) {
 				Destroy ();
 				return 0;
 				}
 			break;
 
 		case 10:
-			if (!m_attachPoints.ReadNormals (cf)) {
+			if (!m_attachPoints.ReadNormals (fp)) {
 				Destroy ();
 				return 0;
 				}
 			break;
 
 		default:
-			cf.Seek (nLength, SEEK_CUR);
+			fp.Seek (nLength, SEEK_CUR);
 			break;
 		}
 	}
-cf.Close ();
+fp.Close ();
 ConfigureSubModels ();
 BuildAnimMatrices ();
 AssignChildren ();
