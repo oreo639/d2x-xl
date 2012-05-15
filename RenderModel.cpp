@@ -77,20 +77,20 @@ return 1;
 
 //------------------------------------------------------------------------------
 
+static int nLevel = 0;
+
 void RenderModel::CSubModel::Render (RenderModel::CModel& model, short nSubModel, int nGunId, int nBombId, int nMissileId, int nMissiles)
 {
-	RenderModel::CFace*		faceP;
-	int							i;
-	short							nTexture = -1;
-	ushort						nFaceVerts, nVerts, nIndex;
+	RenderModel::CFace*	faceP;
+	int						i;
+	short						nTexture = -1;
+	ushort					nFaceVerts, nVerts, nIndex;
 
 if (Filter (nGunId, nBombId, nMissileId, nMissiles))
 	return;
 
-if ((0 != m_vOffset.v.x) || (0 != m_vOffset.v.y) || (0 != m_vOffset.v.z)) {
-	glPushMatrix ();
+if ((0 != m_vOffset.v.x) || (0 != m_vOffset.v.y) || (0 != m_vOffset.v.z))
 	glTranslatef (X2F (m_vOffset.v.x), X2F (m_vOffset.v.y), X2F (m_vOffset.v.z));
-	}
 
 // render any dependent submodels
 for (int i = 0; i < model.m_nSubModels; i++) {
@@ -138,8 +138,9 @@ for (i = m_nFaces, faceP = m_faces; i; ) {
 								0, model.m_nFaceVerts - 1, nVerts, GL_UNSIGNED_SHORT,
 								VBO_OFFSET (nIndex * sizeof (short)));
 	}
-if ((0 != m_vOffset.v.x) || (0 != m_vOffset.v.y) || (0 != m_vOffset.v.z)) 
-	glPopMatrix ();
+
+if ((0 != m_vOffset.v.x) || (0 != m_vOffset.v.y) || (0 != m_vOffset.v.z))
+	glTranslatef (-X2F (m_vOffset.v.x), -X2F (m_vOffset.v.y), -X2F (m_vOffset.v.z));
 }
 
 //------------------------------------------------------------------------------
@@ -165,8 +166,8 @@ glTexCoordPointer (2, GL_DOUBLE, 0, VBO_OFFSET (m_nFaceVerts * (2 * sizeof (CFlo
 glVertexPointer (3, GL_FLOAT, 0, VBO_OFFSET (0));
 glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, m_vboIndexHandle);
 
-//glCullFace (GL_BACK);
-//glDisable (GL_CULL_FACE);
+if (m_nType < 0)
+	glCullFace (GL_BACK);
 glEnable (GL_BLEND);
 glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 glDepthMask (1);
@@ -180,9 +181,14 @@ for (int i = 0; i < m_nSubModels; i++) {
 		m_subModels [i].Render (*this, i, nGunId, nBombId, nMissileId, nMissiles);
 	}
 
+for (; nLevel > 0; nLevel--) 
+	glPopMatrix ();
+	
 view->ResetOpenGL ();
 view->ResetOpenGL ();
 
+if (m_nType < 0)
+	glCullFace (GL_FRONT);
 m_bRendered = 1;
 glCullFace (GL_FRONT);
 glDisableClientState (GL_COLOR_ARRAY);

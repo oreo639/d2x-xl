@@ -62,6 +62,7 @@ m_sortedVerts.Clear (0);
 for (ushort i = 0; i < m_nSubModels; i++)
 	m_subModels [i].m_nSubModel = i;
 
+glGetError ();
 glGenBuffersARB (1, &m_vboDataHandle);
 int i = glGetError ();
 if (i) {

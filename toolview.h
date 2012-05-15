@@ -658,10 +658,10 @@ class CAdvancedObjTool : public CObjectTabDlg
 		int			m_model;
 		int			m_frame;
 		int			m_frameNo;
-		tFixVector	m_velocity;
-		tFixVector	m_thrust;
-		tFixVector	m_rotVel;
-		tFixVector	m_rotThrust;
+		CFixVector	m_velocity;
+		CFixVector	m_thrust;
+		CFixVector	m_rotVel;
+		CFixVector	m_rotThrust;
 
 		CAdvancedObjTool (UINT nId, CWnd* pParent = null) : CObjectTabDlg (nId, pParent) {}
       virtual BOOL OnInitDialog ();

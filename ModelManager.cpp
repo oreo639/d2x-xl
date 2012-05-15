@@ -15,6 +15,8 @@
 
 CModelManager modelManager;
 
+int nDbgModel = -1;
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -227,9 +229,19 @@ if (mf.Open (buffer, bufSize)) {
 	n = mf.ReadUInt32 ();                         
 	for (j = 0; j < n; j++) {
 		i = mf.ReadUInt32 ();
+#ifdef _DEBUG
+		if (i == nDbgModel)
+			nDbgModel = nDbgModel;
+#endif
 		m_polyModels [1][i].Read (&mf);
 		m_polyModels [1][i].Read (&mf, true);
-		m_polyModels [1][i].m_bCustom = 1;
+		if ((m_polyModels [0][i].m_info.dataSize != m_polyModels [1][i].m_info.dataSize) ||
+			memcmp (m_polyModels [0][i].m_info.renderData, m_polyModels [1][i].m_info.renderData, m_polyModels [0][i].m_info.dataSize))
+			m_polyModels [1][i].m_bCustom = 1;
+		else {
+			m_polyModels [0][i].Release ();
+			m_polyModels [0][i].Clear ();
+			}
 		mf.Seek (2 * sizeof (int), SEEK_CUR);
 		}
 	n = mf.ReadUInt32 ();                         
@@ -251,7 +263,11 @@ void CModelManager::ReadMod (char* pszFolder)
 {
 for (int i = 0; i < MAX_POLYGON_MODELS; i++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	if (m_polyModels [1][i].m_info.renderData || (m_aseModels [i].m_nModel >= 0))
+#ifdef _DEBUG
+	if (i == nDbgModel)
+		nDbgModel = nDbgModel;
+#endif
+	if (/*m_polyModels [1][i].m_info.renderData ||*/ (m_aseModels [i].m_nModel >= 0) || (m_oofModels [i].m_nModel >= 0))
 		continue; // already have a custom model
 	if (m_aseModels [i].Read (pszFolder, i))
 		m_renderModels [i].BuildFromASE (m_aseModels [i]);
@@ -323,14 +339,18 @@ else {
 void CModelManager::Draw (void) 
 { 
 if (m_nModel >= 0) {
+#ifdef _DEBUG
+	if (m_nModel == nDbgModel)
+		nDbgModel = nDbgModel;
+#endif
 	m_screenRect [0].x = m_screenRect [0].y = 0x7FFFFFFF;
 	m_screenRect [1].x = m_screenRect [1].y = -0x7FFFFFFF;
 	if (m_renderer->Type ()) {
 		m_renderer->BeginRender ();
 
-		if (m_polyModels [1][m_nModel].Draw (m_viewMatrix, m_pDC, 0))
+		/*if (m_polyModels [1][m_nModel].Draw (m_viewMatrix, m_pDC, 0))
 			;
-		else if (m_renderModels [m_nModel].Render (m_viewMatrix, m_object))
+		else*/ if (m_renderModels [m_nModel].Render (m_viewMatrix, m_object))
 			;
 		else
 			m_polyModels [0][m_nModel].Draw (m_viewMatrix, m_pDC, 0);

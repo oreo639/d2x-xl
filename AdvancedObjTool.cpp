@@ -12,6 +12,7 @@
 #include "dle-xp.h"
 #include "toolview.h"
 #include "textures.h"
+#include "RobotManager.h"
 
 //------------------------------------------------------------------------------
 
@@ -63,18 +64,18 @@ DDX_Text (pDX, IDC_ADVOBJ_TURNROLL, m_turnRoll);
 DDX_Text (pDX, IDC_ADVOBJ_FLAGS, m_flags);
 DDX_Text (pDX, IDC_ADVOBJ_SIZE, m_size);
 DDX_Text (pDX, IDC_ADVOBJ_SHIELD, m_shields);
-DDX_Text (pDX, IDC_ADVOBJ_VX, m_velocity.x);
-DDX_Text (pDX, IDC_ADVOBJ_VY, m_velocity.y);
-DDX_Text (pDX, IDC_ADVOBJ_VZ, m_velocity.z);
-DDX_Text (pDX, IDC_ADVOBJ_TX, m_thrust.x);
-DDX_Text (pDX, IDC_ADVOBJ_TY, m_thrust.y);
-DDX_Text (pDX, IDC_ADVOBJ_TZ, m_thrust.z);
-DDX_Text (pDX, IDC_ADVOBJ_RVX, m_rotVel.x);
-DDX_Text (pDX, IDC_ADVOBJ_RVY, m_rotVel.y);
-DDX_Text (pDX, IDC_ADVOBJ_RVZ, m_rotVel.z);
-DDX_Text (pDX, IDC_ADVOBJ_RTX, m_rotThrust.x);
-DDX_Text (pDX, IDC_ADVOBJ_RTY, m_rotThrust.y);
-DDX_Text (pDX, IDC_ADVOBJ_RTZ, m_rotThrust.z);
+DDX_Text (pDX, IDC_ADVOBJ_VX, m_velocity.v.x);
+DDX_Text (pDX, IDC_ADVOBJ_VY, m_velocity.v.y);
+DDX_Text (pDX, IDC_ADVOBJ_VZ, m_velocity.v.z);
+DDX_Text (pDX, IDC_ADVOBJ_TX, m_thrust.v.x);
+DDX_Text (pDX, IDC_ADVOBJ_TY, m_thrust.v.y);
+DDX_Text (pDX, IDC_ADVOBJ_TZ, m_thrust.v.z);
+DDX_Text (pDX, IDC_ADVOBJ_RVX, m_rotVel.v.x);
+DDX_Text (pDX, IDC_ADVOBJ_RVY, m_rotVel.v.y);
+DDX_Text (pDX, IDC_ADVOBJ_RVZ, m_rotVel.v.z);
+DDX_Text (pDX, IDC_ADVOBJ_RTX, m_rotThrust.v.x);
+DDX_Text (pDX, IDC_ADVOBJ_RTY, m_rotThrust.v.y);
+DDX_Text (pDX, IDC_ADVOBJ_RTZ, m_rotThrust.v.z);
 DDX_Text (pDX, IDC_ADVOBJ_MODEL, m_model);
 DDX_Text (pDX, IDC_ADVOBJ_FRAME, m_frame);
 DDX_Text (pDX, IDC_ADVOBJ_FRAMENO, m_frameNo);
@@ -93,18 +94,18 @@ objP->mType.physInfo.drag = m_drag;
 objP->mType.physInfo.brakes = m_brakes;
 objP->mType.physInfo.turnRoll = m_turnRoll;
 objP->mType.physInfo.flags = m_flags;
-objP->mType.physInfo.velocity.x = m_velocity.x;
-objP->mType.physInfo.velocity.y = m_velocity.y;
-objP->mType.physInfo.velocity.z = m_velocity.z;
-objP->mType.physInfo.thrust.x = m_thrust.x;
-objP->mType.physInfo.thrust.y = m_thrust.y;
-objP->mType.physInfo.thrust.z = m_thrust.z;
-objP->mType.physInfo.rotVel.x = m_rotVel.x;
-objP->mType.physInfo.rotVel.y = m_rotVel.y;
-objP->mType.physInfo.rotVel.z = m_rotVel.z;
-objP->mType.physInfo.rotThrust.x = m_rotThrust.x;
-objP->mType.physInfo.rotThrust.y = m_rotThrust.y;
-objP->mType.physInfo.rotThrust.z = m_rotThrust.z;
+objP->mType.physInfo.velocity.x = m_velocity.v.x;
+objP->mType.physInfo.velocity.y = m_velocity.v.y;
+objP->mType.physInfo.velocity.z = m_velocity.v.z;
+objP->mType.physInfo.thrust.x = m_thrust.v.x;
+objP->mType.physInfo.thrust.y = m_thrust.v.y;
+objP->mType.physInfo.thrust.z = m_thrust.v.z;
+objP->mType.physInfo.rotVel.x = m_rotVel.v.x;
+objP->mType.physInfo.rotVel.y = m_rotVel.v.y;
+objP->mType.physInfo.rotVel.z = m_rotVel.v.z;
+objP->mType.physInfo.rotThrust.x = m_rotThrust.v.x;
+objP->mType.physInfo.rotThrust.y = m_rotThrust.v.y;
+objP->mType.physInfo.rotThrust.z = m_rotThrust.v.z;
 }
 
 								/*--------------------------*/
@@ -138,25 +139,19 @@ CDlgHelpers::EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_FRAMENO, TRUE);
 CGameObject *objP = current->Object ();
 m_size = objP->m_info.size;
 m_shields = objP->m_info.shields;
+CRobotInfo& robotInfo = *robotManager.RobotInfo (objP->m_info.id);
+
 switch (objP->m_info.movementType) {
 	case MT_PHYSICS:	
-		m_mass = objP->mType.physInfo.mass;
-		m_drag = objP->mType.physInfo.drag;
+		m_mass = objP->mType.physInfo.mass ? objP->mType.physInfo.mass : robotInfo.Info ().mass;
+		m_drag = objP->mType.physInfo.drag ? objP->mType.physInfo.drag : robotInfo.Info ().drag;
 		m_brakes = objP->mType.physInfo.brakes;
 		m_turnRoll = objP->mType.physInfo.turnRoll;
-		m_flags = objP->mType.physInfo.flags;
-		m_velocity.x = objP->mType.physInfo.velocity.x;
-		m_velocity.y = objP->mType.physInfo.velocity.y;
-		m_velocity.z = objP->mType.physInfo.velocity.z;
-		m_thrust.x = objP->mType.physInfo.thrust.x;
-		m_thrust.y = objP->mType.physInfo.thrust.y;
-		m_thrust.z = objP->mType.physInfo.thrust.z;
-		m_rotVel.x = objP->mType.physInfo.rotVel.x;
-		m_rotVel.y = objP->mType.physInfo.rotVel.y;
-		m_rotVel.z = objP->mType.physInfo.rotVel.z;
-		m_rotThrust.x = objP->mType.physInfo.rotThrust.x;
-		m_rotThrust.y = objP->mType.physInfo.rotThrust.y;
-		m_rotThrust.z = objP->mType.physInfo.rotThrust.z;
+		m_flags = objP->mType.physInfo.flags ? objP->mType.physInfo.flags : robotInfo.Info ().flags;
+		m_velocity = objP->mType.physInfo.velocity;
+		m_thrust = objP->mType.physInfo.thrust;
+		m_rotVel = objP->mType.physInfo.rotVel;
+		m_rotThrust = objP->mType.physInfo.rotThrust;
 		break;
 
 	case MT_SPINNING:
@@ -168,25 +163,17 @@ switch (objP->m_info.movementType) {
 		m_brakes = 0;
 		m_turnRoll = 0;
 		m_flags = 0;
-		m_velocity.x = 0;
-		m_velocity.y = 0;
-		m_velocity.z = 0;
-		m_thrust.x = 0;
-		m_thrust.y = 0;
-		m_thrust.z = 0;
-		m_rotVel.x = 0;
-		m_rotVel.y = 0;
-		m_rotVel.z = 0;
-		m_rotThrust.x = 0;
-		m_rotThrust.y = 0;
-		m_rotThrust.z = 0;
+		m_velocity.Clear ();
+		m_thrust.Clear ();
+		m_rotVel.Clear ();
+		m_rotThrust.Clear ();
 		break;
 	}
 
 switch (objP->m_info.renderType) {
 	case RT_MORPH:
 	case RT_POLYOBJ:
-		m_model = objP->rType.polyModelInfo.nModel;
+		m_model = objP->rType.polyModelInfo.nModel ? objP->rType.polyModelInfo.nModel : robotInfo.Info ().nModel;
 		m_frame = 0;
 		m_frameNo = 0;
 		CDlgHelpers::EnableControls (IDC_ADVOBJ_FRAME, IDC_ADVOBJ_FRAMENO, FALSE);

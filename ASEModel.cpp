@@ -22,7 +22,7 @@ using namespace ASE;
 
 #define MODEL_DATA_VERSION 1010	//must start with something bigger than the biggest model number
 
-static int nDbgModel = -1;
+extern int nDbgModel;
 
 #define USE_BINARY_MODELS 0
 

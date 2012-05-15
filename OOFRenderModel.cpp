@@ -123,7 +123,6 @@ GetOOFModelItems (m_nModel = oofModel.m_nModel, oofModel, 1.0f);
 m_textures = oofModel.m_textures.Textures ();
 m_nTextures = oofModel.m_textures.Count ();
 memset (m_teamTextures, 0xFF, sizeof (m_teamTextures));
-memset (m_teamTextures, 0xFF, sizeof (m_teamTextures));
 m_nType = -1;
 Setup (1, 1);
 return -1;

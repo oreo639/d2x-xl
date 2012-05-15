@@ -11,6 +11,8 @@
 
 using namespace OOF;
 
+extern int nDbgModel;
+
 //------------------------------------------------------------------------------
 
 #define OOF_MEM_OPT	1
@@ -1530,6 +1532,10 @@ if (strncmp (fileId, "PSPO", 4)) {
 Init ();
 
 m_nModel = nModel;
+#ifdef _DEBUG
+if (nModel == nDbgModel)
+	nDbgModel = nDbgModel;
+#endif
 
 m_nVersion = OOF_ReadInt (fp, "nVersion");
 if (m_nVersion >= 2100)
