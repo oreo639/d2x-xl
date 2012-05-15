@@ -68,6 +68,9 @@ class C1stSplitterWnd : public CSplitterWnd
 		CWnd* GetPane (int row, int col) const { 
 			return ((row < m_nRows) && (col < m_nCols) && GetDlgItem (IdFromRowCol (row, col))) ? CSplitterWnd::GetPane (row, col) : null; 
 			}
+
+		inline int CXSplitter (void) { return m_cxSplitterGap + m_cxSplitter; }
+		inline int CYSplitter (void) { return m_cySplitterGap + m_cySplitter; }
 };
 
 
@@ -77,6 +80,8 @@ class C2ndSplitterWnd : public C1stSplitterWnd
 		int	m_texPaneHeight;
 		C2ndSplitterWnd () : C1stSplitterWnd ()
 			{ m_texPaneHeight = -1; }
+		inline int CXSplitter (void) { return m_cxSplitterGap + m_cxSplitter; }
+		inline int CYSplitter (void) { return m_cySplitterGap + m_cySplitter; }
 		virtual void RecalcLayout (int nToolMode = 0, int nTextureMode = 0);
 };
 
