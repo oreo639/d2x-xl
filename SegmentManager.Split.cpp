@@ -367,8 +367,7 @@ for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		}
 	}
 // relocate center segment vertex indices
-//memcpy (centerSegP->m_info.vertexIds, nNewVerts, sizeof (nNewVerts));
-#if 1
+memcpy (centerSegP->m_info.vertexIds, nNewVerts, sizeof (nNewVerts));
 // join adjacent sides of the segments surrounding the center segment
 // don't process 6th segment as this is handled by processing the 1st one already
 for (short nSegment = 0; nSegment < 5; nSegment++) {
@@ -402,7 +401,6 @@ for (short nSegment = 0; nSegment < 5; nSegment++) {
 			}
 		}
 	}
-#endif
 undoManager.End ();
 DLE.MineView ()->Refresh ();
 return true;
