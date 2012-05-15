@@ -103,16 +103,13 @@ undoManager.Begin (udSegments);
 double angle;
 
 if (bAlign1st) {
+	CUVL uv;
 	// now translate all the childs (u, v) coords so child_point1 is at zero
-	double u0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].u; 
-	double v0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].v; 
-	for (i = 0; i < nChildEdgeCount; i++) {
-		childSideP->m_info.uvls [i].u -= u0; 
-		childSideP->m_info.uvls [i].v -= v0; 
-		}
+	uv = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount]; 
+	for (i = 0; i < nChildEdgeCount; i++)
+		childSideP->m_info.uvls [i] -= uv; 
 	// find difference between parent point0 and child point1
-	u0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].u - sideP->m_info.uvls [nEdge].u; 
-	v0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].v - sideP->m_info.uvls [nEdge].v; 
+	uv = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount] - sideP->m_info.uvls [nEdge]; 
 	// find the angle formed by the two lines
 	double sAngle = atan3 (sideP->m_info.uvls [(nEdge + 1) % nEdgeCount].v - sideP->m_info.uvls [nEdge].v, 
 								  sideP->m_info.uvls [(nEdge + 1) % nEdgeCount].u - sideP->m_info.uvls [nEdge].u); 
@@ -123,16 +120,11 @@ if (bAlign1st) {
 	for (i = 0; i < nChildEdgeCount; i++) 
 		childSideP->m_info.uvls [i].Rotate (angle); 
 	// now translate all the childs (u, v) coords to parent point0
-	for (i = 0; i < nChildEdgeCount; i++) {
-		childSideP->m_info.uvls [i].u -= u0; 
-		childSideP->m_info.uvls [i].v -= v0; 
-		}
-	u0 = childSideP->m_info.uvls [0].u; 
-	v0 = childSideP->m_info.uvls [0].v; 
-	for (i = 0; i < 4; i++) {
-		childSideP->m_info.uvls [i].u -= u0; 
-		childSideP->m_info.uvls [i].v -= v0; 
-		}
+	for (i = 0; i < nChildEdgeCount; i++)
+		childSideP->m_info.uvls [i] -= uv; 
+	uv = childSideP->m_info.uvls [0];
+	for (i = 0; i < nChildEdgeCount; i++) 
+		childSideP->m_info.uvls [i] -= uv; 
 	}
 if (bAlign2nd && sideP->OvlTex (0) && childSideP->OvlTex (0)) {
 	int r, h = sideP->OvlAlignment ();
