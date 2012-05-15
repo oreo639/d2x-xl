@@ -69,9 +69,6 @@ short			nChildEdgeCount = childSideP->VertexCount ();
 
 short			i; 
 short			nEdge, nChildEdge; 
-ushort		vert0, vert1, nChildVert0, nChildVert1; 
-double		u0, v0; 
-double		sAngle, cAngle, angle; 
 
 // ignore children with no texture
 if (!IsWall (CSideKey (nChildSeg, nChildSide)))
@@ -80,13 +77,13 @@ if (!IsWall (CSideKey (nChildSeg, nChildSide)))
 // find matching lines first
 for (nEdge = 0; nEdge < nEdgeCount; nEdge++) {
 	// find vert numbers for the line's two end points
-	vert0 = segP->VertexId (nStartSide, nEdge); 
-	vert1 = segP->VertexId (nStartSide, nEdge + 1); // the index (here: nEdge + 1) gets automatically wrapped by this function
+	ushort vert0 = segP->VertexId (nStartSide, nEdge); 
+	ushort vert1 = segP->VertexId (nStartSide, nEdge + 1); // the index (here: nEdge + 1) gets automatically wrapped by this function
 
 	for (nChildEdge = 0; nChildEdge < nChildEdgeCount; nChildEdge++) {
 		// find vert numbers for the line's two end points
-		nChildVert0 = childSegP->VertexId (nChildSide, nChildEdge);
-		nChildVert1 = childSegP->VertexId (nChildSide, nChildEdge + 1);
+		ushort nChildVert0 = childSegP->VertexId (nChildSide, nChildEdge);
+		ushort nChildVert1 = childSegP->VertexId (nChildSide, nChildEdge + 1);
 		// if points of child's line == corresponding points of parent
 		if (((nChildVert0 == vert1) && (nChildVert1 == vert0)) || ((nChildVert0 == vert0) && (nChildVert1 == vert1)))
 			break;
@@ -103,10 +100,12 @@ if ((nEdge == nEdgeCount) || (nChildEdge == nChildEdgeCount))
 // we can start undoManager now - since we know we are making changes now and won't abort inside this block
 undoManager.Begin (udSegments);
 
+double angle;
+
 if (bAlign1st) {
 	// now translate all the childs (u, v) coords so child_point1 is at zero
-	u0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].u; 
-	v0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].v; 
+	double u0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].u; 
+	double v0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].v; 
 	for (i = 0; i < nChildEdgeCount; i++) {
 		childSideP->m_info.uvls [i].u -= u0; 
 		childSideP->m_info.uvls [i].v -= v0; 
@@ -115,12 +114,12 @@ if (bAlign1st) {
 	u0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].u - sideP->m_info.uvls [nEdge].u; 
 	v0 = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].v - sideP->m_info.uvls [nEdge].v; 
 	// find the angle formed by the two lines
-	sAngle = atan3 (sideP->m_info.uvls [(nEdge + 1) % nEdgeCount].v - sideP->m_info.uvls [nEdge].v, 
-						 sideP->m_info.uvls [(nEdge + 1) % nEdgeCount].u - sideP->m_info.uvls [nEdge].u); 
-	cAngle = atan3 (childSideP->m_info.uvls [nChildEdge].v - childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].v, 
-					 	 childSideP->m_info.uvls [nChildEdge].u - childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].u); 
+	double sAngle = atan3 (sideP->m_info.uvls [(nEdge + 1) % nEdgeCount].v - sideP->m_info.uvls [nEdge].v, 
+								  sideP->m_info.uvls [(nEdge + 1) % nEdgeCount].u - sideP->m_info.uvls [nEdge].u); 
+	double cAngle = atan3 (childSideP->m_info.uvls [nChildEdge].v - childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].v, 
+					 			  childSideP->m_info.uvls [nChildEdge].u - childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount].u); 
 	// now rotate childs (u, v) coords around child_point1 (cAngle - sAngle)
-	double angle = cAngle - sAngle;
+	angle = cAngle - sAngle;
 	for (i = 0; i < nChildEdgeCount; i++) 
 		childSideP->m_info.uvls [i].Rotate (angle); 
 	// now translate all the childs (u, v) coords to parent point0
@@ -128,7 +127,6 @@ if (bAlign1st) {
 		childSideP->m_info.uvls [i].u -= u0; 
 		childSideP->m_info.uvls [i].v -= v0; 
 		}
-	// modulo points by 0x800 (== 64 pixels)
 	u0 = childSideP->m_info.uvls [0].u; 
 	v0 = childSideP->m_info.uvls [0].v; 
 	for (i = 0; i < 4; i++) {
@@ -146,7 +144,6 @@ if (bAlign2nd && sideP->OvlTex (0) && childSideP->OvlTex (0)) {
 		r = 3;
 	else
 		r = 0;
-	angle = sAngle - cAngle; //atan3 (childSideP->m_info.uvls [0].v, childSideP->m_info.uvls [0].u); 
 	if (angle < 0.0)
 		angle += 2 * PI;
 	h = (int) Round (Degrees (angle) / 90.0); 
