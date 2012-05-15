@@ -377,9 +377,6 @@ SetAlpha (255);
 short nBaseTex = sideP->BaseTex ();
 short nOvlTex = sideP->OvlTex (0);
 
-#if 0
-texP [0] = &textureManager.Arrow ();
-#else
 if (textureManager.IsAnimated (sideP->BaseTex ()) && !(bArrow = textureManager.HaveArrow ())) {
 	textureManager.BlendTextures (nBaseTex, nOvlTex, texP [0] = &tex, 0, 0);
 	tex.DrawAnimDirArrows (nBaseTex);
@@ -391,10 +388,8 @@ else {
 		texP [1] = textureManager.Texture (nOvlTex);
 		texP [1]->m_nTexture = nOvlTex;
 		}
-#if 1
 	if (bArrow)
 		texP [2] = &textureManager.Arrow ();
-#endif
 	}
 if (wallP != null) {
 	SetAlpha (wallP->Alpha ());
@@ -409,7 +404,6 @@ if (wallP != null) {
 		colorP = &color;
 		}
 	}
-#endif
 
 RenderFace (fle, texP, colorP);
 if	(texP [0] == &tex)
@@ -477,7 +471,7 @@ void CRendererGL::RenderFace (CFaceListEntry& fle, CTexture* texP [], CBGRA* col
 	CSide*		sideP = segP->Side (fle.m_nSide);
 	CWall*		wallP = sideP->Wall ();
 	float			alpha = float (Alpha ()) / 255.0f * (colorP ? float (colorP->a) / 255.0f : 1.0f);
-	int			bIlluminate = RenderIllumination ();
+	int			bIlluminate = RenderIllumination () && (segP->m_info.function != SEGMENT_FUNC_SKYBOX);
 	ushort*		vertexIds = segP->m_info.vertexIds;
 	ubyte*		vertexIdIndex = sideP->m_vertexIdIndex;
 	int			nVertices = sideP->VertexCount (), 
