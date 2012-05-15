@@ -1737,7 +1737,7 @@ class CToolView : public CWnd {
 		afx_msg void OnSelectPrevTab ();
 		afx_msg void OnSelectNextTab ();
 		void CalcToolSize (void);
-		void RecalcLayout (int nToolMode = 0, int nTextureMode = 0);
+		void RecalcLayout (int nToolMode = -1, int nTextureMode = -1);
 		void MoveWindow (int x, int y, int nWidth, int nHeight, BOOL bRepaint = TRUE);
 		void MoveWindow (LPCRECT lpRect, BOOL bRepaint = TRUE);
 		inline CSize& ToolSize ()

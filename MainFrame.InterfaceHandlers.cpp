@@ -340,23 +340,24 @@ void CMainFrame::OnToggleViews ()
 {
 if (nLayout < 2) {
 	if (m_paneMode == 2) {
-		RecalcLayout (1,1);
+		RecalcLayout (0,0);
 		m_paneMode = 0;
 		m_toolBar.SetButtonInfo (44, ID_VIEW_TOGGLEVIEWS, TBBS_BUTTON, 38);
-		ResetMineZoom ();
+		//ResetMineZoom ();
 		}
 	else {
-		RecalcLayout (2,2);
+		RecalcLayout (1,1);
 		m_paneMode = 2;
 		m_toolBar.SetButtonInfo (44, ID_VIEW_TOGGLEVIEWS, TBBS_BUTTON, 39);
-		m_mineZoom = MineView ()->ZoomIn (2);
+		//m_mineZoom = MineView ()->ZoomIn (2);
 		}
 	}
 }
 
 void CMainFrame::OnToggleTexturePane () 
 {
-RecalcLayout (m_toolMode, (m_textureMode == 1) ? 2 : 1);
+if (!bSingleToolPane)
+	RecalcLayout (m_toolMode, (m_textureMode == 1) ? 2 : 1);
 }
 
 void CMainFrame::OnViewZoomin () 

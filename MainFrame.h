@@ -166,7 +166,7 @@ public:
 	inline CWnd *MinePane () { return (nLayout == 2) ? m_splitter1.GetPane (0,1) : m_splitter2.GetPane (0,0); }
 	inline CWnd *ToolPane ()
 		{ return (nLayout == 2) ? null : (nLayout == 1) ? m_splitter1.GetPane (0,0) : m_splitter2.GetPane (1,0); }
-	virtual void RecalcLayout (int nToolMode = 0, int nTextureMode = 0);
+	virtual void RecalcLayout (int nToolMode = -1, int nTextureMode = -1);
 	inline void StatusMsg (const char *pszMsg)
 		{ m_statusBar.SetPaneText (1, pszMsg); }
 	inline void InfoMsg (const char *pszMsg)
