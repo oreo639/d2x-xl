@@ -267,7 +267,7 @@ for (int i = 0; i < MAX_POLYGON_MODELS; i++) {
 	if (i == nDbgModel)
 		nDbgModel = nDbgModel;
 #endif
-	if (/*m_polyModels [1][i].m_info.renderData ||*/ (m_aseModels [i].m_nModel >= 0) || (m_oofModels [i].m_nModel >= 0))
+	if (m_polyModels [1][i].m_info.renderData || (m_aseModels [i].m_nModel >= 0) || (m_oofModels [i].m_nModel >= 0))
 		continue; // already have a custom model
 	if (m_aseModels [i].Read (pszFolder, i))
 		m_renderModels [i].BuildFromASE (m_aseModels [i]);
@@ -348,9 +348,9 @@ if (m_nModel >= 0) {
 	if (m_renderer->Type ()) {
 		m_renderer->BeginRender ();
 
-		/*if (m_polyModels [1][m_nModel].Draw (m_viewMatrix, m_pDC, 0))
+		if (m_polyModels [1][m_nModel].Draw (m_viewMatrix, m_pDC, 0))
 			;
-		else*/ if (m_renderModels [m_nModel].Render (m_viewMatrix, m_object))
+		else if (m_renderModels [m_nModel].Render (m_viewMatrix, m_object))
 			;
 		else
 			m_polyModels [0][m_nModel].Draw (m_viewMatrix, m_pDC, 0);
