@@ -19,7 +19,7 @@
 #include "mine.h"
 
 extern int nLayout;
-extern int bCommonToolPanes;
+extern int bSingleToolPane;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDLE:

@@ -52,7 +52,7 @@ m_toolMode = 1;
 m_textureMode = 1;
 m_mineZoom = 0;
 nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, DLE.IniFile ());
-bCommonToolPanes = GetPrivateProfileInt ("DLE-XP", "CommonToolPanes", 0, DLE.IniFile ());
+bSingleToolPane = GetPrivateProfileInt ("DLE-XP", "SingleToolPanek", 0, DLE.IniFile ());
 #if EDITBAR
 m_bEditorTB = 1;
 #else
@@ -265,8 +265,8 @@ return CFrameWnd::PreCreateWindow (cs);
 
 #define CX_TOOLS_HORZ		354
 #define CY_TOOLS_HORZ		150
-#define CX_TOOLS_VERT		370
-#define CY_TOOLS_VERT		720
+#define CX_TOOLS_VERT		350
+#define CY_TOOLS_VERT		740
 #define CX_TEXTURES			170
 #define CY_TEXTURES			170
 
@@ -280,7 +280,7 @@ if (!m_splitter1.CreateStatic (this, 1, 2, WS_CHILD | WS_VISIBLE | WS_BORDER))
 GetClientRect (rc);
 rc.InflateRect (-2, -2);
 if (nLayout == 1) {
-	if (bCommonToolPanes) {
+	if (bSingleToolPane) {
 		m_splitter1.CreateView (0, 1, RUNTIME_CLASS (CMineView), CSize (rc.Width () - CX_TOOLS_VERT, rc.Height ()), &context);
 		m_splitter1.SetRowInfo (0, rc.Height (), 16);
 		m_splitter1.SetColumnInfo (0, CX_TOOLS_VERT, 16);
@@ -378,7 +378,7 @@ if (nLayout != 0) {
 			ToolPane ()->GetWindowRect (rcTools);
 		if (rcTools.Width () <= 0) 
 			return; // tool pane minimized
-		if (bCommonToolPanes) {
+		if (bSingleToolPane) {
 			m_splitter1.SetColumnInfo (0, CX_TOOLS_VERT + GetSystemMetrics (SM_CXVSCROLL), 0);
 			m_splitter1.SetColumnInfo (1, rcTotal.Width () - CX_TOOLS_VERT, 0);
 			m_splitter2.SetRowInfo (0, CY_TOOLS_VERT, CY_TOOLS_VERT);
