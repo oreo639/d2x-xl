@@ -247,7 +247,10 @@ DDX_Check (pDX, IDC_PREFS_VIEW_DEPTHTEST, m_bDepthTest);
 DDX_Check (pDX, IDC_PREFS_EXPERTMODE, m_bExpertMode);
 DDX_Check (pDX, IDC_PREFS_SPLASHSCREEN, m_bSplashScreen);
 DDX_Text (pDX, IDC_PREFS_UNDO, m_nMaxUndo);
-DDX_Radio (pDX, IDC_PREFS_LAYOUT0, bCommonToolPanes ? 2 : nLayout);
+h = bCommonToolPanes ? 3 : nLayout;
+DDX_Radio (pDX, IDC_PREFS_LAYOUT0, h);
+bCommonToolPanes = (h == 2);
+nLayout = bCommonToolPanes ? 1 : h;
 DDX_Radio (pDX, IDC_PREFS_RENDERER_3RD_PERSON, m_nPerspective);
 DDX_Check (pDX, IDC_PREFS_USETEXCOLORS, m_bApplyFaceLightSettingsGlobally);
 if (pDX->m_bSaveAndValidate)
