@@ -111,7 +111,7 @@ protected: // create from serialization only
 	UINT_PTR			m_lightTimer;
 	UINT_PTR			m_selectTimer;
 	int 				m_nFrameRate;
-	int				m_bSelectTexturedSide; // force selecting a textured face in 1st person view
+	int				m_bSelectTexturedSides; // force selecting a textured face in 1st person view
 	bool 				m_bHScroll,
 						m_bVScroll;
 	int 				m_xScrollRange,

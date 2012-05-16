@@ -123,7 +123,7 @@ RefreshObject(i, nClosestObj);
 
 short CMineView::FindVisibleSelectedSide (long xMouse, long yMouse, short& nSide)
 {
-if (!m_bSelectTexturedSide || (m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)) 
+if (!Perspective () || !m_bSelectTexturedSides || ((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
 	return -1;
 
 CVertex p1, p2;

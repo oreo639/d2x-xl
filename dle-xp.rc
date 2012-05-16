@@ -3139,14 +3139,14 @@ END
 
 IDR_MINE_CONTEXT_MENU MENU
 BEGIN
-    POPUP "MINE_CONTEXT_MENU"
+    POPUP "Element selection"
     BEGIN
-        MENUITEM "&Points",                     1
-        MENUITEM "&Lines",                      2
-        MENUITEM "&Sides",                      3
-        MENUITEM "&Segments",                   4
-        MENUITEM "&Objects",                    5
-        MENUITEM "&Blocks",                     ID_MINE_BLOCKS
+        MENUITEM "&Points",                     ID_SEL_POINTMODE
+        MENUITEM "&Lines",                      ID_SEL_LINEMODE
+        MENUITEM "&Sides",                      ID_SEL_SIDEMODE
+        MENUITEM "&Segments",                   ID_SEL_SEGMENTMODE
+        MENUITEM "&Objects",                    ID_SEL_OBJECTMODE
+        MENUITEM "&Blocks",                     ID_SEL_BLOCKMODE
         MENUITEM SEPARATOR
         MENUITEM "&Visible Elements",           6
     END
@@ -5908,7 +5908,7 @@ BEGIN
     BUTTON      ID_SEL_POINTMODE
     BUTTON      ID_SEL_LINEMODE
     BUTTON      ID_SEL_SIDEMODE
-    BUTTON      ID_SEL_CUBEMODE
+    BUTTON      ID_SEL_SEGMENTMODE
     BUTTON      ID_SEL_OBJECTMODE
     BUTTON      ID_SEL_BLOCKMODE
     SEPARATOR
@@ -6361,8 +6361,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,11,34,0
- PRODUCTVERSION 1,11,34,0
+ FILEVERSION 1,11,35,0
+ PRODUCTVERSION 1,11,35,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6379,12 +6379,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
             VALUE "FileDescription", "Descent Level Editor XP [16 may 2012]"
-            VALUE "FileVersion", "1.11.34.0"
+            VALUE "FileVersion", "1.11.35.0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) Bryan Aamot, Dietfrid Mali"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1.11.34.0"
+            VALUE "ProductVersion", "1.11.35.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6411,7 +6411,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.11.34\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.11.35\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 
@@ -6584,7 +6584,7 @@ STRINGTABLE
 BEGIN
     ID_SEL_LINEMODE         "set line mode\nset line mode"
     ID_SEL_SIDEMODE         "set side mode\nset side mode"
-    ID_SEL_CUBEMODE         "set segment mode\nset segment mode"
+    ID_SEL_SEGMENTMODE      "set segment mode\nset segment mode"
     ID_SEL_OBJECTMODE       "set object mode\nset object mode"
     ID_SEL_BLOCKMODE        "set block mode\nset block mode"
     ID_INSMODE_NORMAL       "add normal cubes\nadd normal cubes"

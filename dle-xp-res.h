@@ -984,7 +984,7 @@
 #define ID_SEL_POINTMODE                30911
 #define ID_SEL_LINEMODE                 30912
 #define ID_SEL_SIDEMODE                 30913
-#define ID_SEL_CUBEMODE                 30914
+#define ID_SEL_SEGMENTMODE              30914
 #define ID_SEL_OBJECTMODE               30915
 #define ID_SEL_BLOCKMODE                30916
 #define ID_SPLINE_INCREASE					 30917
@@ -1016,7 +1016,7 @@
 #define ID_INSERT_CUBE                  30950
 #define ID_INSERT_CUBE_REACTOR          30951
 #define ID_INSERT_CUBE_ROBOTMAKER       30952
-#define ID_INSERT_CUBE_PRODUCERTER       30953
+#define ID_INSERT_CUBE_PRODUCERTER      30953
 #define ID_INSERT_CUBE_REPAIRCENTER     30954
 #define ID_INSERT_CUBE_WATER            30955
 #define ID_INSERT_CUBE_LAVA             30956
@@ -1025,21 +1025,22 @@
 #define ID_VIEW_CREATE_WEDGE				 30959
 #define ID_VIEW_CREATE_PYRAMID			 30960
 #define ID_VIEW_SHIFT_VERTICES          30961
+#define ID_SEL_TEXTURED_SIDES				 30962
 
-#define ID_TOOLS_TEXTUREEDIT            30960
-#define ID_TOOLS_SEGMENTEDIT            30961
-#define ID_TOOLS_WALLEDIT               30962
-#define ID_TOOLS_TRIGGEREDIT            30963
-#define ID_TOOLS_OBJECTEDIT             30964
-#define ID_TOOLS_EFFECTEDIT             30965
-#define ID_TOOLS_ADVOBJEDIT             30966
-#define ID_TOOLS_LIGHTADJUSTMENT        30967
-#define ID_TOOLS_REACTORTRIGGERS        30968
-#define ID_TOOLS_MISSIONEDIT            30968
-#define ID_TOOLS_DIAGNOSIS              30969
-#define ID_TOOLS_TXTFILTERS             30970
-#define ID_TOOLS_PREFERENCES            30971
-#define ID_TOOLS_CURVEGENERATOR         30972
+#define ID_TOOLS_TEXTUREEDIT            30970
+#define ID_TOOLS_SEGMENTEDIT            30971
+#define ID_TOOLS_WALLEDIT               30972
+#define ID_TOOLS_TRIGGEREDIT            30973
+#define ID_TOOLS_OBJECTEDIT             30974
+#define ID_TOOLS_EFFECTEDIT             30975
+#define ID_TOOLS_ADVOBJEDIT             30976
+#define ID_TOOLS_LIGHTADJUSTMENT        30977
+#define ID_TOOLS_REACTORTRIGGERS        30978
+#define ID_TOOLS_MISSIONEDIT            30978
+#define ID_TOOLS_DIAGNOSIS              30979
+#define ID_TOOLS_TXTFILTERS             30980
+#define ID_TOOLS_PREFERENCES            30981
+#define ID_TOOLS_CURVEGENERATOR         30982
 
 
 #define ID_EDITGEO_FWD                  32913

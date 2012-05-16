@@ -197,7 +197,7 @@ m_lightTimer =
 m_selectTimer = -1;
 m_nFrameRate = 100;
 m_xRenderOffs = m_yRenderOffs = 0;
-m_bSelectTexturedSide = 1;
+m_bSelectTexturedSides = 1;
 }
 
 //------------------------------------------------------------------------------
@@ -1032,13 +1032,14 @@ if (m_mouseState == eMouseStateButtonDown) {
 		contextMenu.LoadMenu (IDR_MINE_CONTEXT_MENU);
 		ClientToScreen (&point);
 		tracker = contextMenu.GetSubMenu (0); 
-		tracker->CheckMenuItem ((UINT) theMine->SelectMode (), 1);
-		tracker->CheckMenuItem (7, m_bSelectTexturedSide);
-	   short nChoice = (short) tracker->TrackPopupMenu (TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x , point.y, AfxGetMainWnd ()); 
+		tracker->CheckMenuItem ((UINT) theMine->SelectMode (), MF_BYPOSITION | MF_CHECKED);
+		tracker->CheckMenuItem (7, MF_BYPOSITION | (m_bSelectTexturedSides ? MF_CHECKED : 0));
+	   short nChoice = (short) tracker->TrackPopupMenu (TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x , point.y, AfxGetMainWnd ()); 
 		contextMenu.DestroyMenu ();
-		if (--nChoice >= 0) {
+		if (nChoice) {
+			nChoice -= ID_SEL_POINTMODE;
 			if (nChoice > eSelectBlock)
-				m_bSelectTexturedSide = !m_bSelectTexturedSide;
+				m_bSelectTexturedSides = !m_bSelectTexturedSides;
 			else
 				SetSelectMode (nChoice);
 			}
