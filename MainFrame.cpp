@@ -464,7 +464,7 @@ else {
 			DLE.ToolPaneSize ().cy = rcTools.Height ();
 		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_HORZ : 0;
 		if (cy)
-			cy += m_splitter1.CYSplitter ();
+			cy += m_splitter2.CYSplitter ();
 		m_splitter2.SetRowInfo (0, rcTotal.Height () - cy, 16);
 		m_splitter2.SetRowInfo (1, cy, 0);
 		m_splitter2.RecalcLayout ();
