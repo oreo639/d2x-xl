@@ -423,7 +423,9 @@ else {
 		int cx = nToolMode ? DLE.ToolPaneSize ().cx ? DLE.ToolPaneSize ().cx : CX_TOOLS_VERT + GetSystemMetrics (SM_CXVSCROLL) : 0;
 		if (cx) 
 			cx += m_splitter1.CXSplitter ();
-		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_VERT : 0 + m_splitter1.CYSplitter ();
+		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_VERT : 0;
+		if (cy)
+			cy += m_splitter1.CYSplitter ();
 		if (bSingleToolPane) {
 			m_splitter1.SetColumnInfo (0, cx, 0);
 			m_splitter1.SetColumnInfo (1, rcTotal.Width () - cx, 0);
@@ -460,7 +462,9 @@ else {
 			DLE.ToolPaneSize ().cx = rcTools.Width ();
 		if (bWasTracking [1]) 
 			DLE.ToolPaneSize ().cy = rcTools.Height ();
-		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_HORZ : 0 + m_splitter1.CYSplitter ();
+		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_HORZ : 0;
+		if (cy)
+			cy += m_splitter1.CYSplitter ();
 		m_splitter2.SetRowInfo (0, rcTotal.Height () - cy, 16);
 		m_splitter2.SetRowInfo (1, cy, 0);
 		m_splitter2.RecalcLayout ();
