@@ -338,7 +338,8 @@ MineView ()->Refresh ();
 
 void CMainFrame::OnToggleViews () 
 {
-if (nLayout < 2) {
+//if (nLayout < 2) 
+	{
 	if (m_paneMode == 1) {
 		RecalcLayout (0,0);
 		m_paneMode = 0;

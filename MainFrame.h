@@ -165,9 +165,9 @@ public:  // control bar embedded members
 	int					m_bEditorTB;
 	CDLESplitterWnd	m_splitter1;
 	CDLESplitterWnd	m_splitter2;
-	CMineView			*m_mineView;
-	CTextureView		*m_textureView;
-	CToolView			*m_toolView;
+	CMineView*			m_mineView;
+	CTextureView*		m_textureView;
+	CToolView*			m_toolView;
 	int					m_paneMode;
 	int					m_toolMode;
 	int					m_textureMode;
@@ -183,10 +183,9 @@ public:
 	inline CTextureView *TextureView () { return m_textureView; }
 	inline CToolView *ToolView ()	{ return m_toolView; }
 	inline CDlcDoc *GetDocument () { return MineView ()->GetDocument (); }
-	inline CWnd *TexturePane () { return (nLayout == 1) ? m_splitter2.GetPane (1,0) : m_splitter1.GetPane (0,0); }
-	inline CWnd *MinePane () { return (nLayout == 2) ? m_splitter1.GetPane (0,1) : m_splitter2.GetPane (0,0); }
-	inline CWnd *ToolPane ()
-		{ return (nLayout == 2) ? null : (nLayout == 1) ? m_splitter1.GetPane (0,0) : m_splitter2.GetPane (1,0); }
+	inline CWnd *TexturePane () { return m_textureView; }
+	inline CWnd *MinePane () { return m_mineView; }
+	inline CWnd *ToolPane () { return (nLayout == 2) ? null : m_toolView; }
 	virtual void RecalcLayout (int nToolMode = -1, int nTextureMode = -1);
 	inline void StatusMsg (const char *pszMsg)
 		{ m_statusBar.SetPaneText (1, pszMsg); }

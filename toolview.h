@@ -211,6 +211,7 @@ class CToolDlg : public CPropertyPage, public CDlgHelpers
 					ShowWindow (SW_RESTORE); 
 					}
 				SetForegroundWindow ();
+				CPropertyPage::UpdateData (FALSE);
 				}
 			}
 #if 0
