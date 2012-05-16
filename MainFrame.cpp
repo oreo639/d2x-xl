@@ -66,10 +66,11 @@ m_toolView = null;
 m_paneMode = 0;
 m_bShowCtrlBar = 1;
 m_bRecalcBarLayout = 0;
-m_texPaneWidth = -1;
 m_toolMode = 1;
 m_textureMode = 1;
 m_mineZoom = 0;
+m_toolPaneSize.cx = 
+m_toolPaneSize.cy = 0;
 nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, DLE.IniFile ());
 bSingleToolPane = GetPrivateProfileInt ("DLE-XP", "SingleToolPane", 0, DLE.IniFile ());
 #if EDITBAR
@@ -284,7 +285,7 @@ return CFrameWnd::PreCreateWindow (cs);
 
 #define CX_TOOLS_HORZ		750
 #define CY_TOOLS_HORZ		385
-#define CX_TOOLS_VERT		345
+#define CX_TOOLS_VERT		385
 #define CY_TOOLS_VERT		770
 #define CX_TEXTURES			140
 #define CY_TEXTURES			170
@@ -393,11 +394,13 @@ if (nLayout == 2) {
 	TexturePane ()->GetWindowRect (rcTextures);
 	if (m_splitter1.WasTracking ()) 
 		DLE.TexturePaneSize ().cx = rcTextures.Width ();
-	int cx = nTextureMode ? DLE.TexturePaneSize ().cx ? DLE.TexturePaneSize ().cx : CX_TEXTURES + m_splitter1.CYSplitter () : 0;
+	int cx = nTextureMode ? DLE.TexturePaneSize ().cx ? DLE.TexturePaneSize ().cx : CX_TEXTURES + GetSystemMetrics (SM_CYVSCROLL) + m_splitter1.CYSplitter () : 0;
 	m_splitter1.SetColumnInfo (0, cx, 0);
 	m_splitter1.SetColumnInfo (1, rcTotal.Width () - cx, 0);
 	m_splitter1.SetRowInfo (0, rcTotal.Height (), 0);
 	m_splitter1.RecalcLayout ();
+	m_toolPaneSize.cx = 
+	m_toolPaneSize.cy = 0;
 	}
 else {
 	if (!ToolPane ())
@@ -443,6 +446,8 @@ else {
 			}
 		m_splitter2.RecalcLayout ();
 		m_splitter1.RecalcLayout ();
+		m_toolPaneSize.cx = CX_TOOLS_VERT;
+		m_toolPaneSize.cy = CY_TOOLS_VERT;
 		}
 	else {
 		if (bWasTracking [0]) 
@@ -459,6 +464,8 @@ else {
 		m_splitter2.SetRowInfo (1, cy, 0);
 		m_splitter2.RecalcLayout ();
 		m_splitter1.RecalcLayout ();
+		m_toolPaneSize.cx = CX_TOOLS_HORZ;
+		m_toolPaneSize.cy = CY_TOOLS_HORZ;
 		}
 	}
 #if 0

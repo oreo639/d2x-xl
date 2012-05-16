@@ -249,7 +249,7 @@ DDX_Check (pDX, IDC_PREFS_SPLASHSCREEN, m_bSplashScreen);
 DDX_Text (pDX, IDC_PREFS_UNDO, m_nMaxUndo);
 h = bSingleToolPane ? 3 : nLayout;
 DDX_Radio (pDX, IDC_PREFS_LAYOUT0, h);
-bSingleToolPane = (h == 2);
+bSingleToolPane = (h == 3);
 nLayout = bSingleToolPane ? 1 : h;
 DDX_Radio (pDX, IDC_PREFS_RENDERER_3RD_PERSON, m_nPerspective);
 DDX_Check (pDX, IDC_PREFS_USETEXCOLORS, m_bApplyFaceLightSettingsGlobally);

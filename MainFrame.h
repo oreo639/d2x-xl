@@ -174,7 +174,7 @@ public:  // control bar embedded members
 	int					m_mineZoom;
 	int					m_bShowCtrlBar;
 	int					m_bRecalcBarLayout;
-	int					m_texPaneWidth;
+	CSize					m_toolPaneSize;
 	CProgressCtrl		m_progress;
 
 public:
@@ -195,8 +195,7 @@ public:
 		{ m_statusBar.SetPaneText (3, pszMsg); }
 	inline void SelModeMsg (const char *pszMsg)
 		{ m_statusBar.SetPaneText (4, pszMsg); }
-	CProgressCtrl& Progress ()
-		{ return m_progress; }
+	CProgressCtrl& Progress ()	{ return m_progress; }
 	bool InitProgress (int nMax);
 	void DebugMsg (const char *);
 	void FixToolBars ();
@@ -210,6 +209,8 @@ public:
 	int CreateToolBars (bool bToolBar = true, bool bEditBar = true);
 	int CreateStatusBar ();
 	void DockToolBars (bool bToolBar, bool bEditBar);
+
+	inline CSize& ToolPaneSize (void) { return m_toolPaneSize; }
 
 	void ConvertMine (int nVersion);
 	void AdjustMine (int nVersion);

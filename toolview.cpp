@@ -261,12 +261,14 @@ return 0;
 
 void CToolView::CalcToolSize (void) 
 {
+#if 0
 if (m_pTools) {
 	CRect	rc;
 	m_pTools->GetWindowRect (rc);
 	m_paneSize.cx = rc.Width ();
 	m_paneSize.cy = rc.Height () + 6/*+ 12*/;
 	}
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -444,9 +446,8 @@ m_bRecalcLayout = TRUE;
 if (DLE.MainFrame ())
 	DLE.MainFrame ()->RecalcLayout (nToolMode, nTextureMode);
 GetWindowRect (rc);
-paneSize.cx = rc.Width ();
-paneSize.cy = rc.Height ();
-if (rc.Width () >= m_paneSize.cx) {
+paneSize = DLE.MainFrame ()->ToolPaneSize ();
+if (rc.Width () >= paneSize.cx) {
 	ShowScrollBar (SB_HORZ, FALSE);
 	rc.left = 0;
 	if (m_bHScroll) {
@@ -455,8 +456,8 @@ if (rc.Width () >= m_paneSize.cx) {
 		}
 	}
 else {
-	m_scrollRange [0] = m_paneSize.cx - paneSize.cx;
-	m_scrollPage [0] = (m_scrollRange [0] < m_paneSize.cx) ? m_scrollRange [0] : m_paneSize.cx;
+	m_scrollRange [0] = paneSize.cx - rc.Width ();
+	m_scrollPage [0] = (m_scrollRange [0] < paneSize.cx) ? m_scrollRange [0] : paneSize.cx;
 	SetScrollRange (SB_HORZ, 0, m_scrollRange [0], TRUE);
 	ShowScrollBar (SB_HORZ, TRUE);
 	rc.left = -GetScrollPos (SB_HORZ);
@@ -465,7 +466,7 @@ else {
 		//m_paneSize.cy += GetSystemMetrics (SM_CXVSCROLL);
 		}
 	}
-if (rc.Height () >= m_paneSize.cy - 11) {
+if (rc.Height () >= paneSize.cy /*- 11*/) {
 	ShowScrollBar (SB_VERT, FALSE);
 	rc.top = 0;
 	if (m_bVScroll) {
@@ -474,8 +475,8 @@ if (rc.Height () >= m_paneSize.cy - 11) {
 		}
 	}
 else {
-	m_scrollRange [1] = m_paneSize.cy - paneSize.cy;
-	m_scrollPage [1] = (m_scrollRange [1] < m_paneSize.cy) ? m_scrollRange [1] : m_paneSize.cy;
+	m_scrollRange [1] = paneSize.cy - rc.Height ();
+	m_scrollPage [1] = (m_scrollRange [1] < paneSize.cy) ? m_scrollRange [1] : paneSize.cy;
 	SetScrollRange (SB_VERT, 0, m_scrollRange [1], TRUE);
 	ShowScrollBar (SB_VERT, TRUE);
 	rc.top = -GetScrollPos (SB_VERT);
@@ -484,8 +485,8 @@ else {
 		//m_paneSize.cx += GetSystemMetrics (SM_CYHSCROLL);
 		}
 	}
-rc.right = (paneSize.cx > m_paneSize.cx) ? paneSize.cx : m_paneSize.cx;
-rc.bottom = (paneSize.cy > m_paneSize.cy) ? paneSize.cy : m_paneSize.cy;
+rc.right = (rc.Width () > paneSize.cx) ? paneSize.cx : rc.Width () - 1;
+rc.bottom = (rc.Height () > paneSize.cy) ? paneSize.cy : rc.Height () - 1;
 m_pTools->MoveWindow (rc);
 m_bRecalcLayout = FALSE;
 }
