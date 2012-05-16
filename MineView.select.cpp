@@ -123,7 +123,7 @@ RefreshObject(i, nClosestObj);
 
 short CMineView::FindVisibleSelectedSide (long xMouse, long yMouse, short& nSide)
 {
-if ((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)) 
+if (!m_bSelectTexturedSide || (m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)) 
 	return -1;
 
 CVertex p1, p2;
@@ -154,7 +154,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		double d;
 		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
 			continue;
-		if (m_bSelectTexturedSide && !sideP->IsVisible ())
+		if (!sideP->IsVisible ())
 			continue;
 		if ((d = Dot (mouseDir, sideP->m_vNormal [0])) > 0.0)
 			continue; // looking at the back of the side
