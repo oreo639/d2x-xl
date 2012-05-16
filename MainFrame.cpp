@@ -27,6 +27,9 @@ END_MESSAGE_MAP ()
 
 void CDLESplitterWnd::OnMouseMove (UINT nFlags, CPoint pos)
 {
+if (IsTracking ())
+	m_bWasTracking = true;
+CSplitterWnd::OnMouseMove (nFlags, pos);
 }
 
 //------------------------------------------------------------------------------
@@ -408,9 +411,9 @@ else if (nLayout == 1) {
 
 	bool bWasTracking [2] = { m_splitter1.WasTracking (), m_splitter2.WasTracking () };
 	
-	if (bWasTracking [1]) 
+	if (bWasTracking [0]) 
 		DLE.ToolPaneSize ().cx = rcTools.Width ();
-	if (bWasTracking [2]) 
+	if (bWasTracking [1]) 
 		DLE.ToolPaneSize ().cy = rcTools.Height ();
 	
 	int cx = (nToolMode ? DLE.ToolPaneSize ().cx ? DLE.ToolPaneSize ().cx : CX_TOOLS_VERT + GetSystemMetrics (SM_CXVSCROLL) : 0) + m_splitter1.CXSplitter ();
@@ -426,9 +429,9 @@ else if (nLayout == 1) {
 		m_splitter1.SetColumnInfo (1, rcTotal.Width () - cx, 0);
 		m_splitter1.SetRowInfo (0, CY_TOOLS_HORZ, 0);
 		TexturePane ()->GetWindowRect (rcTextures);
-		if (bWasTracking [1]) 
+		if (bWasTracking [0]) 
 			DLE.TexturePaneSize ().cx = rcTextures.Width ();
-		if (bWasTracking [2]) 
+		if (bWasTracking [1]) 
 			DLE.TexturePaneSize ().cy = rcTextures.Height ();
 		cy = nTextureMode ? DLE.TexturePaneSize ().cy ? DLE.TexturePaneSize ().cy : CY_TEXTURES : 0 + m_splitter2.CYSplitter ();
 		m_splitter2.SetColumnInfo (0, rcTotal.Width () - cx, 0);
