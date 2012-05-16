@@ -371,11 +371,14 @@ if (bInitialize) {
 	strcpy_s (m_d2Folder, sizeof (m_d2Folder), descentFolder [1]);
 	CompletePath (m_d2Folder, "groupa.pig", ".pig");
 	GetPrivateProfileString ("DLE-XP", "LevelsDirectory", missionFolder, missionFolder, sizeof (missionFolder), DLE.IniFile ());
+	char* ps = strrchr (missionFolder, '\\');
+	if (ps)
+		*ps = '\0';
 	strcpy_s (m_missionFolder, sizeof (m_missionFolder), missionFolder);
-	CompletePath (m_missionFolder, "descent2.hog", ".hog");
+	//CompletePath (m_missionFolder, "descent2.hog", ".hog");
 	GetPrivateProfileString ("DLE-XP", "PlayerProfile", szPlayerProfile, szPlayerProfile, sizeof (szPlayerProfile), DLE.IniFile ());
 	strcpy (modFolder, descentFolder [1]);
-	char* ps = strstr (modFolder, "data");
+	ps = strstr (modFolder, "data");
 	if (ps)
 		strcpy (ps, "mods");
 	else
@@ -515,7 +518,8 @@ _strlwr_s (m_missionFolder, sizeof (m_missionFolder));
 if (strcmp (missionFolder, m_missionFolder)) {
 	strcpy_s (missionFolder, sizeof (missionFolder), m_missionFolder);
 	WritePrivateProfileString ("DLE-XP", "levelsDirectory", missionFolder, DLE.IniFile ());
-	SetCurrentDirectory (missionFolder);
+	if (*missionFolder)
+		::SetCurrentDirectory (missionFolder);
 	}
 
 if (!bUpdate)
