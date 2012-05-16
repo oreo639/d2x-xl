@@ -284,11 +284,11 @@ return CFrameWnd::PreCreateWindow (cs);
 //------------------------------------------------------------------------------
 
 #define CX_TOOLS_HORZ		750
-#define CY_TOOLS_HORZ		385
+#define CY_TOOLS_HORZ		260
 #define CX_TOOLS_VERT		360
 #define CY_TOOLS_VERT		760
 #define CX_TEXTURES			140
-#define CY_TEXTURES			170
+#define CY_TEXTURES			150
 
 BOOL CMainFrame::OnCreateClient (LPCREATESTRUCT lpcs, CCreateContext * pContext)
 {
@@ -459,7 +459,7 @@ else {
 			DLE.ToolPaneSize ().cx = rcTools.Width ();
 		if (bWasTracking [1]) 
 			DLE.ToolPaneSize ().cy = rcTools.Height ();
-		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_HORZ + m_splitter2.CYSplitter () : 0;
+		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_HORZ /*+ m_splitter2.CYSplitter ()*/ : 0;
 		m_splitter2.SetRowInfo (0, rcTotal.Height () - cy, 16);
 		m_splitter2.SetRowInfo (1, cy, 0);
 		m_splitter2.RecalcLayout ();

@@ -457,7 +457,6 @@ if (currentSize.cx >= desiredSize.cx) {
 	rc.left = 0;
 	if (m_bHScroll) {
 		m_bHScroll = FALSE;
-		currentSize.cx -= GetSystemMetrics (SM_CXVSCROLL);
 		}
 	}
 else {
@@ -477,7 +476,6 @@ if (rc.Height () >= desiredSize.cy /*- 11*/) {
 	rc.top = 0;
 	if (m_bVScroll) {
 		m_bVScroll = FALSE;
-		currentSize.cy -= GetSystemMetrics (SM_CYVSCROLL);
 		}
 	}
 else {
@@ -492,8 +490,8 @@ else {
 		m_bVScroll = TRUE;
 		}
 	}
-rc.right = ((rc.Width () > desiredSize.cx) ? desiredSize.cx : rc.left + rc.Width ());
-rc.bottom = ((rc.Height () > desiredSize.cy) ? desiredSize.cy : rc.top + rc.Height ());
+rc.right = (/*(rc.Width () > desiredSize.cx) ? desiredSize.cx :*/ rc.left + rc.Width ());
+rc.bottom = (/*(rc.Height () > desiredSize.cy) ? desiredSize.cy :*/ rc.top + rc.Height ());
 m_pTools->MoveWindow (rc);
 m_bRecalcLayout = FALSE;
 }
