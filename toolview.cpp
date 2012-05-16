@@ -420,7 +420,7 @@ switch (nSBCode) {
 		m_scrollOffs [1] = nPos;
 		break;
 	default:
-		CWnd::OnHScroll (nSBCode, nPos, pScrollBar);
+		CWnd::OnVScroll (nSBCode, nPos, pScrollBar);
 	}
 if (m_scrollOffs [1] < 0)
 	m_scrollOffs [1] = 0;
@@ -440,53 +440,60 @@ if (m_bRecalcLayout)
 	return;
 
 	CRect	rc;
-	CSize	paneSize;
 
 m_bRecalcLayout = TRUE;
 if (DLE.MainFrame ())
 	DLE.MainFrame ()->RecalcLayout (nToolMode, nTextureMode);
 GetWindowRect (rc);
-paneSize = DLE.MainFrame ()->ToolPaneSize ();
-if (rc.Width () >= paneSize.cx) {
+CSize desiredSize = DLE.MainFrame ()->ToolPaneSize ();
+CSize currentSize = CSize (rc.Width (), rc.Height ());
+if (m_bHScroll)
+	currentSize.cx -= GetSystemMetrics (SM_CXVSCROLL);
+if (m_bVScroll)
+	currentSize.cy -= GetSystemMetrics (SM_CYVSCROLL);
+
+if (currentSize.cx >= desiredSize.cx) {
 	ShowScrollBar (SB_HORZ, FALSE);
 	rc.left = 0;
 	if (m_bHScroll) {
 		m_bHScroll = FALSE;
-		//m_paneSize.cy -= GetSystemMetrics (SM_CXVSCROLL);
+		currentSize.cx -= GetSystemMetrics (SM_CXVSCROLL);
 		}
 	}
 else {
-	m_scrollRange [0] = paneSize.cx - rc.Width ();
-	m_scrollPage [0] = (m_scrollRange [0] < paneSize.cx) ? m_scrollRange [0] : paneSize.cx;
+	if (!m_bHScroll)
+		currentSize.cx -= GetSystemMetrics (SM_CXVSCROLL);
+	m_scrollRange [0] = desiredSize.cx - currentSize.cx;
+	m_scrollPage [0] = (m_scrollRange [0] < desiredSize.cx) ? m_scrollRange [0] : desiredSize.cx;
 	SetScrollRange (SB_HORZ, 0, m_scrollRange [0], TRUE);
 	ShowScrollBar (SB_HORZ, TRUE);
 	rc.left = -GetScrollPos (SB_HORZ);
 	if (!m_bHScroll) {
 		m_bHScroll = TRUE;
-		//m_paneSize.cy += GetSystemMetrics (SM_CXVSCROLL);
 		}
 	}
-if (rc.Height () >= paneSize.cy /*- 11*/) {
+if (rc.Height () >= desiredSize.cy /*- 11*/) {
 	ShowScrollBar (SB_VERT, FALSE);
 	rc.top = 0;
 	if (m_bVScroll) {
 		m_bVScroll = FALSE;
-		//m_paneSize.cx -= GetSystemMetrics (SM_CYHSCROLL);
+		currentSize.cy -= GetSystemMetrics (SM_CYVSCROLL);
 		}
 	}
 else {
-	m_scrollRange [1] = paneSize.cy - rc.Height ();
-	m_scrollPage [1] = (m_scrollRange [1] < paneSize.cy) ? m_scrollRange [1] : paneSize.cy;
+	if (!m_bVScroll)
+		currentSize.cy -= GetSystemMetrics (SM_CYVSCROLL);
+	m_scrollRange [1] = desiredSize.cy - currentSize.cy;
+	m_scrollPage [1] = (m_scrollRange [1] < desiredSize.cy) ? m_scrollRange [1] : desiredSize.cy;
 	SetScrollRange (SB_VERT, 0, m_scrollRange [1], TRUE);
 	ShowScrollBar (SB_VERT, TRUE);
 	rc.top = -GetScrollPos (SB_VERT);
 	if (!m_bVScroll) {
 		m_bVScroll = TRUE;
-		//m_paneSize.cx += GetSystemMetrics (SM_CYHSCROLL);
 		}
 	}
-rc.right = (rc.Width () > paneSize.cx) ? paneSize.cx : rc.Width () - 1;
-rc.bottom = (rc.Height () > paneSize.cy) ? paneSize.cy : rc.Height () - 1;
+rc.right = ((rc.Width () > desiredSize.cx) ? desiredSize.cx : rc.left + rc.Width ());
+rc.bottom = ((rc.Height () > desiredSize.cy) ? desiredSize.cy : rc.top + rc.Height ());
 m_pTools->MoveWindow (rc);
 m_bRecalcLayout = FALSE;
 }

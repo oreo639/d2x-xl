@@ -285,8 +285,8 @@ return CFrameWnd::PreCreateWindow (cs);
 
 #define CX_TOOLS_HORZ		750
 #define CY_TOOLS_HORZ		385
-#define CX_TOOLS_VERT		385
-#define CY_TOOLS_VERT		770
+#define CX_TOOLS_VERT		360
+#define CY_TOOLS_VERT		760
 #define CX_TEXTURES			140
 #define CY_TEXTURES			170
 
@@ -423,8 +423,8 @@ else {
 		if (bWasTracking [1]) 
 			DLE.ToolPaneSize ().cy = rcTools.Height ();
 	
-		int cx = nToolMode ? DLE.ToolPaneSize ().cx ? DLE.ToolPaneSize ().cx : CX_TOOLS_VERT + GetSystemMetrics (SM_CXVSCROLL) + m_splitter1.CXSplitter () : 0;
-		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_VERT + m_splitter1.CYSplitter () : 0;
+		int cx = nToolMode ? DLE.ToolPaneSize ().cx ? DLE.ToolPaneSize ().cx : CX_TOOLS_VERT /*+ GetSystemMetrics (SM_CXVSCROLL) + m_splitter1.CXSplitter ()*/ : 0;
+		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_VERT /*+ m_splitter1.CYSplitter ()*/ : 0;
 		if (bSingleToolPane) {
 			m_splitter1.SetColumnInfo (0, cx, 0);
 			m_splitter1.SetColumnInfo (1, rcTotal.Width () - cx, 0);
