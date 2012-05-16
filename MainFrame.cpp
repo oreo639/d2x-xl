@@ -389,10 +389,6 @@ else if (nLayout == 1) {
 		return;
 	MinePane ()->GetWindowRect (rcMine);
 	ToolPane ()->GetWindowRect (rcTools);
-	if (DLE.ToolPaneSize ().cx < 0)
-		DLE.ToolPaneSize ().cx = rcTools.Width ();
-	if (DLE.ToolPaneSize ().cy < 0)
-		DLE.ToolPaneSize ().cy = rcTools.Height ();
 	int cx = (nToolMode ? DLE.ToolPaneSize ().cx ? DLE.ToolPaneSize ().cx : CX_TOOLS_VERT + GetSystemMetrics (SM_CXVSCROLL) : 0) + m_splitter1.CXSplitter ();
 	int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_VERT : 0 + m_splitter1.CYSplitter ();
 	if (bSingleToolPane) {
@@ -406,8 +402,6 @@ else if (nLayout == 1) {
 		m_splitter1.SetColumnInfo (1, rcTotal.Width () - cx, 0);
 		m_splitter1.SetRowInfo (0, CY_TOOLS_HORZ, 0);
 		TexturePane ()->GetWindowRect (rcTextures);
-		if (DLE.TexturePaneSize ().cy < 0)
-			DLE.TexturePaneSize ().cy = rcTexturesk.Height ();
 		cy = nTextureMode ? DLE.TexturePaneSize ().cy ? DLE.TexturePaneSize ().cy : CY_TEXTURES : 0 + m_splitter2.CYSplitter ();
 		m_splitter2.SetColumnInfo (0, rcTotal.Width () - cx, 0);
 		m_splitter2.SetRowInfo (0, rcTotal.Height () - cy, 0);
@@ -415,6 +409,12 @@ else if (nLayout == 1) {
 		}
 	m_splitter2.RecalcLayout ();
 	m_splitter1.RecalcLayout ();
+	ToolPane ()->GetWindowRect (rcTools);
+	DLE.ToolPaneSize ().cx = rcTools.Width ();
+	DLE.ToolPaneSize ().cy = rcTools.Height ();
+	TexturePane ()->GetWindowRect (rcTextures);
+	DLE.TexturePaneSize ().cx = rcTextures.Width ();
+	DLE.TexturePaneSize ().cy = rcTextures.Height ();
 	}
 else {
 	if (nToolMode && (nLayout < 2))

@@ -414,11 +414,7 @@ return 0;
 
 void CTextureView::OnSize (UINT nType, int cx, int cy)
 {
-if (m_paneSize.cx >= 0)
-	m_paneSize.cx = cx;
-if (m_paneSize.cy >= 0)
-	m_paneSize.cy = cy;
-CWnd::Invalidate (1);
+CWnd::OnSize (nType, cx, cy);
 }
 
 								/*---------------------------*/
