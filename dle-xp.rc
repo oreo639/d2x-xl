@@ -3134,6 +3134,27 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDR_MINE_CONTEXT_MENU MENU
+BEGIN
+    POPUP "MINE_CONTEXT_MENU"
+    BEGIN
+        MENUITEM "&Points",                     1
+        MENUITEM "&Lines",                      2
+        MENUITEM "&Sides",                      3
+        MENUITEM "&Segments",                   4
+        MENUITEM "&Objects",                    5
+        MENUITEM "&Blocks",                     ID_MINE_BLOCKS
+        MENUITEM SEPARATOR
+        MENUITEM "&Visible Elements",           6
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -5953,44 +5974,6 @@ END
 #endif    // APSTUDIO_INVOKED
 
 
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#include ""afxres.h""\r\n"
-    "#include ""dle-xp-res.h""\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
-    "#define _AFX_NO_OLE_RESOURCES\r\n"
-    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
-    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
-    "\r\n"
-    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
-    "#ifdef _WIN32\r\n"
-    "LANGUAGE 9, 1\r\n"
-    "#pragma code_page(1252)\r\n"
-    "#endif\r\n"
-    "#include ""afxres.rc""         // Standard components\r\n"
-    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
-    "#endif\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
@@ -6219,6 +6202,44 @@ BEGIN
         MENUITEM "&About DLE XP...",            ID_APP_ABOUT
     END
 END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "#include ""dle-xp-res.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////

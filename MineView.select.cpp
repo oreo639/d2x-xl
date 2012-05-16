@@ -154,7 +154,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		double d;
 		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
 			continue;
-		if (m_bSelectSolidSide && !sideP->IsVisible ())
+		if (m_bSelectTexturedSide && !sideP->IsVisible ())
 			continue;
 		if ((d = Dot (mouseDir, sideP->m_vNormal [0])) > 0.0)
 			continue; // looking at the back of the side
@@ -171,7 +171,6 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 			}
 		}
 	}
-m_bSelectSolidSide = !m_bSelectSolidSide;
 nSide = nMinSide;
 return nMinSeg;
 }

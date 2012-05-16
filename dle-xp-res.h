@@ -61,19 +61,7 @@
 #define IDR_WAYPOINT_ICON					 198
 #define IDR_LIGHT_ICON						 199
 #define IDR_CIRCLE_ICON						 200
-
-
-//#define IDD_ADVOBJDATA_VERT                11502
-//#define IDD_LIGHTDATA_VERT                 11503
-//#define IDD_MISSIONDATA_VERT               11504
-//#define IDD_OBJECTDATA_VERT                11505
-//#define IDD_DIAGDATA_VERT                  11506
-//#define IDD_PREFSDATA_VERT                 11507
-//#define IDD_REACTORDATA_VERT               11508
-//#define IDD_TEXTUREDATA_VERT               11509
-//#define IDD_TRIGGERDATA_VERT               11510
-//#define IDD_WALLDATA_VERT                  11511
-//#define IDD_OBJECTDATA_VERT_OLD            11512
+#define IDR_MINE_CONTEXT_MENU           201
 
 #define IDD_SEGMENTDATA_HORZ               10000
 #define IDD_SEGMENTDATA_VERT               10001
