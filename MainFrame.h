@@ -16,6 +16,11 @@
 #include "toolview.h"
 
 extern int nLayout;
+extern int bSingleToolPane;
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #if EDITBAR == 0
 
@@ -62,29 +67,36 @@ class CEditTool : public CDialog {
 
 #endif
 
-class C1stSplitterWnd : public CSplitterWnd 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+class CDLESplitterWnd : public CSplitterWnd 
 {
 	public:
+		bool m_bWasTracking;
+
 		CWnd* GetPane (int row, int col) const { 
 			return ((row < m_nRows) && (col < m_nCols) && GetDlgItem (IdFromRowCol (row, col))) ? CSplitterWnd::GetPane (row, col) : null; 
 			}
 
 		inline int CXSplitter (void) { return m_cxSplitterGap + m_cxSplitter; }
 		inline int CYSplitter (void) { return m_cySplitterGap + m_cySplitter; }
+		afx_msg void OnMouseMove (UINT nFlags, CPoint pos);
+		inline bool WasTracking (void) {
+			bool bWasTracking = m_bWasTracking;
+			m_bWasTracking = false;
+			return bWasTracking;
+			}
+
+		CDLESplitterWnd () : m_bWasTracking (false) {}
+
+	DECLARE_MESSAGE_MAP()
 };
 
-
-class C2ndSplitterWnd : public C1stSplitterWnd 
-{
-	public:
-		int	m_texPaneHeight;
-		C2ndSplitterWnd () : C1stSplitterWnd ()
-			{ m_texPaneHeight = -1; }
-		inline int CXSplitter (void) { return m_cxSplitterGap + m_cxSplitter; }
-		inline int CYSplitter (void) { return m_cySplitterGap + m_cySplitter; }
-		virtual void RecalcLayout (int nToolMode = 0, int nTextureMode = 0);
-};
-
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 class CExtToolBar : public CToolBar
 {
@@ -105,6 +117,10 @@ class CExtToolBar : public CToolBar
 
 		DECLARE_MESSAGE_MAP ()
 };
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 class CMainFrame : public CFrameWnd
 {
@@ -147,8 +163,8 @@ public:  // control bar embedded members
 	CEditTool			*m_pEditTool;
 #endif
 	int					m_bEditorTB;
-	C1stSplitterWnd	m_splitter1;
-	C2ndSplitterWnd	m_splitter2;
+	CDLESplitterWnd	m_splitter1;
+	CDLESplitterWnd	m_splitter2;
 	CMineView			*m_mineView;
 	CTextureView		*m_textureView;
 	CToolView			*m_toolView;
@@ -376,7 +392,9 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-/////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.

@@ -16,6 +16,22 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+BEGIN_MESSAGE_MAP (CDLESplitterWnd, CSplitterWnd)
+	ON_WM_MOUSEMOVE ()
+END_MESSAGE_MAP ()
+
+//------------------------------------------------------------------------------
+
+void CDLESplitterWnd::OnMouseMove (UINT nFlags, CPoint pos)
+{
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CMainFrame
 
 static UINT indicators[] =
@@ -389,6 +405,14 @@ else if (nLayout == 1) {
 		return;
 	MinePane ()->GetWindowRect (rcMine);
 	ToolPane ()->GetWindowRect (rcTools);
+
+	bool bWasTracking [2] = { m_splitter1.WasTracking (), m_splitter2.WasTracking () };
+	
+	if (bWasTracking [1]) 
+		DLE.ToolPaneSize ().cx = rcTools.Width ();
+	if (bWasTracking [2]) 
+		DLE.ToolPaneSize ().cy = rcTools.Height ();
+	
 	int cx = (nToolMode ? DLE.ToolPaneSize ().cx ? DLE.ToolPaneSize ().cx : CX_TOOLS_VERT + GetSystemMetrics (SM_CXVSCROLL) : 0) + m_splitter1.CXSplitter ();
 	int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_VERT : 0 + m_splitter1.CYSplitter ();
 	if (bSingleToolPane) {
@@ -402,6 +426,10 @@ else if (nLayout == 1) {
 		m_splitter1.SetColumnInfo (1, rcTotal.Width () - cx, 0);
 		m_splitter1.SetRowInfo (0, CY_TOOLS_HORZ, 0);
 		TexturePane ()->GetWindowRect (rcTextures);
+		if (bWasTracking [1]) 
+			DLE.TexturePaneSize ().cx = rcTextures.Width ();
+		if (bWasTracking [2]) 
+			DLE.TexturePaneSize ().cy = rcTextures.Height ();
 		cy = nTextureMode ? DLE.TexturePaneSize ().cy ? DLE.TexturePaneSize ().cy : CY_TEXTURES : 0 + m_splitter2.CYSplitter ();
 		m_splitter2.SetColumnInfo (0, rcTotal.Width () - cx, 0);
 		m_splitter2.SetRowInfo (0, rcTotal.Height () - cy, 0);
@@ -409,12 +437,6 @@ else if (nLayout == 1) {
 		}
 	m_splitter2.RecalcLayout ();
 	m_splitter1.RecalcLayout ();
-	ToolPane ()->GetWindowRect (rcTools);
-	DLE.ToolPaneSize ().cx = rcTools.Width ();
-	DLE.ToolPaneSize ().cy = rcTools.Height ();
-	TexturePane ()->GetWindowRect (rcTextures);
-	DLE.TexturePaneSize ().cx = rcTextures.Width ();
-	DLE.TexturePaneSize ().cy = rcTextures.Height ();
 	}
 else {
 	if (nToolMode && (nLayout < 2))
@@ -438,9 +460,9 @@ CFrameWnd::RecalcLayout ();
 
 //------------------------------------------------------------------------------
 
+#if 0
 void C2ndSplitterWnd::RecalcLayout (int nToolMode, int nTextureMode)
 {
-#if 0
 if (DLE.MainFrame () && DLE.ToolView ()) {
 	CRect	rc, rc0, rc1;
 	GetClientRect (rc);
@@ -469,9 +491,9 @@ if (DLE.MainFrame () && DLE.ToolView ()) {
 			}
 		}
 	}
-#endif
 CSplitterWnd::RecalcLayout ();
 }
+#endif
 
 //------------------------------------------------------------------------------
 // CMainFrame diagnostics
