@@ -52,6 +52,8 @@ m_iconSize.cx = 64 / scale;
 m_iconSize.cy = 64 / scale;
 m_iconSpace.cx = m_iconSize.cx + 6;
 m_iconSpace.cy = m_iconSize.cy + 6;
+m_paneSize.cx = 
+m_paneSize.cy = -1;
 m_viewFlags = 0;
 m_filter.Filter () = GetPrivateProfileInt ("DLE-XP", "TextureFilter", 0xFFFFFFFF, DLE.IniFile ());
 m_bShowAll = TRUE;
@@ -412,8 +414,10 @@ return 0;
 
 void CTextureView::OnSize (UINT nType, int cx, int cy)
 {
-m_paneSize.cx = cx;
-m_paneSize.cy = cy;
+if (m_paneSize.cx >= 0)
+	m_paneSize.cx = cx;
+if (m_paneSize.cy >= 0)
+	m_paneSize.cy = cy;
 CWnd::Invalidate (1);
 }
 

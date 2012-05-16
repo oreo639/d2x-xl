@@ -58,7 +58,8 @@ m_diagTool = null;
 m_settingsTool = null;
 m_txtFilterTool = null;
 m_pTools = null;
-m_paneSize = 0;
+m_paneSize.cx = 
+m_paneSize.cy = -1;
 m_scrollOffs [0] = 0;
 m_scrollPage [0] = 0;
 m_scrollRange [0] = 0;
@@ -281,8 +282,10 @@ if (m_pTools)
 
 void CToolView::OnSize (UINT nType, int cx, int cy)
 {
-m_paneSize.cx = cx;
-m_paneSize.cy = cy;
+if (m_paneSize.cx >= 0)
+	m_paneSize.cx = cx;
+if (m_paneSize.cy >= 0)
+	m_paneSize.cy = cy;
 CWnd::Invalidate (1);
 }
 
