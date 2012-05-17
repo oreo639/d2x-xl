@@ -427,9 +427,9 @@ else {
 		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_VERT /*+ m_splitter1.CYSplitter ()*/ : 0;
 		if (bSingleToolPane) {
 			m_splitter1.SetColumnInfo (0, cx, 0);
-			m_splitter1.SetColumnInfo (1, rcTotal.Width () - cx, 0);
+			m_splitter1.SetColumnInfo (1, max (rcTotal.Width () - cx, 0), 0);
 			m_splitter2.SetRowInfo (0, cy, 0);
-			m_splitter2.SetRowInfo (1, rcTotal.Height () - cy, 16);
+			m_splitter2.SetRowInfo (1, max (rcTotal.Height () - cy, 16), 16);
 			}
 		else {
 			m_splitter1.SetColumnInfo (0, cx, 0);
@@ -440,8 +440,8 @@ else {
 			if (bWasTracking [1]) 
 				DLE.TexturePaneSize ().cy = rcTextures.Height ();
 			cy = nTextureMode ? DLE.TexturePaneSize ().cy ? DLE.TexturePaneSize ().cy : CY_TEXTURES + m_splitter2.CYSplitter () : 0;
-			m_splitter2.SetColumnInfo (0, rcTotal.Width () - cx, 0);
-			m_splitter2.SetRowInfo (0, rcTotal.Height () - cy, 0);
+			m_splitter2.SetColumnInfo (0, max (rcTotal.Width () - cx, 0), 0);
+			m_splitter2.SetRowInfo (0, max (rcTotal.Height () - cy, 0), 0);
 			m_splitter2.SetRowInfo (1, cy, 0);
 			}
 		m_splitter2.RecalcLayout ();
@@ -454,13 +454,13 @@ else {
 			DLE.TexturePaneSize ().cx = rcTextures.Width ();
 		int cx = nTextureMode ? DLE.TexturePaneSize ().cx ? DLE.TexturePaneSize ().cx : CX_TEXTURES + GetSystemMetrics (SM_CXVSCROLL) + m_splitter1.CXSplitter () : 0;
 		m_splitter1.SetColumnInfo (0, cx, 0);
-		m_splitter1.SetColumnInfo (1, rcTotal.Width () - cx, 0);
+		m_splitter1.SetColumnInfo (1, max (rcTotal.Width () - cx, 0), 0);
 		if (bWasTracking [0]) 
 			DLE.ToolPaneSize ().cx = rcTools.Width ();
 		if (bWasTracking [1]) 
 			DLE.ToolPaneSize ().cy = rcTools.Height ();
 		int cy = nToolMode ? DLE.ToolPaneSize ().cy ? DLE.ToolPaneSize ().cy : CY_TOOLS_HORZ /*+ m_splitter2.CYSplitter ()*/ : 0;
-		m_splitter2.SetRowInfo (0, rcTotal.Height () - cy, 16);
+		m_splitter2.SetRowInfo (0, max (rcTotal.Height () - cy, 0), 16);
 		m_splitter2.SetRowInfo (1, cy, 0);
 		m_splitter2.RecalcLayout ();
 		m_splitter1.RecalcLayout ();
