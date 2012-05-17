@@ -695,7 +695,7 @@ blockManager.Copy();
 
 void CDlcDoc::OnQuickCopyBlock ()
 {
-blockManager.Copy("dle_temp.blx");
+blockManager.QuickCopy ();
 }
 
 void CDlcDoc::OnPasteBlock ()
@@ -705,7 +705,7 @@ blockManager.Paste();
 
 void CDlcDoc::OnQuickPasteBlock ()
 {
-blockManager.QuickPaste();
+blockManager.QuickPaste ();
 }
 
 void CDlcDoc::OnDeleteBlock ()

@@ -1038,10 +1038,20 @@ if (m_mouseState == eMouseStateButtonDown) {
 		contextMenu.DestroyMenu ();
 		if (nChoice) {
 			nChoice -= ID_SEL_POINTMODE;
-			if (nChoice > eSelectBlock)
-				m_bSelectTexturedSides = !m_bSelectTexturedSides;
-			else
+			if (nChoice <= eSelectBlock)
 				SetSelectMode (nChoice);
+			else if (nChoice == 6)
+				m_bSelectTexturedSides = !m_bSelectTexturedSides;
+			else if (nChoice == 7)
+				blockManager.QuickCopy ();
+			else if (nChoice == 8)
+				blockManager.QuickPaste ();
+			else if (nChoice == 9)
+			segmentManager.CollapseEdge ();
+			else if (nChoice == 10)
+				segmentManager.CreateWedge ();
+			else if (nChoice == 11)
+				segmentManager.CreatePyramid ();
 			}
 		}
 	}

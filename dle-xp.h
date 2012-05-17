@@ -97,6 +97,10 @@ public:
 
 	bool MakeModFolders (char* szSubFolder);
 
+	inline char* AppFolder (void) { return m_appFolder; }
+
+	inline char* ModFolder (int i) { return m_modFolders [i]; }
+
 	inline char* IniFile (void) { return m_iniFile; }
 
 // Overrides

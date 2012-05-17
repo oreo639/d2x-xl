@@ -20,6 +20,8 @@ class CBlockManager {
 		
 		int Read (char *filename);
 		
+		void QuickCopy (void);
+
 		void QuickPaste (void);
 		
 		void Delete (void);

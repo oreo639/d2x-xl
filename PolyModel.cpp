@@ -124,7 +124,7 @@ while (W (p) != OP_EOF) {
 				tIntUVL* uvls = (tIntUVL*) (p + (modelManager.m_face->nVerts | 1) * 2);
 				for (m_pt = 0; m_pt < modelManager.m_face->nVerts; m_pt++) {
 					modelManager.m_face->texCoords [m_pt].u = X2D (uvls [m_pt].u);
-					modelManager.m_face->texCoords [m_pt].v = X2D (uvls [m_pt].v);
+					modelManager.m_face->texCoords [m_pt].v = -X2D (uvls [m_pt].v);
 					modelManager.m_face->index [m_pt] = WP (p)[m_pt];
 					}
 				modelManager.m_face->Draw ();

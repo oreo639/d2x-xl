@@ -153,10 +153,10 @@ while (!fp.EoF ()) {
 			return 0;
 		for (i = 0; i < 4; i++) {
 			int u, v;
-			if (Error (fscanf_s (fp.File (), "    uvls %hd %hd %hd\n", &u, &v, &sideP->m_info.uvls [i].l), 3, "Invalid UVL information", nSegIdx))
+			if (Error (fscanf_s (fp.File (), "    uvls %d %d %d\n", &u, &v, &sideP->m_info.uvls [i].l), 3, "Invalid UVL information", nSegIdx))
 				return 0;
-			sideP->m_info.uvls [i].u = X2D (u);
-			sideP->m_info.uvls [i].v = X2D (v);
+			sideP->m_info.uvls [i].u = double (u) / 2048.0;
+			sideP->m_info.uvls [i].v = double (v) / 2048.0;
 			}
 		if (m_bExtended) {
 			ushort vertexIdIndex [4];
@@ -466,7 +466,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 			fprintf (fp.File (), "    %s %d\n", m_bExtended ? "BaseTex" : "tmap_num", sideP->BaseTex ());
 			fprintf (fp.File (), "    %s %d\n", m_bExtended ? "OvlTex" : "tmap_num2", sideP->m_info.nOvlTex);
 			for (j = 0; j < 4; j++) {
-				fprintf (fp.File (), "    uvls %d %d %d\n", D2X (sideP->m_info.uvls [j].u), D2X (sideP->m_info.uvls [j].v), sideP->m_info.uvls [j].l);
+				fprintf (fp.File (), "    uvls %d %d %d\n", (int) Round (sideP->m_info.uvls [j].u * 2048.0), (int) Round (sideP->m_info.uvls [j].v * 2048.0), sideP->m_info.uvls [j].l);
 				}
 			if (m_bExtended) {
 				fprintf (fp.File (), "    vertex ids %hu %hu %hu %hu\n",
@@ -565,8 +565,12 @@ if (!DLE.ExpertMode () && Query2Msg (BLOCKOP_HINT, MB_YESNO) != IDYES)
 	return;
 
 char szFile [256];
-if (filename && *filename)
-	strcpy_s (szFile, sizeof (szFile), filename);
+if (filename && *filename) {
+	if (strcmp (filename, "dle_temp.blx"))
+		strcpy_s (szFile, sizeof (szFile), filename);
+	else
+		sprintf (filename, "%sdle_temp.blx", DLE.AppFolder ());
+	}
 else {
 	szFile [0] = '\0';
 	if (!BrowseForFile (FALSE, 
@@ -720,6 +724,13 @@ undoManager.End ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return 0;
+}
+
+//------------------------------------------------------------------------------
+
+void CBlockManager::QuickCopy (void)
+{
+Copy ("dle_temp.blx");
 }
 
 //------------------------------------------------------------------------------
