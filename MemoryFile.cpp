@@ -213,13 +213,13 @@ return 1;
 int CMemoryFile::Load (CFileManager* fp, size_t size)
 {
 if (!Create (size))
-	return 1;
+	return 0;
 if (fp->Read (m_buffer, 1, size) != size) {
 	Close ();
-	return 1;
+	return 0;
 	}
 m_info.name = fp->Name ();
-return 0;
+return 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -227,9 +227,9 @@ return 0;
 int CMemoryFile::Load (const ubyte* buffer, size_t size)
 {
 if ((buffer == null) || (size == 0) || !Create (size))
-	return 1;
+	return 0;
 memcpy (m_buffer, buffer, size);
-return 0;
+return 1;
 }
 
 // ----------------------------------------------------------------------------

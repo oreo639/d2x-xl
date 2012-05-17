@@ -128,7 +128,7 @@ return 1;
 
 //------------------------------------------------------------------------------
 
-int CRobotManager::ReadHXM (CFileManager& fp, long size) 
+int CRobotManager::ReadHXM (CFileManager& fp, long size, bool bCustom) 
 {
 	CRobotInfo	rInfo;
 	int			n, i, j;
@@ -183,20 +183,27 @@ if (m_hxmExtraDataSize > 0) {
 		ErrorMsg ("Couldn'n read extra data from hxm file.\nThis data will be lost when saving the level!");
 		return 0;
 		}
-	modelManager.ReadCustomModelData (m_hxmExtraData, m_hxmExtraDataSize, true);
+	modelManager.ReadCustomModelData (m_hxmExtraData, m_hxmExtraDataSize, bCustom);
 	}
 return 1;
 }
 
 //------------------------------------------------------------------------------
 
-int CRobotManager::ReadHXM (const char* filename) 
+int CRobotManager::ReadHXM (const char* filename, char *szSubFile, bool bCustom)
 {
 	CFileManager fp;
 
 if (!fp.Open (filename, "rb")) 
 	return 1;
-int nResult = ReadHXM (fp, fp.Size ());
+
+long size = szSubFile ? hogManager->FindSubFile (fp, filename, szSubFile, null) : fp.Size ();
+if (0 >= size) {
+	fp.Close ();
+	return;
+	}
+
+int nResult = ReadHXM (fp, size);
 fp.Close ();
 return nResult;
 }

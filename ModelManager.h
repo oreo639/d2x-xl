@@ -179,8 +179,6 @@ class CModelManager {
 		int ReadModelData (char* filename, char *szSubFile, bool bCustom);
 
 		void ReadCustomModelData (CMemoryFile& mf, int bCustom);
-
-		void ReadCustomModelData (char* filename, char *szSubFile, bool bCustom);
 	};
 
 extern CModelManager modelManager;

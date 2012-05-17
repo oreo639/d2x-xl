@@ -115,7 +115,7 @@ CResource res;
 // copy data to a file
 triggerManager.ObjTriggerCount () = 0;
 ubyte* dataP = res.Load (IsD1File () ? IDR_NEW_RDL : IDR_NEW_RL2);
-return !fp.Load (dataP, res.Size ());
+return fp.Load (dataP, res.Size ());
 }
 
 

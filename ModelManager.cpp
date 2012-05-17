@@ -104,7 +104,7 @@ else {
 		return 0;
 	*strstr (filename, "descent2.ham") = '\0';
 	strcat_s (filename, sizeof (filename), "d2x-xl.hog");
-	ReadCustomModelData (filename, "d2x-xl.hxm", 0);
+	robotManager.ReadHXM (filename, "d2x-xl.hxm", false);
 	}
 return 1;
 }
@@ -265,29 +265,6 @@ void CModelManager::ReadCustomModelData (ubyte* buffer, long bufSize, int bCusto
 CMemoryFile mf;
 if (mf.Open (buffer, bufSize))
 	ReadCustomModelData (mf, bCustom);
-}
-
-//------------------------------------------------------------------------------
-
-void CModelManager::ReadCustomModelData (char* filename, char *szSubFile, bool bCustom) 
-{
-	CFileManager fp;
-
-if (!fp.Open (filename, "rb"))
-	return;
-long size = hogManager->FindSubFile (fp, filename, szSubFile, null);
-if (0 > size) {
-	fp.Close ();
-	return;
-	}
-
-CMemoryFile mf;
-if (!mf.Load (&fp, (size_t) size)) {
-	fp.Close ();
-	return;
-	}
-ReadCustomModelData (mf, bCustom);
-fp.Close ();
 }
 
 //------------------------------------------------------------------------------
