@@ -1034,31 +1034,35 @@ if (m_mouseState == eMouseStateButtonDown) {
 		tracker = contextMenu.GetSubMenu (0); 
 		tracker->CheckMenuItem ((UINT) theMine->SelectMode (), MF_BYPOSITION | MF_CHECKED);
 		tracker->CheckMenuItem (7, MF_BYPOSITION | (m_bSelectTexturedSides ? MF_CHECKED : 0));
-	   short nChoice = (short) tracker->TrackPopupMenu (TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x , point.y, AfxGetMainWnd ()); 
+	   int nChoice = tracker->TrackPopupMenu (TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x , point.y, AfxGetMainWnd ()); 
 		contextMenu.DestroyMenu ();
 		if (nChoice) {
-			nChoice -= ID_SEL_POINTMODE;
-			if (nChoice <= eSelectBlock)
-				SetSelectMode (nChoice);
-			else if (nChoice == 6)
+			if ((nChoice >= ID_SEL_POINTMODE) && (nChoice <= ID_SEL_BLOCKMODE))
+				SetSelectMode (nChoice - ID_SEL_POINTMODE);
+			else if (nChoice == ID_SEL_TEXTURED_SIDES)
 				m_bSelectTexturedSides = !m_bSelectTexturedSides;
-			else if (nChoice == 7)
+			else if (nChoice == ID_EDIT_QUICKCOPY)
 				blockManager.QuickCopy ();
-			else if (nChoice == 8)
+			else if (nChoice == ID_EDIT_QUICKPASTE)
 				blockManager.QuickPaste ();
-			else if (nChoice == 9)
-			segmentManager.CollapseEdge ();
-			else if (nChoice == 10)
+			else if (nChoice == ID_VIEW_COLLAPSE_EDGE)
+				segmentManager.CollapseEdge ();
+			else if (nChoice == ID_VIEW_CREATE_WEDGE)
 				segmentManager.CreateWedge ();
-			else if (nChoice == 11)
+			else if (nChoice == ID_VIEW_CREATE_PYRAMID)
 				segmentManager.CreatePyramid ();
+			else if (nChoice == ID_EDIT_UNDO)
+				undoManager.Undo ();
+			else if (nChoice == ID_EDIT_REDO)
+				undoManager.Redo ();
+			Refresh ();
 			}
 		}
 	}
 else if (m_mouseState == eMouseStateRubberBand)
    ResetRubberRect ();
 SetMouseState (eMouseStateIdle);
-CView::OnRButtonUp(nFlags, point);
+CView::OnRButtonUp (nFlags, point);
 }
 
 //------------------------------------------------------------------------------

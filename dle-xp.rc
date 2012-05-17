@@ -3148,14 +3148,17 @@ BEGIN
         MENUITEM "&Objects",                    ID_SEL_OBJECTMODE
         MENUITEM "&Blocks",                     ID_SEL_BLOCKMODE
         MENUITEM SEPARATOR
-        MENUITEM "&Textured Elements",          6
+        MENUITEM "&Textured Elements",          ID_SEL_TEXTURED_SIDES
         MENUITEM SEPARATOR
         MENUITEM "Quick &Copy",                 ID_EDIT_QUICKCOPY
         MENUITEM "Quick &Paste",                ID_EDIT_QUICKPASTE
         MENUITEM SEPARATOR
         MENUITEM "Collapse &Edge",              ID_VIEW_COLLAPSE_EDGE
-        MENUITEM "Collapse to &Wedge",          ID_VIEW_COLLAPSE_WEDGE
-        MENUITEM "Collapse to &Pyramid",        ID_VIEW_COLLAPSE_PYRAMID
+        MENUITEM "Collapse to &Wedge",          ID_VIEW_CREATE_WEDGE
+        MENUITEM "Collapse to &Pyramid",        ID_VIEW_CREATE_PYRAMID
+        MENUITEM SEPARATOR
+        MENUITEM "&Undo",								ID_EDIT_UNDO
+        MENUITEM "&Redo",								ID_EDIT_REDO
     END
 END
 
