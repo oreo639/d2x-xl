@@ -168,8 +168,8 @@ if (bCustom) {
 	if (strstr (szSubFile, ".ham")) {
 		fp.Seek (n * sizeof (int) * 2, SEEK_CUR); // skip dying and dead model numbers
 		n = fp.ReadInt32 ();                          
-		fp.Read (m_textureIndex [0] + m_nBitmaps, sizeof (ushort), n);
-		fp.Read (m_modelTextureIndex [0] + m_nBitmaps, sizeof (ushort), n);
+		fp.Read (&m_textureIndex [0][m_nTextures], sizeof (ushort), n);
+		fp.Read (&m_modelTextureIndex [0][m_nIndices], sizeof (ushort), n);
 		}
 	}
 else {
@@ -212,9 +212,13 @@ else {
 	fp.Seek (2 * n * sizeof (int), SEEK_CUR);
 	n = fp.ReadUInt32 ();                          
 	fp.Seek (2 * n * sizeof (short), SEEK_CUR);
-	m_nBitmaps = fp.ReadUInt32 ();                         
-	fp.Read (m_textureIndex [0], sizeof (ushort), m_nBitmaps);
-	fp.Read (m_modelTextureIndex [0], sizeof (ushort), m_nBitmaps);
+	n = fp.ReadUInt32 ();                         
+	fp.Read (m_textureIndex [0], sizeof (ushort), n);
+	fp.Read (m_modelTextureIndex [0], sizeof (ushort), n);
+	for (m_nTextures = n; !m_textureIndex [0][m_nTextures - 1]; m_nTextures--)
+		;
+	for (m_nIndices = n; !m_modelTextureIndex [0][m_nIndices - 1]; m_nIndices--)
+		;
 	}
 fp.Close ();
 return 1;

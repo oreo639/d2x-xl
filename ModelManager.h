@@ -125,7 +125,8 @@ class CModelManager {
 		int					m_lastObjId;
 		int					m_nModel;
 		int					m_nGlow;
-		int					m_nBitmaps;
+		int					m_nTextures;
+		int					m_nIndices;
 
 #if _DEBUG
 		CStaticArray< CPolyModel, MAX_POLYGON_MODELS > m_polyModels [2];
