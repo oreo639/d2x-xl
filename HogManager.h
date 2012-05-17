@@ -60,6 +60,7 @@ class CHogManager : public CDialog {
 		bool ReadHogData (void);
 		void Reset (void);
 
+		long FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt);
 		int ReadSignature (CFileManager* fp, bool bVerbose = true);
 		int ReadData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels, bool bGetFileData = true);
 
@@ -77,7 +78,6 @@ class CHogManager : public CDialog {
 		inline CListBox *LBFiles () { return (CListBox *) GetDlgItem (IDC_HOG_FILES); }
 
 	private:
-		long FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt);
 		void Rename (CFileManager& fp, int index, char* szNewName);
 
 	DECLARE_MESSAGE_MAP ()

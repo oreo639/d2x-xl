@@ -93,12 +93,19 @@ if (bCustom) {
 	if (psz)
 		*psz = '\0';
 	}
-if (bVertigo)
+if (bVertigo) {
 	strcpy_s (filename, sizeof (filename), "..\\missions\\d2x.hog");
-else
+	if (!ReadModelData (filename, "d2x.ham", true))
+		return 0;
+	}
+else {
 	strcat_s (filename, sizeof (filename), "descent2.ham");
-if (!ReadModelData (filename, bVertigo ? "d2x.ham" : "", bCustom || bVertigo))
-	return 0;
+	if (!ReadModelData (filename, "d2x.ham", bCustom != 0))
+		return 0;
+	*strstr (filename, "d2x.ham") = '\0';
+	strcat_s (filename, sizeof (filename), "d2x-xl.hog");
+	ReadCustomModelData (filename, "d2x-xl.hxm", 0);
+	}
 return 1;
 }
 
@@ -129,37 +136,24 @@ if (!fp.Open (filename, "rb"))
 	uint	i, n;
 
 if (bCustom) {
-	if (0 > hogManager->ReadSignature (&fp))
+	if (0 > hogManager->FindSubFile (fp, filename, szSubFile, null)) {
+		fp.Close ();
 		return 0;
-
-	CLevelHeader lh;
-	long position;
-
-	position = 3;
-	while (!fp.EoF ()) {
-		fp.Seek (position, SEEK_SET);
-		if (!lh.Read (&fp)) {
-			fp.Close ();
-			return 0;
-			}
-		if (!strcmp (lh.Name (), szSubFile)) {
-			id = fp.ReadInt32 ();	  					   
-			if (id != 0x5848414DL) {
-				fp.Close ();
-				return 0;
-				}
-			fp.ReadInt32 ();											
-			n = fp.ReadInt32 ();										
-			fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);	
-			n = fp.ReadInt32 ();										
-			for (i = 0; i < n; i++)
-				robotManager.RobotInfo (N_ROBOT_TYPES_D2 + i)->Read (&fp);
-			n = fp.ReadInt32 ();                         
-			fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     
-			break;
-			}
-		position += lh.Size () + lh.FileSize ();
 		}
+
+	id = fp.ReadInt32 ();	  					   
+	if (id != 0x5848414DL) {
+		fp.Close ();
+		return 0;
+		}
+	fp.ReadInt32 ();											
+	n = fp.ReadInt32 ();										
+	fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);	
+	n = fp.ReadInt32 ();										
+	for (i = 0; i < n; i++)
+		robotManager.RobotInfo (N_ROBOT_TYPES_D2 + i)->Read (&fp);
+	n = fp.ReadInt32 ();                         
+	fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     
 	n = fp.ReadInt32 ();                          
 	for (i = 0; i < n; i++) 
 		m_polyModels [0][N_POLYGON_MODELS_D2 + i].Read (&fp);
@@ -226,38 +220,31 @@ return 1;
 
 //------------------------------------------------------------------------------
 
-void CModelManager::ReadCustomModelData (ubyte* buffer, long bufSize)
+void CModelManager::ReadCustomModelData (CMemoryFile& mf, int bCustom)
 {
-CMemoryFile mf;
-if (mf.Open (buffer, bufSize)) {
-	uint n, i, j;
-	
+uint n, i, j;
+
+if (bCustom) {
 	memcpy (m_textureIndex [1], m_textureIndex [0], sizeof (m_textureIndex [1]));
 	memcpy (m_modelTextureIndex [1], m_modelTextureIndex [0], sizeof (m_modelTextureIndex [1]));
-	n = mf.ReadUInt32 ();                         
-	mf.Seek (n * (sizeof (int) + sizeof (JOINTPOS)), SEEK_CUR);     
-	n = mf.ReadUInt32 ();                         
-	for (j = 0; j < n; j++) {
-		i = mf.ReadUInt32 ();
+	}
+n = mf.ReadUInt32 ();                         
+mf.Seek (n * (sizeof (int) + sizeof (JOINTPOS)), SEEK_CUR);     
+n = mf.ReadUInt32 ();                         
+for (j = 0; j < n; j++) {
+	i = mf.ReadUInt32 ();
 #ifdef _DEBUG
-		if (i == nDbgModel)
-			nDbgModel = nDbgModel;
+	if (i == nDbgModel)
+		nDbgModel = nDbgModel;
 #endif
-		m_polyModels [1][i].Read (&mf);
-		m_polyModels [1][i].Read (&mf, true);
-#ifdef NDEBUG
-		m_polyModels [1][i].m_bCustom = 1;
-#else
-		if ((m_polyModels [0][i].m_info.dataSize != m_polyModels [1][i].m_info.dataSize) ||
-			memcmp (m_polyModels [0][i].m_info.renderData, m_polyModels [1][i].m_info.renderData, m_polyModels [0][i].m_info.dataSize))
-			m_polyModels [1][i].m_bCustom = 1;
-		else {
-			m_polyModels [0][i].Release ();
-			m_polyModels [0][i].Clear ();
-			}
-#endif
-		mf.Seek (2 * sizeof (int), SEEK_CUR);
-		}
+	m_polyModels [bCustom][i].Release ();
+	m_polyModels [bCustom][i].Clear ();
+	m_polyModels [bCustom][i].Read (&mf);
+	m_polyModels [bCustom][i].Read (&mf, true);
+	m_polyModels [bCustom][i].m_bCustom = bCustom;
+	mf.Seek (2 * sizeof (int), SEEK_CUR);
+	}
+if (bCustom) {
 	n = mf.ReadUInt32 ();                         
 	for (j = 0; j < n; j++) {
 		i = mf.ReadInt32 ();
@@ -269,6 +256,38 @@ if (mf.Open (buffer, bufSize)) {
 		m_modelTextureIndex [1][i] = mf.ReadUInt16 ();
 		}
 	}
+}
+
+//------------------------------------------------------------------------------
+
+void CModelManager::ReadCustomModelData (ubyte* buffer, long bufSize, int bCustom)
+{
+CMemoryFile mf;
+if (mf.Open (buffer, bufSize))
+	ReadCustomModelData (mf, bCustom);
+}
+
+//------------------------------------------------------------------------------
+
+void CModelManager::ReadCustomModelData (char* filename, char *szSubFile, bool bCustom) 
+{
+	CFileManager fp;
+
+if (!fp.Open (filename, "rb"))
+	return;
+long size = hogManager->FindSubFile (fp, filename, szSubFile, null);
+if (0 > size) {
+	fp.Close ();
+	return;
+	}
+
+CMemoryFile mf;
+if (!mf.Load (fp, (size_t) size)) {
+	fp.Close ();
+	return;
+	}
+ReadCustomModelData (mf, bCustom);
+fp.Close ();
 }
 
 //------------------------------------------------------------------------------

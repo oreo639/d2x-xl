@@ -81,7 +81,7 @@ public:
 	CVertex		offset;
 	CVertex		normal;
 	short			nTexture;
-	rgbColord		color;
+	rgbColord	color;
 	ushort		nGlow;
 	ushort		index [MAX_POLYMODEL_POLY_POINTS];
 	tTexCoord2d	texCoords [MAX_POLYMODEL_POLY_POINTS];
@@ -165,7 +165,7 @@ class CModelManager {
 			return (dx < dy) ? dy / 2 : dx / 2;
 			}
 
-		void ReadCustomModelData (ubyte* buffer, long bufSize);
+		void ReadCustomModelData (ubyte* buffer, long bufSize, int bCustom = 1);
 
 		void ReadMod (char* pszFolder);
 
@@ -177,7 +177,11 @@ class CModelManager {
 		int Model (void);
 
 		int ReadModelData (char* filename, char *szSubFile, bool bCustom);
-};
+
+		void ReadCustomModelData (CMemoryFile& mf, int bCustom);
+
+		void ReadCustomModelData (char* filename, char *szSubFile, bool bCustom);
+	};
 
 extern CModelManager modelManager;
 

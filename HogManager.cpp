@@ -376,16 +376,19 @@ return true;
 long CHogManager::FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt)
 {
 strcpy_s (message, sizeof (message), (pszSubFile == null) ? m_pszSubFile : pszSubFile);
-char* p = strrchr (message, '.');
-if (p == null) 
-	return 0;
+if (pszExt) {
+	char* p = strrchr (message, '.');
+	if (p == null) 
+		strcat (message, pszExt);
+	else
+		strcpy_s (p, 5, pszExt);
+	}
 
 long size, offset;
 int index = -1;
 
 CLevelHeader lh;
 
-sprintf_s (p, 5, pszExt);
 if (pszSubFile)
 	FindFileData (pszFile, message, lh, size, offset, TRUE, &fp);
 else {
