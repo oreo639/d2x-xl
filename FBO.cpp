@@ -49,9 +49,9 @@ m_info.nColorBuffers =
 m_info.nBufferCount = nBuffers;
 m_info.nFirstBuffer = 0;
 
-ogl.GenTextures (nBuffers, m_info.hColorBuffers);
+glGenTextures (nBuffers, m_info.hColorBuffers);
 for (int i = 0; i < nBuffers; i++) {
-	ogl.BindTexture (m_info.hColorBuffers [i]);
+	glBindTexture (GL_TEXTURE0, m_info.hColorBuffers [i]);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -69,7 +69,6 @@ return glGetError () ? 0 : 1;
 
 int CFBO::CreateDepthBuffer (void)
 {
-ogl.ClearError (false);
 // depth buffer
 if (m_info.nType == 0) // -> no stencil buffer
 	glGenRenderbuffersEXT (1, &m_info.hDepthBuffer);

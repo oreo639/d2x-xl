@@ -289,6 +289,9 @@
     <ClInclude Include="..\FBO.h">
       <Filter>OpenGL\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\RenderBuffers.h">
+      <Filter>OpenGL\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp">
@@ -625,6 +628,9 @@
       <Filter>Items\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\FBO.cpp">
+      <Filter>OpenGL\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RenderBuffers.cpp">
       <Filter>OpenGL\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

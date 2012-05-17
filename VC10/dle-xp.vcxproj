@@ -554,6 +554,7 @@
     <ClInclude Include="..\mineview.h" />
     <ClInclude Include="..\OOFModel.h" />
     <ClInclude Include="..\Parser.h" />
+    <ClInclude Include="..\RenderBuffers.h" />
     <ClInclude Include="..\renderer.h" />
     <ClInclude Include="..\StdAfx.h" />
     <ClInclude Include="..\TEXEDIT.h" />
@@ -711,6 +712,7 @@
     <ClCompile Include="..\OOFModel.cpp" />
     <ClCompile Include="..\OOFRenderModel.cpp" />
     <ClCompile Include="..\ReactorTool.cpp" />
+    <ClCompile Include="..\RenderBuffers.cpp" />
     <ClCompile Include="..\SegmentTool.cpp" />
     <ClCompile Include="..\SettingsTool.cpp" />
     <ClCompile Include="..\StdAfx.cpp">
