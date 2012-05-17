@@ -1,4 +1,3 @@
-#include <windows.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -75,8 +74,8 @@ if (m_info.nType == 0) // -> no stencil buffer
 	glGenRenderbuffersEXT (1, &m_info.hDepthBuffer);
 else { // depth + stencil buffer
 	m_info.hDepthBuffer = (m_info.nType == 1)
-								  ? CreateDepthTexture (GL_TEXTURE0, 1, 1, m_info.nWidth, m_info.nHeight)
-								  : CopyDepthTexture (1); 
+								  ? CreateDepthTexture (1, m_info.nWidth, m_info.nHeight)
+								  : CopyDepthTexture (0, 1, m_info.nWidth, m_info.nHeight); 
 	if (!m_info.hDepthBuffer)
 		return 0;
 	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
@@ -87,7 +86,7 @@ return glGetError () ? 0 : 1;
 
 //------------------------------------------------------------------------------
 
-void CFBO::SelectColorBuffers (int nBuffer = 0) 
+void CFBO::SelectColorBuffers (int nBuffer) 
 { 
 if ((m_info.nBufferCount == 1) || (nBuffer >= m_info.nBufferCount)) 
 	glDrawBuffer (m_info.bufferIds [nBuffer = 0]); // only one buffer or invalid buffer index
@@ -122,9 +121,6 @@ else {
 
 int CFBO::Create (int nWidth, int nHeight, int nType, int nColorBuffers)
 {
-if (!ogl.m_features.bRenderToTexture)
-	return 0;
-
 Destroy ();
 if (nWidth > 0)
 	m_info.nWidth = nWidth;
@@ -206,7 +202,6 @@ return 1;
 
 void CFBO::Setup (void)
 {
-PrintLog (1, "Checking rendering to texture ...\n");
 #if RENDER2TEXTURE
 if (ogl.m_features.bRenderToTexture.Available ()) {
 	PrintLog (1);
@@ -254,7 +249,6 @@ if (ogl.m_features.bRenderToTexture.Available ()) {
 	PrintLog (-1);
 	}
 #endif
-PrintLog (-1, (ogl.m_features.bRenderToTexture == 2) ? "Rendering to texture is available\n" : "No rendering to texture available\n");
 }
 
 //------------------------------------------------------------------------------

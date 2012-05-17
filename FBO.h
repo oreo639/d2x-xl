@@ -72,7 +72,7 @@ class CFBO {
 
 		GLuint Handle (void) { return m_info.hFBO; }
 
-		GLuint& ColorBuffer (int i = 0) { return m_info.hColorBuffer [(i < m_info.nColorBuffers) ? i : m_info.nColorBuffers - 1]; }
+		GLuint& ColorBuffer (int i = 0) { return m_info.hColorBuffers [(i < m_info.nColorBuffers) ? i : m_info.nColorBuffers - 1]; }
 
 		GLuint& DepthBuffer (void) { return m_info.hDepthBuffer; }
 

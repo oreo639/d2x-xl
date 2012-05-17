@@ -1,4 +1,3 @@
-#include <windows.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -6,7 +5,6 @@
 #include "dle-xp.h"
 #include "glew.h"
 #include "RenderBuffers.h"
-#include "FBO.h"
 
 // -----------------------------------------------------------------------------------
 
@@ -15,17 +13,19 @@
 #define GL_DEPTH24_STENCIL8_EXT		0x88F0
 #define GL_TEXTURE_STENCIL_SIZE_EXT 0x88F1
 
-GLuint CreateDepthTexture (int nTMU, int nType, int nWidth, int nHeight)
+GLuint CreateDepthTexture (int nType, int nWidth, int nHeight)
 {
-	GLuint	hDepthBuffer;
+if (!(nWidth && nHeight))
+	return 0;
 
-if (nTMU >= GL_TEXTURE0)
-	glActiveTexture (nTMU);
+GLuint	hDepthBuffer;
+
+glActiveTexture (GL_TEXTURE1);
 glEnable (GL_TEXTURE_2D);
 glGenTextures (1, &hDepthBuffer);
 if (glGetError ())
 	return hDepthBuffer = 0;
-glBindTexture (nTMU, hDepthBuffer);
+glBindTexture (GL_TEXTURE1, hDepthBuffer);
 glTexParameteri (GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -37,27 +37,29 @@ glTexParameteri (GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
 if (nType == 0) // depth + stencil
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8_EXT, nWidth, nHeight, 0, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT, NULL);
 else
-	glTexImage2D (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, (nWidth > 0) ? nWidth, nHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, nWidth, nHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
 if (glGetError ()) {
 	glDeleteTextures (1, &hDepthBuffer);
 	return hDepthBuffer = 0;
 	}
-glBindTexture (nTMU, 0);
+glBindTexture (GL_TEXTURE1, 0);
 return hDepthBuffer;
 }
 
 // -----------------------------------------------------------------------------------
 
-bool CopyDepthTexture (GLuint hDepthBuffer, int nTMU, int nWidth, int nHeight)
+GLuint CopyDepthTexture (GLuint hDestBuffer, int nType, int nWidth, int nHeight)
 {
 	static int nSamples = -1;
 	static int nDuration = 0;
 
 	GLenum nError = glGetError ();
 
-glActiveTexture (nTMU);
+glActiveTexture (GL_TEXTURE1);
 glEnable (GL_TEXTURE_2D);
-glBindTexture (nTMU, hDepthBuffer);
+if (!(hDestBuffer || (hDestBuffer = CreateDepthTexture (nType, nWidth, nHeight))))
+	return 0;
+glBindTexture (GL_TEXTURE1, hDestBuffer);
 glReadBuffer (GL_BACK);
 glCopyTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, 0, 0, nWidth, nHeight);
 if (glGetError ())
@@ -75,22 +77,25 @@ if (t > 0) {
 		}
 	}
 #endif
-return true;
+return hDestBuffer;
 }
 
 // -----------------------------------------------------------------------------------
 
-GLuint CreateColorTexture (int nTMU, int nWidth, int nHeight, bool bFBO)
+GLuint CreateColorTexture (int nWidth, int nHeight, bool bFBO)
 {
+if (!(nWidth && nHeight))
+	return 0;
+
 	GLuint	hColorBuffer;
 
-if (nTMU > GL_TEXTURE0)
-	glActiveTexture (nTMU);
+if (GL_TEXTURE1 > GL_TEXTURE0)
+	glActiveTexture (GL_TEXTURE1);
 glEnable (GL_TEXTURE_2D);
 glGenTextures (1, &hColorBuffer);
 if (glGetError ())
 	return hColorBuffer = 0;
-glBindTexture (nTMU, hColorBuffer);
+glBindTexture (GL_TEXTURE1, hColorBuffer);
 glTexParameteri (GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, nWidth, nHeight, 0, GL_RGB, GL_UNSIGNED_SHORT, NULL);
 if (glGetError ()) {
@@ -114,27 +119,29 @@ return hColorBuffer;
 
 // -----------------------------------------------------------------------------------
 
-bool CopyColorTexture (GLuint hColorBuffer, int nTMU, int nWidth, int nHeight)
+GLuint CopyColorTexture (GLuint hDestBuffer, int nWidth, int nHeight, bool bFBO)
 {
 	GLenum nError = glGetError ();
 
 glActiveTexture (GL_TEXTURE1);
 glEnable (GL_TEXTURE_2D);
-glBindTexture (nTMU, hColorBuffer);
+if (!(hDestBuffer || (hDestBuffer = CreateColorTexture (nWidth, nHeight, bFBO))))
+	return 0;
+glBindTexture (GL_TEXTURE1, hDestBuffer);
 glCopyTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, 0, 0, nWidth, nHeight);
-return true;
+return hDestBuffer;
 }
 
 // -----------------------------------------------------------------------------------
 
 #if 0
 
-GLuint COGL::CreateStencilTexture (int nTMU, int bFBO)
+GLuint COGL::CreateStencilTexture (int bFBO)
 {
 	GLuint	hBuffer;
 
-if (nTMU > 0)
-	glActiveTexture (nTMU);
+if (GL_TEXTURE1 > 0)
+	glActiveTexture (GL_TEXTURE1);
 ogl.glEnable (GL_TEXTURE_2D);
 GenTextures (1, &hBuffer);
 if (glGetError ())
