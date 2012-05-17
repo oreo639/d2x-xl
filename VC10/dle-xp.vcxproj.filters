@@ -277,6 +277,9 @@
     <ClInclude Include="..\OOFModel.h">
       <Filter>Items\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Mineview.Renderer.FBO.h">
+      <Filter>UI\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp">
@@ -611,6 +614,9 @@
     </ClCompile>
     <ClCompile Include="..\OOFRenderModel.cpp">
       <Filter>Items\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Mineview.Renderer.FBO.cpp">
+      <Filter>UI\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

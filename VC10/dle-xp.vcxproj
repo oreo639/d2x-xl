@@ -551,6 +551,7 @@
     <ClInclude Include="..\dle-xp.h" />
     <ClInclude Include="..\MainFrame.h" />
     <ClInclude Include="..\mineview.h" />
+    <ClInclude Include="..\Mineview.Renderer.FBO.h" />
     <ClInclude Include="..\OOFModel.h" />
     <ClInclude Include="..\Parser.h" />
     <ClInclude Include="..\renderer.h" />
@@ -694,6 +695,7 @@
     <ClCompile Include="..\MineView.drag.cpp" />
     <ClCompile Include="..\MineView.draw.cpp" />
     <ClCompile Include="..\MineView.Renderer.cpp" />
+    <ClCompile Include="..\Mineview.Renderer.FBO.cpp" />
     <ClCompile Include="..\MineView.Renderer.OpenGL.cpp" />
     <ClCompile Include="..\MineView.Renderer.Software.cpp" />
     <ClCompile Include="..\MineView.RenderLib.cpp" />
