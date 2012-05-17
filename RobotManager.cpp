@@ -183,7 +183,7 @@ if (m_hxmExtraDataSize > 0) {
 		ErrorMsg ("Couldn'n read extra data from hxm file.\nThis data will be lost when saving the level!");
 		return 0;
 		}
-	modelManager.ReadCustomModelData (m_hxmExtraData, m_hxmExtraDataSize);
+	modelManager.ReadCustomModelData (m_hxmExtraData, m_hxmExtraDataSize, true);
 	}
 return 1;
 }

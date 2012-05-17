@@ -102,7 +102,7 @@ else {
 	strcat_s (filename, sizeof (filename), "descent2.ham");
 	if (!ReadModelData (filename, "d2x.ham", bCustom != 0))
 		return 0;
-	*strstr (filename, "d2x.ham") = '\0';
+	*strstr (filename, "descent2.ham") = '\0';
 	strcat_s (filename, sizeof (filename), "d2x-xl.hog");
 	ReadCustomModelData (filename, "d2x-xl.hxm", 0);
 	}
@@ -282,7 +282,7 @@ if (0 > size) {
 	}
 
 CMemoryFile mf;
-if (!mf.Load (fp, (size_t) size)) {
+if (!mf.Load (&fp, (size_t) size)) {
 	fp.Close ();
 	return;
 	}
