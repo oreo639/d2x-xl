@@ -200,7 +200,7 @@ if (!fp.Open (filename, "rb"))
 long size = szSubFile ? hogManager->FindSubFile (fp, filename, szSubFile, null) : fp.Size ();
 if (0 >= size) {
 	fp.Close ();
-	return;
+	return 0;
 	}
 
 int nResult = ReadHXM (fp, size);

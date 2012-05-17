@@ -373,7 +373,7 @@ return true;
 
 //------------------------------------------------------------------------------
 
-long CHogManager::FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt)
+long CHogManager::FindSubFile (CFileManager& fp, const char* pszFile, const char* pszSubFile, const char* pszExt)
 {
 strcpy_s (message, sizeof (message), (pszSubFile == null) ? m_pszSubFile : pszSubFile);
 if (pszExt) {
@@ -823,7 +823,7 @@ return m_bExtended;
 // CHogManager - read hog data
 //------------------------------------------------------------------------------
 
-bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, CLevelHeader& lh, long& nSize, long& nPos, BOOL bVerbose, CFileManager* fp) 
+bool FindFileData (const char* pszFile, char* pszSubFile, CLevelHeader& lh, long& nSize, long& nPos, BOOL bVerbose, CFileManager* fp) 
 {
 	CFileManager _fp;
 

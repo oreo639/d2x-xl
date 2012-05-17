@@ -60,7 +60,7 @@ class CHogManager : public CDialog {
 		bool ReadHogData (void);
 		void Reset (void);
 
-		long FindSubFile (CFileManager& fp, char* pszFile, char* pszSubFile, char* pszExt);
+		long FindSubFile (CFileManager& fp, const char* pszFile, const char* pszSubFile, const char* pszExt);
 		int ReadSignature (CFileManager* fp, bool bVerbose = true);
 		int ReadData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels, bool bGetFileData = true);
 
@@ -89,7 +89,7 @@ extern CHogManager* hogManager;
 
 bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags = 0, CWnd *pParentWnd = null);
 int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs);
-bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, CLevelHeader& lh, long& nSize, long& nPos, BOOL bVerbose = TRUE, CFileManager* fp = null);
+bool FindFileData (const char* pszFile, char* pszSubFile, CLevelHeader& lh, long& nSize, long& nPos, BOOL bVerbose = TRUE, CFileManager* fp = null);
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size);
 int ReadMissionFile (char *pszFile);
 int WriteMissionFile (char *pszFile, int levelVersion, bool bSaveAs = true);
