@@ -165,6 +165,12 @@ if (bCustom) {
 		m_polyModels [0][N_POLYGON_MODELS_D2 + i].Read (&fp);
 	for (i = 0; i < n; i++) 
 		m_polyModels [0][N_POLYGON_MODELS_D2 + i].Read (&fp, true);
+	if (strstr (szSubFile, ".ham")) {
+		fp.Seek (n * sizeof (int) * 2, SEEK_CUR); // skip dying and dead model numbers
+		n = fp.ReadInt32 ();                          
+		fp.Read (m_textureIndex [0] + m_nBitmaps, sizeof (ushort), n);
+		fp.Read (m_modelTextureIndex [0] + m_nBitmaps, sizeof (ushort), n);
+		}
 	}
 else {
 	id = fp.ReadInt32 ();	  					   
@@ -206,9 +212,9 @@ else {
 	fp.Seek (2 * n * sizeof (int), SEEK_CUR);
 	n = fp.ReadUInt32 ();                          
 	fp.Seek (2 * n * sizeof (short), SEEK_CUR);
-	n = fp.ReadUInt32 ();                         
-	fp.Read (m_textureIndex [0], sizeof (ushort), n);
-	fp.Read (m_modelTextureIndex [0], sizeof (ushort), n);
+	m_nBitmaps = fp.ReadUInt32 ();                         
+	fp.Read (m_textureIndex [0], sizeof (ushort), m_nBitmaps);
+	fp.Read (m_modelTextureIndex [0], sizeof (ushort), m_nBitmaps);
 	}
 fp.Close ();
 return 1;
