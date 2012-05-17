@@ -5,7 +5,8 @@
 #include "mine.h"
 #include "dle-xp.h"
 #include "glew.h"
-#include "fbo.h"
+#include "RenderBuffers.h"
+#include "FBO.h"
 
 //------------------------------------------------------------------------------
 
@@ -74,8 +75,8 @@ if (m_info.nType == 0) // -> no stencil buffer
 	glGenRenderbuffersEXT (1, &m_info.hDepthBuffer);
 else { // depth + stencil buffer
 	m_info.hDepthBuffer = (m_info.nType == 1)
-								  ? ogl.CreateDepthTexture (GL_TEXTURE0, 1, 1, m_info.nWidth, m_info.nHeight)
-								  : ogl.CopyDepthTexture (1); 
+								  ? CreateDepthTexture (GL_TEXTURE0, 1, 1, m_info.nWidth, m_info.nHeight)
+								  : CopyDepthTexture (1); 
 	if (!m_info.hDepthBuffer)
 		return 0;
 	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
@@ -150,8 +151,6 @@ return Available ();
 
 void CFBO::Destroy (void)
 {
-if (!ogl.m_features.bRenderToTexture)
-	return;
 if (m_info.hFBO) {
 	if (m_info.nColorBuffers) {
 		glDeleteTextures (m_info.nColorBuffers, m_info.hColorBuffers);
@@ -184,8 +183,7 @@ if (!m_info.bActive) {
 		}
 	glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_info.hFBO);
 	}
-if (m_info.nType != 3)
-	SelectColorBuffers (nColorBuffers);
+SelectColorBuffers (nColorBuffers);
 return m_info.bActive = 1;
 }
 
@@ -200,7 +198,7 @@ if (Available () <= 0)
 m_info.bActive = 0;
 m_info.nBuffer = 0x7FFFFFFF;
 glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
-ogl.SetDrawBuffer (GL_BACK, 0);
+glDrawBuffer (GL_BACK);
 return 1;
 }
 

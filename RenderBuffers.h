@@ -3,11 +3,11 @@
 
 #include "glew.h"
 
-GLuint CreateDepthTexture (int nTMU, int bFBO, int nType = 0, int nWidth = -1, int hHeight = -1);
-void DestroyDepthTexture (int bFBO);
-GLuint CopyDepthTexture (int nId, int nTMU = GL_TEXTURE1);
-GLuint CreateColorTexture (int nTMU, int bFBO);
+GLuint CreateDepthTexture (int nTMU = GL_TEXTURE1, int nType = 0, int nWidth, int hHeight);
+void DestroyDepthTexture (void);
+bool CopyDepthTexture (GLuint hDepthBuffer, int nTMU = GL_TEXTURE1);
+GLuint CreateColorTexture (int nTMU = GL_TEXTURE1, int nWidth, int nHeight, bool bFBO);
 void DestroyColorTexture (void);
-GLuint CopyColorTexture (void);
+bool CopyColorTexture (GLuint hColorBuffer, int nTMU, int nWidth, int nHeight)
 
 #endif //__RENDERBUFFERS_H
