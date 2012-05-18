@@ -190,10 +190,10 @@ void CFBO::Flush (CRect viewport)
 #endif
 
 glMatrixMode (GL_PROJECTION);
-glLoadIdentity ();//clear matrix
+glLoadIdentity ();
 glOrtho (0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
 glMatrixMode (GL_MODELVIEW);
-glLoadIdentity ();//clear matrix
+glLoadIdentity ();
 
 glEnable (GL_TEXTURE_2D);
 glActiveTexture (GL_TEXTURE0);
@@ -202,13 +202,8 @@ glEnableClientState (GL_TEXTURE_COORD_ARRAY);
 glEnableClientState (GL_VERTEX_ARRAY);
 glTexCoordPointer (2, GL_FLOAT, 0, texCoord);
 glVertexPointer (2, GL_FLOAT, 0, vertices);
-#if 0
-glDisable (GL_TEXTURE_2D);
-glColor3f (0.0f, 0.5f, 1.0f);
-#else
 glBindTexture (GL_TEXTURE_2D, m_info.hColorBuffers [0]);
 glColor3f (1.0f, 1.0f, 1.0f);
-#endif
 glDisable (GL_BLEND);
 glDrawArrays (GL_QUADS, 0, 4);
 glDisableClientState (GL_TEXTURE_COORD_ARRAY);
