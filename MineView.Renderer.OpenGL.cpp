@@ -417,10 +417,10 @@ if	(texP [0] == &tex)
 
 void CRendererGL::BeginRender (bool bOrtho)
 {
-SetupProjection (bOrtho);
 #ifdef _DEBUG
 m_renderBuffers.Enable ();
 #endif
+SetupProjection (bOrtho);
 }
 
 //--------------------------------------------------------------------------
