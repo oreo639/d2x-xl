@@ -85,7 +85,9 @@ ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
 
 void CRendererGL::ClearView (void)
 {
+m_renderBuffers.Enable ();
 glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+m_renderBuffers.Disable ();
 }
 
 // -----------------------------------------------------------------------------
