@@ -200,13 +200,7 @@ void CFBO::Draw (CRect viewport)
 {
 	float uMax = float (viewport.Width ()) / float (m_info.nWidth);
 	float vMax = float (viewport.Height ()) / float (m_info.nHeight);
-	float texCoord [4][2] = {
-		{0.0, 0.0}, 
-		{0.0, vMax},
-		{uMax, vMax},
-		{uMax, 0.0}
-	};
-
+	float texCoord [4][2] = {{0.0, 0.0}, {0.0, vMax}, {uMax, vMax}, {uMax, 0.0}};
 	float vertices [4][2] = {{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}};
 
 glColor3f (1.0f, 1.0f, 1.0f);
