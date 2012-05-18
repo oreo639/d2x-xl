@@ -32,7 +32,7 @@ class CFBO {
 
 		~CFBO () { Destroy (); }
 
-		static void Setup (void);
+		static bool Setup (void);
 
 		void Init (void);
 

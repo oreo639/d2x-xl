@@ -61,7 +61,7 @@ for (int i = 0; i < nBuffers; i++) {
 	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); 
 	glTexParameteri (GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, m_info.nWidth, m_info.nHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glGenerateMipmapEXT (GL_TEXTURE_2D);
+	//glGenerateMipmapEXT (GL_TEXTURE_2D);
 	m_info.bufferIds [i] = GL_COLOR_ATTACHMENT0_EXT + i;
 	}
 return glGetError () ? 0 : 1;
@@ -187,10 +187,10 @@ if (!m_info.bActive)
 	return 1;
 if (Available () <= 0)
 	return 0;
-m_info.bActive = 0;
 m_info.nBuffer = 0x7FFFFFFF;
 glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
 glDrawBuffer (GL_BACK);
+m_info.bActive = 0;
 return 1;
 }
 
@@ -198,9 +198,9 @@ return 1;
 
 void CFBO::Draw (CRect viewport)
 {
-	double uMax = double (viewport.Width ()) / double (m_info.nWidth);
-	double vMax = double (viewport.Height ()) / double (m_info.nHeight);
-	tTexCoord2d texCoord [4] = {
+	float uMax = float (viewport.Width ()) / float (m_info.nWidth);
+	float vMax = float (viewport.Height ()) / float (m_info.nHeight);
+	float texCoord [4][2] = {
 		{0.0, 0.0}, 
 		{0.0, vMax},
 		{uMax, vMax},
@@ -215,7 +215,7 @@ glActiveTexture (GL_TEXTURE0);
 glClientActiveTexture (GL_TEXTURE0);
 glEnableClientState (GL_TEXTURE_COORD_ARRAY);
 glEnableClientState (GL_VERTEX_ARRAY);
-glTexCoordPointer (2, GL_DOUBLE, 0, texCoord);
+glTexCoordPointer (2, GL_FLOAT, 0, texCoord);
 glVertexPointer (2, GL_FLOAT, 0, vertices);
 glBindTexture (GL_TEXTURE_2D, m_info.hColorBuffers [0]);
 glDrawArrays (GL_QUADS, 0, 4);
@@ -225,55 +225,46 @@ glDisableClientState (GL_VERTEX_ARRAY);
 
 //------------------------------------------------------------------------------
 
-void CFBO::Setup (void)
+bool CFBO::Setup (void)
 {
-#if RENDER2TEXTURE
-if (ogl.m_features.bRenderToTexture.Available ()) {
-	PrintLog (1);
-#	ifdef _WIN32
-	ogl.m_features.bRenderToTexture = 0;
-	if (!(glDrawBuffers = (PFNGLDRAWBUFFERSPROC) wglGetProcAddress ("glDrawBuffers")))
-		PrintLog (0, "glDrawBuffers not supported by the OpenGL driver\n");
-	else if (!(glBindRenderbufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC) wglGetProcAddress ("glBindRenderbufferEXT")))
-		PrintLog (0, "glBindRenderbufferEXT not supported by the OpenGL driver\n");
-	else if (!(glIsRenderbufferEXT = (PFNGLISRENDERBUFFEREXTPROC) wglGetProcAddress ("glIsRenderbufferEXT")))
-		PrintLog (0, "glIsRenderbufferEXT not supported by the OpenGL driver\n");
-	else if (!(glDeleteRenderbuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC) wglGetProcAddress ("glDeleteRenderbuffersEXT")))
-		PrintLog (0, "glDeleteRenderbuffersEXT not supported by the OpenGL driver\n");
-	else if (!(glGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC) wglGetProcAddress ("glGenRenderbuffersEXT")))
-		PrintLog (0, "glGenRenderbuffersEXT not supported by the OpenGL driver\n");
-	else if (!(glRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC) wglGetProcAddress ("glRenderbufferStorageEXT")))
-		PrintLog (0, "glRenderbufferStorageEXT not supported by the OpenGL driver\n");
-	else if (!(glGetRenderbufferParameterivEXT = (PFNGLGETRENDERBUFFERPARAMETERIVEXTPROC) wglGetProcAddress ("glGetRenderbufferParameterivEXT")))
-		PrintLog (0, "glGetRenderbufferParameterivEXT not supported by the OpenGL driver\n");
-	else if (!(glIsFramebufferEXT = (PFNGLISFRAMEBUFFEREXTPROC) wglGetProcAddress ("glIsFramebufferEXT")))
-		PrintLog (0, "glIsFramebufferEXT not supported by the OpenGL driver\n");
-	else if (!(glBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC) wglGetProcAddress ("glBindFramebufferEXT")))
-		PrintLog (0, "glBindFramebufferEXT not supported by the OpenGL driver\n");
-	else if (!(glDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC) wglGetProcAddress ("glDeleteFramebuffersEXT")))
-		PrintLog (0, "glDeleteFramebuffersEXT not supported by the OpenGL driver\n");
-	else if (!(glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC) wglGetProcAddress ("glGenFramebuffersEXT")))
-		PrintLog (0, "glGenFramebuffersEXT not supported by the OpenGL driver\n");
-	else if (!(glCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC) wglGetProcAddress ("glCheckFramebufferStatusEXT")))
-		PrintLog (0, "glCheckFramebufferStatusEXT not supported by the OpenGL driver\n");
-	else if (!(glFramebufferTexture1DEXT = (PFNGLFRAMEBUFFERTEXTURE1DEXTPROC) wglGetProcAddress ("glFramebufferTexture1DEXT")))
-		PrintLog (0, "glFramebufferTexture1DEXT not supported by the OpenGL driver\n");
-	else if (!(glFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) wglGetProcAddress ("glFramebufferTexture2DEXT")))
-		PrintLog (0, "glFramebufferTexture2DEXT not supported by the OpenGL driver\n");
-	else if (!(glFramebufferTexture3DEXT = (PFNGLFRAMEBUFFERTEXTURE3DEXTPROC) wglGetProcAddress ("glFramebufferTexture3DEXT")))
-		PrintLog (0, "glFramebufferTexture3DEXT not supported by the OpenGL driver\n");
-	else if (!(glFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC) wglGetProcAddress ("glFramebufferRenderbufferEXT")))
-		PrintLog (0, "glFramebufferRenderbufferEXT not supported by the OpenGL driver\n");
-	else if (!(glGetFramebufferAttachmentParameterivEXT = (PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC) wglGetProcAddress ("glGetFramebufferAttachmentParameterivEXT")))
-		PrintLog (0, "glGetFramebufferAttachmentParameterivEXT not supported by the OpenGL driver\n");
-	else if (!(glGenerateMipmapEXT = (PFNGLGENERATEMIPMAPEXTPROC) wglGetProcAddress ("glGenerateMipmapEXT")))
-		PrintLog (0, "glGenerateMipmapEXT not supported by the OpenGL driver\n");
-	else
-#	endif
-	ogl.m_features.bRenderToTexture = 2;
-	PrintLog (-1);
-	}
-#endif
+if (!(glDrawBuffers = (PFNGLDRAWBUFFERSPROC) wglGetProcAddress ("glDrawBuffers")))
+	return false; //PrintLog (0, "glDrawBuffers not supported by the OpenGL driver\n");
+else if (!(glBindRenderbufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC) wglGetProcAddress ("glBindRenderbufferEXT")))
+	return false; //PrintLog (0, "glBindRenderbufferEXT not supported by the OpenGL driver\n");
+else if (!(glIsRenderbufferEXT = (PFNGLISRENDERBUFFEREXTPROC) wglGetProcAddress ("glIsRenderbufferEXT")))
+	return false; //PrintLog (0, "glIsRenderbufferEXT not supported by the OpenGL driver\n");
+else if (!(glDeleteRenderbuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC) wglGetProcAddress ("glDeleteRenderbuffersEXT")))
+	return false; //PrintLog (0, "glDeleteRenderbuffersEXT not supported by the OpenGL driver\n");
+else if (!(glGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC) wglGetProcAddress ("glGenRenderbuffersEXT")))
+	return false; //PrintLog (0, "glGenRenderbuffersEXT not supported by the OpenGL driver\n");
+else if (!(glRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC) wglGetProcAddress ("glRenderbufferStorageEXT")))
+	return false; //PrintLog (0, "glRenderbufferStorageEXT not supported by the OpenGL driver\n");
+else if (!(glGetRenderbufferParameterivEXT = (PFNGLGETRENDERBUFFERPARAMETERIVEXTPROC) wglGetProcAddress ("glGetRenderbufferParameterivEXT")))
+	return false; //PrintLog (0, "glGetRenderbufferParameterivEXT not supported by the OpenGL driver\n");
+else if (!(glIsFramebufferEXT = (PFNGLISFRAMEBUFFEREXTPROC) wglGetProcAddress ("glIsFramebufferEXT")))
+	return false; //PrintLog (0, "glIsFramebufferEXT not supported by the OpenGL driver\n");
+else if (!(glBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC) wglGetProcAddress ("glBindFramebufferEXT")))
+	return false; //PrintLog (0, "glBindFramebufferEXT not supported by the OpenGL driver\n");
+else if (!(glDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC) wglGetProcAddress ("glDeleteFramebuffersEXT")))
+	return false; //PrintLog (0, "glDeleteFramebuffersEXT not supported by the OpenGL driver\n");
+else if (!(glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC) wglGetProcAddress ("glGenFramebuffersEXT")))
+	return false; //PrintLog (0, "glGenFramebuffersEXT not supported by the OpenGL driver\n");
+else if (!(glCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC) wglGetProcAddress ("glCheckFramebufferStatusEXT")))
+	return false; //PrintLog (0, "glCheckFramebufferStatusEXT not supported by the OpenGL driver\n");
+else if (!(glFramebufferTexture1DEXT = (PFNGLFRAMEBUFFERTEXTURE1DEXTPROC) wglGetProcAddress ("glFramebufferTexture1DEXT")))
+	return false; //PrintLog (0, "glFramebufferTexture1DEXT not supported by the OpenGL driver\n");
+else if (!(glFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) wglGetProcAddress ("glFramebufferTexture2DEXT")))
+	return false; //PrintLog (0, "glFramebufferTexture2DEXT not supported by the OpenGL driver\n");
+else if (!(glFramebufferTexture3DEXT = (PFNGLFRAMEBUFFERTEXTURE3DEXTPROC) wglGetProcAddress ("glFramebufferTexture3DEXT")))
+	return false; //PrintLog (0, "glFramebufferTexture3DEXT not supported by the OpenGL driver\n");
+else if (!(glFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC) wglGetProcAddress ("glFramebufferRenderbufferEXT")))
+	return false; //PrintLog (0, "glFramebufferRenderbufferEXT not supported by the OpenGL driver\n");
+else if (!(glGetFramebufferAttachmentParameterivEXT = (PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC) wglGetProcAddress ("glGetFramebufferAttachmentParameterivEXT")))
+	return false; //PrintLog (0, "glGetFramebufferAttachmentParameterivEXT not supported by the OpenGL driver\n");
+else if (!(glGenerateMipmapEXT = (PFNGLGENERATEMIPMAPEXTPROC) wglGetProcAddress ("glGenerateMipmapEXT")))
+	return false; //PrintLog (0, "glGenerateMipmapEXT not supported by the OpenGL driver\n");
+else
+	return true; //PrintLog (-1);
 }
 
 //------------------------------------------------------------------------------

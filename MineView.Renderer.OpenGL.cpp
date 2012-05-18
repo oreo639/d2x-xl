@@ -176,7 +176,8 @@ if(!wglMakeCurrent (m_glHDC, m_glRC)) {
 glewInit (); // must happen after OpenGL context creation!
 shaderManager.Setup ();
 textureManager.InitShaders ();
-m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 0, 2);
+if (CFBO::Setup ())
+	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 0, 2);
 
 return TRUE;
 }
