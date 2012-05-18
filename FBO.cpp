@@ -159,9 +159,6 @@ if (m_info.bActive)
 	return 1;
 glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_info.hFBO);
 SelectColorBuffers (nColorBuffers);
-glReadBuffer (GL_COLOR_ATTACHMENT0_EXT);
-if (glGetError ())
-	return 0;
 return m_info.bActive = 1;
 }
 
