@@ -179,7 +179,7 @@ return 1;
 
 //------------------------------------------------------------------------------
 
-void CFBO::Draw (CRect viewport)
+void CFBO::Flush (CRect viewport)
 {
 	float uMax = float (viewport.Width ()) / float (m_info.nWidth);
 	float vMax = float (viewport.Height ()) / float (m_info.nHeight);
