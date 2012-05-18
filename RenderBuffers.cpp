@@ -43,7 +43,7 @@ if ((nError = glGetError ())) {
 	glDeleteTextures (1, &hDepthBuffer);
 	return hDepthBuffer = 0;
 	}
-glBindTexture (GL_TEXTURE1, 0);
+glBindTexture (GL_TEXTURE_2D, 0);
 return hDepthBuffer;
 }
 

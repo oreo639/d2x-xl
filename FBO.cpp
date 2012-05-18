@@ -75,10 +75,13 @@ int CFBO::CreateDepthBuffer (void)
 // depth buffer
 if (!(m_info.hDepthBuffer = CreateDepthTexture (m_info.nType, m_info.nWidth, m_info.nHeight)))
 	return 0;
+if (glGetError ())
+	return 0;
 glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
-glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
+if (glGetError ())
+	return 0;
 if (m_info.nType)
-	m_info.hStencilBuffer = m_info.hDepthBuffer;
+	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hStencilBuffer = m_info.hDepthBuffer, 0);
 return glGetError () ? 0 : 1;
 }
 
