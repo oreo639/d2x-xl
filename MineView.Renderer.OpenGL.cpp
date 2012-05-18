@@ -435,6 +435,7 @@ for (int i = 0; i < 3; i++) {
 	glDisableClientState (GL_COLOR_ARRAY);
 	glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState (GL_VERTEX_ARRAY);
+	glBindTexture (GL_TEXTURE_2D, 0);
 	glDisable (GL_TEXTURE_2D);
 	}
 shaderManager.Deploy (-1);
