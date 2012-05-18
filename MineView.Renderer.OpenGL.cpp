@@ -418,7 +418,9 @@ if	(texP [0] == &tex)
 void CRendererGL::BeginRender (bool bOrtho)
 {
 SetupProjection (bOrtho);
+#ifdef _DEBUG
 m_renderBuffers.Enable ();
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -436,8 +438,10 @@ for (int i = 0; i < 3; i++) {
 shaderManager.Deploy (-1);
 glDisable (GL_DEPTH_TEST);
 if (bSwapBuffers) {
+#ifdef _DEBUG
 	m_renderBuffers.Disable ();
 	m_renderBuffers.Draw (Viewport ());
+#endif
 	SwapBuffers (m_glHDC);
 	}
 }
