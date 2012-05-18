@@ -189,25 +189,56 @@ void CFBO::Flush (CRect viewport)
 	float vertices [4][2] = {{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}};
 #endif
 
+GLenum nError;
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glMatrixMode (GL_PROJECTION);
 glLoadIdentity ();
 glOrtho (0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
 glMatrixMode (GL_MODELVIEW);
 glLoadIdentity ();
 
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glEnable (GL_TEXTURE_2D);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glActiveTexture (GL_TEXTURE0);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glClientActiveTexture (GL_TEXTURE0);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glEnableClientState (GL_VERTEX_ARRAY);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glTexCoordPointer (2, GL_FLOAT, 0, texCoord);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glVertexPointer (2, GL_FLOAT, 0, vertices);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glBindTexture (GL_TEXTURE_2D, m_info.hColorBuffers [0]);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glColor3f (1.0f, 1.0f, 1.0f);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glDisable (GL_BLEND);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glDrawArrays (GL_QUADS, 0, 4);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glDisableClientState (GL_TEXTURE_COORD_ARRAY);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 glDisableClientState (GL_VERTEX_ARRAY);
+if ((nError = glGetError ()) != 0)
+	nError = 0;
 }
 
 //------------------------------------------------------------------------------

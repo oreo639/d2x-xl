@@ -639,10 +639,8 @@ void CRendererGL::SetupProjection (bool bOrtho)
 {
 if (m_bOrtho = bOrtho) {
 	glMatrixMode (GL_MODELVIEW);
-	glPushMatrix ();
 	glLoadIdentity ();
 	glMatrixMode (GL_PROJECTION);
-	glPushMatrix ();
 	glLoadIdentity ();
 	glOrtho (0.0, ViewWidth (), 0.0, ViewHeight (), 0.0, 5000.0);
 	glViewport (0, 0, ViewWidth (), ViewHeight ());
