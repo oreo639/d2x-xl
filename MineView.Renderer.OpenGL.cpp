@@ -58,12 +58,11 @@ if (!CreateContext ())
 
 InitProjection ();
 
-CRect rc;
-m_pParent->GetClientRect (rc);
-if (!(rc.Width () && rc.Height ()))
+m_pParent->GetClientRect (Viewport ());
+if (!(Viewport ().Width () && Viewport ().Height ()))
 	return 0;
-glViewport (rc.left, rc.top, rc.Width (), rc.Height ());
-m_glAspectRatio = (GLfloat) rc.Width () / (GLfloat) rc.Height ();
+glViewport (Viewport ().left, Viewport ().top, Viewport ().Width (), Viewport ().Height ());
+m_glAspectRatio = (GLfloat) Viewport ().Width () / (GLfloat) Viewport ().Height ();
 SetupProjection ();
 return -1;
 }
@@ -175,6 +174,7 @@ if(!wglMakeCurrent (m_glHDC, m_glRC)) {
 glewInit (); // must happen after OpenGL context creation!
 shaderManager.Setup ();
 textureManager.InitShaders ();
+m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 0, 2);
 
 return TRUE;
 }
@@ -415,12 +415,15 @@ if	(texP [0] == &tex)
 void CRendererGL::BeginRender (bool bOrtho)
 {
 SetupProjection (bOrtho);
+m_renderBuffers.Enable ();
 }
 
 //--------------------------------------------------------------------------
 
 void CRendererGL::EndRender (bool bSwapBuffers)
 {
+m_renderBuffers.Disable ();
+m_renderBuffers.Draw (Viewport ());
 for (int i = 0; i < 3; i++) {
 	glActiveTexture (GL_TEXTURE0 + i);
 	glClientActiveTexture (GL_TEXTURE0 + i);

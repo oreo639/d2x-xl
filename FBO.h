@@ -78,6 +78,8 @@ class CFBO {
 
 		GLuint& StencilBuffer (void) { return m_info.hStencilBuffer; }
 
+		void CFBO::Draw (CRect viewport);
+		
 	private:
 		int CreateColorBuffers (int nBuffers);
 

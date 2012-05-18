@@ -7,6 +7,7 @@
 
 #include "Matrix.h"
 #include "Textures.h"
+#include "FBO.h"
 #include "glew.h"
 
 // -----------------------------------------------------------------------------
@@ -116,8 +117,9 @@ public:
 	CDoubleVector	m_vScale;
 	CDoubleVector	m_vRotate;
 
-	int 				m_viewHeight;	// in pixels
+	CRect				m_viewport;
 	int 				m_viewWidth;	// in pixels
+	int 				m_viewHeight;	// in pixels
 	int 				m_viewDepth;	// in bytes
 
 	double			m_moveRate [2];
@@ -168,6 +170,7 @@ class CRenderer {
 		inline CDoubleVector& Translation (void) { return m_renderData.m_vTranslate; }
 		inline CDoubleVector& Scale (void) { return m_renderData.m_vScale; }
 		inline CDoubleVector& Rotation (void) { return m_renderData.m_vRotate; }
+		inline CRect& Viewport (void) { return m_renderData.m_viewport; }
 		inline int& ViewWidth (void) { return m_renderData.m_viewWidth; }
 		inline int& ViewHeight (void) { return m_renderData.m_viewHeight; }
 		inline int& ViewDepth (void) { return m_renderData.m_viewDepth; }
@@ -349,6 +352,7 @@ class CRendererGL : public CRenderer {
 		double			m_glAspectRatio;
 		CViewMatrixGL	m_viewMatrix;
 		CDoubleVector	m_vZoom;
+		CFBO				m_renderBuffers;
 
 	public:
 		CRendererGL (CRenderData& renderData);

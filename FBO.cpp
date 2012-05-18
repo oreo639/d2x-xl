@@ -200,6 +200,33 @@ return 1;
 
 //------------------------------------------------------------------------------
 
+void CFBO::Draw (CRect viewport)
+{
+	double uMax = double (viewport.Width ()) / double (m_info.nWidth);
+	double vMax = double (viewport.Height ()) / double (m_info.nHeight);
+	tTexCoord2d texCoord [4] = {
+		{0.0, 0.0}, 
+		{0.0, vMax},
+		{uMax, vMax},
+		{uMax, 0.0}
+	};
+
+	float vertices [4][2] = {{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}};
+
+glColor3f (1.0f, 1.0f, 1.0f);
+glEnable (GL_TEXTURE_2D);
+glActiveTexture (GL_TEXTURE0);
+glBindTexture (GL_TEXTURE0, m_info.hColorBuffers [0]);
+glBegin (GL_QUADS);
+for (int i = 0; i < 4; i++) {
+	glTexCoord2dv ((GLdouble*) &texCoord [i]);
+	glVertex2fv ((GLfloat*) &vertices [i]);
+	}
+glEnd ();
+}
+
+//------------------------------------------------------------------------------
+
 void CFBO::Setup (void)
 {
 #if RENDER2TEXTURE
