@@ -183,11 +183,7 @@ void CFBO::Flush (CRect viewport)
 	float uMax = float (viewport.Width ()) / float (m_info.nWidth);
 	float vMax = float (viewport.Height ()) / float (m_info.nHeight);
 	float texCoord [4][2] = {{0.0, 0.0}, {0.0, vMax}, {uMax, vMax}, {uMax, 0.0}};
-#ifdef _DEBUG
-	float vertices [4][2] = {{0.25f, 0.25f}, {0.25f, 0.75f}, {0.75f, 0.75f}, {0.75f, 0.25f}};
-#else
 	float vertices [4][2] = {{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}};
-#endif
 
 glMatrixMode (GL_PROJECTION);
 glLoadIdentity ();
@@ -195,9 +191,9 @@ glOrtho (0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
 glMatrixMode (GL_MODELVIEW);
 glLoadIdentity ();
 
-glEnable (GL_TEXTURE_2D);
 glActiveTexture (GL_TEXTURE0);
 glClientActiveTexture (GL_TEXTURE0);
+glEnable (GL_TEXTURE_2D);
 glEnableClientState (GL_TEXTURE_COORD_ARRAY);
 glEnableClientState (GL_VERTEX_ARRAY);
 glTexCoordPointer (2, GL_FLOAT, 0, texCoord);
