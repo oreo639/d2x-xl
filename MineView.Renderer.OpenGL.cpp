@@ -443,8 +443,6 @@ glDisable (GL_DEPTH_TEST);
 if (bSwapBuffers) {
 #ifdef _DEBUG
 	m_renderBuffers.Disable ();
-	ClearView ();
-	glDrawBuffer (GL_BACK);
 	m_renderBuffers.Draw (Viewport ());
 #endif
 	SwapBuffers (m_glHDC);
