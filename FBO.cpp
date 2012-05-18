@@ -87,19 +87,6 @@ return glGetError () ? 0 : 1;
 
 //------------------------------------------------------------------------------
 
-void CFBO::SelectColorBuffers (int nBuffer) 
-{ 
-if ((m_info.nBufferCount == 1) || (nBuffer >= m_info.nBufferCount)) 
-	glDrawBuffer (m_info.bufferIds [nBuffer = 0]); // only one buffer or invalid buffer index
-else if (nBuffer < 0)
-	glDrawBuffers (m_info.nBufferCount, m_info.bufferIds); // use all available color buffers
-else
-	glDrawBuffer (m_info.bufferIds [nBuffer]); // use the specified color buffer
-m_info.nBuffer = nBuffer;
-}
-
-//------------------------------------------------------------------------------
-
 void CFBO::AttachBuffers (void)
 {
 for (int i = 0; i < m_info.nColorBuffers; i++)
@@ -131,7 +118,11 @@ if (!(CreateColorBuffers (nColorBuffers) && CreateDepthBuffer ())) {
 	}
 AttachBuffers ();
 glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
-return Available ();
+if  (!Available ()) {
+	Destroy ();
+	return 0;
+	}
+return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -157,12 +148,23 @@ if (m_info.hFBO) {
 
 //------------------------------------------------------------------------------
 
+void CFBO::SelectColorBuffers (int nBuffer) 
+{ 
+if ((m_info.nBufferCount == 1) || (nBuffer >= m_info.nBufferCount)) 
+	glDrawBuffer (m_info.bufferIds [nBuffer = 0]); // only one buffer or invalid buffer index
+else if (nBuffer < 0)
+	glDrawBuffers (m_info.nBufferCount, m_info.bufferIds); // use all available color buffers
+else
+	glDrawBuffer (m_info.bufferIds [nBuffer]); // use the specified color buffer
+m_info.nBuffer = nBuffer;
+}
+
+//------------------------------------------------------------------------------
+
 int CFBO::Enable (int nColorBuffers)
 {
 if (m_info.bActive)
 	return 1;
-if (Available () <= 0)
-	return 0;
 glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_info.hFBO);
 SelectColorBuffers (nColorBuffers);
 glReadBuffer (GL_COLOR_ATTACHMENT0_EXT);
@@ -175,11 +177,10 @@ int CFBO::Disable (void)
 {
 if (!m_info.bActive)
 	return 1;
-if (Available () <= 0)
-	return 0;
 m_info.nBuffer = 0x7FFFFFFF;
 glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
 glDrawBuffer (GL_BACK);
+glReadBuffer (GL_BACK);
 m_info.bActive = 0;
 return 1;
 }
@@ -191,7 +192,7 @@ void CFBO::Draw (CRect viewport)
 	float uMax = float (viewport.Width ()) / float (m_info.nWidth);
 	float vMax = float (viewport.Height ()) / float (m_info.nHeight);
 	float texCoord [4][2] = {{0.0, 0.0}, {0.0, vMax}, {uMax, vMax}, {uMax, 0.0}};
-	float vertices [4][2] = {{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}};
+	float vertices [4][2] = {{0.25f, 0.25f}, {0.25f, 0.75f}, {0.75f, 0.75f}, {0.75f, 0.25f}};
 
 
 glMatrixMode (GL_PROJECTION);
@@ -214,6 +215,7 @@ glColor3f (0.0f, 0.5f, 1.0f);
 glBindTexture (GL_TEXTURE_2D, m_info.hColorBuffers [0]);
 glColor3f (1.0f, 1.0f, 1.0f);
 #endif
+glDisable (GL_BLEND);
 glDrawArrays (GL_QUADS, 0, 4);
 glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 glDisableClientState (GL_VERTEX_ARRAY);
