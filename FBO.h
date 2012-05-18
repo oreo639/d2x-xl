@@ -7,20 +7,18 @@
 #define MAX_COLOR_BUFFERS 16
 
 typedef struct tFrameBuffer {
-	GLuint	hFBO;
-	GLuint	hColorBuffers [MAX_COLOR_BUFFERS];
-	GLuint	bufferIds [MAX_COLOR_BUFFERS];
-	GLuint	hDepthBuffer;
-	GLuint	hStencilBuffer;
-	int		nColorBuffers;
-	int		nFirstBuffer;
-	int		nBufferCount;
-	int		nBuffer;
-	int		nType;
-	int		nWidth;
-	int		nHeight;
-	int		bActive;
-	GLenum	nStatus;
+	GLuint	hFBO; // OpenGL FBO handle
+	GLuint	hColorBuffers [MAX_COLOR_BUFFERS]; // color buffer handles
+	GLuint	bufferIds [MAX_COLOR_BUFFERS]; // color buffer attachment ids
+	GLuint	hDepthBuffer; // depth buffer handle
+	GLuint	hStencilBuffer; // stencil buffer handle
+	int		nColorBuffers; // number of available color buffers
+	int		nBuffer; // currently selected color buffer(s)
+	int		nType; // depth buffer type (depth only / depth + stencil)
+	int		nWidth; // render buffer width
+	int		nHeight; // render buffer height
+	int		bActive; // FBO is draw buffer
+	GLenum	nStatus; // result of availability test
 } tFrameBuffer;
 
 class CFBO {
@@ -60,9 +58,7 @@ class CFBO {
 
 		inline int Active (void) { return m_info.bActive; }
 
-		inline GLuint* BufferIds (void) { return m_info.bufferIds + m_info.nFirstBuffer; }
-
-		inline GLuint BufferCount (void) { return m_info.nBufferCount; }
+		inline GLuint BufferCount (void) { return m_info.nColorBuffers; }
 
 		void SelectColorBuffers (int nBuffer = 0);
 

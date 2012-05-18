@@ -46,9 +46,7 @@ if (nMaxBuffers > MAX_COLOR_BUFFERS)
 	nMaxBuffers = MAX_COLOR_BUFFERS;
 else if (nBuffers > nMaxBuffers)
 	nBuffers = nMaxBuffers;
-m_info.nColorBuffers = 
-m_info.nBufferCount = nBuffers;
-m_info.nFirstBuffer = 0;
+m_info.nColorBuffers = nBuffers;
 glGenTextures (nBuffers, m_info.hColorBuffers);
 glEnable (GL_TEXTURE_2D);
 glActiveTexture (GL_TEXTURE0);
@@ -73,12 +71,8 @@ int CFBO::CreateDepthBuffer (void)
 // depth buffer
 if (!(m_info.hDepthBuffer = CreateDepthTexture (m_info.nType, m_info.nWidth, m_info.nHeight)))
 	return 0;
-if (glGetError ())
-	return 0;
 glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
-if (glGetError ())
-	return 0;
-if (m_info.nType)
+if (m_info.nType) // stencil buffer
 	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hStencilBuffer = m_info.hDepthBuffer, 0);
 return glGetError () ? 0 : 1;
 }
@@ -148,10 +142,10 @@ if (m_info.hFBO) {
 
 void CFBO::SelectColorBuffers (int nBuffer) 
 { 
-if ((m_info.nBufferCount == 1) || (nBuffer >= m_info.nBufferCount)) 
+if ((m_info.nColorBuffers == 1) || (nBuffer >= m_info.nColorBuffers)) 
 	glDrawBuffer (m_info.bufferIds [nBuffer = 0]); // only one buffer or invalid buffer index
 else if (nBuffer < 0)
-	glDrawBuffers (m_info.nBufferCount, m_info.bufferIds); // use all available color buffers
+	glDrawBuffers (m_info.nColorBuffers, m_info.bufferIds); // use all available color buffers
 else
 	glDrawBuffer (m_info.bufferIds [nBuffer]); // use the specified color buffer
 m_info.nBuffer = nBuffer;
