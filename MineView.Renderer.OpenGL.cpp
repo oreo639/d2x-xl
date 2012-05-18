@@ -419,7 +419,7 @@ void CRendererGL::BeginRender (bool bOrtho)
 {
 SetupProjection (bOrtho);
 #ifdef _DEBUG
-//m_renderBuffers.Enable ();
+m_renderBuffers.Enable ();
 #endif
 }
 
