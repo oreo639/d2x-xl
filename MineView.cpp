@@ -337,6 +337,7 @@ if (m_bUpdate) {
 	ClearView ();
 	m_xRenderOffs = m_bHScroll ? GetScrollPos (SB_HORZ) - m_xScrollCenter: 0;
 	m_yRenderOffs = m_bVScroll ? GetScrollPos (SB_VERT) - m_yScrollCenter: 0;
+#if 0
 	BeginRender ();
 	Project ();
 	EndRender ();
@@ -367,13 +368,15 @@ if (m_bUpdate) {
 			DrawWireFrame (true);
 			break;
 		}
+#endif
 	}
-
+#if 0
 DrawRubberBox ();
 if (m_nRenderer)
 	DrawDragPos ();
 DrawHighlight ();
 DrawMineCenter ();
+#endif
 Renderer ().EndRender (true);
 Renderer ().SetDC (pViewDC);
 m_bUpdate = false;

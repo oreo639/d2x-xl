@@ -86,6 +86,8 @@ ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
 void CRendererGL::ClearView (void)
 {
 m_renderBuffers.Enable ();
+glClearColor (1.0f, 0.5f, 0.0f, 0.0f);
+glClearDepth (1.0f);
 glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 m_renderBuffers.Disable ();
 }
@@ -177,7 +179,7 @@ glewInit (); // must happen after OpenGL context creation!
 shaderManager.Setup ();
 textureManager.InitShaders ();
 if (CFBO::Setup ())
-	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 0, 2);
+	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 2);
 
 return TRUE;
 }
@@ -440,6 +442,7 @@ glDisable (GL_DEPTH_TEST);
 if (bSwapBuffers) {
 #ifdef _DEBUG
 	m_renderBuffers.Disable ();
+	glDrawBuffer (GL_BACK);
 	m_renderBuffers.Draw (Viewport ());
 #endif
 	SwapBuffers (m_glHDC);
@@ -622,7 +625,7 @@ EndRender ();
 BOOL CRendererGL::InitProjection (GLvoid)
 {
 glShadeModel (GL_SMOOTH);
-glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
+glClearColor (1.0f, 0.5f, 0.0f, 0.0f);
 glClearDepth (1.0f);
 glEnable (GL_BLEND);
 glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

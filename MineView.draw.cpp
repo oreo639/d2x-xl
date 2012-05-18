@@ -1105,6 +1105,7 @@ Renderer ().EndRender ();
 
 void CMineView::DrawHighlight (short bClear) 
 {
+return;
 CHECKMINE;
 
 	short	currSide, currPoint;

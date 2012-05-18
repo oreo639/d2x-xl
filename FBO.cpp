@@ -73,17 +73,10 @@ return glGetError () ? 0 : 1;
 int CFBO::CreateDepthBuffer (void)
 {
 // depth buffer
-if (m_info.nType == 0) // -> no stencil buffer
-	glGenRenderbuffersEXT (1, &m_info.hDepthBuffer);
-else { // depth + stencil buffer
-	m_info.hDepthBuffer = (m_info.nType == 1)
-								  ? CreateDepthTexture (1, m_info.nWidth, m_info.nHeight)
-								  : CopyDepthTexture (0, 1, m_info.nWidth, m_info.nHeight); 
-	if (!m_info.hDepthBuffer)
-		return 0;
-	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
-	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hStencilBuffer = m_info.hDepthBuffer, 0);
-	}
+if (!(m_info.hDepthBuffer = CreateDepthTexture (1, m_info.nWidth, m_info.nHeight)))
+	return 0;
+glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
+glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hStencilBuffer = m_info.hDepthBuffer, 0);
 return glGetError () ? 0 : 1;
 }
 
@@ -106,13 +99,6 @@ void CFBO::AttachBuffers (void)
 {
 for (int i = 0; i < m_info.nColorBuffers; i++)
 	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, m_info.bufferIds [i], GL_TEXTURE_2D, m_info.hColorBuffers [i], 0);
-if (m_info.nType == 0) {
-	// depth buffer
-	glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, m_info.hDepthBuffer);
-	glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, m_info.nWidth, m_info.nHeight);
-	glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_info.hDepthBuffer);
-	}
-else {
 	// depth + stencil buffer
 	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
 	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hStencilBuffer = m_info.hDepthBuffer, 0);
@@ -120,15 +106,13 @@ else {
 }
 
 //------------------------------------------------------------------------------
-// nType - 0: depth only, 1: depth + stencil
 
-int CFBO::Create (int nWidth, int nHeight, int nType, int nColorBuffers)
+int CFBO::Create (int nWidth, int nHeight, int nColorBuffers)
 {
 Destroy ();
 m_info.nWidth = Pow2ize (nWidth);
 m_info.nHeight = Pow2ize (nHeight);
 
-m_info.nType = nType;
 m_info.hDepthBuffer = 0;
 m_info.hStencilBuffer = 0;
 
@@ -155,10 +139,8 @@ if (m_info.hFBO) {
 		m_info.nColorBuffers = 0;
 		}
 	if (m_info.hDepthBuffer) {
-		if (m_info.nType == 1)
-			glDeleteTextures (1, &m_info.hDepthBuffer);
-		if (m_info.nType >= 0)
-			glDeleteRenderbuffersEXT (1, &m_info.hDepthBuffer);
+		glDeleteTextures (1, &m_info.hDepthBuffer);
+		glDeleteRenderbuffersEXT (1, &m_info.hDepthBuffer);
 		m_info.hDepthBuffer =
 		m_info.hStencilBuffer = 0;
 		}
@@ -175,9 +157,18 @@ if (m_info.bActive)
 	return 1;
 if (Available () <= 0)
 	return 0;
+int j;
+if (j = glGetError ())
+	return 0;
 glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_info.hFBO);
+if (j = glGetError ())
+	return 0;
 SelectColorBuffers (nColorBuffers);
+if (j = glGetError ())
+	return 0;
 glReadBuffer (GL_COLOR_ATTACHMENT0_EXT);
+if (j = glGetError ())
+	return 0;
 return m_info.bActive = 1;
 }
 
@@ -226,9 +217,7 @@ glColor3f (0.0f, 0.5f, 1.0f);
 glBindTexture (GL_TEXTURE_2D, m_info.hColorBuffers [0]);
 glColor3f (1.0f, 1.0f, 1.0f);
 #endif
-glDepthFunc (GL_ALWAYS);
 glDrawArrays (GL_QUADS, 0, 4);
-glDepthFunc (GL_LESS);
 glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 glDisableClientState (GL_VERTEX_ARRAY);
 }

@@ -16,7 +16,6 @@ typedef struct tFrameBuffer {
 	int		nFirstBuffer;
 	int		nBufferCount;
 	int		nBuffer;
-	int		nType;
 	int		nWidth;
 	int		nHeight;
 	int		bActive;
@@ -36,7 +35,7 @@ class CFBO {
 
 		void Init (void);
 
-		int Create (int nWidth, int nHeight, int nType, int nColorBuffers = 1);
+		int Create (int nWidth, int nHeight, int nColorBuffers = 1);
 
 		void Destroy (void);
 
@@ -45,10 +44,6 @@ class CFBO {
 		int Enable (int nColorBuffers = 0);
 
 		int Disable (void);
-
-		inline int GetType (void) { return m_info.nType; }
-
-		inline void SetType (int nType) { m_info.nType = nType; }
 
 		inline int GetWidth (void) { return m_info.nWidth; }
 
