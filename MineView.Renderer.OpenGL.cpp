@@ -86,8 +86,6 @@ ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
 void CRendererGL::ClearView (void)
 {
 m_renderBuffers.Enable ();
-glClearColor (1.0f, 0.5f, 0.0f, 0.0f);
-glClearDepth (1.0f);
 glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 m_renderBuffers.Disable ();
 }
@@ -616,7 +614,7 @@ EndRender ();
 BOOL CRendererGL::InitProjection (GLvoid)
 {
 glShadeModel (GL_SMOOTH);
-glClearColor (1.0f, 0.5f, 0.0f, 0.0f);
+glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
 glClearDepth (1.0f);
 glEnable (GL_BLEND);
 glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
