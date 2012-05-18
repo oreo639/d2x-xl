@@ -159,7 +159,7 @@ class CTextureManager {
 
 		int InitShaders (void);
 
-		int DeployShader (int nType);
+		int DeployShader (int nType, CFaceListEntry& fle);
 
 		CTextureManager() : m_extra (null) { 
 			m_paletteName [0][0] = 0; 

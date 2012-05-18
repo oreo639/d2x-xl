@@ -85,7 +85,7 @@ ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
 
 void CRendererGL::ClearView (void)
 {
-m_renderBuffers.Enable ();
+m_renderBuffers.Enable (-1);
 glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 m_renderBuffers.Disable ();
 }
@@ -419,7 +419,7 @@ void CRendererGL::BeginRender (bool bOrtho)
 {
 SetupProjection (bOrtho);
 #ifdef _DEBUG
-m_renderBuffers.Enable ();
+m_renderBuffers.Enable (-1);
 #endif
 }
 
@@ -579,6 +579,8 @@ else {
 	}
 
 #if 1
+textureManager.DeployShader (bArrow ? nTextures + bArrow : nTextures - 1, fle);
+#else
 if (nTextures + bArrow > 1)
 	textureManager.DeployShader (bArrow ? nTextures : 0);
 else

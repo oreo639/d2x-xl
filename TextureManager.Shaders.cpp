@@ -6,28 +6,44 @@
 
 //------------------------------------------------------------------------------
 
-int tmShaderProgs [3] = {-1, -1, -1};
+int tmShaderProgs [4] = {-1, -1, -1, -1};
 
-const char *texMergeFS [3] = {
+const char *texMergeFS [4] = {
+	"uniform sampler2D baseTex;\r\n" \
+	"uniform vec3 sideKey;\r\n" \
+	"uniform vec3 superTransp;\r\n" \
+	"vec4 texColor;\r\n" \
+	"void main(void)" \
+	"{decalColor=texture2D(decalTex,gl_TexCoord [1].xy);\r\n" \
+	"if((abs(decalColor.r-superTransp.r)<2.0/255.0)&&(abs(decalColor.g-superTransp.g)<2.0/255.0)&&(abs(decalColor.b-superTransp.b)<2.0/255.0))discard;\r\n" \
+	"gl_FragData[0]=texture2D(baseTex,gl_TexCoord [0].xy)*glColor;\r\n" \
+	"gl_FragData[1]=vec4 (sideKey, 1.0);\r\n" \
+   "}"
+	,
 	"uniform sampler2D baseTex, decalTex;\r\n" \
+	"uniform vec3 sideKey;\r\n" \
 	"uniform vec3 superTransp;\r\n" \
 	"vec4 decalColor, texColor;\r\n" \
 	"void main(void)" \
 	"{decalColor=texture2D(decalTex,gl_TexCoord [1].xy);\r\n" \
 	"if((abs(decalColor.r-superTransp.r)<2.0/255.0)&&(abs(decalColor.g-superTransp.g)<2.0/255.0)&&(abs(decalColor.b-superTransp.b)<2.0/255.0))discard;\r\n" \
 	"texColor=texture2D(baseTex,gl_TexCoord [0].xy);\r\n" \
-	"gl_FragColor=vec4(vec3(mix(texColor,decalColor,decalColor.a)),min(1.0,texColor.a+decalColor.a))*gl_Color;\r\n" \
+	"gl_FragData[0]=vec4(vec3(mix(texColor,decalColor,decalColor.a)),min(1.0,texColor.a+decalColor.a))*gl_Color;\r\n" \
+	"gl_FragData[1]=vec4 (sideKey, 1.0);\r\n" \
    "}"
 	,
 	"uniform sampler2D baseTex, arrowTex;\r\n" \
+	"uniform vec3 sideKey;\r\n" \
 	"vec4 texColor, arrowColor;\r\n" \
 	"void main(void)" \
 	"{texColor=texture2D(baseTex,gl_TexCoord [0].xy);\r\n" \
 	"arrowColor=texture2D(arrowTex,gl_TexCoord [1].xy);\r\n" \
-	"gl_FragColor=mix(texColor,arrowColor,arrowColor.a*0.8)*gl_Color;\r\n" \
+	"gl_FragData[0]=mix(texColor,arrowColor,arrowColor.a*0.8)*gl_Color;\r\n" \
+	"gl_FragData[1]=vec4 (sideKey, 1.0);\r\n" \
    "}"
 	,
 	"uniform sampler2D baseTex, decalTex, arrowTex;\r\n" \
+	"uniform vec3 sideKey;\r\n" \
 	"uniform vec3 superTransp;\r\n" \
 	"vec4 decalColor, texColor, arrowColor;\r\n" \
 	"void main(void)" \
@@ -35,7 +51,8 @@ const char *texMergeFS [3] = {
 	"if((abs(decalColor.r-superTransp.r)<2.0/255.0)&&(abs(decalColor.g-superTransp.g)<2.0/255.0)&&(abs(decalColor.b-superTransp.b)<2.0/255.0))discard;\r\n" \
 	"texColor=texture2D(baseTex,gl_TexCoord [0].xy);\r\n" \
 	"arrowColor=texture2D(arrowTex,gl_TexCoord [2].xy);\r\n" \
-	"gl_FragColor=mix(vec4(vec3(mix(texColor,decalColor,decalColor.a)),texColor.a+decalColor.a),arrowColor,arrowColor.a*0.8)*gl_Color;\r\n" \
+	"gl_FragData[0]=mix(vec4(vec3(mix(texColor,decalColor,decalColor.a)),texColor.a+decalColor.a),arrowColor,arrowColor.a*0.8)*gl_Color;\r\n" \
+	"gl_FragData[1]=vec4 (sideKey, 1.0);\r\n" \
    "}"
 	};
 
@@ -65,7 +82,7 @@ return nShaders;
 
 //------------------------------------------------------------------------------
 
-int CTextureManager::DeployShader (int nType)
+int CTextureManager::DeployShader (int nType, CFaceListEntry& fle)
 {
 if (tmShaderProgs [nType] < 0)
 	return -1;
@@ -73,7 +90,6 @@ GLhandleARB shaderProg = GLhandleARB (shaderManager.Deploy (tmShaderProgs [nType
 if (!shaderProg)
 	return -1;
 shaderManager.Rebuild (shaderProg);
-#if 1
 shaderManager.Set ("baseTex", 0);
 if (nType == 0)
 	shaderManager.Set ("decalTex", 1);
@@ -85,10 +101,8 @@ else if (nType == 2) {
 	}
 if (nType != 1) 
 	shaderManager.Set ("superTransp", *((vec3*) paletteManager.SuperTranspKeyf ()));
-#else
-glUniform1i (glGetUniformLocation (shaderProg, "baseTex"), 0);
-glUniform1i (glGetUniformLocation (shaderProg, "decalTex"), 1);
-#endif
+vec3 sideKey = {float (fle.m_nSegment / 256) / 255.0f, float (fle.m_nSegment % 256) / 255.0f, float (fle.m_nSide)};
+shaderManager.Set ("sideKey", sideKey);
 return tmShaderProgs [nType];
 }
 
