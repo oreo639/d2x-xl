@@ -544,13 +544,6 @@ for (int i = 0, j = nOvlAlignment; i < nVertices; i++, j = (j + 1) % nVertices) 
 		}
 	}
 
-#if 0
-if (nTextures == 2)
-	textureManager.DeployShader ();
-else
-	shaderManager.Deploy (-1);
-#endif
-
 if (colorP) {
 	glDisable (GL_TEXTURE_2D);
 	glColor4f (float (colorP->r) / 255.0f, float (colorP->g) / 255.0f, float (colorP->b) / 255.0f, alpha);
@@ -567,7 +560,7 @@ else {
 		glActiveTexture (GL_TEXTURE0 + h);
 		glClientActiveTexture (GL_TEXTURE0 + h);
 		glEnable (GL_TEXTURE_2D);
-		if (!texP [i]->GLBind (GL_TEXTURE0 + h, /*(h == 1) ? GL_DECAL :*/ GL_MODULATE))
+		if (!texP [i]->GLBind (GL_TEXTURE0 + h, GL_MODULATE))
 			return;
 		glEnableClientState (GL_COLOR_ARRAY);
 		glEnableClientState (GL_TEXTURE_COORD_ARRAY);
@@ -577,14 +570,12 @@ else {
 		glVertexPointer (3, GL_DOUBLE, 0, vertices);
 		h++;
 		}
-#if 1
 	for (; h < 3; h++) {
 		glActiveTexture (GL_TEXTURE0 + h);
 		glClientActiveTexture (GL_TEXTURE0 + h);
 		glBindTexture (GL_TEXTURE_2D, 0);
 		glDisable (GL_TEXTURE_2D);
 		}
-#endif
 	}
 
 #if 1

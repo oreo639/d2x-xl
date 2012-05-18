@@ -20,12 +20,12 @@ if (!(nWidth && nHeight))
 
 GLuint	hDepthBuffer;
 
-glActiveTexture (GL_TEXTURE1);
 glEnable (GL_TEXTURE_2D);
+glActiveTexture (GL_TEXTURE0);
 glGenTextures (1, &hDepthBuffer);
 if (glGetError ())
 	return hDepthBuffer = 0;
-glBindTexture (GL_TEXTURE1, hDepthBuffer);
+glBindTexture (GL_TEXTURE_2D, hDepthBuffer);
 glTexParameteri (GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -34,11 +34,12 @@ glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 glTexParameteri (GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY); 	
-if (nType == 0) // depth + stencil
+if (nType == 1) // depth + stencil
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8_EXT, nWidth, nHeight, 0, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT, NULL);
 else
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, nWidth, nHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
-if (glGetError ()) {
+GLenum nError;
+if ((nError = glGetError ())) {
 	glDeleteTextures (1, &hDepthBuffer);
 	return hDepthBuffer = 0;
 	}

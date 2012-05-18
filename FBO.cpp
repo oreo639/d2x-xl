@@ -61,7 +61,7 @@ for (int i = 0; i < nBuffers; i++) {
 	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); 
 	glTexParameteri (GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA8, m_info.nWidth, m_info.nHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glGenerateMipmapEXT (GL_TEXTURE_2D);//
+	//glGenerateMipmapEXT (GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 	m_info.bufferIds [i] = GL_COLOR_ATTACHMENT0_EXT + i;
 	}
@@ -73,10 +73,12 @@ return glGetError () ? 0 : 1;
 int CFBO::CreateDepthBuffer (void)
 {
 // depth buffer
-if (!(m_info.hDepthBuffer = CreateDepthTexture (1, m_info.nWidth, m_info.nHeight)))
+if (!(m_info.hDepthBuffer = CreateDepthTexture (m_info.nType, m_info.nWidth, m_info.nHeight)))
 	return 0;
 glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
-glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hStencilBuffer = m_info.hDepthBuffer, 0);
+glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
+if (m_info.nType)
+	m_info.hStencilBuffer = m_info.hDepthBuffer;
 return glGetError () ? 0 : 1;
 }
 
@@ -101,17 +103,19 @@ for (int i = 0; i < m_info.nColorBuffers; i++)
 	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, m_info.bufferIds [i], GL_TEXTURE_2D, m_info.hColorBuffers [i], 0);
 // depth + stencil buffer
 glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hDepthBuffer, 0);
-glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hStencilBuffer = m_info.hDepthBuffer, 0);
+if (m_info.nType)
+	glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, m_info.hStencilBuffer = m_info.hDepthBuffer, 0);
 }
 
 //------------------------------------------------------------------------------
 
-int CFBO::Create (int nWidth, int nHeight, int nColorBuffers)
+int CFBO::Create (int nWidth, int nHeight, int nType, int nColorBuffers)
 {
 Destroy ();
 m_info.nWidth = Pow2ize (nWidth);
 m_info.nHeight = Pow2ize (nHeight);
 
+m_info.nType = nType;
 m_info.hDepthBuffer = 0;
 m_info.hStencilBuffer = 0;
 

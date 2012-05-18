@@ -16,6 +16,7 @@ typedef struct tFrameBuffer {
 	int		nFirstBuffer;
 	int		nBufferCount;
 	int		nBuffer;
+	int		nType;
 	int		nWidth;
 	int		nHeight;
 	int		bActive;
@@ -35,7 +36,7 @@ class CFBO {
 
 		void Init (void);
 
-		int Create (int nWidth, int nHeight, int nColorBuffers = 1);
+		int Create (int nWidth, int nHeight, int nType = 1, int nColorBuffers = 1);
 
 		void Destroy (void);
 
