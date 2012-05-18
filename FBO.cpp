@@ -184,8 +184,11 @@ void CFBO::Draw (CRect viewport)
 	float uMax = float (viewport.Width ()) / float (m_info.nWidth);
 	float vMax = float (viewport.Height ()) / float (m_info.nHeight);
 	float texCoord [4][2] = {{0.0, 0.0}, {0.0, vMax}, {uMax, vMax}, {uMax, 0.0}};
+#ifdef _DEBUG
 	float vertices [4][2] = {{0.25f, 0.25f}, {0.25f, 0.75f}, {0.75f, 0.75f}, {0.75f, 0.25f}};
-
+#else
+	float vertices [4][2] = {{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}};
+#endif
 
 glMatrixMode (GL_PROJECTION);
 glLoadIdentity ();//clear matrix
