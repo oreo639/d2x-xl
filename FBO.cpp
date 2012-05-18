@@ -203,7 +203,13 @@ void CFBO::Draw (CRect viewport)
 	float texCoord [4][2] = {{0.0, 0.0}, {0.0, vMax}, {uMax, vMax}, {uMax, 0.0}};
 	float vertices [4][2] = {{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}};
 
-glColor3f (1.0f, 1.0f, 1.0f);
+
+glMatrixMode (GL_PROJECTION);
+glLoadIdentity ();//clear matrix
+glOrtho (0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+glMatrixMode (GL_MODELVIEW);
+glLoadIdentity ();//clear matrix
+
 glEnable (GL_TEXTURE_2D);
 glActiveTexture (GL_TEXTURE0);
 glClientActiveTexture (GL_TEXTURE0);
@@ -211,8 +217,16 @@ glEnableClientState (GL_TEXTURE_COORD_ARRAY);
 glEnableClientState (GL_VERTEX_ARRAY);
 glTexCoordPointer (2, GL_FLOAT, 0, texCoord);
 glVertexPointer (2, GL_FLOAT, 0, vertices);
+#if 0
+glDisable (GL_TEXTURE_2D);
+glColor3f (0.0f, 0.5f, 1.0f);
+#else
 glBindTexture (GL_TEXTURE_2D, m_info.hColorBuffers [0]);
+glColor3f (1.0f, 1.0f, 1.0f);
+#endif
+glDepthFunc (GL_ALWAYS);
 glDrawArrays (GL_QUADS, 0, 4);
+glDepthFunc (GL_LESS);
 glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 glDisableClientState (GL_VERTEX_ARRAY);
 }
