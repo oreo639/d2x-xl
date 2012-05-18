@@ -422,8 +422,6 @@ m_renderBuffers.Enable ();
 
 void CRendererGL::EndRender (bool bSwapBuffers)
 {
-m_renderBuffers.Disable ();
-m_renderBuffers.Draw (Viewport ());
 for (int i = 0; i < 3; i++) {
 	glActiveTexture (GL_TEXTURE0 + i);
 	glClientActiveTexture (GL_TEXTURE0 + i);
@@ -434,8 +432,11 @@ for (int i = 0; i < 3; i++) {
 	}
 shaderManager.Deploy (-1);
 glDisable (GL_DEPTH_TEST);
-if (bSwapBuffers)
+if (bSwapBuffers) {
+	m_renderBuffers.Disable ();
+	m_renderBuffers.Draw (Viewport ());
 	SwapBuffers (m_glHDC);
+	}
 }
 
 //------------------------------------------------------------------------------

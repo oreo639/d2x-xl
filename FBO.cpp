@@ -4,6 +4,7 @@
 #include "mine.h"
 #include "dle-xp.h"
 #include "glew.h"
+#include "textures.h"
 #include "RenderBuffers.h"
 #include "FBO.h"
 
@@ -48,19 +49,46 @@ else if (nBuffers > nMaxBuffers)
 m_info.nColorBuffers = 
 m_info.nBufferCount = nBuffers;
 m_info.nFirstBuffer = 0;
-
+int j;
+glGetError ();
 glGenTextures (nBuffers, m_info.hColorBuffers);
+	j = glGetError (); 
+	if (j)
+		return 0;
+glEnable (GL_TEXTURE_2D);
+glActiveTexture (GL_TEXTURE0);
 for (int i = 0; i < nBuffers; i++) {
-	glBindTexture (GL_TEXTURE0, m_info.hColorBuffers [i]);
+	glBindTexture (GL_TEXTURE_2D, m_info.hColorBuffers [i]);
+	j = glGetError (); 
+	if (j)
+		return 0;
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	j = glGetError (); 
+	if (j)
+		return 0;
 	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); 
+	j = glGetError (); 
+	if (j)
+		return 0;
 	glTexParameteri (GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+	j = glGetError (); 
+	if (j)
+		return 0;
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, m_info.nWidth, m_info.nHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	j = glGetError (); 
+	if (j)
+		return 0;
 	glGenerateMipmapEXT (GL_TEXTURE_2D);
+	j = glGetError (); 
+	if (j)
+		return 0;
 	m_info.bufferIds [i] = GL_COLOR_ATTACHMENT0_EXT + i;
+	j = glGetError (); 
+	if (j)
+		return 0;
 	}
 return glGetError () ? 0 : 1;
 }
@@ -122,10 +150,8 @@ else {
 int CFBO::Create (int nWidth, int nHeight, int nType, int nColorBuffers)
 {
 Destroy ();
-if (nWidth > 0)
-	m_info.nWidth = nWidth;
-if (nHeight > 0)
-	m_info.nHeight = nHeight;
+m_info.nWidth = Pow2ize (nWidth);
+m_info.nHeight = Pow2ize (nHeight);
 
 m_info.nType = nType;
 m_info.hDepthBuffer = 0;
@@ -170,15 +196,11 @@ if (m_info.hFBO) {
 
 int CFBO::Enable (int nColorBuffers)
 {
-if (!m_info.bActive) {
-	if (Available () <= 0)
-		return 0;
-	if (m_info.nType == 3) {
-		glDrawBuffer (GL_NONE);
-		glReadBuffer (GL_NONE);
-		}
-	glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_info.hFBO);
-	}
+if (m_info.bActive)
+	return 1;
+if (Available () <= 0)
+	return 0;
+glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_info.hFBO);
 SelectColorBuffers (nColorBuffers);
 return m_info.bActive = 1;
 }
@@ -216,13 +238,15 @@ void CFBO::Draw (CRect viewport)
 glColor3f (1.0f, 1.0f, 1.0f);
 glEnable (GL_TEXTURE_2D);
 glActiveTexture (GL_TEXTURE0);
-glBindTexture (GL_TEXTURE0, m_info.hColorBuffers [0]);
+glBindTexture (GL_TEXTURE_2D, m_info.hColorBuffers [0]);
+glDepthFunc (GL_ALWAYS);
 glBegin (GL_QUADS);
 for (int i = 0; i < 4; i++) {
 	glTexCoord2dv ((GLdouble*) &texCoord [i]);
 	glVertex2fv ((GLfloat*) &vertices [i]);
 	}
 glEnd ();
+glDepthFunc (GL_LESS);
 }
 
 //------------------------------------------------------------------------------
