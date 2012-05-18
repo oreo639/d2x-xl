@@ -227,6 +227,7 @@ glDisableClientState (GL_VERTEX_ARRAY);
 
 bool CFBO::Setup (void)
 {
+#ifdef _DEBUG
 if (!(glDrawBuffers = (PFNGLDRAWBUFFERSPROC) wglGetProcAddress ("glDrawBuffers")))
 	return false; //PrintLog (0, "glDrawBuffers not supported by the OpenGL driver\n");
 else if (!(glBindRenderbufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC) wglGetProcAddress ("glBindRenderbufferEXT")))
@@ -264,6 +265,7 @@ else if (!(glGetFramebufferAttachmentParameterivEXT = (PFNGLGETFRAMEBUFFERATTACH
 else if (!(glGenerateMipmapEXT = (PFNGLGENERATEMIPMAPEXTPROC) wglGetProcAddress ("glGenerateMipmapEXT")))
 	return false; //PrintLog (0, "glGenerateMipmapEXT not supported by the OpenGL driver\n");
 else
+#endif
 	return true; //PrintLog (-1);
 }
 
