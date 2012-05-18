@@ -155,7 +155,7 @@ if (!(PixelFormat = ChoosePixelFormat (m_glHDC, &pfd))) {
 	ErrorMsg (message);
 	return FALSE;
 	}
-if(!SetPixelFormat (m_glHDC, PixelFormat, &pfd)) {
+if (!SetPixelFormat (m_glHDC, PixelFormat, &pfd)) {
 		DestroyContext();
 		sprintf_s (message, sizeof (message), "OpenGL: Can't set the pixel format (%d).", GetLastError ());
 		ErrorMsg (message);
@@ -168,7 +168,7 @@ if (!(m_glRC = wglCreateContext (m_glHDC))) {
 	return FALSE;
 	}
 
-if(!wglMakeCurrent (m_glHDC, m_glRC)) {
+if (!wglMakeCurrent (m_glHDC, m_glRC)) {
 	DestroyContext ();
 	sprintf_s (message, sizeof (message), "OpenGL: Can't activate the rendering context (%d).", GetLastError ());
 	ErrorMsg (message);

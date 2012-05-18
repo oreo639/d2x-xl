@@ -60,9 +60,7 @@ for (int i = 0; i < nBuffers; i++) {
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); 
 	glTexParameteri (GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-	glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA8, m_info.nWidth, m_info.nHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	//glGenerateMipmapEXT (GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+	glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, m_info.nWidth, m_info.nHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	m_info.bufferIds [i] = GL_COLOR_ATTACHMENT0_EXT + i;
 	}
 return glGetError () ? 0 : 1;
