@@ -46,17 +46,6 @@ if (m_segmentInfo.Restore (fp)) {
 #endif
 		m_segments [i].ReadExtras (fp, true);
 		}
-
-	if (DLE.IsStdLevel ()) {
-		int nProducers [2] = {0, 0};
-
-		for (i = 0; i < Count (); i++) {
-			if (m_segments [i].m_info.function == SEGMENT_FUNC_ROBOTMAKER)
-				m_segments [i].m_info.nProducer = nProducers [0]++;
-			else if (m_segments [i].m_info.function == SEGMENT_FUNC_EQUIPMAKER)
-				m_segments [i].m_info.nProducer = nProducers [1]++;
-			}
-		}
 	}
 }
 
