@@ -43,11 +43,7 @@ const char *texMergeFS [SHADER_COUNT] = {
 	,
 	"uniform sampler2D baseTex;\r\n" \
 	"uniform vec3 sideKey;\r\n" \
-	"uniform vec3 superTransp;\r\n" \
-	"vec4 texColor;\r\n" \
-	"void main(void)" \
-	"{decalColor=texture2D(decalTex,gl_TexCoord [1].xy);\r\n" \
-	"if((abs(decalColor.r-superTransp.r)<2.0/255.0)&&(abs(decalColor.g-superTransp.g)<2.0/255.0)&&(abs(decalColor.b-superTransp.b)<2.0/255.0))discard;\r\n" \
+	"void main(void){" \
 	"gl_FragData[0]=texture2D(baseTex,gl_TexCoord [0].xy)*glColor;\r\n" \
 	"gl_FragData[1]=vec4 (sideKey, 1.0);\r\n" \
    "}"
