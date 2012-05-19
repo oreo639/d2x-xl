@@ -123,7 +123,7 @@ RefreshObject(i, nClosestObj);
 
 short CMineView::FindVisibleSelectedSide (long xMouse, long yMouse, short& nSide)
 {
-if (!Perspective () || !m_bSelectTexturedSides || ((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
+if (!m_bSelectTexturedSides || ((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
 	return -1;
 
 short nSegment;
@@ -265,22 +265,22 @@ bool CMineView::SelectCurrentSide (long xMouse, long yMouse, int bAdd)
 if (bAdd < 0)
 	vertexManager.UnmarkAll ();
 	
+short nSide, nSegment = FindVisibleSelectedSide (xMouse, yMouse, nSide);
+
+if (0 <= nSegment) {
+	current->Setup (nSegment, nSide);
+	if (Perspective () && bAdd)
+		current->Segment ()->MarkVertices (MARKED_MASK, nSide);
+	if (Perspective () && bAdd)
+		current->Segment ()->MarkVertices (MARKED_MASK, nSide);
+	if (bAdd)
+		current->Segment ()->MarkVertices (MARKED_MASK, nSide);
+	DLE.ToolView ()->Refresh ();
+	Refresh ();
+	return true;
+	}
+
 if (Perspective ()) {
-	short nSide, nSegment = FindVisibleSelectedSide (xMouse, yMouse, nSide);
-
-	if (0 <= nSegment) {
-		current->Setup (nSegment, nSide);
-		if (Perspective () && bAdd)
-			current->Segment ()->MarkVertices (MARKED_MASK, nSide);
-		if (Perspective () && bAdd)
-			current->Segment ()->MarkVertices (MARKED_MASK, nSide);
-		if (bAdd)
-			current->Segment ()->MarkVertices (MARKED_MASK, nSide);
-		DLE.ToolView ()->Refresh ();
-		Refresh ();
-		return true;
-		}
-
 		int xMax = ViewWidth (), yMax = ViewHeight ();
 		CDoubleVector clickPos (m_clickPos.x, m_clickPos.y, 0.0);
 		CDoubleVector triangle [3];
