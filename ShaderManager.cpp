@@ -126,6 +126,7 @@ else {
 glGetObjectParameterivARB (GLuint (int (handle)), GL_OBJECT_INFO_LOG_LENGTH_ARB, &nLogLen);
 if ((nLogLen > 0) && (infoLog = new char [nLogLen])) {
 	glGetInfoLogARB (GLuint (int (handle)), nLogLen, &charsWritten, infoLog);
+	ErrorMsg (infoLog);
 #if HAVE_PRINTLOG
 	if (*infoLog) {
 		::PrintLog (1);

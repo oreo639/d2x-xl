@@ -44,7 +44,7 @@ const char *texMergeFS [SHADER_COUNT] = {
 	"uniform sampler2D baseTex;\r\n" \
 	"uniform vec3 sideKey;\r\n" \
 	"void main(void){" \
-	"gl_FragData[0]=texture2D(baseTex,gl_TexCoord [0].xy)*glColor;\r\n" \
+	"gl_FragData[0]=texture2D(baseTex,gl_TexCoord [0].xy)*gl_Color;\r\n" \
 	"gl_FragData[1]=vec4 (sideKey, 1.0);\r\n" \
    "}"
 	,
@@ -132,7 +132,7 @@ else if (nType == 2) {
 if (nType != 1) 
 	shaderManager.Set ("superTransp", *((vec3*) paletteManager.SuperTranspKeyf ()));
 if (fle) {
-	vec3 sideKey = {float (fle->m_nSegment / 256) / 255.0f, float (fle->m_nSegment % 256) / 255.0f, float (fle->m_nSide + 1)};
+	vec3 sideKey = {float (fle->m_nSegment / 256) / 255.0f, float (fle->m_nSegment % 256) / 255.0f, float (fle->m_nSide + 1) / 255.0};
 	shaderManager.Set ("sideKey", sideKey);
 	}
 return tmShaderProgs [nType];

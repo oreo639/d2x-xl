@@ -949,10 +949,10 @@ if (!m_bRenderSideKeys)
 if (!m_bHaveSideKeys) {
 	m_renderBuffers.Enable (-1);
 	glReadBuffer (m_renderBuffers.ColorBufferId (1));
-	glReadPixels (0, 0, Viewport ().Width (), Viewport ().Height (), GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*) m_sideKeys);
+	glReadPixels (0, 0, ViewWidth (), ViewHeight (), GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*) m_sideKeys);
 	m_bHaveSideKeys = true;
 	}
-rgbColor& sideKey = m_sideKeys [y * Viewport ().Width () + x];
+rgbColor& sideKey = m_sideKeys [y * ViewWidth () + x];
 if (sideKey.b == 0)
 	return 0;
 nSegment = short (sideKey.r) * 256 + sideKey.g;
