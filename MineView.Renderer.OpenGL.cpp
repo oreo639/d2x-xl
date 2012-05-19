@@ -579,7 +579,7 @@ else {
 	}
 
 #if 1
-textureManager.DeployShader (bArrow ? nTextures + bArrow : nTextures - 1, fle);
+textureManager.DeployShader ((bArrow ? nTextures + bArrow : nTextures - 1), m_bRenderSideKeys ? &fle : null);
 #else
 if (nTextures + bArrow > 1)
 	textureManager.DeployShader (bArrow ? nTextures : 0);
@@ -599,8 +599,9 @@ glDrawArrays ((nVertices == 3) ? GL_TRIANGLES : GL_TRIANGLE_FAN, 0, GLsizei (nVe
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::RenderFaces (CFaceListEntry* faceRenderList, int faceCount)
+void CRendererGL::RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys)
 {
+m_bRenderSideKeys = bRenderSideKeys;
 BeginRender ();
 for (int nFace = faceCount - 1; nFace >= 0; nFace--)
 	if (!faceRenderList [nFace].m_bTransparent)

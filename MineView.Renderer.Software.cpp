@@ -641,7 +641,7 @@ RenderFace (fle, texP [0], (ViewWidth () + 3) & ~3, colorP);
 
 //------------------------------------------------------------------------------
 
-void CRendererSW::RenderFaces (CFaceListEntry* faceRenderList, int faceCount)
+void CRendererSW::RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys)
 {
 BeginRender ();
 if (DepthTest ()) {

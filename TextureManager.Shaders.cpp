@@ -6,9 +6,41 @@
 
 //------------------------------------------------------------------------------
 
-int tmShaderProgs [4] = {-1, -1, -1, -1};
+#define SHADER_COUNT 7
 
-const char *texMergeFS [4] = {
+int tmShaderProgs [SHADER_COUNT] = {-1, -1, -1,-1, -1, -1, -1};
+
+const char *texMergeFS [SHADER_COUNT] = {
+	"uniform sampler2D baseTex, decalTex;\r\n" \
+	"uniform vec3 superTransp;\r\n" \
+	"vec4 decalColor, texColor;\r\n" \
+	"void main(void)" \
+	"{decalColor=texture2D(decalTex,gl_TexCoord [1].xy);\r\n" \
+	"if((abs(decalColor.r-superTransp.r)<2.0/255.0)&&(abs(decalColor.g-superTransp.g)<2.0/255.0)&&(abs(decalColor.b-superTransp.b)<2.0/255.0))discard;\r\n" \
+	"texColor=texture2D(baseTex,gl_TexCoord [0].xy);\r\n" \
+	"gl_FragColor=vec4(vec3(mix(texColor,decalColor,decalColor.a)),min(1.0,texColor.a+decalColor.a))*gl_Color;\r\n" \
+   "}"
+	,
+	"uniform sampler2D baseTex, arrowTex;\r\n" \
+	"vec4 texColor, arrowColor;\r\n" \
+	"void main(void)" \
+	"{texColor=texture2D(baseTex,gl_TexCoord [0].xy);\r\n" \
+	"arrowColor=texture2D(arrowTex,gl_TexCoord [1].xy);\r\n" \
+	"gl_FragColor=mix(texColor,arrowColor,arrowColor.a*0.8)*gl_Color;\r\n" \
+   "}"
+	,
+	"uniform sampler2D baseTex, decalTex, arrowTex;\r\n" \
+	"uniform vec3 sideKey;\r\n" \
+	"uniform vec3 superTransp;\r\n" \
+	"vec4 decalColor, texColor, arrowColor;\r\n" \
+	"void main(void)" \
+	"{decalColor=texture2D(decalTex,gl_TexCoord [1].xy);\r\n" \
+	"if((abs(decalColor.r-superTransp.r)<2.0/255.0)&&(abs(decalColor.g-superTransp.g)<2.0/255.0)&&(abs(decalColor.b-superTransp.b)<2.0/255.0))discard;\r\n" \
+	"texColor=texture2D(baseTex,gl_TexCoord [0].xy);\r\n" \
+	"arrowColor=texture2D(arrowTex,gl_TexCoord [2].xy);\r\n" \
+	"gl_FragColor=mix(vec4(vec3(mix(texColor,decalColor,decalColor.a)),texColor.a+decalColor.a),arrowColor,arrowColor.a*0.8)*gl_Color;\r\n" \
+   "}"
+	,
 	"uniform sampler2D baseTex;\r\n" \
 	"uniform vec3 sideKey;\r\n" \
 	"uniform vec3 superTransp;\r\n" \
@@ -71,7 +103,7 @@ int CTextureManager::InitShaders (void)
 {
 	int nShaders = 0;
 
-for (int i = 0; i < 3; i++) {
+for (int i = 0; i < SHADER_COUNT; i++) {
 	if (shaderManager.Build (tmShaderProgs [i], texMergeFS [i], texMergeVS)) 
 		nShaders |= 1 << i;
 	else
@@ -82,8 +114,10 @@ return nShaders;
 
 //------------------------------------------------------------------------------
 
-int CTextureManager::DeployShader (int nType, CFaceListEntry& fle)
+int CTextureManager::DeployShader (int nType, CFaceListEntry* fle)
 {
+if (fle)
+	nType += 3;
 if (tmShaderProgs [nType] < 0)
 	return -1;
 GLhandleARB shaderProg = GLhandleARB (shaderManager.Deploy (tmShaderProgs [nType]));
@@ -101,8 +135,10 @@ else if (nType == 2) {
 	}
 if (nType != 1) 
 	shaderManager.Set ("superTransp", *((vec3*) paletteManager.SuperTranspKeyf ()));
-vec3 sideKey = {float (fle.m_nSegment / 256) / 255.0f, float (fle.m_nSegment % 256) / 255.0f, float (fle.m_nSide)};
-shaderManager.Set ("sideKey", sideKey);
+if (fle) {
+	vec3 sideKey = {float (fle->m_nSegment / 256) / 255.0f, float (fle->m_nSegment % 256) / 255.0f, float (fle->m_nSide + 1)};
+	shaderManager.Set ("sideKey", sideKey);
+	}
 return tmShaderProgs [nType];
 }
 

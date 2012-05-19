@@ -219,7 +219,7 @@ class CRenderer {
 		virtual void SetCenter (CVertex v, int nType) = 0; 
 		virtual void Pan (char direction, double offset) = 0; 
 		virtual void Reset (void);
-		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount) = 0;
+		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys) = 0;
 		virtual void FitToView (void) = 0;
 		virtual bool CanFitToView (void) = 0;
 
@@ -313,7 +313,7 @@ class CRendererSW : public CRenderer {
 		virtual CBrush* SelectObject (CBrush* brush) { return m_pDC->SelectObject (brush); }
 		virtual HGDIOBJ SelectObject (HGDIOBJ object) { return m_pDC->SelectObject (object); }
 
-		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount);
+		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys);
 		void RenderFace (CFaceListEntry& fle, CTexture* texP, ushort rowOffset, CBGRA* colorP = null);
 
 		virtual int Type (void) { return 0; }
@@ -353,7 +353,8 @@ class CRendererGL : public CRenderer {
 		CViewMatrixGL	m_viewMatrix;
 		CDoubleVector	m_vZoom;
 		CFBO				m_renderBuffers;
-
+		int				m_bRenderSideKeys;
+		
 	public:
 		CRendererGL (CRenderData& renderData);
 
@@ -396,7 +397,7 @@ class CRendererGL : public CRenderer {
 		virtual CBrush* SelectObject (CBrush* brush) { return brush; }
 		virtual HGDIOBJ SelectObject (HGDIOBJ object) { return object; }
 
-		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount);
+		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys);
 		void RenderFace (CFaceListEntry& fle, CTexture* texP [], CBGRA* colorP = null);
 		void ComputeZoom (void);
 
