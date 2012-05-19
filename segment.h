@@ -127,8 +127,8 @@ typedef struct tSegment {
 	int		staticLight;		// average static light in segment 
 	ushort	vertexIds [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
 	short		damage [2];
-	short		nProducer;				// which center segment is associated with, high bit set 
-	short		value;				// matcens: bitmask of producable robots, PRODUCERters: energy given? --MK, 3/15/95 
+	short		nProducer;			// which object producer the segment is associated with
+	short		value;				// index of producer the segment is associated with
 	short		mapBitmask;			// which lines are drawn when displaying wireframe 
 	ubyte		function;			// general function (robot maker, energy center, ... - mutually exclusive)
 	ubyte		props;				// special property of a segment (such as damaging, trigger, etc.)

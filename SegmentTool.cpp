@@ -773,8 +773,6 @@ return j;
 }
 
 //------------------------------------------------------------------------
-// 
-//------------------------------------------------------------------------
 
 void CSegmentTool::AddObjectToRobotMaker ()
 {
@@ -795,8 +793,6 @@ LBUsedBots ()->SetItemData (h, i);
 DLE.MineView ()->Refresh ();
 }
 
-//------------------------------------------------------------------------
-// 
 //------------------------------------------------------------------------
 
 void CSegmentTool::AddObjectToEquipMaker ()
@@ -819,8 +815,6 @@ DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CSegmentTool - AddMsg
-//------------------------------------------------------------------------
 
 void CSegmentTool::OnAddObjectToProducerter ()
 {
@@ -832,8 +826,6 @@ else if (IsEquipMaker (segP))
 	AddObjectToEquipMaker ();
 }
 
-//------------------------------------------------------------------------
-// CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
 void CSegmentTool::DeleteObjectFromRobotMaker () 
@@ -856,8 +848,6 @@ DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CSegmentTool - DelMsg
-//------------------------------------------------------------------------
 
 void CSegmentTool::DeleteObjectFromEquipMaker () 
 {
@@ -879,8 +869,6 @@ DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CSegmentTool - DelMsg
-//------------------------------------------------------------------------
 
 void CSegmentTool::OnDeleteObjectFromProducerter () 
 {
@@ -893,16 +881,12 @@ else if (IsEquipMaker (segP))
 }
 
 //------------------------------------------------------------------------
-// CSegmentTool - OtherSegmentMsg
-//------------------------------------------------------------------------
 
 void CSegmentTool::OnOtherSegment () 
 {
 DLE.MineView ()->SelectOtherSegment ();
 }
 
-//------------------------------------------------------------------------
-// CSegmentTool - SegmentButtonMsg
 //------------------------------------------------------------------------
 
 void CSegmentTool::OnWallDetails () 
@@ -920,8 +904,6 @@ DLE.ToolView ()->EditWall ();
 DLE.MineView ()->Refresh ();
 }
 
-//------------------------------------------------------------------------
-// CSegmentTool - TriggerButtonMsg
 //------------------------------------------------------------------------
 
 void CSegmentTool::OnTriggerDetails ()
