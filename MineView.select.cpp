@@ -126,6 +126,13 @@ short CMineView::FindVisibleSelectedSide (long xMouse, long yMouse, short& nSide
 if (!Perspective () || !m_bSelectTexturedSides || ((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
 	return -1;
 
+short nSegment;
+int nResult = Renderer ().GetSideKey (xMouse, yMouse, nSegment, nSide);
+if (nResult == 1)
+	return nSegment;
+if (nResult == 0)
+	return -1;
+
 CVertex p1, p2;
 p2.m_proj.v.x = xMouse;
 p2.m_proj.v.y = yMouse;

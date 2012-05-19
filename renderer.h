@@ -251,6 +251,7 @@ class CRenderer {
 		virtual int Type (void) = 0;
 		virtual bool SetPerspective (int nPerspective) = 0;
 		virtual int Perspective (void) = 0;
+		virtual int GetSideKey (int x, int y, short& nSegment, short& nSide) = 0;
 
 		virtual bool Ortho (void) { return m_bOrtho; }
 
@@ -319,6 +320,7 @@ class CRendererSW : public CRenderer {
 		virtual int Type (void) { return 0; }
 		virtual bool SetPerspective (int nPerspective) { return false; }
 		virtual int Perspective (void) { return 0; }
+		virtual int GetSideKey (int x, int y, short& nSegment, short& nSide) { return -1; }
 
 		inline HBITMAP DIB (void) { return m_DIB; }
 
@@ -421,7 +423,7 @@ class CRendererGL : public CRenderer {
 			}
 		virtual int Perspective (void) { return m_viewMatrix.Perspective (); }
 
-		bool GetSideKey (int x, int y, short& nSegment, short& nSide);
+		virtual int GetSideKey (int x, int y, short& nSegment, short& nSide);
 	};
 
 // -----------------------------------------------------------------------------

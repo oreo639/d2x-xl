@@ -942,10 +942,10 @@ else {
 
 //------------------------------------------------------------------------------
 
-bool CRendererGL::GetSideKey (int x, int y, short& nSegment, short& nSide)
+int CRendererGL::GetSideKey (int x, int y, short& nSegment, short& nSide)
 {
 if (!m_bRenderSideKeys)
-	return false;
+	return -1;
 if (!m_bHaveSideKeys) {
 	m_renderBuffers.Enable (-1);
 	glReadBuffer (m_renderBuffers.ColorBufferId (1));
@@ -954,10 +954,10 @@ if (!m_bHaveSideKeys) {
 	}
 rgbColor& sideKey = m_sideKeys [y * m_renderBuffers.GetWidth () + x];
 if (sideKey.b == 0)
-	return false;
+	return 0;
 nSegment = short (sideKey.r) * 256 + sideKey.g;
 nSide = sideKey.b - 1;
-return true;
+return 1;
 }
 
 //------------------------------------------------------------------------------
