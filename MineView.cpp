@@ -1024,7 +1024,7 @@ m_releaseState = nFlags;
 if (m_mouseState == eMouseStateButtonDown) {
 	if (m_clickState & MK_CONTROL)
 		ZoomOut ();
-	else if (!Perspective () || (theMine->SelectMode () == eSelectObject)) {
+	else if (!Perspective () && !(m_clickState & MK_SHIFT)) {
 		SetMouseState (eMouseStateIdle);
 		SelectCurrentObject (m_clickPos.x, m_clickPos.y);
 		}
