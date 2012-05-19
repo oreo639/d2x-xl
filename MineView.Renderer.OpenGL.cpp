@@ -45,6 +45,17 @@ CRendererGL::CRendererGL (CRenderData& renderData) : CRenderer (renderData), m_x
 {
 m_glRC = null;
 m_glDC = null;
+m_sideKeys = null;
+}
+
+// -----------------------------------------------------------------------------
+
+CRendererGL::~CRendererGL ()
+{
+if (m_sideKeys) {
+	delete m_sideKeys;
+	m_sideKeys = null;
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -95,16 +106,16 @@ m_renderBuffers.Disable ();
 GLvoid CRendererGL::DestroyContext (void)
 {
 if (m_glRC)	{
-	if (!wglMakeCurrent (NULL,NULL))
+	if (!wglMakeCurrent (null, null))
 		ErrorMsg ("OpenGL: Release of DC and RC failed.");
 	if (!wglDeleteContext(m_glRC))
 		ErrorMsg ("OpenGL: Release of rendering context failed.");
-		m_glRC = NULL;
+		m_glRC = null;
 	}
 if (m_glDC && !::ReleaseDC (m_pParent->m_hWnd, m_glHDC))	 {
 	//ErrorMsg ("OpenGL: Release of device context failed.")
 		;
-	m_glDC = NULL;	
+	m_glDC = null;	
 	}
 #if 0
 if (!UnregisterClass ("OpenGL",AfxGetInstance ())) {
@@ -176,8 +187,10 @@ if (!wglMakeCurrent (m_glHDC, m_glRC)) {
 glewInit (); // must happen after OpenGL context creation!
 shaderManager.Setup ();
 textureManager.InitShaders ();
-if (CFBO::Setup ())
+if (CFBO::Setup ()) {
 	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 1, 2);
+	m_sideKeys = new rgbColor [GetSystemMetrics (SM_CXSCREEN) * GetSystemMetrics (SM_CYSCREEN)];
+	}
 
 return TRUE;
 }
@@ -419,7 +432,7 @@ void CRendererGL::BeginRender (bool bOrtho)
 {
 SetupProjection (bOrtho);
 #ifdef _DEBUG
-m_renderBuffers.Enable (-1);
+m_renderBuffers.Enable (0);
 #endif
 }
 
@@ -601,8 +614,9 @@ glDrawArrays ((nVertices == 3) ? GL_TRIANGLES : GL_TRIANGLE_FAN, 0, GLsizei (nVe
 
 void CRendererGL::RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys)
 {
-m_bRenderSideKeys = bRenderSideKeys;
 BeginRender ();
+if ((m_bRenderSideKeys = bRenderSideKeys))
+	m_renderBuffers.SelectColorBuffers (-1);
 for (int nFace = faceCount - 1; nFace >= 0; nFace--)
 	if (!faceRenderList [nFace].m_bTransparent)
  		DrawFaceTextured (faceRenderList [nFace]);
@@ -610,6 +624,9 @@ for (int nFace = 0; nFace < faceCount; nFace++)
 	if (faceRenderList [nFace].m_bTransparent)
  		DrawFaceTextured (faceRenderList [nFace]);
 EndRender ();
+if (m_bRenderSideKeys = bRenderSideKeys)
+	m_renderBuffers.SelectColorBuffers (0);
+m_bHaveSideKeys = false;
 }
 
 // -----------------------------------------------------------------------------
@@ -921,6 +938,26 @@ else {
 	points [32] = points [0];
 	PolyLine (points, 33);
 	}
+}
+
+//------------------------------------------------------------------------------
+
+bool CRendererGL::GetSideKey (int x, int y, short& nSegment, short& nSide)
+{
+if (!m_bRenderSideKeys)
+	return false;
+if (!m_bHaveSideKeys) {
+	m_renderBuffers.Enable (-1);
+	glReadBuffer (m_renderBuffers.ColorBufferId (1));
+	glReadPixels (0, 0, m_renderBuffers.GetWidth (), m_renderBuffers.GetHeight (), GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*) m_sideKeys);
+	m_bHaveSideKeys = true;
+	}
+rgbColor& sideKey = m_sideKeys [y * m_renderBuffers.GetWidth () + x];
+if (sideKey.b == 0)
+	return false;
+nSegment = short (sideKey.r) * 256 + sideKey.g;
+nSide = sideKey.b - 1;
+return true;
 }
 
 //------------------------------------------------------------------------------

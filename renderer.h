@@ -354,9 +354,12 @@ class CRendererGL : public CRenderer {
 		CDoubleVector	m_vZoom;
 		CFBO				m_renderBuffers;
 		int				m_bRenderSideKeys;
+		rgbColor*		m_sideKeys;
+		bool				m_bHaveSideKeys;
 		
 	public:
 		CRendererGL (CRenderData& renderData);
+		~CRendererGL ();
 
 		virtual int Setup (CWnd* pParent, CDC* pDC);
 		virtual void Release (void) {};
@@ -417,7 +420,9 @@ class CRendererGL : public CRenderer {
 			return true;
 			}
 		virtual int Perspective (void) { return m_viewMatrix.Perspective (); }
-};
+
+		bool GetSideKey (int x, int y, short& nSegment, short& nSide);
+	};
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
