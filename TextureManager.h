@@ -120,6 +120,8 @@ class CTextureManager {
 				return null;
 			if (nTexture < 0)
 				return &m_textures [1][-nTexture - 1]; 
+			else if (nTexture > MaxTextures (nVersion))
+				nTexture = 0;
 			return &m_textures [nVersion][m_index [nVersion][nTexture] - 1];
 			}
 
