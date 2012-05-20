@@ -587,6 +587,10 @@ else {
 		}
 	}
 
+#ifdef _DEBUG
+if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide)))
+	nDbgSeg = nDbgSeg;
+#endif
 #if 1
 textureManager.DeployShader ((bArrow ? nTextures + bArrow : nTextures - 1), m_bRenderSideKeys ? &fle : null);
 #else
