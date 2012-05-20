@@ -224,32 +224,22 @@ return -1;
 
 //--------------------------------------------------------------------------
 
-bool CMineView::SelectCurrentSegment (short direction, long xMouse, long yMouse, int bAdd) 
+bool CMineView::SelectCurrentSide (long xMouse, long yMouse, int bAdd) 
 {
-	CRect	viewport;
-	short nCurSeg, nNextSeg, nCurSide;
-
 if (bAdd < 0)
 	vertexManager.UnmarkAll ();
-if (0 <= (nNextSeg = FindVisibleSelectedSide (xMouse, yMouse, nCurSide))) {
-	current->m_nSegment = nNextSeg;
-	current->m_nSide = nCurSide;
+
+	short nSide, nSegment = FindVisibleSelectedSide (xMouse, yMouse, nSide);
+
+if (0 <= nSegment) 
+	current->Setup (nSegment, nSide);
+else if (m_nearestSegment && m_nearestSide) {
+	current->m_nSegment = segmentManager.Index (m_nearestSegment);
+	current->m_nSide = m_nearestSegment->SideIndex (m_nearestSide);
 	}
-else {
-	GetClientRect (viewport);
-	nCurSeg = nNextSeg = current->m_nSegment;
-	do {
-		Wrap (nNextSeg, direction, 0, segmentManager.Count () - 1); // point to next segment
-		if (0 <= (nCurSide = SegmentIsSelected (segmentManager.Segment (nNextSeg), viewport, xMouse, yMouse)))
-			break;
-		}
-	while (nNextSeg != nCurSeg);
-	if (nCurSide < 0)
-		return false;
-	current->m_nSegment = nNextSeg;
-	current->m_nSide = nCurSide;
-	}
-if (bAdd)
+else
+	return false;
+if (Perspective () && bAdd)
 	current->Segment ()->MarkVertices ();
 DLE.ToolView ()->Refresh ();
 Refresh ();
@@ -258,87 +248,9 @@ return true;
 
 //--------------------------------------------------------------------------
 
-bool CMineView::SelectCurrentSide (long xMouse, long yMouse, int bAdd) 
+bool CMineView::SelectCurrentSegment (long xMouse, long yMouse, int bAdd) 
 {
-	static int nTriangleVerts [2][3] = {{0,1,2},{0,2,3}};
-
-if (bAdd < 0)
-	vertexManager.UnmarkAll ();
-	
-short nSide, nSegment = FindVisibleSelectedSide (xMouse, yMouse, nSide);
-
-if (0 <= nSegment) {
-	current->Setup (nSegment, nSide);
-	if (Perspective () && bAdd)
-		current->Segment ()->MarkVertices (MARKED_MASK, nSide);
-	if (Perspective () && bAdd)
-		current->Segment ()->MarkVertices (MARKED_MASK, nSide);
-	if (bAdd)
-		current->Segment ()->MarkVertices (MARKED_MASK, nSide);
-	DLE.ToolView ()->Refresh ();
-	Refresh ();
-	return true;
-	}
-
-if (Perspective ()) {
-		int xMax = ViewWidth (), yMax = ViewHeight ();
-		CDoubleVector clickPos (m_clickPos.x, m_clickPos.y, 0.0);
-		CDoubleVector triangle [3];
-		short nSegments = segmentManager.Count (), nStartSide = current->m_nSide + 1;
-		bool bInRange [8];
-
-	for (short nSegment = 0; nSegment < nSegments; nSegment++) {
-		CSegment* segP = segmentManager.Segment ((current->m_nSegment + nSegment) % nSegments);
-		ushort* vertexIds = segP->m_info.vertexIds;
-		short nInRange = 0;
-		for (short i = 0; i < 8; i++)
-			if ((vertexIds [i] <= MAX_VERTEX) && (bInRange [i] = vertexManager [vertexIds [i]].InRange (xMax, yMax, m_nRenderer)))
-				++nInRange;
-		if (nInRange < 3)
-			continue;
-		CSide* sideP = segP->Side (nStartSide);
-		for (short nSide = nStartSide; nSide < 6; nSide++, sideP++) {
-			for (short i = 0; i < 2; i++) {
-				short j;
-				for (j = 0; j < 3; j++) {
-					ubyte h = sideP->VertexIdIndex (nTriangleVerts [i][j]);
-					if (!bInRange [h])
-						break;
-					triangle [j] = vertexManager [vertexIds [h]].m_proj;
-					triangle [j].v.z = 0.0;
-					}
-				if (j < 3)
-					continue;
-#if 0
-				if (!PointIsInTriangle2D (clickPos, triangle))
-#else
-				if (!PointIsInTriangle2D (clickPos, triangle [0], triangle [1], triangle [2]))
-#endif
-					continue;
-				current->m_nSegment = (current->m_nSegment + nSegment) % nSegments;
-				current->m_nSide = nSide;
-				if (bAdd)
-					current->Segment ()->MarkVertices (MARKED_MASK, nSide);
-				DLE.ToolView ()->Refresh ();
-				Refresh ();
-				return true;
-				}
-			}
-		nStartSide = 0;
-		}
-	}
-else {
-	CRect rc;
-	GetClientRect (rc);
-	short nCurSide = SegmentIsSelected (current->Segment (), rc, xMouse, yMouse);
-	if (nCurSide < 0)
-		return false;
-	current->m_nSide = nCurSide;
-	current->Segment ()->MarkVertices (MARKED_MASK, nCurSide);
-	}
-DLE.ToolView ()->Refresh ();
-Refresh ();
-return true;
+return SelectCurrentSide (xMouse, yMouse, bAdd);
 }
 
 //--------------------------------------------------------------------------
@@ -452,7 +364,7 @@ switch (theMine->SelectMode ()) {
 		return SelectCurrentSide (xMouse, yMouse, bAdd);
 
 	case SEGMENT_MODE:
-		return SelectCurrentSegment (1, xMouse, yMouse, bAdd);
+		return SelectCurrentSegment (xMouse, yMouse, bAdd);
 
 	case OBJECT_MODE:
 		SelectCurrentObject (xMouse, yMouse);

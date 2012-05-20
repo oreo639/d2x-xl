@@ -298,7 +298,7 @@ public:
 		}
 
 	int FindNearestVertex (long xMouse, long yMouse);
-	bool SelectCurrentSegment (short direction, long xMouse, long yMouse, int bAdd = 0);
+	bool SelectCurrentSegment (long xMouse, long yMouse, int bAdd = 0);
 	bool SelectCurrentSide (long xMouse, long yMouse, int bAdd = 0);
 	bool SelectCurrentLine (long xMouse, long yMouse, int bAdd = 0);
 	bool SelectCurrentPoint (long xMouse, long yMouse, int bAdd = 0);
