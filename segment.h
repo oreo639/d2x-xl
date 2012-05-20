@@ -145,7 +145,6 @@ typedef struct tSegment {
 class CSegment : public CGameItem {
 public:
 	tSegment			m_info;
-	CSegment*		m_link;
 	CSide				m_sides [MAX_SIDES_PER_SEGMENT];		// 6 sides 
 	CDoubleVector	m_vCenter;
 	ubyte				m_nShape;

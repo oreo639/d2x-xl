@@ -333,6 +333,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		m_selectedSegments = segP;
 		}
 	}
+return m_selectedSegments;
 }
 
 // -----------------------------------------------------------------------------
@@ -354,20 +355,22 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		if (nSide < 0)
 			break;
 #pragma omp critical
-		{
-		if (!bSegmentSelected) {
-			bSegmentSelected = true;
-			segP->Link (m_selectedSegments);
-			m_selectedSegments = segP;
+			{
+			if (!bSegmentSelected) {
+				bSegmentSelected = true;
+				segP->Link (m_selectedSegments);
+				m_selectedSegments = segP;
+				}
+			}
+			CSide* sideP = segP->Side (nSide);
+#pragma omp critical
+			{
+			sideP->Link (m_selectedSides);
+			m_selectedSides = sideP;
 			}
 		}
-		CSide* sideP = segP->Side (nSide);
-#pragma omp critical
-		{
-		sideP->Link (m_selectedSides);
-		m_selectedSides = sideP;
-		}
 	}
+return m_selectedSides;
 }
 
 // -----------------------------------------------------------------------------
