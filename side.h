@@ -118,6 +118,10 @@ public:
 
 	short IsSelected (CRect& viewport, long xMouse, long yMouse, ushort vertexIds []);
 
+	inline void Link (CSide* sideP) { m_link = sideP; }
+
+	inline CSide* Link (void) { return m_link; }
+
 	CVertex& Vertex (ushort* vertexIds, ubyte nIndex);
 	
 private:

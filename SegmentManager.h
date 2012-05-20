@@ -57,6 +57,8 @@ class CSegmentManager {
 		robotMakerList			m_producers [2];
 		CMineItemInfo			m_producerInfo [2];
 		bool						m_bCreating;
+		CSegment*				m_selectedSegments;
+		CSide*					m_selectedSides;
 
 	public:
 		inline void ResetInfo (void) {
@@ -341,6 +343,10 @@ class CSegmentManager {
 		bool CollapseEdge (short nSegment = -1, short nSide = -1, short nEdge = -1, bool bUpdateCoord = true);
 
 		void ComputeNormals (bool bAll, bool bView = false);
+
+		CSegment* GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse);
+
+		CSide* GatherSelectedSides (CRect& viewport, long xMouse, long yMouse);
 	
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);

@@ -293,6 +293,10 @@ public:
 
 	short IsSelected (CRect& viewport, long xMouse, long yMouse, short nSide = 0);
 
+	inline void Link (CSegment* segP) { m_link = segP; }
+
+	inline CSegment* Link (void) { return m_link; }
+
 	CSegment () : CGameItem (itSegment), m_link (null) {}
 
 private:

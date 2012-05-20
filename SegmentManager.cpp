@@ -294,7 +294,7 @@ for (short nSegment = 0; 0 <= (nSegment = FindByVertex (nVertex, nSegment)); nSe
 return false;
 }
 
-//---------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CSegmentManager::ComputeNormals (bool bAll, bool bView)
 {
@@ -302,7 +302,7 @@ void CSegmentManager::ComputeNormals (bool bAll, bool bView)
 	
 #pragma omp parallel for
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
-	CSegment* segP = segmentManager.Segment (nSegment);
+	CSegment* segP = Segment (nSegment);
 	segP->ComputeCenter (bView);
 	CSide* sideP = segP->Side (0);
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
@@ -311,6 +311,61 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		if (!(bAll || sideP->IsVisible ()))
 			continue;
 		sideP->ComputeNormals (segP->m_info.vertexIds, segP->m_vCenter, bView);
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+
+CSegment* CSegmentManager::GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse)
+{
+	short nSegments = segmentManager.Count ();
+
+m_selectedSegments = null;
+	
+#pragma omp parallel for
+for (short nSegment = 0; nSegment < nSegments; nSegment++) {
+	CSegment* segP = Segment (nSegment);
+	if (segP->IsSelected (viewport, xMouse, yMouse))
+#pragma omp critical
+		{
+		segP->Link (m_selectedSegments);
+		m_selectedSegments = segP;
+		}
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+CSide* CSegmentManager::GatherSelectedSides (CRect& viewport, long xMouse, long yMouse)
+{
+	short nSegments = segmentManager.Count ();
+
+m_selectedSegments = null;
+m_selectedSides = null;
+	
+#pragma omp parallel for
+for (short nSegment = 0; nSegment < nSegments; nSegment++) {
+	CSegment* segP = Segment (nSegment);
+	bool bSegmentSelected = false;
+	short nSide = 0;
+	for (; nSide < 6; nSide++) {
+		nSide = segP->IsSelected (viewport, xMouse, yMouse, nSide);
+		if (nSide < 0)
+			break;
+#pragma omp critical
+		{
+		if (!bSegmentSelected) {
+			bSegmentSelected = true;
+			segP->Link (m_selectedSegments);
+			m_selectedSegments = segP;
+			}
+		}
+		CSide* sideP = segP->Side (nSide);
+#pragma omp critical
+		{
+		sideP->Link (m_selectedSides);
+		m_selectedSides = sideP;
 		}
 	}
 }
