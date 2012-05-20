@@ -1129,10 +1129,11 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	segP->ComputeCenter (sideP);
 	CVertex& center = sideP->Center ();
 	if (!sideP->IsVisible ()) {
-		sideP->ComputeNormals (segP->m_info.vertexIds, segP->Center (), true);
-		CVertex normal = sideP->Normal (2);
-		normal.Project (ViewMatrix ());
-		center += normal;
+		sideP->ComputeNormals (segP->m_info.vertexIds, segP->Center ());
+		CVertex normal;
+		center += sideP->Normal (2) * 2.0;
+		center.Transform (ViewMatrix ());
+		center.Project (ViewMatrix ());
 		}
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (minDist > dist) {
