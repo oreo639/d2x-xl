@@ -1135,7 +1135,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
 	short nVertices = sideP->VertexCount ();
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penGray + 1);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penOrange + 1);
 	CVertex& center = sideP->Center ();
 	for (int i = 0; i < nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
