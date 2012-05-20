@@ -438,13 +438,10 @@ mousePos.x = xMouse;
 mousePos.y = yMouse;
 mousePos.z = 0;
 
-short nSides = 6;
-short nCurSide = current->m_nSide;
-
 CVertex sideVerts [4];
 int h = VertexCount ();
 for (int j = 0; j < h; j++) {
-	sideVerts [j] = vertexManager [vertexIds [VertexIdIndex (j)]];
+	sideVerts [j] = vertexManager [vertexIds [m_vertexIdIndex [j]]];
 	sideVerts [j].m_screen.z = 0;
 	}
 for (int j = 0; j < h; j++) {
@@ -454,6 +451,7 @@ for (int j = 0; j < h; j++) {
 		sideVerts [j].m_screen.z = -1;
 	else if (sideVerts [j].m_view.v.z < 0.0)
 		sideVerts [j].m_screen.z = -1;
+	}
 if (PointIsInTriangle2D (mousePos, sideVerts [0].m_screen, sideVerts [1].m_screen, sideVerts [2].m_screen))
 	return 1;
 if ((h > 3) && PointIsInTriangle2D (mousePos, sideVerts [0].m_screen, sideVerts [2].m_screen, sideVerts [3].m_screen)) 
