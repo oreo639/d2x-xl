@@ -1103,6 +1103,8 @@ Renderer ().EndRender ();
 
 //--------------------------------------------------------------------------
 
+static inline double sqr (long v) { return double (v) * double (v); }
+
 void CMineView::DrawSelectableSides (void) 
 {
 if (!SelectMode (eSelectSide))
@@ -1116,9 +1118,15 @@ if (!segmentManager.GatherSelectedSides (viewport, m_clickPos.x, m_clickPos.y))
 
 double minDist = 1e30;
 
-CSide* nearestSide = segmentManager.SelectedSides ();
+CSide* nearestSide = null;
 
-for (; nearestSide; nearestSide = nearestSide->Link ()) {
+for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+	segmentManager.Segment (sideP->GetParent ())->ComputeCenter (sideP);
+	double dist = sqrt (sqr (m_clickPos.x - sideP->Center ().m_screen.x), sqr (m_clickPos.y - sideP->Center ().m_screen.y));
+	if (minDist > dist) {
+		minDist = dist;
+		nearestSide = sideP;
+		}
 	}
 }
 
