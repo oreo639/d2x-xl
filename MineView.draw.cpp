@@ -1107,9 +1107,6 @@ static inline double sqr (long v) { return double (v) * double (v); }
 
 void CMineView::DrawSelectableSides (void) 
 {
-m_nearestSegment = null;
-m_nearestSide = null;
-
 if (!SelectMode (eSelectSide))
 	return;
 if (m_bSelectTexturedSides && ((m_viewOption == eViewTextured) || (m_viewOption == eViewTexturedWireFrame)))
@@ -1129,7 +1126,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	segP->ComputeCenter (sideP);
 	CVertex& center = sideP->Center ();
 	if (!sideP->IsVisible ()) {
-		sideP->ComputeNormals (segP->m_info.vertexIds, segP->Center ());
+		sideP->ComputeNormals (segP->m_info.vertexIds, segP->ComputeCenter ());
 		CVertex normal;
 		center += sideP->Normal (2) * 2.0;
 		center.Transform (ViewMatrix ());
@@ -1179,9 +1176,6 @@ Renderer ().EndRender ();
 
 void CMineView::DrawSelectableSegments (void) 
 {
-m_nearestSegment = null;
-m_nearestSide = null;
-
 if (!SelectMode (eSelectSegment))
 	return;
 
@@ -1276,6 +1270,10 @@ if (ViewFlag (eViewMineWalls))
 	DrawWalls ();
 if (ViewFlag (eViewMineLights))
 	DrawLights ();
+
+m_nearestSegment = null;
+m_nearestSide = null;
+
 DrawSelectableSides ();
 DrawSelectableSegments ();
 
