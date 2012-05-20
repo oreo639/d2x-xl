@@ -452,8 +452,8 @@ else {
 			}
 		m_splitter2.RecalcLayout ();
 		m_splitter1.RecalcLayout ();
-		m_toolPaneSize.cx = CX_TOOLS_VERT;
-		m_toolPaneSize.cy = CY_TOOLS_VERT;
+		//m_toolPaneSize.cx = CX_TOOLS_VERT;
+		//m_toolPaneSize.cy = CY_TOOLS_VERT;
 		}
 	else {
 		if (bWasTracking [0]) {
@@ -472,8 +472,8 @@ else {
 		m_splitter2.SetRowInfo (1, cy, 0);
 		m_splitter2.RecalcLayout ();
 		m_splitter1.RecalcLayout ();
-		m_toolPaneSize.cx = CX_TOOLS_HORZ;
-		m_toolPaneSize.cy = CY_TOOLS_HORZ;
+		//m_toolPaneSize.cx = CX_TOOLS_HORZ;
+		//m_toolPaneSize.cy = CY_TOOLS_HORZ;
 		}
 	}
 #if 0

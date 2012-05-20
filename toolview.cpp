@@ -505,7 +505,7 @@ if ((nPage < 0) || (nPage >= sizeofa (m_tools)))
 	return;
 if (m_pTools) {
 	m_pTools->SetActivePage (nPage);
-	DLE.MainFrame ()->RecalcLayout (FALSE, 1);
+	DLE.MainFrame ()->RecalcLayout (-1, -1);
 	}
 else if (nLayout == 2) {
 #if 1
