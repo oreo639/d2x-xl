@@ -487,7 +487,6 @@ void CRendererGL::RenderFace (CFaceListEntry& fle, CTexture* texP [], CBGRA* col
 	static float zoom = 10.0f;
 	static double scrollAngles [8] = {0.0, Radians (45.0), Radians (90.0), Radians (135.0), Radians (180.0), Radians (-135.0), Radians (-90.0), Radians (-45.0)};
 
-#if 1
 	CSegment*		segP = segmentManager.Segment (fle.m_nSegment);
 	CSide*			sideP = segP->Side (fle.m_nSide);
 	CWall*			wallP = sideP->Wall ();
@@ -591,14 +590,8 @@ else {
 if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide)))
 	nDbgSeg = nDbgSeg;
 #endif
-#if 1
+
 textureManager.DeployShader ((bArrow ? nTextures + bArrow : nTextures - 1), m_bRenderSideKeys ? &fle : null);
-#else
-if (nTextures + bArrow > 1)
-	textureManager.DeployShader (bArrow ? nTextures : 0);
-else
-	shaderManager.Deploy (-1);
-#endif
 
 #if GL_TRANSFORM
 m_viewMatrix.SetupOpenGL ();
@@ -606,7 +599,6 @@ glDrawArrays ((nVertices == 3) ? GL_TRIANGLES : GL_TRIANGLE_FAN, 0, GLsizei (nVe
 m_viewMatrix.ResetOpenGL ();
 #else
 glDrawArrays ((nVertices == 3) ? GL_TRIANGLES : GL_TRIANGLE_FAN, 0, GLsizei (nVertices));
-#endif
 #endif
 }
 
