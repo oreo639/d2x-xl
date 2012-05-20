@@ -1213,7 +1213,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		continue;
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
-	Renderer ().SelectPen ((sideP == m_nearestSide) ? penGold + 1 : penMedBlue + 1);
+	Renderer ().SelectPen ((sideP == m_nearestSide) ? penGold + 1 : penOrange + 1);
 	CVertex& center = segP->Center ();
 	for (int i = 0; i < 8; i++) {
 		if (segP->VertexId (i) > MAX_VERTEX)
