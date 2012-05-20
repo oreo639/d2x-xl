@@ -1122,7 +1122,7 @@ CSide* nearestSide = null;
 
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	segmentManager.Segment (sideP->GetParent ())->ComputeCenter (sideP);
-	double dist = sqrt (sqr (m_clickPos.x - sideP->Center ().m_screen.x), sqr (m_clickPos.y - sideP->Center ().m_screen.y));
+	double dist = sqrt (sqr (m_clickPos.x - sideP->Center ().m_screen.x) + sqr (m_clickPos.y - sideP->Center ().m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
 		nearestSide = sideP;
@@ -1133,16 +1133,16 @@ Renderer ().BeginRender (true);
 
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
-	short nSide = segP->Index (sideP);
+	short nSide = segP->SideIndex (sideP);
 	short nVertices = sideP->VertexCount ();
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penGray + 1);
 	CVertex& center = sideP->Center ();
 	for (int i = 0; i < nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
-		Renderer ().MoveTo (vertex->m_screen);
-		Renderer ().LineTo (center.m_screen);
+		Renderer ().MoveTo (*vertex);
+		Renderer ().LineTo (center);
 		}
-	Renderer ().Ellipse (
+	Renderer ().Ellipse (center.m_screen.x, center.m_screen.y, 6, 6);
 	}
 
 Renderer ().EndRender ();

@@ -176,7 +176,7 @@ public:
 	//void Read (CFileManager* fp, bool bFlag = false) {}
 	//void Write (CFileManager* fp, bool bFlag = false) {}
 
-	inline short Index (CSide* sideP) { return short (sideP - &m_sides [0]; }
+	inline short SideIndex (CSide* sideP) { return short (sideP - &m_sides [0]); }
 
 	inline CSide _const_ * Side (short i = 0) _const_ { return ((i < 0) || (i > 6)) ? null : &m_sides [i]; }
 
@@ -288,7 +288,7 @@ public:
 
 	CVertex& ComputeCenter (short nSide);
 
-	inline CVertex& ComputeCenter (CSide* sideP) { return ComputeCenter (Index (sideP)); }
+	inline CVertex& ComputeCenter (CSide* sideP) { return ComputeCenter (SideIndex (sideP)); }
 
 	void ComputeNormals (short nSide, bool bView = false);
 
