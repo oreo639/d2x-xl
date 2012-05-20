@@ -858,23 +858,6 @@ return -1;
 
 // -----------------------------------------------------------------------------
 
-CVertex CSegment::Center (void)
-{
-CVertex* vertP = vertexManager.Vertex (0);
-CVertex v (0, 0, 0);
-int j = 0;
-for (int i = 0; i < 8; i++) {
-	if (m_info.vertexIds [i] != 0xFFFF) {
-		v += vertP [m_info.vertexIds [i]];
-		j++;
-		}
-	}
-v /= -j;
-return v;
-}
-
-// -----------------------------------------------------------------------------
-
 void CSegment::MarkVertices (ubyte mask, short nSide)
 {
 if (nSide < 0) {
@@ -1054,7 +1037,7 @@ return edgeList.Count ();
 
 // -----------------------------------------------------------------------------
 
-CDoubleVector& CSegment::ComputeCenter (bool bView)
+CVertex& CSegment::ComputeCenter (bool bView)
 {
 int nVertices = 0;
 m_vCenter.Clear ();

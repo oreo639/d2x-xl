@@ -146,7 +146,7 @@ class CSegment : public CGameItem {
 public:
 	tSegment			m_info;
 	CSide				m_sides [MAX_SIDES_PER_SEGMENT];		// 6 sides 
-	CDoubleVector	m_vCenter;
+	CVertex			m_vCenter;
 	ubyte				m_nShape;
 	CSegment*		m_link;
 
@@ -264,7 +264,7 @@ public:
 
 	short AdjacentSide (short nIgnoreSide, ushort* nEdgeVerts);
 
-	CVertex Center (void);
+	inline CVertex& Center (void) { return m_vCenter; }
 
 	int BuildEdgeList (CEdgeList& edgeList, bool bSparse = false);
 
@@ -284,7 +284,7 @@ public:
 
 	void ShiftVertices (short nSide);
 
-	CDoubleVector& ComputeCenter (bool bView = false);
+	CVertex& ComputeCenter (bool bView = false);
 
 	CVertex& ComputeCenter (short nSide);
 

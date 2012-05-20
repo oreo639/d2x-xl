@@ -1192,8 +1192,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	if (nSegment == sideP->GetParent ())
 		continue;
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
-	segP->ComputeCenter ();
-	CVertex& center = segP->Center ();
+	CVertex& center = segP->ComputeCenter ();
 	center.Transform (ViewMatrix ());
 	center.Project (ViewMatrix ());
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
