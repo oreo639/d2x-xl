@@ -174,6 +174,7 @@ public:  // control bar embedded members
 	int					m_mineZoom;
 	int					m_bShowCtrlBar;
 	int					m_bRecalcBarLayout;
+	CSize					m_toolPaneSize;
 	CProgressCtrl		m_progress;
 
 public:
@@ -208,6 +209,8 @@ public:
 	int CreateToolBars (bool bToolBar = true, bool bEditBar = true);
 	int CreateStatusBar ();
 	void DockToolBars (bool bToolBar, bool bEditBar);
+
+	inline CSize& ToolPaneSize (void) { return m_toolPaneSize; }
 
 	void ConvertMine (int nVersion);
 	void AdjustMine (int nVersion);
