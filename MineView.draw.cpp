@@ -1139,8 +1139,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CVertex& center = sideP->Center ();
 	for (int i = 0; i < nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
-		Renderer ().MoveTo (*vertex);
-		Renderer ().LineTo (center);
+		Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
+		Renderer ().LineTo (center.m_screen.x, center.m_screen.y);
 		}
 	Renderer ().Ellipse (center.m_screen.x, center.m_screen.y, 6, 6);
 	}

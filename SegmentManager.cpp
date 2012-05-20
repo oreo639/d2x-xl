@@ -345,7 +345,7 @@ CSide* CSegmentManager::GatherSelectedSides (CRect& viewport, long xMouse, long 
 m_selectedSegments = null;
 m_selectedSides = null;
 	
-#pragma omp parallel for
+//#pragma omp parallel for
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = Segment (nSegment);
 	bool bSegmentSelected = false;
@@ -354,7 +354,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		nSide = segP->IsSelected (viewport, xMouse, yMouse, nSide);
 		if (nSide < 0)
 			break;
-#pragma omp critical
+//#pragma omp critical
 			{
 			if (!bSegmentSelected) {
 				bSegmentSelected = true;
@@ -363,7 +363,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 				}
 			}
 			CSide* sideP = segP->Side (nSide);
-#pragma omp critical
+//#pragma omp critical
 			{
 			sideP->Link (m_selectedSides);
 			m_selectedSides = sideP;
