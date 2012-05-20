@@ -7,7 +7,7 @@ CObjectManager objectManager;
 
 CObjectManager::CObjectManager ()
 {
-SortObjects () = GetPrivateProfileInt ("DLE-XP", "SortObjects", objectManager.SortObjects (), DLE.IniFile ());
+SortObjects () = GetPrivateProfileInt ("DLE", "SortObjects", objectManager.SortObjects (), DLE.IniFile ());
 }
 
 // -----------------------------------------------------------------------------

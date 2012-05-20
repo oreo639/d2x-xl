@@ -484,7 +484,7 @@ void CHogManager::OnOK ()
 LBFiles ()->GetText (LBFiles ()->GetCurSel (), m_pszSubFile);
 char *pszExt = strrchr ((char *) m_pszSubFile, '.');
 if (pszExt && _strcmpi (pszExt,".rdl") && _strcmpi (pszExt,".rl2")) {
-	ErrorMsg ("DLE-XP cannot process this file. To change the file,\n\n"
+	ErrorMsg ("DLE cannot process this file. To change the file,\n\n"
 				 "export it and process it with the appropriate application.\n"
 				 "To incorporate the changes in the HOG file,\n"
 				 "import the modified file back into the HOG file.");
@@ -1586,7 +1586,7 @@ if (!strchr (pszSubFile, '.'))
 	strcat_s (missionData.levelList [0], sizeof (missionData.levelList [0]), DLE.IsD2File () ? ".rl2" : ".rdl");
 missionData.numSecrets = 0;
 memset (missionData.missionInfo, 0, sizeof (missionData.missionInfo));
-strcpy_s (missionData.missionInfo [0], sizeof (missionData.missionInfo [0]), "DLE-XP");
+strcpy_s (missionData.missionInfo [0], sizeof (missionData.missionInfo [0]), "DLE");
 strcpy_s (missionData.missionInfo [2], sizeof (missionData.missionInfo [2]), DateStr (szTime, sizeof (szTime), true));
 if (bSaveAs)
 	strcpy_s (missionData.missionInfo [3], sizeof (missionData.missionInfo [3]), "1.0");

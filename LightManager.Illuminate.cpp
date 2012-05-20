@@ -101,7 +101,7 @@ undoManager.End ();
 }
 
 //---------------------------------------------------------------------------------
-// When lighting a mine, DLE-XP will take each light in the mine, walk from it up
+// When lighting a mine, DLE will take each light in the mine, walk from it up
 // <render depth> segments away, lighting all segments it reaches. For each of these
 // segments, it will compute the brightness and color of each side's four corners,
 // generating 24 light values. Segments adjacent to those reached by a given light

@@ -46,6 +46,7 @@
     <ProjectGuid>{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}</ProjectGuid>
     <RootNamespace>DLE-XP</RootNamespace>
     <Keyword>MFCProj</Keyword>
+    <ProjectName>DLE</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Intel Release|Win32'" Label="Configuration">
@@ -183,7 +184,7 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|x64'" />
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">dle-xp-dbg</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">dle-dbg</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'">
     <Midl>
@@ -309,7 +310,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>\programs\d2\dle-xp\dle-xp.exe</OutputFile>
+      <OutputFile>\programs\d2\dle\dle.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -398,7 +399,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>\programs\d2\dle-xp\dle-xp-dbg.exe</OutputFile>
+      <OutputFile>\programs\d2\dle\dle-dbg.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>

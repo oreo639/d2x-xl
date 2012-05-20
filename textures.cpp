@@ -355,7 +355,7 @@ if (nTexture == nDbgTexture)
 CPigTexture* infoP = textureManager.Info (nVersion, -nTexture - 1);
 if (!infoP)
 	return 0;
-// bitmaps > 64x64 will not be used by DLE-XP and will therefore not get centered
+// bitmaps > 64x64 will not be used by DLE and will therefore not get centered
 if ((infoP->width > 64) || (infoP->height > 64))
 	return 1;
 // bitmaps < 64x64 may be needed for rendering items in the level;

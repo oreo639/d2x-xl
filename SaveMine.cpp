@@ -215,7 +215,7 @@ if (savePofNames == null)
 fp->Write (savePofNames, nSavePofNames, 13); // 13 characters each
 
 Info ().player.offset = fp->Tell ();
-char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
+char* str = "Made with Descent Level Editor\0\0\0\0\0\0\0";
 fp->Write (str, (int) strlen (str) + 1, 1);
 
 segmentManager.RenumberProducers ();

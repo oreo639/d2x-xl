@@ -71,8 +71,8 @@ m_textureMode = 1;
 m_mineZoom = 0;
 m_toolPaneSize.cx = 
 m_toolPaneSize.cy = 0;
-nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, DLE.IniFile ());
-bSingleToolPane = GetPrivateProfileInt ("DLE-XP", "SingleToolPane", 0, DLE.IniFile ());
+nLayout = GetPrivateProfileInt ("DLE", "Layout", 0, DLE.IniFile ());
+bSingleToolPane = GetPrivateProfileInt ("DLE", "SingleToolPane", 0, DLE.IniFile ());
 #if EDITBAR
 m_bEditorTB = 1;
 #else

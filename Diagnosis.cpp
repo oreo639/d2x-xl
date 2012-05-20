@@ -1640,7 +1640,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 							nWall, wallP->Info ().nTrigger);
 			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
-#if 1 // linked walls not supported in DLE-XP and D2X-XL
+#if 1 // linked walls not supported in DLE and D2X-XL
 		if (wallP->Info ().linkedWall != -1) {
 			short invLinkedWall = wallP->Info ().linkedWall;
 			if (m_bAutoFixBugs) {

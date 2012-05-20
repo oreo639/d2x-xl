@@ -55,7 +55,7 @@ m_iconSpace.cy = m_iconSize.cy + 6;
 m_paneSize.cx = 
 m_paneSize.cy = 0;
 m_viewFlags = 0;
-m_filter.Filter () = GetPrivateProfileInt ("DLE-XP", "TextureFilter", 0xFFFFFFFF, DLE.IniFile ());
+m_filter.Filter () = GetPrivateProfileInt ("DLE", "TextureFilter", 0xFFFFFFFF, DLE.IniFile ());
 m_bShowAll = TRUE;
 m_bDelayRefresh = false;
 };

@@ -462,13 +462,15 @@ bool CMine::MovePoints (int pt0, int pt1)
 									*segP->Vertex (current->m_nSide, current->m_nPoint + pt0);
 	double			length = vDelta.Mag ();
 	int				i;
+	short				selectMode = DLE.MineView ()->Perspective () ? BLOCK_MODE : m_selectMode;
+
 
 if (length < 1.0) 
 	vDelta.Set (DLE.MineView ()->MineMoveRate (), 0, 0);
 else
 	vDelta *= ((double) DLE.MineView ()->MineMoveRate () / length);
 
-switch (m_selectMode){
+switch (selectMode) {
 	case POINT_MODE:
 		undoManager.Begin (udVertices | udSegments);
 		segP->Vertex (current->m_nSide, current->m_nPoint)->SetDelta (vDelta);
@@ -717,10 +719,11 @@ bool CMine::SpinSelection (double angle)
 	CDoubleMatrix* orient;
 	CVertexSpinner	spinner (angle);
 	int				i, j;
+	short				selectMode = DLE.MineView ()->Perspective () ? BLOCK_MODE : m_selectMode;
 
 spinner.Setup ();
 /* calculate segment pointer */
-switch (m_selectMode) {
+switch (selectMode) {
 	case POINT_MODE:
 		ErrorMsg ("Cannot spin a point");
 		return false;

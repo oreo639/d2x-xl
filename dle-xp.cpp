@@ -222,13 +222,13 @@ BOOL CDLE::InitInstance()
 	// Change the registry key under which our settings are stored.
 	// You should modify this string to be something appropriate
 	// such as the name of your company or organization.
-	SetRegistryKey(_T("DLE-XP"));
+	SetRegistryKey(_T("DLE"));
 
 	::GetModuleFileName (0, m_appFolder, sizeof (m_appFolder));
 	char* ps = strrchr (m_appFolder, '\\');
 	if (ps)
 		ps [1] = '\0';
-	sprintf (m_iniFile, "%sdle-xp.ini", m_appFolder);
+	sprintf (m_iniFile, "%sdle.ini", m_appFolder);
 
 	LoadStdProfileSettings(10);  // Load standard INI file options (including MRU)
 	// Register the application's document templates.  Document templates
@@ -357,7 +357,7 @@ void CDLE::WritePrivateProfileInt (LPSTR szKey, int nValue)
 	char	szValue [20];
 
 sprintf_s (szValue, sizeof (szValue), "%d", nValue);
-WritePrivateProfileString ("DLE-XP", szKey, szValue, DLE.IniFile ());
+WritePrivateProfileString ("DLE", szKey, szValue, DLE.IniFile ());
 }
 
 //------------------------------------------------------------------------------
@@ -405,15 +405,15 @@ CHECKMINE;
 	CRect	rc, tbrc;
 	UINT h = AFX_IDW_DOCKBAR_TOP;
 
-MainFrame ()->m_toolMode = GetPrivateProfileInt ("DLE-XP", "ToolMode", 1, DLE.IniFile ());
-MainFrame ()->m_textureMode = GetPrivateProfileInt ("DLE-XP", "TextureMode", 1, DLE.IniFile ());
+MainFrame ()->m_toolMode = GetPrivateProfileInt ("DLE", "ToolMode", 1, DLE.IniFile ());
+MainFrame ()->m_textureMode = GetPrivateProfileInt ("DLE", "TextureMode", 1, DLE.IniFile ());
 MainFrame ()->m_paneMode = ((MainFrame ()->m_toolMode == 1) && (MainFrame ()->m_textureMode == 1)) ? 1 : 0;
 if (ToolView ()->DiagTool ())
-	ToolView ()->DiagTool ()->m_bAutoFixBugs = GetPrivateProfileInt ("DLE-XP", "AutoFixBugs", 1, DLE.IniFile ());
-rc.left = GetPrivateProfileInt ("DLE-XP", "xWin", 0, DLE.IniFile ());
-rc.top = GetPrivateProfileInt ("DLE-XP", "yWin", 0, DLE.IniFile ());
-rc.right = rc.left + GetPrivateProfileInt ("DLE-XP", "cxWin", 0, DLE.IniFile ());
-rc.bottom = rc.top + GetPrivateProfileInt ("DLE-XP", "cyWin", 0, DLE.IniFile ());
+	ToolView ()->DiagTool ()->m_bAutoFixBugs = GetPrivateProfileInt ("DLE", "AutoFixBugs", 1, DLE.IniFile ());
+rc.left = GetPrivateProfileInt ("DLE", "xWin", 0, DLE.IniFile ());
+rc.top = GetPrivateProfileInt ("DLE", "yWin", 0, DLE.IniFile ());
+rc.right = rc.left + GetPrivateProfileInt ("DLE", "cxWin", 0, DLE.IniFile ());
+rc.bottom = rc.top + GetPrivateProfileInt ("DLE", "cyWin", 0, DLE.IniFile ());
 if ((rc.left >= rc.right) || (rc.top >= rc.bottom) || 
 	 (rc.bottom < 0) || (rc.right < 0) ||
 	 (rc.left >= GetSystemMetrics (SM_CXSCREEN)) || (rc.top >= GetSystemMetrics (SM_CYSCREEN))) {
@@ -429,12 +429,12 @@ else
 	MainFrame ()->MoveWindow (&rc, TRUE);
 
 #if 0
-tbrc.left = GetPrivateProfileInt ("DLE-XP", "xMainTB", 0, DLE.IniFile ());
+tbrc.left = GetPrivateProfileInt ("DLE", "xMainTB", 0, DLE.IniFile ());
 if (tbrc.left < 0)
 	tbrc.left = 0;
-tbrc.top = GetPrivateProfileInt ("DLE-XP", "yMainTB", 0, DLE.IniFile ());
-tbrc.right = tbrc.left + GetPrivateProfileInt ("DLE-XP", "cxMainTB", 0, DLE.IniFile ());
-tbrc.bottom = tbrc.top + GetPrivateProfileInt ("DLE-XP", "cyMainTB", 0, DLE.IniFile ());
+tbrc.top = GetPrivateProfileInt ("DLE", "yMainTB", 0, DLE.IniFile ());
+tbrc.right = tbrc.left + GetPrivateProfileInt ("DLE", "cxMainTB", 0, DLE.IniFile ());
+tbrc.bottom = tbrc.top + GetPrivateProfileInt ("DLE", "cyMainTB", 0, DLE.IniFile ());
 	if (tbrc.Width () > tbrc.Height ())	//horizontal
 	if (tbrc.bottom >= rc.bottom - GetSystemMetrics (SM_CYFRAME))
 		h = AFX_IDW_DOCKBAR_BOTTOM;
@@ -449,13 +449,13 @@ if (tbrc.Width () && tbrc.Height ())
 	MainFrame ()->DockControlBar (&MainFrame ()->m_toolBar, (UINT) h, &tbrc);
 #endif
 
-tbrc.left = GetPrivateProfileInt ("DLE-XP", "xEditTB", 0, DLE.IniFile ());
+tbrc.left = GetPrivateProfileInt ("DLE", "xEditTB", 0, DLE.IniFile ());
 if (tbrc.left < 0)
 	tbrc.left = 0;
-tbrc.top = GetPrivateProfileInt ("DLE-XP", "yEditTB", 0, DLE.IniFile ());
+tbrc.top = GetPrivateProfileInt ("DLE", "yEditTB", 0, DLE.IniFile ());
 #if EDITBAR
-tbrc.right = tbrc.left + GetPrivateProfileInt ("DLE-XP", "cxEditTB", 0, DLE.IniFile ());
-tbrc.bottom = tbrc.top + GetPrivateProfileInt ("DLE-XP", "cyEditTB", 0, DLE.IniFile ());
+tbrc.right = tbrc.left + GetPrivateProfileInt ("DLE", "cxEditTB", 0, DLE.IniFile ());
+tbrc.bottom = tbrc.top + GetPrivateProfileInt ("DLE", "cyEditTB", 0, DLE.IniFile ());
 if (tbrc.Width () > tbrc.Height ())	//horizontal
 	if (tbrc.bottom >= rc.bottom - GetSystemMetrics (SM_CYFRAME))
 		h = AFX_IDW_DOCKBAR_BOTTOM;
@@ -473,7 +473,7 @@ if (tbrc.Width () && tbrc.Height ()) {
 	MainFrame ()->FloatControlBar (&MainFrame ()->m_editBar, p, (UINT) h);
 	}
 #endif
-m_bSplashScreen = GetPrivateProfileInt ("DLE-XP", "SplashScreen", 1, DLE.IniFile ());
+m_bSplashScreen = GetPrivateProfileInt ("DLE", "SplashScreen", 1, DLE.IniFile ());
 }
 
 //------------------------------------------------------------------------------

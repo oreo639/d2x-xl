@@ -528,14 +528,14 @@ for (int i = 0, j = nOvlAlignment; i < nVertices; i++, j = (j + 1) % nVertices) 
 	CUVL uvl = sideP->m_info.uvls [i];
 	if (!colorP) {
 		texCoords [0][i].u = uvl.u;
-		texCoords [0][i].v = uvl.v;
+		texCoords [0][i].v = -uvl.v;
 		if (nTextures > 1)
 			RotateTexCoord2d (texCoords [1][i], texCoords [0][i], nOvlAlignment);
 		if (bArrow) {
 			if (scrollAngle != 0.0)
 				uvl.Rotate (scrollAngle);
 			texCoords [nTextures][i].u = uvl.u;
-			texCoords [nTextures][i].v = 1.0 - uvl.v;
+			texCoords [nTextures][i].v = uvl.v - 1.0;
 			}
 		if (bIlluminate) {
 			float b = 2.0f * X2F (brightness [i]);

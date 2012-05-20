@@ -621,7 +621,7 @@ if (bmfh.bfType != 'B' + (((ushort) 'M') << 8) ) {
 
 // make sure it is a 256 or 16 color bitmap
 if (bmih.biBitCount != 8 && bmih.biBitCount != 4) {
-	ErrorMsg ("DLE-XP only reads 16 or 256 color bitmap files.\n\n"
+	ErrorMsg ("DLE only reads 16 or 256 color bitmap files.\n\n"
 	"Hint: Load this image into a paint program\n"
 	"then save it as a 16 or 256 color *.bmp file.");
 	goto errorExit;
