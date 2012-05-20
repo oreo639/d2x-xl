@@ -1186,6 +1186,7 @@ if (ViewFlag (eViewMineWalls))
 	DrawWalls ();
 if (ViewFlag (eViewMineLights))
 	DrawLights ();
+DrawSelectableSides ();
 
 tunnelMaker.Draw (Renderer (), Pen (penRed), Pen (penBlue), ViewMatrix ());
 
