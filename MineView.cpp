@@ -826,7 +826,7 @@ if (GetFocus () != this)
 if (change.x || change.y) {
 	switch (m_mouseState) {
 		case eMouseStateIdle:
-			if (SelectMode (eSelectSide))
+			if (SelectMode (eSelectSide) || SelectMode (eSelectSegment))
 				Invalidate (FALSE);
 
 #if 0
