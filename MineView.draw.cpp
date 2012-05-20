@@ -1107,6 +1107,9 @@ static inline double sqr (long v) { return double (v) * double (v); }
 
 void CMineView::DrawSelectableSides (void) 
 {
+m_nearestSegment = null;
+m_nearestSide = null;
+
 if (!SelectMode (eSelectSide))
 	return;
 if (m_bSelectTexturedSides && ((m_viewOption == eViewTextured) || (m_viewOption == eViewTexturedWireFrame)))
@@ -1121,12 +1124,17 @@ if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMouse
 
 double minDist = 1e30;
 
-m_nearestSegment = null;
-m_nearestSide = null;
-
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
-	segmentManager.Segment (sideP->GetParent ())->ComputeCenter (sideP);
-	double dist = sqrt (sqr (m_lastMousePos.x - sideP->Center ().m_screen.x) + sqr (m_lastMousePos.y - sideP->Center ().m_screen.y));
+	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
+	segP->ComputeCenter (sideP);
+	CVertex& center = sideP->Center ();
+	if (!sideP->IsVisible ()) {
+		sideP->ComputeNormals (segP->m_info.vertexIds, segP->Center (), true);
+		CVertex normal = sideP->Normal (2);
+		normal.Project (ViewMatrix ());
+		center += normal;
+		}
+	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
 		if (minDist <= 9.0) {
@@ -1144,6 +1152,11 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	short nVertices = sideP->VertexCount ();
 	Renderer ().SelectPen ((sideP == m_nearestSide) ? penGold + 1 : penOrange + 1);
 	CVertex& center = sideP->Center ();
+	if (!sideP->IsVisible ()) {
+		CVertex normal = sideP->Normal (2);
+		normal.Project (ViewMatrix ());
+		center += normal;
+		}
 	for (int i = 0; i < nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
 		CDoubleVector c (double (center.m_screen.x), double (center.m_screen.y), double (center.m_screen.z));
@@ -1165,6 +1178,9 @@ Renderer ().EndRender ();
 
 void CMineView::DrawSelectableSegments (void) 
 {
+m_nearestSegment = null;
+m_nearestSide = null;
+
 if (!SelectMode (eSelectSegment))
 	return;
 
@@ -1175,9 +1191,6 @@ if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMouse
 	return;
 
 double minDist = 1e30;
-
-m_nearestSegment = null;
-m_nearestSide = null;
 
 short nSegment = -1;
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
