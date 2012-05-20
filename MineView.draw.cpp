@@ -1140,8 +1140,14 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CVertex& center = sideP->Center ();
 	for (int i = 0; i < nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
+		CDoubleVector c (double (center.m_screen.x), double (center.m_screen.z), double (center.m_screen.z));
+		CDoubleVector v (double (vertex->m_screen.x), double (vertex->m_screen.z), double (vertex->m_screen.z));
+		c -= v;
+		double m = c.Mag ();
+		c *= (m - 9.0) / m;
+		c += v;
 		Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
-		Renderer ().LineTo (center.m_screen.x, center.m_screen.y);
+		Renderer ().LineTo (long (Round (center.v.x)), long (Round (c.v.y)));
 		}
 	Renderer ().Ellipse (center, 9.0, 9.0);
 	}

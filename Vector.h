@@ -22,6 +22,14 @@ class CLongVector {
 public:
 	long x, y, z;
 
+	inline CLongVector operator- (CLongVector& other) {
+		CLongVector result;
+		result.x = x - other.x;
+		result.y = y - other.y;
+		result.z = z - other.z;
+		return result;
+		}
+
 	inline CLongVector& operator+= (CLongVector& other) {
 		x += other.x;
 		y += other.y;
