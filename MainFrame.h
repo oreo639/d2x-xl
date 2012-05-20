@@ -209,8 +209,6 @@ public:
 	int CreateStatusBar ();
 	void DockToolBars (bool bToolBar, bool bEditBar);
 
-	inline CSize& ToolPaneSize (void) { return m_toolPaneSize; }
-
 	void ConvertMine (int nVersion);
 	void AdjustMine (int nVersion);
 
