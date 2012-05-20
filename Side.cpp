@@ -429,6 +429,38 @@ if (!(PointIsInTriangle3D (intersection, *vertices [0], *vertices [1], *vertices
 return d;
 }
 
+//--------------------------------------------------------------------------
+
+short CSide::IsSelected (CRect& viewport, long xMouse, long yMouse, ushort vertexIds []) 
+{
+CLongVector mousePos;
+mousePos.x = xMouse;
+mousePos.y = yMouse;
+mousePos.z = 0;
+
+short nSides = 6;
+short nCurSide = current->m_nSide;
+
+CVertex sideVerts [4];
+int h = VertexCount ();
+for (int j = 0; j < h; j++) {
+	sideVerts [j] = vertexManager [vertexIds [VertexIdIndex (j)]];
+	sideVerts [j].m_screen.z = 0;
+	}
+for (int j = 0; j < h; j++) {
+	int x = sideVerts [j].m_screen.x;
+	int y = sideVerts [j].m_screen.y;
+	if ((x < viewport.left) || (x > viewport.right) || (y < viewport.top) || (y > viewport.bottom)) 
+		sideVerts [j].m_screen.z = -1;
+	else if (sideVerts [j].m_view.v.z < 0.0)
+		sideVerts [j].m_screen.z = -1;
+if (PointIsInTriangle2D (mousePos, sideVerts [0].m_screen, sideVerts [1].m_screen, sideVerts [2].m_screen))
+	return 1;
+if ((h > 3) && PointIsInTriangle2D (mousePos, sideVerts [0].m_screen, sideVerts [2].m_screen, sideVerts [3].m_screen)) 
+	return 1;
+return 0;
+}
+
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

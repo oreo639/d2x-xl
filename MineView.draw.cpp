@@ -1103,6 +1103,14 @@ Renderer ().EndRender ();
 
 //--------------------------------------------------------------------------
 
+void CMineView::DrawSelectableSides (void) 
+{
+if (!SelectMode (eSelectSide))
+	return;
+}
+
+//--------------------------------------------------------------------------
+
 void CMineView::DrawHighlight (short bClear) 
 {
 CHECKMINE;

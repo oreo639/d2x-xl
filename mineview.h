@@ -210,6 +210,8 @@ public:
 	void DrawOctagon(short nSide, short nSegment);
 	void DrawObject (short objnum, short bClear = 0);
 	void DrawObjects (short bClear = 0);
+	void DrawSelectableSides (void);
+	void DrawSelectableSegments (void);
 	void DrawHighlight (short bClear = 0);
 	void DrawTunnel (void);
 	bool SelectWireFramePen (CSegment* segP);

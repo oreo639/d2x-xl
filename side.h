@@ -33,6 +33,7 @@ public:
 	ubyte				m_nShape;
 	CDoubleVector	m_vNormal [3];
 	CVertex			m_vCenter;
+	CSide*			m_link;
 
 	static short vertexCounts [4];
 	static short faceCounts [4];
@@ -114,6 +115,8 @@ public:
 	CDoubleVector& ComputeNormals (ushort* vertexIds, CDoubleVector& vCenter, bool bView = false);
 
 	double LineHitsFace (CVertex* p1, CVertex* p2, ushort* vertexIds, double maxDist, bool bView = false);
+
+	short IsSelected (CRect& viewport, long xMouse, long yMouse, ushort vertexIds []);
 
 	CVertex& Vertex (ushort* vertexIds, ubyte nIndex);
 	

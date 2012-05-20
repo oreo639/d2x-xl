@@ -149,6 +149,7 @@ public:
 	CSide				m_sides [MAX_SIDES_PER_SEGMENT];		// 6 sides 
 	CDoubleVector	m_vCenter;
 	ubyte				m_nShape;
+	CSegment*		m_link;
 
 public:
 	void Upgrade (void);
@@ -289,6 +290,8 @@ public:
 	void ComputeNormals (short nSide, bool bView = false);
 
 	void UpdateTexCoords (ushort nVertexId, bool bMove, short nIgnoreSide = -1);
+
+	short IsSelected (CRect& viewport, long xMouse, long yMouse, short nSide = 0);
 
 	CSegment () : CGameItem (itSegment), m_link (null) {}
 
