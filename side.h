@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------------
 
 typedef struct tSide {
+	ushort	nParent;
 	ushort	nChild;
 	ushort	nWall;		// (was short) Index into Walls array, which wall (probably door) is on this side 
 	short		nBaseTex;	// Index into array of textures specified in bitmaps.bin 
@@ -121,6 +122,8 @@ public:
 	inline void Link (CSide* sideP) { m_link = sideP; }
 
 	inline CSide* Link (void) { return m_link; }
+
+	inline void SetParent (ushort nParent) { m_info.nParent = nParent; }
 
 	CVertex& Vertex (ushort* vertexIds, ubyte nIndex);
 	

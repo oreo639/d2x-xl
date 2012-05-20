@@ -286,6 +286,8 @@ public:
 
 	CVertex& ComputeCenter (short nSide);
 
+	inline CVertex& ComputeCenter (CSide* sideP) { return ComputeCenter (short (sideP - &m_sides [0])); }
+
 	void ComputeNormals (short nSide, bool bView = false);
 
 	void UpdateTexCoords (ushort nVertexId, bool bMove, short nIgnoreSide = -1);

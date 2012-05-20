@@ -347,6 +347,10 @@ class CSegmentManager {
 		CSegment* GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse);
 
 		CSide* GatherSelectedSides (CRect& viewport, long xMouse, long yMouse);
+
+		inline CSegment* SelectedSegments (void) { return m_selectedSegments; }
+	
+		inline CSide* SelectedSides (void) { return m_selectedSides; }
 	
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);

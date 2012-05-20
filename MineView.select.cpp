@@ -184,7 +184,7 @@ return nMinSeg;
 
 //--------------------------------------------------------------------------
 
-short CMineView::SegmentIsSelected (CSegment* segP, CRect& rc, long xMouse, long yMouse) 
+short CMineView::SegmentIsSelected (CSegment* segP, CRect& viewport, long xMouse, long yMouse) 
 {
 if (!Visible (segP))
 	return -1;
@@ -209,7 +209,7 @@ for (short i = 0; i < nSides; i++, nCurSide = (nCurSide + 1) % nSides) {
 	for (int j = 0; j < h; j++) {
 		int x = sideVerts [j].m_screen.x;
 		int y = sideVerts [j].m_screen.y;
-		if ((x < rc.left) || (x > rc.right) || (y < rc.top) || (y > rc.bottom)) 
+		if ((x < viewport.left) || (x > viewport.right) || (y < viewport.top) || (y > viewport.bottom)) 
 			sideVerts [j].m_screen.z = -1;
 		else if (m_nRenderer && sideVerts [j].m_view.v.z < 0.0)
 			sideVerts [j].m_screen.z = -1;
@@ -226,7 +226,7 @@ return -1;
 
 bool CMineView::SelectCurrentSegment (short direction, long xMouse, long yMouse, int bAdd) 
 {
-	CRect	rc;
+	CRect	viewport;
 	short nCurSeg, nNextSeg, nCurSide;
 
 if (bAdd < 0)
@@ -236,11 +236,11 @@ if (0 <= (nNextSeg = FindVisibleSelectedSide (xMouse, yMouse, nCurSide))) {
 	current->m_nSide = nCurSide;
 	}
 else {
-	GetClientRect (rc);
+	GetClientRect (viewport);
 	nCurSeg = nNextSeg = current->m_nSegment;
 	do {
 		Wrap (nNextSeg, direction, 0, segmentManager.Count () - 1); // point to next segment
-		if (0 <= (nCurSide = SegmentIsSelected (segmentManager.Segment (nNextSeg), rc, xMouse, yMouse)))
+		if (0 <= (nCurSide = SegmentIsSelected (segmentManager.Segment (nNextSeg), viewport, xMouse, yMouse)))
 			break;
 		}
 	while (nNextSeg != nCurSeg);

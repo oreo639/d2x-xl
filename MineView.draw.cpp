@@ -1107,6 +1107,19 @@ void CMineView::DrawSelectableSides (void)
 {
 if (!SelectMode (eSelectSide))
 	return;
+
+CRect viewport;
+GetClientRect (viewport);
+
+if (!segmentManager.GatherSelectedSides (viewport, m_clickPos.x, m_clickPos.y))
+	return;
+
+double minDist = 1e30;
+
+CSide* nearestSide = segmentManager.SelectedSides ();
+
+for (; nearestSide; nearestSide = nearestSide->Link ()) {
+	}
 }
 
 //--------------------------------------------------------------------------

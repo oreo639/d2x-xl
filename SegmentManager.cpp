@@ -368,6 +368,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 			sideP->Link (m_selectedSides);
 			m_selectedSides = sideP;
 			}
+		sideP->SetParent (nSegment);
 		}
 	}
 return m_selectedSides;
