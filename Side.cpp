@@ -433,6 +433,9 @@ return d;
 
 short CSide::IsSelected (CRect& viewport, long xMouse, long yMouse, ushort vertexIds []) 
 {
+if (Shape () > SIDE_SHAPE_TRIANGLE)
+	return 0;
+
 CLongVector mousePos;
 mousePos.x = xMouse;
 mousePos.y = yMouse;

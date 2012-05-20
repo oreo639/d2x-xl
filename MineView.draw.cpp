@@ -1128,6 +1128,24 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		nearestSide = sideP;
 		}
 	}
+
+Renderer ().BeginRender (true);
+
+for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
+	short nSide = segP->Index (sideP);
+	short nVertices = sideP->VertexCount ();
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penGray + 1);
+	CVertex& center = sideP->Center ();
+	for (int i = 0; i < nVertices; i++) {
+		CVertex* vertex = segP->Vertex (nSide, i);
+		Renderer ().MoveTo (vertex->m_screen);
+		Renderer ().LineTo (center.m_screen);
+		}
+	Renderer ().Ellipse (
+	}
+
+Renderer ().EndRender ();
 }
 
 //--------------------------------------------------------------------------
