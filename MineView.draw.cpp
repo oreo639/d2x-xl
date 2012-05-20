@@ -1125,7 +1125,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	double dist = sqrt (sqr (m_lastMousePos.x - sideP->Center ().m_screen.x) + sqr (m_lastMousePos.y - sideP->Center ().m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
-		nearestSide = sideP;
+		if (minDist <= 9.0) 
+			nearestSide = sideP;
 		}
 	}
 
@@ -1142,7 +1143,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
 		Renderer ().LineTo (center.m_screen.x, center.m_screen.y);
 		}
-	Renderer ().Ellipse (center.m_screen.x, center.m_screen.y, 6, 6);
+	Renderer ().Ellipse (center, 9.0, 9.0);
 	}
 
 Renderer ().EndRender ();
