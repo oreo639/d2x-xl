@@ -1113,7 +1113,7 @@ if (!SelectMode (eSelectSide))
 CRect viewport;
 GetClientRect (viewport);
 
-if (!segmentManager.GatherSelectedSides (viewport, m_clickPos.x, m_clickPos.y))
+if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
 	return;
 
 double minDist = 1e30;
@@ -1122,7 +1122,7 @@ CSide* nearestSide = null;
 
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	segmentManager.Segment (sideP->GetParent ())->ComputeCenter (sideP);
-	double dist = sqrt (sqr (m_clickPos.x - sideP->Center ().m_screen.x) + sqr (m_clickPos.y - sideP->Center ().m_screen.y));
+	double dist = sqrt (sqr (m_lastMousePos.x - sideP->Center ().m_screen.x) + sqr (m_lastMousePos.y - sideP->Center ().m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
 		nearestSide = sideP;

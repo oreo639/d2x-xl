@@ -824,8 +824,11 @@ RecordMousePos (point, point);
 if (GetFocus () != this)
 	SetFocus ();
 if (change.x || change.y) {
-	switch(m_mouseState) {
+	switch (m_mouseState) {
 		case eMouseStateIdle:
+			if (SelectMode (eSelectSide))
+				Invalidate (FALSE);
+
 #if 0
 			if (Perspective ()) {
 				double scale = Perspective () ? 300.0 : 200.0;
