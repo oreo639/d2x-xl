@@ -174,7 +174,6 @@ public:  // control bar embedded members
 	int					m_mineZoom;
 	int					m_bShowCtrlBar;
 	int					m_bRecalcBarLayout;
-	CSize					m_toolPaneSize;
 	CProgressCtrl		m_progress;
 
 public:

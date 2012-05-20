@@ -69,8 +69,6 @@ m_bRecalcBarLayout = 0;
 m_toolMode = 1;
 m_textureMode = 1;
 m_mineZoom = 0;
-m_toolPaneSize.cx = 
-m_toolPaneSize.cy = 0;
 nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, DLE.IniFile ());
 bSingleToolPane = GetPrivateProfileInt ("DLE-XP", "SingleToolPane", 0, DLE.IniFile ());
 #if EDITBAR
@@ -399,8 +397,6 @@ if (nLayout == 2) {
 	m_splitter1.SetColumnInfo (1, rcTotal.Width () - cx, 0);
 	m_splitter1.SetRowInfo (0, rcTotal.Height (), 0);
 	m_splitter1.RecalcLayout ();
-	m_toolPaneSize.cx = 
-	m_toolPaneSize.cy = 0;
 	}
 else {
 	if (!ToolPane ())
@@ -452,8 +448,6 @@ else {
 			}
 		m_splitter2.RecalcLayout ();
 		m_splitter1.RecalcLayout ();
-		//m_toolPaneSize.cx = CX_TOOLS_VERT;
-		//m_toolPaneSize.cy = CY_TOOLS_VERT;
 		}
 	else {
 		if (bWasTracking [0]) {
@@ -472,8 +466,6 @@ else {
 		m_splitter2.SetRowInfo (1, cy, 0);
 		m_splitter2.RecalcLayout ();
 		m_splitter1.RecalcLayout ();
-		//m_toolPaneSize.cx = CX_TOOLS_HORZ;
-		//m_toolPaneSize.cy = CY_TOOLS_HORZ;
 		}
 	}
 #if 0
