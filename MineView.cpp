@@ -119,8 +119,9 @@ for (int nWeight = 0; nWeight < 2; nWeight++)
 
 CRenderData::~CRenderData()
 {
-for (int nPen = 0; nPen < penCount; nPen++)
-	delete m_pens [nPen];
+for (int nWeight = 0; nWeight < 2; nWeight++)
+	for (int nPen = 0; nPen < penCount; nPen++)
+		delete m_pens [nWeight][nPen];
 }
 
 //------------------------------------------------------------------------------

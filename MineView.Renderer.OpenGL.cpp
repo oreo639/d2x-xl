@@ -685,7 +685,7 @@ else {
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::SelectPen (int nPen, int nWeight = 1)
+void CRendererGL::SelectPen (int nPen, int nWeight)
 {
 	COLORREF color;
 
