@@ -1104,9 +1104,7 @@ Renderer ().EndRender ();
 // each side vertex to the circle to mark it. Open sides have the circle 
 // moved in by their normal * 2.0.
 
-static inline double sqr (long v) { return double (v) * double (v); }
-
-bool CMineView::DrawSelectableLine (void) 
+bool CMineView::DrawSelectableEdge (void) 
 {
 if (!SelectMode (eSelectLine))
 	return false;
@@ -1122,7 +1120,6 @@ double minDist = 1e30;
 CSegment* nearestSegment = null;
 CSide* nearestSide = null;
 short nNearestEdge = -1;
-CRect viewport = CRect (0, 0, ViewWidth (), ViewHeight ());
 
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
@@ -1379,7 +1376,7 @@ nearest->m_nSegment = -1;
 nearest->m_nSide = -1;
 nearest->m_nEdge = -1;
 
-if (DrawSelectableSides () || DrawSelectableSegments ())
+if (!DrawSelectableEdge () && (DrawSelectableSides () || DrawSelectableSegments ()))
 	DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);
 
 
