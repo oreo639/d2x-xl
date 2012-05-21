@@ -838,7 +838,7 @@ if (change.x || change.y) {
 				}
 			else if (nFlags & MK_SHIFT)
 				SetMouseState (eMouseStateSelect);
-			else if ((m_mouseState == eMouseStatePan) || (m_mouseState == eMouseStateRotate))
+			else if ((m_mouseState == eMouseStatePan) || (m_mouseState == eMouseStateRotate) || (m_mouseState == eMouseStateSelect))
 				SetMouseState (eMouseStateIdle);
 			break;
 
