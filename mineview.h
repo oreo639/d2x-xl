@@ -368,7 +368,7 @@ public:
 	inline CBGR& RenderBuffer (int i) { return m_renderData.m_renderBuffer [i]; }
 	inline depthType& DepthBuffer (int i) { return m_renderData.m_depthBuffer [i]; }
 	inline void SetDepthBuffer (depthType* buffer) { m_renderData.m_depthBuffer = buffer; }
-	inline CPen* Pen (ePenColor nPen) { return (nPen < penCount) ? m_renderData.m_pens [nPen] : null; }
+	inline CPen* Pen (ePenColor nPen, int nWeight = 1) { return (nPen < penCount) ? m_renderData.m_pens [nWeight > 1][nPen] : null; }
 	inline CVertex& MinViewPoint (void) { return m_renderData.m_minViewPoint; }
 	inline CVertex& MaxViewPoint (void) { return m_renderData.m_maxViewPoint; }
 	inline bool IgnoreDepth (void) { return m_renderData.m_bIgnoreDepth; }

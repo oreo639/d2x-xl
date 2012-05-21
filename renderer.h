@@ -165,7 +165,7 @@ class CRenderer {
 		inline CBGR& RenderBuffer (int i) { return m_renderData.m_renderBuffer [i]; }
 		inline depthType& DepthBuffer (int i) { return m_renderData.m_depthBuffer [i]; }
 		inline void SetDepthBuffer (depthType* buffer) { m_renderData.m_depthBuffer = buffer; }
-		inline CPen* Pen (int nPen, int nWeight) { return (nPen < penCount) ? m_renderData.m_pens [nWeight > 1][nPen] : null; }
+		inline CPen* Pen (int nPen, int nWeight = 1) { return (nPen < penCount) ? m_renderData.m_pens [nWeight > 1][nPen] : null; }
 		inline COLORREF PenColor (int nPen) { return m_renderData.PenColor (nPen); }
 		inline CVertex& MinViewPoint (void) { return m_renderData.m_minViewPoint; }
 		inline CVertex& MaxViewPoint (void) { return m_renderData.m_maxViewPoint; }
