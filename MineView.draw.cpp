@@ -1141,13 +1141,14 @@ if (m_nRenderer) {
 	glLineStipple (1, 0x0f0f);  
 	glEnable (GL_LINE_STIPPLE);
 	}
-
+Renderer ().SelectPen (penBoldMedBlue + 1);
 CVertex* v1 = nearest->Segment ()->Vertex (nearest->m_nSide, nNearestEdge);
 CVertex* v2 = nearest->Segment ()->Vertex (nearest->m_nSide, nNearestEdge + 1);
 Renderer ().MoveTo (v1->m_screen.x, v1->m_screen.y);
 Renderer ().LineTo (v2->m_screen.x, v2->m_screen.y);
 if (m_nRenderer)
 	glDisable (GL_LINE_STIPPLE);
+Renderer ().SelectPen (penMedBlue + 1);
 Renderer ().Ellipse (*v1, 8.0, 8.0);
 Renderer ().Ellipse (*v2, 8.0, 8.0);
 Renderer ().EndRender ();
