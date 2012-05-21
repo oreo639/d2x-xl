@@ -1121,6 +1121,25 @@ CSegment* nearestSegment = null;
 CSide* nearestSide = null;
 short nNearestEdge = -1;
 
+	short nSegments = segmentManager.Count ();
+
+#if 1
+for (short nSegment = 0; nSegment < nSegments; nSegment++) {
+	CSegment* segP = segmentManager.Segment (nSegment);
+	bool bSegmentSelected = false;
+	CSide* sideP = segP->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
+			continue;
+		short nEdge = sideP->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, segP->m_info.vertexIds, minDist);
+		if (nEdge >= 0) {
+			nearestSegment = segP;
+			nearestSide = sideP;
+			nNearestEdge = nEdge;
+			}
+		}
+	}
+#else
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nEdge = sideP->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, segP->m_info.vertexIds, minDist);
@@ -1130,7 +1149,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		nNearestEdge = nEdge;
 		}
 	}
-
+#endif
 if (nNearestEdge < 0)
 	return false;
 

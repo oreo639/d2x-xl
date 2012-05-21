@@ -65,7 +65,7 @@ class CVertex : public CDoubleVector, public CGameItem {
 
 		void Transform (CViewMatrix* m);
 
-		inline bool InRange (long xMax, long yMax, int nRenderer) { return (m_screen.x < xMax) && (m_screen.y < yMax) && (!nRenderer || (m_view.v.z >= 0.0)); }
+		inline bool InRange (long xMax, long yMax, int nRenderer) { return  (m_screen.x >= 0) && (m_screen.y >= 0) && (m_screen.x < xMax) && (m_screen.y < yMax) && (!nRenderer || (m_view.v.z >= 0.0)); }
 
 		inline void GLVertex (CDoubleVector& vTranslate) { glVertex3d (m_view.v.x, m_view.v.y, m_view.v.z - vTranslate.v.z); }
 
