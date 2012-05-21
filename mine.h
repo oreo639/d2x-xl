@@ -60,6 +60,7 @@ class CMine {
 		short				m_selectMode;
 		int				m_changesMade;
 		int				m_nNoLightDeltas;
+		int				m_nEditReference;
 		char				m_szBlockFile [256];
 		bool				m_bVertigo;
 		char*				m_pHxmExtraData;
@@ -83,6 +84,8 @@ class CMine {
 		inline bool IsStdLevel (void) { return LevelVersion () < 9; }
 		inline bool LevelIsOutdated (void) { return IsD2XLevel () && (LevelVersion () < LEVEL_VERSION); }
 		inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
+
+		inline int& EditReference (void) { return m_nEditReference; }
 			
 		inline int FileType (void) { return m_fileType; }
 		inline void SetFileType (int fileType) { m_fileType = fileType; }
