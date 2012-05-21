@@ -70,9 +70,10 @@ public:
 	inline short& Index (void) { return m_nIndex; }
 };
 
-extern CSelection selections [2];
+extern CSelection selections [3];
 extern CSelection* current;
 extern CSelection* other;
+extern CSelection* nearest;
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

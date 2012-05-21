@@ -326,7 +326,7 @@ else {
 	if (segP->IsMarked ())
 		Renderer ().SelectPen (penBoldGold + 1);
 	else 
-		Renderer ().SelectPen ((nSegment == current->m_nSegment) ? SelectMode (eSelectSegment) ? penBoldRed + 1 : penWhite + 1 : penBoldGray + 1);   
+		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penBoldRed + 1 : penWhite + 1 : penBoldGray + 1);   
 	if (m_viewOption == eViewWireFrameSparse)
 		DrawSegmentPartial (segP);
 	else
@@ -341,23 +341,20 @@ else {
 				break;
 		}
 	if (i == 4) {
-		Renderer ().SelectPen ((nSegment == current->m_nSegment) ? SelectMode (eSelectSide) ? penBoldRed + 1 : penBoldGreen + 1 : penBoldDkGreen + 1);  
+		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSide) ? penBoldRed + 1 : penBoldGreen + 1 : penBoldDkGreen + 1);  
 		short nVertices = sideP->VertexCount ();
 		for (i = 0; i < nVertices; i++)
 			DrawLine (segP, sideP->VertexIdIndex (i), sideP->VertexIdIndex (i + 1));
 		}
 
-	//if (!Renderer ().Ortho ()) 
+	short i1 = sideP->VertexIdIndex (nLine);
+	short i2 = sideP->VertexIdIndex (nLine + 1);
+	if (!Renderer ().Ortho () ||
+			(vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
+		   vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
 		{
-		short i1 = sideP->VertexIdIndex (nLine);
-		short i2 = sideP->VertexIdIndex (nLine + 1);
-		if (!Renderer ().Ortho () ||
-			 (vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
-		     vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
-			{
-			Renderer ().SelectPen ((nSegment == current->m_nSegment) ? SelectMode (eSelectLine) ? penBoldRed + 1 : penBoldGold + 1 : penDkCyan + 1);  
-			DrawLine (segP, i1, i2);
-			}
+		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penBoldRed + 1 : penBoldGold + 1 : penDkCyan + 1);  
+		DrawLine (segP, i1, i2);
 		}
 
 #if 0
@@ -367,7 +364,7 @@ else {
 		}
 #endif
 	Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
-	Renderer ().SelectPen ((nSegment == current->m_nSegment) ? SelectMode (eSelectPoint) ? penBoldRed + 1 : penBoldGold + 1 : penBoldDkCyan + 1); 
+	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penBoldRed + 1 : penBoldGold + 1 : penBoldDkCyan + 1); 
 	i = segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)];
 	if (vertexManager [i].InRange (xMax, yMax, Renderer ().Type ()))
 		Renderer ().Ellipse (vertexManager [i], 4, 4);
@@ -1122,6 +1119,9 @@ if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMouse
 
 double minDist = 1e30;
 
+CSegment* nearestSegment = null;
+CSide* nearestSide = null;
+
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	segP->ComputeCenter (sideP);
@@ -1136,20 +1136,22 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
-		if (minDist <= 9.0) {
-			m_nearestSegment = segmentManager.Segment (sideP->GetParent ());
-			m_nearestSide = sideP;
+		//if (minDist <= 9.0) 
+			{
+			nearestSegment = segmentManager.Segment (sideP->GetParent ());
+			nearestSide = sideP;
 			}
 		}
 	}
+nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
 
+#if 0
 Renderer ().BeginRender (true);
-
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
 	short nVertices = sideP->VertexCount ();
-	Renderer ().SelectPen ((sideP == m_nearestSide) ? penGold + 1 : penOrange + 1);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penOrange + 1);
 	CVertex& center = sideP->Center ();
 	if (!sideP->IsVisible ()) {
 		CVertex normal = sideP->Normal (2);
@@ -1169,8 +1171,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		}
 	Renderer ().Ellipse (center, 9.0, 9.0);
 	}
-
 Renderer ().EndRender ();
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1204,21 +1206,22 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	if (minDist > dist) {
 		minDist = dist;
 		if (minDist <= 9.0) {
-			m_nearestSegment = segP;
-			m_nearestSide = sideP;
+			nearestSegment = segP;
+			nearestSide = sideP;
 			}
 		}
 	}
+nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
 
+#if 0
 Renderer ().BeginRender (true);
-
 nSegment = -1;
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	if (nSegment == sideP->GetParent ())
 		continue;
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
-	Renderer ().SelectPen ((sideP == m_nearestSide) ? penGold + 1 : penOrange + 1);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penOrange + 1);
 	CVertex& center = segP->Center ();
 	for (int i = 0; i < 8; i++) {
 		if (segP->VertexId (i) > MAX_VERTEX)
@@ -1237,6 +1240,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	}
 
 Renderer ().EndRender ();
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1278,8 +1282,8 @@ if (ViewFlag (eViewMineWalls))
 if (ViewFlag (eViewMineLights))
 	DrawLights ();
 
-m_nearestSegment = null;
-m_nearestSide = null;
+nearest->m_nSegment = -1;
+nearest->m_nSide = -1;
 
 DrawSelectableSides ();
 DrawSelectableSegments ();

@@ -11,9 +11,10 @@
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-CSelection selections [2];
+CSelection selections [3];
 CSelection* current = &selections [0];
 CSelection* other = &selections [1];
+CSelection* nearest = &selections [2]; // nearest to current mouse position
 
 // -----------------------------------------------------------------------------
 
@@ -53,7 +54,7 @@ if (nSide < 0)
 
 CSegment* CSelection::Segment (void)
 {
-return segmentManager.Segment (m_nSegment);
+return (m_nSegment < 0) ? null : segmentManager.Segment (m_nSegment);
 }
 
 // -----------------------------------------------------------------------------
@@ -75,7 +76,7 @@ return (nChild < 0) ? null : segmentManager.Segment (nChild);
 
 CSide* CSelection::Side (void)
 {
-return segmentManager.Side (*this);
+return (m_nSegment < 0) ? null : segmentManager.Side (*this);
 }
 
 // -----------------------------------------------------------------------------

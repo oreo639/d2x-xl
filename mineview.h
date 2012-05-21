@@ -132,8 +132,8 @@ protected: // create from serialization only
 	CRenderer*		m_renderer;
 	int				m_nRenderer;
 
-	CSegment*		m_nearestSegment;
-	CSide*			m_nearestSide;
+	CSegment*		nearestSegment;
+	CSide*			nearestSide;
 
 // Attributes
 public:
