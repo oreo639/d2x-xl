@@ -1148,7 +1148,7 @@ nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex
 
 Renderer ().BeginRender (true);
 if (m_nRenderer) {
-	glLineStipple (1, 0x3333);  
+	glLineStipple (1, 0x0f0f);  
 	glEnable (GL_LINE_STIPPLE);
 	}
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
@@ -1158,6 +1158,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	CVertex& center = sideP->Center ();
 #if 1
+	if (m_nRenderer) 
+		glEnable (GL_LINE_STIPPLE);
 	for (int i = 0; i <= nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
 		if (i)
@@ -1182,10 +1184,10 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
 		}
 #endif
+	if (m_nRenderer)
+		glDisable (GL_LINE_STIPPLE);
 	Renderer ().Ellipse (center, 8.0, 8.0);
 	}
-if (m_nRenderer)
-	glDisable (GL_LINE_STIPPLE);
 Renderer ().EndRender ();
 
 return true;
@@ -1235,8 +1237,8 @@ nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex
 
 Renderer ().BeginRender (true);
 if (m_nRenderer) {
-	glLineStipple (1, 0x3333);  
-	glEnable (GL_LINE_STIPPLE);
+	glLineStipple (1, 0x0f0f);  
+	//glEnable (GL_LINE_STIPPLE);
 	}
 nSegment = -1;
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
@@ -1247,6 +1249,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CVertex& center = segP->Center ();
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 #if 1
+	if (m_nRenderer)
+		glEnable (GL_LINE_STIPPLE);
 	DrawSegmentWireFrame (segP);
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	for (int i = 0; i < 8; i++) {
@@ -1262,12 +1266,12 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
 		Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
 		}
+	if (m_nRenderer)
+		glDisable (GL_LINE_STIPPLE);
 #endif
 	Renderer ().Ellipse (center, 8.0, 8.0);
 	}
 
-if (m_nRenderer)
-	glDisable (GL_LINE_STIPPLE);
 Renderer ().EndRender ();
 
 return true;
