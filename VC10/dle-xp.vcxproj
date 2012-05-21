@@ -551,6 +551,7 @@
     <ClInclude Include="..\dlcDoc.h" />
     <ClInclude Include="..\dle-xp.h" />
     <ClInclude Include="..\FBO.h" />
+    <ClInclude Include="..\Frustum.h" />
     <ClInclude Include="..\MainFrame.h" />
     <ClInclude Include="..\mineview.h" />
     <ClInclude Include="..\OOFModel.h" />
@@ -689,6 +690,7 @@
     <ClCompile Include="..\ExtBitmapButton.cpp" />
     <ClCompile Include="..\ExtSliderCtrl.cpp" />
     <ClCompile Include="..\FBO.cpp" />
+    <ClCompile Include="..\Frustum.cpp" />
     <ClCompile Include="..\LightTool.cpp" />
     <ClCompile Include="..\MainFrame.cpp" />
     <ClCompile Include="..\MainFrame.EditTool.cpp" />

@@ -202,6 +202,68 @@ if (CFBO::Setup ()) {
 return TRUE;
 }
 
+// -----------------------------------------------------------------------------
+
+BOOL CRendererGL::InitProjection (GLvoid)
+{
+glShadeModel (GL_SMOOTH);
+glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
+glClearDepth (1.0f);
+glEnable (GL_BLEND);
+glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+glEnable (GL_DEPTH_TEST);
+glDepthFunc (GL_LESS);
+glEnable (GL_ALPHA_TEST);
+glAlphaFunc (GL_GEQUAL, 0.0025f);	
+glEnable (GL_CULL_FACE);
+glCullFace (GL_FRONT);
+glEnable (GL_LINE_SMOOTH);
+glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+glDrawBuffer (GL_BACK);
+m_glInited = false;
+return TRUE;
+}
+
+// -----------------------------------------------------------------------------
+
+static double viewAngleTable [4] = {30.0, 40.0, 50.0, 60.0};
+
+void CRendererGL::SetupProjection (bool bOrtho) 
+{
+if (m_bOrtho = bOrtho) {
+	glMatrixMode (GL_MODELVIEW);
+	glLoadIdentity ();
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity ();
+	glOrtho (0.0, ViewWidth (), 0.0, ViewHeight (), 0.0, 5000.0);
+	glViewport (0, 0, ViewWidth (), ViewHeight ());
+	ViewMatrix ()->GetProjection ();
+	}
+else {
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity ();
+#if 0
+	gluPerspective (45.0f /** m_glAspectRatio*/, m_glAspectRatio, 1.0f, 5000.0f);
+#else
+#	if 0
+	double h = 1.0f * tan (Radians (180.0 * m_glAspectRatio * 0.5));
+	double w = h * m_glAspectRatio;
+	glFrustum (w, -w, h, -h, 1.0, 5000.0);
+#	else
+	double a = Perspective () ? 30.0 : viewAngleTable [m_viewMatrix.DepthPerception ()];
+	double h = 1.0f * tan (Radians (a));
+	double w = h * m_glAspectRatio;
+	glFrustum (-w, w, h, -h, 1.0, 50000.0);
+#	endif
+#endif
+	glMatrixMode (GL_MODELVIEW);
+	glLoadIdentity ();
+	glScalef (1.0f, -1.0f, -1.0f);
+	ViewMatrix ()->GetProjection ();
+	glEnable (GL_DEPTH_TEST);
+	}
+}
+
 //------------------------------------------------------------------------------
 
 int CRendererGL::Project (CRect* pRC, bool bCheckBehind)
@@ -630,68 +692,6 @@ EndRender ();
 if (m_bRenderSideKeys = bRenderSideKeys)
 	m_renderBuffers.SelectColorBuffers (0);
 m_bHaveSideKeys = false;
-}
-
-// -----------------------------------------------------------------------------
-
-BOOL CRendererGL::InitProjection (GLvoid)
-{
-glShadeModel (GL_SMOOTH);
-glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
-glClearDepth (1.0f);
-glEnable (GL_BLEND);
-glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-glEnable (GL_DEPTH_TEST);
-glDepthFunc (GL_LESS);
-glEnable (GL_ALPHA_TEST);
-glAlphaFunc (GL_GEQUAL, 0.0025f);	
-glEnable (GL_CULL_FACE);
-glCullFace (GL_FRONT);
-glEnable (GL_LINE_SMOOTH);
-glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-glDrawBuffer (GL_BACK);
-m_glInited = false;
-return TRUE;
-}
-
-// -----------------------------------------------------------------------------
-
-static double viewAngleTable [4] = {30.0, 40.0, 50.0, 60.0};
-
-void CRendererGL::SetupProjection (bool bOrtho) 
-{
-if (m_bOrtho = bOrtho) {
-	glMatrixMode (GL_MODELVIEW);
-	glLoadIdentity ();
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
-	glOrtho (0.0, ViewWidth (), 0.0, ViewHeight (), 0.0, 5000.0);
-	glViewport (0, 0, ViewWidth (), ViewHeight ());
-	ViewMatrix ()->GetProjection ();
-	}
-else {
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
-#if 0
-	gluPerspective (45.0f /** m_glAspectRatio*/, m_glAspectRatio, 1.0f, 5000.0f);
-#else
-#	if 0
-	double h = 1.0f * tan (Radians (180.0 * m_glAspectRatio * 0.5));
-	double w = h * m_glAspectRatio;
-	glFrustum (w, -w, h, -h, 1.0, 5000.0);
-#	else
-	double a = Perspective () ? 30.0 : viewAngleTable [m_viewMatrix.DepthPerception ()];
-	double h = 1.0f * tan (Radians (a));
-	double w = h * m_glAspectRatio;
-	glFrustum (-w, w, h, -h, 1.0, 50000.0);
-#	endif
-#endif
-	glMatrixMode (GL_MODELVIEW);
-	glLoadIdentity ();
-	glScalef (1.0f, -1.0f, -1.0f);
-	ViewMatrix ()->GetProjection ();
-	glEnable (GL_DEPTH_TEST);
-	}
 }
 
 //------------------------------------------------------------------------------

@@ -292,6 +292,9 @@
     <ClInclude Include="..\RenderBuffers.h">
       <Filter>OpenGL\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Frustum.h">
+      <Filter>OpenGL\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp">
@@ -631,6 +634,9 @@
       <Filter>OpenGL\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\RenderBuffers.cpp">
+      <Filter>OpenGL\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Frustum.cpp">
       <Filter>OpenGL\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
