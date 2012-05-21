@@ -463,6 +463,30 @@ return 0;
 }
 
 // -----------------------------------------------------------------------------
+
+short CSide::NearestEdge (CRect& viewport, long xMouse, long yMouse, ushort vertexIds [], double& minDist) 
+{
+CDoubleVector mousePos (double (xMouse), double (yMouse), 0.0);
+short nNearestEdge = -1, nEdges = VertexCount ();
+CVertex* v1, * v2 = &vertexManager [vertexIds [m_vertexIdIndex [0]]];
+for (short nEdge = 1; nEdge <= nEdges; nEdge++) {
+	v1 = v2;
+	if (!v1->InRange (viewport.right, viewport.bottom, 1))
+		continue;
+	v2 = &vertexManager [vertexIds [m_vertexIdIndex [nEdge % nEdges]]];
+	if (!v2->InRange (viewport.right, viewport.bottom, 1))
+		continue;
+	v1->m_proj.v.z = v2->m_proj.v.z = 0.0;
+	double dist = PointLineDistance (mousePos, v1->m_proj, v2->m_proj);
+	if (minDist > dist) {
+		minDist = dist;
+		nNearestEdge = nEdge;
+		}
+	}
+return nNearestEdge;
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 //eof side.cpp

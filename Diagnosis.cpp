@@ -90,7 +90,7 @@ MarkSegment (pbp->nChild);
 if ((pbp->nSide >= 0) && (pbp->nSide < MAX_SIDES_PER_SEGMENT))
 	current->m_nSide = pbp->nSide;
 if ((pbp->nLine >= 0) && (pbp->nLine < 4))
-	current->m_nLine = current->m_nPoint = pbp->nLine;
+	current->m_nEdge = current->m_nPoint = pbp->nLine;
 if ((pbp->nPoint >= 0) && (pbp->nPoint < 8))
 	current->m_nPoint = pbp->nPoint;
 if ((pbp->nWall >= 0) && (pbp->nWall < wallManager.WallCount ()))

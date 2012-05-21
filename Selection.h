@@ -17,12 +17,12 @@ class CSelection : public CSideKey {
 public:
 	CSelection() :
 		CSideKey (0, DEFAULT_SIDE),
-		m_nLine (DEFAULT_LINE),
+		m_nEdge (DEFAULT_LINE),
 		m_nPoint (DEFAULT_POINT),
 		m_nObject (DEFAULT_OBJECT)
 	{}
 
-	short m_nLine;
+	short m_nEdge;
 	short m_nPoint;
 	short m_nObject;
 	short	m_nIndex;
@@ -58,7 +58,7 @@ public:
 	void Reset (void) {
 		m_nSegment = 0;
 		m_nSide = DEFAULT_SIDE;
-		m_nLine = DEFAULT_LINE,
+		m_nEdge = DEFAULT_LINE,
 		m_nPoint = DEFAULT_POINT,
 		m_nObject = DEFAULT_OBJECT;
 		}

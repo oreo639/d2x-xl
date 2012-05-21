@@ -204,10 +204,10 @@ seg1 = Segment (current->m_nSegment);
 seg2 = Segment (other->m_nSegment); 
 
 for (i = 0; i < 2; i++) {
-	i1 [i] = seg1->VertexId (current->m_nSide, current->m_nLine + i);
-	i2 [i] = seg2->VertexId (other->m_nSide, other->m_nLine + i);
-	v1 [i] = seg1->Vertex (current->m_nSide, current->m_nLine + i);
-	v2 [i] = seg2->Vertex (other->m_nSide, other->m_nLine + i);
+	i1 [i] = seg1->VertexId (current->m_nSide, current->m_nEdge + i);
+	i2 [i] = seg2->VertexId (other->m_nSide, other->m_nEdge + i);
+	v1 [i] = seg1->Vertex (current->m_nSide, current->m_nEdge + i);
+	v2 [i] = seg2->Vertex (other->m_nSide, other->m_nEdge + i);
 	match [i] = -1; 
 	}
 
@@ -247,7 +247,7 @@ if (match [0] == match [1]) {
 undoManager.Begin (udSegments);
 // define vert numbers
 for (i = 0; i < 2; i++) 
-	seg1->SetVertexId (current->m_nSide, current->m_nLine + i, i2 [match [i]]); 
+	seg1->SetVertexId (current->m_nSide, current->m_nEdge + i, i2 [match [i]]); 
 FixChildren (); 
 undoManager.End ();
 SetLinesToDraw (); 

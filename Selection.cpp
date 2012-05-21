@@ -25,7 +25,7 @@ if (nSegment >= 0)
 if (nSide >= 0) 
 	m_nSide = nSide;
 if (nLine >= 0) 
-	m_nLine = nLine;
+	m_nEdge = nLine;
 if (nPoint >= 0) 
 	m_nPoint = nPoint;
 }

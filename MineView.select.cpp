@@ -1,5 +1,5 @@
-// dlcView.cpp: implementation of the CMineView class
-//
+// MineView.select.cpp: element selection UI functions
+
 
 #include "stdafx.h"
 #include "winuser.h"
@@ -16,7 +16,7 @@
 #include <math.h>
 #include <time.h>
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 static bool PointIsInTriangle2D (CDoubleVector& p, CDoubleVector t [])
 {
@@ -37,12 +37,7 @@ double v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 return (u >= 0.0) && (v >= 0.0) && (u + v <= 1.0);
 }
 
-//--------------------------------------------------------------------------
-//		       select_current_object()
-//
-//  ACTION - finds object pointed to by mouse then draws.
-//
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::SelectCurrentObject (long xMouse, long yMouse) 
 {
@@ -119,7 +114,7 @@ i = current->m_nObject;
 RefreshObject(i, nClosestObj);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // Find the nearest textured segment side the user had clicked on.
 // First try to read the segment and side secondary render target from the renderer
 // If that fails, cast a ray through the mouse position from the near to the 
@@ -192,7 +187,7 @@ return nMinSeg;
 #endif
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 bool CMineView::SelectCurrentSide (long xMouse, long yMouse, int bAdd) 
 {
@@ -218,14 +213,14 @@ Refresh ();
 return true;
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 bool CMineView::SelectCurrentSegment (long xMouse, long yMouse, int bAdd) 
 {
 return SelectCurrentSide (xMouse, yMouse, bAdd);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 bool CMineView::SelectCurrentLine (long xMouse, long yMouse, int bAdd) 
 {
@@ -258,7 +253,7 @@ for (short nSegment = 0; 0 <= (nSegment = segmentManager.FindByVertex (ushort (n
 		if (dMin > d) {
 			dMin = d;
 			current->m_nSegment = nSegment;
-			current->m_nLine = i;
+			current->m_nEdge = i;
 			nVertices [0] = segP->VertexId (i1);
 			nVertices [0] = segP->VertexId (i2);
 			}
@@ -269,14 +264,14 @@ if (bAdd && (nVertices [0] != 0xFFFF) && (nVertices [1] != 0xFFFF)) {
 	vertexManager [nVertices [1]].Mark ();
 	current->m_nPoint = nVertex;
 	if (!current->Segment ()->HasEdge (current->m_nSide, nVertices [0], nVertices [1]))
-		current->m_nSide = edgeSideTable [current->m_nLine][0];
+		current->m_nSide = edgeSideTable [current->m_nEdge][0];
 	}
 DLE.ToolView ()->Refresh ();
 Refresh ();
 return true;
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 int CMineView::FindNearestVertex (long xMouse, long yMouse)
 {
@@ -306,7 +301,7 @@ for (int i = vertexManager.Count (); i; i--, vertexP++) {
 return (nVertex < 0) ? -1 : vertexManager.Count () - nVertex;
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 bool CMineView::SelectCurrentPoint (long xMouse, long yMouse, int bAdd) 
 {
@@ -320,7 +315,7 @@ Refresh ();
 return true;
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 bool CMineView::SelectCurrentElement (long xMouse, long yMouse, int bAdd) 
 {
@@ -345,7 +340,7 @@ switch (theMine->SelectMode ()) {
 return false;
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::NextPoint (int dir) 
 {
@@ -353,19 +348,19 @@ if (current->Side ()->Shape () > SIDE_SHAPE_TRIANGLE)
 	NextSide (dir);
 else {
 	Wrap (current->m_nPoint, dir, 0, current->Side ()->VertexCount () - 1);
-	current->m_nLine = current->m_nPoint;
+	current->m_nEdge = current->m_nPoint;
 	}
 Refresh ();
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::PrevPoint (void)
 {
 NextPoint (-1);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::NextSide (int dir) 
 {
@@ -376,34 +371,34 @@ do {
 Refresh (true);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::PrevSide () 
 {
 NextSide (-1);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::NextLine (int dir) 
 {
 if (current->Side ()->Shape () > SIDE_SHAPE_TRIANGLE)
 	NextSide (dir);
 else {
-	Wrap (current->m_nLine, dir, 0, current->Side ()->VertexCount () - 1);
-	current->m_nPoint = current->m_nLine;
+	Wrap (current->m_nEdge, dir, 0, current->Side ()->VertexCount () - 1);
+	current->m_nPoint = current->m_nEdge;
 	}
 Refresh ();
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::PrevLine (void) 
 {
 NextLine (-1);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::NextSegment (int dir) 
 {
@@ -422,21 +417,21 @@ else {
 	}
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::PrevSegment (void) 
 {
 NextSegment (-1);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // MENU - Forward_Cube
 //
 // ACTION - If child exists, this routine sets current_segment to child segP
 //
 // Changes - Smart side selection added (v0.8)
 //         Smart side selection done before moving (instead of after) (v0.9)
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::SegmentForward (int dir) 
 {
@@ -490,14 +485,14 @@ if (nChild > -1) {
 DrawHighlight (0);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::SegmentBackwards () 
 {
 SegmentForward (-1);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::SelectOtherSegment () 
 {
@@ -508,7 +503,7 @@ Refresh (true);
 DLE.ToolView ()->SegmentTool ()->Refresh ();
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 bool CMineView::SelectOtherSide () 
 {
@@ -523,7 +518,7 @@ DLE.ToolView ()->SegmentTool ()->Refresh ();
 return true;
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::NextObject (int dir) 
 {
@@ -537,14 +532,14 @@ if (objectManager.Count () > 1) {
 RefreshObject (oldObject, newObject);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::PrevObject() 
 {
 NextObject (-1);
 }
 
-//--------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 void CMineView::NextSegmentElement (int dir)
 {

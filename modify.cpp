@@ -80,8 +80,8 @@ bool CMine::EditGeoBack (void)
 if (m_selectMode == POINT_MODE)
 	p1 = p2 = current->m_nPoint;
 else if (m_selectMode == LINE_MODE) {
-	p1 = current->m_nLine;
-	p2 = (current->m_nLine + 1) % nVertices;
+	p1 = current->m_nEdge;
+	p2 = (current->m_nEdge + 1) % nVertices;
 	okToMove = (p1 != p2);
 	}
 
@@ -318,8 +318,8 @@ switch (m_selectMode) {
 		return false;
 
 	case LINE_MODE:
-		point [0] = sideP->VertexIdIndex (current->m_nLine);
-		point [1] = sideP->VertexIdIndex (current->m_nLine + 1);
+		point [0] = sideP->VertexIdIndex (current->m_nEdge);
+		point [1] = sideP->VertexIdIndex (current->m_nEdge + 1);
 		undoManager.Begin (udVertices | udSegments);
 		result = ResizeLine (segP, point [0], point [1], delta, -1);
 		undoManager.End ();
@@ -554,7 +554,7 @@ bool CMine::MoveElements (CDoubleVector vDelta)
 	int				nSegment = current->m_nSegment;
 	int				nSide = current->m_nSide;
 	int				nPoint = current->m_nPoint;
-	int				nLine = current->m_nLine;
+	int				nLine = current->m_nEdge;
 	int				i;
 	CSegment*		segP = current->Segment ();
 	CSide*			sideP = current->Side ();

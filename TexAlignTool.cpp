@@ -102,7 +102,7 @@ m_centerPt.y = minRect.y + 166 / 2;
 segP = current->Segment ();
 sideP = current->Side ();
 nSide = current->m_nSide;
-nLine = current->m_nLine;
+nLine = current->m_nEdge;
 short nEdges = sideP->VertexCount ();
 
 // get device context handle
@@ -330,8 +330,8 @@ if (delta) {
 			sideP->m_info.uvls [current->m_nPoint].u -= delta;
 			break;
 		case LINE_MODE:
-			sideP->m_info.uvls [current->m_nLine].u -= delta;
-			sideP->m_info.uvls [(current->m_nLine + 1) % sideP->VertexCount ()].u -= delta;
+			sideP->m_info.uvls [current->m_nEdge].u -= delta;
+			sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].u -= delta;
 			break;
 		default:
 			for (int i = 0; i < sideP->VertexCount (); i++)
@@ -359,8 +359,8 @@ if (delta) {
 			sideP->m_info.uvls [current->m_nPoint].v -= delta;
 			break;
 		case LINE_MODE:
-			sideP->m_info.uvls [current->m_nLine].v -= delta;
-			sideP->m_info.uvls [(current->m_nLine + 1) % sideP->VertexCount ()].v -= delta;
+			sideP->m_info.uvls [current->m_nEdge].v -= delta;
+			sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].v -= delta;
 			break;
 		default:
 			for (int i = 0; i < sideP->VertexCount (); i++)
@@ -438,7 +438,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		Swap (sideP->m_info.uvls [current->m_nLine].u, sideP->m_info.uvls [(current->m_nLine + 1) % sideP->VertexCount ()].u);
+		Swap (sideP->m_info.uvls [current->m_nEdge].u, sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].u);
 		break;
 	default:
 		for (int i = 0; i < 2; i++) 
@@ -461,7 +461,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		Swap (sideP->m_info.uvls [current->m_nLine].v, sideP->m_info.uvls [(current->m_nLine + 1) % sideP->VertexCount ()].v);
+		Swap (sideP->m_info.uvls [current->m_nEdge].v, sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].v);
 		break;
 	default:
 		for (int i = 0; i < 2; i++) 
@@ -486,8 +486,8 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 		sideP->m_info.uvls [current->m_nPoint].u += delta;
 		break;
 	case LINE_MODE:
-		sideP->m_info.uvls [current->m_nLine].u += delta;
-		sideP->m_info.uvls [(current->m_nLine + 1) % sideP->VertexCount ()].u += delta;
+		sideP->m_info.uvls [current->m_nEdge].u += delta;
+		sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].u += delta;
 		break;
 	default:
 		for (int i = 0; i < sideP->VertexCount (); i++)
@@ -513,8 +513,8 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 		sideP->m_info.uvls [current->m_nPoint].v += delta;
 		break;
 	case LINE_MODE:
-		sideP->m_info.uvls [current->m_nLine].v += delta;
-		sideP->m_info.uvls [(current->m_nLine + 1) % sideP->VertexCount ()].v += delta;
+		sideP->m_info.uvls [current->m_nEdge].v += delta;
+		sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].v += delta;
 		break;
 	default:
 		for (int i = 0; i < sideP->VertexCount (); i++)

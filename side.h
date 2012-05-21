@@ -119,6 +119,8 @@ public:
 
 	short IsSelected (CRect& viewport, long xMouse, long yMouse, ushort vertexIds []);
 
+	short NearestEdge (CRect& viewport, long xMouse, long yMouse, ushort vertexIds [], double& minDist);
+
 	inline void Link (CSide* sideP) { m_link = sideP; }
 
 	inline CSide* Link (void) { return m_link; }

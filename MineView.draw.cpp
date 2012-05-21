@@ -350,8 +350,8 @@ else {
 	short i1 = sideP->VertexIdIndex (nLine);
 	short i2 = sideP->VertexIdIndex (nLine + 1);
 	if (!Renderer ().Ortho () ||
-			(vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
-		   vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
+		 (vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
+		  vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
 		{
 		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penBoldRed + 1 : penBoldGold + 1 : penDkCyan + 1);  
 		DrawLine (segP, i1, i2);
@@ -1106,6 +1106,66 @@ Renderer ().EndRender ();
 
 static inline double sqr (long v) { return double (v) * double (v); }
 
+bool CMineView::DrawSelectableLine (void) 
+{
+if (!SelectMode (eSelectLine))
+	return false;
+
+CRect viewport;
+GetClientRect (viewport);
+
+if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
+	return false;
+
+double minDist = 1e30;
+
+CSegment* nearestSegment = null;
+CSide* nearestSide = null;
+short nNearestEdge = -1;
+CRect viewport = CRect (0, 0, ViewWidth (), ViewHeight ());
+
+for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
+	short nEdge = sideP->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, segP->m_info.vertexIds, minDist);
+	if (nEdge >= 0) {
+		nearestSegment = segP;
+		nearestSide = sideP;
+		nNearestEdge = nEdge;
+		}
+	}
+
+if (nNearestEdge < 0)
+	return false;
+
+nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide), nNearestEdge, nNearestEdge);
+
+Renderer ().BeginRender (true);
+if (m_nRenderer) {
+	glLineStipple (1, 0x0f0f);  
+	glEnable (GL_LINE_STIPPLE);
+	}
+
+CVertex* v1 = current->Segment ()->Vertex (current->m_nSide, nNearestEdge);
+CVertex* v2 = current->Segment ()->Vertex (current->m_nSide, nNearestEdge + 1);
+Renderer ().MoveTo (v1->m_screen.x, v1->m_screen.y);
+Renderer ().LineTo (v2->m_screen.x, v2->m_screen.y);
+if (m_nRenderer)
+	glDisable (GL_LINE_STIPPLE);
+Renderer ().Ellipse (*v1, 8.0, 8.0);
+Renderer ().Ellipse (*v2, 8.0, 8.0);
+Renderer ().EndRender ();
+
+return true;
+}
+
+//--------------------------------------------------------------------------
+// Determine all sides in the projection to the mine view of which the current 
+// mouse position lies. Draw a circle in each side's center and a line from 
+// each side vertex to the circle to mark it. Open sides have the circle 
+// moved in by their normal * 2.0.
+
+static inline double sqr (long v) { return double (v) * double (v); }
+
 bool CMineView::DrawSelectableSides (void) 
 {
 if (!SelectMode (eSelectSide))
@@ -1144,7 +1204,6 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		}
 	}
 nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
-
 
 Renderer ().BeginRender (true);
 if (m_nRenderer) {
@@ -1301,13 +1360,13 @@ Renderer ().BeginRender (Renderer ().Type () == 0);
 // draw highlighted Segments () (other first, then current)
 if (*current == selections [0]) {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nLine, selections [1].m_nPoint, bClear);
-	DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nLine, selections [0].m_nPoint, bClear);
+		DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].m_nPoint, bClear);
+	DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].m_nPoint, bClear);
 	}
 else {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nLine, selections [0].m_nPoint, bClear);
-	DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nLine, selections [1].m_nPoint, bClear);
+		DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].m_nPoint, bClear);
+	DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].m_nPoint, bClear);
 	}
 Renderer ().EndRender ();
 
@@ -1318,6 +1377,7 @@ if (ViewFlag (eViewMineLights))
 
 nearest->m_nSegment = -1;
 nearest->m_nSide = -1;
+nearest->m_nEdge = -1;
 
 if (DrawSelectableSides () || DrawSelectableSegments ())
 	DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);

@@ -341,7 +341,7 @@ void CSegmentTool::OnSide6 () { OnSide (5); }
 void CSegmentTool::OnPoint (int nPoint)
 {
 CHECKMINE;
-current->m_nLine = current->m_nPoint = m_nPoint = nPoint;
+current->m_nEdge = current->m_nPoint = m_nPoint = nPoint;
 DLE.MineView ()->Refresh ();
 }
 
