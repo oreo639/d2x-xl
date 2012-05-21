@@ -121,6 +121,7 @@ protected: // create from serialization only
 						m_yRenderOffs;
 	int 				m_nViewDist;
 	int 				m_nMineCenter;
+	int				m_nEditReference;
 
 	CPoint			m_viewCenter;
 	CPoint			m_viewMax;
@@ -180,6 +181,8 @@ public:
 		return (segP->Index () >= 0) && (segP->Index () <= ViewDist ()); 
 		}
 
+	inline void SetEditReference (int nReference) { m_nEditReference = nReference; }
+	inline int GetEditReference (void) { return Perspective () && m_nEditReference; }
 	void DrawMineCenter (void);
 	bool VertexVisible (int v);
 	void ComputeViewLimits (CRect* pRC = null);

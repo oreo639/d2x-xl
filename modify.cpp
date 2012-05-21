@@ -24,38 +24,42 @@ bool CMine::EditGeoFwd (void)
 {
   double				radius;
   CVertex			center, oppCenter;
-  CDoubleVector	v;
+  CDoubleVector	vDelta;
   int					i;
 /* calculate center of current side */
 	CSegment*		segP = current->Segment ();
 	CSide*			sideP = current->Side ();
 
-for (i = 0; i < 4; i++) {
-	int nVertex = segP->VertexId (sideP->VertexIdIndex (i));
-   center += *vertexManager.Vertex (nVertex);
-	 }
-center /= 4.0;
+if (DLE.MineView ()->GetEditReference ())
+	vDelta = DLE.MineView ()->ViewMatrix ()->Forward ();
+else {
+	for (i = 0; i < 4; i++) {
+		int nVertex = segP->VertexId (sideP->VertexIdIndex (i));
+		center += *vertexManager.Vertex (nVertex);
+		 }
+	center /= 4.0;
 	
-// calculate center of opposite of current side
-CSide* oppSideP = segP->Side (oppSideTable [current->m_nSide]);
-for (i = 0; i < 4; i++) {
-	int nVertex = current->Segment ()->VertexId (oppSideP->VertexIdIndex (i));
-   oppCenter += *vertexManager.Vertex (nVertex);
-	}
-oppCenter /= 4.0;
+	// calculate center of opposite of current side
+	CSide* oppSideP = segP->Side (oppSideTable [current->m_nSide]);
+	for (i = 0; i < 4; i++) {
+		int nVertex = current->Segment ()->VertexId (oppSideP->VertexIdIndex (i));
+		oppCenter += *vertexManager.Vertex (nVertex);
+		}
+	oppCenter /= 4.0;
 
-center -= oppCenter;
-// normalize vector
-v = CDoubleVector (center);
-// normalize direction
-radius = v.Mag ();
-if (radius > 0.1)
-	v /= radius;
-else
-	v = segmentManager.CalcSideNormal (*current);
+	center -= oppCenter;
+	// normalize vector
+	vDelta = CDoubleVector (center);
+	// normalize direction
+	radius = vDelta.Mag ();
+	if (radius > 0.1)
+		vDelta /= radius;
+	else
+		vDelta = segmentManager.CalcSideNormal (*current);
+	}
 // move on x, y, and z
- v *= DLE.MineView ()->MineMoveRate ();
- MoveElements (v);
+ vDelta *= DLE.MineView ()->MineMoveRate ();
+ MoveElements (vDelta);
  return true;
 }
 
@@ -113,13 +117,10 @@ if (!okToMove) {
 	ErrorMsg ("Too small to move in that direction");
 	return false;
 	}
-// normalize direction
-CDoubleVector v = segmentManager.CalcSideNormal (*current);
-// move on x, y, and z
-v *= -DLE.MineView ()->MineMoveRate ();
-MoveElements (v);
-return true;
 
+CDoubleVector vDelta = DLE.MineView ()->GetEditReference () ? DLE.MineView ()->ViewMatrix ()->Forward () : segmentManager.CalcSideNormal (*current);
+vDelta *= -DLE.MineView ()->MineMoveRate ();
+MoveElements (vDelta);
 return true;
 }
 
@@ -141,28 +142,44 @@ return SpinSelection (-theMine->RotateRate ());
 
 bool CMine::EditGeoUp (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (theMine->RotateRate (), false) : MovePoints (1, 0);
+if (m_selectMode == SIDE_MODE) 
+	return RotateSelection (theMine->RotateRate (), false);
+if (!DLE.MineView ()->GetEditReference ())
+	return MovePoints (1, 0);
+return MovePoints (DLE.MineView ()->ViewMatrix ()->Up ());
 }
 
 //------------------------------------------------------------------------------
 
 bool CMine::EditGeoDown (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (-theMine->RotateRate (), false) : MovePoints (0, 1);
+if (m_selectMode == SIDE_MODE)
+	return RotateSelection (-theMine->RotateRate (), false);
+if (!DLE.MineView ()->GetEditReference ())
+	return MovePoints (0, 1);
+return MovePoints (DLE.MineView ()->ViewMatrix ()->Up () * -1.0);
 }
 
 //------------------------------------------------------------------------------
 
 bool CMine::EditGeoRight (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (theMine->RotateRate (),true) : MovePoints (current->Side ()->VertexCount () -1, 0);
+if (m_selectMode == SIDE_MODE) 
+	return RotateSelection (theMine->RotateRate (), true);
+if (!DLE.MineView ()->GetEditReference ())
+	return MovePoints (current->Side ()->VertexCount () -1, 0);
+return MovePoints (DLE.MineView ()->ViewMatrix ()->Left () * -1.0);
 }
 
 //------------------------------------------------------------------------------
 
 bool CMine::EditGeoLeft (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (-theMine->RotateRate (),true) : MovePoints (0, current->Side ()->VertexCount () - 1);
+if (m_selectMode == SIDE_MODE) 
+	return RotateSelection (-theMine->RotateRate (),true);
+if (!DLE.MineView ()->GetEditReference ())
+	return MovePoints (0, current->Side ()->VertexCount () - 1);
+return MovePoints (DLE.MineView ()->ViewMatrix ()->Left ());
 }
 
 //------------------------------------------------------------------------------
@@ -454,12 +471,10 @@ return false;
 // of the current line.
 //--------------------------------------------------------------------------------
 
-bool CMine::MovePoints (int pt0, int pt1) 
+bool CMine::MovePoints (CDoubleVector vDelta) 
 {
 	CSegment*		segP = current->Segment ();
 	CSide*			sideP = segP->Side (current->m_nSide);
-	CDoubleVector	vDelta = *segP->Vertex (current->m_nSide, current->m_nPoint + pt1) - 
-									*segP->Vertex (current->m_nSide, current->m_nPoint + pt0);
 	double			length = vDelta.Mag ();
 	int				i;
 	short				selectMode = DLE.MineView ()->Perspective () ? BLOCK_MODE : m_selectMode;
@@ -543,6 +558,12 @@ switch (selectMode) {
 		break;
 	}
 return true;
+}
+
+bool CMine::MovePoints (int pt0, int pt1) 
+{
+CSegment* segP = current->Segment ();
+MovePoints (*segP->Vertex (current->m_nSide, current->m_nPoint + pt1) - *segP->Vertex (current->m_nSide, current->m_nPoint + pt0));
 }
 
 /***************************************************************************
