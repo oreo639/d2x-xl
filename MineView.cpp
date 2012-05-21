@@ -860,6 +860,8 @@ if (change.x || change.y) {
 			break;
 
 		case eMouseStateSelect:
+			if (!(nFlags & MK_SHIFT))
+				SetMouseState (eMouseStateIdle);
 			if (SelectMode (eSelectPoint) || SelectMode (eSelectLine) || SelectMode (eSelectSide) || SelectMode (eSelectSegment))
 				Invalidate (FALSE);
 			break;
