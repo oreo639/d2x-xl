@@ -16,7 +16,7 @@ static int planeVerts [6][4] = {
 
 static int normRefs [6][2] = {{1,5},{4,7},{5,4},{7,4},{4,5},{5,1}};
 
-void CFrustum::Compute (CRect viewport, double fov)
+void CFrustum::Setup (CRect viewport, double fov)
 {
 double h = double (tan (fov * PI / 360.0));
 double w = double (h * double (viewport.Width ()) / double (viewport.Height ()));

@@ -250,10 +250,11 @@ else {
 	double w = h * m_glAspectRatio;
 	glFrustum (w, -w, h, -h, 1.0, 5000.0);
 #	else
-	double a = Perspective () ? 30.0 : viewAngleTable [m_viewMatrix.DepthPerception ()];
-	double h = 1.0f * tan (Radians (a));
+	double fov = Perspective () ? 30.0 : viewAngleTable [m_viewMatrix.DepthPerception ()];
+	double h = 1.0f * tan (Radians (fov));
 	double w = h * m_glAspectRatio;
 	glFrustum (-w, w, h, -h, 1.0, 50000.0);
+	m_frustum.Setup (Viewport (), fov);
 #	endif
 #endif
 	glMatrixMode (GL_MODELVIEW);

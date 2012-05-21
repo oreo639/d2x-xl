@@ -8,6 +8,7 @@
 #include "Matrix.h"
 #include "Textures.h"
 #include "FBO.h"
+#include "Frustum.h"
 #include "glew.h"
 
 // -----------------------------------------------------------------------------
@@ -237,6 +238,7 @@ class CRenderer {
 		virtual bool SetPerspective (int nPerspective) = 0;
 		virtual int Perspective (void) = 0;
 		virtual int GetSideKey (int x, int y, short& nSegment, short& nSide) = 0;
+		virtual CFrustum* Frustum (void) { return null; }
 
 		virtual bool Ortho (void) { return m_bOrtho; }
 
@@ -343,6 +345,7 @@ class CRendererGL : public CRenderer {
 		int				m_bRenderSideKeys;
 		rgbColor*		m_sideKeys;
 		bool				m_bHaveSideKeys;
+		CFrustum			m_frustum;
 		
 	public:
 		CRendererGL (CRenderData& renderData);
@@ -409,6 +412,8 @@ class CRendererGL : public CRenderer {
 		virtual int Perspective (void) { return m_viewMatrix.Perspective (); }
 
 		virtual int GetSideKey (int x, int y, short& nSegment, short& nSide);
+
+		virtual CFrustum* Frustum (void) { return &m_frustum; }
 	};
 
 // -----------------------------------------------------------------------------

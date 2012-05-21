@@ -15,7 +15,7 @@ class CFrustum {
 		CVertex	m_centers [6];
 		CVertex	m_normals [6];
 
-	void Compute (CRect viewport, double fov);
+	void Setup (CRect viewport, double fov);
 	bool Contains (short nSegment, short nSide);
 	};
 
