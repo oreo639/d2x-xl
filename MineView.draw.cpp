@@ -1246,16 +1246,11 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		center.Transform (ViewMatrix ());
 		center.Project (ViewMatrix ());
 		}
-	//if ((center.m_screen.x < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom))
-	//	continue;
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
-		//if (minDist <= 8.0) 
-			{
-			nearestSegment = segmentManager.Segment (sideP->GetParent ());
-			nearestSide = sideP;
-			}
+		nearestSegment = segmentManager.Segment (sideP->GetParent ());
+		nearestSide = sideP;
 		}
 	}
 nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
@@ -1273,14 +1268,12 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	short nVertices = sideP->VertexCount ();
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	CVertex& center = sideP->Center ();
-	//if ((center.m_screen.x < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom))
-	//	continue;
-#if 1
+
 	if (m_nRenderer) {
 		glEnable (GL_LINE_STIPPLE);
 		glLineStipple (1, 0x00ff);  
 		}
-#if NDEBUG
+
 	for (int i = 0; i <= nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
 		if (i)
@@ -1288,7 +1281,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		else
 			Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
 		}
-#endif
+
 	if (!sideP->IsVisible ()) {
 		CVertex normal = sideP->Normal (2);
 		normal.Project (ViewMatrix ());
@@ -1307,7 +1300,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
 		Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
 		}
-#endif
+
 	if (m_nRenderer)
 		glDisable (GL_LINE_STIPPLE);
 	if (center.m_view.v.z >= 0.0)
@@ -1351,11 +1344,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
-		//if (minDist <= 8.0) 
-			{
-			nearestSegment = segP;
-			nearestSide = sideP;
-			}
+		nearestSegment = segP;
+		nearestSide = sideP;
 		}
 	}
 nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));

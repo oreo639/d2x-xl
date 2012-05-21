@@ -281,8 +281,14 @@ viewMatrix->SetViewInfo (ViewWidth (), ViewHeight ());
 
 nProjected = 0;
 j = vertexManager.Count ();
+#ifdef NDEBUG
 #pragma omp parallel for reduction(+: nProjected)
+#endif
 for (i = 0; i < j; i++) {
+#ifdef _DEBUG
+	if (i == nDbgVertex)
+		nDbgVertex = nDbgVertex;
+#endif
 	CVertex& v = vertexManager [i];
 	if (v.Status () == 255) // skybox inclusion/exclusion
 		continue;

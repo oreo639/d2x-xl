@@ -14,12 +14,12 @@ static int planeVerts [6][4] = {
 
 void CFrustum::Setup (CRect viewport, double fov)
 {
-#if 0
-double h = double (tan (fov * PI / 360.0));
+#if 1
+double h = double (tan (fov * PI / 180.0));
 double w = double (h * double (viewport.Width ()) / double (viewport.Height ()));
 #else
-double h = double (viewport.Height ());
-double w = double (viewport.Width ());
+double h = double (viewport.Height ()) * 0.5;
+double w = double (viewport.Width ()) * 0.5;
 #endif
 double n = double (1.0);
 double f = double (50000.0);
