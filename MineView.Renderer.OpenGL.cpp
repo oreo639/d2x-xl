@@ -188,7 +188,7 @@ glewInit (); // must happen after OpenGL context creation!
 shaderManager.Setup ();
 textureManager.InitShaders ();
 if (CFBO::Setup ()) {
-	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 1, 2);
+	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 1, 1);
 	m_sideKeys = new rgbColor [GetSystemMetrics (SM_CXSCREEN) * GetSystemMetrics (SM_CYSCREEN)];
 	}
 
@@ -937,6 +937,8 @@ else {
 int CRendererGL::GetSideKey (int x, int y, short& nSegment, short& nSide)
 {
 if (!m_bRenderSideKeys)
+	return -1;
+if (m_renderBuffers.BufferCount () < 2)
 	return -1;
 if (!m_bHaveSideKeys) {
 	m_renderBuffers.Enable (-1);
