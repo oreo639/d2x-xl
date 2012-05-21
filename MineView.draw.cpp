@@ -1246,8 +1246,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		center.Transform (ViewMatrix ());
 		center.Project (ViewMatrix ());
 		}
-	if ((center.m_screen.x < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom))
-		continue;
+	//if ((center.m_screen.x < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom))
+	//	continue;
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
@@ -1273,8 +1273,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	short nVertices = sideP->VertexCount ();
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 4);
 	CVertex& center = sideP->Center ();
-	if ((center.m_screen.x < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom))
-		continue;
+	//if ((center.m_screen.x < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom))
+	//	continue;
 #if 1
 	if (m_nRenderer) {
 		glEnable (GL_LINE_STIPPLE);
