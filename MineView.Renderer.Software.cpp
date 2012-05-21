@@ -663,10 +663,10 @@ EndRender ();
 
 //------------------------------------------------------------------------------
 
-void CRendererSW::SelectPen (int nPen)
+void CRendererSW::SelectPen (int nPen, int nWeight)
 {
 if (nPen > 0)
-	SelectObject (Pen (nPen - 1));
+	SelectObject (Pen (nPen - 1, nWeight));
 }
 
 //------------------------------------------------------------------------------

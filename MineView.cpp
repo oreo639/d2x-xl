@@ -96,21 +96,6 @@ COLORREF CRenderData::PenColor (int nPen)
 		RGB (  0,255,255),
 		RGB (255,196,  0),
 		RGB (255,128,  0),
-		RGB (255,  0,255),
-		RGB (  0,  0,  0),
-		RGB (255,255,255),
-		RGB (255,196,  0), //ok, that's gold, but cyan doesn't work - palette problem?
-		// RGB ( 0,255,255), //doesn't work (rather green) - palette problem?
-		RGB (255,  0,  0),
-		RGB (128,128,128),
-		RGB (160,160,160),
-		RGB (  0,255,  0),
-		RGB (  0,128,  0),
-		RGB (  0,128,128),
-		RGB (  0,  0,255),
-		RGB (  0,128,255),
-		RGB (255,196,  0),
-		RGB (255,128,  0),
 		RGB (255,  0,255)
 	};
 
@@ -125,8 +110,9 @@ m_renderBuffer = 0;
 m_depthBuffer = null;
 m_bDepthTest = true;
 
-for (int nPen = 0; nPen < penCount; nPen++)
-	m_pens [nPen] = new CPen (PS_SOLID, (nPen < penBoldBlack) ? 1 : 2, PenColor (nPen));
+for (int nWeight = 0; nWeight < 2; nWeight++)
+	for (int nPen = 0; nPen < penCount; nPen++)
+		m_pens [nWeight][nPen] = new CPen (PS_SOLID, nWeight + 1, PenColor (nPen));
 }
 
 //------------------------------------------------------------------------------

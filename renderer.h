@@ -94,20 +94,6 @@ typedef enum ePenColor {
 	penYellow,
 	penOrange,
 	penMagenta,
-	penBoldBlack,
-	penBoldWhite,
-	penBoldGold,
-	penBoldRed,
-	penBoldGray,
-	penBoldLtGray,
-	penBoldGreen,
-	penBoldDkGreen,
-	penBoldDkCyan,
-	penBoldBlue,
-	penBoldMedBlue,
-	penBoldYellow,
-	penBoldOrange,
-	penBoldMagenta,
 	penCount
 };
 
@@ -137,7 +123,7 @@ public:
 	CBGR*				m_renderBuffer;
 	depthType*		m_depthBuffer;
 
-	CPen*				m_pens [penCount];
+	CPen*				m_pens [2][penCount];
 
 	uint				m_viewObjectFlags;
 	uint				m_viewMineFlags;
@@ -146,7 +132,6 @@ public:
 	CRenderData ();
 	~CRenderData ();
 	COLORREF PenColor (int nPen);
-	inline int PenWidth (int nPen) { return (nPen - 1 < penBoldBlack) ? 1 : 2; }
 };
 
 
@@ -180,9 +165,8 @@ class CRenderer {
 		inline CBGR& RenderBuffer (int i) { return m_renderData.m_renderBuffer [i]; }
 		inline depthType& DepthBuffer (int i) { return m_renderData.m_depthBuffer [i]; }
 		inline void SetDepthBuffer (depthType* buffer) { m_renderData.m_depthBuffer = buffer; }
-		inline CPen* Pen (int nPen) { return (nPen < penCount) ? m_renderData.m_pens [nPen] : null; }
+		inline CPen* Pen (int nPen, int nWeight) { return (nPen < penCount) ? m_renderData.m_pens [nWeight > 1][nPen] : null; }
 		inline COLORREF PenColor (int nPen) { return m_renderData.PenColor (nPen); }
-		inline int PenWidth (int nPen) { return m_renderData.PenWidth (nPen); }
 		inline CVertex& MinViewPoint (void) { return m_renderData.m_minViewPoint; }
 		inline CVertex& MaxViewPoint (void) { return m_renderData.m_maxViewPoint; }
 		inline bool IgnoreDepth (void) { return m_renderData.m_bIgnoreDepth; }
@@ -224,7 +208,7 @@ class CRenderer {
 		virtual void FitToView (void) = 0;
 		virtual bool CanFitToView (void) = 0;
 
-		virtual void SelectPen (int nPen) = 0;
+		virtual void SelectPen (int nPen, int nWeight = 1) = 0;
 		virtual void MoveTo (int x, int y) = 0;
 		virtual void LineTo (int x, int y) = 0;
 		virtual void Rectangle (int left, int top, int right, int bottom) = 0;
@@ -294,7 +278,7 @@ class CRendererSW : public CRenderer {
 		virtual void FitToView (void) {}
 		virtual bool CanFitToView (void) { return true; }
 	
-		virtual void SelectPen (int nPen);
+		virtual void SelectPen (int nPen, int nWeight = 1);
 		virtual void MoveTo (int x, int y) { m_pDC->MoveTo (x, y); }
 		virtual void LineTo (int x, int y) { m_pDC->LineTo (x,y ); }
 		virtual void Rectangle (int left, int top, int right, int bottom) { m_pDC->Rectangle (left, top, right, bottom); }
@@ -382,7 +366,7 @@ class CRendererGL : public CRenderer {
 		virtual void FitToView (void) { ComputeZoom (); }
 		virtual bool CanFitToView (void) { return Perspective () == 0; }
 
-		virtual void SelectPen (int nPen);
+		virtual void SelectPen (int nPen, int nWeight = 1);
 		virtual void MoveTo (int x, int y);
 		virtual void LineTo (int x, int y);
 		virtual void PolyLine (CPoint* points, int nPoints);

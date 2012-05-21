@@ -126,11 +126,11 @@ else if (m_nMineCenter == 2) {
 	viewMatrix->Transform (center.m_view, center);
 	Renderer ().EndRender ();
 
-	ePenColor penColors [3] = {penBoldGreen, penBoldGray, penBoldGold};
+	ePenColor penColors [3] = {penGreen, penGray, penGold};
 
 	Renderer ().BeginRender (true);
 	for (h = 0; h < 3; h++) {
-		Renderer ().SelectPen (penColors [h] + 1);
+		Renderer ().SelectPen (penColors [h] + 1, 2);
 		for (i = -60, m = 0; i <= 60; i += 30, m++) {
 			for (j = 0, n = 0; j <= 360; j += 15, n++) {
 				CVertex v = circles [h][m][n];
@@ -324,9 +324,9 @@ if (bClearIt) {
 	} 
 else {
 	if (segP->IsMarked ())
-		Renderer ().SelectPen (penBoldGold + 1);
+		Renderer ().SelectPen (penGold + 1, 2);
 	else 
-		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penBoldRed + 1 : penWhite + 1 : penBoldGray + 1);   
+		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penRed + 1 : penWhite + 1 : penGray + 1, 2);   
 	if (m_viewOption == eViewWireFrameSparse)
 		DrawSegmentPartial (segP);
 	else
@@ -341,7 +341,7 @@ else {
 				break;
 		}
 	if (i == 4) {
-		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSide) ? penBoldRed + 1 : penBoldGreen + 1 : penBoldDkGreen + 1);  
+		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSide) ? penRed + 1 : penGreen + 1 : penDkGreen + 1, 2);  
 		short nVertices = sideP->VertexCount ();
 		for (i = 0; i < nVertices; i++)
 			DrawLine (segP, sideP->VertexIdIndex (i), sideP->VertexIdIndex (i + 1));
@@ -353,7 +353,7 @@ else {
 		 (vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
 		  vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
 		{
-		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penBoldRed + 1 : penBoldGold + 1 : penDkCyan + 1);  
+		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penRed + 1 : penGold + 1 : penDkCyan + 1, 2);  
 		DrawLine (segP, i1, i2);
 		}
 
@@ -364,7 +364,7 @@ else {
 		}
 #endif
 	Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
-	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penBoldRed + 1 : penBoldGold + 1 : penBoldDkCyan + 1); 
+	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penRed + 1 : penGold + 1 : penDkCyan + 1, 2); 
 	i = segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)];
 	if (vertexManager [i].InRange (xMax, yMax, Renderer ().Type ()))
 		Renderer ().Ellipse (vertexManager [i], 4, 4);
@@ -990,7 +990,7 @@ else {
 				break;
 			case OBJ_SMOKE:
 			case OBJ_EFFECT:
-				Renderer ().SelectPen (penBoldGreen + 1);
+				Renderer ().SelectPen (penGreen + 1, 2);
 				break;
 			case OBJ_HOSTAGE: 
 				Renderer ().SelectPen (penBlue + 1);
@@ -1141,7 +1141,7 @@ if (m_nRenderer) {
 	glLineStipple (1, 0x0f0f);  
 	glEnable (GL_LINE_STIPPLE);
 	}
-Renderer ().SelectPen (penBoldMedBlue + 1);
+Renderer ().SelectPen (penMedBlue + 1, 2);
 CVertex* v1 = nearest->Segment ()->Vertex (nearest->m_nSide, nNearestEdge);
 CVertex* v2 = nearest->Segment ()->Vertex (nearest->m_nSide, nNearestEdge + 1);
 Renderer ().MoveTo (v1->m_screen.x, v1->m_screen.y);

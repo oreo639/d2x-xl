@@ -576,7 +576,7 @@ else
 	d = X2D (m_info.size) * 1.1;
 renderer.EndRender ();
 renderer.BeginRender (bOrtho);
-renderer.SelectPen (bCurrent ? penBoldGold + 1 : penBoldRed + 1); 
+renderer.SelectPen (bCurrent ? penGold + 1 : penRed + 1, 2); 
 renderer.Ellipse (center, -d, -d);
 renderer.EndRender ();
 }

@@ -685,7 +685,7 @@ else {
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::SelectPen (int nPen)
+void CRendererGL::SelectPen (int nPen, int nWeight = 1)
 {
 	COLORREF color;
 
@@ -694,7 +694,7 @@ if (nPen > 0)
 else
 	return;
 glColor3f (float (GetRValue (color)) / 255.0f, float (GetGValue (color)) / 255.0f, float (GetBValue (color)) / 255.0f);
-glLineWidth (float (PenWidth (nPen)) * 1.5f);
+glLineWidth (float (nWeight) * 1.5f);
 }
 
 //------------------------------------------------------------------------------
