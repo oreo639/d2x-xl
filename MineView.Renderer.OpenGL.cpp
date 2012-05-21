@@ -17,6 +17,8 @@
 #include "ShaderManager.h"
 #include "mineview.h"
 
+#define USE_RTT 0
+
 extern short nDbgSeg, nDbgSide;
 extern int nDbgVertex;
 
@@ -96,9 +98,13 @@ ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
 
 void CRendererGL::ClearView (void)
 {
+#if USE_RTT
 m_renderBuffers.Enable (-1);
+#endif
 glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#if USE_RTT
 m_renderBuffers.Disable ();
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -187,11 +193,12 @@ if (!wglMakeCurrent (m_glHDC, m_glRC)) {
 glewInit (); // must happen after OpenGL context creation!
 shaderManager.Setup ();
 textureManager.InitShaders ();
+#if USE_RTT
 if (CFBO::Setup ()) {
 	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 1, 1);
 	m_sideKeys = new rgbColor [GetSystemMetrics (SM_CXSCREEN) * GetSystemMetrics (SM_CYSCREEN)];
 	}
-
+#endif
 return TRUE;
 }
 
@@ -431,7 +438,9 @@ if	(texP [0] == &tex)
 void CRendererGL::BeginRender (bool bOrtho)
 {
 SetupProjection (bOrtho);
+#if USE_RTT
 m_renderBuffers.Enable (0);
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -936,6 +945,7 @@ else {
 
 int CRendererGL::GetSideKey (int x, int y, short& nSegment, short& nSide)
 {
+#if USE_RTT
 if (!m_bRenderSideKeys)
 	return -1;
 if (m_renderBuffers.BufferCount () < 2)
@@ -952,6 +962,9 @@ if (sideKey.b == 0)
 nSegment = short (sideKey.r) * 256 + sideKey.g;
 nSide = sideKey.b - 1;
 return 1;
+#else
+return -1;
+#endif
 }
 
 //------------------------------------------------------------------------------

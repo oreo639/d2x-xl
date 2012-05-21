@@ -3148,7 +3148,7 @@ BEGIN
         MENUITEM "&Objects",                    ID_SEL_OBJECTMODE
         MENUITEM "&Blocks",                     ID_SEL_BLOCKMODE
         MENUITEM SEPARATOR
-		  MENUITEM "Use Viewer Orientation",      ID_EDIT_VIEWER_IS_REFERENCE
+        MENUITEM "Use Viewer Orientation",      ID_EDIT_VIEWER_IS_REFERENCE
         MENUITEM SEPARATOR
         MENUITEM "Quick &Copy",                 ID_EDIT_QUICKCOPY
         MENUITEM "Quick &Paste",                ID_EDIT_QUICKPASTE
@@ -6421,7 +6421,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor 1.11.50\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor 1.11.40\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 
