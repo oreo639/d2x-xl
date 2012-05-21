@@ -22,36 +22,16 @@ extern int nDbgVertex;
 
 bool CMine::EditGeoFwd (void)
 {
-  double				radius;
-  CVertex			center, oppCenter;
-  CDoubleVector	vDelta;
-  int					i;
-/* calculate center of current side */
+	CDoubleVector	vDelta;
 	CSegment*		segP = current->Segment ();
-	CSide*			sideP = current->Side ();
 
-if (DLE.MineView ()->GetEditReference ())
+if (DLE.MineView ()->GetEditReference ()) {
 	vDelta = DLE.MineView ()->ViewMatrix ()->Forward ();
+	}
 else {
-	for (i = 0; i < 4; i++) {
-		int nVertex = segP->VertexId (sideP->VertexIdIndex (i));
-		center += *vertexManager.Vertex (nVertex);
-		 }
-	center /= 4.0;
-	
-	// calculate center of opposite of current side
-	CSide* oppSideP = segP->Side (oppSideTable [current->m_nSide]);
-	for (i = 0; i < 4; i++) {
-		int nVertex = current->Segment ()->VertexId (oppSideP->VertexIdIndex (i));
-		oppCenter += *vertexManager.Vertex (nVertex);
-		}
-	oppCenter /= 4.0;
-
-	center -= oppCenter;
-	// normalize vector
-	vDelta = CDoubleVector (center);
+	vDelta = segP->ComputeCenter (current->m_nSide) - segP->ComputeCenter (short (oppSideTable [current->m_nSide]));
 	// normalize direction
-	radius = vDelta.Mag ();
+	double radius = vDelta.Mag ();
 	if (radius > 0.1)
 		vDelta /= radius;
 	else
@@ -118,7 +98,18 @@ if (!okToMove) {
 	return false;
 	}
 
-CDoubleVector vDelta = DLE.MineView ()->GetEditReference () ? DLE.MineView ()->ViewMatrix ()->Forward () : segmentManager.CalcSideNormal (*current);
+CDoubleVector vDelta;
+if (DLE.MineView ()->GetEditReference ())
+	vDelta = DLE.MineView ()->ViewMatrix ()->Forward ();
+else {
+	vDelta = segP->ComputeCenter (current->m_nSide) - segP->ComputeCenter (short (oppSideTable [current->m_nSide]));
+	// normalize direction
+	double radius = vDelta.Mag ();
+	if (radius > 0.1)
+		vDelta /= radius;
+	else
+		vDelta = segmentManager.CalcSideNormal (*current);
+	}
 vDelta *= -DLE.MineView ()->MineMoveRate ();
 MoveElements (vDelta);
 return true;
@@ -563,7 +554,7 @@ return true;
 bool CMine::MovePoints (int pt0, int pt1) 
 {
 CSegment* segP = current->Segment ();
-MovePoints (*segP->Vertex (current->m_nSide, current->m_nPoint + pt1) - *segP->Vertex (current->m_nSide, current->m_nPoint + pt0));
+return MovePoints (*segP->Vertex (current->m_nSide, current->m_nPoint + pt1) - *segP->Vertex (current->m_nSide, current->m_nPoint + pt0));
 }
 
 /***************************************************************************
@@ -760,12 +751,13 @@ switch (selectMode) {
 		//       |x  y  z |
 		// AxB = |ax ay az| = x(aybz-azby), y(azbx-axbz), z(axby-aybx)
 		//       |bx by bz|
-		segP->ComputeNormals (spinner.m_nSide);
-		spinner.m_vNormal = sideP->Normal ();
-		// normalize the vector
-		// set sign (since vert numbers for most sides don't follow right-handed convention)
-		// set opposite spinner.m_vCenter
-		spinner.m_vOppCenter = spinner.m_vCenter + spinner.m_vNormal;
+		if (DLE.MineView ()->GetEditReference ())
+			spinner.m_vOppCenter = spinner.m_vCenter + DLE.MineView ()->ViewMatrix ()->Forward ();
+		else {
+			segP->ComputeNormals (spinner.m_nSide);
+			spinner.m_vNormal = sideP->Normal ();
+			spinner.m_vOppCenter = spinner.m_vCenter + spinner.m_vNormal;
+			}
 		/* rotate points around a line */
 		undoManager.Begin (udVertices | udSegments);
 		j = sideP->VertexCount ();
@@ -782,7 +774,7 @@ switch (selectMode) {
 
 	case SEGMENT_MODE:	// spin segment around the spinner.m_vCenter of the segment using screen's perspective
 		spinner.m_vCenter = segP->ComputeCenter ();
-		spinner.m_vOppCenter = segP->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
+		spinner.m_vOppCenter = DLE.MineView ()->GetEditReference () ? DLE.MineView ()->ViewMatrix ()->Forward () : segP->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
 
 		// rotate points about a point
 		undoManager.Begin (udVertices | udSegments);
@@ -825,7 +817,16 @@ switch (selectMode) {
 
 	case BLOCK_MODE:
 		spinner.m_vCenter = segP->ComputeCenter ();
-		spinner.m_vOppCenter = segP->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
+		if (DLE.MineView ()->GetEditReference ()) {
+			spinner.m_vOppCenter = spinner.m_vCenter + DLE.MineView ()->ViewMatrix ()->Forward ();
+			CVertex& v = segP->ComputeCenter ();
+			CVertex v1 = spinner.m_vCenter - v;
+			CVertex v2 = spinner.m_vOppCenter - v;
+			if (Dot (v1, v2) < 0.0)
+				spinner.m_vOppCenter = spinner.m_vCenter - DLE.MineView ()->ViewMatrix ()->Forward ();
+			}
+		else
+			spinner.m_vOppCenter = segP->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
 		// rotate points about a point
 		undoManager.Begin (udVertices | udObjects);
 		for (i = 0; i < vertexManager.Count (); i++)

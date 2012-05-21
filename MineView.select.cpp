@@ -207,7 +207,7 @@ if ((nearest->m_nSegment >= 0) && (nearest->m_nSide >= 0)) {
 else
 	return false;
 if (Perspective () && bAdd)
-	current->Segment ()->MarkVertices ();
+	current->Segment ()->MarkVertices (MARKED_MASK, current->m_nSide);
 DLE.ToolView ()->Refresh ();
 Refresh ();
 return true;

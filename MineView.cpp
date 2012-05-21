@@ -1026,7 +1026,7 @@ if (m_mouseState == eMouseStateButtonDown) {
 		ClientToScreen (&point);
 		tracker = contextMenu.GetSubMenu (0); 
 		tracker->CheckMenuItem ((UINT) theMine->SelectMode (), MF_BYPOSITION | MF_CHECKED);
-		if (EditReference ())
+		if (GetEditReference ())
 			tracker->CheckMenuItem ((UINT) ID_EDIT_VIEWER_IS_REFERENCE, MF_BYCOMMAND | MF_CHECKED);
 	   int nChoice = tracker->TrackPopupMenu (TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x , point.y, AfxGetMainWnd ()); 
 		contextMenu.DestroyMenu ();
