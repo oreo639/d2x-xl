@@ -1441,20 +1441,22 @@ nearest->m_nSegment = -1;
 nearest->m_nSide = -1;
 nearest->m_nEdge = -1;
 
-if (DrawSelectablePoint ())
-	;
-else if (DrawSelectableEdge ())
-	;
-else if (DrawSelectableSides () || DrawSelectableSegments ()) {
-	Renderer ().BeginRender (true);
-	if (m_nRenderer) {
-		glLineStipple (1, 0x00ff);  
-		glEnable (GL_LINE_STIPPLE);
+if (m_mouseState == eMouseStateSelect) {
+	if (DrawSelectablePoint ())
+		;
+	else if (DrawSelectableEdge ())
+		;
+	else if (DrawSelectableSides () || DrawSelectableSegments ()) {
+		Renderer ().BeginRender (true);
+		if (m_nRenderer) {
+			glLineStipple (1, 0x00ff);  
+			glEnable (GL_LINE_STIPPLE);
+			}
+		DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);
+		if (m_nRenderer)
+			glDisable (GL_LINE_STIPPLE);
+		Renderer ().EndRender ();
 		}
-	DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);
-	if (m_nRenderer)
-		glDisable (GL_LINE_STIPPLE);
-	Renderer ().EndRender ();
 	}
 
 tunnelMaker.Draw (Renderer (), Pen (penRed), Pen (penBlue), ViewMatrix ());

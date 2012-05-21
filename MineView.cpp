@@ -470,7 +470,7 @@ return lightManager.DeltaIndexCount () > 0;
 void CMineView::OnTimer (UINT_PTR nIdEvent)
 {
 CHECKMINE;
-
+#if 0
 if (nIdEvent == 4) {
 	if (m_mouseState == eMouseStateButtonDown) {
 		m_mouseState = eMouseStateSelect;
@@ -485,7 +485,9 @@ if (nIdEvent == 4) {
 			}
 		}
 	}
-else if (nIdEvent == 3) {
+else 
+#endif
+if (nIdEvent == 3) {
 	if (DLE.MineView ()->RenderVariableLights ()) {
 		AdvanceLightTick ();
 		if (SetLightStatus ()) {
@@ -814,43 +816,8 @@ if (GetFocus () != this)
 if (change.x || change.y) {
 	switch (m_mouseState) {
 		case eMouseStateIdle:
-			if (SelectMode (eSelectPoint) || SelectMode (eSelectLine) || SelectMode (eSelectSide) || SelectMode (eSelectSegment))
-				Invalidate (FALSE);
-
-#if 0
-			if (Perspective ()) {
-				double scale = Perspective () ? 300.0 : 200.0;
-				Rotate('Y', Perspective () ? double (change.x) / scale : -double (change.x) / scale);
-				Rotate('X', Perspective () ? double (change.y) / scale : -double (change.y) / scale);
-				break;
-				}
-#endif
 		case eMouseStatePan:
 		case eMouseStateRotate:
-#if 0
-			if ((nFlags & (MK_SHIFT | MK_CONTROL)) == (MK_SHIFT | MK_CONTROL)) {
-				if (change.y > 0)
-					ZoomOut (1, true);
-				else if (change.y < 0)
-					ZoomIn (1, true);
-				}	
-			else if (nFlags & MK_SHIFT) {
-				SetMouseState (eMouseStateRotate);
-				double scale = Perspective () ? 300.0 : 200.0;
-				Rotate('Y', -double (change.x) / scale);
-				Rotate('X', (m_nRenderer && !Perspective ()) ? double (change.y) / scale : -double (change.y) / scale);
-				}
-			else if (nFlags & MK_CONTROL) {
-				double scale = m_nRenderer ? 0.5 : 1.0;
-				SetMouseState (eMouseStatePan);
-				double d = double (change.x) * scale;
-				if (d != 0.0)
-					Pan ('X', Perspective () ? -d : d);
-				d = double (change.y) * scale;
-				if (d != 0.0)
-					Pan ('Y', -d);
-				}
-#else
 			if (nFlags & MK_CONTROL) {
 				if (nFlags & MK_SHIFT) {
 					SetMouseState (eMouseStateRotate);
@@ -869,7 +836,8 @@ if (change.x || change.y) {
 						Pan ('Y', -d);
 					}
 				}
-#endif
+			else if (nFlags & MK_SHIFT)
+				SetMouseState (eMouseStateSelect);
 			else if ((m_mouseState == eMouseStatePan) || (m_mouseState == eMouseStateRotate))
 				SetMouseState (eMouseStateIdle);
 			break;
@@ -892,9 +860,8 @@ if (change.x || change.y) {
 			break;
 
 		case eMouseStateSelect:
-			m_clickPos = point;
-			SetMouseState (eMouseStateRubberBand);
-			UpdateRubberRect (point);
+			if (SelectMode (eSelectPoint) || SelectMode (eSelectLine) || SelectMode (eSelectSide) || SelectMode (eSelectSegment))
+				Invalidate (FALSE);
 			break;
 
 		case eMouseStateDrag:
@@ -958,7 +925,7 @@ void CMineView::OnLButtonDown (UINT nFlags, CPoint point)
 SetMouseState (eMouseStateButtonDown);
 RecordMousePos (m_clickPos, point);
 m_clickState = nFlags;
-m_selectTimer = SetTimer (4, 500U, null);
+//m_selectTimer = SetTimer (4, 500U, null);
 CView::OnLButtonDown (nFlags, point);
 }
 
