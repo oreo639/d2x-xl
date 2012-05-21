@@ -1271,7 +1271,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
 	short nVertices = sideP->VertexCount ();
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 4);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	CVertex& center = sideP->Center ();
 	//if ((center.m_screen.x < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom))
 	//	continue;
