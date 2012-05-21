@@ -205,9 +205,9 @@ if (0 <= nSegment)
 	current->Setup (nSegment, nSide);
 else 
 #endif
-if (nearestSegment && nearestSide) {
-	current->m_nSegment = segmentManager.Index (nearestSegment);
-	current->m_nSide = nearestSegment->SideIndex (nearestSide);
+if ((nearest->m_nSegment >= 0) && (nearest->m_nSide >= 0)) {
+	current->m_nSegment = nearest->m_nSegment;
+	current->m_nSide = nearest->m_nSide;
 	}
 else
 	return false;

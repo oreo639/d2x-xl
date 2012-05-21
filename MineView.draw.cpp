@@ -1106,16 +1106,16 @@ Renderer ().EndRender ();
 
 static inline double sqr (long v) { return double (v) * double (v); }
 
-void CMineView::DrawSelectableSides (void) 
+bool CMineView::DrawSelectableSides (void) 
 {
 if (!SelectMode (eSelectSide))
-	return;
+	return false;
 
 CRect viewport;
 GetClientRect (viewport);
 
 if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
-	return;
+	return false;
 
 double minDist = 1e30;
 
@@ -1136,7 +1136,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
-		//if (minDist <= 9.0) 
+		//if (minDist <= 8.0) 
 			{
 			nearestSegment = segmentManager.Segment (sideP->GetParent ());
 			nearestSide = sideP;
@@ -1145,14 +1145,26 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	}
 nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
 
-#if 0
+
 Renderer ().BeginRender (true);
+if (m_nRenderer) {
+	glLineStipple (1, 0x3333);  
+	glEnable (GL_LINE_STIPPLE);
+	}
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
 	short nVertices = sideP->VertexCount ();
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penOrange + 1);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	CVertex& center = sideP->Center ();
+#if 1
+	for (int i = 0; i <= nVertices; i++) {
+		CVertex* vertex = segP->Vertex (nSide, i);
+		if (i)
+			Renderer ().LineTo (vertex->m_screen.x, vertex->m_screen.y);
+		else
+			Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
+		}
 	if (!sideP->IsVisible ()) {
 		CVertex normal = sideP->Normal (2);
 		normal.Project (ViewMatrix ());
@@ -1164,15 +1176,19 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		CDoubleVector v (double (vertex->m_screen.x), double (vertex->m_screen.y), double (vertex->m_screen.z));
 		c -= v;
 		double m = c.Mag ();
-		c *= (m - 9.0) / m;
+		c *= (m - 8.0) / m;
 		c += v;
 		Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
 		Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
 		}
-	Renderer ().Ellipse (center, 9.0, 9.0);
-	}
-Renderer ().EndRender ();
 #endif
+	Renderer ().Ellipse (center, 8.0, 8.0);
+	}
+if (m_nRenderer)
+	glDisable (GL_LINE_STIPPLE);
+Renderer ().EndRender ();
+
+return true;
 }
 
 //--------------------------------------------------------------------------
@@ -1181,18 +1197,21 @@ Renderer ().EndRender ();
 // each side vertex to the circle to mark it. Open sides have the circle 
 // moved in by their normal * 2.0.
 
-void CMineView::DrawSelectableSegments (void) 
+bool CMineView::DrawSelectableSegments (void) 
 {
 if (!SelectMode (eSelectSegment))
-	return;
+	return false;
 
 CRect viewport;
 GetClientRect (viewport);
 
 if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
-	return;
+	return false;
 
 double minDist = 1e30;
+
+CSegment* nearestSegment = null;
+CSide* nearestSide = null;
 
 short nSegment = -1;
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
@@ -1205,7 +1224,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
-		if (minDist <= 9.0) {
+		//if (minDist <= 8.0) 
+			{
 			nearestSegment = segP;
 			nearestSide = sideP;
 			}
@@ -1213,16 +1233,22 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	}
 nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
 
-#if 0
 Renderer ().BeginRender (true);
+if (m_nRenderer) {
+	glLineStipple (1, 0x3333);  
+	glEnable (GL_LINE_STIPPLE);
+	}
 nSegment = -1;
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	if (nSegment == sideP->GetParent ())
 		continue;
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penOrange + 1);
 	CVertex& center = segP->Center ();
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
+#if 1
+	DrawSegmentWireFrame (segP);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	for (int i = 0; i < 8; i++) {
 		if (segP->VertexId (i) > MAX_VERTEX)
 			continue;
@@ -1231,16 +1257,20 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		CDoubleVector v (double (vertex->m_screen.x), double (vertex->m_screen.y), double (vertex->m_screen.z));
 		c -= v;
 		double m = c.Mag ();
-		c *= (m - 9.0) / m;
+		c *= (m - 8.0) / m;
 		c += v;
 		Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
 		Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
 		}
-	Renderer ().Ellipse (center, 9.0, 9.0);
+#endif
+	Renderer ().Ellipse (center, 8.0, 8.0);
 	}
 
+if (m_nRenderer)
+	glDisable (GL_LINE_STIPPLE);
 Renderer ().EndRender ();
-#endif
+
+return true;
 }
 
 //--------------------------------------------------------------------------
@@ -1285,8 +1315,9 @@ if (ViewFlag (eViewMineLights))
 nearest->m_nSegment = -1;
 nearest->m_nSide = -1;
 
-DrawSelectableSides ();
-DrawSelectableSegments ();
+if (DrawSelectableSides () || DrawSelectableSegments ())
+	DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);
+
 
 tunnelMaker.Draw (Renderer (), Pen (penRed), Pen (penBlue), ViewMatrix ());
 

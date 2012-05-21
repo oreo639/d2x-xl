@@ -132,9 +132,6 @@ protected: // create from serialization only
 	CRenderer*		m_renderer;
 	int				m_nRenderer;
 
-	CSegment*		nearestSegment;
-	CSide*			nearestSide;
-
 // Attributes
 public:
 	CDlcDoc* GetDocument();
@@ -212,8 +209,8 @@ public:
 	void DrawOctagon(short nSide, short nSegment);
 	void DrawObject (short objnum, short bClear = 0);
 	void DrawObjects (short bClear = 0);
-	void DrawSelectableSides (void);
-	void DrawSelectableSegments (void);
+	bool DrawSelectableSides (void);
+	bool DrawSelectableSegments (void);
 	void DrawHighlight (short bClear = 0);
 	void DrawTunnel (void);
 	bool SelectWireFramePen (CSegment* segP);
