@@ -1099,10 +1099,8 @@ Renderer ().EndRender ();
 }
 
 //--------------------------------------------------------------------------
-// Determine all sides in the projection to the mine view of which the current 
-// mouse position lies. Draw a circle in each side's center and a line from 
-// each side vertex to the circle to mark it. Open sides have the circle 
-// moved in by their normal * 2.0.
+// Determine the side edge the projection of which to the mine view is closest
+// to the current mouse position.
 
 bool CMineView::DrawSelectableEdge (void) 
 {
@@ -1112,18 +1110,14 @@ if (!SelectMode (eSelectLine))
 CRect viewport;
 GetClientRect (viewport);
 
-if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
-	return false;
-
 double minDist = 1e30;
 
 CSegment* nearestSegment = null;
 CSide* nearestSide = null;
 short nNearestEdge = -1;
 
-	short nSegments = segmentManager.Count ();
-
 #if 1
+short nSegments = segmentManager.Count ();
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = segmentManager.Segment (nSegment);
 	bool bSegmentSelected = false;
@@ -1140,6 +1134,9 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		}
 	}
 #else
+if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
+	return false;
+
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nEdge = sideP->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, segP->m_info.vertexIds, minDist);
@@ -1176,7 +1173,7 @@ return true;
 }
 
 //--------------------------------------------------------------------------
-// Determine all sides in the projection to the mine view of which the current 
+// Determine all sides in the projection of which  to the mine viewthe current 
 // mouse position lies. Draw a circle in each side's center and a line from 
 // each side vertex to the circle to mark it. Open sides have the circle 
 // moved in by their normal * 2.0.
@@ -1270,7 +1267,7 @@ return true;
 }
 
 //--------------------------------------------------------------------------
-// Determine all segments in the projection to the mine view of which the current 
+// Determine all segments in the projection of which to the mine view the current 
 // mouse position lies. Draw a circle in each segment's center and a line from 
 // each side vertex to the circle to mark it. Open sides have the circle 
 // moved in by their normal * 2.0.
