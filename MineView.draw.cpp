@@ -1227,7 +1227,7 @@ if (!SelectMode (eSelectSide))
 CRect viewport;
 GetClientRect (viewport);
 
-if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
+if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y, !ViewFlag (eViewMineSkyBox)))
 	return false;
 
 double minDist = 1e30;
@@ -1319,7 +1319,7 @@ if (!SelectMode (eSelectSegment))
 CRect viewport;
 GetClientRect (viewport);
 
-if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
+if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y, !ViewFlag (eViewMineSkyBox)))
 	return false;
 
 double minDist = 1e30;

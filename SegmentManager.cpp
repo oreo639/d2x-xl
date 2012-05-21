@@ -317,7 +317,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 
 //------------------------------------------------------------------------------
 
-CSegment* CSegmentManager::GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse)
+CSegment* CSegmentManager::GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox)
 {
 	short nSegments = segmentManager.Count ();
 
@@ -326,6 +326,8 @@ m_selectedSegments = null;
 #pragma omp parallel for
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = Segment (nSegment);
+	if ((segP->Function () == SEGMENT_FUNC_SKYBOX) && !bAllowSkyBox)
+		continue;
 	if (segP->IsSelected (viewport, xMouse, yMouse))
 #pragma omp critical
 		{
@@ -338,7 +340,7 @@ return m_selectedSegments;
 
 // -----------------------------------------------------------------------------
 
-CSide* CSegmentManager::GatherSelectedSides (CRect& viewport, long xMouse, long yMouse)
+CSide* CSegmentManager::GatherSelectedSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox)
 {
 	short nSegments = segmentManager.Count ();
 
@@ -348,6 +350,8 @@ m_selectedSides = null;
 //#pragma omp parallel for
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = Segment (nSegment);
+	if ((segP->Function () == SEGMENT_FUNC_SKYBOX) && !bAllowSkyBox)
+		continue;
 	bool bSegmentSelected = false;
 	short nSide = 0;
 	for (; nSide < 6; nSide++) {

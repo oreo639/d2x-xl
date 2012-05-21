@@ -344,9 +344,9 @@ class CSegmentManager {
 
 		void ComputeNormals (bool bAll, bool bView = false);
 
-		CSegment* GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse);
+		CSegment* GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox);
 
-		CSide* GatherSelectedSides (CRect& viewport, long xMouse, long yMouse);
+		CSide* GatherSelectedSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox);
 
 		inline CSegment* SelectedSegments (void) { return m_selectedSegments; }
 	
