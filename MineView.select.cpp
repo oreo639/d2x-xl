@@ -120,10 +120,17 @@ RefreshObject(i, nClosestObj);
 }
 
 //--------------------------------------------------------------------------
+// Find the nearest textured segment side the user had clicked on.
+// First try to read the segment and side secondary render target from the renderer
+// If that fails, cast a ray through the mouse position from the near to the 
+// far plane and find the nearest textured segment side intersected by the ray
+// Disabled because the new side and segment selection method is more flexible
+// when it comes to selecting open (untextured) sides.
 
 short CMineView::FindVisibleSelectedSide (long xMouse, long yMouse, short& nSide)
 {
-if (!m_bSelectTexturedSides || ((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
+#if 0
+if (((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
 	return -1;
 
 short nSegment;
@@ -180,46 +187,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	}
 nSide = nMinSide;
 return nMinSeg;
-}
-
-//--------------------------------------------------------------------------
-
-short CMineView::SegmentIsSelected (CSegment* segP, CRect& viewport, long xMouse, long yMouse) 
-{
-if (!Visible (segP))
-	return -1;
-
-CLongVector mousePos;
-mousePos.x = xMouse;
-mousePos.y = yMouse;
-mousePos.z = 0;
-
-
-short nSides = 6;
-short nCurSide = current->m_nSide;
-
-for (short i = 0; i < nSides; i++, nCurSide = (nCurSide + 1) % nSides) {
-	CSide* sideP = segP->Side (nCurSide);
-	CVertex sideVerts [4];
-	int h = sideP->VertexCount ();
-	for (int j = 0; j < h; j++) {
-		sideVerts [j] = vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (j)]];
-		sideVerts [j].m_screen.z = 0;
-		}
-	for (int j = 0; j < h; j++) {
-		int x = sideVerts [j].m_screen.x;
-		int y = sideVerts [j].m_screen.y;
-		if ((x < viewport.left) || (x > viewport.right) || (y < viewport.top) || (y > viewport.bottom)) 
-			sideVerts [j].m_screen.z = -1;
-		else if (m_nRenderer && sideVerts [j].m_view.v.z < 0.0)
-			sideVerts [j].m_screen.z = -1;
-		}
-	if (PointIsInTriangle2D (mousePos, sideVerts [0].m_screen, sideVerts [1].m_screen, sideVerts [2].m_screen))
-		return nCurSide;
-	if ((h > 3) && PointIsInTriangle2D (mousePos, sideVerts [0].m_screen, sideVerts [2].m_screen, sideVerts [3].m_screen)) 
-		return nCurSide;
-	}
-return -1;
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -228,12 +196,14 @@ bool CMineView::SelectCurrentSide (long xMouse, long yMouse, int bAdd)
 {
 if (bAdd < 0)
 	vertexManager.UnmarkAll ();
-
+#if 0
 	short nSide, nSegment = FindVisibleSelectedSide (xMouse, yMouse, nSide);
 
 if (0 <= nSegment) 
 	current->Setup (nSegment, nSide);
-else if (m_nearestSegment && m_nearestSide) {
+else if (m_nearestSegment && m_nearestSide) 
+#endif
+	{
 	current->m_nSegment = segmentManager.Index (m_nearestSegment);
 	current->m_nSide = m_nearestSegment->SideIndex (m_nearestSide);
 	}

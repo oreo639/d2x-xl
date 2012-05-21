@@ -259,7 +259,7 @@ if (faceCount > 1)
 	SortFaces (0, faceCount - 1);
 CalcSegDist ();
 
-Renderer ().RenderFaces (faceRenderList, faceCount, m_bSelectTexturedSides);
+Renderer ().RenderFaces (faceRenderList, faceCount, 0);
 }
 
 //--------------------------------------------------------------------------
@@ -1102,6 +1102,10 @@ Renderer ().EndRender ();
 }
 
 //--------------------------------------------------------------------------
+// Determine all sides in the projection to the mine view of which the current 
+// mouse position lies. Draw a circle in each side's center and a line from 
+// each side vertex to the circle to mark it. Open sides have the circle 
+// moved in by their normal * 2.0.
 
 static inline double sqr (long v) { return double (v) * double (v); }
 
@@ -1109,9 +1113,6 @@ void CMineView::DrawSelectableSides (void)
 {
 if (!SelectMode (eSelectSide))
 	return;
-if (m_bSelectTexturedSides && ((m_viewOption == eViewTextured) || (m_viewOption == eViewTexturedWireFrame)))
-	return;
-
 
 CRect viewport;
 GetClientRect (viewport);
@@ -1173,6 +1174,10 @@ Renderer ().EndRender ();
 }
 
 //--------------------------------------------------------------------------
+// Determine all segments in the projection to the mine view of which the current 
+// mouse position lies. Draw a circle in each segment's center and a line from 
+// each side vertex to the circle to mark it. Open sides have the circle 
+// moved in by their normal * 2.0.
 
 void CMineView::DrawSelectableSegments (void) 
 {

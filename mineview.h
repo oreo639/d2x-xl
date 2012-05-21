@@ -111,7 +111,6 @@ protected: // create from serialization only
 	UINT_PTR			m_lightTimer;
 	UINT_PTR			m_selectTimer;
 	int 				m_nFrameRate;
-	int				m_bSelectTexturedSides; // force selecting a textured face in 1st person view
 	bool 				m_bHScroll,
 						m_bVScroll;
 	int 				m_xScrollRange,
@@ -401,7 +400,6 @@ public:
 
 private:
 	short FindVisibleSelectedSide (long xMouse, long yMouse, short& nSide);
-	short SegmentIsSelected (CSegment* segP, CRect& rc, long xMouse, long yMouse);
 
 protected:
 

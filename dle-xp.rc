@@ -3148,8 +3148,6 @@ BEGIN
         MENUITEM "&Objects",                    ID_SEL_OBJECTMODE
         MENUITEM "&Blocks",                     ID_SEL_BLOCKMODE
         MENUITEM SEPARATOR
-        MENUITEM "&Textured Elements",          ID_SEL_TEXTURED_SIDES
-        MENUITEM SEPARATOR
         MENUITEM "Quick &Copy",                 ID_EDIT_QUICKCOPY
         MENUITEM "Quick &Paste",                ID_EDIT_QUICKPASTE
         MENUITEM SEPARATOR
