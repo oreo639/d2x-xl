@@ -1110,6 +1110,10 @@ for (ubyte i = 0; i < 8; i++) {
 short CSegment::IsSelected (CRect& viewport, long xMouse, long yMouse, short nSide) 
 {
 short nSegment = segmentManager.Index (this);
+#ifdef _DEBUG
+if (nSegment == nDbgSeg)
+	nDbgSeg = nDbgSeg;
+#endif
 CFrustum* frustum = DLE.MineView ()->Renderer ().Frustum ();
 for (; nSide < 6; nSide++) {
 	if (frustum && !frustum->Contains (nSegment, nSide))
