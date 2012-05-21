@@ -480,7 +480,7 @@ for (short nEdge = 1; nEdge <= nEdges; nEdge++) {
 	double dist = PointLineDistance (mousePos, v1->m_proj, v2->m_proj);
 	if (minDist > dist) {
 		minDist = dist;
-		nNearestEdge = nEdge;
+		nNearestEdge = nEdge - 1;
 		}
 	}
 return nNearestEdge;

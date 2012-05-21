@@ -1377,9 +1377,10 @@ nearest->m_nSegment = -1;
 nearest->m_nSide = -1;
 nearest->m_nEdge = -1;
 
-if (!DrawSelectableEdge () && (DrawSelectableSides () || DrawSelectableSegments ()))
+if (DrawSelectableEdge ())
+	;
+else if (DrawSelectableSides () || DrawSelectableSegments ())
 	DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);
-
 
 tunnelMaker.Draw (Renderer (), Pen (penRed), Pen (penBlue), ViewMatrix ());
 
