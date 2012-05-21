@@ -1102,6 +1102,45 @@ Renderer ().EndRender ();
 // Determine the side edge the projection of which to the mine view is closest
 // to the current mouse position.
 
+bool CMineView::DrawSelectablePoint (void) 
+{
+if (!SelectMode (eSelectPoint))
+	return false;
+
+CRect viewport;
+GetClientRect (viewport);
+
+double minDist = 1e30;
+short nNearestVertex = -1;
+
+CDoubleVector mousePos (double (m_lastMousePos.x), double (m_lastMousePos.y), 0.0);
+
+short nVertices = vertexManager.Count ();
+for (short nVertex = 0; nVertex < nVertices; nVertex++) {
+	CVertex& v = vertexManager [nVertex];
+	if (!v.InRange (viewport.right, viewport.bottom, m_nRenderer))
+		continue;
+	double dist = Distance (mousePos, v.m_proj);
+	if (minDist > dist) {
+		minDist = dist;
+		nNearestVertex = nVertex;
+		}
+	}
+if (nNearestVertex < 0)
+	return false;
+
+Renderer ().BeginRender (true);
+Renderer ().SelectPen (penMedBlue + 1, 1);
+Renderer ().Ellipse (vertexManager [nNearestVertex], 8.0, 8.0);
+Renderer ().EndRender ();
+
+return true;
+}
+
+//--------------------------------------------------------------------------
+// Determine the side edge the projection of which to the mine view is closest
+// to the current mouse position.
+
 bool CMineView::DrawSelectableEdge (void) 
 {
 if (!SelectMode (eSelectLine))
@@ -1393,7 +1432,9 @@ nearest->m_nSegment = -1;
 nearest->m_nSide = -1;
 nearest->m_nEdge = -1;
 
-if (DrawSelectableEdge ())
+if (DrawSelectablePoint ())
+	;
+else if (DrawSelectableEdge ())
 	;
 else if (DrawSelectableSides () || DrawSelectableSegments ())
 	DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);

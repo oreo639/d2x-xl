@@ -3142,7 +3142,7 @@ BEGIN
     POPUP "Element selection"
     BEGIN
         MENUITEM "&Points",                     ID_SEL_POINTMODE
-        MENUITEM "&Lines",                      ID_SEL_LINEMODE
+        MENUITEM "&Edges",                      ID_SEL_EDGEMODE
         MENUITEM "&Sides",                      ID_SEL_SIDEMODE
         MENUITEM "S&egments",                   ID_SEL_SEGMENTMODE
         MENUITEM "&Objects",                    ID_SEL_OBJECTMODE
@@ -5914,7 +5914,7 @@ BEGIN
     BUTTON      ID_INSMODE_MIRROR
     SEPARATOR
     BUTTON      ID_SEL_POINTMODE
-    BUTTON      ID_SEL_LINEMODE
+    BUTTON      ID_SEL_EDGEMODE
     BUTTON      ID_SEL_SIDEMODE
     BUTTON      ID_SEL_SEGMENTMODE
     BUTTON      ID_SEL_OBJECTMODE
@@ -6590,7 +6590,7 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_SEL_LINEMODE         "set line mode\nset line mode"
+    ID_SEL_EDGEMODE         "set line mode\nset line mode"
     ID_SEL_SIDEMODE         "set side mode\nset side mode"
     ID_SEL_SEGMENTMODE      "set segment mode\nset segment mode"
     ID_SEL_OBJECTMODE       "set object mode\nset object mode"

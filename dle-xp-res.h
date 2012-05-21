@@ -982,7 +982,7 @@
 #define ID_SEL_PREV_TAB						 30909
 #define ID_SEL_NEXT_TAB						 30910
 #define ID_SEL_POINTMODE                30911
-#define ID_SEL_LINEMODE                 30912
+#define ID_SEL_EDGEMODE                 30912
 #define ID_SEL_SIDEMODE                 30913
 #define ID_SEL_SEGMENTMODE              30914
 #define ID_SEL_OBJECTMODE               30915

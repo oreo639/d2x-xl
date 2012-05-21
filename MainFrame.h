@@ -330,7 +330,7 @@ public:
 	afx_msg void OnSelectPrevTab ();
 	afx_msg void OnSelectNextTab ();
 	afx_msg void OnSelectPointMode ();
-	afx_msg void OnSelectLineMode ();
+	afx_msg void OnSelectEdgeMode ();
 	afx_msg void OnSelectSideMode ();
 	afx_msg void OnSelectCubeMode ();
 	afx_msg void OnSelectObjectMode ();

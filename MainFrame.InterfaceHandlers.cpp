@@ -110,7 +110,7 @@ BEGIN_MESSAGE_MAP (CMainFrame, CFrameWnd)
 	ON_COMMAND (ID_SEL_PREV_TAB, OnSelectPrevTab)
 	ON_COMMAND (ID_SEL_NEXT_TAB, OnSelectNextTab)
 	ON_COMMAND (ID_SEL_POINTMODE, OnSelectPointMode)
-	ON_COMMAND (ID_SEL_LINEMODE, OnSelectLineMode)
+	ON_COMMAND (ID_SEL_EDGEMODE, OnSelectEdgeMode)
 	ON_COMMAND (ID_SEL_SIDEMODE, OnSelectSideMode)
 	ON_COMMAND (ID_SEL_SEGMENTMODE, OnSelectCubeMode)
 	ON_COMMAND (ID_SEL_OBJECTMODE, OnSelectObjectMode)
@@ -638,7 +638,7 @@ void CMainFrame::OnSelectPointMode ()
 SetSelectMode (eSelectPoint);
 }
 
-void CMainFrame::OnSelectLineMode ()
+void CMainFrame::OnSelectEdgeMode ()
 {
 SetSelectMode (eSelectLine);
 }
