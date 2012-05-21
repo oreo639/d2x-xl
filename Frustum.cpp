@@ -12,10 +12,6 @@ static int planeVerts [6][4] = {
 	{0,1,2,3},{0,1,5,4},{1,2,6,5},{2,3,7,6},{0,3,7,4},{4,5,6,7}
 	};
 
-//static int oppSides [6] = {5, 3, 4, 1, 2, 0};
-
-static int normRefs [6][2] = {{1,5},{4,7},{5,4},{7,4},{4,5},{5,1}};
-
 void CFrustum::Setup (CRect viewport, double fov)
 {
 double h = double (tan (fov * PI / 360.0));
@@ -27,38 +23,45 @@ double r = f / n;
 
 #define ln -w
 #define rn +w
-#define tn +h
-#define bn -h
+#define tn -h
+#define bn +h
 
 #define lf (ln * r)
 #define rf (rn * r)
 #define tf (tn * r)
 #define bf (bn * r)
 
-for (int i = 0; i < 4; i++)
-	m_corners [i].Clear ();
+m_corners [0].Set (ln, bn, n);
+m_corners [1].Set (ln, tn, n);
+m_corners [2].Set (rn, tn, n);
+m_corners [3].Set (rn, bn, n);
 m_corners [4].Set (lf, bf, f);
-m_corners [5].Set (lf, rf, f);
+m_corners [5].Set (lf, tf, f);
 m_corners [6].Set (rf, tf, f);
 m_corners [7].Set (rf, bf, f);
-m_centers [0].Set (0.0, 0.0, 0.0);
+m_centers [0].Set (0.0, 0.0, n);
 m_centers [1].Set (lf * 0.5, 0.0, m);
-m_centers [1].Set (0.0f, tf * 0.5, m);
-m_centers [1].Set (rf * 0.5, 0.0, m);
-m_centers [1].Set (0.0, bf * 0.5, m);
-m_centers [1].Set (0.0, 0.0, f);
+m_centers [2].Set (0.0, tf * 0.5, m);
+m_centers [3].Set (rf * 0.5, 0.0, m);
+m_centers [4].Set (0.0, bf * 0.5, m);
+m_centers [5].Set (0.0, 0.0, f);
 
+
+CVertex center;
+for (int i = 0; i < 8; i++) 
+	center += m_corners [i];
+center /= 8.0;
 
 m_centers [0].Clear ();
 m_normals [0].Set (0.0, 0.0, 1.0);
-for (int i = 1; i < 6; i++) {
+for (int i = 0; i < 6; i++) {
 	m_normals [i] = Normal (m_corners [planeVerts [i][1]], m_corners [planeVerts [i][2]], m_corners [planeVerts [i][3]]);
 	for (int j = 0; j < 4; j++)
 		m_centers [i] += m_corners [planeVerts [i][j]];
 	m_centers [i] /= 4.0;
-	CDoubleVector v = m_corners [normRefs [i][1]] - m_corners [normRefs [i][0]];
+	CDoubleVector v = center - m_centers [i];
 	v.Normalize ();
-	if (Dot (v, m_normals [i]) < 0)
+	if (Dot (v, m_normals [i]) < 0.0)
 		m_normals [i].Negate ();
 	}
 }
@@ -91,10 +94,10 @@ for (i = 0; i < 6; i++) {
 	int bPtInside = 1;
 	CDoubleVector& c = m_centers [i];
 	CDoubleVector& n = m_normals [i];
-	for (j = 0; j < 4; j++) {
+	for (j = 0; j < nVertices; j++) {
 		CDoubleVector v = points [j]->m_view - c;
-		Normalize (v);
-		if (Dot (n, v) < 0) {
+		v = Normalize (v);
+		if (Dot (n, v) < 0.0) {
 			if (!--nPtInside)
 				return false;
 			++nOutside [j];
@@ -106,7 +109,7 @@ for (i = 0; i < 6; i++) {
 
 if (nInside == 6)
 	return true; // face completely contained
-for (j = 0; j < 4; j++) 
+for (j = 0; j < nVertices; j++) 
 	if (!nOutside [j])
 		return true; // some vertex inside frustum
 
@@ -114,7 +117,7 @@ for (j = 0; j < 4; j++)
 // to do that, compute the intersections of all frustum edges with the plane(s) spanned up by the face (two planes if face not planar)
 // if an edge intersects, check whether the intersection is inside the face
 // since the near plane is at 0.0, only 8 edges of 5 planes need to be checked
-for (i = 11; i >= 4; i--)
+for (i = 0; i < 12; i++)
 	if (sideP->LineHitsFace (&m_corners [lineVerts [i][0]], &m_corners [lineVerts [i][1]], segP->m_info.vertexIds, 0.0, true))
 		return true;
 return false;
