@@ -984,17 +984,34 @@ return true;
 
 void CMainFrame::OnEditGeoFwd ()
 {
-EditGeoFwd ();
-}
-
-void CMainFrame::OnEditGeoUp ()
-{
-EditGeoUp ();
+if (MineView ()->Perspective ())
+	EditGeoUp ();
+else
+	EditGeoFwd ();
 }
 
 void CMainFrame::OnEditGeoBack ()
 {
-EditGeoBack ();
+if (MineView ()->Perspective ())
+	EditGeoDown ();
+else
+	EditGeoBack ();
+}
+
+void CMainFrame::OnEditGeoUp ()
+{
+if (MineView ()->Perspective ())
+	EditGeoFwd ();
+else
+	EditGeoUp ();
+}
+
+void CMainFrame::OnEditGeoDown ()
+{
+if (MineView ()->Perspective ())
+	EditGeoBack ();
+else
+EditGeoDown ();
 }
 
 void CMainFrame::OnEditGeoRotLeft ()
@@ -1015,11 +1032,6 @@ EditGeoRotRight ();
 void CMainFrame::OnEditGeoLeft ()
 {
 EditGeoLeft ();
-}
-
-void CMainFrame::OnEditGeoDown ()
-{
-EditGeoDown ();
 }
 
 void CMainFrame::OnEditGeoRight ()
