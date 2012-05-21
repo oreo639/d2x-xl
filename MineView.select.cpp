@@ -227,44 +227,18 @@ bool CMineView::SelectCurrentLine (long xMouse, long yMouse, int bAdd)
 if (bAdd < 0)
 	vertexManager.UnmarkAll ();
 
-int nVertex = FindNearestVertex (xMouse, yMouse);
-if (nVertex < 0)
+if (nearest->m_nEdge < 0)
 	return false;
 
-	CDoubleVector	clickPos (m_clickPos.x, m_clickPos.y, 0.0);
-	double			dMin = 1e30;
-	ushort			nVertices [2] = {0xFFFF, 0xFFFF};
-	int				xMax = ViewWidth (), yMax = ViewHeight ();
-	int				nEdge = -1;
-	CEdgeList		edgeList;
-
-for (short nSegment = 0; 0 <= (nSegment = segmentManager.FindByVertex (ushort (nVertex), nSegment)); nSegment++) {
-	CSegment* segP = segmentManager.Segment (nSegment);
-	short nEdges = segP->BuildEdgeList (edgeList);
-	ubyte s1, s2, i1, i2;
-	for (short i = 0; i < nEdges; i++) {
-		edgeList.Get (i, s1, s2, i1, i2);
-		CVertex* v1 = segP->Vertex (i1);
-		CVertex* v2 = segP->Vertex (i2);
-		if (!(v1->InRange (xMax, yMax, m_nRenderer) && v2->InRange (xMax, yMax, m_nRenderer)))
-			continue;
-		v1->m_proj.v.z = v2->m_proj.v.z = 0.0;
-		double d = PointLineDistance (clickPos, v1->m_proj, v2->m_proj);
-		if (dMin > d) {
-			dMin = d;
-			current->m_nSegment = nSegment;
-			current->m_nEdge = i;
-			nVertices [0] = segP->VertexId (i1);
-			nVertices [0] = segP->VertexId (i2);
-			}
-		}
-	}
-if (bAdd && (nVertices [0] != 0xFFFF) && (nVertices [1] != 0xFFFF)) {
+ushort nVertices [2] = {nearest->Segment ()->VertexId (nearest->m_nSide, nearest->m_nEdge), 
+								nearest->Segment ()->VertexId (nearest->m_nSide, nearest->m_nEdge + 1)};
+if (bAdd && (nVertices [0] <= MAX_VERTEX) && (nVertices [1] <= MAX_VERTEX)) {
 	vertexManager [nVertices [0]].Mark ();
 	vertexManager [nVertices [1]].Mark ();
-	current->m_nPoint = nVertex;
-	if (!current->Segment ()->HasEdge (current->m_nSide, nVertices [0], nVertices [1]))
-		current->m_nSide = edgeSideTable [current->m_nEdge][0];
+	current->m_nSegment = nearest->m_nSegment;
+	current->m_nSide = nearest->m_nSide;
+	current->m_nEdge = nearest->m_nEdge;
+	current->m_nPoint = nearest->m_nEdge;
 	}
 DLE.ToolView ()->Refresh ();
 Refresh ();
