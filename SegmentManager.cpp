@@ -347,7 +347,9 @@ CSide* CSegmentManager::GatherSelectedSides (CRect& viewport, long xMouse, long 
 m_selectedSegments = null;
 m_selectedSides = null;
 	
-//#pragma omp parallel for
+#ifdef NDEBUG
+#	pragma omp parallel for
+#endif
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = Segment (nSegment);
 	if ((segP->Function () == SEGMENT_FUNC_SKYBOX) && !bAllowSkyBox)
@@ -358,7 +360,9 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		nSide = segP->IsSelected (viewport, xMouse, yMouse, nSide);
 		if (nSide < 0)
 			break;
-//#pragma omp critical
+#ifdef NDEBUG
+#	pragma omp critical
+#endif
 			{
 			if (!bSegmentSelected) {
 				bSegmentSelected = true;
@@ -367,7 +371,9 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 				}
 			}
 			CSide* sideP = segP->Side (nSide);
-//#pragma omp critical
+#ifdef NDEBUG
+#	pragma omp critical
+#endif
 			{
 			sideP->Link (m_selectedSides);
 			m_selectedSides = sideP;

@@ -373,7 +373,7 @@ class CRendererGL : public CRenderer {
 		virtual void Polygon (CPoint* points, int nPoints);
 		virtual void Rectangle (int left, int top, int right, int bottom);
 		virtual void Ellipse (CVertex& center, double xRad, double yRad);
-
+		void Clip (CLongVector* line);
 		virtual void MoveTo (CVertex& v);
 		virtual void LineTo (CVertex& v);
 		virtual void PolyLine (CVertex* vertices, int nVertices);

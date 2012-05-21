@@ -518,7 +518,7 @@ if (!Visible (segP))
 if (segP->m_info.bTunnel != bTunnel)
 	return;
 
-if (bSparse || Renderer ().Ortho ()) {
+if (!m_nRenderer && (bSparse || Renderer ().Ortho ())) {
 	short xMax = ViewWidth ();
 	short yMax = ViewHeight ();
 	ushort* vertexIds = segP->m_info.vertexIds;
@@ -1193,7 +1193,7 @@ nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex
 
 Renderer ().BeginRender (true);
 if (m_nRenderer) {
-	glLineStipple (1, 0x0f0f);  
+	glLineStipple (1, 0x00ff);  
 	glEnable (GL_LINE_STIPPLE);
 	}
 Renderer ().SelectPen (penMedBlue + 1, 2);
@@ -1260,7 +1260,7 @@ nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex
 
 Renderer ().BeginRender (true);
 if (m_nRenderer) {
-	glLineStipple (1, 0x0f0f);  
+	glLineStipple (1, 0x00ff);  
 	glEnable (GL_LINE_STIPPLE);
 	}
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
@@ -1270,8 +1270,10 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	CVertex& center = sideP->Center ();
 #if 1
-	if (m_nRenderer) 
+	if (m_nRenderer) {
 		glEnable (GL_LINE_STIPPLE);
+		glLineStipple (1, 0x00ff);  
+		}
 	for (int i = 0; i <= nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
 		if (i)
@@ -1284,6 +1286,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		normal.Project (ViewMatrix ());
 		center += normal;
 		}
+	if (m_nRenderer)
+		glLineStipple (1, 0x3333);  
 	for (int i = 0; i < nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
 		CDoubleVector c (double (center.m_screen.x), double (center.m_screen.y), double (center.m_screen.z));
@@ -1349,7 +1353,7 @@ nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex
 
 Renderer ().BeginRender (true);
 if (m_nRenderer) {
-	glLineStipple (1, 0x0f0f);  
+	glLineStipple (1, 0x00ff);  
 	//glEnable (GL_LINE_STIPPLE);
 	}
 nSegment = -1;
@@ -1361,10 +1365,14 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CVertex& center = segP->Center ();
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 #if 1
-	if (m_nRenderer)
+	if (m_nRenderer) {
+		glLineStipple (1, 0x00ff);  
 		glEnable (GL_LINE_STIPPLE);
+		}
 	DrawSegmentWireFrame (segP);
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
+	if (m_nRenderer)
+		glLineStipple (1, 0x3333);  
 	for (int i = 0; i < 8; i++) {
 		if (segP->VertexId (i) > MAX_VERTEX)
 			continue;
@@ -1436,8 +1444,17 @@ if (DrawSelectablePoint ())
 	;
 else if (DrawSelectableEdge ())
 	;
-else if (DrawSelectableSides () || DrawSelectableSegments ())
+else if (DrawSelectableSides () || DrawSelectableSegments ()) {
+	Renderer ().BeginRender (true);
+	if (m_nRenderer) {
+		glLineStipple (1, 0x00ff);  
+		glEnable (GL_LINE_STIPPLE);
+		}
 	DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);
+	if (m_nRenderer)
+		glDisable (GL_LINE_STIPPLE);
+	Renderer ().EndRender ();
+	}
 
 tunnelMaker.Draw (Renderer (), Pen (penRed), Pen (penBlue), ViewMatrix ());
 
