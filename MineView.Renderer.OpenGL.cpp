@@ -721,6 +721,7 @@ m_v = v;
 }
 
 //------------------------------------------------------------------------------
+// This crap should work, but it doesn't ... why the heck doesn't it?
 
 static inline double sqr (long v) { return double (v) * double (v); }
 
@@ -740,25 +741,32 @@ if (!nClip)
 
 double m = double (line [1].y - line [0].y) / double (line [1].x - line [0].x);
 double b = double (line [0].y) - m * double (line [0].x);
-CLongVector v = line [1] - line [0];
-double l = v.Sqr ();
 
-CLongVector pi [4];
-pi [0].x = 0;
-pi [0].y = long (Round (b));
-pi [1].y = 0;
-pi [1].x = long (Round (-b / m));
-pi [2].x = ViewWidth () - 1;
-pi [2].y = long (Round (b + m * pi [2].x));
-pi [3].y = ViewHeight () - 1;
-pi [3].x = long (Round ((pi [3].y - b) / m));
-pi [0].z = pi [1].z = pi [2].z = pi [3].z = 0;
+CDoubleVector v1 (line [0].x, line [0].y, 0.0);
+CDoubleVector v2 (line [1].x, line [1].y, 0.0);
+
+CDoubleVector pi [4];
+pi [0].v.x = 0;
+pi [0].v.y = b;
+pi [1].v.y = 0;
+pi [1].v.x = -b / m;
+pi [2].v.x = double (w) - 1;
+pi [2].v.y = b + m * pi [2].v.x;
+pi [3].v.y = double (h) - 1;
+pi [3].v.x = (pi [3].v.y - b) / m;
 for (int i = 0, j = !bClip [0]; (i < 4) && nClip; i++) 
-	if ((pi [i].x >= 0) && (pi [i].x < w) && (pi [i].y >= 0) && (pi [i].y < h)) {
-		v = line [!j];
-		v -= pi [i];
-		if (v.Sqr () < l) {
-			line [j++] = pi [i];
+	if ((pi [i].v.x >= 0.0) && (pi [i].v.x < w) && (pi [i].v.y >= 0.0) && (pi [i].v.y < h)) {
+		CDoubleVector dv1, dv2;
+		dv1 = pi [i];
+		dv2 = dv1;
+		dv1 -= v1;
+		dv2 -= v2;
+		// check whether the new point lies on the edge by computing the angle (dot product)
+		// of the vectors from the new point to each of the edge's current points
+		// these vectors must point away from each other -> dot < 0
+		if (Dot (dv1, dv2) < 0.0) {
+			line [j].x = long (Round (pi [i].v.x));
+			line [j++].y = long (Round (pi [i].v.y));
 			--nClip;
 			}
 		}
@@ -774,7 +782,6 @@ line [0].x = m_x;
 line [0].y = m_y;
 line [1].x = x;
 line [1].y = y;
-line [0].z = line [1].z = 0;
 if (Clip (line)) {
 	glBegin (GL_LINES);
 	glVertex2i (line [0].x, line [0].y);

@@ -1246,6 +1246,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		center.Transform (ViewMatrix ());
 		center.Project (ViewMatrix ());
 		}
+	if ((center.m_screen.x < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom))
+		continue;
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (minDist > dist) {
 		minDist = dist;
@@ -1257,6 +1259,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		}
 	}
 nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
+if (nearest->m_nSegment < 0)
+	return false;
 
 Renderer ().BeginRender (true);
 if (m_nRenderer) {
@@ -1267,13 +1271,16 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
 	short nVertices = sideP->VertexCount ();
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 4);
 	CVertex& center = sideP->Center ();
+	if ((center.m_screen.x < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom))
+		continue;
 #if 1
 	if (m_nRenderer) {
 		glEnable (GL_LINE_STIPPLE);
 		glLineStipple (1, 0x00ff);  
 		}
+#if NDEBUG
 	for (int i = 0; i <= nVertices; i++) {
 		CVertex* vertex = segP->Vertex (nSide, i);
 		if (i)
@@ -1281,6 +1288,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		else
 			Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
 		}
+#endif
 	if (!sideP->IsVisible ()) {
 		CVertex normal = sideP->Normal (2);
 		normal.Project (ViewMatrix ());
@@ -1302,7 +1310,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 #endif
 	if (m_nRenderer)
 		glDisable (GL_LINE_STIPPLE);
-	Renderer ().Ellipse (center, 8.0, 8.0);
+	if (center.m_view.v.z >= 0.0)
+		Renderer ().Ellipse (center, 8.0, 8.0);
 	}
 Renderer ().EndRender ();
 
@@ -1350,6 +1359,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		}
 	}
 nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
+if (nearest->m_nSegment < 0)
+	return false;
 
 Renderer ().BeginRender (true);
 if (m_nRenderer) {
