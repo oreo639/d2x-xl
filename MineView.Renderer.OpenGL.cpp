@@ -722,14 +722,20 @@ m_v = v;
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::Clip (CLongVector* line)
+bool CRendererGL::Clip (CLongVector* line)
 {
 	int w = ViewWidth ();
 	int h = ViewHeight ();
+	int bClip [2];
+	int nClip = 0;
 
-if ((line [0].x >= 0) && (line [0].x < w) && (line [0].y >= 0) && (line [0].y < h) &&
-	 (line [1].x >= 0) && (line [1].x < w) && (line [1].y >= 0) && (line [1].y < h))
-	return;
+for (int i = 0; i < 2; i++) 
+	if ((bClip [i] = (line [0].x < 0) || (line [0].x >= w) || (line [0].y < 0) || (line [0].y <= h)))
+		++nClip;
+
+if (!nClip)
+	return true;
+
 double m = double (line [1].y - line [0].y) / double (line [1].x - line [0].x);
 double b = double (line [0].y) - m * double (line [0].x);
 
@@ -742,9 +748,12 @@ pi [2].x = ViewWidth () - 1;
 pi [2].y = long (Round (b + m * pi [2].x));
 pi [3].y = ViewHeight () - 1;
 pi [3].x = long (Round ((pi [3].y - b) / m));
-for (int i = 0, j = 0; (i < 4) && (j < 2); i++) 
-	if ((pi [i].x >= 0) && (pi [i].x < w) && (pi [i].y >= 0) && (pi [i].y < h))
+for (int i = 0, j = !bClip [0]; (i < 4) && nClip; i++) 
+	if ((pi [i].x >= 0) && (pi [i].x < w) && (pi [i].y >= 0) && (pi [i].y < h)) {
 		line [j++] = pi [i];
+		--nClip;
+		}
+return nClip == 0;
 }
 
 //------------------------------------------------------------------------------
@@ -756,11 +765,12 @@ line [0].x = m_x;
 line [0].y = m_y;
 line [1].x = x;
 line [1].y = y;
-Clip (line);
-glBegin (GL_LINES);
-glVertex2i (line [0].x, line [0].y);
-glVertex2i (line [1].x, line [1].y);
-glEnd ();
+if (Clip (line)) {
+	glBegin (GL_LINES);
+	glVertex2i (line [0].x, line [0].y);
+	glVertex2i (line [1].x, line [1].y);
+	glEnd ();
+	}
 m_x = x, m_y = y;
 }
 
