@@ -722,6 +722,8 @@ m_v = v;
 
 //------------------------------------------------------------------------------
 
+static inline double sqr (long v) { return double (v) * double (v); }
+
 bool CRendererGL::Clip (CLongVector* line)
 {
 	int w = ViewWidth ();
@@ -730,7 +732,7 @@ bool CRendererGL::Clip (CLongVector* line)
 	int nClip = 0;
 
 for (int i = 0; i < 2; i++) 
-	if ((bClip [i] = (line [0].x < 0) || (line [0].x >= w) || (line [0].y < 0) || (line [0].y <= h)))
+	if ((bClip [i] = (line [i].x < 0) || (line [i].x >= w) || (line [i].y < 0) || (line [i].y >= h)))
 		++nClip;
 
 if (!nClip)
@@ -738,6 +740,8 @@ if (!nClip)
 
 double m = double (line [1].y - line [0].y) / double (line [1].x - line [0].x);
 double b = double (line [0].y) - m * double (line [0].x);
+CLongVector v = line [1] - line [0];
+double l = v.Sqr ();
 
 CLongVector pi [4];
 pi [0].x = 0;
@@ -748,10 +752,15 @@ pi [2].x = ViewWidth () - 1;
 pi [2].y = long (Round (b + m * pi [2].x));
 pi [3].y = ViewHeight () - 1;
 pi [3].x = long (Round ((pi [3].y - b) / m));
+pi [0].z = pi [1].z = pi [2].z = pi [3].z = 0;
 for (int i = 0, j = !bClip [0]; (i < 4) && nClip; i++) 
 	if ((pi [i].x >= 0) && (pi [i].x < w) && (pi [i].y >= 0) && (pi [i].y < h)) {
-		line [j++] = pi [i];
-		--nClip;
+		v = line [!j];
+		v -= pi [i];
+		if (v.Sqr () < l) {
+			line [j++] = pi [i];
+			--nClip;
+			}
 		}
 return nClip == 0;
 }
@@ -765,6 +774,7 @@ line [0].x = m_x;
 line [0].y = m_y;
 line [1].x = x;
 line [1].y = y;
+line [0].z = line [1].z = 0;
 if (Clip (line)) {
 	glBegin (GL_LINES);
 	glVertex2i (line [0].x, line [0].y);

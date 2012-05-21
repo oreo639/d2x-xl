@@ -500,7 +500,7 @@ for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
 		Renderer ().MoveTo (v1);
 		Renderer ().LineTo (v2);
 		}
-	else if (v1.InRange (xMax, yMax, nType) && v2.InRange (xMax, yMax, nType)) {
+	else { //if (v1.InRange (xMax, yMax, nType) && v2.InRange (xMax, yMax, nType)) {
 		Renderer ().MoveTo (v1.m_screen.x, v1.m_screen.y);
 		Renderer ().LineTo (v2.m_screen.x, v2.m_screen.y);
 		}

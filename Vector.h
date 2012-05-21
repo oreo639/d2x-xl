@@ -37,12 +37,23 @@ public:
 		return *this;
 		}
 
+	inline CLongVector& operator-= (CLongVector& other) {
+		x -= other.x;
+		y -= other.y;
+		z -= other.z;
+		return *this;
+		}
+
 	inline CLongVector& operator/= (long n) {
 		x /= n;
 		y /= n;
 		z /= n;
 		return *this;
-	}
+		}
+
+	inline double Sqr (void) { return double (x) * double (x) + double (y) * double (y) + double (z) * double (z); }
+
+	inline long Mag (void) { return long (Round (sqrt (Sqr ()))); }
 };
 
 // -----------------------------------------------------------------------------

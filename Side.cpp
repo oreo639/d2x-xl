@@ -451,9 +451,9 @@ for (int j = 0; j < h; j++) {
 	int x = sideVerts [j].m_screen.x;
 	int y = sideVerts [j].m_screen.y;
 	if ((x < viewport.left) || (x > viewport.right) || (y < viewport.top) || (y > viewport.bottom)) 
-		sideVerts [j].m_screen.z = -1;
+		sideVerts [j].m_screen.z = 0;
 	else if (sideVerts [j].m_view.v.z < 0.0)
-		sideVerts [j].m_screen.z = -1;
+		sideVerts [j].m_screen.z = 0;
 	}
 if (PointIsInTriangle2D (mousePos, sideVerts [0].m_screen, sideVerts [1].m_screen, sideVerts [2].m_screen))
 	return 1;
