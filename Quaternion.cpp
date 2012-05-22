@@ -173,5 +173,42 @@ angle = acos (w) * 2.0;
 }
 
 // -----------------------------------------------------------------------------
-
-
+#if 0 // usage example
+void Camera::movex(float xmmod)
+{
+	pos += rotation * Vector3(xmmod, 0.0f, 0.0f);
+}
+ 
+void Camera::movey(float ymmod)
+{
+	pos.y -= ymmod;
+}
+ 
+void Camera::movez(float zmmod)
+{
+	pos += rotation * Vector3(0.0f, 0.0f, -zmmod);
+}
+ 
+void Camera::rotatex(float xrmod)
+{
+	Quaternion nrot(Vector3(1.0f, 0.0f, 0.0f), xrmod * PIOVER180);
+	rotation = rotation * nrot;
+}
+ 
+void Camera::rotatey(float yrmod)
+{
+	Quaternion nrot(Vector3(0.0f, 1.0f, 0.0f), yrmod * PIOVER180);
+	rotation = nrot * rotation;
+}
+ 
+void Camera::tick(float seconds)
+{
+	if (xrot != 0.0f) rotatex(xrot * seconds * rotspeed);
+	if (yrot != 0.0f) rotatey(yrot * seconds * rotspeed);
+ 
+	if (xmov != 0.0f) movex(xmov * seconds * movespeed);
+	if (ymov != 0.0f) movey(ymov * seconds * movespeed);
+	if (zmov != 0.0f) movez(zmov * seconds * movespeed);
+}
+#endif
+// -----------------------------------------------------------------------------
