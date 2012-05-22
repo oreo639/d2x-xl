@@ -288,6 +288,7 @@ public:
 	inline CPoint& ViewMax (void) { return m_viewMax; }
 
 	void SetMouseState (int newMouseState);
+	inline bool MouseState (int nMouseState) { return m_mouseState == nMouseState; }
 	void RecordMousePos (CPoint& mousePos, CPoint point);
 	BOOL SetCursor (HCURSOR hCursor);
 //	void UpdateCursor (void);

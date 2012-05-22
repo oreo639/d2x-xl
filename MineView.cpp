@@ -926,7 +926,8 @@ if (change.x || change.y) {
 
 void CMineView::OnLButtonDown (UINT nFlags, CPoint point)
 {
-SetMouseState (eMouseStateButtonDown);
+if ((m_mouseState != eMouseStateSelect) || !(nFlags & MK_SHIFT))
+	SetMouseState (eMouseStateButtonDown);
 RecordMousePos (m_clickPos, point);
 m_clickState = nFlags;
 //m_selectTimer = SetTimer (4, 500U, null);
@@ -943,20 +944,17 @@ if (m_selectTimer != -1) {
 	}
 RecordMousePos (m_releasePos, point);
 m_releaseState = nFlags;
-if (m_mouseState == eMouseStateButtonDown)
+if (m_mouseState == eMouseStateButtonDown) {
 	if (m_clickState & MK_CONTROL)
 		ZoomIn ();
 	else {
 		SetMouseState (eMouseStateIdle);
-		if (Perspective ())
-			SelectCurrentElement (m_clickPos.x, m_clickPos.y, (m_clickState & MK_SHIFT) ? 1 : -1);
-		else {
-			if (m_clickState & MK_SHIFT)
-				SelectCurrentSide (m_clickPos.x, m_clickPos.y);
-			else
-				SelectCurrentSegment (m_clickPos.x, m_clickPos.y);
-			}
+		SelectCurrentElement (m_clickPos.x, m_clickPos.y, (Perspective () && (m_clickState & MK_SHIFT)) ? 1 : -1);
 		}
+	}
+else if (m_mouseState == eMouseStateSelect) {
+	SelectCurrentElement (m_clickPos.x, m_clickPos.y, -1);
+	}
 else if (m_mouseState == eMouseStateRubberBand) {
    ResetRubberRect ();
 	MarkRubberBandedVertices ();

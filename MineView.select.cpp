@@ -124,17 +124,17 @@ RefreshObject(i, nClosestObj);
 
 short CMineView::FindSelectedTexturedSide (long xMouse, long yMouse, short& nSide)
 {
-if (!m_bEnableQuickSelection)
-	return -1;
 if (((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
 	return -1;
 
 short nSegment;
-int nResult = Renderer ().GetSideKey (xMouse, yMouse, nSegment, nSide);
-if (nResult == 1)
-	return nSegment;
-if (nResult == 0)
-	return -1;
+if (m_bEnableQuickSelection) {
+	int nResult = Renderer ().GetSideKey (xMouse, yMouse, nSegment, nSide);
+	if (nResult == 1)
+		return nSegment;
+	if (nResult == 0)
+		return -1;
+	}
 
 CVertex p1, p2;
 p2.m_proj.v.x = xMouse;
@@ -202,8 +202,6 @@ else {
 		return false;
 	current->Setup (nSegment, nSide);
 	}
-else
-	return false;
 if (Perspective () && bAdd)
 	current->Segment ()->MarkVertices (MARKED_MASK, current->m_nSide);
 DLE.ToolView ()->Refresh ();
