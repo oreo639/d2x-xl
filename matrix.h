@@ -128,6 +128,10 @@ public:
 	//computes a matrix from a forward vector and an angle
 	CDoubleMatrix (CDoubleVector *v, short a);
 
+	CDoubleVector Angles (void) {
+		return CDoubleVector (atan2 (m.rVec.v.y, m.rVec.v.z), atan2 (-m.rVec.v.x, sqrt (m.rVec.v.y * m.rVec.v.y + m.rVec.v.z * m.rVec.v.z)), atan2 (m.uVec.v.z, m.fVec.v.z));
+		}
+	
 	void Clear (void);
 	CDoubleMatrix& Set (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
 	CDoubleMatrix& Set (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh);

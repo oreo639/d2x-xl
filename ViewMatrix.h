@@ -66,6 +66,8 @@ class CViewMatrix
 			Transformation ().m.rVec = rVec;
 			}
 
+		CDoubleVector CViewMatrix::Angles (void) { return Transformation ().Angles (); }
+
 		void Translate (CDoubleVector vTranslate);
 
 		void SetViewInfo (short viewWidth, short viewHeight);
