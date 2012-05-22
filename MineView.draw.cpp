@@ -1255,88 +1255,91 @@ nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex
 if (nearest->m_nSegment < 0)
 	return false;
 
-Renderer ().BeginRender ();
-if (m_nRenderer) {
-	glLineStipple (1, 0x00ff);  
-	glEnable (GL_LINE_STIPPLE);
-	glDepthFunc (GL_ALWAYS);
-	}
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
-	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
-	short nSide = segP->SideIndex (sideP);
-	short nVertices = sideP->VertexCount ();
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
-	CVertex& center = sideP->Center ();
-#if 0
-	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
-	if (dist > 64.0)
-		continue;
-#endif
-	if (m_nRenderer) 
+if (m_nShowSelectionCandidates > 1) {
+	Renderer ().BeginRender ();
+	if (m_nRenderer) {
 		glLineStipple (1, 0x00ff);  
-	if (Renderer ().Ortho ()) {
-		for (int i = 0; i <= nVertices; i++) {
-			CVertex* vertex = segP->Vertex (nSide, i);
-			if (i)
-				Renderer ().LineTo (vertex->m_screen.x, vertex->m_screen.y);
-			else
-				Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
-			}
+		glEnable (GL_LINE_STIPPLE);
+		glDepthFunc (GL_ALWAYS);
 		}
-	else {
-		for (int i = 0; i <= nVertices; i++) {
-			CVertex* vertex = segP->Vertex (nSide, i);
-			if (i)
-				Renderer ().LineTo (*vertex);
-			else
-				Renderer ().MoveTo (*vertex);
-			}
-		}
-
-	if (!sideP->IsVisible ()) {
-		CVertex normal = sideP->Normal (2);
-		normal.Project (ViewMatrix ());
-		center += normal;
-		}
-	if (m_nRenderer)
-		glLineStipple (1, 0x3333);  
-	for (int i = 0; i < nVertices; i++) {
+	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+		CSegment* segP = segmentManager.Segment (sideP->GetParent ());
+		short nSide = segP->SideIndex (sideP);
+		short nVertices = sideP->VertexCount ();
+		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
+		CVertex& center = sideP->Center ();
+	#if 0
+		double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
+		if (dist > 64.0)
+			continue;
+	#endif
+		if (m_nRenderer) 
+			glLineStipple (1, 0x00ff);  
 		if (Renderer ().Ortho ()) {
-			CVertex* vertex = segP->Vertex (nSide, i);
-			CDoubleVector c (double (center.m_screen.x), double (center.m_screen.y), double (center.m_screen.z));
-			CDoubleVector v (double (vertex->m_screen.x), double (vertex->m_screen.y), double (vertex->m_screen.z));
-			c -= v;
-			double m = c.Mag ();
-			c *= (m - 8.0) / m;
-			c += v;
-			Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
-			Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
+			for (int i = 0; i <= nVertices; i++) {
+				CVertex* vertex = segP->Vertex (nSide, i);
+				if (i)
+					Renderer ().LineTo (vertex->m_screen.x, vertex->m_screen.y);
+				else
+					Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
+				}
 			}
 		else {
-			Renderer ().MoveTo (*segP->Vertex (nSide, i));
-			Renderer ().LineTo (center);
+			for (int i = 0; i <= nVertices; i++) {
+				CVertex* vertex = segP->Vertex (nSide, i);
+				if (i)
+					Renderer ().LineTo (*vertex);
+				else
+					Renderer ().MoveTo (*vertex);
+				}
+			}
+
+		if (!sideP->IsVisible ()) {
+			CVertex normal = sideP->Normal (2);
+			normal.Project (ViewMatrix ());
+			center += normal;
+			}
+		if (m_nRenderer)
+			glLineStipple (1, 0x3333);  
+		for (int i = 0; i < nVertices; i++) {
+			if (Renderer ().Ortho ()) {
+				CVertex* vertex = segP->Vertex (nSide, i);
+				CDoubleVector c (double (center.m_screen.x), double (center.m_screen.y), double (center.m_screen.z));
+				CDoubleVector v (double (vertex->m_screen.x), double (vertex->m_screen.y), double (vertex->m_screen.z));
+				c -= v;
+				double m = c.Mag ();
+				c *= (m - 8.0) / m;
+				c += v;
+				Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
+				Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
+				}
+			else {
+				Renderer ().MoveTo (*segP->Vertex (nSide, i));
+				Renderer ().LineTo (center);
+				}
 			}
 		}
+	Renderer ().EndRender ();
 	}
-//Renderer ().EndRender ();
-//
-//Renderer ().BeginRender (true);
-if (m_nRenderer)
-	glDisable (GL_LINE_STIPPLE);
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
-	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
-	short nSide = segP->SideIndex (sideP);
-	CVertex& center = sideP->Center ();
-#if 0
-	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
-	if (dist > 64.0)
-		continue;
-#endif
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
-	Renderer ().Ellipse (center, 5.0, 5.0);
-	}
-Renderer ().EndRender ();
 
+if (m_nShowSelectionCandidates > 0) {
+	Renderer ().BeginRender ();
+	if (m_nRenderer)
+		glDisable (GL_LINE_STIPPLE);
+	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+		CSegment* segP = segmentManager.Segment (sideP->GetParent ());
+		short nSide = segP->SideIndex (sideP);
+		CVertex& center = sideP->Center ();
+#if 0
+		double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
+		if (dist > 64.0)
+			continue;
+#endif
+		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
+		Renderer ().Ellipse (center, 5.0, 5.0);
+		}
+	Renderer ().EndRender ();
+	}
 return true;
 }
 
@@ -1383,72 +1386,76 @@ nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex
 if (nearest->m_nSegment < 0)
 	return false;
 
-Renderer ().BeginRender ();
-if (m_nRenderer) {
-	glLineStipple (1, 0x00ff);  
-	glDepthFunc (GL_ALWAYS);
-	glEnable (GL_LINE_STIPPLE);
-	}
-nSegment = -1;
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
-	if (nSegment == sideP->GetParent ())
-		continue;
-	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
-	short nSide = segP->SideIndex (sideP);
-	CVertex& center = segP->Center ();
-#if 0
-	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
-	if (dist > 64.0)
-		continue;
-#endif
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
-	if (m_nRenderer)
+if (m_nShowSelectionCandidates > 1) {
+	Renderer ().BeginRender ();
+	if (m_nRenderer) {
 		glLineStipple (1, 0x00ff);  
-	DrawSegmentWireFrame (segP);
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
-	if (m_nRenderer)
-		glLineStipple (1, 0x3333);  
-	for (int i = 0; i < 8; i++) {
-		if (segP->VertexId (i) > MAX_VERTEX)
+		glDepthFunc (GL_ALWAYS);
+		glEnable (GL_LINE_STIPPLE);
+		}
+	nSegment = -1;
+	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+		if (nSegment == sideP->GetParent ())
 			continue;
-		if (Renderer ().Ortho ()) {
-			CVertex* vertex = segP->Vertex (i);
-			CDoubleVector c (double (center.m_screen.x), double (center.m_screen.y), double (center.m_screen.z));
-			CDoubleVector v (double (vertex->m_screen.x), double (vertex->m_screen.y), double (vertex->m_screen.z));
-			c -= v;
-			double m = c.Mag ();
-			c *= (m - 8.0) / m;
-			c += v;
-			Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
-			Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
-			}
-		else {
-			Renderer ().MoveTo (*segP->Vertex (nSide, i));
-			Renderer ().LineTo (center);
+		CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
+		short nSide = segP->SideIndex (sideP);
+		CVertex& center = segP->Center ();
+#if 0
+		double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
+		if (dist > 64.0)
+			continue;
+#endif
+		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
+		if (m_nRenderer)
+			glLineStipple (1, 0x00ff);  
+		DrawSegmentWireFrame (segP);
+		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
+		if (m_nRenderer)
+			glLineStipple (1, 0x3333);  
+		for (int i = 0; i < 8; i++) {
+			if (segP->VertexId (i) > MAX_VERTEX)
+				continue;
+			if (Renderer ().Ortho ()) {
+				CVertex* vertex = segP->Vertex (i);
+				CDoubleVector c (double (center.m_screen.x), double (center.m_screen.y), double (center.m_screen.z));
+				CDoubleVector v (double (vertex->m_screen.x), double (vertex->m_screen.y), double (vertex->m_screen.z));
+				c -= v;
+				double m = c.Mag ();
+				c *= (m - 8.0) / m;
+				c += v;
+				Renderer ().MoveTo (vertex->m_screen.x, vertex->m_screen.y);
+				Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
+				}
+			else {
+				Renderer ().MoveTo (*segP->Vertex (nSide, i));
+				Renderer ().LineTo (center);
+				}
 			}
 		}
+	Renderer ().EndRender ();
 	}
-//Renderer ().EndRender ();
-//
-//Renderer ().BeginRender ();
-if (m_nRenderer)
-	glDisable (GL_LINE_STIPPLE);
-nSegment = -1;
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
-	if (nSegment == sideP->GetParent ())
-		continue;
-	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
-	short nSide = segP->SideIndex (sideP);
-	CVertex& center = segP->Center ();
+
+if (m_nShowSelectionCandidates > 0) {
+	Renderer ().BeginRender ();
+	if (m_nRenderer)
+		glDisable (GL_LINE_STIPPLE);
+	nSegment = -1;
+	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+		if (nSegment == sideP->GetParent ())
+			continue;
+		CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
+		short nSide = segP->SideIndex (sideP);
+		CVertex& center = segP->Center ();
 #if 0
-	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
-	if (dist > 64.0)
-		continue;
+		double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
+		if (dist > 64.0)
+			continue;
 #endif
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
-	Renderer ().Ellipse (center, 5.0, 5.0);
+		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
+		Renderer ().Ellipse (center, 5.0, 5.0);
+		}
+	Renderer ().EndRender ();
 	}
-Renderer ().EndRender ();
 
 return true;
 }
