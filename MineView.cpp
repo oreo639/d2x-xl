@@ -1002,7 +1002,7 @@ if (m_mouseState == eMouseStateButtonDown) {
 			tracker->CheckMenuItem ((UINT) ID_EDIT_MOVE_ALONG_VIEWER_AXES, MF_BYCOMMAND | MF_CHECKED);
 		if (m_bEnableQuickSelection)
 			tracker->CheckMenuItem ((UINT) ID_EDIT_ENABLE_QUICK_SELECTION, MF_BYCOMMAND | MF_CHECKED);
-		tracker->ModifyMenu (MF_BYCOMMAND, MF_STRING, ID_EDIT_SHOW_SELECTION_CANDIDATES, showSelectionCandidates [m_nShowSelectionCandidates]);
+		tracker->ModifyMenu (ID_EDIT_SHOW_SELECTION_CANDIDATES, MF_BYCOMMAND | MF_STRING, ID_EDIT_SHOW_SELECTION_CANDIDATES, showSelectionCandidates [m_nShowSelectionCandidates]);
 	   int nChoice = tracker->TrackPopupMenu (TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x , point.y, AfxGetMainWnd ()); 
 		contextMenu.DestroyMenu ();
 		if (nChoice) {

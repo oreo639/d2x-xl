@@ -291,27 +291,29 @@ Refresh (false);
 
 void CMineView::AlignViewerWithSide (void)
 {
-CSegment* segP = current->Segment ();
-CSide* sideP = current->Side ();
-sideP->ComputeNormals (segP->m_info.vertexIds, segP->ComputeCenter ());
-CDoubleMatrix r;
-r.m.fVec = sideP->Normal (2);
-r.m.fVec.Negate ();
-short nSide = current->m_nSide;
-short nEdge = current->m_nEdge;
-r.m.rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nEdge);
-r.m.rVec.Normalize ();
-segP->ComputeCenter (nSide);
-r.m.uVec = Normal (sideP->Center (), r.m.fVec, r.m.rVec);
-r.m.uVec.Negate ();
+if (Perspective ()) {
+	CSegment* segP = current->Segment ();
+	CSide* sideP = current->Side ();
+	sideP->ComputeNormals (segP->m_info.vertexIds, segP->ComputeCenter ());
+	CDoubleMatrix r;
+	r.m.fVec = sideP->Normal (2);
+	r.m.fVec.Negate ();
+	short nSide = current->m_nSide;
+	short nEdge = current->m_nEdge;
+	r.m.rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nEdge);
+	r.m.rVec.Normalize ();
+	segP->ComputeCenter (nSide);
+	r.m.uVec = Normal (sideP->Center (), r.m.fVec, r.m.rVec);
+	r.m.uVec.Negate ();
 #if 1
-ViewMatrix ()->Stuff (r);
-SetCenter (segP->Center (), 1);
+	ViewMatrix ()->Stuff (r);
+	SetCenter (segP->Center (), 1);
 #else
-Rotation () = r.Angles ();
-ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
+	Rotation () = r.Angles ();
+	ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
 #endif
-Invalidate (FALSE);
+	Invalidate (FALSE);
+	}
 }
 
 //------------------------------------------------------------------------------
