@@ -134,7 +134,7 @@ else if (nSubType == 3) {
 	shaderManager.Set ("decalTex", 1); 
 	shaderManager.Set ("arrowTex", 2);
 	}
-if (!(nSubType & 1)) 
+if (nSubType & 1) 
 	shaderManager.Set ("superTransp", *((vec3*) paletteManager.SuperTranspKeyf ()));
 if (fle) {
 	vec3 sideKey = {float (fle->m_nSegment / 256) / 255.0f, float (fle->m_nSegment % 256) / 255.0f, float (fle->m_nSide + 1) / 255.0f};

@@ -1015,6 +1015,7 @@ if (!m_bHaveSideKeys) {
 	m_renderBuffers.Enable (-1);
 	glReadBuffer (m_renderBuffers.ColorBufferId (1));
 	glReadPixels (0, 0, ViewWidth (), ViewHeight (), GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*) m_sideKeys);
+	m_renderBuffers.Disable ();
 	m_bHaveSideKeys = true;
 	}
 rgbColor& sideKey = m_sideKeys [y * ViewWidth () + x];

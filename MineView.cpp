@@ -837,7 +837,7 @@ if (change.x || change.y) {
 						Pan ('Y', -d);
 					}
 				}
-			else if (nFlags & MK_SHIFT)
+			else if (!m_bSelectOnlyTexturedSides && (nFlags & MK_SHIFT))
 				SetMouseState (eMouseStateSelect);
 			else if ((m_mouseState == eMouseStatePan) || (m_mouseState == eMouseStateRotate) || (m_mouseState == eMouseStateSelect))
 				SetMouseState (eMouseStateIdle);
@@ -953,7 +953,7 @@ if (m_mouseState == eMouseStateButtonDown)
 			if (m_clickState & MK_SHIFT)
 				SelectCurrentSide (m_clickPos.x, m_clickPos.y);
 			else
-				SelectCurrentSegment (1, m_clickPos.x, m_clickPos.y);
+				SelectCurrentSegment (m_clickPos.x, m_clickPos.y);
 			}
 		}
 else if (m_mouseState == eMouseStateRubberBand) {
