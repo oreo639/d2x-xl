@@ -1246,7 +1246,11 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		center.Transform (ViewMatrix ());
 		center.Project (ViewMatrix ());
 		}
+	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom)) 
+		continue;
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
+	if (dist > 64.0)
+		continue;
 	if (minDist > dist) {
 		minDist = dist;
 		nearestSegment = segmentManager.Segment (sideP->GetParent ());
@@ -1268,6 +1272,11 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	short nVertices = sideP->VertexCount ();
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	CVertex& center = sideP->Center ();
+	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom)) 
+		continue;
+	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
+	if (dist > 64.0)
+		continue;
 
 	if (m_nRenderer) {
 		glEnable (GL_LINE_STIPPLE);
@@ -1341,7 +1350,11 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CVertex& center = segP->ComputeCenter ();
 	center.Transform (ViewMatrix ());
 	center.Project (ViewMatrix ());
+	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom)) 
+		continue;
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
+	if (dist > 64.0)
+		continue;
 	if (minDist > dist) {
 		minDist = dist;
 		nearestSegment = segP;
@@ -1364,6 +1377,11 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
 	CVertex& center = segP->Center ();
+	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom)) 
+		continue;
+	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
+	if (dist > 64.0)
+		continue;
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 #if 1
 	if (m_nRenderer) {
