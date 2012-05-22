@@ -3148,9 +3148,10 @@ BEGIN
         MENUITEM "&Objects",                    ID_SEL_OBJECTMODE
         MENUITEM "&Blocks",                     ID_SEL_BLOCKMODE
         MENUITEM SEPARATOR
-        MENUITEM "Enable Quick Selection",      ID_EDIT_ENABLE_QUICK_SELECTION
-        MENUITEM "Align Movement With Viewer",  ID_EDIT_ALIGN_MOVEMENT_WITH_VIEWER
         MENUITEM "Show Selection Candidates",   ID_EDIT_SHOW_SELECTION_CANDIDATES
+        MENUITEM "Enable Quick Selection",      ID_EDIT_ENABLE_QUICK_SELECTION
+        MENUITEM "Align Viewer With Side",      ID_EDIT_ALIGN_VIEWER_WITH_SIDE
+        MENUITEM "Move Along Viewer Axes",      ID_EDIT_MOVE_ALONG_VIEWER_AXES
         MENUITEM SEPARATOR
         MENUITEM "Quick &Copy",                 ID_EDIT_QUICKCOPY
         MENUITEM "Quick &Paste",                ID_EDIT_QUICKPASTE

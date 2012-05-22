@@ -288,6 +288,25 @@ Refresh (false);
 }
 
 //------------------------------------------------------------------------------
+
+void CMineView::AlignViewerWithSide (void)
+{
+CSegment* segP = current->Segment ();
+CSide* sideP = current->Side ();
+sideP->ComputeNormals (segP->m_info.vertexIds, segP->ComputeCenter ());
+CDoubleVector fVec = sideP->Normal (2);
+fVec.Negate ();
+short nSide = current->m_nSide;
+short nEdge = current->m_nEdge;
+CDoubleVector rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nEdge);
+rVec.Normalize ();
+CDoubleVector p0 = segP->Center (), p1 = p0 + fVec, p2 = p0 + rVec;
+CDoubleVector uVec = Perpendicular (p0, p1, p2);
+CViewMatrix* viewMatrix = ViewMatrix ();
+Renderer ().Rotation () = CDoubleVector (Dot (viewMatrix->Forward (), fVec) * PI, Dot (viewMatrix->Right (), rVec) * PI, Dot (viewMatrix->Up (), uVec) * PI);
+}
+
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
@@ -300,14 +319,6 @@ else if (nSteps > 1)
 Scale ().v.z *= zoom;
 ViewMatrix ()->Scale (zoom);
 }
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

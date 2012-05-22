@@ -999,7 +999,7 @@ if (m_mouseState == eMouseStateButtonDown) {
 		tracker = contextMenu.GetSubMenu (0); 
 		tracker->CheckMenuItem ((UINT) theMine->SelectMode (), MF_BYPOSITION | MF_CHECKED);
 		if (GetElementMovementReference ())
-			tracker->CheckMenuItem ((UINT) ID_EDIT_ALIGN_MOVEMENT_WITH_VIEWER, MF_BYCOMMAND | MF_CHECKED);
+			tracker->CheckMenuItem ((UINT) ID_EDIT_MOVE_ALONG_VIEWER_AXES, MF_BYCOMMAND | MF_CHECKED);
 		if (m_bEnableQuickSelection)
 			tracker->CheckMenuItem ((UINT) ID_EDIT_ENABLE_QUICK_SELECTION, MF_BYCOMMAND | MF_CHECKED);
 		tracker->ModifyMenu (MF_BYCOMMAND, MF_STRING, ID_EDIT_SHOW_SELECTION_CANDIDATES, showSelectionCandidates [m_nShowSelectionCandidates]);
@@ -1012,8 +1012,10 @@ if (m_mouseState == eMouseStateButtonDown) {
 				Renderer ().SetRTT (m_bEnableQuickSelection = !m_bEnableQuickSelection);
 			else if (nChoice == ID_EDIT_SHOW_SELECTION_CANDIDATES)
 				m_nShowSelectionCandidates = (m_nShowSelectionCandidates + 1) % 3;
-			else if (nChoice == ID_EDIT_ALIGN_MOVEMENT_WITH_VIEWER)
+			else if (nChoice == ID_EDIT_MOVE_ALONG_VIEWER_AXES)
 				SetElementMovementReference (!GetElementMovementReference ());
+			else if (nChoice == ID_EDIT_ALIGN_VIEWER_WITH_SIDE)
+				AlignViewerWithSide ();
 			else if (nChoice == ID_EDIT_QUICKCOPY)
 				blockManager.QuickCopy ();
 			else if (nChoice == ID_EDIT_QUICKPASTE)

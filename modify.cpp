@@ -551,6 +551,8 @@ switch (selectMode) {
 return true;
 }
 
+//--------------------------------------------------------------------------------
+
 bool CMine::MovePoints (int pt0, int pt1) 
 {
 CSegment* segP = current->Segment ();
