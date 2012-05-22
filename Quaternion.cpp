@@ -98,7 +98,7 @@ Normalize ();
 
 static inline double Sign (double x) {return (x >= 0.0f) ? +1.0f : -1.0f;}
 
-CQuaternion& CQuaternion::FromMatrix (CDoubleMatrix& m)
+void CQuaternion::FromMatrix (CDoubleMatrix& m)
 {
 x = ( m.m.rVec.v.x + m.m.uVec.v.y + m.m.fVec.v.z + 1.0f) / 4.0f;
 y = ( m.m.rVec.v.x - m.m.uVec.v.y - m.m.fVec.v.z + 1.0f) / 4.0f;
@@ -113,31 +113,30 @@ y = sqrt (y);
 z = sqrt (z);
 w = sqrt (w);
 if (x >= y && x >= z && x >= w) {
-    x *= +1.0f;
+    //x *= +1.0f;
     y *= Sign (m.m.fVec.v.y - m.m.uVec.v.z);
     z *= Sign (m.m.rVec.v.z - m.m.fVec.v.x);
     w *= Sign (m.m.uVec.v.x - m.m.rVec.v.y);
 	}
 else if (y >= x && y >= z && y >= w) {
     x *= Sign (m.m.fVec.v.y - m.m.uVec.v.z);
-    y *= +1.0f;
+    //y *= +1.0f;
     z *= Sign (m.m.uVec.v.x + m.m.rVec.v.y);
     w *= Sign (m.m.rVec.v.z + m.m.fVec.v.x);
 	} 
 else if (z >= x && z >= y && z >= w) {
     x *= Sign (m.m.rVec.v.z - m.m.fVec.v.x);
     y *= Sign (m.m.uVec.v.x + m.m.rVec.v.y);
-    z *= +1.0f;
+    //z *= +1.0f;
     w *= Sign (m.m.fVec.v.y + m.m.uVec.v.z);
 	} 
 else if (w >= x && w >= y && w >= z) {
     x *= Sign (m.m.uVec.v.x - m.m.rVec.v.y);
     y *= Sign (m.m.fVec.v.x + m.m.rVec.v.z);
     z *= Sign (m.m.fVec.v.y + m.m.uVec.v.z);
-    w *= +1.0f;
+    //w *= +1.0f;
 	}
 Normalize ();
-return *this;
 }
 
 // -----------------------------------------------------------------------------
