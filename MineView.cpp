@@ -163,7 +163,7 @@ m_xScrollCenter =
 m_yScrollCenter = 0;
 m_nMineCenter = 2;
 m_nViewDist = 0;
-SetEditReference (1);
+SetElementMovementReference (1);
 SetMineMoveRate (1.0);
 SetViewMoveRate (1.0);
 Reset ();
@@ -998,7 +998,7 @@ if (m_mouseState == eMouseStateButtonDown) {
 		ClientToScreen (&point);
 		tracker = contextMenu.GetSubMenu (0); 
 		tracker->CheckMenuItem ((UINT) theMine->SelectMode (), MF_BYPOSITION | MF_CHECKED);
-		if (GetEditReference ())
+		if (GetElementMovementReference ())
 			tracker->CheckMenuItem ((UINT) ID_EDIT_ALIGN_MOVEMENT_WITH_VIEWER, MF_BYCOMMAND | MF_CHECKED);
 		if (m_bEnableQuickSelection)
 			tracker->CheckMenuItem ((UINT) ID_EDIT_ENABLE_QUICK_SELECTION, MF_BYCOMMAND | MF_CHECKED);
@@ -1013,7 +1013,7 @@ if (m_mouseState == eMouseStateButtonDown) {
 			else if (nChoice == ID_EDIT_SHOW_SELECTION_CANDIDATES)
 				m_nShowSelectionCandidates = (m_nShowSelectionCandidates + 1) % 3;
 			else if (nChoice == ID_EDIT_ALIGN_MOVEMENT_WITH_VIEWER)
-				SetEditReference (!GetEditReference ());
+				SetElementMovementReference (!GetElementMovementReference ());
 			else if (nChoice == ID_EDIT_QUICKCOPY)
 				blockManager.QuickCopy ();
 			else if (nChoice == ID_EDIT_QUICKPASTE)

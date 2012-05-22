@@ -123,7 +123,7 @@ protected: // create from serialization only
 						m_yRenderOffs;
 	int 				m_nViewDist;
 	int 				m_nMineCenter;
-	int				m_nEditReference;
+	int				m_nElementMovementReference;
 
 	CPoint			m_viewCenter;
 	CPoint			m_viewMax;
@@ -183,8 +183,8 @@ public:
 		return (segP->Index () >= 0) && (segP->Index () <= ViewDist ()); 
 		}
 
-	inline void SetEditReference (int nReference) { m_nEditReference = nReference; }
-	inline int GetEditReference (void) { return Perspective () && m_nEditReference; }
+	inline void SetElementMovementReference (int nReference) { m_nElementMovementReference = nReference; }
+	inline int GetElementMovementReference (void) { return Perspective () && m_nElementMovementReference; }
 	inline int EnableQuickSelection (void) { return m_bEnableQuickSelection; }
 	inline int ShowSelectionCandidates (void) { return m_nShowSelectionCandidates; }
 	void DrawMineCenter (void);

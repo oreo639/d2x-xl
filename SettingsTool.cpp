@@ -449,8 +449,9 @@ WritePrivateProfileInt ("MineCenter", m_nMineCenter);
 WritePrivateProfileInt ("MaxUndo", m_nMaxUndo);
 WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
 WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
-WritePrivateProfileInt ("DLE", DLE.MineView ()->EnableQuickSelection ());
-WritePrivateProfileInt ("DLE", DLE.MineView ()->ShowSelectionCandidates ());
+WritePrivateProfileInt ("EnableQuickSelection", DLE.MineView ()->EnableQuickSelection ());
+WritePrivateProfileInt ("ShowSelectionCandidates", DLE.MineView ()->ShowSelectionCandidates ());
+WritePrivateProfileInt ("ElementMovementReference", DLE.MineView ()->GetElementMovementReference ());
 }
 
 //------------------------------------------------------------------------------

@@ -25,7 +25,7 @@ bool CMine::EditGeoFwd (void)
 	CDoubleVector	vDelta;
 	CSegment*		segP = current->Segment ();
 
-if (DLE.MineView ()->GetEditReference ()) {
+if (DLE.MineView ()->GetElementMovementReference ()) {
 	vDelta = DLE.MineView ()->ViewMatrix ()->Forward ();
 	}
 else {
@@ -99,7 +99,7 @@ if (!okToMove) {
 	}
 
 CDoubleVector vDelta;
-if (DLE.MineView ()->GetEditReference ())
+if (DLE.MineView ()->GetElementMovementReference ())
 	vDelta = DLE.MineView ()->ViewMatrix ()->Forward ();
 else {
 	vDelta = segP->ComputeCenter (current->m_nSide) - segP->ComputeCenter (short (oppSideTable [current->m_nSide]));
@@ -135,7 +135,7 @@ bool CMine::EditGeoUp (void)
 {
 if (m_selectMode == SIDE_MODE) 
 	return RotateSelection (theMine->RotateRate (), false);
-if (!DLE.MineView ()->GetEditReference ())
+if (!DLE.MineView ()->GetElementMovementReference ())
 	return MovePoints (1, 0);
 return MovePoints (DLE.MineView ()->ViewMatrix ()->Up ());
 }
@@ -146,7 +146,7 @@ bool CMine::EditGeoDown (void)
 {
 if (m_selectMode == SIDE_MODE)
 	return RotateSelection (-theMine->RotateRate (), false);
-if (!DLE.MineView ()->GetEditReference ())
+if (!DLE.MineView ()->GetElementMovementReference ())
 	return MovePoints (0, 1);
 return MovePoints (DLE.MineView ()->ViewMatrix ()->Up () * -1.0);
 }
@@ -157,7 +157,7 @@ bool CMine::EditGeoRight (void)
 {
 if (m_selectMode == SIDE_MODE) 
 	return RotateSelection (theMine->RotateRate (), true);
-if (!DLE.MineView ()->GetEditReference ())
+if (!DLE.MineView ()->GetElementMovementReference ())
 	return MovePoints (current->Side ()->VertexCount () -1, 0);
 return MovePoints (DLE.MineView ()->ViewMatrix ()->Left () * -1.0);
 }
@@ -168,7 +168,7 @@ bool CMine::EditGeoLeft (void)
 {
 if (m_selectMode == SIDE_MODE) 
 	return RotateSelection (-theMine->RotateRate (),true);
-if (!DLE.MineView ()->GetEditReference ())
+if (!DLE.MineView ()->GetElementMovementReference ())
 	return MovePoints (0, current->Side ()->VertexCount () - 1);
 return MovePoints (DLE.MineView ()->ViewMatrix ()->Left ());
 }
@@ -751,7 +751,7 @@ switch (selectMode) {
 		//       |x  y  z |
 		// AxB = |ax ay az| = x(aybz-azby), y(azbx-axbz), z(axby-aybx)
 		//       |bx by bz|
-		if (DLE.MineView ()->GetEditReference ())
+		if (DLE.MineView ()->GetElementMovementReference ())
 			spinner.m_vOppCenter = spinner.m_vCenter + DLE.MineView ()->ViewMatrix ()->Forward ();
 		else {
 			segP->ComputeNormals (spinner.m_nSide);
@@ -774,7 +774,7 @@ switch (selectMode) {
 
 	case SEGMENT_MODE:	// spin segment around the spinner.m_vCenter of the segment using screen's perspective
 		spinner.m_vCenter = segP->ComputeCenter ();
-		spinner.m_vOppCenter = DLE.MineView ()->GetEditReference () ? DLE.MineView ()->ViewMatrix ()->Forward () : segP->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
+		spinner.m_vOppCenter = DLE.MineView ()->GetElementMovementReference () ? DLE.MineView ()->ViewMatrix ()->Forward () : segP->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
 
 		// rotate points about a point
 		undoManager.Begin (udVertices | udSegments);
@@ -817,7 +817,7 @@ switch (selectMode) {
 
 	case BLOCK_MODE:
 		spinner.m_vCenter = segP->ComputeCenter ();
-		if (DLE.MineView ()->GetEditReference ()) {
+		if (DLE.MineView ()->GetElementMovementReference ()) {
 			spinner.m_vOppCenter = spinner.m_vCenter + DLE.MineView ()->ViewMatrix ()->Forward ();
 			CVertex& v = segP->ComputeCenter ();
 			CVertex v1 = spinner.m_vCenter - v;
