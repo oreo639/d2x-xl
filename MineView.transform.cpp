@@ -294,15 +294,15 @@ void CMineView::AlignViewerWithSide (void)
 CSegment* segP = current->Segment ();
 CSide* sideP = current->Side ();
 sideP->ComputeNormals (segP->m_info.vertexIds, segP->ComputeCenter ());
-CDoubleVector fVec = sideP->Normal (2);
-fVec.Negate ();
+CDoubleMatrix r;
+r.m.fVec = sideP->Normal (2);
+r.m.fVec.Negate ();
 short nSide = current->m_nSide;
 short nEdge = current->m_nEdge;
-CDoubleVector rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nEdge);
-rVec.Normalize ();
-CDoubleVector v0 = segP->Center (), v1 = v0 + fVec, v2 = v0 + rVec;
-CDoubleVector uVec = Perpendicular (v0, v1, v2);
-ViewMatrix ()->Stuff (fVec, uVec, rVec);
+r.m.rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nEdge);
+r.m.rVec.Normalize ();
+Rotation () = r.Angles ();
+ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
 Invalidate (FALSE);
 }
 
