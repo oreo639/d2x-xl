@@ -346,7 +346,7 @@ class CSegmentManager {
 
 		CSegment* GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox);
 
-		CSide* GatherSelectedSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox);
+		CSide* GatherSelectedSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox, bool bSegments);
 
 		inline CSegment* SelectedSegments (void) { return m_selectedSegments; }
 	

@@ -1229,7 +1229,7 @@ if (!SelectMode (eSelectSide))
 CRect viewport;
 GetClientRect (viewport);
 
-if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y, ViewFlag (eViewMineSkyBox)))
+if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y, ViewFlag (eViewMineSkyBox), false))
 	return false;
 
 double minDist = 1e30;
@@ -1241,15 +1241,6 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	segP->ComputeCenter (sideP);
 	CVertex& center = sideP->Center ();
-	if (!sideP->IsVisible ()) {
-		sideP->ComputeNormals (segP->m_info.vertexIds, segP->ComputeCenter ());
-		CVertex normal;
-		center += sideP->Normal (2) * 2.0;
-		center.Transform (ViewMatrix ());
-		center.Project (ViewMatrix ());
-		}
-	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom) || (center.m_view.v.z < 0.0)) 
-		continue;
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 #if 0
 	if (dist > 64.0)
@@ -1277,8 +1268,6 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	short nVertices = sideP->VertexCount ();
 	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	CVertex& center = sideP->Center ();
-	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom) || (center.m_view.v.z < 0.0)) 
-		continue;
 #if 0
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (dist > 64.0)
@@ -1368,7 +1357,7 @@ if (!SelectMode (eSelectSegment))
 CRect viewport;
 GetClientRect (viewport);
 
-if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y, ViewFlag (eViewMineSkyBox)))
+if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y, ViewFlag (eViewMineSkyBox), true))
 	return false;
 
 double minDist = 1e30;
@@ -1382,10 +1371,6 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 		continue;
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
 	CVertex& center = segP->ComputeCenter ();
-	center.Transform (ViewMatrix ());
-	center.Project (ViewMatrix ());
-	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom) || (center.m_view.v.z < 0.0)) 
-		continue;
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 #if 0
 	if (dist > 64.0)
@@ -1414,8 +1399,6 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
 	CVertex& center = segP->Center ();
-	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom) || (center.m_view.v.z < 0.0)) 
-		continue;
 #if 0
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (dist > 64.0)

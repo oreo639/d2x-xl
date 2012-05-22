@@ -340,7 +340,7 @@ return m_selectedSegments;
 
 // -----------------------------------------------------------------------------
 
-CSide* CSegmentManager::GatherSelectedSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox)
+CSide* CSegmentManager::GatherSelectedSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox, bool bSegments)
 {
 	short nSegments = segmentManager.Count ();
 
@@ -357,7 +357,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	bool bSegmentSelected = false;
 	short nSide = 0;
 	for (; nSide < 6; nSide++) {
-		nSide = segP->IsSelected (viewport, xMouse, yMouse, nSide);
+		nSide = segP->IsSelected (viewport, xMouse, yMouse, nSide, bSegments);
 		if (nSide < 0)
 			break;
 #ifdef NDEBUG

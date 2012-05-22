@@ -1107,19 +1107,43 @@ for (ubyte i = 0; i < 8; i++) {
 
 //--------------------------------------------------------------------------
 
-short CSegment::IsSelected (CRect& viewport, long xMouse, long yMouse, short nSide) 
+short CSegment::IsSelected (CRect& viewport, long xMouse, long yMouse, short nSide, bool bSegments) 
 {
+ComputeCenter ();
+CViewMatrix* viewMatrix = DLE.MineView ()->ViewMatrix ();
+if (bSegments) {
+	CVertex& center = Center ();
+	center.Transform (viewMatrix);
+	center.Project (viewMatrix);
+	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom) || (center.m_view.v.z < 0.0)) 
+		return -1;
+	}
 short nSegment = segmentManager.Index (this);
 #ifdef _DEBUG
 if (nSegment == nDbgSeg)
 	nDbgSeg = nDbgSeg;
 #endif
 CFrustum* frustum = DLE.MineView ()->Renderer ().Frustum ();
-for (; nSide < 6; nSide++) {
+CSide* sideP = Side (nSide);
+for (; nSide < 6; nSide++, sideP++) {
 	if (frustum && !frustum->Contains (nSegment, nSide))
 		continue;
-	if (Side (nSide)->IsSelected (viewport, xMouse, yMouse, m_info.vertexIds))
-		return nSide;
+	sideP->SetParent (nSegment);
+	if (!sideP->IsSelected (viewport, xMouse, yMouse, m_info.vertexIds))
+		continue;
+	if (!bSegments) {
+		CVertex& center = sideP->Center ();
+		if (!sideP->IsVisible ()) {
+			sideP->ComputeNormals (m_info.vertexIds, Center ());
+			CVertex normal;
+			center += sideP->Normal (2) * 2.0;
+			center.Transform (viewMatrix);
+			center.Project (viewMatrix);
+			}
+		if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom) || (center.m_view.v.z < 0.0)) 
+			continue;
+		}
+	return nSide;
 	}
 return -1;
 }

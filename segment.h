@@ -294,7 +294,7 @@ public:
 
 	void UpdateTexCoords (ushort nVertexId, bool bMove, short nIgnoreSide = -1);
 
-	short IsSelected (CRect& viewport, long xMouse, long yMouse, short nSide = 0);
+	short IsSelected (CRect& viewport, long xMouse, long yMouse, short nSide, bool bSegments);
 
 	inline void Link (CSegment* segP) { m_link = segP; }
 
