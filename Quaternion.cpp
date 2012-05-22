@@ -10,7 +10,7 @@ void CQuaternion::Normalize (void)
 {
 	// Don't normalize if we don't have to
 double mag2 = w * w + x * x + y * y + z * z;
-if ((fabs (mag2) > 1e-30) && (fabs (mag2 - 1.0f) > 1e-30)) {
+if ((fabs (mag2) > 1e-30) && (fabs (mag2 - 1.0) > 1e-30)) {
 	double mag = sqrt (mag2);
 	w /= mag;
 	x /= mag;
@@ -42,7 +42,7 @@ CQuaternion vecQuat, resQuat;
 vecQuat.x = vn.v.x;
 vecQuat.y = vn.v.y;
 vecQuat.z = vn.v.z;
-vecQuat.w = 0.0f;
+vecQuat.w = 0.0;
  
 resQuat = vecQuat * GetConjugate ();
 resQuat = *this * resQuat;
@@ -93,9 +93,85 @@ w = cosr * cosp * cosy + sinr * sinp * siny;
  
 Normalize ();
 }
-// -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
+
+static inline double Sign (double x) {return (x >= 0.0f) ? +1.0f : -1.0f;}
+
+CQuaternion& CQuaternion::FromMatrix (CDoubleMatrix& m)
+{
+x = ( m.m.rVec.v.x + m.m.uVec.v.y + m.m.fVec.v.z + 1.0f) / 4.0f;
+y = ( m.m.rVec.v.x - m.m.uVec.v.y - m.m.fVec.v.z + 1.0f) / 4.0f;
+z = (-m.m.rVec.v.x + m.m.uVec.v.y - m.m.fVec.v.z + 1.0f) / 4.0f;
+w = (-m.m.rVec.v.x - m.m.uVec.v.y + m.m.fVec.v.z + 1.0f) / 4.0f;
+if (x < 0.0f) x = 0.0f;
+if (y < 0.0f) y = 0.0f;
+if (z < 0.0f) z = 0.0f;
+if (w < 0.0f) w = 0.0f;
+x = sqrt (x);
+y = sqrt (y);
+z = sqrt (z);
+w = sqrt (w);
+if (x >= y && x >= z && x >= w) {
+    x *= +1.0f;
+    y *= Sign (m.m.fVec.v.y - m.m.uVec.v.z);
+    z *= Sign (m.m.rVec.v.z - m.m.fVec.v.x);
+    w *= Sign (m.m.uVec.v.x - m.m.rVec.v.y);
+	}
+else if (y >= x && y >= z && y >= w) {
+    x *= Sign (m.m.fVec.v.y - m.m.uVec.v.z);
+    y *= +1.0f;
+    z *= Sign (m.m.uVec.v.x + m.m.rVec.v.y);
+    w *= Sign (m.m.rVec.v.z + m.m.fVec.v.x);
+	} 
+else if (z >= x && z >= y && z >= w) {
+    x *= Sign (m.m.rVec.v.z - m.m.fVec.v.x);
+    y *= Sign (m.m.uVec.v.x + m.m.rVec.v.y);
+    z *= +1.0f;
+    w *= Sign (m.m.fVec.v.y + m.m.uVec.v.z);
+	} 
+else if (w >= x && w >= y && w >= z) {
+    x *= Sign (m.m.uVec.v.x - m.m.rVec.v.y);
+    y *= Sign (m.m.fVec.v.x + m.m.rVec.v.z);
+    z *= Sign (m.m.fVec.v.y + m.m.uVec.v.z);
+    w *= +1.0f;
+	}
+Normalize ();
+return *this;
+}
+
+// -----------------------------------------------------------------------------
+
+CDoubleMatrix CQuaternion::GetMatrix (void)
+{
+double x2 = x * x;
+double y2 = y * y;
+double z2 = z * z;
+double xy = x * y;
+double xz = x * z;
+double yz = y * z;
+double wx = w * x;
+double wy = w * y;
+double wz = w * z;
+ 
+// This calculation would be a lot more complicated for non-unit length quaternions
+// Note: The constructor of Matrix4 expects the Matrix in column-major format like expected by
+//   OpenGL
+return CDoubleMatrix (1.0 - 2.0 * (y2 + z2), 2.0 * (xy + wz), 2.0 * (xz - wy), 
+							 2.0 * (xy - wz), 1.0 - 2.0 * (x2 + z2), 2.0 * (yz + wx), 
+							 2.0 * (xz + wy), 2.0 * (yz - wx), 1.0 - 2.0 * (x2 + y2));
+}
+
+// -----------------------------------------------------------------------------
+
+void CQuaternion::GetAxisAngle (CDoubleVector& axis, double& angle)
+{
+double scale = sqrt (x * x + y * y + z * z);
+axis.v.x = x / scale;
+axis.v.y = y / scale;
+axis.v.z = z / scale;
+angle = acos (w) * 2.0;
+}
 
 // -----------------------------------------------------------------------------
 

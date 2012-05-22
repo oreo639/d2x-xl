@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include "Vector.h"
+#include "Matrix.h"
 
 class CQuaternion {
 	public:
@@ -20,7 +21,9 @@ class CQuaternion {
 	CDoubleVector CQuaternion::operator* (const CDoubleVector &vec);
 	void FromAxis (const CDoubleVector &v, double angle);
 	void FromEuler (double pitch, double yaw, double roll);
-
+	CQuaternion FromMatrix (CDoubleMatrix& m);
+	CDoubleMatrix GetMatrix (void);
+	void GetAxisAngle (CDoubleVector& axis, double& angle);
 	};
 
 #endif //__Quaternion_h
