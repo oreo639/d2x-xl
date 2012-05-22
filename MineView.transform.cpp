@@ -303,8 +303,10 @@ r.m.rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nEdge);
 r.m.rVec.Normalize ();
 segP->ComputeCenter (nSide);
 r.m.uVec = Normal (sideP->Center (), r.m.fVec, r.m.rVec);
+r.m.uVec.Negate ();
 #if 1
 ViewMatrix ()->Stuff (r);
+SetCenter (segP->Center ());
 #else
 Rotation () = r.Angles ();
 ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
