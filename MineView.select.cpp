@@ -124,7 +124,7 @@ RefreshObject(i, nClosestObj);
 
 short CMineView::FindSelectedTexturedSide (long xMouse, long yMouse, short& nSide)
 {
-if (!m_bSelectOnlyTexturedSides)
+if (!m_bEnableQuickSelection)
 	return -1;
 if (((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
 	return -1;

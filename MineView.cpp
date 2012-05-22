@@ -153,7 +153,8 @@ ViewObjectFlags () = eViewObjectsAll;
 ViewMineFlags () = eViewMineLights | eViewMineWalls | eViewMineSpecial;
 m_viewOption = eViewTextured;
 m_nDelayRefresh = 0;
-m_bSelectOnlyTexturedSides = false;
+m_bEnableQuickSelection = false;
+m_nShowSelectionCandidates = 2;
 m_bHScroll = 
 m_bVScroll = false;
 m_xScrollRange =
@@ -837,7 +838,7 @@ if (change.x || change.y) {
 						Pan ('Y', -d);
 					}
 				}
-			else if (!m_bSelectOnlyTexturedSides && (nFlags & MK_SHIFT))
+			else if (!m_bEnableQuickSelection && (nFlags & MK_SHIFT))
 				SetMouseState (eMouseStateSelect);
 			else if ((m_mouseState == eMouseStatePan) || (m_mouseState == eMouseStateRotate) || (m_mouseState == eMouseStateSelect))
 				SetMouseState (eMouseStateIdle);
@@ -980,6 +981,7 @@ CView::OnRButtonDown (nFlags, point);
 
 void CMineView::OnRButtonUp (UINT nFlags, CPoint point)
 {
+	static char* showSelectionCandidates [] = {"Show Selection Candidates: Off", "Show Selection Candidates: Circles", "Show Selection Candidates: Full"};
 RecordMousePos (m_releasePos, point);
 m_releaseState = nFlags;
 if (m_mouseState == eMouseStateButtonDown) {
@@ -997,17 +999,20 @@ if (m_mouseState == eMouseStateButtonDown) {
 		tracker = contextMenu.GetSubMenu (0); 
 		tracker->CheckMenuItem ((UINT) theMine->SelectMode (), MF_BYPOSITION | MF_CHECKED);
 		if (GetEditReference ())
-			tracker->CheckMenuItem ((UINT) ID_EDIT_VIEWER_IS_REFERENCE, MF_BYCOMMAND | MF_CHECKED);
-		if (m_bSelectOnlyTexturedSides)
-			tracker->CheckMenuItem ((UINT) ID_EDIT_SELECT_ONLY_TEXTURED, MF_BYCOMMAND | MF_CHECKED);
+			tracker->CheckMenuItem ((UINT) ID_EDIT_ALIGN_MOVEMENT_WITH_VIEWER, MF_BYCOMMAND | MF_CHECKED);
+		if (m_bEnableQuickSelection)
+			tracker->CheckMenuItem ((UINT) ID_EDIT_ENABLE_QUICK_SELECTION, MF_BYCOMMAND | MF_CHECKED);
+		tracker->ModifyMenu (MF_BYCOMMAND, MF_STRING, ID_EDIT_SHOW_SELECTION_CANDIDATES, showSelectionCandidates [m_nShowSelectionCandidates]);
 	   int nChoice = tracker->TrackPopupMenu (TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x , point.y, AfxGetMainWnd ()); 
 		contextMenu.DestroyMenu ();
 		if (nChoice) {
 			if ((nChoice >= ID_SEL_POINTMODE) && (nChoice <= ID_SEL_BLOCKMODE))
 				SetSelectMode (nChoice - ID_SEL_POINTMODE);
-			else if (nChoice == ID_EDIT_SELECT_ONLY_TEXTURED)
-				Renderer ().SetRTT (m_bSelectOnlyTexturedSides = !m_bSelectOnlyTexturedSides);
-			else if (nChoice == ID_EDIT_VIEWER_IS_REFERENCE)
+			else if (nChoice == ID_EDIT_ENABLE_QUICK_SELECTION)
+				Renderer ().SetRTT (m_bEnableQuickSelection = !m_bEnableQuickSelection);
+			else if (nChoice == ID_EDIT_SHOW_SELECTION_CANDIDATES)
+				m_nShowSelectionCandidates = (m_nShowSelectionCandidates + 1) % 3;
+			else if (nChoice == ID_EDIT_ALIGN_MOVEMENT_WITH_VIEWER)
 				SetEditReference (!GetEditReference ());
 			else if (nChoice == ID_EDIT_QUICKCOPY)
 				blockManager.QuickCopy ();

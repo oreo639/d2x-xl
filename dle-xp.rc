@@ -3148,8 +3148,9 @@ BEGIN
         MENUITEM "&Objects",                    ID_SEL_OBJECTMODE
         MENUITEM "&Blocks",                     ID_SEL_BLOCKMODE
         MENUITEM SEPARATOR
-        MENUITEM "Select only Textured Sides",  ID_EDIT_SELECT_ONLY_TEXTURED
-        MENUITEM "Use Viewer Orientation",      ID_EDIT_VIEWER_IS_REFERENCE
+        MENUITEM "Enable Quick Selection",		ID_EDIT_ENABLE_QUICK_SELECTION
+        MENUITEM "Align Movement With Viewer",  ID_EDIT_ALIGN_MOVEMENT_WITH_VIEWER
+        MENUITEM "Show Selection Candidates",   ID_EDIT_SHOW_SELECTION_CANDIDATES
         MENUITEM SEPARATOR
         MENUITEM "Quick &Copy",                 ID_EDIT_QUICKCOPY
         MENUITEM "Quick &Paste",                ID_EDIT_QUICKPASTE

@@ -261,7 +261,7 @@ if (faceCount > 1)
 	SortFaces (0, faceCount - 1);
 CalcSegDist ();
 
-Renderer ().RenderFaces (faceRenderList, faceCount, m_bSelectOnlyTexturedSides);
+Renderer ().RenderFaces (faceRenderList, faceCount, m_bEnableQuickSelection);
 }
 
 //--------------------------------------------------------------------------
@@ -1328,8 +1328,6 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
 	CVertex& center = sideP->Center ();
-	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom) || (center.m_view.v.z < 0.0)) 
-		continue;
 #if 0
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (dist > 64.0)
@@ -1370,7 +1368,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	if (nSegment == sideP->GetParent ())
 		continue;
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
-	CVertex& center = segP->ComputeCenter ();
+	CVertex& center = segP->Center ();
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 #if 0
 	if (dist > 64.0)
@@ -1443,8 +1441,6 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
 	CVertex& center = segP->Center ();
-	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom) || (center.m_view.v.z < 0.0)) 
-		continue;
 #if 0
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 	if (dist > 64.0)
@@ -1501,7 +1497,7 @@ nearest->m_nSegment = -1;
 nearest->m_nSide = -1;
 nearest->m_nEdge = -1;
 
-if (!m_bSelectOnlyTexturedSides && (m_mouseState == eMouseStateSelect)) {
+if (m_mouseState == eMouseStateSelect) {
 	if (DrawSelectablePoint ())
 		;
 	else if (DrawSelectableEdge ())

@@ -111,7 +111,8 @@ protected: // create from serialization only
 	UINT_PTR			m_lightTimer;
 	UINT_PTR			m_selectTimer;
 	int 				m_nFrameRate;
-	bool				m_bSelectOnlyTexturedSides;
+	int				m_nShowSelectionCandidates;
+	bool				m_bEnableQuickSelection;
 	bool 				m_bHScroll,
 						m_bVScroll;
 	int 				m_xScrollRange,
