@@ -300,10 +300,14 @@ short nSide = current->m_nSide;
 short nEdge = current->m_nEdge;
 CDoubleVector rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nEdge);
 rVec.Normalize ();
-CDoubleVector p0 = segP->Center (), p1 = p0 + fVec, p2 = p0 + rVec;
-CDoubleVector uVec = Perpendicular (p0, p1, p2);
+CDoubleVector v0 = segP->Center (), v1 = v0 + fVec, v2 = v0 + rVec;
+CDoubleVector uVec = Perpendicular (v0, v1, v2);
 CViewMatrix* viewMatrix = ViewMatrix ();
-Renderer ().Rotation () = CDoubleVector (Dot (viewMatrix->Forward (), fVec) * PI, Dot (viewMatrix->Right (), rVec) * PI, Dot (viewMatrix->Up (), uVec) * PI);
+v0 = CDoubleVector (0.0, 0.0, 1.0);
+v1 = CDoubleVector (1.0, 0.0, 0.0);
+v2 = CDoubleVector (0.0, 1.0, 0.0);
+Renderer ().Rotation () = CDoubleVector (Dot (v0, fVec) * PI, Dot (v1, rVec) * PI, Dot (v2, uVec) * PI);
+Invalidate (FALSE);
 }
 
 //------------------------------------------------------------------------------
