@@ -60,6 +60,12 @@ class CViewMatrix
 			double xSpin, double ySpin, double zSpin)
 			{ Setup (CDoubleVector (xMove, yMove, zMove), CDoubleVector (xSize, ySize, zSize), CDoubleVector (xSpin, ySpin, zSpin)); }
 
+		inline void Stuff (CDoubleVector fVec, CDoubleVector uVec, CDoubleVector rVec) {
+			Transformation ().m.fVec = fVec;
+			Transformation ().m.uVec = uVec;
+			Transformation ().m.rVec = rVec;
+			}
+
 		void Translate (CDoubleVector vTranslate);
 
 		void SetViewInfo (short viewWidth, short viewHeight);
