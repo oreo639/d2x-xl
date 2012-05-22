@@ -60,9 +60,9 @@ m_data [0].m_transformation [1] = m_data [0].m_transformation [0].Inverse ();
 void CViewMatrix::ClampAngle (int i)
 {
 if (m_data [0].m_rotate [i] < 0)
-	m_data [0].m_rotate [i] += (int) (-m_data [0].m_rotate [i] / 360) * 360;
+	m_data [0].m_rotate [i] += (int) (-m_data [0].m_rotate [i] / 360.0) * 360.0;
 else
-	m_data [0].m_rotate [i] -= (int) (m_data [0].m_rotate [i] / 360) * 360;
+	m_data [0].m_rotate [i] -= (int) (m_data [0].m_rotate [i] / 360.0) * 360.0;
 }
 
 //--------------------------------------------------------------------------

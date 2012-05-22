@@ -427,20 +427,16 @@ s.Set (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 1.0);
 
 CDoubleVector CDoubleMatrix::Angles (void)
 {
+#if 0
+return CDoubleVector (atan2 (m.fVec.v.y, m.fVec.v.z), atan2 (-m.fVec.v.x, sqrt (m.fVec.v.y * m.fVec.v.y + m.fVec.v.z * m.fVec.v.z)), atan2 (m.uVec.v.z, m.rVec.v.z));
+#else
 	CDoubleVector	a;
-	double			sinh, cosh, cosp;
 
-a.v.x = ((m.fVec.v.x == 0.0) && (m.fVec.v.z == 0.0)) ? 0.0 : atan2 (m.fVec.v.z, m.fVec.v.x);
-sinh = sin (a.v.x);
-cosh = cos (a.v.x);
-if (fabs (sinh) > fabs (cosh))		
-	cosp = m.fVec.v.x / sinh;
-else								
-	cosp = m.fVec.v.z / cosh;
-if ((cosp == 0.0) && (m.fVec.v.y == 0.0))
-	a.v.y = 0;
-else
-	a.v.y = atan2 (cosp, -m.fVec.v.y);
+a.v.y = ((m.fVec.v.x == 0.0) && (m.fVec.v.z == 0.0)) ? 0.0 : atan2 (m.fVec.v.z, m.fVec.v.x);
+double sinh = sin (a.v.y);
+double cosh = cos (a.v.y);
+double cosp = (fabs (sinh) > fabs (cosh)) ? m.fVec.v.x / sinh : m.fVec.v.z / cosh;
+a.v.x = ((cosp == 0.0) && (m.fVec.v.y == 0.0)) ? 0.0 : a.v.x = atan2 (cosp, -m.fVec.v.y);
 if (cosp == 0.0)	
 	a.v.z = 0.0;
 else {
@@ -451,6 +447,7 @@ else {
 	a.v.z = ((sinb == 0.0) && (cosb == 0.0)) ? 0.0 : atan2 (cosb, sinb);
 	}
 return a;
+#endif
 }
 
 // -----------------------------------------------------------------------------
