@@ -424,4 +424,34 @@ s.Set (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 1.0);
 }
 
 // -----------------------------------------------------------------------------
+
+CDoubleVector CDoubleMatrix::Angles (void)
+{
+	CDoubleVector	a;
+	double			sinh, cosh, cosp;
+
+a.v.x = ((m.fVec.v.x == 0.0) && (m.fVec.v.z == 0.0)) ? 0.0 : atan2 (m.fVec.v.z, m.fVec.v.x);
+sinh = sin (a.v.x);
+cosh = cos (a.v.x);
+if (fabs (sinh) > fabs (cosh))		
+	cosp = m.fVec.v.x / sinh;
+else								
+	cosp = m.fVec.v.z / cosh;
+if ((cosp == 0.0) && (m.fVec.v.y == 0.0))
+	a.v.y = 0;
+else
+	a.v.y = atan2 (cosp, -m.fVec.v.y);
+if (cosp == 0.0)	
+	a.v.z = 0.0;
+else {
+	double sinb, cosb;
+
+	sinb = m.rVec.v.y / cosp;
+	cosb = m.uVec.v.y / cosp;
+	a.v.z = ((sinb == 0.0) && (cosb == 0.0)) ? 0.0 : atan2 (cosb, sinb);
+	}
+return a;
+}
+
+// -----------------------------------------------------------------------------
 // eof
