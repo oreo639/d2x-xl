@@ -153,6 +153,7 @@ ViewObjectFlags () = eViewObjectsAll;
 ViewMineFlags () = eViewMineLights | eViewMineWalls | eViewMineSpecial;
 m_viewOption = eViewTextured;
 m_nDelayRefresh = 0;
+m_bSelectOnlyTexturedSides = false;
 m_bHScroll = 
 m_bVScroll = false;
 m_xScrollRange =
@@ -997,11 +998,15 @@ if (m_mouseState == eMouseStateButtonDown) {
 		tracker->CheckMenuItem ((UINT) theMine->SelectMode (), MF_BYPOSITION | MF_CHECKED);
 		if (GetEditReference ())
 			tracker->CheckMenuItem ((UINT) ID_EDIT_VIEWER_IS_REFERENCE, MF_BYCOMMAND | MF_CHECKED);
+		if (m_bSelectOnlyTexturedSides)
+			tracker->CheckMenuItem ((UINT) ID_EDIT_SELECT_ONLY_TEXTURED, MF_BYCOMMAND | MF_CHECKED);
 	   int nChoice = tracker->TrackPopupMenu (TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x , point.y, AfxGetMainWnd ()); 
 		contextMenu.DestroyMenu ();
 		if (nChoice) {
 			if ((nChoice >= ID_SEL_POINTMODE) && (nChoice <= ID_SEL_BLOCKMODE))
 				SetSelectMode (nChoice - ID_SEL_POINTMODE);
+			else if (nChoice == ID_EDIT_SELECT_ONLY_TEXTURED)
+				m_bSelectOnlyTexturedSides = !m_bSelectOnlyTexturedSides;
 			else if (nChoice == ID_EDIT_VIEWER_IS_REFERENCE)
 				SetEditReference (!GetEditReference ());
 			else if (nChoice == ID_EDIT_QUICKCOPY)

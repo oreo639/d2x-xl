@@ -397,7 +397,7 @@ int s = (tgaHeader.bits == 32) ? 4 : 3;
 color.a = 255;
 CBGRA* buffer = Buffer ();
 // textures are getting reversed here for easier rendering!
-if (tgaHeader.yStart == 0) { 
+if (tgaHeader.yStart != 0) { 
 	h = m_info.width * (m_info.height - 1);
 	for (int i = m_info.height; i; i--) {
 		for (int j = m_info.width; j; j--, h++) {

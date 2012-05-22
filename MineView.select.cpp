@@ -124,9 +124,8 @@ RefreshObject(i, nClosestObj);
 
 short CMineView::FindVisibleSelectedSide (long xMouse, long yMouse, short& nSide)
 {
-#if 1
-return -1;
-#else
+if (!m_bSelectOnlyTexturedSides)
+	return -1;
 if (((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
 	return -1;
 
@@ -184,7 +183,6 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	}
 nSide = nMinSide;
 return nMinSeg;
-#endif
 }
 
 //-----------------------------------------------------------------------------

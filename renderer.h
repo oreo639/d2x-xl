@@ -147,9 +147,10 @@ class CRenderer {
 		CWnd*				m_pParent;
 		CDC*				m_pDC;
 		bool				m_bOrtho;
+		bool				m_bRTT;
 
 	public:
-		CRenderer (CRenderData& renderData) : m_renderData (renderData), m_pParent (null), m_pDC (null), m_bOrtho (false) {}
+		CRenderer (CRenderData& renderData) : m_renderData (renderData), m_pParent (null), m_pDC (null), m_bOrtho (false), m_bRTT (false) {}
 
 		inline void SetData (CRenderData& renderData) { m_renderData = renderData; }
 
@@ -241,6 +242,8 @@ class CRenderer {
 		virtual CFrustum* Frustum (void) { return null; }
 
 		virtual bool Ortho (void) { return m_bOrtho; }
+		virtual bool RTT (void) { return m_bRTT; }
+		virtual void SetRTT (bool bRTT) { m_bRTT = bRTT; }
 
 		bool InitViewDimensions (void);
 		void ComputeViewLimits (CRect* pRC);

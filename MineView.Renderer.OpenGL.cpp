@@ -17,8 +17,6 @@
 #include "ShaderManager.h"
 #include "mineview.h"
 
-#define USE_RTT 0
-
 extern short nDbgSeg, nDbgSide;
 extern int nDbgVertex;
 
@@ -98,13 +96,11 @@ ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
 
 void CRendererGL::ClearView (void)
 {
-#if USE_RTT
-m_renderBuffers.Enable (-1);
-#endif
+if (RTT ())
+	m_renderBuffers.Enable (-1);
 glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-#if USE_RTT
-m_renderBuffers.Disable ();
-#endif
+if (RTT ())
+	m_renderBuffers.Disable ();
 }
 
 // -----------------------------------------------------------------------------
@@ -193,12 +189,10 @@ if (!wglMakeCurrent (m_glHDC, m_glRC)) {
 glewInit (); // must happen after OpenGL context creation!
 shaderManager.Setup ();
 textureManager.InitShaders ();
-#if USE_RTT
 if (CFBO::Setup ()) {
 	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 1, 1);
 	m_sideKeys = new rgbColor [GetSystemMetrics (SM_CXSCREEN) * GetSystemMetrics (SM_CYSCREEN)];
 	}
-#endif
 return TRUE;
 }
 
@@ -507,9 +501,8 @@ if	(texP [0] == &tex)
 void CRendererGL::BeginRender (bool bOrtho)
 {
 SetupProjection (bOrtho);
-#if USE_RTT
-m_renderBuffers.Enable (0);
-#endif
+if (RTT ())
+	m_renderBuffers.Enable (0);
 }
 
 //--------------------------------------------------------------------------
@@ -530,10 +523,10 @@ glDisable (GL_DEPTH_TEST);
 glDisable (GL_LINE_STIPPLE);
 glDepthFunc (GL_LESS);
 if (bSwapBuffers) {
-#if USE_RTT
-	m_renderBuffers.Disable ();
-	m_renderBuffers.Flush (Viewport ());
-#endif
+	if (RTT ()) {
+		m_renderBuffers.Disable ();
+		m_renderBuffers.Flush (Viewport ());
+		}
 	SwapBuffers (m_glHDC);
 	}
 }
@@ -1014,8 +1007,7 @@ else {
 
 int CRendererGL::GetSideKey (int x, int y, short& nSegment, short& nSide)
 {
-#if USE_RTT
-if (!m_bRenderSideKeys)
+if (!(RTT () && m_bRenderSideKeys))
 	return -1;
 if (m_renderBuffers.BufferCount () < 2)
 	return -1;
@@ -1031,9 +1023,6 @@ if (sideKey.b == 0)
 nSegment = short (sideKey.r) * 256 + sideKey.g;
 nSide = sideKey.b - 1;
 return 1;
-#else
-return -1;
-#endif
 }
 
 //------------------------------------------------------------------------------

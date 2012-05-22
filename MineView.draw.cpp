@@ -1518,7 +1518,7 @@ nearest->m_nSegment = -1;
 nearest->m_nSide = -1;
 nearest->m_nEdge = -1;
 
-if (m_mouseState == eMouseStateSelect) {
+if (!m_bSelectOnlyTexturedSides && (m_mouseState == eMouseStateSelect)) {
 	if (DrawSelectablePoint ())
 		;
 	else if (DrawSelectableEdge ())
