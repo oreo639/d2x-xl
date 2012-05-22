@@ -705,7 +705,7 @@ m_bHaveSideKeys = false;
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::SelectPen (int nPen, int nWeight)
+void CRendererGL::SelectPen (int nPen, float nWeight)
 {
 if (nPen > 0) {
 	COLORREF color = PenColor (ePenColor (nPen - 1));

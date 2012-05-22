@@ -1346,7 +1346,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	if (dist > 64.0)
 		continue;
 #endif
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 2);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
 	Renderer ().Ellipse (center, 5.0, 5.0);
 	}
 Renderer ().EndRender ();
@@ -1467,7 +1467,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	if (dist > 64.0)
 		continue;
 #endif
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 2);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
 	Renderer ().Ellipse (center, 5.0, 5.0);
 	}
 Renderer ().EndRender ();

@@ -209,7 +209,7 @@ class CRenderer {
 		virtual void FitToView (void) = 0;
 		virtual bool CanFitToView (void) = 0;
 
-		virtual void SelectPen (int nPen, int nWeight = 1) = 0;
+		virtual void SelectPen (int nPen, float nWeight = 1.0f) = 0;
 		virtual void MoveTo (int x, int y) = 0;
 		virtual void LineTo (int x, int y) = 0;
 		virtual void Rectangle (int left, int top, int right, int bottom) = 0;
@@ -280,7 +280,7 @@ class CRendererSW : public CRenderer {
 		virtual void FitToView (void) {}
 		virtual bool CanFitToView (void) { return true; }
 	
-		virtual void SelectPen (int nPen, int nWeight = 1);
+		virtual void SelectPen (int nPen, float nWeight = 1.0f);
 		virtual void MoveTo (int x, int y) { m_pDC->MoveTo (x, y); }
 		virtual void LineTo (int x, int y) { m_pDC->LineTo (x,y ); }
 		virtual void Rectangle (int left, int top, int right, int bottom) { m_pDC->Rectangle (left, top, right, bottom); }
@@ -369,7 +369,7 @@ class CRendererGL : public CRenderer {
 		virtual void FitToView (void) { ComputeZoom (); }
 		virtual bool CanFitToView (void) { return Perspective () == 0; }
 
-		virtual void SelectPen (int nPen, int nWeight = 1);
+		virtual void SelectPen (int nPen, float nWeight = 1.0f);
 		virtual void MoveTo (int x, int y);
 		virtual void LineTo (int x, int y);
 		virtual void PolyLine (CPoint* points, int nPoints);
