@@ -302,11 +302,20 @@ CDoubleVector rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nE
 rVec.Normalize ();
 CDoubleVector v0 = segP->Center (), v1 = v0 + fVec, v2 = v0 + rVec;
 CDoubleVector uVec = Perpendicular (v0, v1, v2);
+//v0 = CDoubleVector (0.0, 0.0, 1.0);
+//v1 = CDoubleVector (1.0, 0.0, 0.0);
+//v2 = CDoubleVector (0.0, 1.0, 0.0);
 CViewMatrix* viewMatrix = ViewMatrix ();
-v0 = CDoubleVector (0.0, 0.0, 1.0);
-v1 = CDoubleVector (1.0, 0.0, 0.0);
-v2 = CDoubleVector (0.0, 1.0, 0.0);
-Renderer ().Rotation () = CDoubleVector (Dot (v0, fVec) * PI, Dot (v1, rVec) * PI, Dot (v2, uVec) * PI);
+v0 = viewMatrix->Forward ();
+v1 = viewMatrix->Right ();
+v2 = viewMatrix->Up ();
+double dot;
+dot = Dot (v0, fVec);
+dot = Dot (v1, rVec);
+dot = Dot (v2, uVec);
+viewMatrix->Rotate ('X', acos (Dot (viewMatrix->Forward (), fVec)));
+viewMatrix->Rotate ('Z', acos (Dot (viewMatrix->Right (), rVec)));
+viewMatrix->Rotate ('Y', acos (Dot (viewMatrix->Up (), uVec)));
 Invalidate (FALSE);
 }
 
