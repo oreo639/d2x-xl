@@ -192,14 +192,15 @@ bool CMineView::SelectCurrentSide (long xMouse, long yMouse, int bAdd)
 if (bAdd < 0)
 	vertexManager.UnmarkAll ();
 
-	short nSide, nSegment = FindSelectedTexturedSide (xMouse, yMouse, nSide);
-
-if (0 <= nSegment) 
-	current->Setup (nSegment, nSide);
-else 
-if ((nearest->m_nSegment >= 0) && (nearest->m_nSide >= 0)) {
+if ((m_mouseState == eMouseStateSelect) && (nearest->m_nSegment >= 0) && (nearest->m_nSide >= 0)) {
 	current->m_nSegment = nearest->m_nSegment;
 	current->m_nSide = nearest->m_nSide;
+	}
+else {
+	short nSide, nSegment = FindSelectedTexturedSide (xMouse, yMouse, nSide);
+	if (0 > nSegment) 
+		return false;
+	current->Setup (nSegment, nSide);
 	}
 else
 	return false;
