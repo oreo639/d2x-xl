@@ -190,7 +190,7 @@ glewInit (); // must happen after OpenGL context creation!
 shaderManager.Setup ();
 textureManager.InitShaders ();
 if (CFBO::Setup ()) {
-	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 1, 1);
+	m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 1, 2);
 	m_sideKeys = new rgbColor [GetSystemMetrics (SM_CXSCREEN) * GetSystemMetrics (SM_CYSCREEN)];
 	}
 return TRUE;
@@ -304,6 +304,41 @@ for (i = 0; i < j; i++) {
 	}
 ComputeViewLimits (pRC);
 return nProjected;
+}
+
+//--------------------------------------------------------------------------
+
+void CRendererGL::BeginRender (bool bOrtho)
+{
+SetupProjection (bOrtho);
+if (RTT ())
+	m_renderBuffers.Enable (0);
+}
+
+//--------------------------------------------------------------------------
+
+void CRendererGL::EndRender (bool bSwapBuffers)
+{
+for (int i = 0; i < 3; i++) {
+	glActiveTexture (GL_TEXTURE0 + i);
+	glClientActiveTexture (GL_TEXTURE0 + i);
+	glDisableClientState (GL_COLOR_ARRAY);
+	glDisableClientState (GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState (GL_VERTEX_ARRAY);
+	glBindTexture (GL_TEXTURE_2D, 0);
+	glDisable (GL_TEXTURE_2D);
+	}
+shaderManager.Deploy (-1);
+glDisable (GL_DEPTH_TEST);
+glDisable (GL_LINE_STIPPLE);
+glDepthFunc (GL_LESS);
+if (bSwapBuffers) {
+	if (RTT ()) {
+		m_renderBuffers.Disable ();
+		m_renderBuffers.Flush (Viewport ());
+		}
+	SwapBuffers (m_glHDC);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -494,41 +529,6 @@ if (wallP != null) {
 RenderFace (fle, texP, colorP);
 if	(texP [0] == &tex)
 	texP [0]->GLRelease ();
-}
-
-//--------------------------------------------------------------------------
-
-void CRendererGL::BeginRender (bool bOrtho)
-{
-SetupProjection (bOrtho);
-if (RTT ())
-	m_renderBuffers.Enable (0);
-}
-
-//--------------------------------------------------------------------------
-
-void CRendererGL::EndRender (bool bSwapBuffers)
-{
-for (int i = 0; i < 3; i++) {
-	glActiveTexture (GL_TEXTURE0 + i);
-	glClientActiveTexture (GL_TEXTURE0 + i);
-	glDisableClientState (GL_COLOR_ARRAY);
-	glDisableClientState (GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState (GL_VERTEX_ARRAY);
-	glBindTexture (GL_TEXTURE_2D, 0);
-	glDisable (GL_TEXTURE_2D);
-	}
-shaderManager.Deploy (-1);
-glDisable (GL_DEPTH_TEST);
-glDisable (GL_LINE_STIPPLE);
-glDepthFunc (GL_LESS);
-if (bSwapBuffers) {
-	if (RTT ()) {
-		m_renderBuffers.Disable ();
-		m_renderBuffers.Flush (Viewport ());
-		}
-	SwapBuffers (m_glHDC);
-	}
 }
 
 //------------------------------------------------------------------------------

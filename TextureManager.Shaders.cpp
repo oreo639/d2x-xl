@@ -125,16 +125,16 @@ if (!shaderProg)
 	return -1;
 shaderManager.Rebuild (shaderProg);
 shaderManager.Set ("baseTex", 0);
-nType %= 4;
-if (nType == 1)
+int nSubType = nType % 4;
+if (nSubType == 1)
 	shaderManager.Set ("decalTex", 1);
-else if (nType == 2)
+else if (nSubType == 2)
 	shaderManager.Set ("arrowTex", 1);
-else if (nType == 3) {
+else if (nSubType == 3) {
 	shaderManager.Set ("decalTex", 1); 
 	shaderManager.Set ("arrowTex", 2);
 	}
-if (nType != 1) 
+if (!(nSubType & 1)) 
 	shaderManager.Set ("superTransp", *((vec3*) paletteManager.SuperTranspKeyf ()));
 if (fle) {
 	vec3 sideKey = {float (fle->m_nSegment / 256) / 255.0f, float (fle->m_nSegment % 256) / 255.0f, float (fle->m_nSide + 1) / 255.0f};
