@@ -528,6 +528,7 @@ for (int i = 0; i < 3; i++) {
 shaderManager.Deploy (-1);
 glDisable (GL_DEPTH_TEST);
 glDisable (GL_LINE_STIPPLE);
+glDepthFunc (GL_LESS);
 if (bSwapBuffers) {
 #if USE_RTT
 	m_renderBuffers.Disable ();
@@ -992,9 +993,9 @@ if (!m_bOrtho/* && Perspective ()*/) {
 		points [i].m_view.v.z = center.m_view.v.z;
 		}
 	points [32] = points [0];
-	glLineWidth (3.0);
+	//glLineWidth (3.0);
 	PolyLine (points, 33);
-	glLineWidth (1.0);
+	//glLineWidth (1.0);
 	}
 else {
 	CPoint points [33];

@@ -1269,7 +1269,7 @@ Renderer ().BeginRender ();
 if (m_nRenderer) {
 	glLineStipple (1, 0x00ff);  
 	glEnable (GL_LINE_STIPPLE);
-	glDepthFunc (GL_LEQUAL);
+	glDepthFunc (GL_ALWAYS);
 	}
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
@@ -1330,9 +1330,11 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 			}
 		}
 	}
-Renderer ().EndRender ();
-
-Renderer ().BeginRender (true);
+//Renderer ().EndRender ();
+//
+//Renderer ().BeginRender (true);
+if (m_nRenderer)
+	glDisable (GL_LINE_STIPPLE);
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
@@ -1345,7 +1347,7 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	if (dist > 64.0)
 		continue;
 #endif
-	Renderer ().Ellipse (center, 8.0, 8.0);
+	Renderer ().Ellipse (center, 5.0, 5.0, 2);
 	}
 Renderer ().EndRender ();
 
@@ -1402,7 +1404,7 @@ if (nearest->m_nSegment < 0)
 Renderer ().BeginRender ();
 if (m_nRenderer) {
 	glLineStipple (1, 0x00ff);  
-	glDepthFunc (GL_LEQUAL);
+	glDepthFunc (GL_ALWAYS);
 	glEnable (GL_LINE_STIPPLE);
 	}
 nSegment = -1;
@@ -1446,9 +1448,11 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 			}
 		}
 	}
-Renderer ().EndRender ();
-
-Renderer ().BeginRender (true);
+//Renderer ().EndRender ();
+//
+//Renderer ().BeginRender ();
+if (m_nRenderer)
+	glDisable (GL_LINE_STIPPLE);
 nSegment = -1;
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	if (nSegment == sideP->GetParent ())
@@ -1463,8 +1467,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	if (dist > 64.0)
 		continue;
 #endif
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
-	Renderer ().Ellipse (center, 8.0, 8.0);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 2);
+	Renderer ().Ellipse (center, 5.0, 5.0);
 	}
 Renderer ().EndRender ();
 
@@ -1524,7 +1528,7 @@ if (m_mouseState == eMouseStateSelect) {
 		if (m_nRenderer) {
 			glLineStipple (1, 0x00ff);  
 			glEnable (GL_LINE_STIPPLE);
-			glDepthFunc (GL_LEQUAL);
+			glDepthFunc (GL_ALWAYS);
 			}
 		DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);
 		if (m_nRenderer)
