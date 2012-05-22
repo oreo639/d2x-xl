@@ -402,7 +402,7 @@ public:
 	inline CDC* DC (void) { return Renderer ().DC (); }
 
 private:
-	short FindVisibleSelectedSide (long xMouse, long yMouse, short& nSide);
+	short FindSelectedTexturedSide (long xMouse, long yMouse, short& nSide);
 
 protected:
 

@@ -261,7 +261,7 @@ if (faceCount > 1)
 	SortFaces (0, faceCount - 1);
 CalcSegDist ();
 
-Renderer ().RenderFaces (faceRenderList, faceCount, 0);
+Renderer ().RenderFaces (faceRenderList, faceCount, m_bSelectOnlyTexturedSides);
 }
 
 //--------------------------------------------------------------------------

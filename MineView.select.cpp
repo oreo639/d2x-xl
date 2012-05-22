@@ -122,7 +122,7 @@ RefreshObject(i, nClosestObj);
 // Disabled because the new side and segment selection method is more flexible
 // when it comes to selecting open (untextured) sides.
 
-short CMineView::FindVisibleSelectedSide (long xMouse, long yMouse, short& nSide)
+short CMineView::FindSelectedTexturedSide (long xMouse, long yMouse, short& nSide)
 {
 if (!m_bSelectOnlyTexturedSides)
 	return -1;
@@ -191,13 +191,12 @@ bool CMineView::SelectCurrentSide (long xMouse, long yMouse, int bAdd)
 {
 if (bAdd < 0)
 	vertexManager.UnmarkAll ();
-#if 0
-	short nSide, nSegment = FindVisibleSelectedSide (xMouse, yMouse, nSide);
+
+	short nSide, nSegment = FindSelectedTexturedSide (xMouse, yMouse, nSide);
 
 if (0 <= nSegment) 
 	current->Setup (nSegment, nSide);
 else 
-#endif
 if ((nearest->m_nSegment >= 0) && (nearest->m_nSide >= 0)) {
 	current->m_nSegment = nearest->m_nSegment;
 	current->m_nSide = nearest->m_nSide;

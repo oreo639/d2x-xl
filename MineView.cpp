@@ -1006,7 +1006,7 @@ if (m_mouseState == eMouseStateButtonDown) {
 			if ((nChoice >= ID_SEL_POINTMODE) && (nChoice <= ID_SEL_BLOCKMODE))
 				SetSelectMode (nChoice - ID_SEL_POINTMODE);
 			else if (nChoice == ID_EDIT_SELECT_ONLY_TEXTURED)
-				m_bSelectOnlyTexturedSides = !m_bSelectOnlyTexturedSides;
+				Renderer ().SetRTT (m_bSelectOnlyTexturedSides = !m_bSelectOnlyTexturedSides);
 			else if (nChoice == ID_EDIT_VIEWER_IS_REFERENCE)
 				SetEditReference (!GetEditReference ());
 			else if (nChoice == ID_EDIT_QUICKCOPY)
