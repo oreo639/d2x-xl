@@ -1338,7 +1338,6 @@ if (m_nRenderer)
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nSide = segP->SideIndex (sideP);
-	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
 	CVertex& center = sideP->Center ();
 	if ((center.m_screen.x  < 0) || (center.m_screen.y < 0) || (center.m_screen.x >= viewport.right) || (center.m_screen.y >= viewport.bottom) || (center.m_view.v.z < 0.0)) 
 		continue;
@@ -1347,7 +1346,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link 
 	if (dist > 64.0)
 		continue;
 #endif
-	Renderer ().Ellipse (center, 5.0, 5.0, 2);
+	Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 2);
+	Renderer ().Ellipse (center, 5.0, 5.0);
 	}
 Renderer ().EndRender ();
 
