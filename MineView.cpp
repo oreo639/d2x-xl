@@ -167,6 +167,8 @@ SetEditReference (1);
 SetMineMoveRate (1.0);
 SetViewMoveRate (1.0);
 Reset ();
+m_bEnableQuickSelection = GetPrivateProfileInt ("DLE", "EnableQuickSelection", 1, DLE.IniFile ());
+m_nShowSelectionCandidates = GetPrivateProfileInt ("DLE", "ShowSelectionCandidates", 2, DLE.IniFile ());
 }
 
 //------------------------------------------------------------------------------

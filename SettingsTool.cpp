@@ -448,6 +448,9 @@ WritePrivateProfileInt ("ViewDistance", m_nViewDist);
 WritePrivateProfileInt ("MineCenter", m_nMineCenter);
 WritePrivateProfileInt ("MaxUndo", m_nMaxUndo);
 WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
+WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
+WritePrivateProfileInt ("DLE", DLE.MineView ()->EnableQuickSelection ());
+WritePrivateProfileInt ("DLE", DLE.MineView ()->ShowSelectionCandidates ());
 }
 
 //------------------------------------------------------------------------------

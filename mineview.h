@@ -112,7 +112,7 @@ protected: // create from serialization only
 	UINT_PTR			m_selectTimer;
 	int 				m_nFrameRate;
 	int				m_nShowSelectionCandidates;
-	bool				m_bEnableQuickSelection;
+	int				m_bEnableQuickSelection;
 	bool 				m_bHScroll,
 						m_bVScroll;
 	int 				m_xScrollRange,
@@ -185,6 +185,8 @@ public:
 
 	inline void SetEditReference (int nReference) { m_nEditReference = nReference; }
 	inline int GetEditReference (void) { return Perspective () && m_nEditReference; }
+	inline int EnableQuickSelection (void) { return m_bEnableQuickSelection; }
+	inline int ShowSelectionCandidates (void) { return m_nShowSelectionCandidates; }
 	void DrawMineCenter (void);
 	bool VertexVisible (int v);
 	void ComputeViewLimits (CRect* pRC = null);
