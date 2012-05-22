@@ -556,6 +556,7 @@
     <ClInclude Include="..\mineview.h" />
     <ClInclude Include="..\OOFModel.h" />
     <ClInclude Include="..\Parser.h" />
+    <ClInclude Include="..\Quaternion.h" />
     <ClInclude Include="..\RenderBuffers.h" />
     <ClInclude Include="..\renderer.h" />
     <ClInclude Include="..\StdAfx.h" />
@@ -714,6 +715,7 @@
     <ClCompile Include="..\ObjectTool.Sound.cpp" />
     <ClCompile Include="..\OOFModel.cpp" />
     <ClCompile Include="..\OOFRenderModel.cpp" />
+    <ClCompile Include="..\Quaternion.cpp" />
     <ClCompile Include="..\ReactorTool.cpp" />
     <ClCompile Include="..\RenderBuffers.cpp" />
     <ClCompile Include="..\SegmentTool.cpp" />

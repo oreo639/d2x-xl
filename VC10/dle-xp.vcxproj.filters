@@ -295,6 +295,9 @@
     <ClInclude Include="..\Frustum.h">
       <Filter>OpenGL\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Quaternion.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp">
@@ -638,6 +641,9 @@
     </ClCompile>
     <ClCompile Include="..\Frustum.cpp">
       <Filter>OpenGL\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Quaternion.cpp">
+      <Filter>Core\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
