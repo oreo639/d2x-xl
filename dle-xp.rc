@@ -3148,7 +3148,7 @@ BEGIN
         MENUITEM "&Objects",                    ID_SEL_OBJECTMODE
         MENUITEM "&Blocks",                     ID_SEL_BLOCKMODE
         MENUITEM SEPARATOR
-        MENUITEM "Enable Quick Selection",		ID_EDIT_ENABLE_QUICK_SELECTION
+        MENUITEM "Enable Quick Selection",      ID_EDIT_ENABLE_QUICK_SELECTION
         MENUITEM "Align Movement With Viewer",  ID_EDIT_ALIGN_MOVEMENT_WITH_VIEWER
         MENUITEM "Show Selection Candidates",   ID_EDIT_SHOW_SELECTION_CANDIDATES
         MENUITEM SEPARATOR
@@ -6373,8 +6373,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,11,43,0
- PRODUCTVERSION 1,11,43,0
+ FILEVERSION 1,11,44,0
+ PRODUCTVERSION 1,11,44,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6391,12 +6391,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
             VALUE "FileDescription", "Descent Level Editor [22 may 2012]"
-            VALUE "FileVersion", "1.11.43.0"
+            VALUE "FileVersion", "1.11.44.0"
             VALUE "InternalName", "DLE"
             VALUE "LegalCopyright", "Copyright (C) Bryan Aamot, Dietfrid Mali"
             VALUE "OriginalFilename", "DLE.EXE"
             VALUE "ProductName", "Descent Level Editor"
-            VALUE "ProductVersion", "1.11.43.0"
+            VALUE "ProductVersion", "1.11.44.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6423,7 +6423,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor 1.11.43\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor 1.11.44\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

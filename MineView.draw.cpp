@@ -1325,7 +1325,7 @@ if (m_nShowSelectionCandidates > 1) {
 if (m_nShowSelectionCandidates > 0) {
 	Renderer ().BeginRender ();
 	if (m_nRenderer)
-		glDisable (GL_LINE_STIPPLE);
+		glDepthFunc (GL_ALWAYS);
 	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 		CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 		short nSide = segP->SideIndex (sideP);
@@ -1438,7 +1438,7 @@ if (m_nShowSelectionCandidates > 1) {
 if (m_nShowSelectionCandidates > 0) {
 	Renderer ().BeginRender ();
 	if (m_nRenderer)
-		glDisable (GL_LINE_STIPPLE);
+		glDepthFunc (GL_ALWAYS);
 	nSegment = -1;
 	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 		if (nSegment == sideP->GetParent ())
