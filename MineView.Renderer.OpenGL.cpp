@@ -527,6 +527,7 @@ for (int i = 0; i < 3; i++) {
 	}
 shaderManager.Deploy (-1);
 glDisable (GL_DEPTH_TEST);
+glDisable (GL_LINE_STIPPLE);
 if (bSwapBuffers) {
 #if USE_RTT
 	m_renderBuffers.Disable ();
