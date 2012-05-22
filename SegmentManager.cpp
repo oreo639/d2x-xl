@@ -328,7 +328,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = Segment (nSegment);
 	if ((segP->Function () == SEGMENT_FUNC_SKYBOX) && !bAllowSkyBox)
 		continue;
-	if (segP->IsSelected (viewport, xMouse, yMouse))
+	if (segP->IsSelected (viewport, xMouse, yMouse, true))
 #pragma omp critical
 		{
 		segP->Link (m_selectedSegments);

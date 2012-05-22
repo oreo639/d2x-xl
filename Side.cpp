@@ -431,7 +431,7 @@ return d;
 
 //--------------------------------------------------------------------------
 
-short CSide::IsSelected (CRect& viewport, long xMouse, long yMouse, ushort vertexIds [], bool bSegments) 
+short CSide::IsSelected (CRect& viewport, long xMouse, long yMouse, ushort vertexIds []) 
 {
 if (Shape () > SIDE_SHAPE_TRIANGLE)
 	return 0;
