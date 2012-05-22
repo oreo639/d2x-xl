@@ -55,6 +55,26 @@ m_data [0].m_transformation [1] = m_data [0].m_transformation [0].Inverse ();
 
 //--------------------------------------------------------------------------
 
+void CViewMatrix::Stuff (CDoubleVector fVec, CDoubleVector uVec, CDoubleVector rVec) 
+{
+m_data [0].m_transformation [0].m.fVec = fVec;
+m_data [0].m_transformation [0].m.uVec = uVec;
+m_data [0].m_transformation [0].m.rVec = rVec;
+m_data [0].m_transformation [1] = m_data [0].m_transformation [0].Inverse ();
+Rotation ().Clear ();
+}
+
+//--------------------------------------------------------------------------
+
+void CViewMatrix::Stuff (CDoubleMatrix& m) 
+{
+m_data [0].m_transformation [0] = m;
+m_data [0].m_transformation [1] = m.Inverse ();
+Rotation ().Clear ();
+}
+
+//--------------------------------------------------------------------------
+
 void CViewMatrix::ClampAngle (int i)
 {
 if (m_data [0].m_rotate [i] < 0)
