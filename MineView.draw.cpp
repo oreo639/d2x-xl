@@ -1239,7 +1239,6 @@ CSide* nearestSide = null;
 
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
-	segP->ComputeCenter (sideP);
 	CVertex& center = sideP->Center ();
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 #if 0

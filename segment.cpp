@@ -1132,6 +1132,7 @@ for (; nSide < 6; nSide++, sideP++) {
 	if (!sideP->IsSelected (viewport, xMouse, yMouse, m_info.vertexIds))
 		continue;
 	if (!bSegments) {
+		ComputeCenter (nSide);
 		CVertex& center = sideP->Center ();
 		if (!sideP->IsVisible ()) {
 			sideP->ComputeNormals (m_info.vertexIds, Center ());
