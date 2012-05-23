@@ -410,10 +410,12 @@ void CRendererGL::SetCenter (CVertex v, int nType)
 Translation ().v.x = v.v.x;
 Translation ().v.y = v.v.y;
 #	else
-if (Perspective ())
-	Translation () = -v;
+if (Perspective ()) {
+	Translation () = v;
+	m_viewMatrix.Translation () = v;
+	}
 else {
-	m_viewMatrix.Origin () = -v;
+	m_viewMatrix.Origin () = v;
 	Translation ().v.x = 
 	Translation ().v.y = 0.0;
 	ComputeZoom ();

@@ -306,7 +306,7 @@ if (Perspective ()) {
 	segP->ComputeCenter (nSide);
 	r.m.uVec = Normal (sideP->Center (), r.m.fVec, r.m.rVec);
 	//r.m.uVec.Negate ();
-#ifdef NDEBUG
+#if 1//def NDEBUG
 	ViewMatrix ()->Stuff (r);
 #else
 	Rotation () = r.Angles ();
