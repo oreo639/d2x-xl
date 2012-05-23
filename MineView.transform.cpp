@@ -283,6 +283,7 @@ void CMineView::CenterOnSegment (void)
 {
 CHECKMINE;
 
+current->Segment ()->ComputeCenter ();
 SetCenter (current->Segment ()->Center (), 1);
 Refresh (false);
 }
@@ -305,16 +306,19 @@ if (Perspective ()) {
 	segP->ComputeCenter (nSide);
 	r.m.uVec = Normal (sideP->Center (), r.m.fVec, r.m.rVec);
 	//r.m.uVec.Negate ();
-#if 0
+#ifdef NDEBUG
 	ViewMatrix ()->Stuff (r);
 #else
 	Rotation () = r.Angles ();
-	//ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
-	ViewMatrix ()->Transformation ().Clear ();
+#	if 1
+	ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
+#	else
 	ViewMatrix ()->Rotation ().Clear ();
-	ViewMatrix ()->Rotate ('X', Rotation ().v.x);
-	ViewMatrix ()->Rotate ('Y', Rotation ().v.y);
+	ViewMatrix ()->Setup (Translation (), Scale (), ViewMatrix ()->Rotation ());
 	ViewMatrix ()->Rotate ('Z', Rotation ().v.z);
+	ViewMatrix ()->Rotate ('Y', Rotation ().v.y);
+	ViewMatrix ()->Rotate ('X', Rotation ().v.x);
+#	endif
 #endif
 	SetCenter (segP->Center (), 1);
 	Invalidate (FALSE);

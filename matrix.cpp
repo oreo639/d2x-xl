@@ -428,8 +428,9 @@ s.Set (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 1.0);
 CDoubleVector CDoubleMatrix::Angles (void)
 {
 	CDoubleVector a;
+	CDoubleMatrix id;
 
-a.v.y = asin (-m.rVec.v.z);
+a.v.y = -asin (m.rVec.v.z);
 double cosY = cos (a.v.y);
 if (fabs (cosY) > 1e-10) { // gimbal lock?
 	a.v.x = atan2 (-m.uVec.v.z / cosY, m.fVec.v.z / cosY);
@@ -439,6 +440,9 @@ else {
 	a.v.x = 0.0;
 	a.v.z = atan2 (m.uVec.v.x, m.uVec.v.y);
 	}
+double dot = Dot (m.rVec, id.m.rVec);
+if (dot < 0.0)
+	a.v.z = -a.v.z;
 return a;
 }
 
