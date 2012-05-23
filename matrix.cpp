@@ -427,27 +427,19 @@ s.Set (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 1.0);
 
 CDoubleVector CDoubleMatrix::Angles (void)
 {
-#if 0
-return CDoubleVector (atan2 (m.fVec.v.y, m.fVec.v.z), atan2 (-m.fVec.v.x, sqrt (m.fVec.v.y * m.fVec.v.y + m.fVec.v.z * m.fVec.v.z)), atan2 (m.uVec.v.z, m.rVec.v.z));
-#else
-	CDoubleVector	a;
+	CDoubleVector a;
 
-a.v.y = ((m.rVec.v.x == 0.0) && (m.rVec.v.z == 0.0)) ? 0.0 : atan2 (m.rVec.v.z, m.rVec.v.x);
-double sinh = sin (a.v.y);
-double cosh = cos (a.v.y);
-double cosp = (fabs (sinh) > fabs (cosh)) ? m.rVec.v.x / sinh : m.rVec.v.z / cosh;
-a.v.x = ((cosp == 0.0) && (m.rVec.v.y == 0.0)) ? 0.0 : atan2 (cosp, -m.rVec.v.y);
-if (cosp == 0.0)	
-	a.v.z = 0.0;
+a.v.y = asin (-m.rVec.v.z);
+double cosY = cos (a.v.y);
+if (fabs (cosY) > 1e-10) { // gimbal lock?
+	a.v.x = atan2 (-m.uVec.v.z / cosY, m.fVec.v.z / cosY);
+	a.v.z = atan2 (-m.rVec.v.y / cosY, m.rVec.v.x / cosY);
+	}
 else {
-	double sinb, cosb;
-
-	sinb = m.fVec.v.y / cosp;
-	cosb = m.uVec.v.y / cosp;
-	a.v.z = ((sinb == 0.0) && (cosb == 0.0)) ? 0.0 : atan2 (cosb, sinb);
+	a.v.x = 0.0;
+	a.v.z = atan2 (m.uVec.v.x, m.uVec.v.y);
 	}
 return a;
-#endif
 }
 
 // -----------------------------------------------------------------------------

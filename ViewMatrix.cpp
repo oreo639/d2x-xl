@@ -31,22 +31,33 @@ m_viewHeight = viewHeight / 2;
 }
 
 //--------------------------------------------------------------------------
+// M = Rz * Ry * Rx
 
 void CViewMatrix::Setup (CDoubleVector vTranslate, CDoubleVector vScale, CDoubleVector vRotate)
 {
 CDoubleVector sinSpin (sin (vRotate.v.x), sin (vRotate.v.y), sin (vRotate.v.z));
 CDoubleVector cosSpin (cos (vRotate.v.x), cos (vRotate.v.y), cos (vRotate.v.z));
-
+#if 0
+m_data [0].m_transformation [0].Set (cy * cz, 
+												 cy * sz, 
+												 -sy,
+												 sx * sy * cz - cx * sz,
+												 sx * sy * sz + cx * cz,
+												 sx * cy,
+												 cx * sy * cz - sx * sz,
+												 cx * sy * sz - sx * cz,
+												 cx * cy);
+#else
 m_data [0].m_transformation [0].Set (vScale.v.x * cosSpin.v.z * cosSpin.v.y, 
 												 vScale.v.y * sinSpin.v.z * cosSpin.v.y, 
-												 -vScale.v.z * sinSpin.v.y,
-												 -vScale.v.x * sinSpin.v.z * cosSpin.v.x + vScale.v.x * cosSpin.v.z * sinSpin.v.y * sinSpin.v.x,
+												 vScale.v.z * -sinSpin.v.y,
+												 vScale.v.x * -sinSpin.v.z * cosSpin.v.x + vScale.v.x * cosSpin.v.z * sinSpin.v.y * sinSpin.v.x,
 												 vScale.v.y * sinSpin.v.z * sinSpin.v.y * sinSpin.v.x + vScale.v.y * cosSpin.v.z * cosSpin.v.x,
 												 vScale.v.z * cosSpin.v.y * sinSpin.v.x,
 												 vScale.v.x * cosSpin.v.z * sinSpin.v.y * cosSpin.v.x - vScale.v.x * sinSpin.v.z * sinSpin.v.x,
 												 vScale.v.y * sinSpin.v.z * sinSpin.v.y * cosSpin.v.x - vScale.v.y * cosSpin.v.z * sinSpin.v.x,
 												 vScale.v.z * cosSpin.v.y * cosSpin.v.x);
-
+#endif
 m_data [0].m_translate = vTranslate;
 m_data [0].m_scale = vScale;
 m_data [0].m_rotate = vRotate;
@@ -163,7 +174,7 @@ if (angle) {
 		double cosa = (double) cos (angle);
 		double sina = (double) sin (angle);
 		CDoubleMatrix m, r;
-		switch(axis) {
+		switch (axis) {
 			default:
 			case 'X':
 				RotateAngle (0, angle);
@@ -296,6 +307,13 @@ CViewMatrix::Setup (vTranslate, vScale, vRotate);
 CDoubleVector sinSpin (sin (vRotate.v.x), sin (vRotate.v.y), sin (vRotate.v.z));
 CDoubleVector cosSpin (cos (vRotate.v.x), cos (vRotate.v.y), cos (vRotate.v.z));
 
+CDoubleMatrix rX (1.0, 0.0, 0.0, 0.0, cosSpin.v.x, sinSpin.v.x, 0.0, -sinSpin.v.x, cosSpin.v.x);
+CDoubleMatrix rY (cosSpin.v.y, 0.0, -sinSpin.v.y, 0.0, 1.0, 0.0, sinSpin.v.y, 0.0, cosSpin.v.y);
+CDoubleMatrix rZ (cosSpin.v.z, sinSpin.v.z, 0.0, -sinSpin.v.z, cosSpin.v.z, 0.0, 0.0, 0.0, 1.0);
+rX.Mul (rY);
+rX.Mul (rZ);
+
+#if 0
 m_data [0].m_transformation [0].Set (cosSpin.v.z * cosSpin.v.y, 
 												 sinSpin.v.z * cosSpin.v.y, 
 												 -sinSpin.v.y,
@@ -305,7 +323,17 @@ m_data [0].m_transformation [0].Set (cosSpin.v.z * cosSpin.v.y,
 												 cosSpin.v.z * sinSpin.v.y * cosSpin.v.x - sinSpin.v.z * sinSpin.v.x,
 												 sinSpin.v.z * sinSpin.v.y * cosSpin.v.x - cosSpin.v.z * sinSpin.v.x,
 												 cosSpin.v.y * cosSpin.v.x);
-
+#else
+m_data [0].m_transformation [0].Set (vScale.v.x * cosSpin.v.z * cosSpin.v.y, 
+												 vScale.v.y * sinSpin.v.z * cosSpin.v.y, 
+												 vScale.v.z * -sinSpin.v.y,
+												 vScale.v.x * -sinSpin.v.z * cosSpin.v.x + vScale.v.x * cosSpin.v.z * sinSpin.v.y * sinSpin.v.x,
+												 vScale.v.y * sinSpin.v.z * sinSpin.v.y * sinSpin.v.x + vScale.v.y * cosSpin.v.z * cosSpin.v.x,
+												 vScale.v.z * cosSpin.v.y * sinSpin.v.x,
+												 vScale.v.x * cosSpin.v.z * sinSpin.v.y * cosSpin.v.x - vScale.v.x * sinSpin.v.z * sinSpin.v.x,
+												 vScale.v.y * sinSpin.v.z * sinSpin.v.y * cosSpin.v.x - vScale.v.y * cosSpin.v.z * sinSpin.v.x,
+												 vScale.v.z * cosSpin.v.y * cosSpin.v.x);
+#endif
 m_data [0].m_translate = vTranslate;
 m_data [0].m_scale = vScale;
 m_data [0].m_rotate = vRotate;

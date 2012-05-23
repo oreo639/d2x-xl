@@ -141,7 +141,7 @@ Normalize ();
 
 // -----------------------------------------------------------------------------
 
-CDoubleMatrix CQuaternion::GetMatrix (void)
+CDoubleMatrix CQuaternion::ToMatrix (void)
 {
 double x2 = x * x;
 double y2 = y * y;
@@ -163,7 +163,7 @@ return CDoubleMatrix (1.0 - 2.0 * (y2 + z2), 2.0 * (xy + wz), 2.0 * (xz - wy),
 
 // -----------------------------------------------------------------------------
 
-void CQuaternion::GetAxisAngle (CDoubleVector& axis, double& angle)
+void CQuaternion::ToAxisAngle (CDoubleVector& axis, double& angle)
 {
 double scale = sqrt (x * x + y * y + z * z);
 axis.v.x = x / scale;

@@ -22,8 +22,8 @@ class CQuaternion {
 	void FromAxis (const CDoubleVector &v, double angle);
 	void FromEuler (double pitch, double yaw, double roll);
 	void FromMatrix (CDoubleMatrix& m);
-	CDoubleMatrix GetMatrix (void);
-	void GetAxisAngle (CDoubleVector& axis, double& angle);
+	CDoubleMatrix ToMatrix (void);
+	void ToAxisAngle (CDoubleVector& axis, double& angle);
 	};
 
 #endif //__Quaternion_h

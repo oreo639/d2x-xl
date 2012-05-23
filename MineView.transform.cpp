@@ -304,14 +304,19 @@ if (Perspective ()) {
 	r.m.rVec.Normalize ();
 	segP->ComputeCenter (nSide);
 	r.m.uVec = Normal (sideP->Center (), r.m.fVec, r.m.rVec);
-	r.m.uVec.Negate ();
-#if 1
+	//r.m.uVec.Negate ();
+#if 0
 	ViewMatrix ()->Stuff (r);
-	SetCenter (segP->Center (), 1);
 #else
 	Rotation () = r.Angles ();
-	ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
+	//ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
+	ViewMatrix ()->Transformation ().Clear ();
+	ViewMatrix ()->Rotation ().Clear ();
+	ViewMatrix ()->Rotate ('X', Rotation ().v.x);
+	ViewMatrix ()->Rotate ('Y', Rotation ().v.y);
+	ViewMatrix ()->Rotate ('Z', Rotation ().v.z);
 #endif
+	SetCenter (segP->Center (), 1);
 	Invalidate (FALSE);
 	}
 }
