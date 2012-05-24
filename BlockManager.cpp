@@ -569,7 +569,7 @@ if (filename && *filename) {
 	if (strcmp (filename, "dle_temp.blx"))
 		strcpy_s (szFile, sizeof (szFile), filename);
 	else
-		sprintf (filename, "%sdle_temp.blx", DLE.AppFolder ());
+		sprintf (szFile, "%sdle_temp.blx", DLE.AppFolder ());
 	}
 else {
 	szFile [0] = '\0';
