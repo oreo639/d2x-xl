@@ -378,7 +378,9 @@ class CSegmentManager {
 	
 		inline CSide* SelectedSides (void) { return m_selectedSides; }
 	
-		void CSegmentManager::GatherEdges (void);
+		void CSegmentManager::GatherEdges (CAVLTree <CEdgeTreeNode, uint>& edgeTree);
+
+		uint CSegmentManager::VisibleSideCount (void);
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);

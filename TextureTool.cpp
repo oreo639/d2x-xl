@@ -16,6 +16,8 @@
 #include "texedit.h"
 #include "FileManager.h"
 #include "TextureManager.h"
+#include "AVLTree.h"
+#include "SLL.h"
 
 #include <math.h>
 
@@ -916,21 +918,43 @@ CHECKMINE;
 UpdateData (TRUE);
 vertexManager.UnTagAll ();
 
-CPlaneSide segList [SEGMENT_LIMIT];
+CDynamicArray<CSideKey> sideList;
+sideList.Create (segmentManager.VisibleSideCount ());
+
 int nHead = 0;
 int nTail = 1;
-segList [nHead] = current->Segment ();
+sideList [nHead] = CSideKey (*current);
+
+
+CAVLTree <CEdgeTreeNode, uint>& edgeTree;
+CEdgeList edgeList;
 
 while (nHead < nTail) {
-	CSegment* segP = segList [nHead++];
-
-current->Segment ()->ComputeNormals (current->m_nSide);
-CSegment* segP = current->Segment ();
-for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) {
-	segP->ComputeNormals (-1);
-	for (short nSide = 0; nSide < 6; nSide++) {
-		if (fabs (Dot (segP->Side (nSide)->Normal (), parentSide ()->Normal)) < 0.3)
-			segP->Tag (nSide);
+	CSideKey key = sideList [nHead++];
+	CSegment* segP = segmentManager.Segment (key);
+	CSide* sideP = segmentManager.Side (key);
+	segP->ComputeNormals (key.m_nSide);
+	edgeList.Reset ();
+	int nEdges = segP->BuildEdgeList (edgeList, key.m_nSide, true);
+	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
+		ubyte side1, side2, i1, i2;
+		edgeList.Get (nEdge, side1, side2, i1, i2);
+		ushort v1 = segP->VertexId (side1, i1);
+		ushort v2 = segP->VertexId (side1, i2);
+		CEdgeTreeNode* node = edgeTree.Find ((v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16));
+		if (!node)
+			continue;
+		CSLLIterator<CSideKey, CSideKey>* iter = new CSLLIterator<CSideKey, CSideKey> (node->m_sides);
+		for (CSideKey* keyP = iter->Begin (); keyP != iter->End (); (*iter)++) {
+			CSegment* childSegP = segmentManager.Segment (*keyP);
+			if (!childSegP->IsTagged (keyP->m_nSide)) {
+				CSide* childSideP = segmentManager.Side (*keyP);
+				childSegP->ComputeNormals (keyP->m_nSegment);
+				if (fabs (Dot (sideP->Normal (), childSideP->Normal ())) < 0.3)
+					childSegP->Tag (keyP->m_nSide);
+				sideList [nTail++] = *keyP;
+				}
+			}
 		}
 	}
 

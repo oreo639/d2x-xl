@@ -1035,28 +1035,35 @@ for (int i = 0; i < 6; i++, sideP++) {
 
 // -----------------------------------------------------------------------------
 
-int CSegment::BuildEdgeList (CEdgeList& edgeList, bool bSparse)
+int CSegment::BuildEdgeList (CEdgeList& edgeList, ubyte nSide, bool bSparse)
 {
-	CSide*		sideP = Side (0);
+	CSide* sideP = Side (nSide);
 
-edgeList.Reset ();
-for (ubyte nSide = 0; nSide < 6; nSide++, sideP++) {
-	if (bSparse && !sideP->IsVisible ())
-		continue; // only gather edges that are not shared with another segment
-	short nVertices = sideP->VertexCount ();
-	if (nVertices < 2)
-		continue;
-	if (nVertices == 2)
-		edgeList.Add (nSide, sideP->VertexIdIndex (0), sideP->VertexIdIndex (1));
-	else {
-		ubyte v1, v2 = sideP->VertexIdIndex (0);
-		for (short nVertex = 1; nVertex <= nVertices; nVertex++) {
-			v1 = v2;
-			v2 = sideP->VertexIdIndex (nVertex);
-			edgeList.Add (nSide, v1, v2);
-			}
+if (bSparse && !sideP->IsVisible ())
+	return 0; // only gather edges that are not shared with another segment
+short nVertices = sideP->VertexCount ();
+if (nVertices < 2)
+	return 0;
+if (nVertices == 2)
+	edgeList.Add (nSide, sideP->VertexIdIndex (0), sideP->VertexIdIndex (1));
+else {
+	ubyte v1, v2 = sideP->VertexIdIndex (0);
+	for (short nVertex = 1; nVertex <= nVertices; nVertex++) {
+		v1 = v2;
+		v2 = sideP->VertexIdIndex (nVertex);
+		edgeList.Add (nSide, v1, v2);
 		}
 	}
+return 1;
+}
+
+// -----------------------------------------------------------------------------
+
+int CSegment::BuildEdgeList (CEdgeList& edgeList, bool bSparse)
+{
+edgeList.Reset ();
+for (ubyte nSide = 0; nSide < 6; nSide++) 
+	BuildEdgeList (edgeList, nSide, bSparse);
 return edgeList.Count ();
 }
 

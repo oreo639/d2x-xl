@@ -386,13 +386,17 @@ return m_selectedSides;
 }
 
 // -----------------------------------------------------------------------------
+// Collect all edges that belong to at least one "visible" side (i.e. a side
+// with no connected segment or a visible, textured wall) and create a list 
+// of all visible sides that are connect to each such edge. The edge key is 
+// created out of the ids of the two vertices defining the edge: smaller vertex
+// id in low word, greater vertex id in high word of a uint. 
 
-void CSegmentManager::GatherEdges (void)
+void CSegmentManager::GatherEdges (CAVLTree <CEdgeTreeNode, uint>& edgeTree)
 {
 	CEdgeList	edgeList;
 	CSegment*	segP = Segment (0);
 	short			nSegments = Count ();
-	CAVLTree <CEdgeTreeNode, uint> edgeTree;
 
 for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 	int nEdges = segP->BuildEdgeList (edgeList, true);
@@ -405,11 +409,28 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 		CEdgeTreeNode node (key);
 		CEdgeTreeNode*nodeP = edgeTree.Insert (node, key);
 		if (nodeP) { // insert sides into side list of current edge
-			nodeP->Insert (nSegment, side1);
-			nodeP->Insert (nSegment, side2);
+			if (segP->Side (side1)->IsVisible ())
+				nodeP->Insert (nSegment, side1);
+			if (segP->Side (side2)->IsVisible ())
+				nodeP->Insert (nSegment, side2);
 			}
 		}
 	}
+}
+
+// -----------------------------------------------------------------------------
+
+uint CSegmentManager::VisibleSideCount (void)
+{
+	CSegment*	segP = Segment (0);
+	short			nSegments = Count ();
+	uint			nSides = 0;
+
+for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++)
+	for (short nSide = 0; nSide < 6; nSide++)
+		if (segP->Side (nSide)->IsVisible ())
+			nSides++;
+return nSides;
 }
 
 // -----------------------------------------------------------------------------

@@ -274,6 +274,8 @@ public:
 
 	inline CVertex& Center (void) { return m_vCenter; }
 
+	int BuildEdgeList (CEdgeList& edgeList, ubyte nSide, bool bSparse = false);
+
 	int BuildEdgeList (CEdgeList& edgeList, bool bSparse = false);
 
 	void CreateOppVertexIndex (short nSide, ubyte* oppVertexIndex);
