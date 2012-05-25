@@ -60,7 +60,7 @@ class CAVLTree {
 
 		private: _T* Add (CNode<_T>** node)
 		{
-		if (!(m_current = new <_T>))
+		if (!(m_current = new CNode<_T>))
 			return null;
 		*node = m_current;
 		m_current->m_data = m_data;
@@ -73,9 +73,10 @@ class CAVLTree {
 		private: void BalanceLeftGrowth (CNode<_T>* p)
 		{
 		if (m_changed) {
+			CNode<_T>* p1, * p2;
 			switch (p->m_balance) {
 				case AVL_UNDERFLOW:
-					CNode<_T>* p1 = p->m_left;
+					p1 = p->m_left;
 					if (p1->m_balance == AVL_UNDERFLOW) { // simle LL rotation
 						p->m_left = p1->m_right;
 						p1->m_right = p;
@@ -83,7 +84,7 @@ class CAVLTree {
 						p = p1;
 						}
 					else { // double LR rotation
-	               CNode<_T>* p2 = p1->m_right;
+	               p2 = p1->m_right;
 		            p1->m_right = p2->m_left;
 			         p2->m_left = p1;
 						p->m_left = p2->m_right;
@@ -113,6 +114,7 @@ class CAVLTree {
 		private: void BalanceRightGrowth (CNode<_T>* p)
 		{
 		if (m_changed) {
+			CNode<_T>* p1, * p2;
 			switch (p->m_balance) {
 				case AVL_UNDERFLOW:
 					p->m_balance = AVL_BALANCED;
@@ -124,7 +126,7 @@ class CAVLTree {
 					break;
    
 				case AVL_OVERFLOW:
-					CNode<_T>* p1 = p->m_right;
+					p1 = p->m_right;
 					if (p1->m_balance == AVL_OVERFLOW) { // simple RR rotation
 						p->m_right = p1->m_left;
 						p1->m_left = p;
@@ -132,7 +134,7 @@ class CAVLTree {
 						p = p1;
 						}
 					else { // double RL rotation
-						CNode<_T>* p2 = p1->m_left;
+						p2 = p1->m_left;
 						p1->m_left = p2->m_right;
 						p2->m_right = p1;
 						p->m_right = p2->m_left;
@@ -156,15 +158,15 @@ class CAVLTree {
 		if (!p) 
 			return Add (node);
 
-		if (p->m_data > key) {
-			if (Insert (a, &p->m_left))
+		if (p->m_data > m_key) {
+			if (Insert (&p->m_left))
 				return null;
 			BalanceLeftGrowth (p);
 			}
-		else if (p->m_data < key) {
+		else if (p->m_data < m_key) {
 			if (Insert (&p->m_right))
 				return null;
-			BalanceRightGrowth ();
+			BalanceRightGrowth (p);
 			}
 		else {
 			m_duplicate = true;
