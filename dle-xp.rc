@@ -254,8 +254,8 @@ BEGIN
     PUSHBUTTON      "&edit...",IDC_TEXTURE_EDIT,86,9,54,10,WS_GROUP
     PUSHBUTTON      "&copy",IDC_TEXTURE_COPY,86,19,54,10,WS_GROUP
     PUSHBUTTON      "&paste",IDC_TEXTURE_PASTESIDE,86,41,54,10
-    PUSHBUTTON      "paste &marked",IDC_TEXTURE_PASTEMARKED,86,51,54,10
-    PUSHBUTTON      "paste &touching",IDC_TEXTURE_PASTETOUCHING,86,61,54,10
+    PUSHBUTTON      "paste &touching",IDC_TEXTURE_PASTETOUCHING,86,51,54,10
+    PUSHBUTTON      "&mark plane",IDC_TEXTURE_MARK_PLANE,86,61,54,10
     PUSHBUTTON      "&replace",IDC_TEXTURE_REPLACE,86,70,54,10
     PUSHBUTTON      "clean&up",IDC_TEXTURE_CLEANUP,86,80,54,10
     CONTROL         "",IDC_TEXTURE_BRIGHTSLIDER,"msctls_trackbar32",TBS_AUTOTICKS | TBS_TOP | WS_TABSTOP,37,113,72,14
@@ -1214,8 +1214,8 @@ BEGIN
     PUSHBUTTON      "&edit...",IDC_TEXTURE_EDIT,101,12,54,10,WS_GROUP
     PUSHBUTTON      "&copy",IDC_TEXTURE_COPY,101,23,54,10,WS_GROUP
     PUSHBUTTON      "&paste",IDC_TEXTURE_PASTESIDE,101,48,54,10
-    PUSHBUTTON      "paste &marked",IDC_TEXTURE_PASTEMARKED,101,58,54,10
-    PUSHBUTTON      "paste &touching",IDC_TEXTURE_PASTETOUCHING,101,68,54,10
+    PUSHBUTTON      "paste &touching",IDC_TEXTURE_PASTETOUCHING,101,58,54,10
+    PUSHBUTTON      "&mark plane",IDC_TEXTURE_MARK_PLANE,101,68,54,10
     PUSHBUTTON      "&replace",IDC_TEXTURE_REPLACE,101,78,54,10
     PUSHBUTTON      "clean&up",IDC_TEXTURE_CLEANUP,101,88,54,10
     CONTROL         "use 1st",IDC_TEXTURE_PASTE1ST,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,115,104,36,8
@@ -2417,8 +2417,8 @@ BEGIN
     PUSHBUTTON      "&edit...",IDC_TEXTURE_EDIT,86,9,54,10,WS_GROUP
     PUSHBUTTON      "&copy",IDC_TEXTURE_COPY,86,19,54,10,WS_GROUP
     PUSHBUTTON      "&paste",IDC_TEXTURE_PASTESIDE,86,41,54,10
-    PUSHBUTTON      "paste &marked",IDC_TEXTURE_PASTEMARKED,86,51,54,10
-    PUSHBUTTON      "paste &touching",IDC_TEXTURE_PASTETOUCHING,86,61,54,10
+    PUSHBUTTON      "paste &touching",IDC_TEXTURE_PASTETOUCHING,86,51,54,10
+    PUSHBUTTON      "&mark plane",IDC_TEXTURE_MARK_PLANE,86,61,54,10
     PUSHBUTTON      "&replace",IDC_TEXTURE_REPLACE,86,70,54,10
     PUSHBUTTON      "clean&up",IDC_TEXTURE_CLEANUP,86,80,54,10
     CONTROL         "",IDC_TEXTURE_BRIGHTSLIDER,"msctls_trackbar32",TBS_AUTOTICKS | TBS_TOP | WS_TABSTOP,37,113,72,16
@@ -6374,8 +6374,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,11,46,0
- PRODUCTVERSION 1,11,46,0
+ FILEVERSION 1,11,47,0
+ PRODUCTVERSION 1,11,47,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6391,13 +6391,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor [24 may 2012]"
-            VALUE "FileVersion", "1.11.46.0"
+            VALUE "FileDescription", "Descent Level Editor [25 may 2012]"
+            VALUE "FileVersion", "1.11.47.0"
             VALUE "InternalName", "DLE"
             VALUE "LegalCopyright", "Copyright (C) Bryan Aamot, Dietfrid Mali"
             VALUE "OriginalFilename", "DLE.EXE"
             VALUE "ProductName", "Descent Level Editor"
-            VALUE "ProductVersion", "1.11.46.0"
+            VALUE "ProductVersion", "1.11.47.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6424,7 +6424,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor 1.11.46\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor 1.11.47\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

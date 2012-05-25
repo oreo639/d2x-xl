@@ -236,7 +236,7 @@
 #define IDC_TEXTURE_REPLACE             10307
 #define IDC_TEXTURE_COPY                10308
 #define IDC_TEXTURE_PASTESIDE           10309
-#define IDC_TEXTURE_PASTEMARKED         10310
+#define IDC_TEXTURE_MARK_PLANE         10310
 #define IDC_TEXTURE_PASTETOUCHING       10311
 #define IDC_TEXTURE_PASTE1ST            10312
 #define IDC_TEXTURE_PASTE2ND            10313

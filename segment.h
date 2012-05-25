@@ -186,6 +186,8 @@ public:
 
 	CVertex _const_ * CSegment::Vertex (ushort nSide, short nIndex) _const_;
 
+	inline ushort* VertexIds (void) { return m_info.vertexIds; }
+
 	inline ushort VertexId (short i) { return m_info.vertexIds [i]; }
 
 	inline ubyte VertexIdIndex (short nSide, short nPoint) { return m_sides [nSide].VertexIdIndex (ubyte (nPoint)); }
@@ -231,6 +233,10 @@ public:
 	inline void Unmark (ubyte mask = MARKED_MASK) { m_info.flags &= ~mask; }
 
 	inline bool IsMarked (ubyte mask = MARKED_MASK) { return (m_info.flags & mask) != 0; }
+
+	void Mark (short nSide, ubyte mask = MARKED_MASK) { m_info.flags |= mask; }
+
+	void Unmark (short nSide, ubyte mask = MARKED_MASK) { m_info.flags &= ~mask; }
 
 	inline bool IsMarked (short nSide, ubyte mask = MARKED_MASK);
 

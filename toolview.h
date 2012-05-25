@@ -1433,7 +1433,7 @@ class CTextureTool : public CTexToolDlg
 		afx_msg void OnEditTexture ();
 		afx_msg void OnPasteSide ();
 		afx_msg void OnPasteTouching ();
-		afx_msg void OnPasteMarked ();
+		afx_msg void OnMarkInPlane ();
 		afx_msg void OnReplace ();
 		afx_msg void OnSetLight ();
 		afx_msg void OnSelect1st ();

@@ -890,7 +890,23 @@ else {
 
 // -----------------------------------------------------------------------------
 
-inline bool CSegment::IsMarked (short nSide, ubyte mask = MARKED_MASK)
+void CSegment::Mark (short nSide, ubyte mask = MARKED_MASK)
+{
+for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
+	Vertex (i, nSide)->Mark (mask);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::Unmark (short nSide, ubyte mask = MARKED_MASK)
+{
+for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
+	Vertex (i, nSide)->Mark (mask);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CSegment::IsMarked (short nSide, ubyte mask = MARKED_MASK)
 {
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 	if (!Vertex (i, nSide)->IsMarked (mask))

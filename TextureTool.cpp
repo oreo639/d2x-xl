@@ -41,7 +41,7 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TEXTURE_COPY, OnSaveTexture)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTESIDE, OnPasteSide)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTETOUCHING, OnPasteTouching)
-	ON_BN_CLICKED (IDC_TEXTURE_PASTEMARKED, OnPasteMarked)
+	ON_BN_CLICKED (IDC_TEXTURE_MARK_PLANE, OnMarkInPlane)
 	ON_BN_CLICKED (IDC_TEXTURE_REPLACE, OnReplace)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE1ST, OnPaste1st)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE2ND, OnPaste2nd)
@@ -901,37 +901,24 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnPasteMarked () 
+void CTextureTool::OnMarkInPlane () 
 {
 CHECKMINE;
 
 UpdateData (TRUE);
-if (!(m_bUse1st || m_bUse2nd))
-	return;
+vertexManager.UnmarkAll ();
 
-	short			nSegment,
-					nSide;
-	CSegment*	segP = segmentManager.Segment (0);
-	CSide*		sideP;
-	bool			bAll = !segmentManager.HaveMarkedSides ();
-
-if (bAll && (QueryMsg ("Paste texture to entire mine?") != IDYES))
-	return;
-undoManager.Begin (udSegments);
-if (bAll)
-	INFOMSG (" Pasting texture in entire mine.");
-for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
-	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
-		if (bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
-			if (segP->ChildId (nSide) == -1) {
-				segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
-				for (int i = 0; i < 4; i++)
-					sideP->m_info.uvls [i].l = m_saveUVLs [i].l;
-				}
-			}
+current->Segment ()->ComputeNormals (current->m_nSide);
+CDoubleVector vReference = current->Segment ()->Side ()->Normal ();
+CSegment* segP = segmentManager.Segment (0);
+for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) {
+	segP->ComputeNormals (-1);
+	for (short nSide = 0; nSide < 6; nSide++) {
+		if (fabs (Dot (segP->Side (nSide)->Normal (), vReference)) < 0.3)
+			segP->Mark (nSide);
 		}
 	}
-undoManager.End ();
+
 Refresh ();
 DLE.MineView ()->Refresh ();
 }

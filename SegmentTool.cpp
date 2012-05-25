@@ -526,7 +526,7 @@ undoManager.End ();
 void CSegmentTool::OnAddSegment () 
 {
 CHECKMINE;
-segmentManager.Create (*current));
+segmentManager.Create (*current);
 CSegment* segP = segmentManager.Segment (0);
 for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) 
 	for (short nSide = 0; nSide < 6; nSide++)
