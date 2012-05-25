@@ -236,7 +236,7 @@
 #define IDC_TEXTURE_REPLACE             10307
 #define IDC_TEXTURE_COPY                10308
 #define IDC_TEXTURE_PASTESIDE           10309
-#define IDC_TEXTURE_MARK_PLANE         10310
+#define IDC_TEXTURE_TAG_PLANE         10310
 #define IDC_TEXTURE_PASTETOUCHING       10311
 #define IDC_TEXTURE_PASTE1ST            10312
 #define IDC_TEXTURE_PASTE2ND            10313
@@ -274,7 +274,7 @@
 #define IDC_TEXALIGN_SHOWCHILDREN       10352
 #define IDC_TEXALIGN_STRETCH2FIT        10353
 #define IDC_TEXALIGN_RESET              10354
-#define IDC_TEXALIGN_RESETMARKED        10355
+#define IDC_TEXALIGN_RESET_TAGGED        10355
 #define IDC_TEXALIGN_CHILDALIGN         10356
 #define IDC_TEXALIGN_ALIGNALL           10357
 #define IDC_TEXALIGN_HFLIP              10358
@@ -358,7 +358,7 @@
 #define IDC_PREFS_VIEW_LIGHTS           10425
 #define IDC_PREFS_VIEW_SHADING          10426
 #define IDC_PREFS_VIEW_DELTALIGHTS      10427
-#define IDC_PREFS_VIEW_HIDEMARKED       10428
+#define IDC_PREFS_VIEW_HIDE_TAGGED       10428
 #define IDC_PREFS_VIEW_SKYBOX				 10429
 #define IDC_PREFS_VIEW_ALLTEXTURES		 10430
 #define IDC_PREFS_VIEW_ROBOTS			 	 10431
@@ -892,9 +892,9 @@
 #define ID_EDIT_QUICKPASTE              30802
 #define ID_EDIT_DELETEBLOCK             30803
 #define ID_EDIT_COPYOTHERCUBESTEXTURES  30804
-#define ID_EDIT_MARK                    30805
-#define ID_EDIT_MARKALL                 30806
-#define ID_EDIT_UNMARKALL               30807
+#define ID_EDIT_TAG                    30805
+#define ID_EDIT_TAGALL                 30806
+#define ID_EDIT_UNTAG_ALL               30807
 #define ID_VIEW_ZOOMIN                  30808
 #define ID_VIEW_ZOOMOUT                 30809
 #define ID_VIEW_FITTOVIEW               30810
@@ -913,7 +913,7 @@
 #define ID_VIEW_LIGHTS                  30823
 #define ID_VIEW_SHADING                 30824
 #define ID_VIEW_DELTALIGHTS             30825
-#define ID_VIEW_HIDEMARKED              30826
+#define ID_VIEW_HIDE_TAGGED             30826
 #define ID_VIEW_ALLTEXTURES             30827
 #define ID_VIEW_PAN_LEFT                30828
 #define ID_VIEW_PAN_RIGHT               30829

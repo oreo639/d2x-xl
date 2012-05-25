@@ -41,7 +41,7 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TEXTURE_COPY, OnSaveTexture)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTESIDE, OnPasteSide)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTETOUCHING, OnPasteTouching)
-	ON_BN_CLICKED (IDC_TEXTURE_MARK_PLANE, OnMarkPlane)
+	ON_BN_CLICKED (IDC_TEXTURE_TAG_PLANE, OnTagPlane)
 	ON_BN_CLICKED (IDC_TEXTURE_REPLACE, OnReplace)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE1ST, OnPaste1st)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE2ND, OnPaste2nd)
@@ -57,7 +57,7 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TEXALIGN_HSHRINK, OnHShrink)
 	ON_BN_CLICKED (IDC_TEXALIGN_VSHRINK, OnVShrink)
 	ON_BN_CLICKED (IDC_TEXALIGN_RESET, OnAlignReset)
-	ON_BN_CLICKED (IDC_TEXALIGN_RESETMARKED, OnAlignResetMarked)
+	ON_BN_CLICKED (IDC_TEXALIGN_RESET_TAGGED, OnAlignResetTagged)
 	ON_BN_CLICKED (IDC_TEXALIGN_STRETCH2FIT, OnAlignStretch2Fit)
 	ON_BN_CLICKED (IDC_TEXALIGN_CHILDALIGN, OnAlignChildren)
 	ON_BN_CLICKED (IDC_TEXALIGN_ALIGNALL, OnAlignAll)
@@ -215,7 +215,7 @@ m_btnRARight.AutoLoad (IDC_TEXALIGN_RARIGHT, this);
 
 m_btnStretch2Fit.AutoLoad (IDC_TEXALIGN_STRETCH2FIT, this);
 m_btnReset.AutoLoad (IDC_TEXALIGN_RESET, this);
-m_btnResetMarked.AutoLoad (IDC_TEXALIGN_RESETMARKED, this);
+m_btnResetTagged.AutoLoad (IDC_TEXALIGN_RESET_TAGGED, this);
 m_btnChildAlign.AutoLoad (IDC_TEXALIGN_CHILDALIGN, this);
 m_btnAlignAll.AutoLoad (IDC_TEXALIGN_ALIGNALL, this);
 m_btnAddLight.AutoLoad (IDC_TEXLIGHT_ADD, this);
@@ -235,7 +235,7 @@ m_btnRALeft.EnableToolTips (TRUE);
 m_btnRARight.EnableToolTips (TRUE);
 m_btnStretch2Fit.EnableToolTips (TRUE);
 m_btnReset.EnableToolTips (TRUE);
-m_btnResetMarked.EnableToolTips (TRUE);
+m_btnResetTagged.EnableToolTips (TRUE);
 m_btnChildAlign.EnableToolTips (TRUE);
 m_btnAlignAll.EnableToolTips (TRUE);
 m_btnAddLight.EnableToolTips (TRUE);
@@ -902,12 +902,12 @@ DLE.MineView ()->Refresh ();
 //------------------------------------------------------------------------------
 // TODO: Beginning with the current side, walk through all adjacent sides and 
 // mark all in plane
-void CTextureTool::OnMarkPlane () 
+void CTextureTool::OnTagPlane () 
 {
 CHECKMINE;
 
 UpdateData (TRUE);
-vertexManager.UnmarkAll ();
+vertexManager.UnTagAll ();
 
 current->Segment ()->ComputeNormals (current->m_nSide);
 CDoubleVector vReference = current->Segment ()->Side ()->Normal ();
@@ -916,7 +916,7 @@ for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegmen
 	segP->ComputeNormals (-1);
 	for (short nSide = 0; nSide < 6; nSide++) {
 		if (fabs (Dot (segP->Side (nSide)->Normal (), vReference)) < 0.3)
-			segP->Mark (nSide);
+			segP->Tag (nSide);
 		}
 	}
 
@@ -938,7 +938,7 @@ if (!(m_bUse1st || m_bUse2nd))
 					nSide;
 	CSegment*	segP = segmentManager.Segment (0);
 	CSide*		sideP;
-	bool			bAll = !segmentManager.HaveMarkedSides ();
+	bool			bAll = !segmentManager.HaveTaggedSides ();
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;
@@ -947,7 +947,7 @@ if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++)
-		if (bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
+		if (bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))) {
 			if (m_bUse1st && (sideP->BaseTex () != m_lastTexture [0]))
 				continue;
 			if (m_bUse2nd && ((sideP->OvlTex (0)) != m_lastTexture [1]))

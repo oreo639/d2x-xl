@@ -694,7 +694,7 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 }
 
 //------------------------------------------------------------------------
-// CObjectTool - Delete All (Marked) Triggers
+// CObjectTool - Delete All (taggd) Triggers
 //------------------------------------------------------------------------
 
 void CObjectTool::OnDeleteAll () 
@@ -705,10 +705,10 @@ CGameObject *objP = current->Object ();
 int nType = objP->Type ();
 int nId = objP->Id ();
 objP = objectManager.Object (0);
-bool bAll = (segmentManager.MarkedCount (true) == 0);
+bool bAll = (segmentManager.TaggedCount (true) == 0);
 int nDeleted = 0;
 for (int h = objectManager.Count (), i = 0; i < h; ) {
-	if ((objP->Type () == nType) && (objP->Id () == nId) && (bAll || segmentManager.Segment (objP->m_info.nSegment)->IsMarked ())) {
+	if ((objP->Type () == nType) && (objP->Id () == nId) && (bAll || segmentManager.Segment (objP->m_info.nSegment)->IsTagged ())) {
 		objectManager.Delete (i);
 		nDeleted++;
 		h--;

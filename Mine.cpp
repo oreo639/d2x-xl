@@ -282,11 +282,11 @@ void CMine::ClearMineData ()
 // initialize Segments ()
 CSegment *segP = segmentManager.Segment (0);
 for (i = 0; i < SEGMENT_LIMIT; i++, segP++)
-	segP->Unmark ();
+	segP->UnTag ();
 segmentManager.Count () = 0;
 // initialize vertices
 for (i = 0; i < MAX_VERTICES; i++) 
-	vertexManager.Status (i) &= ~MARKED_MASK;
+	vertexManager.Status (i) &= ~TAGGED_MASK;
 vertexManager.Count () = 0;
 lightManager.Count () = 0;
 // reset "howmany"

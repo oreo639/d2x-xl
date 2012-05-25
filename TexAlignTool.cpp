@@ -646,7 +646,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignResetMarked ()
+void CTextureTool::OnAlignResetTagged ()
 {	
 	short nWalls = wallManager.WallCount ();
 	BOOL bModified = FALSE;
@@ -660,7 +660,7 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE) 
 			continue;
-		if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
+		if (segmentManager.IsTagged (CSideKey (nSegment, nSide))) {
 			if ((segP->ChildId (nSide) == -1) || (segP->m_sides [nSide].m_info.nWall < nWalls)) {
 				segP->m_sides [nSide].m_info.nOvlTex &= TEXTURE_MASK; // rotate 0
 				segP->SetUV (nSide, 0.0, 0.0);
@@ -685,7 +685,7 @@ void CTextureTool::OnAlignStretch2Fit ()
 
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-if (!segmentManager.HaveMarkedSides ()) {
+if (!segmentManager.HaveTaggedSides ()) {
 	for (i = 0; i < sideP->VertexCount (); i++) {
 		sideP->m_info.uvls [i].u = defaultUVLs [i].u;
 		sideP->m_info.uvls [i].v = defaultUVLs [i].v;
@@ -694,7 +694,7 @@ if (!segmentManager.HaveMarkedSides ()) {
 else {
 	for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
-			if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
+			if (segmentManager.IsTagged (CSideKey (nSegment, nSide))) {
 				for (i = 0; i < sideP->VertexCount (); i++) {
 					sideP->m_info.uvls [i].u = defaultUVLs [i].u;
 					sideP->m_info.uvls [i].v = defaultUVLs [i].v;
@@ -710,7 +710,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::AlignChildren (short nSegment, short nSide, bool bStart, bool bMarked)
+void CTextureTool::AlignChildren (short nSegment, short nSide, bool bStart, bool bTagged)
 {
 static bool (*alignedSides) [6] = NULL;
 // set all segment sides as not aligned yet
@@ -723,8 +723,8 @@ if (bStart) {
 	CSegment* segP = segmentManager.Segment (0);
 	for (int i = 0; i < segmentManager.Count (); i++, segP++)
 		for (int j = 0; j < 6; j++)
-			// if we're aligning marked sides, consider unmarked already aligned
-			alignedSides [i][j] = (segP->Side (j)->Shape () > SIDE_SHAPE_TRIANGLE) || (bMarked && !segmentManager.IsMarked (CSideKey (i, j)));
+			// if we're aligning marked sides, consider untagged already aligned
+			alignedSides [i][j] = (segP->Side (j)->Shape () > SIDE_SHAPE_TRIANGLE) || (bTagged && !segmentManager.IsTagged (CSideKey (i, j)));
 	}
 // mark current side as aligned
 alignedSides [nSegment][nSide] = true;
@@ -748,7 +748,7 @@ void CTextureTool::OnAlignAll (void)
 
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-bool bAll = !segmentManager.HaveMarkedSegments ();
+bool bAll = !segmentManager.HaveTaggedSegments ();
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++)
 	 segP->Index () = 0;
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
@@ -761,7 +761,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.
 		continue;
 	if (m_bUse2nd && (sideP->OvlTex (0) != childSideP->OvlTex (0)))
 		continue;
-	if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
+	if (!(bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))))
 		continue;
 	if (nSegment != current->m_nSegment) {
 		segmentManager.Segment (nSegment)->SetUV (nSide, 0, 0);
@@ -787,19 +787,19 @@ void CTextureTool::OnAlignChildren ()
 // set all segment sides as not aligned yet
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-if (!segmentManager.HaveMarkedSegments ())
+if (!segmentManager.HaveTaggedSegments ())
 	// call recursive function which aligns one at a time
 	AlignChildren (current->m_nSegment, current->m_nSide, true, false);
 else {	// use all marked sides as alignment source
 	bool bStart = true;
-	if (current->Segment ()->IsMarked ()) {
+	if (current->Segment ()->IsTagged ()) {
 		AlignChildren (current->m_nSegment, current->m_nSide, true, true);
 		bStart = false;
 		}
 	CSegment* segP = segmentManager.Segment (0);
 	for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++, bStart = false)
 		for (short nSide = 0; nSide < 6; nSide++)
-			if ((segP->Side (nSide)->Shape () <= SIDE_SHAPE_TRIANGLE) && segmentManager.IsMarked (CSideKey (nSegment, nSide))) 
+			if ((segP->Side (nSide)->Shape () <= SIDE_SHAPE_TRIANGLE) && segmentManager.IsTagged (CSideKey (nSegment, nSide))) 
 				AlignChildren (nSegment, nSide, bStart, true);
 	}
 undoManager.End ();

@@ -88,9 +88,9 @@ undoManager.End ();
 
 void CVertexManager::DeleteUnused (void)
 {
-UnmarkAll (NEW_MASK);
+UnTagAll (NEW_MASK);
 // mark all used verts
-segmentManager.MarkAll (NEW_MASK);
+segmentManager.TagAll (NEW_MASK);
 undoManager.Begin (udVertices);
 for (CVertexIterator vi (-Count ()); vi; ) {
 	--vi;
@@ -139,7 +139,7 @@ for (int i = 0; i < j; i++)
 
 // ----------------------------------------------------------------------------- 
 
-void CVertexManager::MarkAll (ubyte mask)
+void CVertexManager::TagAll (ubyte mask)
 {
 CVertex* v = &m_vertices [0];
 for (int i = Count (); i; i--, v++)
@@ -148,7 +148,7 @@ for (int i = Count (); i; i--, v++)
 
 // ----------------------------------------------------------------------------- 
 
-void CVertexManager::UnmarkAll (ubyte mask)
+void CVertexManager::UnTagAll (ubyte mask)
 {
 CVertex* v = &m_vertices [0];
 for (int i = Count (); i; i--, v++)

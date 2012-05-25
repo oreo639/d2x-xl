@@ -159,7 +159,7 @@ for (short nSegment = 0; 0 <= (nSegment = FindByVertex (nVertexId, nSegment)); n
 	if (nIgnoreSegment >= 0) {
 		if ((nIgnoreSide < 0) && (nSegment == nIgnoreSegment))
 			continue;
-		if ((nIgnoreSegment == 0x7FFF) && segP->IsMarked ())
+		if ((nIgnoreSegment == 0x7FFF) && segP->IsTagged ())
 			continue;
 		}
 	segP->UpdateTexCoords (nVertexId, bMove, (nSegment == nIgnoreSegment) ? nIgnoreSide : -1);

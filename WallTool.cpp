@@ -464,14 +464,14 @@ void CWallTool::OnDeleteWallAll ()
 undoManager.Begin (udWalls | udTriggers);
 DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = segmentManager.Segment (0);
-bool bAll = !segmentManager.HaveMarkedSegments ();
+bool bAll = !segmentManager.HaveTaggedSegments ();
 int h, i, j, nDeleted = 0;
 for (h = segmentManager.Count (), i = 0; i < h; i++, segP++) {
 	CSide* sideP = segP->m_sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
 		if (sideP->Info ().nWall >= MAX_WALLS)
 			continue;
-		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
+		if (bAll || segmentManager.IsTagged (CSideKey (i, j))) {
 			wallManager.Delete (sideP->Info ().nWall);
 			nDeleted++;
 			}

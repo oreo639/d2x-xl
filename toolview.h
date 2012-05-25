@@ -405,7 +405,7 @@ class CDiagTool : public CToolDlg
 		bool CheckBotGens (void);
 		bool CheckEquipGens (void);
 		bool CheckLights (void);
-		bool MarkSegment (short nSegment);
+		bool TagSegment (short nSegment);
 		char FindProducer (CObjectProducer* producerP, short nSegment, short* refList = null);
 		void CountProducerRefs (int nSpecialType, short* refList, CObjectProducer* producerP, short nProducers);
 		short FixProducers (int nSpecialType, short* segList, short* refList, CObjectProducer* producerP, short nProducers, char* pszType);
@@ -1365,7 +1365,7 @@ class CTextureTool : public CTexToolDlg
 		CExtBitmapButton	m_btnRARight;
 		CBitmapButton		m_btnStretch2Fit;
 		CBitmapButton		m_btnReset;
-		CBitmapButton		m_btnResetMarked;
+		CBitmapButton		m_btnResetTagged;
 		CBitmapButton		m_btnAlignAll;
 		CBitmapButton		m_btnChildAlign;
 		CBitmapButton		m_btnAddLight;
@@ -1433,7 +1433,7 @@ class CTextureTool : public CTexToolDlg
 		afx_msg void OnEditTexture ();
 		afx_msg void OnPasteSide ();
 		afx_msg void OnPasteTouching ();
-		afx_msg void OnMarkPlane ();
+		afx_msg void OnTagPlane ();
 		afx_msg void OnReplace ();
 		afx_msg void OnSetLight ();
 		afx_msg void OnSelect1st ();
@@ -1453,7 +1453,7 @@ class CTextureTool : public CTexToolDlg
 		afx_msg void OnHShrink ();
 		afx_msg void OnVShrink ();
 		afx_msg void OnAlignReset ();
-		afx_msg void OnAlignResetMarked ();
+		afx_msg void OnAlignResetTagged ();
 		afx_msg void OnAlignStretch2Fit ();
 		afx_msg void OnAlignAll ();
 		afx_msg void OnAlignChildren ();
@@ -1556,7 +1556,7 @@ class CTextureTool : public CTexToolDlg
 		int ScrollSpeed (ushort texture,int *x,int *y);
 		int AlignTextures (short start_segment, short start_side, short only_child);
 		void AlignChildTextures (int nSegment, int nSide, bool (*alignedSides)[6]);
-		void AlignChildren (short nSegment, short nSide, bool bStart, bool bMarked);
+		void AlignChildren (short nSegment, short nSide, bool bStart, bool bTagged);
 		CSideKey FindAdjacentSide (CSideKey side, short nLine, short depth = -1, short nFirstSegment = -1);
 		void SetWallColor (void);
 

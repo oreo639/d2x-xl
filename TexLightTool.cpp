@@ -329,7 +329,7 @@ if (lightManager.ApplyFaceLightSettingsGlobally ()) {
 	CSegment*	segP = segmentManager.Segment (0);
 	CSide*		sideP;
 	CWall			*wallP;
-	bool			bAll = !segmentManager.HaveMarkedSides ();
+	bool			bAll = !segmentManager.HaveTaggedSides ();
 
 	for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
@@ -338,7 +338,7 @@ if (lightManager.ApplyFaceLightSettingsGlobally ()) {
 			wallP = wallManager.Wall (sideP->m_info.nWall);
 			if ((wallP == null) || !wallP->IsTransparent ())
 				continue;
-			if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
+			if (!(bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))))
 				continue;
 			if (sideP->BaseTex () != nBaseTex)
 				continue;

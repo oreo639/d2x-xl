@@ -178,7 +178,7 @@ CHECKMINE;
 if (!Inited ())
 	return;
 ClearBugList ();
-segmentManager.UnmarkAll ();
+segmentManager.UnTagAll ();
 }
 //------------------------------------------------------------------------------
 

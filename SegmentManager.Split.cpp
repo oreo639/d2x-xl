@@ -127,7 +127,7 @@ memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (nVe
 // replace existing point with new point
 segP = Segment (key.m_nSegment); 
 int nPoint = segP->UpdateVertexId (nVertexId, vertexManager.Count ()); 
-segP->Unmark (); 
+segP->UnTag (); 
 
 // update total number of vertices
 for (short nSide = 0; nSide < 6; nSide++) {
@@ -195,7 +195,7 @@ for (i = 0; i < 2; i++)
 		memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (nEdgeVerts [i]), sizeof (*vertexManager.Vertex (0)));
 		// replace existing point with new point
 		segP->m_info.vertexIds [vertexIdIndex [i]] = vertexManager.Count (); 
-		segP->Unmark (); 
+		segP->UnTag (); 
 		vertexManager.Status (vertexManager.Count ()++) = 0; 
 		}
 // this code will unlink all adjacement segments that share this edge, too
@@ -277,7 +277,7 @@ if (!bSolidify) {
 			memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (nFaceVerts [i]), sizeof (*vertexManager.Vertex (0)));
 			// replace existing points with new points
 			segP->m_info.vertexIds [sideP->VertexIdIndex (i)] = vertexManager.Count (); 
-			segP->Unmark (); 
+			segP->UnTag (); 
 			vertexManager.Status (vertexManager.Count ()++) = 0; 
 			}
 		}
@@ -509,7 +509,7 @@ for (short nSide = 0; nSide < 6; nSide++)
 for (short nLine = 0; nLine < 12; nLine++)
 	*vertexManager.Vertex (nNewVerts [j++]) = Average (*rootSegP->Vertex (edgeVertexTable [nLine][0]), *rootSegP->Vertex (edgeVertexTable [nLine][1]));
 for (j = 0; j < 19; j++)
-	vertexManager.Status (nNewVerts [j]) |= MARKED_MASK; 
+	vertexManager.Status (nNewVerts [j]) |= TAGGED_MASK; 
 
 // create the surrounding segments
 

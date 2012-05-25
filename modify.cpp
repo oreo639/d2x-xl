@@ -416,7 +416,7 @@ switch (m_selectMode) {
 					center;
 		CVertex* vertexP = vertexManager.Vertex (0);
 		for (i = vertexManager.Count (), j = 0; j < i; j++, vertexP++)
-			if (vertexP->Status () & MARKED_MASK) {
+			if (vertexP->Status () & TAGGED_MASK) {
 				maxPoint = Max (maxPoint, *vertexP);
 				minPoint = Min (minPoint, *vertexP);
 				}
@@ -430,7 +430,7 @@ switch (m_selectMode) {
 		j = vertexManager.Count ();
 		vertexP = vertexManager.Vertex (0);
 		for (i = 0; i < j; i++, vertexP++)
-			if (vertexP->IsMarked ()) {
+			if (vertexP->IsTagged ()) {
 				CVertex v = *vertexP;
 				v -= center;
 				v *= delta;
@@ -440,11 +440,11 @@ switch (m_selectMode) {
 				}
 		vertexP = vertexManager.Vertex (0);
 		for (i = 0; i < j; i++, vertexP++)
-			if (vertexP->IsMarked ())
+			if (vertexP->IsTagged ())
 				segmentManager.UpdateTexCoords (i, false);
 		vertexP = vertexManager.Vertex (0);
 		for (i = 0; i < j; i++, vertexP++)
-			if (vertexP->IsMarked ()) {
+			if (vertexP->IsTagged ()) {
 				vertexP->Move ();
 				segmentManager.UpdateTexCoords (i, true);
 				}
@@ -537,7 +537,7 @@ switch (selectMode) {
 		bool bMoved = false;
 		undoManager.Begin (udVertices | udSegments);
 		for (i = 0; i < MAX_VERTICES; i++) {
-			if (vertexManager.Status (i) & MARKED_MASK) {
+			if (vertexManager.Status (i) & TAGGED_MASK) {
 				vertexManager.Vertex (i)->SetDelta (vDelta);
 				segmentManager.UpdateTexCoords (ushort (i), false);
 				vertexManager.Vertex (i)->Move ();
@@ -642,19 +642,19 @@ switch (selectMode) {
 		undoManager.Begin (udObjects);
 		CGameObject *objP = objectManager.Object (0);
 		for (i = 0; i < MAX_VERTICES; i++)
-			if (vertexManager.Status (i) & MARKED_MASK) 
+			if (vertexManager.Status (i) & TAGGED_MASK) 
 				vertexManager.Vertex (i)->SetDelta (vDelta);
 		for (i = 0; i < MAX_VERTICES; i++)
-			if (vertexManager.Status (i) & MARKED_MASK) 
+			if (vertexManager.Status (i) & TAGGED_MASK) 
 				segmentManager.UpdateTexCoords (i, false, 0x7FFF);
 		for (i = 0; i < MAX_VERTICES; i++)
-			if (vertexManager.Status (i) & MARKED_MASK) {
+			if (vertexManager.Status (i) & TAGGED_MASK) {
 				vertexManager.Vertex (i)->Move ();
 				segmentManager.UpdateTexCoords (i, true, 0x7FFF);
 				}
 		for (i = objectManager.Count (); i; i--, objP++)
 			if (objP->m_info.nSegment >= 0)
-				if (objP->Segment ()->IsMarked ())
+				if (objP->Segment ()->IsTagged ())
 					objP->Position () += vDelta;
 		undoManager.End ();
 		break;
@@ -832,20 +832,20 @@ switch (selectMode) {
 		// rotate points about a point
 		undoManager.Begin (udVertices | udObjects);
 		for (i = 0; i < vertexManager.Count (); i++)
-			if (vertexManager.Status (i) & MARKED_MASK)
+			if (vertexManager.Status (i) & TAGGED_MASK)
 				spinner.SetDelta (i);
 		for (i = 0; i < vertexManager.Count (); i++)
-			if (vertexManager.Status (i) & MARKED_MASK)
+			if (vertexManager.Status (i) & TAGGED_MASK)
 				spinner.UpdateTexCoords (i, false);
 		for (i = 0; i < vertexManager.Count (); i++)
-			if (vertexManager.Status (i) & MARKED_MASK) {
+			if (vertexManager.Status (i) & TAGGED_MASK) {
 				spinner.Move (i);
 				spinner.UpdateTexCoords (i, true);
 				}
 		// rotate Objects () within marked segments
 		objP = objectManager.Object (0);
 		for (i = objectManager.Count (); i; i--, objP++)
-			if (objP->Segment ()->IsMarked ())
+			if (objP->Segment ()->IsTagged ())
 				objP->Position ().Rotate (spinner.m_vCenter, spinner.m_vOppCenter, angle);
 		undoManager.End ();
 		break;

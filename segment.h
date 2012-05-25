@@ -228,21 +228,21 @@ public:
 
 	inline CUVL _const_ * Uvls (short nSide) _const_ { return Side (nSide)->Uvls (); }
 
-	inline void Mark (ubyte mask = MARKED_MASK) { m_info.flags |= mask; }
+	inline void Tag (ubyte mask = TAGGED_MASK) { m_info.flags |= mask; }
 
-	inline void Unmark (ubyte mask = MARKED_MASK) { m_info.flags &= ~mask; }
+	inline void UnTag (ubyte mask = TAGGED_MASK) { m_info.flags &= ~mask; }
 
-	inline bool IsMarked (ubyte mask = MARKED_MASK) { return (m_info.flags & mask) != 0; }
+	inline bool IsTagged (ubyte mask = TAGGED_MASK) { return (m_info.flags & mask) != 0; }
 
-	void Mark (short nSide, ubyte mask = MARKED_MASK) { m_info.flags |= mask; }
+	void Tag (short nSide, ubyte mask = TAGGED_MASK) { m_info.flags |= mask; }
 
-	void Unmark (short nSide, ubyte mask = MARKED_MASK) { m_info.flags &= ~mask; }
+	void UnTag (short nSide, ubyte mask = TAGGED_MASK) { m_info.flags &= ~mask; }
 
-	inline bool IsMarked (short nSide, ubyte mask = MARKED_MASK);
+	inline bool IsTagged (short nSide, ubyte mask = TAGGED_MASK);
 
-	void MarkVertices (ubyte mask = MARKED_MASK, short nSide = -1);
+	void TagVertices (ubyte mask = TAGGED_MASK, short nSide = -1);
 
-	void UnmarkVertices (ubyte mask = MARKED_MASK, short nSide = -1);
+	void UnTagVertices (ubyte mask = TAGGED_MASK, short nSide = -1);
 
 	inline bool IsD2X (void) { return (m_info.function >= SEGMENT_FUNC_TEAM_BLUE) || (m_info.props != 0); }
 

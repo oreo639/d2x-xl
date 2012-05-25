@@ -287,7 +287,7 @@ while (!fp.EoF ()) {
 			*vertexManager.Vertex (nVertex) = v;
 			vertexManager.Vertex (nVertex)->Backup ();
 			}
-		vertexManager.Status (nVertex) |= MARKED_MASK;
+		vertexManager.Status (nVertex) |= TAGGED_MASK;
 		}
 
 #if 0
@@ -314,7 +314,7 @@ while (!fp.EoF ()) {
 						continue;
 					short nChildVert;
 					for (nChildVert = 0; nChildVert < 4; nChildVert++) {
-						if (!childSegP->Vertex (sideVertexTable [nChildSide][nChildVert])->IsMarked (SHARED_MASK))
+						if (!childSegP->Vertex (sideVertexTable [nChildSide][nChildVert])->IsTagged (SHARED_MASK))
 							break;
 						}
 					if (nChildVert == 4) {
@@ -380,7 +380,7 @@ while (!fp.EoF ()) {
 		segP->m_info.nProducer = -1;
 		segP->m_info.value = -1;
 		}
-	segP->Mark (MARKED_MASK); // no other bits
+	segP->Tag (TAGGED_MASK); // no other bits
 	// calculate childFlags
 	segP->m_info.childFlags = 0;
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
@@ -457,7 +457,7 @@ int nSegments = segmentManager.Count ();
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	CSegment* segP = segmentManager.Segment (nSegment);
-	if (segP->IsMarked ()) {
+	if (segP->IsTagged ()) {
 		fprintf (fp.File (), "segment %d\n", nSegment);
 		CSide* sideP = segP->m_sides;
 		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
@@ -492,7 +492,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 						int iTarget, count = 0;
 						// count trigger targets in marked area
 						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
-							if (segmentManager.Segment (trigP->Segment (iTarget))->IsMarked ())
+							if (segmentManager.Segment (trigP->Segment (iTarget))->IsTagged ())
 								count++;
 						fprintf (fp.File (), "        trigger %d\n", wallP->Info ().nTrigger);
 						fprintf (fp.File (), "			    type %d\n", trigP->Type ());
@@ -501,7 +501,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 						fprintf (fp.File (), "			    timer %d\n", trigP->Info ().time);
 						fprintf (fp.File (), "			    count %d\n", count);
 						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
-							if (segmentManager.Segment (trigP->Segment (iTarget))->IsMarked ()) {
+							if (segmentManager.Segment (trigP->Segment (iTarget))->IsTagged ()) {
 								fprintf (fp.File (), "			        segment %d\n", trigP->Segment (iTarget));
 								fprintf (fp.File (), "			        side %d\n", trigP->Side (iTarget));
 								}
@@ -512,7 +512,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		fprintf (fp.File (), "  children");
 		for (short nSide = 0; nSide < 6; nSide++) {
 			short nChild = segP->ChildId (nSide);
-			fprintf (fp.File (), " %d", ((nChild < 0) || !segmentManager.Segment (nChild)->IsMarked ()) ? -1 : nChild);
+			fprintf (fp.File (), " %d", ((nChild < 0) || !segmentManager.Segment (nChild)->IsTagged ()) ? -1 : nChild);
 			}
 		fprintf (fp.File (), "\n");
 		// save vertices
@@ -555,7 +555,7 @@ if (tunnelMaker.Active ())
 	return;
 
   // make sure some cubes are marked
-short count = segmentManager.MarkedCount ();
+short count = segmentManager.TaggedCount ();
 if (count == 0) {
 	ErrorMsg ("No block marked.\n\nUse 'M' or shift left mouse button\nto mark one or more cubes.");
 	return;
@@ -669,19 +669,19 @@ else {
 
 strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick paste
 
-// unmark all segmentManager.Segment ()
+// untag all segmentManager.Segment ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
 undoManager.Begin (udAll);
 DLE.MineView ()->DelayRefresh (true);
 CSegment* segP = segmentManager.Segment (0);
 for (short nSegment = 0; nSegment < SEGMENT_LIMIT; nSegment++, segP++) {
 	segP->Index () = nSegment;
-	segP->Unmark ();
+	segP->UnTag ();
 	}
 
-// unmark all vertices
+// untag all vertices
 for (int nVertex = 0; nVertex < MAX_VERTICES; nVertex++) 
-	vertexManager.Vertex (nVertex)->Unmark (MARKED_MASK | NEW_MASK);
+	vertexManager.Vertex (nVertex)->UnTag (TAGGED_MASK | NEW_MASK);
 
 DLE.MainFrame ()->InitProgress (fp.Length ());
 short count = Read (fp);
@@ -713,7 +713,7 @@ for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<
 	}
 // clear all new vertices as such
 for (int nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
-	vertexManager.Vertex (nVertex)->Unmark (NEW_MASK);
+	vertexManager.Vertex (nVertex)->UnTag (NEW_MASK);
 // now set all seg_numbers
 segP = segmentManager.Segment (0);
 for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
@@ -757,7 +757,7 @@ short nSegment, count;
 if (tunnelMaker.Active ()) 
 	return;
 // make sure some cubes are marked
-count = segmentManager.MarkedCount ();
+count = segmentManager.TaggedCount ();
 if (!count) {
 	ErrorMsg ("No block marked.\n\n"
 				 "Use 'M' or shift left mouse button\n"
@@ -777,7 +777,7 @@ DLE.MineView ()->DelayRefresh (true);
 DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 for (nSegment = segmentManager.Count () - 1; nSegment >= 0; nSegment--) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	if (segmentManager.Segment (nSegment)->IsMarked ()) {
+	if (segmentManager.Segment (nSegment)->IsTagged ()) {
 		if (segmentManager.Count () <= 1)
 			break;
 		if (objectManager.Object (0)->m_info.nSegment == nSegment) {

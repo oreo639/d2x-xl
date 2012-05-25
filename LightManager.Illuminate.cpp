@@ -15,7 +15,7 @@ extern int nDbgVertex;
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
-// Mark each segment that is within a given range (in segments to traverse) to a root segment
+// Tag each segment that is within a given range (in segments to traverse) to a root segment
 
 class CVicinity {
 	private:
@@ -84,7 +84,7 @@ int nSegments = segmentManager.Count ();
 #pragma omp parallel for
 for (int i = 0; i < nSegments; i++) {
 	CSegment* segP = segmentManager.Segment (i);
-	if (bAll || (segP->IsMarked ())) {
+	if (bAll || (segP->IsTagged ())) {
 		CSide* sideP = segP->m_sides;
 		for (int j = 0; j < 6; j++, sideP++) {
 			CUVL* uvlP = sideP->m_info.uvls;
@@ -140,7 +140,7 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 		int nVertex = segP->m_info.vertexIds [nPoint];
 		if (nVertex > MAX_VERTEX)
 			continue;
-		if (bAll || (vertexManager.Status (nVertex) & MARKED_MASK)) {
+		if (bAll || (vertexManager.Status (nVertex) & TAGGED_MASK)) {
 			CSide* sideP = segP->Side (0);
 			for (int nSide = 0; nSide < 6; nSide++, sideP++) {
 				int nCorner = sideP->HasVertex (nPoint);
@@ -182,7 +182,7 @@ for (int i = 0; i < nSegments; i++) {
 	bool bUndo = false;
 	for (int nPoint = 0; nPoint < 8; nPoint++) {
 		int nVertex = segP->m_info.vertexIds [nPoint];
-		if ((maxBrightness [nVertex].count > 0) && (bAll || (vertexManager.Status (nVertex) & MARKED_MASK))) {
+		if ((maxBrightness [nVertex].count > 0) && (bAll || (vertexManager.Status (nVertex) & TAGGED_MASK))) {
 			CSide* sideP = segP->Side (0);
 			for (int nSide = 0; nSide < 6; nSide++, sideP++) {
 				int nCorner = sideP->HasVertex (nPoint);
@@ -238,7 +238,7 @@ if (bAll)
 int nSegments = segmentManager.Count ();
 for (int i = 0; i < nSegments; i++) {
 	CSegment *segP = segmentManager.Segment (i);
-	if (bAll || (segP->IsMarked ())) {
+	if (bAll || (segP->IsTagged ())) {
 		segP->Backup ();
 		CSide* sideP = segP->m_sides;
 		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
@@ -276,7 +276,7 @@ for (; nSegment < nSegments; nSegment++) {
 #endif
 		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
 			continue;
-		if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
+		if (!(bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))))
 			continue;
 		if (!segmentManager.IsWall (CSideKey (nSegment, nSide)))
 			continue;
@@ -439,7 +439,7 @@ for (int nChildSeg = 0; nChildSeg < nSegments; nChildSeg++) {
 	// loop on child sides
 	for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 		// if side has a child..
-		if (!(bAll || segmentManager.IsMarked (CSideKey (nChildSeg, nChildSide))))
+		if (!(bAll || segmentManager.IsTagged (CSideKey (nChildSeg, nChildSide))))
 			continue;
 		if (childSegP->ChildId (nChildSide) >= 0) {
 			CWall* wallP = childSegP->Side (nChildSide)->Wall ();
@@ -579,7 +579,7 @@ for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	CSegment* srcSegP = segmentManager.Segment (nSourceSeg);
 	// skip if not marked unless we are automatically saving
-	if  (!(srcSegP->IsMarked () || bForce)) 
+	if  (!(srcSegP->IsTagged () || bForce)) 
 		continue;
 	// loop on all sides
 #if DBG
@@ -879,7 +879,7 @@ undoManager.Begin (udSegments);
 int nSegments = segmentManager.Count ();
 for (int si = 0; si < nSegments; si++) {
 	CSegment* segP = segmentManager.Segment (si);
-	if (bAll || (segP->IsMarked ())) {
+	if (bAll || (segP->IsTagged ())) {
 		if (!bDynSegLights)
 			segP->m_info.staticLight = nLight;
 		else {

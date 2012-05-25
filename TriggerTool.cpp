@@ -621,7 +621,7 @@ DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CTriggerTool - Delete All (Marked) Triggers
+// CTriggerTool - Delete All (Tagged) Triggers
 //------------------------------------------------------------------------
 
 void CTriggerTool::OnDeleteTriggerAll () 
@@ -632,7 +632,7 @@ CSegment *segP = segmentManager.Segment (0);
 CSide *sideP;
 CTrigger* triggerP;
 ubyte nType = current->Trigger () ? current->Trigger ()->Type () : 255;
-bool bAll = !segmentManager.HaveMarkedSegments ();
+bool bAll = !segmentManager.HaveTaggedSegments ();
 int i, j, nDeleted = 0;
 for (i = segmentManager.Count (); i; i--, segP++) {
 	sideP = segP->m_sides;
@@ -645,7 +645,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 			continue;
 		if ((nType != 255) && (triggerP->Type () != nType))
 			continue;
-		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
+		if (bAll || segmentManager.IsTagged (CSideKey (i, j))) {
 			triggerManager.Delete (wallP->Info ().nTrigger);
 			nDeleted++;
 			}

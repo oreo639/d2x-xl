@@ -58,12 +58,12 @@ m_statsWidth = 0;
 
 //------------------------------------------------------------------------------
 
-bool CDiagTool::MarkSegment (short nSegment) 
+bool CDiagTool::TagSegment (short nSegment) 
 {
 if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	return false;
-segmentManager.Segment (nSegment)->Unmark (MARKED_MASK);
-segmentManager.Segment (nSegment)->Mark (MARKED_MASK);
+segmentManager.Segment (nSegment)->UnTag (TAGGED_MASK);
+segmentManager.Segment (nSegment)->Tag (TAGGED_MASK);
 return true;
 }
 
@@ -83,10 +83,10 @@ if ((i < 0) || (i >= LBBugs ()->GetCount ()))
 tBugPos *pbp = (tBugPos *) LBBugs ()->GetItemDataPtr (i);
 if (!pbp)
 	return;
-segmentManager.UnmarkAll ();
-if (bCurSeg = MarkSegment (pbp->nSegment))
+segmentManager.UnTagAll ();
+if (bCurSeg = TagSegment (pbp->nSegment))
 	current->m_nSegment = pbp->nSegment;
-MarkSegment (pbp->nChild);
+TagSegment (pbp->nChild);
 if ((pbp->nSide >= 0) && (pbp->nSide < MAX_SIDES_PER_SEGMENT))
 	current->m_nSide = pbp->nSide;
 if ((pbp->nLine >= 0) && (pbp->nLine < 4))
@@ -97,7 +97,7 @@ if ((pbp->nWall >= 0) && (pbp->nWall < wallManager.WallCount ()))
 	nWall = pbp->nWall;
 else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < triggerManager.WallTriggerCount ()))
 	wallP = wallManager.FindByTrigger (pbp->nTrigger);
-if ((wallP != null) && MarkSegment (wallP->m_nSegment))
+if ((wallP != null) && TagSegment (wallP->m_nSegment))
 	if (bCurSeg) {
 		other->m_nSegment = wallP->m_nSegment;
 		other->m_nSide = wallP->m_nSide;

@@ -89,9 +89,9 @@ class CTextureManager {
 		
 		int CountCustomTextures (void);
 		
-		void UnmarkTextures (void);
+		void UnTagUsedTextures (void);
 
-		void MarkUsedTextures (void);
+		void TagUsedTextures (void);
 		
 		void RemoveTextures (bool bUnused = true);
 		

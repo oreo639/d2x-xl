@@ -72,7 +72,7 @@ ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
 //CenterOnMine ();
 Project (&rc);
 ViewMatrix ()->SetViewInfo (ViewWidth (), ViewHeight ());
-MarkVisibleVerts ();
+TagVisibleVerts ();
 Project (&rc);
 CRect	crc;
 GetClientRect (crc);
@@ -168,7 +168,7 @@ if (segmentManager.Count () == 1)
 	DLE.MineView ()->Pan ('Z', -80.0);
 Renderer ().FitToView ();
 SetMoveRates (moveRates);
-MarkVisibleVerts (true);
+TagVisibleVerts (true);
 DelayRefresh (false);
 Refresh ();
 return 1;
@@ -202,7 +202,7 @@ void CMineView::AlignSide()
 }
 //------------------------------------------------------------------------------
 
-void CMineView::MarkVisibleVerts (bool bReset)
+void CMineView::TagVisibleVerts (bool bReset)
 {
 	int			h, i;
 	CSegment*	segP;
@@ -228,7 +228,7 @@ CHECKMINE;
 	CVertex*		vertP;
 	CVertex		vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
 
-MarkVisibleVerts ();
+TagVisibleVerts ();
 vertP = vertexManager.Vertex (0);
 for (int i = 0, h = vertexManager.Count (); i < h; i++, vertP++) {
 	if (vertexManager.Status (i)) {
@@ -257,7 +257,7 @@ else
 factor = 0.1 * pow (zoomScales [0], (double) factor);
 Scale ().Set (factor, factor, factor);
 ViewMatrix ()->Setup (Translation (), Scale (), Rotation ());
-MarkVisibleVerts (true);
+TagVisibleVerts (true);
 SetCenter (CDoubleVector (Average (vMin, vMax)), 0);
 Refresh (false);
 }

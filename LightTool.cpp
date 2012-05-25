@@ -128,7 +128,7 @@ UpdateData (TRUE);
 // make sure there are marked blocks
 theMine->m_nNoLightDeltas = m_nNoLightDeltas;
 lightManager.SetRenderDepth (m_staticRenderDepth, m_deltaRenderDepth);
-if (bAll = !segmentManager.HaveMarkedSides ())
+if (bAll = !segmentManager.HaveTaggedSides ())
 	STATUSMSG (" illuminating entire mine ...");
 undoManager.Begin (udLight | udSegments);
 if (m_bIlluminate)
@@ -204,7 +204,7 @@ for (CSegmentIterator si; si; si++) {
 	for (ubyte nSide = 0; nSide < 6; nSide++, sideP++) {
 		for (int i = 0; i < 4; i++) {
 			ushort nVertex = segP->m_info.vertexIds [segP->Side (nSide)->VertexIdIndex (i)];
-			if (vertexManager.Status (nVertex) & MARKED_MASK) {
+			if (vertexManager.Status (nVertex) & TAGGED_MASK) {
 				sideP->m_info.uvls [i].l = nVertexLight;
 				bChange = true;
 				}

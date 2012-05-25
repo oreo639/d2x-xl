@@ -5,18 +5,18 @@
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::IsMarked (CSideKey key)
+bool CSegmentManager::IsTagged (CSideKey key)
 {
-return Segment (key.m_nSegment)->IsMarked (key.m_nSide);
+return Segment (key.m_nSegment)->IsTagged (key.m_nSide);
 }
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::IsMarked (short nSegment)
+bool CSegmentManager::IsTagged (short nSegment)
 {
 CSegment *segP = Segment (nSegment);
 for (int i = 0;  i < 8; i++)
-	if (!(vertexManager.Status (segP->m_info.vertexIds [i]) & MARKED_MASK))
+	if (!(vertexManager.Status (segP->m_info.vertexIds [i]) & TAGGED_MASK))
 		return false;
 return true;
 }
@@ -24,15 +24,15 @@ return true;
 // ----------------------------------------------------------------------------- 
 //			 mark_segment()
 //
-//  ACTION - Toggle marked bit of segment and mark/unmark vertices.
+//  ACTION - Toggle marked bit of segment and tag/untag vertices.
 //
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::Mark (short nSegment)
+void CSegmentManager::Tag (short nSegment)
 {
   CSegment *segP = Segment (nSegment); 
 
-segP->Mark (); /* flip marked bit */
+segP->Tag (); /* flip marked bit */
 
 // update vertices's marked status
 // ..first clear all marked verts
@@ -40,15 +40,15 @@ segP->Mark (); /* flip marked bit */
 int nSegments = segmentManager.Count ();
 for (int si = 0; si < nSegments; si++) {
 	CSegment* segP = segmentManager.Segment (si);
-	if (segP->IsMarked ())
+	if (segP->IsTagged ())
 		for (ushort nVertex = 0; nVertex < 8; nVertex++)
-			segP->Vertex (nVertex)->Status () |= MARKED_MASK; 
+			segP->Vertex (nVertex)->Status () |= TAGGED_MASK; 
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::UpdateMarked (void)
+void CSegmentManager::UpdateTagged (void)
 {
 // mark all cubes which have all 8 verts marked
 CSegment* segP = Segment (0);
@@ -56,27 +56,27 @@ short nSegments = Count ();
 
 for (short i = 0; i < nSegments; i++, segP++) {
 	ushort* vertexIds = segP->m_info.vertexIds;
-	short nMarked = 0, nVertices = 0;
+	short nTagged = 0, nVertices = 0;
 	short j = 0;
 	for (; j < 8; j++) {
-		if ((vertexIds [j] <= MAX_VERTEX) && !(vertexManager.Status (vertexIds [j]) & MARKED_MASK))
+		if ((vertexIds [j] <= MAX_VERTEX) && !(vertexManager.Status (vertexIds [j]) & TAGGED_MASK))
 			break;
 		}
 	if (j < 8)
-		segP->Unmark (); 
+		segP->UnTag (); 
 	else
-		segP->Mark (); 
+		segP->Tag (); 
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::MarkAll (ubyte mask) 
+void CSegmentManager::TagAll (ubyte mask) 
 {
 CSegment* segP = Segment (0);
 short nSegments = Count ();
 for (short i = 0; i < nSegments; i++, segP++) {
-	segP->Mark (mask); 
+	segP->Tag (mask); 
 	for (short j = 0; j < 8; j++)
 		if (segP->VertexId (j) <= MAX_VERTEX)
 			segP->Vertex (j)->Status () |= mask;
@@ -86,12 +86,12 @@ DLE.MineView ()->Refresh ();
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::UnmarkAll (ubyte mask) 
+void CSegmentManager::UnTagAll (ubyte mask) 
 {
 CSegment* segP = Segment (0);
 short nSegments = Count ();
 for (short i = 0; i < nSegments; i++, segP++) {
-	segP->Unmark (mask); 
+	segP->UnTag (mask); 
 	for (short j = 0; j < 8; j++)
 		if (segP->VertexId (j) <= MAX_VERTEX)
 			segP->Vertex (j)->Status () &= ~mask;
@@ -101,13 +101,13 @@ DLE.MineView ()->Refresh ();
 
 // ------------------------------------------------------------------------ 
 
-bool CSegmentManager::HaveMarkedSides (void)
+bool CSegmentManager::HaveTaggedSides (void)
 {
 int nSegments = segmentManager.Count ();
 for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSide* sideP = segmentManager.Segment (nSegment)->m_sides;
 	for (short nSide = 0; nSide < 6; nSide++)
-		if (IsMarked (CSideKey (nSegment, nSide)))
+		if (IsTagged (CSideKey (nSegment, nSide)))
 			return true;
 	}
 return false; 
@@ -115,13 +115,13 @@ return false;
 
 // ------------------------------------------------------------------------ 
 
-short CSegmentManager::MarkedCount (bool bCheck)
+short CSegmentManager::TaggedCount (bool bCheck)
 {
 int nCount = 0; 
 CSegment* segP = Segment (0);
 short nSegments = Count ();
 for (short i = 0; i < nSegments; i++, segP++) {
-	if (segP->IsMarked ()) {
+	if (segP->IsTagged ()) {
 		if (bCheck)
 			return 1; 
 		++nCount; 
@@ -132,9 +132,9 @@ return nCount;
 
 // ------------------------------------------------------------------------
 
-void CSegmentManager::MarkSelected (void)
+void CSegmentManager::TagSelected (void)
 {
-	bool	bSegMark = false; 
+	bool	bSegTag = false; 
 	CSegment *segP = current->Segment (); 
 	int i, p [8], nPoints; 
 
@@ -164,27 +164,27 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 		break; 
 
 	//default:
-	//	bSegMark = true; 
+	//	bSegTag = true; 
 	}
 
-if (bSegMark)
-	Mark (current->m_nSegment); 
+if (bSegTag)
+	Tag (current->m_nSegment); 
 else {
 	// set i to nPoints if all verts are marked
 	for (i = 0; i < nPoints; i++)
-		if (!(vertexManager.Status (p [i]) & MARKED_MASK)) 
+		if (!(vertexManager.Status (p [i]) & TAGGED_MASK)) 
 			break; 
-		// if all verts are marked, then unmark them
+		// if all verts are tagged, then untag them
 	if (i == nPoints) {
 		for (i = 0; i < nPoints; i++)
-			vertexManager.Status (p [i]) &= ~MARKED_MASK; 
+			vertexManager.Status (p [i]) &= ~TAGGED_MASK; 
 		}
 	else {
-		// otherwise mark all the points
+		// otherwise tag all the points
 		for (i = 0; i < nPoints; i++)
-			vertexManager.Status (p [i]) |= MARKED_MASK; 
+			vertexManager.Status (p [i]) |= TAGGED_MASK; 
 		}
-	UpdateMarked (); 
+	UpdateTagged (); 
 	}
 DLE.MineView ()->Refresh (); 
 }

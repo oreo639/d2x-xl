@@ -813,7 +813,7 @@ for (short i = triggerManager.ReactorTriggerCount (); i > 0; )
 		objectManager.SecretSegment () = 0; 
 
 	// update segment flags
-	delSegP->Unmark (); 
+	delSegP->UnTag (); 
 
 	// unlink any children with this segment number
 	int nSegments = segmentManager.Count ();

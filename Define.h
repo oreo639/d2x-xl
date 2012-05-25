@@ -117,8 +117,8 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 
 #define PREFS_SHOW_POINT_COORDINATES 1
 #define PREFS_SHOW_CROSS_HAIR        2
-#define PREFS_HIDE_MARKED_BLOCKS     4
-#define PREFS_DONT_SAVE_CLightDeltaValueS 8
+#define PREFS_HIDE_TAGGED_BLOCKS     4
+#define PREFS_DONT_SAVE_LIGHT_DELTAS 8
 
 // My own defines
 #define EXTENDED_HAM 1
@@ -316,7 +316,7 @@ inline double Degrees (double a) {
 
 // -----------------------------------------------------------------------------
 
-#define MARKED_MASK  0x80 // used on wallFlags & vertexStatus 
+#define TAGGED_MASK  0x80 // used on wallFlags & vertexStatus 
 #define DELETED_MASK 0x40 // used on wallFlags & vertexStatus 
 #define NEW_MASK     0x20 // used on vertexStatus      
 #define SHARED_MASK	0x10

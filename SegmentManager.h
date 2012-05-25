@@ -230,25 +230,25 @@ class CSegmentManager {
 
 		void UpdateVertices (short nOldVert, short nNewVert);
 
-		void Mark (short nSegment);
+		void Tag (short nSegment);
 
-		void MarkAll (ubyte mask = MARKED_MASK);
+		void TagAll (ubyte mask = TAGGED_MASK);
 
-		void UnmarkAll (ubyte mask = MARKED_MASK);
+		void UnTagAll (ubyte mask = TAGGED_MASK);
 
-		void MarkSelected (void);
+		void TagSelected (void);
 
-		void UpdateMarked (void);
+		void UpdateTagged (void);
 
-		bool IsMarked (short nSegment);
+		bool IsTagged (short nSegment);
 
-		bool IsMarked (CSideKey key = CSideKey (-1, -1));
+		bool IsTagged (CSideKey key = CSideKey (-1, -1));
 
-		short	MarkedCount (bool bCheck = false);
+		short	TaggedCount (bool bCheck = false);
 
-		bool HaveMarkedSegments (void) { return MarkedCount (true) > 0; }
+		bool HaveTaggedSegments (void) { return TaggedCount (true) > 0; }
 
-		bool HaveMarkedSides (void);
+		bool HaveTaggedSides (void);
 
 		int AlignTextures (short nStartSeg, short nStartSide, short nChildSeg, short nChildSide, int bAlign1st, int bAlign2nd);
 

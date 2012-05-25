@@ -190,7 +190,7 @@ return nMinSeg;
 bool CMineView::SelectCurrentSide (long xMouse, long yMouse, int bAdd) 
 {
 if (bAdd < 0)
-	vertexManager.UnmarkAll ();
+	vertexManager.UnTagAll ();
 
 if ((m_mouseState == eMouseStateSelect) && (nearest->m_nSegment >= 0) && (nearest->m_nSide >= 0)) {
 	current->m_nSegment = nearest->m_nSegment;
@@ -203,7 +203,7 @@ else {
 	current->Setup (nSegment, nSide);
 	}
 if (Perspective () && bAdd)
-	current->Segment ()->MarkVertices (MARKED_MASK, current->m_nSide);
+	current->Segment ()->TagVertices (TAGGED_MASK, current->m_nSide);
 DLE.ToolView ()->Refresh ();
 Refresh ();
 return true;
@@ -221,7 +221,7 @@ return SelectCurrentSide (xMouse, yMouse, bAdd);
 bool CMineView::SelectCurrentLine (long xMouse, long yMouse, int bAdd) 
 {
 if (bAdd < 0)
-	vertexManager.UnmarkAll ();
+	vertexManager.UnTagAll ();
 
 if (nearest->m_nEdge < 0)
 	return false;
@@ -229,8 +229,8 @@ if (nearest->m_nEdge < 0)
 ushort nVertices [2] = {nearest->Segment ()->VertexId (nearest->m_nSide, nearest->m_nEdge), 
 								nearest->Segment ()->VertexId (nearest->m_nSide, nearest->m_nEdge + 1)};
 if (bAdd && (nVertices [0] <= MAX_VERTEX) && (nVertices [1] <= MAX_VERTEX)) {
-	vertexManager [nVertices [0]].Mark ();
-	vertexManager [nVertices [1]].Mark ();
+	vertexManager [nVertices [0]].Tag ();
+	vertexManager [nVertices [1]].Tag ();
 	current->m_nSegment = nearest->m_nSegment;
 	current->m_nSide = nearest->m_nSide;
 	current->m_nEdge = nearest->m_nEdge;
@@ -276,10 +276,10 @@ return (nVertex < 0) ? -1 : vertexManager.Count () - nVertex;
 bool CMineView::SelectCurrentPoint (long xMouse, long yMouse, int bAdd) 
 {
 if (bAdd < 0)
-	vertexManager.UnmarkAll ();
+	vertexManager.UnTagAll ();
 int nVertex = FindNearestVertex (xMouse, yMouse);
 if (bAdd && (nVertex >= 0))
-	vertexManager [nVertex].Mark ();
+	vertexManager [nVertex].Tag ();
 DLE.ToolView ()->Refresh ();
 Refresh ();
 return true;

@@ -858,58 +858,58 @@ return -1;
 
 // -----------------------------------------------------------------------------
 
-void CSegment::MarkVertices (ubyte mask, short nSide)
+void CSegment::TagVertices (ubyte mask, short nSide)
 {
 if (nSide < 0) {
 	for (int i = 0; i < 8; i++)
 		if (m_info.vertexIds [i] <= MAX_VERTEX)
-			vertexManager [m_info.vertexIds [i]].Mark (mask);
+			vertexManager [m_info.vertexIds [i]].Tag (mask);
 	}
 else {
 	CSide* sideP = Side (nSide);
 	for (int i = 0, j = sideP->VertexCount (); i < j; i++)
-		vertexManager [m_info.vertexIds [sideP->VertexIdIndex (i)]].Mark (mask);
+		vertexManager [m_info.vertexIds [sideP->VertexIdIndex (i)]].Tag (mask);
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegment::UnmarkVertices (ubyte mask, short nSide)
+void CSegment::UnTagVertices (ubyte mask, short nSide)
 {
 if (nSide < 0) {
 	for (int i = 0; i < 8; i++)
 		if (m_info.vertexIds [i] <= MAX_VERTEX)
-			vertexManager [m_info.vertexIds [i]].Unmark (mask);
+			vertexManager [m_info.vertexIds [i]].UnTag (mask);
 	}
 else {
 	CSide* sideP = Side (nSide);
 	for (int i = 0, j = sideP->VertexCount (); i < j; i++)
-		vertexManager [m_info.vertexIds [sideP->VertexIdIndex (i)]].Unmark (mask);
+		vertexManager [m_info.vertexIds [sideP->VertexIdIndex (i)]].UnTag (mask);
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegment::Mark (short nSide, ubyte mask = MARKED_MASK)
+void CSegment::Tag (short nSide, ubyte mask = TAGGED_MASK)
 {
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
-	Vertex (i, nSide)->Mark (mask);
+	Vertex (i, nSide)->Tag (mask);
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegment::Unmark (short nSide, ubyte mask = MARKED_MASK)
+void CSegment::UnTag (short nSide, ubyte mask = TAGGED_MASK)
 {
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
-	Vertex (i, nSide)->Mark (mask);
+	Vertex (i, nSide)->Tag (mask);
 }
 
 // -----------------------------------------------------------------------------
 
-bool CSegment::IsMarked (short nSide, ubyte mask = MARKED_MASK)
+bool CSegment::IsTagged (short nSide, ubyte mask = TAGGED_MASK)
 {
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
-	if (!Vertex (i, nSide)->IsMarked (mask))
+	if (!Vertex (i, nSide)->IsTagged (mask))
 		return false;
 return true;
 }

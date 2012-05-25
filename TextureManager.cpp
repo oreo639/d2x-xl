@@ -585,7 +585,7 @@ return 0;
 
 //------------------------------------------------------------------------
 
-void CTextureManager::UnmarkTextures (void)
+void CTextureManager::UnTagUsedTextures (void)
 {
 if (!textureManager.Available ())
 	return;
@@ -599,7 +599,7 @@ for (i = 0; i < h; i++)
 
 //------------------------------------------------------------------------
 
-void CTextureManager::MarkUsedTextures (void)
+void CTextureManager::TagUsedTextures (void)
 {
 if (!textureManager.Available ())
 	return;
@@ -608,7 +608,7 @@ if (!textureManager.Available ())
 	int nVersion = DLE.IsD1File () ? 0 : 1;
 	int i, j, h = MaxTextures (nVersion);
 
-UnmarkTextures ();
+UnTagUsedTextures ();
 
 for (i = segmentManager.Count (); i; i--, segP++) {
 	CSide* sideP = segP->m_sides;
@@ -641,9 +641,9 @@ void CTextureManager::RemoveTextures (bool bUnused)
 
 if (nCustom) {
 	if (bUnused)
-		MarkUsedTextures ();
+		TagUsedTextures ();
 	else
-		UnmarkTextures ();
+		UnTagUsedTextures ();
 	Release (Version (), false, true);
 	LoadTextures (-1, true);
 	int nRemoved = nCustom - CountCustomTextures ();

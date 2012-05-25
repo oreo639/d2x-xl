@@ -55,11 +55,11 @@ class CVertex : public CDoubleVector, public CGameItem {
 
 		virtual void Redo (void);
 
-		inline void Mark (ubyte mask = MARKED_MASK) { m_status |= mask; }
+		inline void Tag (ubyte mask = TAGGED_MASK) { m_status |= mask; }
 
-		inline void Unmark (ubyte mask = MARKED_MASK) { m_status &= ~mask; }
+		inline void UnTag (ubyte mask = TAGGED_MASK) { m_status &= ~mask; }
 
-		inline bool IsMarked (ubyte mask = MARKED_MASK) { return (m_status & mask) != 0; }
+		inline bool IsTagged (ubyte mask = TAGGED_MASK) { return (m_status & mask) != 0; }
 
 		void Project (CViewMatrix* m);
 

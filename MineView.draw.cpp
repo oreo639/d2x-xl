@@ -297,7 +297,7 @@ if (bClearIt) {
 	int nVert = segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)];
 	if (vertexManager [nVert].InRange (xMax, yMax, Renderer ().Type ()))
 		Renderer ().Ellipse (vertexManager [nVert], 4, 4);
-	if (segP->IsMarked ()) {
+	if (segP->IsTagged ()) {
 		Renderer ().SelectPen (penGold + 1);
 		DrawSegmentWireFrame (segP);
 		} 
@@ -325,7 +325,7 @@ if (bClearIt) {
 		}
 	} 
 else {
-	if (segP->IsMarked ())
+	if (segP->IsTagged ())
 		Renderer ().SelectPen (penGold + 1, 2);
 	else 
 		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penRed + 1 : penWhite + 1 : penGray + 1, 2);   
@@ -559,7 +559,7 @@ for (int i = 0; i < 8; i++, vertexIds++)
 
 bool CMineView::SelectWireFramePen (CSegment* segP)
 {
-if (segP->IsMarked ()) {
+if (segP->IsTagged ()) {
 	Renderer ().SelectPen (SelectMode (eSelectBlock) ? penRed + 1 : penGold + 1);
 	return true;
 	}
@@ -603,7 +603,7 @@ return false;
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawMarkedSegments (short bClear) 
+void CMineView::DrawTaggedSegments (short bClear) 
 {
 CHECKMINE;
 
@@ -632,7 +632,7 @@ else if (SelectMode (eSelectBlock)) // && edit_mode != EDIT_OFF) {
 else
 	Renderer ().SelectPen (penGold + 1);
 for (i = 0; i < vertexManager.Count (); i++)
-	if ((vertexManager.Status (i) & MARKED_MASK) && vertexManager [i].InRange (xMax, yMax, Renderer ().Type ())) 
+	if ((vertexManager.Status (i) & TAGGED_MASK) && vertexManager [i].InRange (xMax, yMax, Renderer ().Type ())) 
 		Renderer ().Rectangle (vertexManager [i], 5, 5);
 Renderer ().EndRender ();
 }
@@ -1476,8 +1476,8 @@ if (segmentManager.Count ()== 0)
 // draw Objects ()
 if (!bClear) {
 	DrawObjects (bClear);
-//	if (/*!(preferences & PREFS_HIDE_MARKED_BLOCKS) ||*/ SelectMode (eSelectBlock))
-	DrawMarkedSegments (bClear);
+//	if (/*!(preferences & PREFS_HIDE_TAGGED_BLOCKS) ||*/ SelectMode (eSelectBlock))
+	DrawTaggedSegments (bClear);
   }
 
 Renderer ().BeginRender (Renderer ().Type () == 0);

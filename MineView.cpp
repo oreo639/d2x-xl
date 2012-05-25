@@ -959,7 +959,7 @@ else if (m_mouseState == eMouseStateSelect) {
 	}
 else if (m_mouseState == eMouseStateRubberBand) {
    ResetRubberRect ();
-	MarkRubberBandedVertices ();
+	TagRubberBandedVertices ();
 	}
 else if (m_mouseState == eMouseStateDrag)
 	FinishDrag ();
@@ -1100,7 +1100,7 @@ return false;
 
 //------------------------------------------------------------------------------
 
-void CMineView::MarkRubberBandedVertices (void)
+void CMineView::TagRubberBandedVertices (void)
 {
 CHECKMINE;
 
@@ -1110,14 +1110,14 @@ for (int i = 0, j = vertexManager.Count (); i < j; i++) {
 		 BETWEEN (m_clickPos.y, v.m_screen.y, m_releasePos.y) &&
 		 VertexVisible (i)) {
 		if (m_clickState & MK_SHIFT)
-			vertexManager.Status (i) &= ~MARKED_MASK;
+			vertexManager.Status (i) &= ~TAGGED_MASK;
 		else
-			vertexManager.Status (i) |= MARKED_MASK;
+			vertexManager.Status (i) |= TAGGED_MASK;
 		m_bUpdate = true;
 		}
 	}
 if (m_bUpdate) 
-	segmentManager.UpdateMarked ();
+	segmentManager.UpdateTagged ();
 Refresh ();
 }
 

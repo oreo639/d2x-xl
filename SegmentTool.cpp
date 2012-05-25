@@ -297,15 +297,15 @@ if (Prop (nProp)->GetCheck ())
 else
 	m_nProps &= ~(1 << nProp);
 
-BOOL bMarked = segmentManager.HaveMarkedSegments ();
+BOOL bTagged = segmentManager.HaveTaggedSegments ();
 
 undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
-if (bMarked) {
+if (bTagged) {
 	CSegment *segP = segmentManager.Segment (0);
 	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->IsMarked ())
+		if (segP->IsTagged ())
 			segP->m_info.props = m_nProps;
 	}
 else 					
@@ -530,7 +530,7 @@ segmentManager.Create (*current);
 CSegment* segP = segmentManager.Segment (0);
 for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) 
 	for (short nSide = 0; nSide < 6; nSide++)
-		if (segP->IsMarked (nSide) && !segP->HasChild (nSide)) 
+		if (segP->IsTagged (nSide) && !segP->HasChild (nSide)) 
 			if (0 > segmentManager.Create (CSideKey (nSegment, nSide)))
 				break;
 DLE.MineView ()->Refresh ();
@@ -554,15 +554,15 @@ void CSegmentTool::OnSetOwner (void)
 CHECKMINE;
 
 	BOOL	bChangeOk = TRUE;
-	BOOL	bMarked = segmentManager.HaveMarkedSegments ();
+	BOOL	bTagged = segmentManager.HaveTaggedSegments ();
 
 undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
-if (bMarked) {
+if (bTagged) {
 	CSegment *segP = segmentManager.Segment (0);
 	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->IsMarked ())
+		if (segP->IsTagged ())
 			segP->m_info.owner = m_nOwner;
 	}
 else 					
@@ -578,15 +578,15 @@ void CSegmentTool::OnSetGroup (void)
 CHECKMINE;
 
 	BOOL	bChangeOk = TRUE;
-	BOOL	bMarked = segmentManager.HaveMarkedSegments ();
+	BOOL	bTagged = segmentManager.HaveTaggedSegments ();
 
 undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
-if (bMarked) {
+if (bTagged) {
 	CSegment *segP = segmentManager.Segment (0);
 	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->IsMarked ())
+		if (segP->IsTagged ())
 			segP->m_info.group = m_nGroup;
 	}
 else 					
@@ -613,13 +613,13 @@ if (DLE.IsStdLevel () && !segmentFuncs [nNewFunction].bStandard) {
 	}
 
 	BOOL		bChangeOk = TRUE;
-	BOOL		bMarked = segmentManager.HaveMarkedSegments ();
+	BOOL		bTagged = segmentManager.HaveTaggedSegments ();
 	int		nSegment, nMinSeg, nMaxSeg;
 
 DLE.MineView ()->DelayRefresh (true);
 m_nLastSegment = -1; //force Refresh() to rebuild all dialog data
 SegFuncSpinner ()->SetPos (nNewFunction);
-if (bMarked) {
+if (bTagged) {
 	nMinSeg = 0;
 	nMaxSeg = segmentManager.Count ();
 	}
@@ -630,7 +630,7 @@ else {
 undoManager.Begin (udSegments);
 CSegment* segP = segmentManager.Segment (nMinSeg);
 for (nSegment = nMinSeg; nSegment < nMaxSeg; nSegment++, segP++) {
-	if (bMarked && !segP->IsMarked ())
+	if (bTagged && !segP->IsTagged ())
 		continue;
 	if (nNewFunction == segP->m_info.function)
 		continue;
@@ -1002,17 +1002,17 @@ segmentManager.CreatePyramid ();
 void CSegmentTool::OnSplitSegmentIn8 ()
 {
 CHECKMINE;
-BOOL bMarked = segmentManager.HaveMarkedSegments ();
+BOOL bTagged = segmentManager.HaveTaggedSegments ();
 
 undoManager.Begin (udSegments | udVertices | udWalls);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
-if (!bMarked) 
+if (!bTagged) 
 	segmentManager.SplitIn8 (current->Segment ());
 else {
 	short nSegCount = segmentManager.Count ();
 	for (short nSegment = 0; nSegment < nSegCount; nSegment++)
-		if (segmentManager.Segment (nSegment)->IsMarked () && !segmentManager.SplitIn8 (segmentManager.Segment (nSegment)))
+		if (segmentManager.Segment (nSegment)->IsTagged () && !segmentManager.SplitIn8 (segmentManager.Segment (nSegment)))
 			break;
 	}
 DLE.MineView ()->DelayRefresh (false);

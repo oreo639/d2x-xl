@@ -94,9 +94,9 @@ class CVertexManager  {
 
 		void Clear (void);
 
-		void MarkAll (ubyte mask = MARKED_MASK);
+		void TagAll (ubyte mask = TAGGED_MASK);
 
-		void UnmarkAll (ubyte mask = MARKED_MASK);
+		void UnTagAll (ubyte mask = TAGGED_MASK);
 
 		CDoubleVector GetCenter (void);
 

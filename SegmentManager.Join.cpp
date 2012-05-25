@@ -105,7 +105,7 @@ for (i = 0; i < n; i++) {
 	newVertex = seg2->m_info.vertexIds [side2->VertexIdIndex (match [i].v)]; 
 
 	// if either vert was marked, then mark the new vert
-	vertexManager.Status (newVertex) |= (vertexManager.Status (oldVertex) & MARKED_MASK); 
+	vertexManager.Status (newVertex) |= (vertexManager.Status (oldVertex) & TAGGED_MASK); 
 
 	// update all Segment () that use this vertex
 	if (oldVertex != newVertex) {

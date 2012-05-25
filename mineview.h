@@ -199,7 +199,7 @@ public:
 	bool InitViewDimensions (void);
 	void DrawWireFrame (bool bSparse);
 	void DrawSegmentsTextured (void);
-	void DrawMarkedSegments (short bClear = 0);
+	void DrawTaggedSegments (short bClear = 0);
 	void DrawSegment (CSegment *segP, bool bSparse);
 	void DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short bClear = 0);
 	void DrawSegmentPartial (CSegment *segP);
@@ -231,7 +231,7 @@ public:
 	void TogglePerspective (void);
 	void Rotate (char direction, double angle);
 	void AlignSide ();
-	void MarkVisibleVerts (bool bReset = false);
+	void TagVisibleVerts (bool bReset = false);
 	void CenterOnMine ();
 	void CenterOnSegment ();
 	void CenterOnObject ();
@@ -313,7 +313,7 @@ public:
 	void SelectCurrentObject (long xMouse, long yMouse);
 	bool SelectCurrentElement (long xMouse, long yMouse, int bAdd);
 	void RefreshObject(short old_object, short new_object);
-	void MarkRubberBandedVertices (void);
+	void TagRubberBandedVertices (void);
 	BOOL DrawRubberBox ();
 	void UpdateRubberRect (CPoint pt);
 	void ResetRubberRect ();

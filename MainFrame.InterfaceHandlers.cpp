@@ -50,9 +50,9 @@ BEGIN_MESSAGE_MAP (CMainFrame, CFrameWnd)
 	ON_COMMAND (ID_EDITGEO_ROTRIGHT, OnEditGeoRotRight)
 	ON_COMMAND (ID_EDITGEO_SHRINK, OnEditGeoShrink)
 	ON_COMMAND (ID_VIEW_REDRAW, OnRedraw)
-	ON_COMMAND (ID_EDIT_MARK, OnEditMark)
-	ON_COMMAND (ID_EDIT_MARKALL, OnEditMarkAll)
-	ON_COMMAND (ID_EDIT_UNMARKALL, OnEditUnmarkAll)
+	ON_COMMAND (ID_EDIT_TAG, OnEditTag)
+	ON_COMMAND (ID_EDIT_TAGALL, OnEditTagAll)
+	ON_COMMAND (ID_EDIT_UNTAG_ALL, OnEditUnTagAll)
 	ON_COMMAND (ID_EDIT_TEXTURE, OnEditTexture)
 	ON_COMMAND (ID_EDIT_SEGMENT, OnEditSegment)
 	ON_COMMAND (ID_EDIT_WALL, OnEditWall)
@@ -226,19 +226,19 @@ if (m_paneMode == 1)
 m_paneMode = 0;
 }
 
-void CMainFrame::OnEditMark () 
+void CMainFrame::OnEditTag () 
 {
-segmentManager.MarkSelected ();
+segmentManager.TagSelected ();
 }
 
-void CMainFrame::OnEditMarkAll () 
+void CMainFrame::OnEditTagAll () 
 {
-segmentManager.MarkAll ();
+segmentManager.TagAll ();
 }
 
-void CMainFrame::OnEditUnmarkAll () 
+void CMainFrame::OnEditUnTagAll () 
 {
-segmentManager.UnmarkAll ();
+segmentManager.UnTagAll ();
 }
 
 void CMainFrame::OnEditTexture () { 

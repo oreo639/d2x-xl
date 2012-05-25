@@ -256,9 +256,9 @@ public:
 	afx_msg void OnInsModeExtend ();
 	afx_msg void OnInsModeMirror ();
 	afx_msg void OnToggleInsMode ();
-	afx_msg void OnEditMark ();
-	afx_msg void OnEditMarkAll ();
-	afx_msg void OnEditUnmarkAll ();
+	afx_msg void OnEditTag ();
+	afx_msg void OnEditTagAll ();
+	afx_msg void OnEditUnTagAll ();
 	afx_msg void OnRedraw ();
 	afx_msg void OnToggleViews ();
 	afx_msg void OnToggleTexturePane();
