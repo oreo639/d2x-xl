@@ -1,7 +1,7 @@
 
 #include "AVLTree.h"
 
-INT2 avlDepth = 0;
+short avlDepth = 0;
 
 #define  AVL_OVERFLOW   1
 #define  AVL_BALANCED   0
@@ -9,44 +9,12 @@ INT2 avlDepth = 0;
 
 // -----------------------------------------------------------------------------
 
-INT2 WINEXP CAVL::Init (pCAVL:: a, 
-							pAllocFunc allocFunc, pFreeFunc freeFunc, 
-							pAllocFunc allocDataFunc, pFreeFunc freeDataFunc,
-							pCAVL::CmpFunc cmpFunc, pCAVL::WalkFunc walkFunc,
-							INT4 nDataSize, BOOLEAN bUseStack)
+_T* CAVLTree::Find (_K key)
 {
-#pragma omp critical
-{
-MemSet (a, 0, sizeof (a));
-SetMemFunc (a->allocFunc, allocFunc ? allocFunc : PtvAlloc);
-SetMemFunc (a->freeFunc, freeFunc ? freeFunc : PtvFree);
-SetMemFunc (a->allocDataFunc, allocDataFunc ? allocDataFunc : PtvAlloc);
-SetMemFunc (a->freeDataFunc, freeDataFunc ? freeDataFunc : PtvFree);
-a->cmpFunc = cmpFunc;
-a->walkFunc = walkFunc;
-a->dataSize = nDataSize;
-if (a->bUseStack = bUseStack)
-	{
-	InitStack (&(a->avlStack), "AVL node buffer", sizeof (tCAVL::Node), 10000, 0, FALSE, FALSE);
-	if (nDataSize)
-		InitStack (&(a->dataStack), "AVL data buffer", nDataSize, 10000, 0, FALSE, FALSE);
-	}
-}
-return E_PTV_OK;
-}
+   CAVL::CNode<_T>* p;
 
-// -----------------------------------------------------------------------------
-
-void * CAVL::Find (CAVL& a, _T* key)
-{
-   CAVLNode* root;
-
-if (!a->cmpFunc)
-	{
-	a->avlRes = E_PTV_INVARG;
-	return NULL;
-	}
-for (root = a->root; root; )
+for (p = m_root; p; ) {
+	if (
    {
    switch (a->cmpFunc (root->pData, key))
       {
@@ -66,7 +34,7 @@ return NULL;
 
 // -----------------------------------------------------------------------------
 
-INT2 CAVL::AllocNode (pCAVL:: a, pCAVLNode* root)
+short CAVL::AllocNode (pCAVL:: a, pCAVLNode* root)
 {
 	void *	pData = NULL;
 	INT4		h;
@@ -93,7 +61,7 @@ LEAVE1 (0, a->avlRes = E_PTV_OK);
 
 // -----------------------------------------------------------------------------
 
-static INT2 DoCAVL::Insert
+static short CAVL::DoInsert
 #ifdef _ANSIC
    (pCAVL:: a, pCAVLNode* root)
 #else
@@ -212,7 +180,7 @@ LEAVE1 (0, a->avlRes = E_PTV_OK);
 
 // -----------------------------------------------------------------------------
 
-INT2 LIBEXP CAVL::Insert
+short LIBEXP CAVL::Insert
 #ifdef _ANSIC
    (pCAVL:: a, PPTR ppData, INT4 dataSize, void * key)
 #else
@@ -414,10 +382,10 @@ else
 
 // -----------------------------------------------------------------------------
 
-static INT2 DoCAVL::Delete (pCAVL:: a, pCAVLNode* root, PPTR ppData)
+static short DoCAVL::Delete (pCAVL:: a, pCAVLNode* root, PPTR ppData)
 {
    CAVLNode* r, d;
-	INT2		avlRes = E_PTV_NOTFOUND;
+	short		avlRes = E_PTV_NOTFOUND;
 
 ENTER ("DoCAVL::Delete");
 if (!(r = *root))
@@ -489,7 +457,7 @@ LEAVE1 (0, a->avlRes = avlRes);
 
 // -----------------------------------------------------------------------------
 
-INT2 LIBEXP CAVL::Delete (pCAVL:: a, void * key, PPTR ppData)
+short LIBEXP CAVL::Delete (pCAVL:: a, void * key, PPTR ppData)
 {
 ENTER ("CAVL::Delete");
 if (!a->cmpFunc)
@@ -701,7 +669,7 @@ return pData;
 
 // -----------------------------------------------------------------------------
 
-INT2 LIBEXP CAVL::DecKey (pCAVL:: a, void * pOldKey, void * pNewKey)
+short LIBEXP CAVL::DecKey (pCAVL:: a, void * pOldKey, void * pNewKey)
 {
 	void *	pData;
 

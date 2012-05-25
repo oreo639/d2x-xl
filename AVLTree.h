@@ -1,133 +1,187 @@
 #ifndef __AVLTree_H
 #define __AVLTree_H
 
-#if _MSC
-#  pragma pack(push,1)
-#endif
+#include "mine.h"
 
+template < class _T, _K > 
+class CAVLTree {
 
-typedef tAvlWalkFunc *  pAvlWalkFunc;
-typedef tAvlCmpFunc *   pAvlCmpFunc;
+#define  AVL_OVERFLOW   1
+#define  AVL_BALANCED   0
+#define  AVL_UNDERFLOW  3
 
-#define PAVLNODE        struct tAvlNode *
-
-typedef PACKED struct tAvlNode
-   BEGIN
-   PAVLNODE    left;
-   PAVLNODE    right;
-   void *     pData;
-   tBitField   balance  :2;
-   tBitField   userData :1;
-   END tAvlNode;
-
-typedef tAvlNode *   pAvlNode;
-typedef pAvlNode *   ppAvlNode;
-
-typedef PACKED struct tAvl
-   BEGIN
-   pAvlNode       root;
-   pAvlNode       current;
-   pAvlCmpFunc    cmpFunc;
-   pAvlWalkFunc   walkFunc;
-   pAllocFunc     allocFunc;
-   pFreeFunc      freeFunc;
-   pAllocFunc     allocDataFunc;
-   pFreeFunc      freeDataFunc;
-	tLStack			avlStack;
-	tLStack			dataStack;
-   LPSTR          key;
-   INT4           dataSize;
-   BOOLEAN        dupEntry;
-   BOOLEAN        branchChanged;
-	BOOLEAN			bUseStack;
-	INT2				avlRes;
-	tSemaphore		sem;
-   END tAvl;
-
-typedef tAvl *       pAvl;
-
-#if _MSC
-#  pragma pack(pop)
-#endif
-
-template class< _T > class CAVLTree (_T) {
-	};
-
-INT2 WINEXP AvlInit (pAvl a, 
-							pAllocFunc allocFunc, pFreeFunc freeFunc, 
-							pAllocFunc allocDataFunc, pFreeFunc freeDataFunc,
-							pAvlCmpFunc cmpFunc, pAvlWalkFunc walkFunc,
-							INT4 nDataSize, BOOLEAN bUseStack);
-
-INT2 LIBEXP AvlInsert (pAvl a, void * * data, INT4 dataSize, void * key);
-  /* Knoten in AVL-Baum einfuegen */
-
-INT2 LIBEXP AvlDelete (pAvl a, void * key, PPTR ppData);
-  /* Knoten aus AVL-Baum loeschen */
-
-void LIBEXP AvlFreeAll (pAvl a);
-  /* gesamten AVL-Baum loeschen */
-
-void LIBEXP AvlFreeData (pAvl a);
-  /* Datenbloecke des gesamten AVL-Baums loeschen */
-
-void * LIBEXP AvlFind (pAvl a, void * key);
-  /* Eintrag in AVL-Baum suchen */
-
-BOOLEAN LIBEXP AvlWalk (pAvl a, pAvlWalkFunc walkFunc, void * pUserData);
-  /* rekursiv durch AVL-Baum gehen; bei jedem Knoten wird walkHandler */
-  /* aufgerufen */
-
-#ifdef __cplusplus
-END
-
-class CAvl {
-	private:
-		tAvl	m_a;
 	public:
-		CAvl ()
-			{ memset (&m_a, 0, sizeof (m_a)); }
-		~CAvl () 
-			{ Destroy (); }
-		inline INT2 Create (pAvlCmpFunc cmpFunc, INT4 nDataSize) 
-			{ return ::AvlInit (&m_a, NULL, NULL, NULL, NULL, cmpFunc, NULL, nDataSize, TRUE); }
-		INT2 Insert (void *pKey, void *pData, INT4 nDataSize = -1) {
-			void	*pAvlData = NULL;
-			INT2	nAvlRes = ::AvlInsert (&m_a, &pAvlData, nDataSize, pKey);
-			if (0 < nAvlRes && pData && (nDataSize > 0))
-				memcpy (pAvlData, pData, nDataSize);
-			return nAvlRes;
+		typedef bool (walkCallback*) (_T& data);
+
+		template < class _U > 
+		class CNode {
+			CNode*	m_left;
+			CNode*	m_right;
+			_U			m_data;
+			byte		m_balance;
+			};
+
+		CNode<_T>*	m_root;
+		CNode<_T>*	m_current;
+		CNode<_T>	m_data;
+		_K				m_key;
+		bool			m_duplicate;
+		bool			m_changed;
+
+		// -----------------------------------------------------------------------------
+
+		CAVLTree () : m_root (null) {}
+
+		// -----------------------------------------------------------------------------
+
+		~CAVLTree () { Destroy (); }
+
+		// -----------------------------------------------------------------------------
+
+		bool Add (CNode<_T>* root)
+		{
+		if (!(m_current = new <_T>))
+			return false;
+		*root = m_current;
+		m_current->m_data = m_data;
+		m_changed = true;
+		return true;
+		}
+
+		// -----------------------------------------------------------------------------
+
+		void Destroy (void);
+
+		// -----------------------------------------------------------------------------
+
+		short Insert (CNode<_T>** root)
+		{
+			byte			b;
+			CNode<_T>*	p1, p2, p = *root;
+
+		if (!p) 
+			return Add (root) ? 0 : -1;
+
+		if (p->m_data > key) {
+			if (Insert (a, &p->m_left))
+				return -1;
+			if (m_changed) {
+				switch (p->m_balance) {
+					case AVL_UNDERFLOW:
+						p1 = p->m_left;
+						if (p1->m_balance == AVL_UNDERFLOW) { // simle LL rotation
+							p->m_left = p1->m_right;
+							p1->m_right = p;
+							p->m_balance = AVL_BALANCED;
+							p = p1;
+							}
+						else { // double LR rotation
+	                  p2 = p1->m_right;
+		               p1->m_right = p2->m_left;
+			            p2->m_left = p1;
+							p->m_left = p2->m_right;
+							p2->m_right = p;
+							b = p2->m_balance;
+							p->m_balance = (b == AVL_UNDERFLOW) ? AVL_OVERFLOW : AVL_BALANCED;
+							p1->m_balance = (b == AVL_OVERFLOW) ? AVL_UNDERFLOW : AVL_BALANCED;
+							p = p2;
+							}
+						p->m_balance = AVL_BALANCED;
+						m_changed = FALSE;
+						break;
+   
+					case AVL_BALANCED:
+						p->m_balance = AVL_UNDERFLOW;
+						break;
+   
+					case AVL_OVERFLOW:
+						p->m_balance = AVL_BALANCED;
+						m_changed = FALSE;
+						break;
+					}
+				}
 			}
-		inline INT2 Delete (void *pKey, void **ppData)
-			{ return ::AvlDelete (&m_a, pKey, ppData); }
-		inline void *Find (void *pKey)
-			{ return ::AvlFind (&m_a, pKey); }
-		inline BOOL Walk (pAvlWalkFunc walkFunc, void *pUserData)
-			{ return ::AvlWalk (&m_a, walkFunc, pUserData); }
-		inline void FreeData (void)
-			{ ::AvlFreeData (&m_a); }
-		inline void Destroy (void) {
-			::AvlFreeAll (&m_a); 
-			memset (&m_a, 0, sizeof (m_a));
+		else if (p->m_data < key) {
+			if (Insert (&p->m_right))
+				return -1;
+			if (m_changed) {
+				switch (p->m_balance) {
+					case AVL_UNDERFLOW:
+						p->m_balance = AVL_BALANCED;
+						m_changed = false;
+						break;
+   
+					case AVL_BALANCED:
+						p->m_balance = AVL_OVERFLOW;
+						break;
+   
+					case AVL_OVERFLOW:
+						p1 = p->m_right;
+						if (p1->m_balance == AVL_OVERFLOW) { // simple RR rotation
+							p->m_right = p1->m_left;
+							p1->m_left = p;
+							p->m_balance = AVL_BALANCED;
+							p = p1;
+							}
+						else { // double RL rotation
+							p2 = p1->m_left;
+							p1->m_left = p2->m_right;
+							p2->m_right = p1;
+							p->m_right = p2->m_left;
+							p2->m_left = p;
+							b = (byte) p2->m_balance;
+							p->m_balance = (b == AVL_OVERFLOW) ? AVL_UNDERFLOW : AVL_BALANCED;
+							p1->m_balance = (b == AVL_UNDERFLOW) ? AVL_OVERFLOW : AVL_BALANCED;
+							p = p2;
+							}
+						p->m_balance = AVL_BALANCED;
+						m_changed = FALSE;
+					}
+				}
 			}
+		else {
+			m_duplicate = true;
+			m_current = p;
+			}
+		*root = p;
+		return 0;
+		} 
+
+		// -----------------------------------------------------------------------------
+
+		short Insert (_T data, _K key)
+		{
+		}
+
+		// -----------------------------------------------------------------------------
+
+		short Delete (_K key);
+
+		// -----------------------------------------------------------------------------
+
+		_T* Find (_K key) 
+		{
+			CAVL::CNode<_T>* p = m_root;
+
+		while (p) {
+			if (p->m_data > key)
+				p = p->m_left;
+			else if (p->m_data < key)
+				p = p->m_right;
+			else {
+				m_current = p;
+				return p->m_data;
+				}
+			}
+		return NULL;
+		} 
+
+		// -----------------------------------------------------------------------------
+
+		bool Walk (walkCallback callback);
+
+		// -----------------------------------------------------------------------------
+
 	};
-#endif
 
-#else
-
-extern INT2 AvlAlloc ();
-extern void AvlFree ();
-extern void AvlFreeAll ();
-extern void AvlFreeData ();
-extern void * AvlFind ();
-extern BOOLEAN AvlWalk ();
-
-#endif
-
-extern INT2       avlDepth;
-extern pAllocFunc avlAlloc;
-extern pFreeFunc  avlFree;
-
-#endif /*__AVL_H*/
-
-/*eof*/
+#endif //__AVLTree_H
