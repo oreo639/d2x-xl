@@ -49,44 +49,18 @@ typedef struct tVertMatch {
 
 // -----------------------------------------------------------------------------
 
-class CSideListEntry : public CSideKey {
-	public:
-		CSideListEntry*	m_link;
-
-	CSideListEntry (short nSegment = -1, short nSide = -1) : CSideKey (nSegment, nSide) {}
-	};
-
-
 class CEdgeTreeNode {
 	public:
 		uint								m_nKey;
 		CSLL<CSideKey, CSideKey>	m_sides;
-		CSideListEntry*	m_sides;
 
-	explicit CEdgeTreeNode (uint nKey = 0) : m_nKey (nKey), m_sides (null) {}
-	~CEdgeTreeNode () {
-		CSideListEntry* linkP;
-		for (CSideListEntry* listP = m_sides; listP; listP = linkP) {
-			linkP = listP->m_link;
-			delete listP;
-			}
-		}
+	explicit CEdgeTreeNode (uint nKey = 0) : m_nKey (nKey) {}
+	~CEdgeTreeNode () {}
+	void Destroy (void) { m_sides.Destroy (); }
 
-	CSideListEntry* Insert (short nSegment, short nSide) {
-		CSideListEntry* tailP = null;
-		CSideListEntry* listP = m_sides;
-		for (; listP; listP = listP->m_link) {
-			tailP = listP;
-			if ((listP->m_nSegment == nSegment) && (listP->m_nSide == nSide))
-				return listP;
-			}
-		if (!(listP = new CSideListEntry (nSegment, nSide)))
-			return null;
-		if (tailP)
-			tailP->m_link = listP;
-		else
-			m_sides = listP;
-		return listP;
+	CSideKey* Insert (short nSegment, short nSide) {
+		CSideKey	key = CSideKey (nSegment, nSide);
+		return m_sides.Insert (key, key);
 		}
 
 	inline bool operator< (uint key) { return m_nKey < key; }
