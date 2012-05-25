@@ -902,6 +902,13 @@ DLE.MineView ()->Refresh ();
 //------------------------------------------------------------------------------
 // TODO: Beginning with the current side, walk through all adjacent sides and 
 // mark all in plane
+
+class CPlaneSide {
+	public:
+		short nParent;
+		short	nSegment;
+};
+
 void CTextureTool::OnTagPlane () 
 {
 CHECKMINE;
@@ -909,13 +916,20 @@ CHECKMINE;
 UpdateData (TRUE);
 vertexManager.UnTagAll ();
 
+CPlaneSide segList [SEGMENT_LIMIT];
+int nHead = 0;
+int nTail = 1;
+segList [nHead] = current->Segment ();
+
+while (nHead < nTail) {
+	CSegment* segP = segList [nHead++];
+
 current->Segment ()->ComputeNormals (current->m_nSide);
-CDoubleVector vReference = current->Segment ()->Side ()->Normal ();
-CSegment* segP = segmentManager.Segment (0);
+CSegment* segP = current->Segment ();
 for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) {
 	segP->ComputeNormals (-1);
 	for (short nSide = 0; nSide < 6; nSide++) {
-		if (fabs (Dot (segP->Side (nSide)->Normal (), vReference)) < 0.3)
+		if (fabs (Dot (segP->Side (nSide)->Normal (), parentSide ()->Normal)) < 0.3)
 			segP->Tag (nSide);
 		}
 	}

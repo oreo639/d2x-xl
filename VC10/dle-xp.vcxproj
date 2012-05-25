@@ -545,6 +545,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\AVLTree.h" />
     <ClInclude Include="..\ComCube.h" />
     <ClInclude Include="..\ComMine.h" />
     <ClInclude Include="..\ComObj.h" />
@@ -620,6 +621,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp" />
+    <ClCompile Include="..\AVLTree.cpp" />
     <ClCompile Include="..\CONVERT.CPP">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>

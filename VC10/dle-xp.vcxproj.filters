@@ -298,6 +298,9 @@
     <ClInclude Include="..\Quaternion.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\AVLTree.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp">
@@ -643,6 +646,9 @@
       <Filter>OpenGL\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Quaternion.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AVLTree.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
