@@ -39,11 +39,25 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		void Destroy (void);
+		private: void Destroy (CNode<_T>* node)
+		{
+		if (node) {
+			Destroy (node->m_left);
+			Destroy (node->m_right);
+			delete node;
+			}
+		}
 
 		// -----------------------------------------------------------------------------
 
-		bool Add (CNode<_T>* node)
+		public: void Destroy (void)
+		{
+		Destroy (m_root);
+		}
+
+		// -----------------------------------------------------------------------------
+
+		public: bool Add (CNode<_T>* node)
 		{
 		if (!(m_current = new <_T>))
 			return false;
@@ -55,7 +69,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		void BalanceLeftGrowth (CNode<_T>* p)
+		private: void BalanceLeftGrowth (CNode<_T>* p)
 		{
 		if (m_changed) {
 			switch (p->m_balance) {
@@ -95,7 +109,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		void BalanceRightGrowth (CNode*<_T> p)
+		private: void BalanceRightGrowth (CNode*<_T> p)
 		{
 		if (m_changed) {
 			switch (p->m_balance) {
@@ -134,7 +148,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		short Insert (CNode<_T>** node)
+		public: short Insert (CNode<_T>** node)
 		{
 			CNode<_T>*	p = *node;
 
@@ -161,7 +175,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		short Insert (_T data, _K key)
+		public: short Insert (_T data, _K key)
 		{
 		m_data = data;
 		m_key = key;
@@ -172,7 +186,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		void BalanceLeftShrink (CNode<_T>* node)
+		private: void BalanceLeftShrink (CNode<_T>* node)
 		{
 		if (m_changed) {
 			CNode<_T>* p = *node;
@@ -220,7 +234,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		void BalanceRightShrink (CNode<_T>* node)
+		private: void BalanceRightShrink (CNode<_T>* node)
 		{
 		if (m_changed) {
 			CNode<_T>* p = *node;
@@ -272,7 +286,7 @@ class CAVLTree {
 		// and put it in the place of the element to be deleted. To do that, the data
 		// members of the two tree elements are simply exchanged.
 
-		static Replace (CNode<_T>** node, CNode<_T>** deleted)
+		private: void Replace (CNode<_T>** node, CNode<_T>** deleted)
 		{
 			CAVLNode* r, d;
 			void *  h;
@@ -295,7 +309,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		short Delete (CNode<_T>** node, _K key)
+		private: short Delete (CNode<_T>** node, _K key)
 		{
 			int avlRes = 0;
 			CAVLNode* p = *node;
@@ -336,7 +350,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		_T* Find (_K key) 
+		public: _T* Find (_K key) 
 		{
 			CAVL::CNode<_T>* p = m_root;
 
@@ -355,7 +369,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		bool Walk (CNode<_T>* node)
+		private: bool Walk (CNode<_T>* node)
 		{
 		if (!Walk (node->m_left))
 			return false;
@@ -370,7 +384,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		bool Walk (walkCallback callback)
+		public: bool Walk (walkCallback callback)
 		{
 		m_callback = callback;
 		return Walk (m_root);
