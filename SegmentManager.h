@@ -9,6 +9,7 @@
 #include "MineInfo.h"
 #include "FreeList.h"
 #include "SLL.h"
+#include "AVLTree.h"
 
 // -----------------------------------------------------------------------------
 
