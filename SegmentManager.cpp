@@ -386,19 +386,22 @@ return m_selectedSides;
 
 // -----------------------------------------------------------------------------
 
-class CSideList {
+class CSideListEntry {
 	public:
-		CSideList*	m_link;
-		short			m_nSegment;
-		short			m_nSide;
+		CSideListEntry*	m_link;
+		short					m_nSegment;
+		short					m_nSide;
 	};
 
 
-class CEdgeList {
+class CEdgeTreeNode {
 	public:
-		CEdgeList*	m_link;
-		CSideList*	m_sides;
-		uint			m_nKey;
+		CEdgeTreeNode*		m_node;
+		CSideListEntry*	m_sides;
+		uint					m_nKey;
+
+	inline bool operator< (uint key) { return m_nKey < key; }
+	inline bool operator> (uint key) { return m_nKey > key; }
 	};
 
 // -----------------------------------------------------------------------------
