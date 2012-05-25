@@ -217,6 +217,77 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
+		void BalanceRightShrink (CNode<_T>* node, bool& bShrunk)
+		{
+		CNode<_T>* p = *node;
+		switch (p->m_balance) {
+			case AVL_OVERFLOW:
+				p->m_balance = AVL_BALANCED;
+				break;
+
+			case AVL_BALANCED:
+				p->m_balance = AVL_UNDERFLOW;
+				bShrunk = false;
+				break;
+
+			case AVL_UNDERFLOW:
+				CNode<_T>* p1 = p->m_left;
+				if (p1->m_balance != AVL_OVERFLOW) { // simple LL rotation
+					p->m_left = p1->m_right;
+					p1->m_right = p;
+					if (p1->m_balance) {
+						p->m_balance = 
+						p1->m_balance = AVL_BALANCED;
+						}
+					else {
+						p->m_balance = AVL_UNDERFLOW;
+						p1->m_balance = AVL_OVERFLOW;
+						bShrunk = false;
+						}
+					p = p1;
+					}
+				else { // double LR rotation
+					CNode<_T>* p2 = p1->m_right;
+					b = (INT1) p2->m_balance;
+					p1->m_right = p2->m_left;
+					p2->m_left = p1;
+					p->m_left = p2->m_right;
+					p2->m_right = p;
+					p->m_balance = (b == AVL_UNDERFLOW) ? AVL_OVERFLOW : AVL_BALANCED;
+					p1->m_balance = (b == AVL_OVERFLOW) ? AVL_UNDERFLOW : AVL_BALANCED;
+					p = p2;
+					p->m_balance = AVL_BALANCED;
+					}
+			}
+		*node = p;
+		}
+
+		// -----------------------------------------------------------------------------
+		// Find the greatest element in the left sub tree of the tree node to be deleted
+		// and put it in the place of the element to be deleted. To do that, the data
+		// members of the two tree elements are simply exchanged.
+
+		static Replace (CNode<_T>** node, CNode<_T>** deleted, bool& bShrunk)
+		{
+			CAVLNode* r, d;
+			void *  h;
+
+		p = *node;
+		if (p->m_right) {
+			Replace (&p->m_right, deleted, bShrunk);
+			if (*branchShrinked)
+				CAVL::BalanceRShrink (&(p), bShrunk);
+			}
+		else {
+			CNode<_T>* d = *deleted;
+			Swap (p->m_data, (*deleted)->m_data);
+			*deleted = p;
+			p = p->m_left;
+			bShrunk = true;
+			}
+		*node = p;     
+		} 
+
 		// -----------------------------------------------------------------------------
 
 		short Delete (_K key);
