@@ -11,19 +11,20 @@ class CAVLTree {
 #define  AVL_UNDERFLOW  3
 
 	public:
-		typedef bool (walkCallback*) (_T& data);
+		typedef bool (*walkCallback) (_T& data);
 
 		template < class _U > 
 		class CNode {
-			CNode*	m_left;
-			CNode*	m_right;
-			_U			m_data;
-			byte		m_balance;
+			public:
+				CNode*	m_left;
+				CNode*	m_right;
+				_U			m_data;
+				byte		m_balance;
 			};
 
 		CNode<_T>*		m_root;
 		CNode<_T>*		m_current;
-		CNode<_T>		m_data;
+		_T					m_data;
 		_K					m_key;
 		bool				m_duplicate;
 		bool				m_changed;
@@ -57,7 +58,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		private: _T* Add (CNode<_T>* node)
+		private: _T* Add (CNode<_T>** node)
 		{
 		if (!(m_current = new <_T>))
 			return null;
@@ -109,7 +110,7 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		private: void BalanceRightGrowth (CNode*<_T> p)
+		private: void BalanceRightGrowth (CNode<_T>* p)
 		{
 		if (m_changed) {
 			switch (p->m_balance) {
@@ -153,7 +154,7 @@ class CAVLTree {
 			CNode<_T>*	p = *node;
 
 		if (!p) 
-			return Add (root);
+			return Add (node);
 
 		if (p->m_data > key) {
 			if (Insert (a, &p->m_left))
@@ -322,7 +323,7 @@ class CAVLTree {
 			BalanceLeftShrink (&p);
 			}	
 		else if (p->m_data < key) {
-			if (Delete (&p->m_right)
+			if (Delete (&p->m_right))
 				return -1;
 			if (m_changed)
 				BalanceRightShrink (&p);

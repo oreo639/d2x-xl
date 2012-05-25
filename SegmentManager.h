@@ -63,6 +63,11 @@ class CEdgeTreeNode {
 		return m_sides.Insert (key, key);
 		}
 
+	inline CEdgeTreeNode& operator= (CEdgeTreeNode& other) {
+		m_nKey = other.m_nKey;
+		m_sides = other.m_sides;
+		return *this;
+		}
 	inline bool operator< (uint key) { return m_nKey < key; }
 	inline bool operator> (uint key) { return m_nKey > key; }
 	};

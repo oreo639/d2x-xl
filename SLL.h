@@ -9,15 +9,19 @@
 // Single Sided Linked List
 
 template < class _T, class _K >
+class CSLLIterator;
+
+template < class _T, class _K >
 class CSLL {
 	public:
-		friend class CSLLIterator <_T>;
+		friend class CSLLIterator<_T, _K>;
 	private:
 		template < class _U >
 		class CNode {
-			CNode*	m_link;
-			_U			m_data;
-			}
+			public:
+				CNode*	m_link;
+				_U			m_data;
+			};
 
 		CNode<_T>*	m_root;
 
@@ -40,27 +44,28 @@ class CSLL {
 			CNode<_T>* listP = m_root;
 			for (; listP; listP = listP->m_link) {
 				tailP = listP;
-				if (*listP == key)
+				if (listP->m_data == key)
 					return &listP->m_data;
 				}
-			if (!(listP = new _T (key))
+			if (!(listP = new CNode<_T>))
 				return null;
 			if (tailP)
 				tailP->m_link = listP;
 			else
-				m_sides = listP;
+				m_root = listP;
+			listP->m_data = data;
 			return &listP->m_data;
 			}
 	};
 
-template < class _T >
+template < class _T, class _K >
 class CSLLIterator {
 	private:
-		CSLL<_T>&			m_sll;
+		CSLL<_T, _K>&		m_sll;
 		CSLL::CNode<_T>*	m_current;
 
 	public:
-		CSLLIterator (CSLL<_T>& sll) : m_sll (sll) {}
+		CSLLIterator (CSLL<_T, _K>& sll) : m_sll (sll) {}
 
 		_T* Begin (void) { 
 			m_current = &m_sll.m_root;
@@ -72,6 +77,11 @@ class CSLLIterator {
 		CSLLIterator& operator++() { m_current = m_current->m_link; }
 		
 		_T* operator*() { return &m_current->m_data; }
+
+	inline CSLL<_T, _K>& operator= (CSLL<_T, _K>& other) {
+		m_root = other.m_root;
+		return *this;
+		}
 
 	};
 

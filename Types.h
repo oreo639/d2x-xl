@@ -20,6 +20,8 @@ public:
 
 	CSideKey (short nSegment = -1, short nSide = -1) : m_nSegment(nSegment), m_nSide(nSide) {}
 
+	CSideKey (CSideKey& other) : m_nSegment (other.m_nSegment), m_nSide (other.m_nSide) {}
+
 	inline bool operator == (CSideKey& other) { return (m_nSegment == other.m_nSegment) && (m_nSide == other.m_nSide); }
 	
 	inline bool operator != (CSideKey& other) { return (m_nSegment != other.m_nSegment) || (m_nSide != other.m_nSide); }

@@ -401,7 +401,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 		edgeList.Get (nEdge, side1, side2, i1, i2);
 		ushort v1 = segP->VertexId (side1, i1);
 		ushort v2 = segP->VertexId (side1, i2);
-		uint key = (v1 < v2) ? v1 + uint (v2) << 16 : v2 + uint (v1) << 16;
+		uint key = (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16);
 		CEdgeTreeNode node (key);
 		CEdgeTreeNode*nodeP = edgeTree.Insert (node, key);
 		if (nodeP) { // insert sides into side list of current edge
