@@ -21,12 +21,13 @@ class CAVLTree {
 			byte		m_balance;
 			};
 
-		CNode<_T>*	m_root;
-		CNode<_T>*	m_current;
-		CNode<_T>	m_data;
-		_K				m_key;
-		bool			m_duplicate;
-		bool			m_changed;
+		CNode<_T>*		m_root;
+		CNode<_T>*		m_current;
+		CNode<_T>		m_data;
+		_K					m_key;
+		bool				m_duplicate;
+		bool				m_changed;
+		walkCallback	m_callback;
 
 		// -----------------------------------------------------------------------------
 
@@ -354,13 +355,13 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		bool Walk (walkCallback callback, CNode<_T>* node)
+		bool Walk (CNode<_T>* node)
 		{
 		if (!Walk (node->m_left))
 			return false;
 		if (!node)
 			return true;
-		if (!callback (node->m_data))
+		if (!m_callback (node->m_data))
 			return false;
 		if (!Walk (node->m_right))
 			return false;
@@ -371,6 +372,7 @@ class CAVLTree {
 
 		bool Walk (walkCallback callback)
 		{
+		m_callback = callback;
 		return Walk (m_root);
 		}
 
