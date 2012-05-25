@@ -2,6 +2,7 @@
 
 #include "mine.h"
 #include "dle-xp.h"
+#include "AVLTree.h"
 
 CSegmentManager segmentManager;
 
@@ -317,7 +318,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 
 //------------------------------------------------------------------------------
 
-CSegment* CSegmentManager::GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox)
+CSegment* CSegmentManager::GatherSelectableSegments (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox)
 {
 	short nSegments = segmentManager.Count ();
 
@@ -340,7 +341,7 @@ return m_selectedSegments;
 
 // -----------------------------------------------------------------------------
 
-CSide* CSegmentManager::GatherSelectedSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox, bool bSegments)
+CSide* CSegmentManager::GatherSelectableSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox, bool bSegments)
 {
 	short nSegments = segmentManager.Count ();
 
@@ -386,23 +387,30 @@ return m_selectedSides;
 
 // -----------------------------------------------------------------------------
 
-class CSideListEntry {
-	public:
-		CSideListEntry*	m_link;
-		short					m_nSegment;
-		short					m_nSide;
-	};
+void CSegmentManager::GatherEdges (void)
+{
+	CEdgeList	edgeList;
+	CSegment*	segP = Segment (0);
+	short			nSegments = Count ();
+	CAVLTree <CEdgeTreeNode, uint> edgeTree;
 
-
-class CEdgeTreeNode {
-	public:
-		CEdgeTreeNode*		m_node;
-		CSideListEntry*	m_sides;
-		uint					m_nKey;
-
-	inline bool operator< (uint key) { return m_nKey < key; }
-	inline bool operator> (uint key) { return m_nKey > key; }
-	};
+for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
+	int nEdges = segP->BuildEdgeList (edgeList, true);
+	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
+		ubyte side1, side2, i1, i2;
+		edgeList.Get (nEdge, side1, side2, i1, i2);
+		ushort v1 = segP->VertexId (side1, i1);
+		ushort v2 = segP->VertexId (side1, i2);
+		uint key = (v1 < v2) ? v1 + uint (v2) << 16 : v2 + uint (v1) << 16;
+		CEdgeTreeNode node (key);
+		CEdgeTreeNode*nodeP = edgeTree.Insert (node, key);
+		if (nodeP) { // insert sides into side list of current edge
+			nodeP->Insert (nSegment, side1);
+			nodeP->Insert (nSegment, side2);
+			}
+		}
+	}
+}
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 
 #include "mine.h"
 
-template < class _T, _K > 
+template < class _T, class _K > 
 class CAVLTree {
 
 #define  AVL_OVERFLOW   1
@@ -57,14 +57,14 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		public: bool Add (CNode<_T>* node)
+		private: _T* Add (CNode<_T>* node)
 		{
 		if (!(m_current = new <_T>))
-			return false;
+			return null;
 		*node = m_current;
 		m_current->m_data = m_data;
 		m_changed = true;
-		return true;
+		return &m_current->m_data;
 		}
 
 		// -----------------------------------------------------------------------------
@@ -148,21 +148,21 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		public: short Insert (CNode<_T>** node)
+		public: _T* Insert (CNode<_T>** node)
 		{
 			CNode<_T>*	p = *node;
 
 		if (!p) 
-			return Add (root) ? 0 : -1;
+			return Add (root);
 
 		if (p->m_data > key) {
 			if (Insert (a, &p->m_left))
-				return -1;
+				return null;
 			BalanceLeftGrowth (p);
 			}
 		else if (p->m_data < key) {
 			if (Insert (&p->m_right))
-				return -1;
+				return null;
 			BalanceRightGrowth ();
 			}
 		else {
@@ -170,12 +170,12 @@ class CAVLTree {
 			m_current = p;
 			}
 		*node = p;
-		return 0;
+		return &m_current->m_data;
 		} 
 
 		// -----------------------------------------------------------------------------
 
-		public: short Insert (_T data, _K key)
+		public: _T* Insert (_T data, _K key)
 		{
 		m_data = data;
 		m_key = key;

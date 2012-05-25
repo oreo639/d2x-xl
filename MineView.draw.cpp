@@ -1175,7 +1175,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 		}
 	}
 #else
-if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
+if (!segmentManager.GatherSelectableSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
 	return false;
 
 for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
@@ -1229,7 +1229,7 @@ if (!SelectMode (eSelectSide))
 CRect viewport;
 GetClientRect (viewport);
 
-if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y, ViewFlag (eViewMineSkyBox), false))
+if (!segmentManager.GatherSelectableSides (viewport, m_lastMousePos.x, m_lastMousePos.y, ViewFlag (eViewMineSkyBox), false))
 	return false;
 
 double minDist = 1e30;
@@ -1357,7 +1357,7 @@ if (!SelectMode (eSelectSegment))
 CRect viewport;
 GetClientRect (viewport);
 
-if (!segmentManager.GatherSelectedSides (viewport, m_lastMousePos.x, m_lastMousePos.y, ViewFlag (eViewMineSkyBox), true))
+if (!segmentManager.GatherSelectableSides (viewport, m_lastMousePos.x, m_lastMousePos.y, ViewFlag (eViewMineSkyBox), true))
 	return false;
 
 double minDist = 1e30;

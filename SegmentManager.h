@@ -8,8 +8,9 @@
 #include "Selection.h"
 #include "MineInfo.h"
 #include "FreeList.h"
+#include "SLL.h"
 
-//------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 #define MAX_SEGMENTS_D1		800  // descent 1 max # of cubes
 #define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes
@@ -25,7 +26,7 @@
 
 #define MAX_NUM_RECHARGERS ((theMine == null) ? MAX_NUM_RECHARGERS_D2X : (DLE.IsD1File () || (DLE.LevelVersion () < 12)) ? MAX_NUM_RECHARGERS_D2 : MAX_NUM_RECHARGERS_D2X)
 
-//------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 #ifdef _DEBUG
 
@@ -39,14 +40,60 @@ typedef CStaticArray<CObjectProducer, MAX_NUM_MATCENS_D2> robotMakerList;
 
 #endif
 
-//------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 typedef struct tVertMatch {
 		short		v;
 		double	d;
 	} tVertMatch; 
 
-//------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+class CSideListEntry : public CSideKey {
+	public:
+		CSideListEntry*	m_link;
+
+	CSideListEntry (short nSegment = -1, short nSide = -1) : CSideKey (nSegment, nSide) {}
+	};
+
+
+class CEdgeTreeNode {
+	public:
+		uint								m_nKey;
+		CSLL<CSideKey, CSideKey>	m_sides;
+		CSideListEntry*	m_sides;
+
+	explicit CEdgeTreeNode (uint nKey = 0) : m_nKey (nKey), m_sides (null) {}
+	~CEdgeTreeNode () {
+		CSideListEntry* linkP;
+		for (CSideListEntry* listP = m_sides; listP; listP = linkP) {
+			linkP = listP->m_link;
+			delete listP;
+			}
+		}
+
+	CSideListEntry* Insert (short nSegment, short nSide) {
+		CSideListEntry* tailP = null;
+		CSideListEntry* listP = m_sides;
+		for (; listP; listP = listP->m_link) {
+			tailP = listP;
+			if ((listP->m_nSegment == nSegment) && (listP->m_nSide == nSide))
+				return listP;
+			}
+		if (!(listP = new CSideListEntry (nSegment, nSide)))
+			return null;
+		if (tailP)
+			tailP->m_link = listP;
+		else
+			m_sides = listP;
+		return listP;
+		}
+
+	inline bool operator< (uint key) { return m_nKey < key; }
+	inline bool operator> (uint key) { return m_nKey > key; }
+	};
+
+// -----------------------------------------------------------------------------
 
 class CSegmentManager {
 	public:
@@ -344,14 +391,16 @@ class CSegmentManager {
 
 		void ComputeNormals (bool bAll, bool bView = false);
 
-		CSegment* GatherSelectedSegments (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox);
+		CSegment* GatherSelectableSegments (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox);
 
-		CSide* GatherSelectedSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox, bool bSegments);
+		CSide* GatherSelectableSides (CRect& viewport, long xMouse, long yMouse, bool bAllowSkyBox, bool bSegments);
 
 		inline CSegment* SelectedSegments (void) { return m_selectedSegments; }
 	
 		inline CSide* SelectedSides (void) { return m_selectedSides; }
 	
+		void CSegmentManager::GatherEdges (void);
+
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);
 
@@ -389,13 +438,13 @@ class CSegmentManager {
 
 extern CSegmentManager segmentManager;
 
-//------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 class CSegmentIterator : public CGameItemIterator<CSegment> {
 	public:
 		CSegmentIterator() : CGameItemIterator (const_cast<CSegment*>(segmentManager.Segment (0)), segmentManager.Count ()) {}
 	};
 
-//------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 #endif //__segman_h

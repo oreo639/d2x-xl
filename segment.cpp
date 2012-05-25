@@ -1041,7 +1041,7 @@ int CSegment::BuildEdgeList (CEdgeList& edgeList, bool bSparse)
 
 edgeList.Reset ();
 for (ubyte nSide = 0; nSide < 6; nSide++, sideP++) {
-	if (bSparse && (ChildId (nSide) != -1))
+	if (bSparse && !sideP->IsVisible ())
 		continue; // only gather edges that are not shared with another segment
 	short nVertices = sideP->VertexCount ();
 	if (nVertices < 2)

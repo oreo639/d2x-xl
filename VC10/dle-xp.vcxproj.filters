@@ -301,6 +301,9 @@
     <ClInclude Include="..\AVLTree.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\SLL.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp">
