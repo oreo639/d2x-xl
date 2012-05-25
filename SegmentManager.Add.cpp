@@ -64,7 +64,7 @@ if (nDelSeg < --Count ()) {
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::Create (int addMode)
+short CSegmentManager::Create (CSideKey key, int addMode)
 {
 	int i;
 

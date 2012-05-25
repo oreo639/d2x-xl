@@ -232,6 +232,8 @@ public:
 
 	inline bool IsMarked (ubyte mask = MARKED_MASK) { return (m_info.flags & mask) != 0; }
 
+	inline bool IsMarked (short nSide, ubyte mask = MARKED_MASK);
+
 	void MarkVertices (ubyte mask = MARKED_MASK, short nSide = -1);
 
 	void UnmarkVertices (ubyte mask = MARKED_MASK, short nSide = -1);

@@ -7,13 +7,7 @@
 
 bool CSegmentManager::IsMarked (CSideKey key)
 {
-current->Get (key);
-CSegment *segP = Segment (key.m_nSegment);
-for (int i = 0; i < 4; i++) {
-	if (!(vertexManager.Status (segP->m_info.vertexIds [segP->Side (key.m_nSide)->VertexIdIndex (i)]) & MARKED_MASK))
-		return false;
-	}
-return true;
+return Segment (key.m_nSegment)->IsMarked (key.m_nSide);
 }
 
 // ----------------------------------------------------------------------------- 

@@ -888,6 +888,15 @@ else {
 	}
 }
 
+// -----------------------------------------------------------------------------
+
+inline bool CSegment::IsMarked (short nSide, ubyte mask = MARKED_MASK)
+{
+for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
+	if (!Vertex (i, nSide)->IsMarked (mask))
+		return false;
+return true;
+}
 
 // -----------------------------------------------------------------------------
 

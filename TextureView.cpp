@@ -162,6 +162,11 @@ else if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
+	CSegment* segP = segmentManager.Segment (0);
+	for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) 
+		for (short nSide = 0; nSide < 6; nSide++)
+			if (segP->IsMarked (nSide)) 
+				segmentManager.SetTextures (CSideKey (nSegment, nSide), nTexture, -1);
 	segmentManager.SetTextures (*current, nTexture, -1);
 	Refresh ();
 	}
@@ -183,6 +188,11 @@ if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
+	CSegment* segP = segmentManager.Segment (0);
+	for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) 
+		for (short nSide = 0; nSide < 6; nSide++)
+			if (segP->IsMarked (nSide)) 
+				segmentManager.SetTextures (CSideKey (nSegment, nSide), -1, nTexture);
 	segmentManager.SetTextures (*current, -1, nTexture);
 	Refresh ();
 	}
