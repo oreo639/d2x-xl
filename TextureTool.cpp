@@ -41,7 +41,7 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TEXTURE_COPY, OnSaveTexture)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTESIDE, OnPasteSide)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTETOUCHING, OnPasteTouching)
-	ON_BN_CLICKED (IDC_TEXTURE_MARK_PLANE, OnMarkInPlane)
+	ON_BN_CLICKED (IDC_TEXTURE_MARK_PLANE, OnMarkPlane)
 	ON_BN_CLICKED (IDC_TEXTURE_REPLACE, OnReplace)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE1ST, OnPaste1st)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE2ND, OnPaste2nd)
@@ -900,8 +900,9 @@ DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------------
-
-void CTextureTool::OnMarkInPlane () 
+// TODO: Beginning with the current side, walk through all adjacent sides and 
+// mark all in plane
+void CTextureTool::OnMarkPlane () 
 {
 CHECKMINE;
 
