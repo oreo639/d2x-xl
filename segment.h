@@ -234,9 +234,9 @@ public:
 
 	inline bool IsTagged (ubyte mask = TAGGED_MASK) { return (m_info.flags & mask) != 0; }
 
-	void Tag (short nSide, ubyte mask = TAGGED_MASK) { m_info.flags |= mask; }
+	void Tag (short nSide, ubyte mask = TAGGED_MASK);
 
-	void UnTag (short nSide, ubyte mask = TAGGED_MASK) { m_info.flags &= ~mask; }
+	void UnTag (short nSide, ubyte mask = TAGGED_MASK);
 
 	inline bool IsTagged (short nSide, ubyte mask = TAGGED_MASK);
 

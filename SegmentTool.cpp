@@ -526,13 +526,7 @@ undoManager.End ();
 void CSegmentTool::OnAddSegment () 
 {
 CHECKMINE;
-segmentManager.Create (*current);
-CSegment* segP = segmentManager.Segment (0);
-for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) 
-	for (short nSide = 0; nSide < 6; nSide++)
-		if (segP->IsTagged (nSide) && !segP->HasChild (nSide)) 
-			if (0 > segmentManager.Create (CSideKey (nSegment, nSide)))
-				break;
+segmentManager.AddSegments ();
 DLE.MineView ()->Refresh ();
 }
 

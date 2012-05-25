@@ -64,6 +64,19 @@ if (nDelSeg < --Count ()) {
 
 // ----------------------------------------------------------------------------- 
 
+void CSegmentManager::AddSegments (void)
+{
+Create (*current);
+CSegment* segP = Segment (0);
+for (short nSegment = 0, nSegments = Count (); nSegment < nSegments; nSegment++, segP++) 
+	for (short nSide = 0; nSide < 6; nSide++)
+		if (segP->IsTagged (nSide) && !segP->HasChild (nSide)) 
+			if (0 > Create (CSideKey (nSegment, nSide)))
+				break;
+}
+
+// ----------------------------------------------------------------------------- 
+
 short CSegmentManager::Create (CSideKey key, int addMode)
 {
 	int i;
@@ -83,15 +96,15 @@ if ((Count () == MAX_SEGMENTS - 1) && (QueryMsg ("Adding more segments will exce
 	return -1;
 	}
 
-CSegment* segP = Segment (current->m_nSegment); 
+CSegment* segP = Segment (key.m_nSegment); 
 
-short	nCurSide = current->m_nSide; 
+short	nCurSide = key.m_nSide; 
 if (segP->ChildId (nCurSide) >= 0) {
 	ErrorMsg ("Can not add a new segment to a side\nwhich already has a segment attached."); 
 	return -1;
 	}
 
-if (current->Side ()->VertexCount () < 3) {
+if (Side (key)->VertexCount () < 3) {
 	ErrorMsg ("Can not add a new segment to this side."); 
 	undoManager.Unroll ();
 	return -1;
@@ -104,7 +117,7 @@ undoManager.Begin (udSegments);
 if (addMode < 0)
 	addMode = m_nAddMode;
 
-short nSides [2] = {current->m_nSide, oppSideTable [current->m_nSide]};
+short nSides [2] = {key.m_nSide, oppSideTable [key.m_nSide]};
 
 if ((addMode == MIRROR) && (segP->Side (nSides [0])->Shape () != segP->Side (nSides [1])->Shape ())) // mirror not possible!
 	addMode = EXTEND;
@@ -113,7 +126,7 @@ short nNewSeg = Add ();
 CSegment* newSegP = Segment (nNewSeg); 
 
 ushort newVerts [4]; 
-vertexManager.Add (newVerts, current->Side ()->VertexCount ());
+vertexManager.Add (newVerts, Side (key)->VertexCount ());
 
 short nVertices = ComputeVertices (newVerts, addMode); 
 
@@ -203,7 +216,7 @@ for (int i = 0; i < nVertices; i++) {
 // define children and special child
 newSegP->m_info.childFlags = 1 << oppSideTable [nCurSide]; // only opposite side connects to current segment
 for (int i = 0; i < MAX_SIDES_PER_SEGMENT; i++) { // no remaining children
-	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? current->m_nSegment : -1);
+	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? key.m_nSegment : -1);
 	newSegP->Side (i)->DetectShape ();
 	}
 
@@ -230,7 +243,7 @@ for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 newSegP->m_info.staticLight = segP->m_info.staticLight; 
 
 // delete variable light if it exists
-lightManager.DeleteVariableLight (CSideKey (current->m_nSegment, nCurSide)); 
+lightManager.DeleteVariableLight (CSideKey (key.m_nSegment, nCurSide)); 
 
 // update current segment
 segP->SetChild (nCurSide, nNewSeg); 
@@ -258,10 +271,10 @@ for (int i = 0; i < nSegments; i++, segP++) {
 #endif
 // auto align textures new segment
 for (short nNewSide = 0; nNewSide < 6; nNewSide++)
-	AlignTextures (current->m_nSegment, nNewSide, nNewSeg, nNewSide, true, true); 
+	AlignTextures (key.m_nSegment, nNewSide, nNewSeg, nNewSide, true, true); 
 // set current segment to new segment
-current->m_nSegment = nNewSeg; 
-current->Segment ()->Backup (opAdd);
+key.m_nSegment = nNewSeg; 
+Segment (key)->Backup (opAdd);
 //		SetLinesToDraw(); 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
@@ -286,7 +299,7 @@ if (bCreate) {
 		undoManager.End ();
 		return -1;
 		}
-	nSegment = Create ();
+	nSegment = Create (*current, -1);
 	if (nSegment < 0) {
 		Remove (nSegment);
 		undoManager.End ();
@@ -314,7 +327,7 @@ return nSegment;
 // ----------------------------------------------------------------------------- 
 
 bool CSegmentManager::CreateProducer (short nSegment, bool bCreate, ubyte nType, bool bSetDefTextures, 
-												CObjectProducer* producers, CMineItemInfo& info, char* szError) 
+												  CObjectProducer* producers, CMineItemInfo& info, char* szError) 
 {
 if (info.count >= MAX_MATCENS) {
     ErrorMsg (szError);

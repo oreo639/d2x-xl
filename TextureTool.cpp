@@ -926,7 +926,7 @@ int nTail = 1;
 sideList [nHead] = CSideKey (*current);
 
 
-CAVLTree <CEdgeTreeNode, uint>& edgeTree;
+CAVLTree <CEdgeTreeNode, uint> edgeTree;
 CEdgeList edgeList;
 
 while (nHead < nTail) {
@@ -935,7 +935,7 @@ while (nHead < nTail) {
 	CSide* sideP = segmentManager.Side (key);
 	segP->ComputeNormals (key.m_nSide);
 	edgeList.Reset ();
-	int nEdges = segP->BuildEdgeList (edgeList, key.m_nSide, true);
+	int nEdges = segP->BuildEdgeList (edgeList, ubyte (key.m_nSide), true);
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
 		ubyte side1, side2, i1, i2;
 		edgeList.Get (nEdge, side1, side2, i1, i2);

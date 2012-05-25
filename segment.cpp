@@ -890,7 +890,7 @@ else {
 
 // -----------------------------------------------------------------------------
 
-void CSegment::Tag (short nSide, ubyte mask = TAGGED_MASK)
+void CSegment::Tag (short nSide, ubyte mask)
 {
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 	Vertex (i, nSide)->Tag (mask);
@@ -898,7 +898,7 @@ for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 
 // -----------------------------------------------------------------------------
 
-void CSegment::UnTag (short nSide, ubyte mask = TAGGED_MASK)
+void CSegment::UnTag (short nSide, ubyte mask)
 {
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 	Vertex (i, nSide)->Tag (mask);
@@ -906,7 +906,7 @@ for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 
 // -----------------------------------------------------------------------------
 
-bool CSegment::IsTagged (short nSide, ubyte mask = TAGGED_MASK)
+bool CSegment::IsTagged (short nSide, ubyte mask)
 {
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 	if (!Vertex (i, nSide)->IsTagged (mask))

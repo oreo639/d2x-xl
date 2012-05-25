@@ -1,7 +1,8 @@
 #ifndef __AVLTree_H
 #define __AVLTree_H
 
-#include "mine.h"
+#include "define.h"
+#include "types.h"
 
 template < class _T, class _K > 
 class CAVLTree {
@@ -355,7 +356,7 @@ class CAVLTree {
 
 		public: _T* Find (_K key) 
 		{
-			CAVL::CNode<_T>* p = m_root;
+			CNode<_T>* p = m_root;
 
 		while (p) {
 			if (p->m_data > key)
@@ -364,7 +365,7 @@ class CAVLTree {
 				p = p->m_right;
 			else {
 				m_current = p;
-				return p->m_data;
+				return &p->m_data;
 				}
 			}
 		return null;

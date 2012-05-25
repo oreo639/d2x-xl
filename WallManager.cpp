@@ -407,7 +407,7 @@ if (!triggerManager.HaveResources ())
 
 int nLastSeg = current->m_nSegment;
 undoManager.Begin (udSegments | udWalls);
-if (!segmentManager.Create ()) {
+if (!segmentManager.Create (*current, -1)) {
 	undoManager.Unroll ();
 	return false;
 	}

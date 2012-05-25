@@ -190,6 +190,8 @@ class CSegmentManager {
 
 		void Remove (short nDelSeg);
 
+		void AddSegments (void);
+
 		short Create (CSideKey key, int addMode = -1);
 
 		void Delete (short nDelSeg = -1, bool bDeleteVerts = true);

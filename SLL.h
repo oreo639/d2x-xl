@@ -3,7 +3,7 @@
 #define __SLL_H
 
 #include "define.h"
-#include "mine.h"
+#include "types.h"
 
 // -----------------------------------------------------------------------------
 // Single Sided Linked List
@@ -15,7 +15,7 @@ template < class _T, class _K >
 class CSLL {
 	public:
 		friend class CSLLIterator<_T, _K>;
-	private:
+
 		template < class _U >
 		class CNode {
 			public:
@@ -56,33 +56,37 @@ class CSLL {
 			listP->m_data = data;
 			return &listP->m_data;
 			}
+
+	inline CSLL<_T, _K>& operator= (CSLL<_T, _K>& other) {
+		m_root = other.m_root;
+		return *this;
+		}
 	};
 
 template < class _T, class _K >
 class CSLLIterator {
 	private:
-		CSLL<_T, _K>&		m_sll;
-		CSLL::CNode<_T>*	m_current;
+		CSLL<_T, _K>&				m_sll;
+		typename CSLL<_T, _K>::CNode<_T>*	m_current;
 
 	public:
 		CSLLIterator (CSLL<_T, _K>& sll) : m_sll (sll) {}
 
 		_T* Begin (void) { 
-			m_current = &m_sll.m_root;
-			return m_current->m_data; 
+			m_current = m_sll.m_root;
+			return &m_current->m_data; 
 			}
 
 		_T* End (void) { return null; }
 
 		CSLLIterator& operator++() { m_current = m_current->m_link; }
 		
+		CSLLIterator& operator++(int) { 
+			m_current = m_current->m_link; 
+			return *this;
+			}
+		
 		_T* operator*() { return &m_current->m_data; }
-
-	inline CSLL<_T, _K>& operator= (CSLL<_T, _K>& other) {
-		m_root = other.m_root;
-		return *this;
-		}
-
 	};
 
 // -----------------------------------------------------------------------------
