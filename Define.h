@@ -316,10 +316,10 @@ inline double Degrees (double a) {
 
 // -----------------------------------------------------------------------------
 
-#define TAGGED_MASK  0x80 // used on wallFlags & vertexStatus 
-#define DELETED_MASK 0x40 // used on wallFlags & vertexStatus 
-#define NEW_MASK     0x20 // used on vertexStatus      
-#define SHARED_MASK	0x10
+#define TAGGED_MASK  ubyte (0x80) // used on wallFlags & vertexStatus 
+#define DELETED_MASK ubyte (0x40) // used on wallFlags & vertexStatus 
+#define NEW_MASK     ubyte (0x20) // used on vertexStatus      
+#define SHARED_MASK	ubyte (0x10)
 
 // -----------------------------------------------------------------------------
 
