@@ -1374,13 +1374,13 @@ bool CDiagTool::CheckBotGens (void)
 if (theMine == null) 
 	return false;
 
-	short				h = segmentManager.Count (), i, nSegment = 0;
-	bool				bOk = true;
-	short				nProducerSegs, nProducers = short (segmentManager.RobotMakerCount ());
-	CSegment*		segP = segmentManager.Segment (0);
-	CObjectProducer*		producerP = segmentManager.RobotMaker (0);
-	short				segList [MAX_NUM_MATCENS_D2];
-	short				refList [MAX_NUM_MATCENS_D2];
+	short					h = segmentManager.Count (), i, nSegment = 0;
+	bool					bOk = true;
+	short					nProducerSegs, nProducers = short (segmentManager.RobotMakerCount ());
+	CSegment*			segP = segmentManager.Segment (0);
+	CObjectProducer*	producerP = segmentManager.RobotMaker (0);
+	short					segList [MAX_NUM_MATCENS_D2];
+	short					refList [MAX_NUM_MATCENS_D2];
 
   short sub_errors = m_nErrors [0];
   short sub_warnings = m_nErrors [1];
@@ -1407,12 +1407,12 @@ return false;
 
 bool CDiagTool::CheckEquipGens (void)
 {
-	short				i, nSegment = 0;
-	bool				bOk = true;
-	int				nProducerSegs, nProducers = int (segmentManager.EquipMakerCount ());
-	CObjectProducer*		producerP = segmentManager.EquipMaker (0);
-	short				segList [MAX_NUM_MATCENS_D2];
-	short				refList [MAX_NUM_MATCENS_D2];
+	short					i, nSegment = 0;
+	bool					bOk = true;
+	int					nProducerSegs, nProducers = int (segmentManager.EquipMakerCount ());
+	CObjectProducer*	producerP = segmentManager.EquipMaker (0);
+	short					segList [MAX_NUM_MATCENS_D2];
+	short					refList [MAX_NUM_MATCENS_D2];
 
   short sub_errors = m_nErrors [0];
   short sub_warnings = m_nErrors [1];
