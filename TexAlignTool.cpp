@@ -712,24 +712,19 @@ UpdateAlignWnd ();
 
 void CTextureTool::AlignChildren (short nSegment, short nSide, bool bStart, bool bTagged)
 {
-static bool (*alignedSides) [6] = NULL;
-// set all segment sides as not aligned yet
 if (bStart) {
-	if (alignedSides)
-		delete [] alignedSides;
-	alignedSides = new bool [segmentManager.Count ()][6];
-	if (!alignedSides)
-		return;
+	segmentManager.UnTagAll (ALIGNED_MASK);
 	CSegment* segP = segmentManager.Segment (0);
 	for (int i = 0; i < segmentManager.Count (); i++, segP++)
-		for (int j = 0; j < 6; j++)
+		for (short j = 0; j < 6; j++)
 			// if we're aligning marked sides, consider untagged already aligned
-			alignedSides [i][j] = (segP->Side (j)->Shape () > SIDE_SHAPE_TRIANGLE) || (bTagged && !segmentManager.IsTagged (CSideKey (i, j)));
+			if ((segP->Side (j)->Shape () > SIDE_SHAPE_TRIANGLE) || (bTagged && !segmentManager.IsTagged (CSideKey (i, j))))
+				segP->Tag (j, ALIGNED_MASK);
 	}
 // mark current side as aligned
-alignedSides [nSegment][nSide] = true;
+segmentManager.Segment (nSegment)->Tag (nSide, ALIGNED_MASK);
 // call recursive function which aligns one at a time
-AlignChildTextures (nSegment, nSide, alignedSides);
+AlignChildTextures (nSegment, nSide);
 }
 
 //------------------------------------------------------------------------------
@@ -807,15 +802,17 @@ UpdateAlignWnd ();
 }
 
 //------------------------------------------------------------------------------
+// TODO: Build an AVL edge tree (via the segment manager) and walk through all sides
+// via the side lists of each edge in the edge tree.
 
-void CTextureTool::AlignChildTextures (int nSegment, int nSide, bool (*alignedSides) [6])
+void CTextureTool::AlignChildTextures (short nSegment, short nSide)
 {
+#ifdef _DEBUG
 if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	return;
 if ((nSide < 0) || (nSide >= 6))
 	return;
-if (!alignedSides)
-	return;
+#endif
 if (!m_bUse1st && !m_bUse2nd)
 	return; // nothing to align
 
@@ -827,7 +824,7 @@ if (!childList)
 	return;
 
 childList [tos++] = CSideKey (nSegment, nSide);
-alignedSides [nSegment][nSide] = true;
+segP->Tag (nSide, ALIGNED_MASK);
 
 while (pos < tos) {
 	CSideKey thisSide = childList [pos++];
@@ -852,10 +849,10 @@ while (pos < tos) {
 			continue;
 		if ((nChildSide < 0) || (nChildSide >= 6))
 			continue;
-		if (alignedSides [nChildSeg][nChildSide])
+		CSegment* childSegP = segmentManager.Segment (nChildSeg);
+		if (childSegP->IsTagged (nChildSide, ALIGNED_MASK))
 			continue;
 		// next check that the textures match
-		CSegment* childSegP = segmentManager.Segment (nChildSeg);
 		if (m_bUse1st && segP->m_sides [nSide].BaseTex () != childSegP->m_sides [nChildSide].BaseTex ())
 			continue;
 		short nOvlTex = segP->m_sides [nSide].OvlTex () & TEXTURE_MASK;
@@ -869,7 +866,7 @@ while (pos < tos) {
 #endif
 		segmentManager.AlignTextures (nSegment, nSide, nChildSeg, nChildSide, m_bUse1st, m_bUse2nd);
 		childList [tos++] = childSide;
-		alignedSides [nChildSeg][nChildSide] = true;
+		childSegP->Tag (nChildSide, ALIGNED_MASK);
 		}
 	}
 
@@ -887,12 +884,14 @@ if (depth == -1)
 	depth = SEGMENT_LIMIT;
 else if (depth <= 0)
 	return noResult;
+#ifdef _DEBUG
 if ((side.m_nSegment < 0) || (side.m_nSegment >= segmentManager.Count ()))
 	return noResult;
 if ((side.m_nSide < 0) || (side.m_nSide >= 6))
 	return noResult;
 if ((nLine < 0) || (nLine >= 4))
 	return noResult;
+#endif
 // loop check - saves iterations over just relying on depth
 if (nFirstSegment == -1)
 	nFirstSegment = side.m_nSegment;
