@@ -119,13 +119,13 @@ return false;
 
 // ------------------------------------------------------------------------ 
 
-short CSegmentManager::TaggedCount (bool bCheck)
+short CSegmentManager::TaggedCount (bool bSides, bool bCheck)
 {
 int nCount = 0; 
 CSegment* segP = Segment (0);
 short nSegments = Count ();
 for (short i = 0; i < nSegments; i++, segP++) {
-	if (segP->IsTagged ()) {
+	if (segP->IsTagged () || (bSides && segP->IsTagged (short (-1)))) {
 		if (bCheck)
 			return 1; 
 		++nCount; 
@@ -218,7 +218,7 @@ current->Segment ()->Tag (current->m_nSide);
 CAVLTree <CEdgeTreeNode, uint> edgeTree;
 segmentManager.GatherEdges (edgeTree);
 
-segmentManager.ComputeNormals (true);
+segmentManager.ComputeNormals (false);
 CDoubleVector refNormal = current->Side ()->Normal ();
 
 CEdgeList edgeList;

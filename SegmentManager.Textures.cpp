@@ -42,6 +42,7 @@ return true;
 
 int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nChildSeg, short nChildSide, int bAlign1st, int bAlign2nd)
 {
+#ifdef _DEBUG
 if ((nStartSeg < 0) || (nStartSeg >= Count ()))
 	return -1;
 if ((nStartSide < 0) || (nStartSide >= 6))
@@ -51,7 +52,6 @@ if ((nChildSeg < 0) || (nChildSeg >= Count ()))
 if ((nChildSide < 0) || (nChildSide >= 6))
 	return -1;
 
-#ifdef _DEBUG
 if ((nStartSeg == nDbgSeg) && ((nDbgSide < 0) || (nStartSide == nDbgSide)))
 	nDbgSeg = nDbgSeg;
 #endif

@@ -275,9 +275,9 @@ class CSegmentManager {
 
 		bool IsTagged (CSideKey key = CSideKey (-1, -1));
 
-		short	TaggedCount (bool bCheck = false);
+		short	TaggedCount (bool bSides = false, bool bCheck = false);
 
-		bool HaveTaggedSegments (void) { return TaggedCount (true) > 0; }
+		bool HaveTaggedSegments (bool bSides = false) { return TaggedCount (bSides, true) > 0; }
 
 		bool HaveTaggedSides (void);
 

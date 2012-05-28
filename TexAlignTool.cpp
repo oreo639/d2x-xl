@@ -748,7 +748,7 @@ void CTextureTool::OnAlignAll (void)
 
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-bool bAll = !segmentManager.HaveTaggedSegments ();
+bool bAll = !segmentManager.HaveTaggedSegments (true);
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++)
 	 segP->Index () = 0;
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
@@ -787,7 +787,7 @@ void CTextureTool::OnAlignChildren ()
 // set all segment sides as not aligned yet
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-if (!segmentManager.HaveTaggedSegments ())
+if (!segmentManager.HaveTaggedSegments (true))
 	// call recursive function which aligns one at a time
 	AlignChildren (current->m_nSegment, current->m_nSide, true, false);
 else {	// use all marked sides as alignment source
