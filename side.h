@@ -130,6 +130,10 @@ public:
 
 	inline short GetParent (void) { return m_info.nParent; }
 
+	inline void Tag (ubyte mask = TAGGED_MASK) { m_nTag |= mask; }
+
+	inline void UnTag (ubyte mask = TAGGED_MASK) { m_nTag &= ~mask; }
+
 	CVertex& Vertex (ushort* vertexIds, ubyte nIndex);
 	
 private:

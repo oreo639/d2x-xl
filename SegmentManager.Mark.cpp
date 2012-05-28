@@ -92,6 +92,8 @@ CSegment* segP = Segment (0);
 short nSegments = Count ();
 for (short i = 0; i < nSegments; i++, segP++) {
 	segP->UnTag (mask); 
+	for (short j = 0; j < 6; j++)
+		Side (j)->UnTag (mask);
 	for (short j = 0; j < 8; j++)
 		if (segP->VertexId (j) <= MAX_VERTEX)
 			segP->Vertex (j)->Status () &= ~mask;

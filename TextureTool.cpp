@@ -920,7 +920,7 @@ void CTextureTool::OnTagPlane ()
 CHECKMINE;
 
 UpdateData (TRUE);
-vertexManager.UnTagAll ();
+segmentManager.UnTagAll ();
 
 CDynamicArray<CSideKey> sideList;
 sideList.Create (segmentManager.VisibleSideCount ());
@@ -932,6 +932,9 @@ current->Segment ()->Tag (current->m_nSide);
 
 CAVLTree <CEdgeTreeNode, uint> edgeTree;
 segmentManager.GatherEdges (edgeTree);
+
+current->Segment ()->ComputeNormals (current->m_nSide);
+CDoubleVector refNormal = current->Side ()->Normal ();
 
 CEdgeList edgeList;
 
@@ -974,6 +977,10 @@ while (nHead < nTail) {
 				childSegP->ComputeNormals (iter->m_nSide);
 				if (Dot (sideP->Normal (), childSideP->Normal ()) > 0.7) {
 #ifdef _DEBUG
+					if (Dot (refNormal, childSideP->Normal ()) <= 0.0) {
+						double dot = Dot (sideP->Normal (), childSideP->Normal ();
+						nDbgSeg = nDbgSeg;
+						}
 					if ((iter->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (iter->m_nSide == nDbgSide)))
 						nDbgSeg = nDbgSeg;
 #endif
