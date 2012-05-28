@@ -199,7 +199,7 @@ if (left < r)
 
 //----------------------------------------------------------------------------
 
-void CMineView::DrawSegmentsTextured (void)
+void CMineView::DrawTexturedSegments (void)
 {
 CHECKMINE;
 if (!textureManager.Available ())
@@ -473,7 +473,7 @@ for (short nSide = 0; nSide < 6; nSide++) {
 
 void CMineView::RenderSegmentWireFrame (CSegment *segP, bool bSparse)
 {
-	int bOrtho = Renderer ().Ortho ();
+	int	bOrtho = Renderer ().Ortho ();
 
 if (bOrtho) {
 	if (!Visible (segP))
@@ -488,14 +488,27 @@ else if (!bSparse) {
 	}
 
 	CEdgeList	edgeList;
-	ushort*	vertexIds = segP->m_info.vertexIds;
-	short		xMax = ViewWidth (),
-				yMax = ViewHeight ();
-	int		nType = Renderer ().Type ();
+	ushort*		vertexIds = segP->m_info.vertexIds;
+	short			xMax = ViewWidth (),
+					yMax = ViewHeight ();
+	int			nType = Renderer ().Type ();
+	ePenColor	pen;
+	float			penWeight;
+	bool			bTagged [2]= {false, false};
 
+Renderer ().GetPen (pen, penWeight);
 for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
 	ubyte i1, i2, side1, side2;
 	edgeList.Get (i, side1, side2, i1, i2);
+	bTagged [0] = bTagged [1];
+	bTagged [1] = segP->IsTagged (side1) || segP->IsTagged (side2);
+	if (bTagged [0] != bTagged [1]) {
+		if (bTagged [1])
+			Renderer ().SelectPen (penRed + 1);
+		else
+			Renderer ().SelectPen (pen + 1, penWeight);
+		}
+
 	CVertex& v1 = vertexManager [vertexIds [i1]];
 	CVertex& v2 = vertexManager [vertexIds [i2]];
 	if (!bOrtho) {

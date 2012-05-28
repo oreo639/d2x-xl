@@ -129,6 +129,9 @@ public:
 	uint				m_viewObjectFlags;
 	uint				m_viewMineFlags;
 
+	ePenColor		m_pen;
+	float				m_penWeight;
+
 public:
 	CRenderData ();
 	~CRenderData ();
@@ -211,6 +214,7 @@ class CRenderer {
 		virtual bool CanFitToView (void) = 0;
 
 		virtual void SelectPen (int nPen, float nWeight = 1.0f) = 0;
+		void GetPen (ePenColor& nPen, float& penWeight)  { nPen = m_renderData.m_pen, penWeight = m_renderData.m_penWeight; }
 		virtual void MoveTo (int x, int y) = 0;
 		virtual void LineTo (int x, int y) = 0;
 		virtual void Rectangle (int left, int top, int right, int bottom) = 0;

@@ -336,12 +336,12 @@ if (m_bUpdate) {
 	ShiftViewPoints ();
 	switch (m_viewOption) {
 		case eViewTextured:
-			DrawSegmentsTextured ();
+			DrawTexturedSegments ();
 			break;
 
 		case eViewTexturedWireFrame:
 			DrawWireFrame (false);
-			DrawSegmentsTextured ();
+			DrawTexturedSegments ();
 			break;
 
 		case eViewWireFrameFull:

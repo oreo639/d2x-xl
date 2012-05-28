@@ -198,7 +198,7 @@ public:
 	void ResetView (bool bRefresh = false);
 	bool InitViewDimensions (void);
 	void DrawWireFrame (bool bSparse);
-	void DrawSegmentsTextured (void);
+	void DrawTexturedSegments (void);
 	void DrawTaggedSegments (short bClear = 0);
 	void DrawSegment (CSegment *segP, bool bSparse);
 	void DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short bClear = 0);
