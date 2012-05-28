@@ -924,6 +924,7 @@ sideList.Create (segmentManager.VisibleSideCount ());
 int nHead = 0;
 int nTail = 1;
 sideList [nHead] = CSideKey (*current);
+current->Segment ()->Tag (current->m_nSide);
 
 CAVLTree <CEdgeTreeNode, uint> edgeTree;
 segmentManager.GatherEdges (edgeTree);
@@ -956,9 +957,10 @@ while (nHead < nTail) {
 			if (!childSegP->IsTagged (keyP->m_nSide)) {
 				CSide* childSideP = segmentManager.Side (*keyP);
 				childSegP->ComputeNormals (keyP->m_nSide);
-				if (fabs (Dot (sideP->Normal (), childSideP->Normal ())) < 0.3)
+				if (fabs (Dot (sideP->Normal (), childSideP->Normal ())) < 0.3) {
 					childSegP->Tag (keyP->m_nSide);
-				sideList [nTail++] = *keyP;
+					sideList [nTail++] = *keyP;
+					}
 				}
 			}
 		}
