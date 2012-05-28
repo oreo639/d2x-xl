@@ -406,13 +406,16 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 		ushort v1 = segP->VertexId (side1, i1);
 		ushort v2 = segP->VertexId (side1, i2);
 		uint key = (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16);
-		CEdgeTreeNode node (key);
-		CEdgeTreeNode*nodeP = edgeTree.Insert (node, key);
-		if (nodeP) { // insert sides into side list of current edge
-			if (segP->Side (side1)->IsVisible ())
-				nodeP->Insert (nSegment, side1);
-			if (segP->Side (side2)->IsVisible ())
-				nodeP->Insert (nSegment, side2);
+		bool bVisible [2] = { (side1 < 6) && segP->Side (side1)->IsVisible (), (side2 < 6) && segP->Side (side2)->IsVisible () };
+		if ((bVisible [0] || bVisible [1])) {
+			CEdgeTreeNode node (key);
+			CEdgeTreeNode*nodeP = edgeTree.Insert (node, key);
+			if (nodeP) { // insert sides into side list of current edge
+				if (bVisible [0])
+					nodeP->Insert (nSegment, side1);
+				if (bVisible [1])
+					nodeP->Insert (nSegment, side2);
+				}
 			}
 		}
 	}

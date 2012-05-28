@@ -21,6 +21,8 @@ class CAVLTree {
 				CNode*	m_right;
 				_U			m_data;
 				byte		m_balance;
+
+			CNode () : m_left (null), m_right (null), m_balance (0) {}
 			};
 
 		CNode<_T>*		m_root;
