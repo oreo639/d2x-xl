@@ -951,15 +951,15 @@ while (nHead < nTail) {
 		CEdgeTreeNode* node = edgeTree.Find ((v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16));
 		if (!node)
 			continue;
-		CSLLIterator<CSideKey, CSideKey>* iter = new CSLLIterator<CSideKey, CSideKey> (node->m_sides);
-		for (iter->Begin (); !iter->End (); iter++) {
-			CSegment* childSegP = segmentManager.Segment (*iter);
+		CSLLIterator<CSideKey, CSideKey> iter (node->m_sides);
+		for (iter.Begin (); *iter != iter.End (); iter++) {
+			CSegment* childSegP = segmentManager.Segment (**iter);
 			if (!childSegP->IsTagged (iter->m_nSide)) {
-				CSide* childSideP = segmentManager.Side (*iter);
+				CSide* childSideP = segmentManager.Side (**iter);
 				childSegP->ComputeNormals (iter->m_nSide);
 				if (fabs (Dot (sideP->Normal (), childSideP->Normal ())) < 0.3) {
 					childSegP->Tag (iter->m_nSide);
-					sideList [nTail++] = *iter;
+					sideList [nTail++] = **iter;
 					}
 				}
 			}

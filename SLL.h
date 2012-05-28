@@ -88,9 +88,9 @@ class CSLLIterator {
 			return *this;
 			}
 		
-		inline _T* operator->() { return &m_current->m_data; }
+		inline _T* operator->() { return m_current ? &m_current->m_data : null; }
 		
-		inline _T* operator*() { return &m_current->m_data; }
+		inline _T* operator*() { return m_current ? &m_current->m_data : null; }
 	};
 
 // -----------------------------------------------------------------------------
