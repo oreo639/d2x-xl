@@ -964,7 +964,7 @@ while (nHead < nTail) {
 				childSegP->ComputeNormals (iter->m_nSide);
 				if (Dot (sideP->Normal (), childSideP->Normal ()) > 0.7) {
 #ifdef _DEBUG
-					if ((iter->m_nSegment == nDbgSeg) ((nDbgSide < 0) || (iter->m_nSide == nDbgSide)))
+					if ((iter->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (iter->m_nSide == nDbgSide)))
 						nDbgSeg = nDbgSeg;
 #endif
 					childSegP->Tag (iter->m_nSide);
