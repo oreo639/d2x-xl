@@ -938,6 +938,8 @@ CDoubleVector refNormal = current->Side ()->Normal ();
 
 CEdgeList edgeList;
 
+double maxAngle = cos (Radians (22.5));
+
 while (nHead < nTail) {
 	CSideKey key = sideList [nHead++];
 	CSegment* segP = segmentManager.Segment (key);
@@ -975,18 +977,18 @@ while (nHead < nTail) {
 			if (!childSegP->IsTagged (iter->m_nSide)) {
 				CSide* childSideP = segmentManager.Side (**iter);
 				childSegP->ComputeNormals (iter->m_nSide);
-				if (Dot (sideP->Normal (), childSideP->Normal ()) > 0.7) {
+				if (Dot (sideP->Normal (), childSideP->Normal ()) < maxAngle) 
+					continue;
 #ifdef _DEBUG
-					if (Dot (refNormal, childSideP->Normal ()) <= 0.0) {
-						double dot = Dot (sideP->Normal (), childSideP->Normal ());
-						nDbgSeg = nDbgSeg;
-						}
-					if ((iter->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (iter->m_nSide == nDbgSide)))
-						nDbgSeg = nDbgSeg;
-#endif
-					childSegP->Tag (iter->m_nSide);
-					sideList [nTail++] = **iter;
+				if (Dot (refNormal, childSideP->Normal ()) <= 0.0) {
+					double dot = Dot (sideP->Normal (), childSideP->Normal ());
+					nDbgSeg = nDbgSeg;
 					}
+				if ((iter->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (iter->m_nSide == nDbgSide)))
+					nDbgSeg = nDbgSeg;
+#endif
+				childSegP->Tag (iter->m_nSide);
+				sideList [nTail++] = **iter;
 				}
 			}
 		}
