@@ -494,7 +494,7 @@ else if (!bSparse) {
 	int			nType = Renderer ().Type ();
 	ePenColor	pen;
 	float			penWeight;
-	bool			bTagged [2]= {false, false};
+	bool			bTagged [2] = {false, false};
 
 Renderer ().GetPen (pen, penWeight);
 for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
@@ -625,6 +625,8 @@ CHECKMINE;
 	short			yMax = ViewHeight ();
 	short			i;
 
+if (m_nRenderer)
+	bClear = false;
 Renderer ().BeginRender (Renderer ().Type () == 0);
 if (!Renderer ().Ortho ())
 	glDepthFunc (GL_LEQUAL);
