@@ -951,7 +951,7 @@ if (m_mouseState == eMouseStateButtonDown) {
 		ZoomIn ();
 	else {
 		SetMouseState (eMouseStateIdle);
-		SelectCurrentElement (m_clickPos.x, m_clickPos.y, (Perspective () && (m_clickState & MK_SHIFT)) ? 1 : -1);
+		SelectCurrentElement (m_clickPos.x, m_clickPos.y, (Perspective () ? (m_clickState & MK_SHIFT) ? 1 : -1 : 0);
 		}
 	}
 else if (m_mouseState == eMouseStateSelect) {
@@ -987,7 +987,7 @@ m_releaseState = nFlags;
 if (m_mouseState == eMouseStateButtonDown) {
 	if (m_clickState & MK_CONTROL)
 		ZoomOut ();
-	else if (!Perspective () && !(m_clickState & MK_SHIFT)) {
+	else if (!(Perspective () || (m_clickState & MK_SHIFT))) {
 		SetMouseState (eMouseStateIdle);
 		SelectCurrentObject (m_clickPos.x, m_clickPos.y);
 		}
