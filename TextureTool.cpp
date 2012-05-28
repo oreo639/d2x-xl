@@ -955,7 +955,7 @@ while (nHead < nTail) {
 			CSegment* childSegP = segmentManager.Segment (*keyP);
 			if (!childSegP->IsTagged (keyP->m_nSide)) {
 				CSide* childSideP = segmentManager.Side (*keyP);
-				childSegP->ComputeNormals (keyP->m_nSegment);
+				childSegP->ComputeNormals (keyP->m_nSide);
 				if (fabs (Dot (sideP->Normal (), childSideP->Normal ())) < 0.3)
 					childSegP->Tag (keyP->m_nSide);
 				sideList [nTail++] = *keyP;
