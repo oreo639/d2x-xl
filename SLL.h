@@ -74,21 +74,23 @@ class CSLLIterator {
 	public:
 		CSLLIterator (CSLL<_T, _K>& sll) : m_sll (sll) {}
 
-		_T* Begin (void) { 
+		inline _T* Begin (void) { 
 			m_current = m_sll.m_root;
 			return &m_current->m_data; 
 			}
 
-		_T* End (void) { return null; }
+		inline _T* End (void) { return null; }
 
-		CSLLIterator& operator++() { m_current = m_current->m_link; }
+		inline CSLLIterator& operator++() { m_current = m_current->m_link; }
 		
-		CSLLIterator& operator++(int) { 
+		inline CSLLIterator& operator++(int) { 
 			m_current = m_current->m_link; 
 			return *this;
 			}
 		
-		_T* operator*() { return &m_current->m_data; }
+		inline _T* operator->() { return &m_current->m_data; }
+		
+		inline _T* operator*() { return &m_current->m_data; }
 	};
 
 // -----------------------------------------------------------------------------

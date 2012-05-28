@@ -952,14 +952,14 @@ while (nHead < nTail) {
 		if (!node)
 			continue;
 		CSLLIterator<CSideKey, CSideKey>* iter = new CSLLIterator<CSideKey, CSideKey> (node->m_sides);
-		for (CSideKey* keyP = iter->Begin (); keyP != iter->End (); (*iter)++) {
-			CSegment* childSegP = segmentManager.Segment (*keyP);
-			if (!childSegP->IsTagged (keyP->m_nSide)) {
-				CSide* childSideP = segmentManager.Side (*keyP);
-				childSegP->ComputeNormals (keyP->m_nSide);
+		for (iter->Begin (); !iter->End (); iter++) {
+			CSegment* childSegP = segmentManager.Segment (*iter);
+			if (!childSegP->IsTagged (iter->m_nSide)) {
+				CSide* childSideP = segmentManager.Side (*iter);
+				childSegP->ComputeNormals (iter->m_nSide);
 				if (fabs (Dot (sideP->Normal (), childSideP->Normal ())) < 0.3) {
-					childSegP->Tag (keyP->m_nSide);
-					sideList [nTail++] = *keyP;
+					childSegP->Tag (iter->m_nSide);
+					sideList [nTail++] = *iter;
 					}
 				}
 			}
