@@ -978,7 +978,7 @@ while (nHead < nTail) {
 				if (Dot (sideP->Normal (), childSideP->Normal ()) > 0.7) {
 #ifdef _DEBUG
 					if (Dot (refNormal, childSideP->Normal ()) <= 0.0) {
-						double dot = Dot (sideP->Normal (), childSideP->Normal ();
+						double dot = Dot (sideP->Normal (), childSideP->Normal ());
 						nDbgSeg = nDbgSeg;
 						}
 					if ((iter->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (iter->m_nSide == nDbgSide)))
