@@ -3,6 +3,10 @@
 #include "mine.h"
 #include "dle-xp.h"
 
+extern short nDbgSeg, nDbgSide;
+extern int nDbgVertex;
+uint nDbgEdgeKey = 0xffffffff;
+
 // ----------------------------------------------------------------------------- 
 
 bool CSegmentManager::IsTagged (CSideKey key)

@@ -27,10 +27,6 @@
 static char THIS_FILE [] = __FILE__;
 #endif
 
-extern short nDbgSeg, nDbgSide;
-extern int nDbgVertex;
-uint nDbgEdgeKey = 0xffffffff;
-
 #define TEXTOOLDLG 1
 
 /////////////////////////////////////////////////////////////////////////////
