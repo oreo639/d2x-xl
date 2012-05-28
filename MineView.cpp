@@ -951,7 +951,7 @@ if (m_mouseState == eMouseStateButtonDown) {
 		ZoomIn ();
 	else {
 		SetMouseState (eMouseStateIdle);
-		SelectCurrentElement (m_clickPos.x, m_clickPos.y, (Perspective () ? (m_clickState & MK_SHIFT) ? 1 : -1 : 0);
+		SelectCurrentElement (m_clickPos.x, m_clickPos.y, Perspective () ? (m_clickState & MK_SHIFT) ? 1 : -1 : 0);
 		}
 	}
 else if (m_mouseState == eMouseStateSelect) {
