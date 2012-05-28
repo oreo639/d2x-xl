@@ -363,14 +363,14 @@ if (Shape () > SIDE_SHAPE_TRIANGLE)
 else if (bView) {
 	CDoubleVector& v0 = vertexManager [vertexIds [m_vertexIdIndex [0]]].m_view;
 	CDoubleVector v = vCenter - v0;
-	m_vNormal [0] = ::Normal (v0, vertexManager [vertexIds [m_vertexIdIndex [1]]].m_view, vertexManager [vertexIds [m_vertexIdIndex [2]]].m_view);
+	::Normal (m_vNormal [0], v0, vertexManager [vertexIds [m_vertexIdIndex [1]]].m_view, vertexManager [vertexIds [m_vertexIdIndex [2]]].m_view);
 	if (Dot (m_vNormal [0], v) < 0.0) // make sure normal points into the segment
 		m_vNormal [0].Negate ();
 
 	if (VertexCount () < 4) 
 		m_vNormal [1] = m_vNormal [0];
 	else {
-		m_vNormal [1] = ::Normal (v0, vertexManager [vertexIds [m_vertexIdIndex [2]]].m_view, vertexManager [vertexIds [m_vertexIdIndex [3]]].m_view);
+		::Normal (m_vNormal [1], v0, vertexManager [vertexIds [m_vertexIdIndex [2]]].m_view, vertexManager [vertexIds [m_vertexIdIndex [3]]].m_view);
 		if (Dot (m_vNormal [1], v) < 0.0)
 			m_vNormal [1].Negate ();
 		}
@@ -378,14 +378,14 @@ else if (bView) {
 else {
 	CDoubleVector& v0 = vertexManager [vertexIds [m_vertexIdIndex [0]]];
 	CDoubleVector v = vCenter - v0;
-	m_vNormal [0] = ::Normal (v0, vertexManager [vertexIds [m_vertexIdIndex [1]]], vertexManager [vertexIds [m_vertexIdIndex [2]]]);
+	::Normal (m_vNormal [0], v0, vertexManager [vertexIds [m_vertexIdIndex [1]]], vertexManager [vertexIds [m_vertexIdIndex [2]]]);
 	if (Dot (m_vNormal [0], v) < 0.0) // make sure normal points into the segment
 		m_vNormal [0].Negate ();
 
 	if (VertexCount () < 4) 
 		m_vNormal [1] = m_vNormal [0];
 	else {
-		m_vNormal [1] = ::Normal (v0, vertexManager [vertexIds [m_vertexIdIndex [2]]], vertexManager [vertexIds [m_vertexIdIndex [3]]]);
+		::Normal (m_vNormal [1], v0, vertexManager [vertexIds [m_vertexIdIndex [2]]], vertexManager [vertexIds [m_vertexIdIndex [3]]]);
 		if (Dot (m_vNormal [1], v) < 0.0)
 			m_vNormal [1].Negate ();
 		}

@@ -221,6 +221,7 @@ CAVLTree <CEdgeTreeNode, uint> edgeTree;
 segmentManager.GatherEdges (edgeTree);
 
 segmentManager.ComputeNormals (true);
+segmentManager.ComputeNormals (true);
 CDoubleVector refNormal = current->Side ()->Normal ();
 
 CEdgeList edgeList;
@@ -278,6 +279,7 @@ while (nHead < nTail) {
 			}
 		}
 	}
+segmentManager.ComputeNormals (true);
 }
 
 // ------------------------------------------------------------------------

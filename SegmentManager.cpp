@@ -300,8 +300,10 @@ return false;
 void CSegmentManager::ComputeNormals (bool bAll, bool bView)
 {
 	short nSegments = segmentManager.Count ();
-	
-#pragma omp parallel for
+
+#ifdef NDEBUG
+#	pragma omp parallel for
+#endif
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = Segment (nSegment);
 	segP->ComputeCenter (bView);
