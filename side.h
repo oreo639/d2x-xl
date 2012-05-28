@@ -32,6 +32,7 @@ public:
 	tSide				m_info;
 	ubyte				m_vertexIdIndex [4]; // table of the indices of the side's four vertices' ids in the side's parent segment's vertex id table
 	ubyte				m_nShape;
+	ubyte				m_nTag;
 	CDoubleVector	m_vNormal [3];
 	CVertex			m_vCenter;
 	CSide*			m_link;

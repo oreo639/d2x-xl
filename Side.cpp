@@ -262,6 +262,7 @@ memset (m_info.uvlDeltas, 0, sizeof (m_info.uvlDeltas));
 void CSide::Reset (short nSide)
 {
 ResetTextures ();
+m_nTag = 0;
 m_info.nChild = 0xFFFF;
 m_info.nWall = NO_WALL;
 if (nSide >= 0) {

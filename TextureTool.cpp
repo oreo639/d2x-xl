@@ -29,6 +29,7 @@ static char THIS_FILE [] = __FILE__;
 
 extern short nDbgSeg, nDbgSide;
 extern int nDbgVertex;
+uint nDbgEdgeKey = 0xffffffff;
 
 #define TEXTOOLDLG 1
 
@@ -939,6 +940,10 @@ while (nHead < nTail) {
 	CSegment* segP = segmentManager.Segment (key);
 	CSide* sideP = segmentManager.Side (key);
 	segP->ComputeNormals (key.m_nSide);
+#ifdef _DEBUG
+	if ((key.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (key.m_nSide == nDbgSide)))
+		nDbgSeg = nDbgSeg;
+#endif
 	edgeList.Reset ();
 	if (!segP->BuildEdgeList (edgeList, ubyte (key.m_nSide), true))
 		continue;
@@ -953,6 +958,11 @@ while (nHead < nTail) {
 			}
 		ushort v1 = segP->VertexId (i1);
 		ushort v2 = segP->VertexId (i2);
+#ifdef _DEBUG
+		uint k = (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16);
+		if (k == nDbgEdgeKey)
+			nDbgEdgeKey = nDbgEdgeKey;
+#endif
 		CEdgeTreeNode* node = edgeTree.Find ((v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16));
 		if (!node)
 			continue;
