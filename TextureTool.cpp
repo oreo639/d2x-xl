@@ -959,7 +959,7 @@ while (nHead < nTail) {
 			if (!childSegP->IsTagged (iter->m_nSide)) {
 				CSide* childSideP = segmentManager.Side (**iter);
 				childSegP->ComputeNormals (iter->m_nSide);
-				if (fabs (Dot (sideP->Normal (), childSideP->Normal ())) < 0.3) {
+				if (Dot (sideP->Normal (), childSideP->Normal ()) > 0.7) {
 					childSegP->Tag (iter->m_nSide);
 					sideList [nTail++] = **iter;
 					}
