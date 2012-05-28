@@ -220,7 +220,7 @@ current->Segment ()->Tag (current->m_nSide);
 CAVLTree <CEdgeTreeNode, uint> edgeTree;
 segmentManager.GatherEdges (edgeTree);
 
-current->Segment ()->ComputeNormals (current->m_nSide);
+segmentManager.ComputeNormals (true);
 CDoubleVector refNormal = current->Side ()->Normal ();
 
 CEdgeList edgeList;
@@ -231,7 +231,6 @@ while (nHead < nTail) {
 	CSideKey key = sideList [nHead++];
 	CSegment* segP = segmentManager.Segment (key);
 	CSide* sideP = segmentManager.Side (key);
-	segP->ComputeNormals (key.m_nSide);
 #ifdef _DEBUG
 	if ((key.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (key.m_nSide == nDbgSide)))
 		nDbgSeg = nDbgSeg;
@@ -263,7 +262,6 @@ while (nHead < nTail) {
 			CSegment* childSegP = segmentManager.Segment (**iter);
 			if (!childSegP->IsTagged (iter->m_nSide)) {
 				CSide* childSideP = segmentManager.Side (**iter);
-				childSegP->ComputeNormals (iter->m_nSide);
 				if (Dot (sideP->Normal (), childSideP->Normal ()) < maxAngle) 
 					continue;
 #ifdef _DEBUG
