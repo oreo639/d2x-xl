@@ -21,6 +21,8 @@ class CSLL {
 			public:
 				CNode*	m_link;
 				_U			m_data;
+
+			CNode () : m_link (null) {}
 			};
 
 		CNode<_T>*	m_root;
