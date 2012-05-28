@@ -27,6 +27,9 @@
 static char THIS_FILE [] = __FILE__;
 #endif
 
+extern short nDbgSeg, nDbgSide;
+extern int nDbgVertex;
+
 #define TEXTOOLDLG 1
 
 /////////////////////////////////////////////////////////////////////////////
@@ -960,6 +963,10 @@ while (nHead < nTail) {
 				CSide* childSideP = segmentManager.Side (**iter);
 				childSegP->ComputeNormals (iter->m_nSide);
 				if (Dot (sideP->Normal (), childSideP->Normal ()) > 0.7) {
+#ifdef _DEBUG
+					if ((iter->m_nSegment == nDbgSeg) ((nDbgSide < 0) || (iter->m_nSide == nDbgSide)))
+						nDbgSeg = nDbgSeg;
+#endif
 					childSegP->Tag (iter->m_nSide);
 					sideList [nTail++] = **iter;
 					}

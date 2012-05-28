@@ -163,11 +163,13 @@ else if (nFlags & MK_CONTROL) {
 	}
 else {
 	CSegment* segP = segmentManager.Segment (0);
+	undoManager.Begin (udSegments); 
 	for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) 
 		for (short nSide = 0; nSide < 6; nSide++)
 			if (segP->IsTagged (nSide)) 
 				segmentManager.SetTextures (CSideKey (nSegment, nSide), nTexture, -1);
 	segmentManager.SetTextures (*current, nTexture, -1);
+	undoManager.End (); 
 	Refresh ();
 	}
 }
