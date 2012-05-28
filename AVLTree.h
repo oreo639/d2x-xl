@@ -162,12 +162,12 @@ class CAVLTree {
 			return Add (node);
 
 		if (p->m_data > m_key) {
-			if (Insert (&p->m_left))
+			if (!Insert (&p->m_left))
 				return null;
 			BalanceLeftGrowth (p);
 			}
 		else if (p->m_data < m_key) {
-			if (Insert (&p->m_right))
+			if (!Insert (&p->m_right))
 				return null;
 			BalanceRightGrowth (p);
 			}
