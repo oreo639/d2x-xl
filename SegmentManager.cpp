@@ -406,10 +406,6 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 		ushort v1 = segP->VertexId (side1, i1);
 		ushort v2 = segP->VertexId (side1, i2);
 		uint key = (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16);
-#ifdef _DEBUG
-		if (key == 17236226)
-			key = key;
-#endif
 		bool bVisible [2] = { (side1 < 6) && segP->Side (side1)->IsVisible (), (side2 < 6) && segP->Side (side2)->IsVisible () };
 		if ((bVisible [0] || bVisible [1])) {
 			CEdgeTreeNode node (key);

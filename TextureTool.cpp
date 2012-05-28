@@ -937,7 +937,9 @@ while (nHead < nTail) {
 	CSide* sideP = segmentManager.Side (key);
 	segP->ComputeNormals (key.m_nSide);
 	edgeList.Reset ();
-	int nEdges = segP->BuildEdgeList (edgeList, ubyte (key.m_nSide), true);
+	if (!segP->BuildEdgeList (edgeList, ubyte (key.m_nSide), true))
+		continue;
+	int nEdges = edgeList.Count ();
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
 		ubyte side1, side2, i1, i2;
 		edgeList.Get (nEdge, side1, side2, i1, i2);
