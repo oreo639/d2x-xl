@@ -948,8 +948,8 @@ while (nHead < nTail) {
 			if (side1 > 5)
 				continue;
 			}
-		ushort v1 = segP->VertexId (side1, i1);
-		ushort v2 = segP->VertexId (side1, i2);
+		ushort v1 = segP->VertexId (i1);
+		ushort v2 = segP->VertexId (i2);
 		CEdgeTreeNode* node = edgeTree.Find ((v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16));
 		if (!node)
 			continue;

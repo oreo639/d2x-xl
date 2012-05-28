@@ -403,8 +403,8 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
 		ubyte side1, side2, i1, i2;
 		edgeList.Get (nEdge, side1, side2, i1, i2);
-		ushort v1 = segP->VertexId (side1, i1);
-		ushort v2 = segP->VertexId (side1, i2);
+		ushort v1 = segP->VertexId (i1);
+		ushort v2 = segP->VertexId (i2);
 		uint key = (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16);
 		bool bVisible [2] = { (side1 < 6) && segP->Side (side1)->IsVisible (), (side2 < 6) && segP->Side (side2)->IsVisible () };
 		if ((bVisible [0] || bVisible [1])) {
