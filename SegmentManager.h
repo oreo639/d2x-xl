@@ -265,6 +265,8 @@ class CSegmentManager {
 
 		void UnTagAll (ubyte mask = TAGGED_MASK);
 
+		void TagPlane (void);
+
 		void TagSelected (void);
 
 		void UpdateTagged (void);

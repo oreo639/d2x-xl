@@ -191,6 +191,93 @@ else {
 DLE.MineView ()->Refresh (); 
 }
 
+//------------------------------------------------------------------------------
+// TODO: Beginning with the current side, walk through all adjacent sides and 
+// mark all in plane
+
+class CPlaneSide {
+	public:
+		short nParent;
+		short	nSegment;
+};
+
+void CSegmentManager::TagPlane (void) 
+{
+segmentManager.UnTagAll ();
+
+CDynamicArray<CSideKey> sideList;
+sideList.Create (segmentManager.VisibleSideCount ());
+
+int nHead = 0;
+int nTail = 1;
+sideList [nHead] = CSideKey (*current);
+current->Segment ()->Tag (current->m_nSide);
+
+CAVLTree <CEdgeTreeNode, uint> edgeTree;
+segmentManager.GatherEdges (edgeTree);
+
+current->Segment ()->ComputeNormals (current->m_nSide);
+CDoubleVector refNormal = current->Side ()->Normal ();
+
+CEdgeList edgeList;
+
+double maxAngle = cos (Radians (22.5));
+
+while (nHead < nTail) {
+	CSideKey key = sideList [nHead++];
+	CSegment* segP = segmentManager.Segment (key);
+	CSide* sideP = segmentManager.Side (key);
+	segP->ComputeNormals (key.m_nSide);
+#ifdef _DEBUG
+	if ((key.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (key.m_nSide == nDbgSide)))
+		nDbgSeg = nDbgSeg;
+#endif
+	edgeList.Reset ();
+	if (!segP->BuildEdgeList (edgeList, ubyte (key.m_nSide), true))
+		continue;
+	int nEdges = edgeList.Count ();
+	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
+		ubyte side1, side2, i1, i2;
+		edgeList.Get (nEdge, side1, side2, i1, i2);
+		if (side1 > 5) {
+			side1 = side2;
+			if (side1 > 5)
+				continue;
+			}
+		ushort v1 = segP->VertexId (i1);
+		ushort v2 = segP->VertexId (i2);
+#ifdef _DEBUG
+		uint k = (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16);
+		if (k == nDbgEdgeKey)
+			nDbgEdgeKey = nDbgEdgeKey;
+#endif
+		CEdgeTreeNode* node = edgeTree.Find ((v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16));
+		if (!node)
+			continue;
+		CSLLIterator<CSideKey, CSideKey> iter (node->m_sides);
+		for (iter.Begin (); *iter != iter.End (); iter++) {
+			CSegment* childSegP = segmentManager.Segment (**iter);
+			if (!childSegP->IsTagged (iter->m_nSide)) {
+				CSide* childSideP = segmentManager.Side (**iter);
+				childSegP->ComputeNormals (iter->m_nSide);
+				if (Dot (sideP->Normal (), childSideP->Normal ()) < maxAngle) 
+					continue;
+#ifdef _DEBUG
+				if (Dot (refNormal, childSideP->Normal ()) <= 0.0) {
+					double dot = Dot (sideP->Normal (), childSideP->Normal ());
+					nDbgSeg = nDbgSeg;
+					}
+				if ((iter->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (iter->m_nSide == nDbgSide)))
+					nDbgSeg = nDbgSeg;
+#endif
+				childSegP->Tag (iter->m_nSide);
+				sideList [nTail++] = **iter;
+				}
+			}
+		}
+	}
+}
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
