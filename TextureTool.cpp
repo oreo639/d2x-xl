@@ -925,8 +925,9 @@ int nHead = 0;
 int nTail = 1;
 sideList [nHead] = CSideKey (*current);
 
-
 CAVLTree <CEdgeTreeNode, uint> edgeTree;
+segmentManager.GatherEdges (edgeTree);
+
 CEdgeList edgeList;
 
 while (nHead < nTail) {
