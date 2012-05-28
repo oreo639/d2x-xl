@@ -940,6 +940,11 @@ while (nHead < nTail) {
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
 		ubyte side1, side2, i1, i2;
 		edgeList.Get (nEdge, side1, side2, i1, i2);
+		if (side1 > 5) {
+			side1 = side2;
+			if (side1 > 5)
+				continue;
+			}
 		ushort v1 = segP->VertexId (side1, i1);
 		ushort v2 = segP->VertexId (side1, i2);
 		CEdgeTreeNode* node = edgeTree.Find ((v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16));

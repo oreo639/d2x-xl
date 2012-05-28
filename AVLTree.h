@@ -73,8 +73,10 @@ class CAVLTree {
 
 		// -----------------------------------------------------------------------------
 
-		private: void BalanceLeftGrowth (CNode<_T>* p)
+		private: void BalanceLeftGrowth (CNode<_T>** node)
 		{
+			CNode<_T>*	p = *node;
+
 		if (m_changed) {
 			CNode<_T>* p1, * p2;
 			switch (p->m_balance) {
@@ -110,12 +112,15 @@ class CAVLTree {
 					break;
 				}
 			}
+		*node = p;
 		}
 
 		// -----------------------------------------------------------------------------
 
-		private: void BalanceRightGrowth (CNode<_T>* p)
+		private: void BalanceRightGrowth (CNode<_T>** node)
 		{
+			CNode<_T>*	p = *node;
+
 		if (m_changed) {
 			CNode<_T>* p1, * p2;
 			switch (p->m_balance) {
@@ -150,6 +155,7 @@ class CAVLTree {
 					m_changed = FALSE;
 				}
 			}
+		*node = p;
 		}
 
 		// -----------------------------------------------------------------------------
@@ -164,12 +170,12 @@ class CAVLTree {
 		if (p->m_data > m_key) {
 			if (!Insert (&p->m_left))
 				return null;
-			BalanceLeftGrowth (p);
+			BalanceLeftGrowth (&p);
 			}
 		else if (p->m_data < m_key) {
 			if (!Insert (&p->m_right))
 				return null;
-			BalanceRightGrowth (p);
+			BalanceRightGrowth (&p);
 			}
 		else {
 			m_duplicate = true;
