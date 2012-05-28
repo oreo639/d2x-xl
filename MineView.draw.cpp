@@ -497,13 +497,17 @@ else if (!bSparse) {
 	bool			bSegment = !bTagged || segP->IsTagged ();
 	bool			bSideTagged [2] = {false, false};
 
+#ifdef _DEBUG
+if (segmentManager.Index (segP) == nDbgSeg)
+	nDbgSeg = nDbgSeg;
+#endif
 Renderer ().GetPen (pen, penWeight);
 for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
 	ubyte i1, i2, side1, side2;
 	edgeList.Get (i, side1, side2, i1, i2);
 	bSideTagged [0] = bSideTagged [1];
 	bSideTagged [1] = segP->IsTagged (short (side1)) || segP->IsTagged (short (side2));
-	if (!bSegment || bSideTagged [1])
+	if (!(bSegment || bSideTagged [1]))
 		continue;
 	if (bSideTagged [0] != bSideTagged [1]) {
 		if (bSideTagged [1])
