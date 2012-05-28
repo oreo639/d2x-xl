@@ -471,7 +471,7 @@ for (short nSide = 0; nSide < 6; nSide++) {
 
 //--------------------------------------------------------------------------
 
-void CMineView::RenderSegmentWireFrame (CSegment *segP, bool bSparse)
+void CMineView::RenderSegmentWireFrame (CSegment *segP, bool bSparse, bool bTagged)
 {
 	int	bOrtho = Renderer ().Ortho ();
 
@@ -494,16 +494,19 @@ else if (!bSparse) {
 	int			nType = Renderer ().Type ();
 	ePenColor	pen;
 	float			penWeight;
-	bool			bTagged [2] = {false, false};
+	bool			bSegment = !bTagged || segP->IsTagged ();
+	bool			bSideTagged [2] = {false, false};
 
 Renderer ().GetPen (pen, penWeight);
 for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
 	ubyte i1, i2, side1, side2;
 	edgeList.Get (i, side1, side2, i1, i2);
-	bTagged [0] = bTagged [1];
-	bTagged [1] = segP->IsTagged (side1) || segP->IsTagged (side2);
-	if (bTagged [0] != bTagged [1]) {
-		if (bTagged [1])
+	bSideTagged [0] = bSideTagged [1];
+	bSideTagged [1] = segP->IsTagged (side1) || segP->IsTagged (side2);
+	if (!bSegment || bSideTagged [1])
+		continue;
+	if (bSideTagged [0] != bSideTagged [1]) {
+		if (bSideTagged [1])
 			Renderer ().SelectPen (penRed + 1);
 		else
 			Renderer ().SelectPen (pen + 1, penWeight);
@@ -520,11 +523,71 @@ for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
 		Renderer ().LineTo (v2.m_screen.x, v2.m_screen.y);
 		}
 	}
+if (bSideTagged [1])
+	Renderer ().SelectPen (pen + 1, penWeight);
 }
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentWireFrame (CSegment *segP, bool bSparse, char bTunnel)
+void CMineView::RenderSegmentWireFrame (CSegment *segP, bool bSparse, bool bTagged)
+{
+	int	bOrtho = Renderer ().Ortho ();
+
+if (bOrtho) {
+	if (!Visible (segP))
+		return;
+	}
+else if (!bSparse) {
+	if ((segP == current->Segment ()) || (segP == other->Segment ()))
+		glDisable (GL_DEPTH_TEST);
+	else
+		glEnable (GL_DEPTH_TEST);
+	glLineWidth (ViewOption (eViewTexturedWireFrame) ? 3.0f : 2.0f);
+	}
+
+	CEdgeList	edgeList;
+	ushort*		vertexIds = segP->m_info.vertexIds;
+	short			xMax = ViewWidth (),
+					yMax = ViewHeight ();
+	int			nType = Renderer ().Type ();
+	ePenColor	pen;
+	float			penWeight;
+	bool			bSegment = !bTagged || segP->IsTagged ();
+	bool			bSideTagged [2] = {false, false};
+
+Renderer ().GetPen (pen, penWeight);
+for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
+	ubyte i1, i2, side1, side2;
+	edgeList.Get (i, side1, side2, i1, i2);
+	bSideTagged [0] = bSideTagged [1];
+	bSideTagged [1] = segP->IsTagged (side1) || segP->IsTagged (side2);
+	if (!bSegment || bSideTagged [1])
+		continue;
+	if (bSideTagged [0] != bSideTagged [1]) {
+		if (bSideTagged [1])
+			Renderer ().SelectPen (penRed + 1);
+		else
+			Renderer ().SelectPen (pen + 1, penWeight);
+		}
+
+	CVertex& v1 = vertexManager [vertexIds [i1]];
+	CVertex& v2 = vertexManager [vertexIds [i2]];
+	if (!bOrtho) {
+		Renderer ().MoveTo (v1);
+		Renderer ().LineTo (v2);
+		}
+	else { //if (v1.InRange (xMax, yMax, nType) && v2.InRange (xMax, yMax, nType)) {
+		Renderer ().MoveTo (v1.m_screen.x, v1.m_screen.y);
+		Renderer ().LineTo (v2.m_screen.x, v2.m_screen.y);
+		}
+	}
+if (bSideTagged [1])
+	Renderer ().SelectPen (pen + 1, penWeight);
+}
+
+//--------------------------------------------------------------------------
+
+void CMineView::DrawSegmentWireFrame (CSegment *segP, bool bSparse, bool bTagged, char bTunnel)
 {
 CHECKMINE;
 
@@ -547,7 +610,7 @@ if (!m_nRenderer && (bSparse || Renderer ().Ortho ())) {
 if (bSparse)
 	DrawSparseSegmentWireFrame (segP);
 else
-	RenderSegmentWireFrame (segP, false);
+	RenderSegmentWireFrame (segP, false, bTagged);
 }
 
 //--------------------------------------------------------------------------
@@ -633,7 +696,7 @@ if (!Renderer ().Ortho ())
 if (!bClear) {
 	for (i = 0; i < segmentManager.Count (); i++) {
 		if (SelectWireFramePen (segP = segmentManager.Segment (i)))
-			DrawSegmentWireFrame (segP);
+			DrawSegmentWireFrame (segP, false, true);
 		}
 	}
 Renderer ().EndRender ();
@@ -978,7 +1041,7 @@ CSegment *segP = segmentManager.Segment (SEGMENT_LIMIT - 1);
 renderer.BeginRender (renderer.Type () == 0);
 renderer.SelectPen (penBlue + 1);
 for (i = 0; i < tunnelMaker.Length (); i++, segP--)
-	DrawSegmentWireFrame (segP, false, 1);
+	DrawSegmentWireFrame (segP, false, false, 1);
 renderer.EndRender ();
 }
 

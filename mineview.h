@@ -203,9 +203,9 @@ public:
 	void DrawSegment (CSegment *segP, bool bSparse);
 	void DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short bClear = 0);
 	void DrawSegmentPartial (CSegment *segP);
-	void DrawSegmentWireFrame (CSegment *segP, bool bSparse = false, char bTunnel = 0);
+	void DrawSegmentWireFrame (CSegment *segP, bool bSparse = false, bool bTagged = false, char bTunnel = 0);
 	void DrawSparseSegmentWireFrame (CSegment *segP);
-	void RenderSegmentWireFrame (CSegment *segP, bool bSparse);
+	void RenderSegmentWireFrame (CSegment *segP, bool bSparse, bool bTagged = false);
 	void DrawSegmentPoints (CSegment *segP);
 
 	void DrawCurrentSegment (CSegment *segP, bool bSparse);

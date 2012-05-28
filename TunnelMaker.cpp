@@ -604,7 +604,7 @@ if (m_points [2].InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, render
 renderer.SelectPen (penBlue + 1);
 h = tunnelMaker.Length ();
 for (int i = 0; i < h; i++)
-	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_nSegments [i]), false, 1);
+	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_nSegments [i]), false, false, 1);
 renderer.EndRender ();
 }
 
