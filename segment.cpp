@@ -910,7 +910,12 @@ for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 
 bool CSegment::IsTagged (short nSide, ubyte mask)
 {
-return (Side (nSide)->m_nTag & mask) != 0;
+if (nSide >= 0)
+	return (Side (nSide)->m_nTag & mask) != 0;
+for (nSide = 0; nSide < 6; nSide++)
+	if ((Side (nSide)->m_nTag & mask) != 0)
+		return true;
+return false;
 }
 
 // -----------------------------------------------------------------------------
