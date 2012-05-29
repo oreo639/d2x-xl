@@ -459,13 +459,13 @@ short CSegmentManager::ComputeVerticesOrtho (CSideKey key, ushort newVerts [4])
 	short				nVertices = sideP->VertexCount ();
 
 	CDoubleVector	A [4]; 
-	short				i, points [4]; 
+	short				i, nPoint = sideP->Point (), points [4]; 
 
 for (i = 0; i < 4; i++)
-	points [i] = (current->Point () + i) % 4;
-CDoubleVector center = CalcSideCenter (*current); 
-CDoubleVector oppCenter = CalcSideCenter (CSideKey (current->SegmentId (), oppSideTable [current->SideId ()])); 
-CDoubleVector vNormal = CalcSideNormal (*current); 
+	points [i] = (nPoint + i) % 4;
+CDoubleVector center = CalcSideCenter (key); 
+CDoubleVector oppCenter = CalcSideCenter (CSideKey (key.m_nSegment, oppSideTable [key.m_nSide])); 
+CDoubleVector vNormal = CalcSideNormal (key); 
 // set the length of the new segment to be one standard segment length
 // scale the vector
 vNormal *= 20.0; // 20 is edge length of a standard segment
@@ -474,7 +474,7 @@ CDoubleVector newCenter = center + vNormal;
 // new method: extend points 0 and 1 with vNormal, then move point 0 toward point 1.
 // point 0
 ushort i1, i2;
-segP->GetEdgeVertices (current->SideId (), current->Point (), i1, i2);
+segP->GetEdgeVertices (key.m_nSide, nPoint, i1, i2);
 CDoubleVector a = vNormal + *vertexManager.Vertex (i1); 
 // point 1
 CDoubleVector b = vNormal + *vertexManager.Vertex (i2); 
@@ -520,13 +520,13 @@ return nVertices;
 
 short CSegmentManager::ComputeVerticesExtend (CSideKey key, ushort newVerts [4])
 {
-	CSegment*		segP = current->Segment (); 
-	CSide*			sideP = current->Side ();
+	CSegment*		segP = segmentManager.Segment (key); 
+	CSide*			sideP = segP->Side (key.m_nSide);
 	short				nVertices = sideP->VertexCount ();
 
-CDoubleVector center = CalcSideCenter (*current); 
-CDoubleVector oppCenter = CalcSideCenter (CSideKey (current->SegmentId (), oppSideTable [current->SideId ()])); 
-CDoubleVector vNormal = CalcSideNormal (*current); 
+CDoubleVector center = CalcSideCenter (key); 
+CDoubleVector oppCenter = CalcSideCenter (CSideKey (key.m_nSegment, oppSideTable [key.m_nSide])); 
+CDoubleVector vNormal = CalcSideNormal (key); 
 // calculate the length of the new segment
 vNormal *= Distance (center, oppCenter); 
 // set the new vertices
@@ -546,16 +546,16 @@ short CSegmentManager::ComputeVerticesMirror (CSideKey key, ushort newVerts [4])
 	short				i; 
 	CDoubleVector	center, oppCenter, newCenter, vNormal; 
 
-	CSegment*		segP = current->Segment (); 
-	CSide*			sideP = current->Side ();
-	CSide*			oppSideP = current->OppositeSide ();
+	CSegment*		segP = segmentManager.Segment (key); 
+	CSide*			sideP = segP->Side (key.m_nSide);
+	CSide*			oppSideP = segmentManager.Side (CSideKey (key.m_nSegment, oppSideTable [key.m_nSide]));
 	short				nVertices = sideP->VertexCount ();
 	ubyte				oppVertexIdIndex [4];
 
-	current->Segment ()->CreateOppVertexIndex (current->SideId (), oppVertexIdIndex);
+	segP->CreateOppVertexIndex (key.m_nSide, oppVertexIdIndex);
 
 // copy side's four points into A
-short nSide = current->SideId ();
+short nSide = key.m_nSide;
 for (i = 0; i < nVertices; i++) {
 	A [i] = *segP->Vertex (sideP->m_vertexIdIndex [i]); 
 	A [i + nVertices] = *segP->Vertex (oppVertexIdIndex [i]); 
