@@ -71,46 +71,6 @@ class CEdgeKey {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-class CSideListEntry {
-	public:
-		CSideKey	m_parent;
-		CSideKey	m_child;
-		CEdgeKey	m_edge;
-};
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-class CTaggingStrategy {
-	public:
-		CAVLTree <CEdgeTreeNode, uint>	m_edgeTree;
-		CDynamicArray<CSideListEntry>		m_sideList;
-
-		CSegment	*	m_segP, * m_childSegP;
-		CSide*		m_sideP, * m_childSideP;
-		CEdgeKey		m_edgeKey;
-		ubyte			m_tag;
-
-	inline bool Setup (int nSides, ubyte tag = TAGGED_MASK) { 
-		m_tag = tag;
-		return m_sideList.Create (nSides) != null; 
-		}
-	inline uint EdgeKey (ushort v1, ushort v2) { return m_edgeKey.Compose (v1, v2); }
-	int Run (short nSegment = -1, short nSide = -1);
-	inline short ParentSegment (int i) { return m_sideList [i].m_parent.m_nSegment; }
-	inline short ParentSide (int i) { return m_sideList [i].m_parent.m_nSide; }
-	inline short ChildSegment (int i) { return m_sideList [i].m_child.m_nSegment; }
-	inline short ChildSide (int i) { return m_sideList [i].m_child.m_nSide; }
-	inline ushort V1 (int i) { return m_sideList [i].m_edge.V1 (); }
-	inline ushort V2 (int i) { return m_sideList [i].m_edge.V2 (); }
-	virtual bool Accept (void) = 0;
-};
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
 #ifdef _DEBUG
 
 typedef CStaticArray< CSegment, SEGMENT_LIMIT > segmentList;
@@ -488,6 +448,74 @@ class CSegmentIterator : public CGameItemIterator<CSegment> {
 		CSegmentIterator() : CGameItemIterator (const_cast<CSegment*>(segmentManager.Segment (0)), segmentManager.Count ()) {}
 	};
 
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+class CSideListEntry {
+	public:
+		CSideKey	m_parent;
+		CSideKey	m_child;
+		CEdgeKey	m_edge;
+};
+
+// -----------------------------------------------------------------------------
+
+class CTaggingStrategy {
+	public:
+		CAVLTree <CEdgeTreeNode, uint>	m_edgeTree;
+		CDynamicArray<CSideListEntry>		m_sideList;
+
+		CSegment	*	m_segP, * m_childSegP;
+		CSide*		m_sideP, * m_childSideP;
+		CEdgeKey		m_edgeKey;
+		ubyte			m_tag;
+
+	inline bool Setup (int nSides, ubyte tag = TAGGED_MASK) { 
+		m_tag = tag;
+		return m_sideList.Create (nSides) != null; 
+		}
+	inline uint EdgeKey (ushort v1, ushort v2) { return m_edgeKey.Compose (v1, v2); }
+	int Run (short nSegment = -1, short nSide = -1);
+	inline short ParentSegment (int i) { return m_sideList [i].m_parent.m_nSegment; }
+	inline short ParentSide (int i) { return m_sideList [i].m_parent.m_nSide; }
+	inline short ChildSegment (int i) { return m_sideList [i].m_child.m_nSegment; }
+	inline short ChildSide (int i) { return m_sideList [i].m_child.m_nSide; }
+	inline ushort V1 (int i) { return m_sideList [i].m_edge.V1 (); }
+	inline ushort V2 (int i) { return m_sideList [i].m_edge.V2 (); }
+	virtual bool Accept (void) = 0;
+};
+
+// -----------------------------------------------------------------------------
+
+class CTagByAngle : public CTaggingStrategy {
+	public:
+		double m_maxAngle;
+		
+		CTagByAngle () : m_maxAngle (cos (Radians (22.5))) {}
+
+		virtual bool Accept (void) { return m_childSideP->IsVisible () && (Dot (m_sideP->Normal (), m_childSideP->Normal ()) >= m_maxAngle); }
+	};
+
+// -----------------------------------------------------------------------------
+
+class CTagByTextures : public CTaggingStrategy {
+	public:
+		short m_nBaseTex, m_nOvlTex;
+		bool	m_bAll;
+		
+		CTagByTextures (short nBaseTex, short nOvlTex) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex) { m_bAll = !segmentManager.HaveTaggedSegments (true); }
+
+		virtual bool Accept (void) { 
+			return (m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&
+					 m_childSideP->IsVisible () &&
+					 ((m_nBaseTex < 0) || (m_childSideP->BaseTex () == m_nBaseTex)) && 
+					 ((m_nOvlTex < 0) || (m_childSideP->OvlTex () == m_nOvlTex)); 
+			}
+	};
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 #endif //__segman_h

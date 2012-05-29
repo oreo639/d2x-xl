@@ -220,8 +220,6 @@ segmentManager.ComputeNormals (false);
 
 CEdgeList edgeList;
 
-double maxAngle = cos (Radians (22.5));
-
 while (nHead < nTail) {
 	CSideKey parent = m_sideList [nHead++].m_child;
 	m_segP = segmentManager.Segment (parent);

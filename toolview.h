@@ -1378,7 +1378,6 @@ class CTextureTool : public CTexToolDlg
 
 		bool					m_bInitTextureListBoxes;
 
-		char					m_szTextureBuf [100];
 		int					m_lastTexture [2];
 		int					m_lastMode;
 		int					m_saveTexture [2];
@@ -1434,6 +1433,7 @@ class CTextureTool : public CTexToolDlg
 		afx_msg void OnPasteSide ();
 		afx_msg void OnPasteTouching ();
 		afx_msg void OnTagPlane ();
+		afx_msg void OnTagTextures ();
 		afx_msg void OnReplace ();
 		afx_msg void OnSetLight ();
 		afx_msg void OnSelect1st ();

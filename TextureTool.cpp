@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTESIDE, OnPasteSide)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTETOUCHING, OnPasteTouching)
 	ON_BN_CLICKED (IDC_TEXTURE_TAG_PLANE, OnTagPlane)
+	ON_BN_CLICKED (IDC_TEXTURE_TAG_TEXTURES, OnTagTextures)
 	ON_BN_CLICKED (IDC_TEXTURE_REPLACE, OnReplace)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE1ST, OnPaste1st)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE2ND, OnPaste2nd)
@@ -153,7 +154,6 @@ m_nLightDelay = 1000;
 m_nLightTime = 1.0;
 m_iLight = -1;
 m_nHighlight = -1;
-*m_szTextureBuf = '\0';
 memset (m_szLight, 0, sizeof (m_szLight));
 m_bLightEnabled = TRUE;
 m_bIgnorePlane = FALSE;
@@ -295,7 +295,6 @@ DDX_Double (pDX, IDC_TEXALIGN_VALIGN, m_alignY);
 DDX_Double (pDX, IDC_TEXALIGN_RALIGN, m_alignAngle);
 DDX_Radio (pDX, IDC_TEXALIGN_ROT0, m_alignRot2nd);
 //DDX_Double (pDX, IDC_TEXLIGHT_TIMER, m_nLightTime);
-DDX_Text (pDX, IDC_TEXTURE_PASTEBUF, m_szTextureBuf, sizeof (m_szTextureBuf));
 //if (!nLayout) 
 	{
 	DDX_Text (pDX, IDC_TEXLIGHT_EDIT, m_szLight, sizeof (m_szLight));
@@ -809,24 +808,11 @@ void CTextureTool::OnSaveTexture ()
 {
 CHECKMINE;
 
-	char			*t1Name, *t2Name;
-	CSide		*sideP = current->Side ();
-	CComboBox	*pcb;
-
 m_saveTexture [0] = sideP->BaseTex ();
 m_saveTexture [1] = sideP->OvlTex (0);
 int i;
 for (i = 0; i < 4; i++)
 	m_saveUVLs [i].l = sideP->m_info.uvls [i].l;
-
-pcb = CBTexture1 ();
-t1Name = textureManager.Name (-1, (short) pcb->GetItemData (pcb->GetCurSel ()));
-pcb = CBTexture2 ();
-if (i = int (pcb->GetItemData (pcb->GetCurSel ())))
-	t2Name = textureManager.Name (-1, (short) i);
-else
-	t2Name = "(none)";
-sprintf_s (m_szTextureBuf, sizeof (m_szTextureBuf ), "%s,%s", t1Name, t2Name);
 UpdateData (FALSE);
 //SaveTextureStatic->SetText(message);
 }
@@ -905,17 +891,6 @@ DLE.MineView ()->Refresh ();
 // TODO: Beginning with the current side, walk through all adjacent sides and 
 // mark all in plane
 
-class CTagByAngle : public CTaggingStrategy {
-	public:
-		double m_maxAngle;
-		
-		CTagByAngle () : m_maxAngle (cos (Radians (22.5))) {}
-
-		virtual bool Accept (void) { return m_childSideP->IsVisible () && (Dot (m_sideP->Normal (), m_childSideP->Normal ()) >= m_maxAngle); }
-	};
-
-
-
 void CTextureTool::OnTagPlane () 
 {
 CHECKMINE;
@@ -923,6 +898,21 @@ CHECKMINE;
 UpdateData (TRUE);
 
 CTagByAngle tagger;
+if (tagger.Setup (segmentManager.VisibleSideCount ()))
+	tagger.Run ();
+Refresh ();
+DLE.MineView ()->Refresh ();
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureTool::OnTagTextures () 
+{
+CHECKMINE;
+
+UpdateData (TRUE);
+
+CTagByTextures tagger (m_bUse1st ? current->Side ()->BaseTex () : -1, m_bUse2nd ? current->Side ()->OvlTex () : -1);
 if (tagger.Setup (segmentManager.VisibleSideCount ()))
 	tagger.Run ();
 Refresh ();
