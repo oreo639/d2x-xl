@@ -1127,9 +1127,9 @@ Refresh ();
 //==========================================================================
 //==========================================================================
 
-void CMineView::RefreshObject(short old_object, short new_object) 
+void CMineView::RefreshObject(short oldObject, short newObject) 
 {
-current->ObjectId () = new_object;
+current->SetObjectId (newObject);
 DLE.ToolView ()->Refresh ();
 Refresh (false);
 }

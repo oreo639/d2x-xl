@@ -68,7 +68,7 @@ return Segment ()->ChildId (m_nSide);
 
 CSegment* CSelection::ChildSeg (void)
 {
-short nChild = Child ();
+short nChild = ChildId ();
 return (nChild < 0) ? null : segmentManager.Segment (nChild);
 }
 
@@ -130,7 +130,7 @@ void CSelection::Fix (short nSegment)
 if (m_nSegment != nSegment)
 	return;
 short nChild;
-if ((nChild = Child ()) > -1) {
+if ((nChild = ChildId ()) > -1) {
 	m_nSegment = nChild;
 	return;
 	}
