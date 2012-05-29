@@ -817,10 +817,11 @@ class CTagByTextures : public CTaggingStrategy {
 		virtual bool Accept (void) { 
 			return (m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&
 					 (m_childSideP->Shape () <= SIDE_SHAPE_TRIANGLE) && 
-					 ((m_nBaseTex < 0) || (m_sideP->BaseTex () == m_childSideP->BaseTex ())) && 
-					 ((m_nOvlTex < 0) || (m_sideP->OvlTex () == m_childSideP->OvlTex ())); 
+					 ((m_nBaseTex < 0) || (m_childSideP->BaseTex () == m_nBaseTex)) && 
+					 ((m_nOvlTex < 0) || (m_childSideP->OvlTex () == m_nOvlTex)); 
 			}
 	};
+
 
 void CTextureTool::AlignChildTextures (short nSegment, short nSide)
 {
