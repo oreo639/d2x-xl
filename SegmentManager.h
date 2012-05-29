@@ -13,6 +13,51 @@
 
 // -----------------------------------------------------------------------------
 
+#define MAX_SEGMENTS_D1		800  // descent 1 max # of cubes
+#define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes
+#define SEGMENT_LIMIT		20000 // D2X-XL max # of cubes
+
+#define MAX_SEGMENTS ((theMine == null) ? MAX_SEGMENTS_D2 : DLE.IsD1File () ? MAX_SEGMENTS_D1  : DLE.IsStdLevel () ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT)
+
+#define MAX_NUM_MATCENS_D1			20
+#define MAX_NUM_MATCENS_D2			100
+
+#define MAX_NUM_RECHARGERS_D2		70
+#define MAX_NUM_RECHARGERS_D2X	500
+
+#define MAX_NUM_RECHARGERS ((theMine == null) ? MAX_NUM_RECHARGERS_D2X : (DLE.IsD1File () || (DLE.LevelVersion () < 12)) ? MAX_NUM_RECHARGERS_D2 : MAX_NUM_RECHARGERS_D2X)
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+class CEdgeTreeNode {
+	public:
+		uint								m_nKey;
+		CSLL<CSideKey, CSideKey>	m_sides;
+
+	explicit CEdgeTreeNode (uint nKey = 0) : m_nKey (nKey) {}
+	~CEdgeTreeNode () {}
+	void Destroy (void) { m_sides.Destroy (); }
+
+	CSideKey* Insert (short nSegment, short nSide) {
+		CSideKey	key = CSideKey (nSegment, nSide);
+		return m_sides.Insert (key, key);
+		}
+
+	inline CEdgeTreeNode& operator= (CEdgeTreeNode& other) {
+		m_nKey = other.m_nKey;
+		m_sides = other.m_sides;
+		return *this;
+		}
+	inline bool operator< (uint key) { return m_nKey < key; }
+	inline bool operator> (uint key) { return m_nKey > key; }
+	};
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 class CEdgeKey {
 	public:
 		uint	m_key;
@@ -22,12 +67,20 @@ class CEdgeKey {
 		inline uint Key (void) { return m_key; }
 };
 
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 class CSideListEntry {
 	public:
 		CSideKey	m_parent;
 		CSideKey	m_child;
 		CEdgeKey	m_edge;
 };
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 class CTaggingStrategy {
 	public:
@@ -55,21 +108,7 @@ class CTaggingStrategy {
 };
 
 // -----------------------------------------------------------------------------
-
-#define MAX_SEGMENTS_D1		800  // descent 1 max # of cubes
-#define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes
-#define SEGMENT_LIMIT		20000 // D2X-XL max # of cubes
-
-#define MAX_SEGMENTS ((theMine == null) ? MAX_SEGMENTS_D2 : DLE.IsD1File () ? MAX_SEGMENTS_D1  : DLE.IsStdLevel () ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT)
-
-#define MAX_NUM_MATCENS_D1			20
-#define MAX_NUM_MATCENS_D2			100
-
-#define MAX_NUM_RECHARGERS_D2		70
-#define MAX_NUM_RECHARGERS_D2X	500
-
-#define MAX_NUM_RECHARGERS ((theMine == null) ? MAX_NUM_RECHARGERS_D2X : (DLE.IsD1File () || (DLE.LevelVersion () < 12)) ? MAX_NUM_RECHARGERS_D2 : MAX_NUM_RECHARGERS_D2X)
-
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 #ifdef _DEBUG
@@ -90,31 +129,6 @@ typedef struct tVertMatch {
 		short		v;
 		double	d;
 	} tVertMatch; 
-
-// -----------------------------------------------------------------------------
-
-class CEdgeTreeNode {
-	public:
-		uint								m_nKey;
-		CSLL<CSideKey, CSideKey>	m_sides;
-
-	explicit CEdgeTreeNode (uint nKey = 0) : m_nKey (nKey) {}
-	~CEdgeTreeNode () {}
-	void Destroy (void) { m_sides.Destroy (); }
-
-	CSideKey* Insert (short nSegment, short nSide) {
-		CSideKey	key = CSideKey (nSegment, nSide);
-		return m_sides.Insert (key, key);
-		}
-
-	inline CEdgeTreeNode& operator= (CEdgeTreeNode& other) {
-		m_nKey = other.m_nKey;
-		m_sides = other.m_sides;
-		return *this;
-		}
-	inline bool operator< (uint key) { return m_nKey < key; }
-	inline bool operator> (uint key) { return m_nKey > key; }
-	};
 
 // -----------------------------------------------------------------------------
 

@@ -911,7 +911,7 @@ class CTagByAngle : public CTaggingStrategy {
 		
 		CTagByAngle () : m_maxAngle (cos (Radians (22.5))) {}
 
-		virtual bool Filter (void) { return Dot (m_sideP->Normal (), m_childSideP->Normal ()) >= m_maxAngle); }
+		virtual bool Filter (void) { return Dot (m_sideP->Normal (), m_childSideP->Normal ()) >= m_maxAngle; }
 	};
 
 
