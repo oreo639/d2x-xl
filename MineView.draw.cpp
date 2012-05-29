@@ -1461,7 +1461,7 @@ DrawTaggedSegments ();
 Renderer ().BeginRender (Renderer ().Type () == 0);
 // draw highlighted Segments () (other first, then current)
 if (*current == selections [0]) {
-	if (selections [0].m_nSegment != selections [1].m_nSegment)
+	if (selections [0].SegmentId () != selections [1].SegmentId ())
 		DrawSegment (selections [1].SegmentId (), selections [1].SideId (), selections [1].Edge (), selections [1].Point ());
 	DrawSegment (selections [0].SegmentId (), selections [0].SideId (), selections [0].Edge (), selections [0].Point ());
 	}
