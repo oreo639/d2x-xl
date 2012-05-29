@@ -782,6 +782,10 @@ void CTextureTool::OnAlignChildren ()
 // set all segment sides as not aligned yet
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
+#if 1
+// the alignment function will take care of only aligning tagged sides (provided they are all connected)
+AlignChildren (current->m_nSegment, current->m_nSide, true, false);
+#else
 if (!segmentManager.HaveTaggedSegments (true))
 	// call recursive function which aligns one at a time
 	AlignChildren (current->m_nSegment, current->m_nSide, true, false);
@@ -797,6 +801,7 @@ else {	// use all marked sides as alignment source
 			if ((segP->Side (nSide)->Shape () <= SIDE_SHAPE_TRIANGLE) && segmentManager.IsTagged (CSideKey (nSegment, nSide))) 
 				AlignChildren (nSegment, nSide, bStart, true);
 	}
+#endif
 undoManager.End ();
 UpdateAlignWnd ();
 }
@@ -812,7 +817,7 @@ class CTagByTextures : public CTaggingStrategy {
 		short m_nBaseTex, m_nOvlTex;
 		bool	m_bAll;
 		
-		CTagByTextures (short nBaseTex, short nOvlTex) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex) { m_bAll = segmentManager.HaveTaggedSegments () || segmentManager.HaveTaggedSides (); }
+		CTagByTextures (short nBaseTex, short nOvlTex) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex) { m_bAll = !segmentManager.HaveTaggedSegments (true); }
 
 		virtual bool Accept (void) { 
 			return (m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&

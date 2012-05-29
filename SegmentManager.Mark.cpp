@@ -212,7 +212,7 @@ if (nSide < 0)
 	nSide = current->m_nSide;
 m_sideList [nHead].m_parent = CSideKey (-1, -1);
 m_sideList [nHead].m_child = CSideKey (nSegment, nSide);
-segmentManager.Segment (nSegment)->Tag (nSide);
+segmentManager.Segment (nSegment)->Tag (nSide, m_tag);
 
 segmentManager.GatherEdges (m_edgeTree);
 
