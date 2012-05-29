@@ -282,8 +282,6 @@ class CSegmentManager {
 
 		void UnTagAll (ubyte mask = TAGGED_MASK);
 
-		int TagSides (CDynamicArray<CSideKey>& sideList, bool (*sideFilter) (CSide* sideP, CSide* childSideP));
-
 		void TagSelected (void);
 
 		void UpdateTagged (void);

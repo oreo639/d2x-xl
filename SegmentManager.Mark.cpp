@@ -131,9 +131,10 @@ void CSegmentManager::TagSelected (void)
 {
 	bool	bSegTag = false; 
 	CSegment *segP = current->Segment (); 
-	int i, p [8], nPoints; 
+	int i, j, p [8], nPoints; 
+	uint selectMode = DLE.MineView ()->GetSelectMode ();
 
-switch (DLE.MineView ()->GetSelectMode ()) {
+switch (selectMode) {
 	case eSelectPoint:
 		nPoints = 1; 
 		p [0] = current->VertexId (); 
@@ -154,33 +155,57 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	case eSelectSegment:
 	default:
 		nPoints = 8; 
-		for (i = 0; i < nPoints; i++)
-			p [i] = segP->VertexId (i); 
+		for (i = 0, j = 0; i < nPoints; i++) {
+			p [j] = segP->VertexId (i); 
+			if (p [j] <= MAX_VERTEX)
+				j++;
+			}
+		nPoints = j;
+		break; 
+	}
+
+// set i to nPoints if all verts are marked
+for (i = 0; i < nPoints; i++)
+	if (!(vertexManager.Status (p [i]).IsTagged ()) 
 		break; 
 
-	//default:
-	//	bSegTag = true; 
-	}
+if (i == nPoints) { // if all verts are tagged, then untag them
+	switch (selectMode) {
+		case eSelectPoint:
+		case eSelectLine:
+			for (i = 0; i < nPoints; i++)
+				vertexManager.Status (p [i]).UnTag (); 
+			break;
 
-if (bSegTag)
-	Tag (current->m_nSegment); 
-else {
-	// set i to nPoints if all verts are marked
-	for (i = 0; i < nPoints; i++)
-		if (!(vertexManager.Status (p [i]) & TAGGED_MASK)) 
+		case eSelectSide:
+			current->Segment ()->UnTag (current->m_nSide);
 			break; 
-		// if all verts are tagged, then untag them
-	if (i == nPoints) {
-		for (i = 0; i < nPoints; i++)
-			vertexManager.Status (p [i]) &= ~TAGGED_MASK; 
+
+		case eSelectSegment:
+		default:
+			current->Segment ()->UnTag ();
+			break; 
 		}
-	else {
-		// otherwise tag all the points
-		for (i = 0; i < nPoints; i++)
-			vertexManager.Status (p [i]) |= TAGGED_MASK; 
-		}
-	UpdateTagged (); 
 	}
+else { // otherwise tag all the points
+	switch (selectMode) {
+		case eSelectPoint:
+		case eSelectLine:
+			for (i = 0; i < nPoints; i++)
+				vertexManager.Status (p [i]).Tag (); 
+			break;
+
+		case eSelectSide:
+			current->Segment ()->Tag (current->m_nSide);
+			break; 
+
+		case eSelectSegment:
+		default:
+			current->Segment ()->Tag ();
+			break; 
+		}
+	}
+UpdateTagged (); 
 DLE.MineView ()->Refresh (); 
 }
 
