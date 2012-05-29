@@ -923,8 +923,8 @@ CHECKMINE;
 UpdateData (TRUE);
 
 CTagByAngle tagger;
-tagger.Setup (segmentManager.VisibleSideCount ());
-tagger.Run ();
+if (tagger.Setup (segmentManager.VisibleSideCount ()))
+	tagger.Run ();
 Refresh ();
 DLE.MineView ()->Refresh ();
 }

@@ -13,15 +13,26 @@
 
 // -----------------------------------------------------------------------------
 
+class CSideListEntry {
+	public:
+		CSideKey	m_parent;
+		CSideKey	m_child;
+};
+
 class CTaggingStrategy {
 	public:
-		CDynamicArray<CSideKey>&	m_sideList;
+		CAVLTree <CEdgeTreeNode, uint>	m_edgeTree;
+		CDynamicArray<CSideListEntry>		m_sideList;
+
 		CSegment	*	m_segP, * m_childSegP;
 		CSide*		m_sideP, * m_childSideP;
 
 	inline bool Setup (int nSides) { return m_sideList.Create (nSides) != null; }
-	int Run (void);
-	virtual bool Filter (void) = 0;
+	inline uint EdgeKey (ushort v1, ushort v2) { return (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16); }
+	int Run (short nSegment = -1, short nSide = -1);
+	inline short Segment (int i) { return m_sideList [i].m_nSegment; }
+	inline short Side (int i) { return m_sideList [i].m_nSide; }
+	virtual bool Accept (void) = 0;
 };
 
 // -----------------------------------------------------------------------------

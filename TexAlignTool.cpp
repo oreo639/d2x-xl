@@ -805,6 +805,37 @@ UpdateAlignWnd ();
 // TODO: Build an AVL edge tree (via the segment manager) and walk through all sides
 // via the side lists of each edge in the edge tree.
 
+#if 1
+
+class CTagByTextures : public CTaggingStrategy {
+	public:
+		short m_nBaseTex, m_nOvlTex;
+		
+		CTagByTextures (short nBaseTex, short nOvlTex) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex) {}
+
+		virtual bool Accept (void) { (m_childSideP->Shape () <= SIDE_SHAPE_TRIANGLE) && ((m_nBaseTex < 0) || (m_sideP->BaseTex () == m_childSideP->BaseTex ())) && ((m_nOvlTex < 0) || (m_sideP->OvlTex () == m_childSideP->OvlTex ())); }
+	};
+
+void CTextureTool::AlignChildTextures (short nSegment, short nSide)
+{
+	CSegment*		segP = segmentManager.Segment (nSegment);
+	CSide*			sideP = segP->Side (nSide);
+	CTagByTextures tagger (m_bUse1st ? sideP->BaseTex () : -1, m_bUse2nd ? sideP->OvlTex () : -1);
+	int				nSides;
+
+if (tagger.Setup (segmentManager.VisibleSideCount ()))
+	nSides = tagger.Run ();
+else
+	return;
+
+for (int i = 0; i < nSides; i++) {
+	nSegment = tagger.Segment (i);
+	nSide = tagger.Side (i);
+	}
+}
+
+#else
+
 void CTextureTool::AlignChildTextures (short nSegment, short nSide)
 {
 #ifdef _DEBUG
@@ -840,8 +871,8 @@ while (pos < tos) {
 		nDbgSeg = nDbgSeg;
 #endif
 	// look for adjacent sides in each direction
-	for (short nLine = 0; nLine < sideP->VertexCount (); nLine++) {
-		CSideKey childSide = FindAdjacentSide (thisSide, nLine);
+	for (short nEdge = 0; nEdge < sideP->VertexCount (); nEdge++) {
+		CSideKey childSide = FindAdjacentSide (thisSide, nEdge);
 		short nChildSeg = childSide.m_nSegment;
 		short nChildSide = childSide.m_nSide;
 		// first check that we got a valid side and haven't already aligned it
@@ -872,6 +903,8 @@ while (pos < tos) {
 
 delete [] childList;
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 
