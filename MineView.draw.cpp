@@ -457,7 +457,7 @@ else if (!bSparse) {
 	int			nType = Renderer ().Type ();
 	ePenColor	pen;
 	float			penWeight;
-	bool			bSegment = /*!bTagged ||*/ segP->IsTagged ();
+	bool			bSegmentIsTagged = segP->IsTagged ();
 	bool			bSideTagged [2] = {false, false};
 
 #ifdef _DEBUG
@@ -468,12 +468,12 @@ Renderer ().GetPen (pen, penWeight);
 for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
 	ubyte i1, i2, side1, side2;
 	edgeList.Get (i, side1, side2, i1, i2);
-	if (!bSegment) {
+	if (!bSegmentIsTagged) {
 		bSideTagged [0] = bSideTagged [1];
 		bSideTagged [1] = segP->IsTagged (short (side1)) || segP->IsTagged (short (side2));
 		if (bSideTagged [0] != bSideTagged [1]) {
 			if (bSideTagged [1])
-				Renderer ().SelectPen (penRed + 1, 2.0f);
+				Renderer ().SelectPen (penOrange + 1, 2.0f);
 			else
 				Renderer ().SelectPen (pen + 1, penWeight);
 			}
@@ -546,7 +546,7 @@ bool CMineView::SelectWireFramePen (CSegment* segP)
 {
 return false;
 if (segP->IsTagged ()) { // check the segment and all of its sides
-	Renderer ().SelectPen (SelectMode (eSelectBlock) ? penRed + 1 : penGold + 1);
+	Renderer ().SelectPen (penOrange + 1); //SelectMode (eSelectBlock) ? penRed + 1 : penGold + 1);
 	return true;
 	}
 
@@ -609,10 +609,14 @@ Renderer ().EndRender ();
 Renderer ().BeginRender (true);
 // draw a square around all marked points
 Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
+#if 1
+Renderer ().SelectPen (penOrange + 1);
+#else
 if (SelectMode (eSelectBlock)) 
 	Renderer ().SelectPen (penRed + 1);
 else
 	Renderer ().SelectPen (penGold + 1);
+#endif
 for (i = 0; i < vertexManager.Count (); i++)
 	if ((vertexManager.Status (i) & TAGGED_MASK) && vertexManager [i].InRange (xMax, yMax, Renderer ().Type ())) 
 		Renderer ().Rectangle (vertexManager [i], 5, 5);
