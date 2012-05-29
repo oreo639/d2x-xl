@@ -224,8 +224,8 @@ double maxAngle = cos (Radians (22.5));
 
 while (nHead < nTail) {
 	CSideKey parent = m_sideList [nHead++].m_child;
-	CSegment* m_segP = segmentManager.Segment (parent);
-	CSide* m_sideP = segmentManager.Side (parent);
+	m_segP = segmentManager.Segment (parent);
+	m_sideP = segmentManager.Side (parent);
 	edgeList.Reset ();
 	if (!m_segP->BuildEdgeList (edgeList, ubyte (parent.m_nSide), true))
 		continue;
@@ -247,9 +247,9 @@ while (nHead < nTail) {
 			continue;
 		CSLLIterator<CSideKey, CSideKey> iter (node->m_sides);
 		for (iter.Begin (); *iter != iter.End (); iter++) {
-			CSegment* m_childSegP = segmentManager.Segment (**iter);
+			m_childSegP = segmentManager.Segment (**iter);
 			if (!m_childSegP->IsTagged (iter->m_nSide, m_tag)) {
-				CSide* m_childSideP = segmentManager.Side (**iter);
+				m_childSideP = segmentManager.Side (**iter);
 				if (Accept ()) {
 					m_childSegP->Tag (iter->m_nSide, m_tag);
 					m_sideList [nTail].m_edge = m_edgeKey;

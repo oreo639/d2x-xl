@@ -156,9 +156,13 @@ short nSegments = segmentManager.Count ();
 Renderer ().Project ();
 segmentManager.ComputeNormals (true, true);
 
+bool bSkyBox = ViewFlag (eViewMineSkyBox);
+
 #pragma omp parallel for
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = segmentManager.Segment (nSegment);
+	if (!bSkyBox && (segP->Function () == SEGMENT_FUNC_SKYBOX))
+		continue;
 	CSide* sideP = segP->Side (0);
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		double d;
