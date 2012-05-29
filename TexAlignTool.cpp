@@ -816,7 +816,7 @@ void CTextureTool::AlignChildTextures (short nSegment, short nSide)
 {
 	CSegment*		segP = segmentManager.Segment (nSegment);
 	CSide*			sideP = segP->Side (nSide);
-	CTagByTextures tagger (m_bUse1st ? sideP->BaseTex () : -1, m_bUse2nd ? sideP->OvlTex () : -1);
+	CTagByTextures tagger (m_bUse1st ? sideP->BaseTex () : -1, m_bUse2nd ? sideP->OvlTex () : -1, bool (m_bIgnorePlane));
 	int				nSides;
 
 if (tagger.Setup (segmentManager.VisibleSideCount (), ALIGNED_MASK))
@@ -904,6 +904,8 @@ delete [] childList;
 
 //------------------------------------------------------------------------------
 
+#if 0
+
 CSideKey CTextureTool::FindAdjacentSide (CSideKey side, short nLine, short depth, short nFirstSegment)
 {
 // default result - no side found
@@ -987,6 +989,8 @@ if (!m_bIgnorePlane) {
 	}
 return FindAdjacentSide (CSideKey (nChildSeg, nOppositeSide), nOppositeLine, depth - 1, nFirstSegment);
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 

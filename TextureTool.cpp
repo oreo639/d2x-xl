@@ -156,7 +156,7 @@ m_iLight = -1;
 m_nHighlight = -1;
 memset (m_szLight, 0, sizeof (m_szLight));
 m_bLightEnabled = TRUE;
-m_bIgnorePlane = FALSE;
+m_bIgnorePlane = true;
 m_bIgnoreWalls = TRUE;
 m_nColorIndex = -1;
 m_nEditFunc = -1;

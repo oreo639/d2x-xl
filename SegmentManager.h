@@ -464,6 +464,7 @@ class CTaggingStrategy {
 		CAVLTree <CEdgeTreeNode, uint>	m_edgeTree;
 		CDynamicArray<CSideListEntry>		m_sideList;
 
+		CSideKey		m_parent, m_child;
 		CSegment	*	m_segP, * m_childSegP;
 		CSide*		m_sideP, * m_childSideP;
 		CEdgeKey		m_edgeKey;
@@ -500,13 +501,14 @@ class CTagByAngle : public CTaggingStrategy {
 class CTagByTextures : public CTaggingStrategy {
 	public:
 		short m_nBaseTex, m_nOvlTex;
-		bool	m_bAll;
+		bool	m_bAll, m_bIgnorePlane;
 		
-		CTagByTextures (short nBaseTex, short nOvlTex) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex) { m_bAll = !segmentManager.HaveTaggedSegments (true); }
+		CTagByTextures (short nBaseTex, short nOvlTex, bool bIgnorePlane = true) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex), m_bIgnorePlane (bIgnorePlane) { m_bAll = !segmentManager.HaveTaggedSegments (true); }
 
 		virtual bool Accept (void) { 
 			return (m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&
 					 m_childSideP->IsVisible () &&
+					 (m_bIgnorePlane || (m_parent.m_nSide == m_child.m_nSide)) &&
 					 ((m_nBaseTex < 0) || (m_childSideP->BaseTex () == m_nBaseTex)) && 
 					 ((m_nOvlTex < 0) || (m_childSideP->OvlTex () == m_nOvlTex)); 
 			}

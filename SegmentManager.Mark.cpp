@@ -236,11 +236,11 @@ segmentManager.ComputeNormals (false);
 CEdgeList edgeList;
 
 while (nHead < nTail) {
-	CSideKey parent = m_sideList [nHead++].m_child;
-	m_segP = segmentManager.Segment (parent);
-	m_sideP = segmentManager.Side (parent);
+	m_parent = m_sideList [nHead++].m_child;
+	m_segP = segmentManager.Segment (m_parent);
+	m_sideP = segmentManager.Side (m_parent);
 	edgeList.Reset ();
-	if (!m_segP->BuildEdgeList (edgeList, ubyte (parent.m_nSide), true))
+	if (!m_segP->BuildEdgeList (edgeList, ubyte (m_parent.m_nSide), true))
 		continue;
 	int nEdges = edgeList.Count ();
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
@@ -260,14 +260,15 @@ while (nHead < nTail) {
 			continue;
 		CSLLIterator<CSideKey, CSideKey> iter (node->m_sides);
 		for (iter.Begin (); *iter != iter.End (); iter++) {
-			m_childSegP = segmentManager.Segment (**iter);
+			m_child = **iter;
+			m_childSegP = segmentManager.Segment (m_child);
 			if (!m_childSegP->IsTagged (iter->m_nSide, m_tag)) {
-				m_childSideP = segmentManager.Side (**iter);
+				m_childSideP = segmentManager.Side (m_child);
 				if (Accept ()) {
 					m_childSegP->Tag (iter->m_nSide, m_tag);
 					m_sideList [nTail].m_edge = m_edgeKey;
-					m_sideList [nTail].m_parent = parent;
-					m_sideList [nTail++].m_child = **iter;
+					m_sideList [nTail].m_parent = m_parent;
+					m_sideList [nTail++].m_child = m_child;
 					}
 				}
 			}
