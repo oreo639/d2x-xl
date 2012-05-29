@@ -240,6 +240,8 @@ public:
 
 	void UnTag (short nSide, ubyte mask = TAGGED_MASK);
 
+	void ToggleTag (short nSide, ubyte mask = TAGGED_MASK);
+
 	bool IsTagged (short nSide, ubyte mask = TAGGED_MASK);
 
 	void TagVertices (ubyte mask = TAGGED_MASK, short nSide = -1);
