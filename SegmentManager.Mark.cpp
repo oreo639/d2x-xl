@@ -166,7 +166,7 @@ switch (selectMode) {
 
 // set i to nPoints if all verts are marked
 for (i = 0; i < nPoints; i++)
-	if (!(vertexManager.Status (p [i]).IsTagged ()) 
+	if (!vertexManager [p [i]].IsTagged ()) 
 		break; 
 
 if (i == nPoints) { // if all verts are tagged, then untag them
@@ -174,7 +174,7 @@ if (i == nPoints) { // if all verts are tagged, then untag them
 		case eSelectPoint:
 		case eSelectLine:
 			for (i = 0; i < nPoints; i++)
-				vertexManager.Status (p [i]).UnTag (); 
+				vertexManager [p [i]].UnTag (); 
 			break;
 
 		case eSelectSide:
@@ -192,7 +192,7 @@ else { // otherwise tag all the points
 		case eSelectPoint:
 		case eSelectLine:
 			for (i = 0; i < nPoints; i++)
-				vertexManager.Status (p [i]).Tag (); 
+				vertexManager [p [i]].Tag (); 
 			break;
 
 		case eSelectSide:
