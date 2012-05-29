@@ -59,6 +59,8 @@ class CVertex : public CDoubleVector, public CGameItem {
 
 		inline void UnTag (ubyte mask = TAGGED_MASK) { m_status &= ~mask; }
 
+		inline void ToggleTag (ubyte mask = TAGGED_MASK) { m_status ^= mask; }
+
 		inline bool IsTagged (ubyte mask = TAGGED_MASK) { return (m_status & mask) != 0; }
 
 		void Project (CViewMatrix* m);

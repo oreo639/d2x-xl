@@ -36,18 +36,9 @@ void CSegmentManager::Tag (short nSegment)
 {
   CSegment *segP = Segment (nSegment); 
 
-segP->Tag (); /* flip marked bit */
-
-// update vertices's marked status
-// ..first clear all marked verts
-// ..then mark all verts for marked Segment ()
-int nSegments = segmentManager.Count ();
-for (int si = 0; si < nSegments; si++) {
-	CSegment* segP = segmentManager.Segment (si);
-	if (segP->IsTagged ())
-		for (ushort nVertex = 0; nVertex < 8; nVertex++)
-			segP->Vertex (nVertex)->Status () |= TAGGED_MASK; 
-	}
+segP->Tag ();
+for (ushort nVertex = 0; nVertex < 8; nVertex++)
+	segP->Vertex (nVertex)->Status () |= TAGGED_MASK; 
 }
 
 // -----------------------------------------------------------------------------

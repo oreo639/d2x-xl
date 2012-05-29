@@ -228,13 +228,11 @@ public:
 
 	inline CUVL _const_ * Uvls (short nSide) _const_ { return Side (nSide)->Uvls (); }
 
-	inline void Tag (ubyte mask = TAGGED_MASK) { m_info.flags |= mask; }
+	void Tag (ubyte mask = TAGGED_MASK);
 
-	inline void UnTag (ubyte mask = TAGGED_MASK) { 
-		m_info.flags &= ~mask; 
-		for (short i = 0; i < 6; i++)
-			Side (i)->UnTag (mask);
-		}
+	void UnTag (ubyte mask = TAGGED_MASK);
+
+	void ToggleTag (ubyte mask = TAGGED_MASK);
 
 	inline bool IsTagged (ubyte mask = TAGGED_MASK) { return (m_info.flags & mask) != 0; }
 

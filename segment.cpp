@@ -890,9 +890,45 @@ else {
 
 // -----------------------------------------------------------------------------
 
+void CSegment::Tag (ubyte mask)
+{
+Side (nSide)->Tag (mask);
+for (int i = 0, i < 6; i++)
+	Side (i)->Tag (mask);
+for (int i = 0, i < 8; i++)
+	if (VertexIds (i) <= MAX_VERTEX)
+		Vertex (i)->Tag (mask);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::UnTag (ubyte mask)
+{
+Side (nSide)->UnTag (mask);
+for (int i = 0, i < 6; i++)
+	Side (i)->UnTag (mask);
+for (int i = 0, i < 8; i++)
+	if (VertexIds (i) <= MAX_VERTEX)
+		Vertex (i)->UnTag (mask);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::ToggleTag (ubyte mask)
+{
+Side (nSide)->ToggleTag (mask);
+for (int i = 0, i < 6; i++)
+	Side (i)->ToggleTag (mask);
+for (int i = 0, i < 8; i++)
+	if (VertexIds (i) <= MAX_VERTEX)
+		Vertex (i)->ToggleTag (mask);
+}
+
+// -----------------------------------------------------------------------------
+
 void CSegment::Tag (short nSide, ubyte mask)
 {
-Side (nSide)->m_nTag |= mask;
+Side (nSide)->Tag (mask);
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 	Vertex (nSide, i)->Tag (mask);
 }
@@ -901,9 +937,18 @@ for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 
 void CSegment::UnTag (short nSide, ubyte mask)
 {
-Side (nSide)->m_nTag &= ~mask;
+Side (nSide)->UnTag (mask);
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
-	Vertex (nSide, i)->Tag (mask);
+	Vertex (nSide, i)->UnTag (mask);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::ToggleTag (short nSide, ubyte mask)
+{
+Side (nSide)->ToggleTag (mask);
+for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
+	Vertex (nSide, i)->ToggleTag (mask);
 }
 
 // -----------------------------------------------------------------------------
@@ -911,9 +956,9 @@ for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 bool CSegment::IsTagged (short nSide, ubyte mask)
 {
 if (nSide >= 0)
-	return (Side (nSide)->m_nTag & mask) != 0;
+	return (Side (nSide)->IsTagged (mask);
 for (nSide = 0; nSide < 6; nSide++)
-	if ((Side (nSide)->m_nTag & mask) != 0)
+	if (Side (nSide)->IsTagged (mask))
 		return true;
 return false;
 }

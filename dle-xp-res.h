@@ -893,8 +893,8 @@
 #define ID_EDIT_QUICKPASTE              30802
 #define ID_EDIT_DELETEBLOCK             30803
 #define ID_EDIT_COPYOTHERCUBESTEXTURES  30804
-#define ID_EDIT_TAG                    30805
-#define ID_EDIT_TAGALL                 30806
+#define ID_EDIT_TAG                     30805
+#define ID_EDIT_TAGALL                  30806
 #define ID_EDIT_UNTAG_ALL               30807
 #define ID_VIEW_ZOOMIN                  30808
 #define ID_VIEW_ZOOMOUT                 30809
