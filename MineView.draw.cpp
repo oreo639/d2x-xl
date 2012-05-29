@@ -279,7 +279,7 @@ return true;
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegment (short nSegment, short nSide, short nLine, short nPoint, short bClearIt) 
+void CMineView::DrawSegment (short nSegment, short nSide, short nLine, short nPoint) 
 {
 CHECKMINE;
 
@@ -291,86 +291,49 @@ CHECKMINE;
 	if (!Visible (segP))
 		return;
 
-if (bClearIt) {
-	Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
-	Renderer ().SelectPen (penBlack + 1); // BLACK
-	int nVert = segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)];
-	if (vertexManager [nVert].InRange (xMax, yMax, Renderer ().Type ()))
-		Renderer ().Ellipse (vertexManager [nVert], 4, 4);
-	if (segP->IsTagged ()) {
-		Renderer ().SelectPen (penGold + 1);
-		DrawSegmentWireFrame (segP);
-		} 
-	else {
-		if (m_viewOption == eViewWireFrameSparse) {
-			Renderer ().SelectPen (penBlack + 1);
-			DrawSegmentWireFrame (segP);  
-			Renderer ().SelectPen (penGray + 1);
-			DrawSegmentPartial (segP); 
-			}
-		if ((m_viewOption == eViewWireFrameFull) || (m_viewOption == eViewNearbyCubeLines) || (m_viewOption == eViewTextured)) {
-			Renderer ().SelectPen (penGray + 1); 
-			DrawSegmentWireFrame (segP);
-			}
-		if (m_viewOption == eViewHideLines) {
-			Renderer ().SelectPen (penBlack + 1);  
-			DrawSegmentWireFrame (segP);  
-			}
-		}
-	if (m_viewOption == eViewNearbyCubeLines) {
-		Renderer ().SelectPen (penBlack + 1);  
-		DrawSegmentWireFrame (segP);  
-		Renderer ().SelectPen (penWhite + 1); 
-		DrawSegmentPoints (segP);  
-		}
-	} 
-else {
-	if (segP->IsTagged ())
-		Renderer ().SelectPen (penGold + 1, 2);
-	else 
-		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penRed + 1 : penWhite + 1 : penGray + 1, 2);   
-	if (m_viewOption == eViewWireFrameSparse)
-		DrawSegmentPartial (segP);
-	else
-		DrawSegmentWireFrame (segP);
+// draw the segment's wire frame
+if (segP->IsTagged ())
+	Renderer ().SelectPen (penGold + 1, 2);
+else 
+	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penRed + 1 : penWhite + 1 : penGray + 1, 2);   
+if (m_viewOption == eViewWireFrameSparse)
+	DrawSegmentPartial (segP);
+else
+	DrawSegmentWireFrame (segP);
 
+// draw the current side's outline
 	int i;
-	if (!Renderer ().Ortho ())
-		i = 4;
-	else {
-		for (i = 0; i < 4; i++)
-			if (!vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (i)]].InRange (xMax, yMax, Renderer ().Type ()))
-				break;
-		}
-	if (i == 4) {
-		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSide) ? penRed + 1 : penGreen + 1 : penDkGreen + 1, 2);  
-		short nVertices = sideP->VertexCount ();
-		for (i = 0; i < nVertices; i++)
-			DrawLine (segP, sideP->VertexIdIndex (i), sideP->VertexIdIndex (i + 1));
-		}
-
-	short i1 = sideP->VertexIdIndex (nLine);
-	short i2 = sideP->VertexIdIndex (nLine + 1);
-	if (!Renderer ().Ortho () ||
-		 (vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
-		  vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
-		{
-		Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penRed + 1 : penGold + 1 : penDkCyan + 1, 2);  
-		DrawLine (segP, i1, i2);
-		}
-
-#if 0
-	if (Renderer ().Ortho () && !Perspective ()) {
-		Renderer ().EndRender ();
-		Renderer ().BeginRender (true);
-		}
-#endif
-	Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
-	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penRed + 1 : penGold + 1 : penDkCyan + 1, 2); 
-	i = segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)];
-	if (vertexManager [i].InRange (xMax, yMax, Renderer ().Type ()))
-		Renderer ().Ellipse (vertexManager [i], 4, 4);
+if (!Renderer ().Ortho ())
+	i = 4;
+else {
+	for (i = 0; i < 4; i++)
+		if (!vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (i)]].InRange (xMax, yMax, Renderer ().Type ()))
+			break;
 	}
+if (i == 4) {
+	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSide) ? penRed + 1 : penGreen + 1 : penDkGreen + 1, 2);  
+	short nVertices = sideP->VertexCount ();
+	for (i = 0; i < nVertices; i++)
+		DrawLine (segP, sideP->VertexIdIndex (i), sideP->VertexIdIndex (i + 1));
+	}
+
+// draw the current line
+short i1 = sideP->VertexIdIndex (nLine);
+short i2 = sideP->VertexIdIndex (nLine + 1);
+if (!Renderer ().Ortho () ||
+		(vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
+		vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
+	{
+	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penRed + 1 : penGold + 1 : penDkCyan + 1, 2);  
+	DrawLine (segP, i1, i2);
+	}
+
+// draw a circle around the current vertex
+Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
+Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penRed + 1 : penGold + 1 : penDkCyan + 1, 2); 
+i = segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)];
+if (vertexManager [i].InRange (xMax, yMax, Renderer ().Type ()))
+	Renderer ().Ellipse (vertexManager [i], 4, 4);
 }
 
 //--------------------------------------------------------------------------
@@ -581,6 +544,7 @@ for (int i = 0; i < 8; i++, vertexIds++)
 
 bool CMineView::SelectWireFramePen (CSegment* segP)
 {
+return false;
 if (segP->IsTagged ()) { // check the segment and all of its sides
 	Renderer ().SelectPen (SelectMode (eSelectBlock) ? penRed + 1 : penGold + 1);
 	return true;
@@ -630,7 +594,7 @@ return false;
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawTaggedSegments (short bClear) 
+void CMineView::DrawTaggedSegments (void) 
 {
 CHECKMINE;
 
@@ -638,25 +602,17 @@ CHECKMINE;
 	short			xMax = ViewWidth ();
 	short			yMax = ViewHeight ();
 	short			i;
-
-if (m_nRenderer)
-	bClear = false;
 Renderer ().BeginRender (Renderer ().Type () == 0);
 if (!Renderer ().Ortho ())
 	glDepthFunc (GL_LEQUAL);
-if (!bClear) {
-	for (i = 0; i < segmentManager.Count (); i++) {
-		if (SelectWireFramePen (segP = segmentManager.Segment (i)))
-			DrawSegmentWireFrame (segP, false, true);
-		}
-	}
+for (i = 0; i < segmentManager.Count (); i++) 
+	if (SelectWireFramePen (segP = segmentManager.Segment (i)))
+		DrawSegmentWireFrame (segP, false, true);
 Renderer ().EndRender ();
 Renderer ().BeginRender (true);
 // draw a square around all marked points
-Renderer ().SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
-if (bClear)
-	Renderer ().SelectPen (penBlack + 1);
-else if (SelectMode (eSelectBlock)) // && edit_mode != EDIT_OFF) {
+Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
+if (SelectMode (eSelectBlock)) 
 	Renderer ().SelectPen (penRed + 1);
 else
 	Renderer ().SelectPen (penGold + 1);
@@ -1004,53 +960,49 @@ renderer.EndRender ();
 //        then its a secret return point)
 //--------------------------------------------------------------------------
 
-void CMineView::SelectObjectPen (CGameObject* objP, short bClear) 
+void CMineView::SelectObjectPen (CGameObject* objP) 
 {
-if (bClear == 2)
-	Renderer ().SelectPen (penBlack + 1);
+if ((m_selectMode == OBJECT_MODE) && (objP == current->Object ()))
+	Renderer ().SelectPen (penRed + 1); // RED
 else {
-	if ((m_selectMode == OBJECT_MODE) && (objP == current->Object ()))
-		Renderer ().SelectPen (penRed + 1); // RED
-	else {
-		switch(objP->Type ()) {
-			case OBJ_ROBOT: 
-			case OBJ_CAMBOT: 
-			case OBJ_EXPLOSION:
-			case OBJ_MONSTERBALL:
-				Renderer ().SelectPen (penMagenta + 1);
-				break;
-			case OBJ_SMOKE:
-			case OBJ_EFFECT:
-				Renderer ().SelectPen (penGreen + 1, 2);
-				break;
-			case OBJ_HOSTAGE: 
-				Renderer ().SelectPen (penBlue + 1);
-				break;
-			case OBJ_PLAYER: 
-				Renderer ().SelectPen (penGold + 1);
-				break;
-			case OBJ_WEAPON: 
-				Renderer ().SelectPen (penDkGreen + 1);
-				break;
-			case OBJ_POWERUP: 
-				Renderer ().SelectPen (penOrange + 1);
-				break;
-			case OBJ_REACTOR: 
-				Renderer ().SelectPen (penLtGray + 1);
-				break;
-			case OBJ_COOP: 
-				Renderer ().SelectPen (penGold + 1);
-				break;
-			default:
-				Renderer ().SelectPen (penGreen + 1);
-			}
+	switch(objP->Type ()) {
+		case OBJ_ROBOT: 
+		case OBJ_CAMBOT: 
+		case OBJ_EXPLOSION:
+		case OBJ_MONSTERBALL:
+			Renderer ().SelectPen (penMagenta + 1);
+			break;
+		case OBJ_SMOKE:
+		case OBJ_EFFECT:
+			Renderer ().SelectPen (penGreen + 1, 2);
+			break;
+		case OBJ_HOSTAGE: 
+			Renderer ().SelectPen (penBlue + 1);
+			break;
+		case OBJ_PLAYER: 
+			Renderer ().SelectPen (penGold + 1);
+			break;
+		case OBJ_WEAPON: 
+			Renderer ().SelectPen (penDkGreen + 1);
+			break;
+		case OBJ_POWERUP: 
+			Renderer ().SelectPen (penOrange + 1);
+			break;
+		case OBJ_REACTOR: 
+			Renderer ().SelectPen (penLtGray + 1);
+			break;
+		case OBJ_COOP: 
+			Renderer ().SelectPen (penGold + 1);
+			break;
+		default:
+			Renderer ().SelectPen (penGreen + 1);
 		}
 	}
 }
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawObject (short nObject, short bClear) 
+void CMineView::DrawObject (short nObject) 
 {
 CHECKMINE;
 
@@ -1082,17 +1034,15 @@ else {
 
 double d = (ViewOption (eViewTexturedWireFrame) || ViewOption (eViewTextured)) ? ViewMatrix ()->Distance (objP->Position ()) : 1e30;
 if (textureManager.Available (1) && objP->HasPolyModel () && modelManager.Setup (objP, m_renderer, DC ()) && ((nObject == current->m_nObject) || (d <= MODEL_DISPLAY_LIMIT))) {
-	SelectObjectPen (objP, bClear);
+	SelectObjectPen (objP);
 	if (objP->DrawArrow (Renderer (), -1)) { // only render if fully visible (check using the arrow representation)
-		if (bClear)
-			Renderer ().SelectPen (penBlack + 1);
 		Renderer ().SelectObject ((HBRUSH) GetStockObject (BLACK_BRUSH));
 		modelManager.Draw ();
 		}
 	}
 else {
 	if ((d > MODEL_DISPLAY_LIMIT) || !objP->DrawSprite (Renderer ()) || (nObject == current->m_nObject)) {
-		SelectObjectPen (objP, bClear);
+		SelectObjectPen (objP);
 		objP->DrawArrow (Renderer (), (nObject == current->m_nObject));
 		}
 	}
@@ -1103,7 +1053,7 @@ if ((nObject == current->m_nObject) || (nObject == other->m_nObject))
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawObjects (short bClear) 
+void CMineView::DrawObjects (void) 
 {
 CHECKMINE;
 
@@ -1491,7 +1441,7 @@ return true;
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawHighlight (short bClear) 
+void CMineView::DrawHighlight (void) 
 {
 CHECKMINE;
 
@@ -1503,23 +1453,21 @@ if (segmentManager.Count ()== 0)
 	return;
 
 // draw Objects ()
-if (!bClear) {
-	DrawObjects (bClear);
+DrawObjects ();
 //	if (/*!(preferences & PREFS_HIDE_TAGGED_BLOCKS) ||*/ SelectMode (eSelectBlock))
-	DrawTaggedSegments (bClear);
-  }
+DrawTaggedSegments ();
 
 Renderer ().BeginRender (Renderer ().Type () == 0);
 // draw highlighted Segments () (other first, then current)
 if (*current == selections [0]) {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].m_nPoint, bClear);
-	DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].m_nPoint, bClear);
+		DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].m_nPoint);
+	DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].m_nPoint);
 	}
 else {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].m_nPoint, bClear);
-	DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].m_nPoint, bClear);
+		DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].m_nPoint);
+	DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].m_nPoint);
 	}
 Renderer ().EndRender ();
 
@@ -1544,7 +1492,7 @@ if (m_mouseState == eMouseStateSelect) {
 			glEnable (GL_LINE_STIPPLE);
 			glDepthFunc (GL_ALWAYS);
 			}
-		DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT, bClear);
+		DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT);
 		if (m_nRenderer)
 			glDisable (GL_LINE_STIPPLE);
 		Renderer ().EndRender ();

@@ -379,16 +379,8 @@ void CMineView::NextSegment (int dir)
 if (segmentManager.Count () <= 0)
 	return;
 
-if (0) {//!ViewOption (eViewWireFrameSparse)) {
-	DrawHighlight (1);
-	Wrap (current->m_nSegment, dir, 0, segmentManager.Count () - 1);
-	Refresh (true);
-	DrawHighlight (0);
-	}
-else {
-	Wrap (current->m_nSegment, dir, 0, segmentManager.Count () - 1);
-	Refresh (true);
-	}
+Wrap (current->m_nSegment, dir, 0, segmentManager.Count () - 1);
+Refresh (true);
 }
 
 //-----------------------------------------------------------------------------
@@ -413,7 +405,6 @@ void CMineView::SegmentForward (int dir)
 	short nChild, nSide;
 	bool bFwd = (dir == 1);
 
-DrawHighlight (1);
 segP = segmentManager.Segment (current->m_nSegment);
 nChild = segP->ChildId (bFwd ? current->m_nSide: oppSideTable [current->m_nSide]);
 if (nChild <= -1) {
@@ -438,7 +429,7 @@ if (nChild <= -1) {
 	}
 if (nChild > -1) {
 	childSegP = segmentManager.Segment (nChild);
-// try to select side which is in same direction as current side
+	// try to select side which is in same direction as current side
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (childSegP->ChildId (nSide) == current->m_nSegment) {
 			current->m_nSide =  bFwd ? oppSideTable [nSide]: nSide;
@@ -446,17 +437,10 @@ if (nChild > -1) {
 			}
 		}
 	m_lastSegment = current->m_nSegment;
-	if (0) {//!ViewOption (eViewWireFrameSparse)) {
-		// DrawHighlight (1);
-		current->m_nSegment = nChild;
-		// DrawHighlight (0);
-		} 
-	else {
-		current->m_nSegment = nChild;
-		Refresh (true);
-		}
+	current->m_nSegment = nChild;
 	}
-DrawHighlight (0);
+DrawHighlight ();
+Refresh (true);
 }
 
 //-----------------------------------------------------------------------------

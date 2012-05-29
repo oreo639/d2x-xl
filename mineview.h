@@ -199,9 +199,9 @@ public:
 	bool InitViewDimensions (void);
 	void DrawWireFrame (bool bSparse);
 	void DrawTexturedSegments (void);
-	void DrawTaggedSegments (short bClear = 0);
+	void DrawTaggedSegments (void);
 	void DrawSegment (CSegment *segP, bool bSparse);
-	void DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short bClear = 0);
+	void DrawSegment (short nSegment,short nSide, short nEdge, short nPoint);
 	void DrawSegmentPartial (CSegment *segP);
 	void DrawSegmentWireFrame (CSegment *segP, bool bSparse = false, bool bTagged = false, char bTunnel = 0);
 	void DrawSparseSegmentWireFrame (CSegment *segP);
@@ -214,17 +214,17 @@ public:
 	void DrawWalls (void);
 	void DrawLights (void);
 	void DrawOctagon(short nSide, short nSegment);
-	void DrawObject (short objnum, short bClear = 0);
-	void DrawObjects (short bClear = 0);
+	void DrawObject (short nObject);
+	void DrawObjects (void);
 	bool DrawSelectablePoint (void);
 	bool DrawSelectableEdge (void);
 	bool DrawSelectableSides (void);
 	bool DrawSelectableSegments (void);
-	void DrawHighlight (short bClear = 0);
+	void DrawHighlight (void);
 	void DrawTunnel (void);
 	bool SelectWireFramePen (CSegment* segP);
 	void SelectWallPen (CWall* wallP);
-	void SelectObjectPen (CGameObject* objP, short bClear);
+	void SelectObjectPen (CGameObject* objP);
 
 	// view control functions
 	int FitToView (void);
