@@ -66,6 +66,7 @@ if (nDelSeg < --Count ()) {
 
 void CSegmentManager::AddSegments (void)
 {
+undoManager.Begin (udSegments); 
 Create (*current);
 CSegment* segP = Segment (0);
 for (short nSegment = 0, nSegments = Count (); nSegment < nSegments; nSegment++, segP++) 
@@ -73,6 +74,7 @@ for (short nSegment = 0, nSegments = Count (); nSegment < nSegments; nSegment++,
 		if (segP->IsTagged (nSide) && !segP->HasChild (nSide)) 
 			if (0 > Create (CSideKey (nSegment, nSide)))
 				break;
+undoManager.End (); 
 }
 
 // ----------------------------------------------------------------------------- 
