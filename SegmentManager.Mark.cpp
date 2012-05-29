@@ -205,7 +205,6 @@ else { // otherwise tag all the points
 			break; 
 		}
 	}
-UpdateTagged (); 
 DLE.MineView ()->Refresh (); 
 }
 

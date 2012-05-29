@@ -581,10 +581,15 @@ for (int i = 0; i < 8; i++, vertexIds++)
 
 bool CMineView::SelectWireFramePen (CSegment* segP)
 {
-if (segP->IsTagged () || segP->IsTagged (short (-1))) { // check the segment and all of its sides
+if (segP->IsTagged ()) { // check the segment and all of its sides
 	Renderer ().SelectPen (SelectMode (eSelectBlock) ? penRed + 1 : penGold + 1);
 	return true;
 	}
+else if (segP->IsTagged (short (-1))) { // check the segment and all of its sides
+	Renderer ().SelectPen (penLtGray + 1);
+	return true;
+	}
+
 
 if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextured)) {
 	switch (segP->m_info.function) {
