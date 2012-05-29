@@ -829,8 +829,13 @@ else
 	return;
 
 for (int i = 0; i < nSides; i++) {
-	nSegment = tagger.Segment (i);
-	nSide = tagger.Side (i);
+	nSegment = tagger.ParentSegment (i);
+	nSide = tagger.ParentSide (i);
+	segP = segmentManager.Segment (nSegment);
+	sideP = segP->Side (nSide);
+
+	short nChildSegment = tagger.ChildSegment (i);
+	short nChildSide = tagger.ChildSide (i);
 	}
 }
 

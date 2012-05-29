@@ -226,11 +226,11 @@ CEdgeList edgeList;
 double maxAngle = cos (Radians (22.5));
 
 while (nHead < nTail) {
-	CSideKey key = m_sideList [nHead++].m_child;
-	CSegment* m_segP = segmentManager.Segment (key);
-	CSide* m_sideP = segmentManager.Side (key);
+	CSideKey parent = m_sideList [nHead++].m_child;
+	CSegment* m_segP = segmentManager.Segment (parent);
+	CSide* m_sideP = segmentManager.Side (parent);
 	edgeList.Reset ();
-	if (!m_segP->BuildEdgeList (edgeList, ubyte (key.m_nSide), true))
+	if (!m_segP->BuildEdgeList (edgeList, ubyte (parent.m_nSide), true))
 		continue;
 	int nEdges = edgeList.Count ();
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
@@ -255,7 +255,8 @@ while (nHead < nTail) {
 				CSide* m_childSideP = segmentManager.Side (**iter);
 				if (Accept ()) {
 					m_childSegP->Tag (iter->m_nSide);
-					m_sideList [nTail].m_parent = key;
+					m_sideList [nTail].m_edge = m_edgeKey;
+					m_sideList [nTail].m_parent = parent;
 					m_sideList [nTail++].m_child = **iter;
 					}
 				}

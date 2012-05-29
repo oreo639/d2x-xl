@@ -17,6 +17,16 @@ class CSideListEntry {
 	public:
 		CSideKey	m_parent;
 		CSideKey	m_child;
+		uint		m_edge;
+};
+
+class CEdgeKey {
+	public:
+		uint	m_key;
+		uint Compose (ushort v1, ushort v2) { m_key = (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16); }
+		ushort V1 (void) { return ushort (m_key & 0xffff); }
+		ushort V2 (void) { return ushort (m_key >> 16); }
+		inline uint Key (void) { return m_key; }
 };
 
 class CTaggingStrategy {
@@ -26,12 +36,15 @@ class CTaggingStrategy {
 
 		CSegment	*	m_segP, * m_childSegP;
 		CSide*		m_sideP, * m_childSideP;
+		CEdgeKey		m_edgeKey;
 
 	inline bool Setup (int nSides) { return m_sideList.Create (nSides) != null; }
-	inline uint EdgeKey (ushort v1, ushort v2) { return (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16); }
+	inline uint EdgeKey (ushort v1, ushort v2) { return m_edgeKey.Compose (v1, v2); }
 	int Run (short nSegment = -1, short nSide = -1);
-	inline short Segment (int i) { return m_sideList [i].m_nSegment; }
-	inline short Side (int i) { return m_sideList [i].m_nSide; }
+	inline short ParentSegment (int i) { return m_sideList [i].m_parent.m_nSegment; }
+	inline short ParentSide (int i) { return m_sideList [i].m_parent.m_nSide; }
+	inline short ChildSegment (int i) { return m_sideList [i].m_child.m_nSegment; }
+	inline short ChildSide (int i) { return m_sideList [i].m_child.m_nSide; }
 	virtual bool Accept (void) = 0;
 };
 
