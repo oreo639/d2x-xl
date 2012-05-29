@@ -158,7 +158,7 @@ short CSelection::SetSegmentId (short nSegment)
 if ((this == current) && (0 <= m_nSegment) && (0 <= m_nSide))
 	Side ()->SetPoint ((ubyte) Point ());
 m_nSegment = nSegment;
-if ((this == current) && (0 <= m_nSegment) && (0 <= m_nSide))
+if ((0 <= m_nSegment) && (0 <= m_nSide))
 	SetPoint (Side ()->Point ());
 return m_nSegment;
 }
@@ -170,7 +170,7 @@ short CSelection::SetSideId (short nSide)
 if ((this == current) && (0 <= m_nSegment) && (0 <= m_nSide))
 	Side ()->SetPoint ((ubyte) Point ());
 m_nSide = nSide;
-if ((this == current) && (0 <= m_nSegment) && (0 <= m_nSide))
+if ((0 <= m_nSegment) && (0 <= m_nSide))
 	SetPoint (Side ()->Point ());
 return m_nSide; 
 }
