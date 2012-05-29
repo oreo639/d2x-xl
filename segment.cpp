@@ -953,7 +953,7 @@ for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 bool CSegment::IsTagged (short nSide, ubyte mask)
 {
 if (nSide >= 0)
-	return (Side (nSide)->IsTagged (mask);
+	return Side (nSide)->IsTagged (mask);
 for (nSide = 0; nSide < 6; nSide++)
 	if (Side (nSide)->IsTagged (mask))
 		return true;
