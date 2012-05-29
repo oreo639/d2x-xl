@@ -293,7 +293,7 @@ CHECKMINE;
 
 // draw the segment's wire frame
 if (segP->IsTagged ())
-	Renderer ().SelectPen (penGold + 1, 2);
+	Renderer ().SelectPen (penGold + 1, 2.0f);
 else 
 	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penRed + 1 : penWhite + 1 : penGray + 1, 2);   
 if (m_viewOption == eViewWireFrameSparse)
@@ -324,13 +324,13 @@ if (!Renderer ().Ortho () ||
 		(vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
 		vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
 	{
-	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penRed + 1 : penGold + 1 : penDkCyan + 1, 2);  
+	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penRed + 1 : penGold + 1 : penMedCyan + 1, 2);  
 	DrawLine (segP, i1, i2);
 	}
 
 // draw a circle around the current vertex
 Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
-Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penRed + 1 : penGold + 1 : penDkCyan + 1, 2); 
+Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penRed + 1 : penGold + 1 : penMedCyan + 1, 2); 
 i = segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)];
 if (vertexManager [i].InRange (xMax, yMax, Renderer ().Type ()))
 	Renderer ().Ellipse (vertexManager [i], 4, 4);
@@ -457,7 +457,7 @@ else if (!bSparse) {
 	int			nType = Renderer ().Type ();
 	ePenColor	pen;
 	float			penWeight;
-	bool			bSegment = !bTagged || segP->IsTagged ();
+	bool			bSegment = /*!bTagged ||*/ segP->IsTagged ();
 	bool			bSideTagged [2] = {false, false};
 
 #ifdef _DEBUG
@@ -468,15 +468,15 @@ Renderer ().GetPen (pen, penWeight);
 for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
 	ubyte i1, i2, side1, side2;
 	edgeList.Get (i, side1, side2, i1, i2);
-	bSideTagged [0] = bSideTagged [1];
-	bSideTagged [1] = segP->IsTagged (short (side1)) || segP->IsTagged (short (side2));
-	if (!(bSegment || bSideTagged [1]))
-		continue;
-	if (bSideTagged [0] != bSideTagged [1]) {
-		if (bSideTagged [1])
-			Renderer ().SelectPen (penRed + 1);
-		else
-			Renderer ().SelectPen (pen + 1, penWeight);
+	if (!bSegment) {
+		bSideTagged [0] = bSideTagged [1];
+		bSideTagged [1] = segP->IsTagged (short (side1)) || segP->IsTagged (short (side2));
+		if (bSideTagged [0] != bSideTagged [1]) {
+			if (bSideTagged [1])
+				Renderer ().SelectPen (penRed + 1, 2.0f);
+			else
+				Renderer ().SelectPen (pen + 1, penWeight);
+			}
 		}
 
 	CVertex& v1 = vertexManager [vertexIds [i1]];
@@ -549,11 +549,6 @@ if (segP->IsTagged ()) { // check the segment and all of its sides
 	Renderer ().SelectPen (SelectMode (eSelectBlock) ? penRed + 1 : penGold + 1);
 	return true;
 	}
-else if (segP->IsTagged (short (-1))) { // check the segment and all of its sides
-	Renderer ().SelectPen (penLtGray + 1);
-	return true;
-	}
-
 
 if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextured)) {
 	switch (segP->m_info.function) {
@@ -584,6 +579,8 @@ if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextured)) {
 				Renderer ().SelectPen (penMedBlue + 1);
 			else if (segP->m_info.props & SEGMENT_PROP_LAVA)
 				Renderer ().SelectPen (penMedRed + 1);
+			else if (segP->IsTagged (short (-1))) 
+				Renderer ().SelectPen (penGray + 1);
 			else
 				return false;
 		return true;
@@ -1067,7 +1064,7 @@ if (DLE.IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < triggerManager.WallTriggerCount (); i++)
 	if (triggerManager.Trigger (i)->Type () == TT_SECRET_EXIT) {
-		DrawObject ((short)objectManager.Count (), 0);
+		DrawObject ((short)objectManager.Count ());
 		break; // only draw one secret exit
 		}
 	}
@@ -1075,7 +1072,7 @@ HiliteTarget ();
 CGameObject *objP = objectManager.Object (0);
 for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
 	if (ViewObject (objP))
-		DrawObject (j, 0);
+		DrawObject (j);
 Renderer ().EndRender ();
 }
 

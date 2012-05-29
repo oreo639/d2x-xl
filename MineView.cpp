@@ -91,6 +91,8 @@ COLORREF CRenderData::PenColor (int nPen)
 		RGB (  0,255,  0),
 		RGB (  0,128,  0),
 		RGB (  0,128,128),
+		RGB (  0,192,192),
+		RGB (  0,255,255),
 		RGB (  0,  0,255),
 		RGB (  0,128,255),
 		RGB (  0,255,255),
@@ -169,7 +171,7 @@ SetViewMoveRate (1.0);
 Reset ();
 m_bEnableQuickSelection = GetPrivateProfileInt ("DLE", "EnableQuickSelection", 1, DLE.IniFile ());
 m_nShowSelectionCandidates = GetPrivateProfileInt ("DLE", "ShowSelectionCandidates", 2, DLE.IniFile ());
-Renderer ().SetRTT (m_bEnableQuickSelection);
+Renderer ().SetRTT (m_bEnableQuickSelection != 0);
 }
 
 //------------------------------------------------------------------------------
