@@ -808,6 +808,7 @@ void CTextureTool::OnSaveTexture ()
 {
 CHECKMINE;
 
+CSide* sideP = current->Side ();
 m_saveTexture [0] = sideP->BaseTex ();
 m_saveTexture [1] = sideP->OvlTex (0);
 int i;
