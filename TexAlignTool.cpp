@@ -815,10 +815,10 @@ class CTagByTextures : public CTaggingStrategy {
 		CTagByTextures (short nBaseTex, short nOvlTex) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex) { m_bAll = segmentManager.HaveTaggedSegments () || segmentManager.HaveTaggedSides (); }
 
 		virtual bool Accept (void) { 
-			(m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&
-			(m_childSideP->Shape () <= SIDE_SHAPE_TRIANGLE) && 
-			((m_nBaseTex < 0) || (m_sideP->BaseTex () == m_childSideP->BaseTex ())) && 
-			((m_nOvlTex < 0) || (m_sideP->OvlTex () == m_childSideP->OvlTex ())); 
+			return (m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&
+					 (m_childSideP->Shape () <= SIDE_SHAPE_TRIANGLE) && 
+					 ((m_nBaseTex < 0) || (m_sideP->BaseTex () == m_childSideP->BaseTex ())) && 
+					 ((m_nOvlTex < 0) || (m_sideP->OvlTex () == m_childSideP->OvlTex ())); 
 			}
 	};
 
@@ -836,6 +836,8 @@ else
 
 for (int i = 0; i < nSides; i++) 
 	segmentManager.AlignTextures (tagger.ParentSegment (i), tagger.ParentSide (i), tagger.ChildSegment (i), tagger.ChildSide (i), m_bUse1st, m_bUse2nd);
+
+segmentManager.UnTagAll (TAGGED_MASK | ALIGNED_MASK);
 }
 
 #else

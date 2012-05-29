@@ -201,7 +201,7 @@ DLE.MineView ()->Refresh ();
 
 int CTaggingStrategy::Run (short nSegment, short nSide) 
 {
-segmentManager.UnTagAll ();
+segmentManager.UnTagAll (m_tag);
 
 int nHead = 0;
 int nTail = 1;
