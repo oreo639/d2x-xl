@@ -905,13 +905,26 @@ DLE.MineView ()->Refresh ();
 // TODO: Beginning with the current side, walk through all adjacent sides and 
 // mark all in plane
 
+class CTagByAngle : public CTaggingStrategy {
+	public:
+		double m_maxAngle;
+		
+		CTagByAngle () : m_maxAngle (cos (Radians (22.5))) {}
+
+		virtual bool Filter (void) { return Dot (m_sideP->Normal (), m_childSideP->Normal ()) >= m_maxAngle); }
+	};
+
+
+
 void CTextureTool::OnTagPlane () 
 {
 CHECKMINE;
 
 UpdateData (TRUE);
 
-segmentManager.TagPlane ();
+CTagByAngle tagger;
+tagger.Setup (segmentManager.VisibleSideCount ());
+tagger.Run ();
 Refresh ();
 DLE.MineView ()->Refresh ();
 }

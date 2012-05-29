@@ -13,6 +13,19 @@
 
 // -----------------------------------------------------------------------------
 
+class CTaggingStrategy {
+	public:
+		CDynamicArray<CSideKey>&	m_sideList;
+		CSegment	*	m_segP, * m_childSegP;
+		CSide*		m_sideP, * m_childSideP;
+
+	inline bool Setup (int nSides) { return m_sideList.Create (nSides) != null; }
+	int Run (void);
+	virtual bool Filter (void) = 0;
+};
+
+// -----------------------------------------------------------------------------
+
 #define MAX_SEGMENTS_D1		800  // descent 1 max # of cubes
 #define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes
 #define SEGMENT_LIMIT		20000 // D2X-XL max # of cubes
@@ -265,7 +278,7 @@ class CSegmentManager {
 
 		void UnTagAll (ubyte mask = TAGGED_MASK);
 
-		void TagPlane (void);
+		int TagSides (CDynamicArray<CSideKey>& sideList, bool (*sideFilter) (CSide* sideP, CSide* childSideP));
 
 		void TagSelected (void);
 
