@@ -89,16 +89,16 @@ selections [0].Index () = 0;
 selections [1].Index () = 1;
 current = &selections [0];
 other = &selections [1];
-selections [0].m_nSegment = DEFAULT_SEGMENT;
-selections [0].Point () = DEFAULT_POINT;
-selections [0].m_nEdge = DEFAULT_LINE;
-selections [0].m_nSide = DEFAULT_SIDE;
-selections [0].m_nObject = DEFAULT_OBJECT;
-selections [1].m_nSegment = DEFAULT_SEGMENT;
-selections [1].Point () = DEFAULT_POINT;
-selections [1].m_nEdge = DEFAULT_LINE;
-selections [1].m_nSide = DEFAULT_SIDE;
-selections [1].m_nObject = DEFAULT_OBJECT;
+selections [0].SetSegmentId (DEFAULT_SEGMENT);
+selections [0].SetPoint (DEFAULT_POINT);
+selections [0].SetEdge (DEFAULT_EDGE);
+selections [0].SetSideId (DEFAULT_SIDE);
+selections [0].SetObjectId (DEFAULT_OBJECT);
+selections [1].SetSegmentId (DEFAULT_SEGMENT);
+selections [1].SetPoint (DEFAULT_POINT);
+selections [1].SetEdge (DEFAULT_EDGE);
+selections [1].SetSideId (DEFAULT_SIDE);
+selections [1].SetObjectId (DEFAULT_OBJECT);
 undoManager.Reset ();
 }
 

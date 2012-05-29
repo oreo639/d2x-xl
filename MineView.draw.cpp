@@ -1462,13 +1462,13 @@ Renderer ().BeginRender (Renderer ().Type () == 0);
 // draw highlighted Segments () (other first, then current)
 if (*current == selections [0]) {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].Point ());
-	DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].Point ());
+		DrawSegment (selections [1].SegmentId (), selections [1].SideId (), selections [1].Edge (), selections [1].Point ());
+	DrawSegment (selections [0].SegmentId (), selections [0].SideId (), selections [0].Edge (), selections [0].Point ());
 	}
 else {
-	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].Point ());
-	DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].Point ());
+	if (selections [0].SegmentId () != selections [1].SegmentId ())
+		DrawSegment (selections [0].SegmentId (), selections [0].SideId (), selections [0].Edge (), selections [0].Point ());
+	DrawSegment (selections [1].SegmentId (), selections [1].SideId (), selections [1].Edge (), selections [1].Point ());
 	}
 Renderer ().EndRender ();
 
@@ -1477,9 +1477,9 @@ if (ViewFlag (eViewMineWalls))
 if (ViewFlag (eViewMineLights))
 	DrawLights ();
 
-nearest->m_nSegment = -1;
-nearest->m_nSide = -1;
-nearest->m_nEdge = -1;
+nearest->SetSegmentId (-1);
+nearest->SetSideId (-1);
+nearest->SetEdge (-1);
 
 if (m_mouseState == eMouseStateSelect) {
 	if (DrawSelectablePoint ())
@@ -1493,7 +1493,7 @@ if (m_mouseState == eMouseStateSelect) {
 			glEnable (GL_LINE_STIPPLE);
 			glDepthFunc (GL_ALWAYS);
 			}
-		DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_LINE, DEFAULT_POINT);
+		DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_EDGE, DEFAULT_POINT);
 		if (m_nRenderer)
 			glDisable (GL_LINE_STIPPLE);
 		Renderer ().EndRender ();

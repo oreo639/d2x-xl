@@ -171,7 +171,7 @@ if (wallP == null) {
 			undoManager.Unroll ();
 			return null;
 			}
-		wallP = wallManager.Create (CSideKey (), (current->Child () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
+		wallP = wallManager.Create (CSideKey (), (current->ChildId () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
 		if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			undoManager.Unroll ();

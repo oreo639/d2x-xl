@@ -412,12 +412,12 @@ if (!segmentManager.Create (*current, -1)) {
 	return false;
 	}
 int nNewSeg = current->SegmentId ();
-current->SegmentId () = nLastSeg;
+current->SetSegmentId (nLastSeg);
 if (Create (*current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	triggerManager.Create (WallCount () - 1, TT_SECRET_EXIT);
 	objectManager.SecretSegment () = current->SegmentId ();
 	segmentManager.SetDefaultTexture (426);
-	current->SegmentId () = nNewSeg;
+	current->SetSegmentId (nNewSeg);
 	segmentManager.SetDefaultTexture (426);
 	DLE.MineView ()->Refresh ();
 	undoManager.End ();

@@ -197,8 +197,8 @@ if (bAdd < 0)
 	vertexManager.UnTagAll ();
 
 if ((m_mouseState == eMouseStateSelect) && (nearest->m_nSegment >= 0) && (nearest->m_nSide >= 0)) {
-	current->SegmentId () = nearest->m_nSegment;
-	current->SideId () = nearest->m_nSide;
+	current->SetSegmentId (nearest->m_nSegment);
+	current->SetSideId (nearest->m_nSide);
 	}
 else {
 	short nSide, nSegment = FindSelectedTexturedSide (xMouse, yMouse, nSide);
@@ -227,18 +227,18 @@ bool CMineView::SelectCurrentLine (long xMouse, long yMouse, int bAdd)
 if (bAdd < 0)
 	vertexManager.UnTagAll ();
 
-if (nearest->m_nEdge < 0)
+if (nearest->Edge () < 0)
 	return false;
 
-ushort nVertices [2] = {nearest->Segment ()->VertexId (nearest->m_nSide, nearest->m_nEdge), 
-								nearest->Segment ()->VertexId (nearest->m_nSide, nearest->m_nEdge + 1)};
+ushort nVertices [2] = {nearest->Segment ()->VertexId (nearest->m_nSide, nearest->Edge ()), 
+								nearest->Segment ()->VertexId (nearest->m_nSide, nearest->Edge () + 1)};
 if (bAdd && (nVertices [0] <= MAX_VERTEX) && (nVertices [1] <= MAX_VERTEX)) {
 	vertexManager [nVertices [0]].Tag ();
 	vertexManager [nVertices [1]].Tag ();
-	current->SegmentId () = nearest->m_nSegment;
-	current->SideId () = nearest->m_nSide;
-	current->Edge () = nearest->m_nEdge;
-	current->Point () = nearest->m_nEdge;
+	current->SetSegmentId (nearest->m_nSegment);
+	current->SetSideId (nearest->m_nSide);
+	current->SetEdge (nearest->Edge ());
+	current->SetPoint (nearest->Edge ());
 	}
 DLE.ToolView ()->Refresh ();
 Refresh ();
@@ -408,7 +408,7 @@ if (nChild <= -1) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (segP->ChildId (nSide) != m_lastSegment && segP->ChildId (nSide) > -1) {
 			nChild = segP->ChildId (nSide);
-			current->SideId () =  bFwd ? nSide: oppSideTable [nSide];
+			current->SetSideId (bFwd ? nSide: oppSideTable [nSide]);
 			break;
 			}
 		}
@@ -417,7 +417,7 @@ if (nChild <= -1) {
 		for (nSide = 0; nSide < 6; nSide++) {
 			if (segP->ChildId (nSide) > -1) {
 				nChild = segP->ChildId (nSide);
-				current->SideId () = bFwd ? nSide: oppSideTable [nSide];
+				current->SetSideId (bFwd ? nSide: oppSideTable [nSide]);
 				break;
 				}
 			}			
@@ -428,12 +428,12 @@ if (nChild > -1) {
 	// try to select side which is in same direction as current side
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (childSegP->ChildId (nSide) == current->SegmentId ()) {
-			current->SideId () =  bFwd ? oppSideTable [nSide]: nSide;
+			current->SetSideId (bFwd ? oppSideTable [nSide]: nSide);
 			break;
 			}
 		}
 	m_lastSegment = current->SegmentId ();
-	current->SegmentId () = nChild;
+	current->SetSegmentId (nChild);
 	}
 DrawHighlight ();
 Refresh (true);

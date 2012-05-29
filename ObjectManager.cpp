@@ -220,7 +220,7 @@ CVertex center;
 //objP->Position () = segmentManager.CalcCenter (center, current->SegmentId ());
 //objP->m_location.lastPos = objP->Position ();
 objP->Info ().nSegment = -1;
-current->ObjectId () = nObject;
+current->SetObjectId (nObject);
 Move (objP);
 // set the id if new object is a player or a coop
 if ((type == OBJ_PLAYER) || (type == OBJ_COOP))
@@ -274,10 +274,10 @@ if (nDelObj < --Count ()) {
 	triggerManager.RenumberObjTriggers ();
 	triggerManager.RenumberTargetObjs ();
 	}
-if (selections [0].m_nObject >= Count ())
-	selections [0].m_nObject = Count () - 1;
-if (selections [1].m_nObject >= Count ())
-	selections [1].m_nObject = Count () - 1;
+if (selections [0].ObjectId () >= Count ())
+	selections [0].SetObjectId (Count () - 1);
+if (selections [1].ObjectId () >= Count ())
+	selections [1].SetObjectId (Count () - 1);
 undoManager.End ();
 }
 

@@ -310,7 +310,7 @@ inline double Degrees (double a) {
 
 #define DEFAULT_SEGMENT 0
 #define DEFAULT_SIDE    4
-#define DEFAULT_LINE    0 // line of the current side (0..3) 
+#define DEFAULT_EDGE    0 // line of the current side (0..3) 
 #define DEFAULT_POINT   0 // point of the current side (0..3) 
 #define DEFAULT_OBJECT  0
 

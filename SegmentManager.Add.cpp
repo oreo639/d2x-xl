@@ -41,9 +41,9 @@ Count ()--;
 if (nDelSeg < --Count ()) {
 	// move the last segment in the segment list to the deleted segment's position
 	if (current->SegmentId () == Count ())
-		current->SegmentId () = nDelSeg;
+		current->SetSegmentId (nDelSeg);
 	if (other->m_nSegment == Count ())
-		other->m_nSegment = nDelSeg;
+		other->SetSegmentId (nDelSeg);
 	*Segment (nDelSeg) = *Segment (Count ());
 	// update all trigger targets pointing at the moved segment
 	triggerManager.UpdateTargets (Count (), nDelSeg);
@@ -295,7 +295,7 @@ if ((szError != null) && DLE.IsD1File ()) {
 
 undoManager.Begin (udSegments);
 if (bCreate) {
-	if (current->Child () >= 0) {
+	if (current->ChildId () >= 0) {
 		undoManager.End ();
 		return -1;
 		}
@@ -436,14 +436,14 @@ else {
 		return -1;
 		}
 	if (bSetDefTextures) { // add energy spark walls to fuel center sides
-		current->SegmentId () = nLastSeg;
+		current->SetSegmentId (nLastSeg);
 		if (wallManager.Create (*current, WALL_ILLUSION, 0, KEY_NONE, -1, -1) != null) {
 			CSideKey back;
 			if (BackSide (back))
 				wallManager.Create (back, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
 			}
 		Segment (nSegment)->Backup ();
-		current->SegmentId () = nSegment;
+		current->SetSegmentId (nSegment);
 		}
 	}
 undoManager.End ();

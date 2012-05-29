@@ -325,7 +325,7 @@ void CSegmentTool::OnProp5 () { OnProp (4); }
 void CSegmentTool::OnSide (int nSide)
 {
 CHECKMINE;
-current->SideId () = m_nSide = nSide;
+current->SetSideId (m_nSide = nSide);
 DLE.MineView ()->Refresh ();
 }
 
@@ -711,7 +711,7 @@ UpdateData (TRUE);
 void CSegmentTool::OnSetSegment () 
 {
 CHECKMINE;
-current->SegmentId () = CBSegmentId ()->GetCurSel ();
+current->SetSegmentId (CBSegmentId ()->GetCurSel ());
 DLE.MineView ()->Refresh ();
 }
 
@@ -898,8 +898,8 @@ int i = LBTriggers ()->GetCurSel ();
 if (i < 0)
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
-current->SegmentId () = (short) (h / 0x10000L);
-current->SideId () = (short) (h % 0x10000L);
+current->SetSegmentId (short (h / 0x10000L));
+current->SetSideId (short (h % 0x10000L));
 DLE.ToolView ()->EditWall ();
 DLE.MineView ()->Refresh ();
 }
@@ -917,8 +917,8 @@ if ((i < 0) || (i >= LBTriggers ()->GetCount ()))
 long h = long (LBTriggers ()->GetItemData (i));
 other->m_nSegment = current->SegmentId ();
 other->m_nSide = current->SideId ();
-current->SegmentId () = (short) (h / 0x10000L);
-current->SideId () = (short) (h % 0x10000L);
+current->SetSegmentId (short (h / 0x10000L));
+current->SetSideId (short (h % 0x10000L));
 DLE.ToolView ()->EditTrigger ();
 DLE.MineView ()->Refresh ();
 }

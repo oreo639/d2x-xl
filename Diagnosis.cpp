@@ -85,14 +85,14 @@ if (!pbp)
 	return;
 segmentManager.UnTagAll ();
 if (bCurSeg = TagSegment (pbp->nSegment))
-	current->SegmentId () = pbp->nSegment;
+	current->SetSegmentId (pbp->nSegment);
 TagSegment (pbp->nChild);
 if ((pbp->nSide >= 0) && (pbp->nSide < MAX_SIDES_PER_SEGMENT))
-	current->SideId () = pbp->nSide;
+	current->SetSideId (pbp->nSide);
 if ((pbp->nLine >= 0) && (pbp->nLine < 4))
-	current->Edge () = current->Point () = pbp->nLine;
+	current->SetEdge (pbp->nLine);
 if ((pbp->nPoint >= 0) && (pbp->nPoint < 8))
-	current->Point () = pbp->nPoint;
+	current->SetPoint (pbp->nPoint);
 if ((pbp->nWall >= 0) && (pbp->nWall < wallManager.WallCount ()))
 	nWall = pbp->nWall;
 else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < triggerManager.WallTriggerCount ()))
@@ -103,11 +103,11 @@ if ((wallP != null) && TagSegment (wallP->m_nSegment))
 		other->m_nSide = wallP->m_nSide;
 		}
 	else {
-		current->SegmentId () = wallP->m_nSegment;
-		current->SideId () = wallP->m_nSide;
+		current->SetSegmentId (wallP->m_nSegment);
+		current->SetSideId (wallP->m_nSide);
 		}
 if ((pbp->nObject >= 0) && (pbp->nObject < objectManager.Count ()))
-	current->ObjectId () = pbp->nObject;
+	current->SetObjectId (pbp->nObject);
 DLE.MineView ()->Refresh ();
 }
 

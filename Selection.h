@@ -23,7 +23,7 @@ class CSelection : public CSideKey {
 	public:
 		CSelection() :
 			CSideKey (0, DEFAULT_SIDE),
-			m_nEdge (DEFAULT_LINE),
+			m_nEdge (DEFAULT_EDGE),
 			m_nPoint (DEFAULT_POINT),
 			m_nObject (DEFAULT_OBJECT)
 		{}
@@ -79,7 +79,7 @@ class CSelection : public CSideKey {
 		void Reset (void) {
 			m_nSegment = 0;
 			m_nSide = DEFAULT_SIDE;
-			m_nEdge = DEFAULT_LINE,
+			m_nEdge = DEFAULT_EDGE,
 			m_nPoint = DEFAULT_POINT,
 			m_nObject = DEFAULT_OBJECT;
 			}
