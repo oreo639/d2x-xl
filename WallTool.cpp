@@ -288,7 +288,7 @@ m_wallP [0] = current->Wall ();
 if (m_wallP [0] == null) {
 	strcpy_s (m_szMsg, sizeof (m_szMsg), "No wall for current side");
 	EnableControls (FALSE);
-	if (current->Segment ()->ChildId (current->m_nSide) >= 0)
+	if (current->Segment ()->ChildId (current->SideId ()) >= 0)
 		CToolDlg::EnableControls (IDC_WALL_ADD_DOOR_NORMAL, IDC_WALL_ADD_WALL_LAVAFALL, TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_WALL_TYPE)->EnableWindow (TRUE);

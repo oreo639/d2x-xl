@@ -257,7 +257,7 @@ ushort nVertex = 0;
 for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 	CSegment* segP = segmentManager.Segment (m_nSegments [nSegment]);
 	// copy current segment
-	*segP = *segmentManager.Segment (current->m_nSegment);
+	*segP = *segmentManager.Segment (current->SegmentId ());
 	for (int i = 0; i < 6; i++)
 		segP->SetChild (i, -1);
 	segP->m_info.bTunnel = 0;
@@ -330,7 +330,7 @@ if (!m_bActive) {
 		}
 	// make sure there are no children on either segment/side
 	other = &selections [!current->Index ()];
-	if ((current->Segment ()->ChildId (current->m_nSide) != -1) ||
+	if ((current->Segment ()->ChildId (current->SideId ()) != -1) ||
 		 (other->Segment ()->ChildId (other->m_nSide) != -1)) {
 		ErrorMsg ("Starting and/or ending point of segment\n"
 					 "already have segment(s) attached.\n\n"
@@ -398,10 +398,10 @@ void CTunnelMaker::Stretch (void)
 
 //undoManager.UpdateBuffer(0);
 
-if (current->m_nSegment == m_info [0].m_nSegment)
+if (current->SegmentId () == m_info [0].m_nSegment)
 	if (m_info [0].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
 		m_info [0].m_length += TUNNEL_INTERVAL;
-if (current->m_nSegment == m_info [1].m_nSegment)
+if (current->SegmentId () == m_info [1].m_nSegment)
 	if (m_info [1].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
 		m_info [1].m_length += TUNNEL_INTERVAL;
 DLE.MineView ()->Refresh ();
@@ -414,10 +414,10 @@ void CTunnelMaker::Shrink (void)
 
 //  undoManager.UpdateBuffer(0);
 
-if (current->m_nSegment == m_info [0].m_nSegment)
+if (current->SegmentId () == m_info [0].m_nSegment)
 	if (m_info [0].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
 		m_info [0].m_length -= TUNNEL_INTERVAL;
-if (current->m_nSegment == m_info [1].m_nSegment)
+if (current->SegmentId () == m_info [1].m_nSegment)
 	if (m_info [1].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
 		m_info [1].m_length -= TUNNEL_INTERVAL;
 DLE.MineView ()->Refresh ();

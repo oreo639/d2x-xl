@@ -673,7 +673,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if ((m_nTrigger == -1) || (m_nTrigger >= TriggerCount ()))
 	return;
 if (m_nClass) {
-	current->ObjectId () = triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject;
+	current->SetObjectId (triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject);
 	}
 else {
 	for (nWall = 0, wallP = wallManager.Wall (0); nWall < wallManager.WallCount (); nWall++, wallP++)
@@ -690,8 +690,8 @@ else {
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((current->m_nSegment != wallP->m_nSegment) ||
-		 (current->m_nSide != wallP->m_nSide)) {
+	if ((current->SegmentId () != wallP->m_nSegment) ||
+		 (current->SideId () != wallP->m_nSide)) {
 		*((CSideKey *) current) = *((CSideKey *) wallP);
 		}
 	}
@@ -965,7 +965,7 @@ short nSide = m_triggerP->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
 
-if ((current->m_nSegment == nSegment) && (current->m_nSide == nSide))
+if ((current->SegmentId () == nSegment) && (current->SideId () == nSide))
 	return;
 *((CSideKey *) other) = *(m_triggerP->Target (m_iTarget));
 DLE.MineView ()->Refresh ();

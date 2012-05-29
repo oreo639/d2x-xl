@@ -200,10 +200,10 @@ for (i = 0; i < 2; i++)
 		}
 // this code will unlink all adjacement segments that share this edge, too
 for (short nSide = 0; nSide < 6; nSide++) {
-	CSideKey back, key (current->m_nSegment, nSide);
+	CSideKey back, key (current->SegmentId (), nSide);
 	if (segP->HasEdge (nSide, nEdgeVerts [0], nEdgeVerts [1]) && BackSide (key, back)) {
 		UnlinkChild (back.m_nSegment, back.m_nSide);
-		UnlinkChild (current->m_nSegment, nSide); 
+		UnlinkChild (current->SegmentId (), nSide); 
 		}
 	}
 
@@ -238,7 +238,7 @@ if (nChildSeg == -1) {
 	return false; 
 	}
 if (nSide < 0)
-	nSide = current->m_nSide;
+	nSide = current->SideId ();
 
 	CSide*	sideP = segP->Side (nSide);
 	int		nVertices = sideP->VertexCount ();
@@ -267,7 +267,7 @@ if (bVerbose && (QueryMsg ("Are you sure you want to unjoin this side?") != IDYE
 	return false; 
 
 undoManager.Begin (udSegments | udVertices);
-segP = Segment (current->m_nSegment); 
+segP = Segment (current->SegmentId ()); 
 if (nShared < nVertices)
 	bSolidify = 0;
 if (!bSolidify) {
@@ -284,7 +284,7 @@ if (!bSolidify) {
 	ubyte nOppSide = oppSideTable [nSide];
 	for (int nSide = 0; nSide < 6; nSide++)
 		if (nSide != nOppSide)
-			UnlinkChild (current->m_nSegment, nSide); 
+			UnlinkChild (current->SegmentId (), nSide); 
 	SetLinesToDraw (); 
 	INFOMSG (" Four new points were made for the current side."); 
 	}
@@ -294,12 +294,12 @@ else {
 	// yes, see if child has a side which points to the parent
 	int nChildSide;
 	for (nChildSide = 0; nChildSide < 6; nChildSide++)
-		if (childSegP->ChildId (nChildSide) == current->m_nSegment) 
+		if (childSegP->ChildId (nChildSide) == current->SegmentId ()) 
 			break; 
 	// if we bShared the matching side
 	if (nChildSide < 6)
 		ResetSide (nChildSeg, nChildSide); 
-	ResetSide (current->m_nSegment, current->m_nSide); 
+	ResetSide (current->SegmentId (), current->SideId ()); 
 	SetLinesToDraw (); 
 	}
 undoManager.End ();
@@ -746,7 +746,7 @@ if (segP->Shape () != SEGMENT_SHAPE_CUBE) {
 	}
 
 	CSide* sideP = current->Side ();
-	short nSide = current->m_nSide, nOppSide = oppSideTable [current->m_nSide];
+	short nSide = current->SideId (), nOppSide = oppSideTable [current->SideId ()];
 
 undoManager.Begin (udSegments | udVertices | udWalls);
 
@@ -778,7 +778,7 @@ if (segP->Shape () != SEGMENT_SHAPE_CUBE) {
 	}
 
 	CSide* sideP = current->Side ();
-	short nSide = current->m_nSide, nOppSide = oppSideTable [current->m_nSide];
+	short nSide = current->SideId (), nOppSide = oppSideTable [current->SideId ()];
 
 undoManager.Begin (udSegments | udVertices | udWalls);
 

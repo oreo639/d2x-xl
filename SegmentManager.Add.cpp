@@ -40,8 +40,8 @@ Count ()--;
 #else
 if (nDelSeg < --Count ()) {
 	// move the last segment in the segment list to the deleted segment's position
-	if (current->m_nSegment == Count ())
-		current->m_nSegment = nDelSeg;
+	if (current->SegmentId () == Count ())
+		current->SegmentId () = nDelSeg;
 	if (other->m_nSegment == Count ())
 		other->m_nSegment = nDelSeg;
 	*Segment (nDelSeg) = *Segment (Count ());
@@ -429,21 +429,21 @@ undoManager.Begin (udSegments);
 if (nType == SEGMENT_FUNC_REPAIRCEN)
 	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? 433 : -1, "Repair centers are not available in Descent 1.");
 else {
-	short nLastSeg = current->m_nSegment;
+	short nLastSeg = current->SegmentId ();
 	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? DLE.IsD1File () ? 322 : 333 : -1);
 	if (nSegment < 0) {
 		undoManager.End ();
 		return -1;
 		}
 	if (bSetDefTextures) { // add energy spark walls to fuel center sides
-		current->m_nSegment = nLastSeg;
+		current->SegmentId () = nLastSeg;
 		if (wallManager.Create (*current, WALL_ILLUSION, 0, KEY_NONE, -1, -1) != null) {
 			CSideKey back;
 			if (BackSide (back))
 				wallManager.Create (back, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
 			}
 		Segment (nSegment)->Backup ();
-		current->m_nSegment = nSegment;
+		current->SegmentId () = nSegment;
 		}
 	}
 undoManager.End ();
@@ -464,7 +464,7 @@ short CSegmentManager::ComputeVerticesOrtho (CSideKey key, ushort newVerts [4])
 for (i = 0; i < 4; i++)
 	points [i] = (current->Point () + i) % 4;
 CDoubleVector center = CalcSideCenter (*current); 
-CDoubleVector oppCenter = CalcSideCenter (CSideKey (current->m_nSegment, oppSideTable [current->m_nSide])); 
+CDoubleVector oppCenter = CalcSideCenter (CSideKey (current->SegmentId (), oppSideTable [current->SideId ()])); 
 CDoubleVector vNormal = CalcSideNormal (*current); 
 // set the length of the new segment to be one standard segment length
 // scale the vector
@@ -474,7 +474,7 @@ CDoubleVector newCenter = center + vNormal;
 // new method: extend points 0 and 1 with vNormal, then move point 0 toward point 1.
 // point 0
 ushort i1, i2;
-segP->GetEdgeVertices (current->m_nSide, current->Point (), i1, i2);
+segP->GetEdgeVertices (current->SideId (), current->Point (), i1, i2);
 CDoubleVector a = vNormal + *vertexManager.Vertex (i1); 
 // point 1
 CDoubleVector b = vNormal + *vertexManager.Vertex (i2); 
@@ -525,7 +525,7 @@ short CSegmentManager::ComputeVerticesExtend (CSideKey key, ushort newVerts [4])
 	short				nVertices = sideP->VertexCount ();
 
 CDoubleVector center = CalcSideCenter (*current); 
-CDoubleVector oppCenter = CalcSideCenter (CSideKey (current->m_nSegment, oppSideTable [current->m_nSide])); 
+CDoubleVector oppCenter = CalcSideCenter (CSideKey (current->SegmentId (), oppSideTable [current->SideId ()])); 
 CDoubleVector vNormal = CalcSideNormal (*current); 
 // calculate the length of the new segment
 vNormal *= Distance (center, oppCenter); 
@@ -552,10 +552,10 @@ short CSegmentManager::ComputeVerticesMirror (CSideKey key, ushort newVerts [4])
 	short				nVertices = sideP->VertexCount ();
 	ubyte				oppVertexIdIndex [4];
 
-	current->Segment ()->CreateOppVertexIndex (current->m_nSide, oppVertexIdIndex);
+	current->Segment ()->CreateOppVertexIndex (current->SideId (), oppVertexIdIndex);
 
 // copy side's four points into A
-short nSide = current->m_nSide;
+short nSide = current->SideId ();
 for (i = 0; i < nVertices; i++) {
 	A [i] = *segP->Vertex (sideP->m_vertexIdIndex [i]); 
 	A [i + nVertices] = *segP->Vertex (oppVertexIdIndex [i]); 
@@ -645,7 +645,7 @@ bool CSegmentManager::SetDefaultTexture (short nTexture)
 if (nTexture < 0)
 	return true;
 
-short nSegment = current->m_nSegment;
+short nSegment = current->SegmentId ();
 CSegment *segP = Segment (nSegment);
 
 if (!m_bCreating)
@@ -778,7 +778,7 @@ void CSegmentManager::Delete (short nDelSeg, bool bDeleteVerts)
 if (Count () < 2)
 	return; 
 if (nDelSeg < 0)
-	nDelSeg = current->m_nSegment; 
+	nDelSeg = current->SegmentId (); 
 if (nDelSeg < 0 || nDelSeg >= Count ()) 
 	return; 
 if (tunnelMaker.Active ())

@@ -34,7 +34,7 @@ CHECKMINE;
 
 for (CSegmentIterator si; si; si++)
 	si->Index () = -1;
-segRef [0] = current->m_nSegment;	
+segRef [0] = current->SegmentId ();	
 current->Segment ()->Index () = 0;
 
 int i = 1, h = 0, j = 0;
@@ -295,7 +295,7 @@ CHECKMINE;
 if (segP->IsTagged ())
 	Renderer ().SelectPen (penGold + 1, 2.0f);
 else 
-	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penRed + 1 : penWhite + 1 : penGray + 1, 2);   
+	Renderer ().SelectPen (((nSegment == current->SegmentId ()) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penRed + 1 : penWhite + 1 : penGray + 1, 2);   
 if (m_viewOption == eViewWireFrameSparse)
 	DrawSegmentPartial (segP);
 else
@@ -311,7 +311,7 @@ else {
 			break;
 	}
 if (i == 4) {
-	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSide) ? penRed + 1 : penGreen + 1 : penDkGreen + 1, 2);  
+	Renderer ().SelectPen (((nSegment == current->SegmentId ()) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSide) ? penRed + 1 : penGreen + 1 : penDkGreen + 1, 2);  
 	short nVertices = sideP->VertexCount ();
 	for (i = 0; i < nVertices; i++)
 		DrawLine (segP, sideP->VertexIdIndex (i), sideP->VertexIdIndex (i + 1));
@@ -324,13 +324,13 @@ if (!Renderer ().Ortho () ||
 		(vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
 		vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
 	{
-	Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penRed + 1 : penGold + 1 : penMedCyan + 1, 2);  
+	Renderer ().SelectPen (((nSegment == current->SegmentId ()) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penRed + 1 : penGold + 1 : penMedCyan + 1, 2);  
 	DrawLine (segP, i1, i2);
 	}
 
 // draw a circle around the current vertex
 Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
-Renderer ().SelectPen (((nSegment == current->m_nSegment) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penRed + 1 : penGold + 1 : penMedCyan + 1, 2); 
+Renderer ().SelectPen (((nSegment == current->SegmentId ()) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penRed + 1 : penGold + 1 : penMedCyan + 1, 2); 
 i = segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)];
 if (vertexManager [i].InRange (xMax, yMax, Renderer ().Type ()))
 	Renderer ().Ellipse (vertexManager [i], 4, 4);
@@ -631,7 +631,7 @@ CHECKMINE;
 
 	short xMax = ViewWidth ();
 	short yMax = ViewHeight ();
-	short nSide = current->m_nSide;
+	short nSide = current->SideId ();
 	short nLine = current->Point ();
 	short	nPoint = current->Point ();
 	CSide* sideP = segP->Side (nSide);
@@ -1048,7 +1048,7 @@ else {
 		}
 	}
 
-if ((nObject == current->ObjectId ()) || (nObject == other->m_nObject))
+if ((nObject == current->ObjectId ()) || (nObject == other->ObjectId ()))
 	objP->DrawHighlight (Renderer (), (nObject == current->ObjectId ()));
 }
 
@@ -1507,7 +1507,7 @@ tunnelMaker.Draw (Renderer (), Pen (penRed), Pen (penBlue), ViewMatrix ());
 if (preferences & PREFS_SHOW_POINT_COORDINATES) 
 	{
    strcat_s (message, sizeof (message), "  point (x, y,z): (");
-   short vertex = segmentManager.Segment (0) [current->m_nSegment].m_info.vertexIds [sideVertexTable [current->m_nSide][current->Point ()]];
+   short vertex = segmentManager.Segment (0) [current->SegmentId ()].m_info.vertexIds [sideVertexTable [current->SideId ()][current->Point ()]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
 				  vertexManager.Vertex (vertex)->v.x, vertexManager.Vertex (vertex)->v.y, vertexManager.Vertex (vertex)->v.z);
@@ -1520,25 +1520,25 @@ else
 	strcat_s (message, sizeof (message), "  segment size: ");
 	CDoubleVector center1, center2;
    double length;
-   center1 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 0));
-	center2 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 2));
+   center1 = segmentManager.CalcSideCenter (CSideKey (current->SegmentId (), 0));
+	center2 = segmentManager.CalcSideCenter (CSideKey (current->SegmentId (), 2));
    length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 1));
-   center2 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 3));
+   center1 = segmentManager.CalcSideCenter (CSideKey (current->SegmentId (), 1));
+   center2 = segmentManager.CalcSideCenter (CSideKey (current->SegmentId (), 3));
    length = Distance (center1, center2);
    sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 4));
-   center2 = segmentManager.CalcSideCenter (CSideKey (current->m_nSegment, 5));
+   center1 = segmentManager.CalcSideCenter (CSideKey (current->SegmentId (), 4));
+   center2 = segmentManager.CalcSideCenter (CSideKey (current->SegmentId (), 5));
    length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}
 strcat_s (message, sizeof (message), ",  segment:");
-_itoa_s (current->m_nSegment, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (current->SegmentId (), message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " side:");
-_itoa_s ((currSide = current->m_nSide) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s ((currSide = current->SideId ()) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " point:");
 _itoa_s (currPoint = current->Point (), message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");

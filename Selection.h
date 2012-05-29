@@ -66,11 +66,11 @@ class CSelection : public CSideKey {
 
 		inline short Point (void) { return m_nPoint; }
 
-		inline short SetPoint (short nPoint) { return m_nPoint = nPoint; }
+		inline short SetPoint (short nPoint) { return m_nEdge = m_nPoint = nPoint; }
 
 		inline short Edge (void) { return m_nEdge; }
 
-		inline short SetEdge (short nEdge) { return m_nEdge = nEdge; }
+		inline short SetEdge (short nEdge) { return m_nPoint = m_nEdge = nEdge; }
 
 		CColor* LightColor (void);
 

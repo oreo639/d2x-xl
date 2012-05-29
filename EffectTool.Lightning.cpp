@@ -227,11 +227,11 @@ void CLightningEffectTool::HiliteTarget (void)
 CGameObject *objP = current->Object ();
 if ((objP->Type () != OBJ_EFFECT) || (objP->Id () != LIGHTNING_ID))
 	return;
-other->m_nObject = current->ObjectId ();
+other->ObjectId () = current->ObjectId ();
 if (nTarget = objP->rType.lightningInfo.nTarget)
 	for (i = 0, objP = objectManager.Object (0); i < objectManager.Count (); i++, objP++)
 		if ((objP->Type () == OBJ_EFFECT) && (objP->Id () == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
-			other->m_nObject = i;
+			other->ObjectId () = i;
 			break;
 			return;
 			}

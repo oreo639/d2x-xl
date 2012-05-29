@@ -146,10 +146,10 @@ if (selections [0].m_nSegment== selections [1].m_nSegment) {
 	}
 
 other = &selections [*current == selections [0]];
-seg1 = Segment (current->m_nSegment); 
+seg1 = Segment (current->SegmentId ()); 
 seg2 = Segment (other->m_nSegment); 
 vert1 = seg1->m_info.vertexIds [current->Side ()->VertexIdIndex (current->Point ())]; 
-vert2 = seg2->m_info.vertexIds [other->Side ()->VertexIdIndex (other->m_nPoint)]; 
+vert2 = seg2->m_info.vertexIds [other->Side ()->VertexIdIndex (other->Point ())]; 
 // make sure verts are different
 if (vert1== vert2) {
 	ErrorMsg ("These points are already joined."); 
@@ -200,14 +200,14 @@ if (selections [0].m_nSegment == selections [1].m_nSegment) {
 	}
 
 other = &selections [*current == selections [0]];
-seg1 = Segment (current->m_nSegment); 
+seg1 = Segment (current->SegmentId ()); 
 seg2 = Segment (other->m_nSegment); 
 
 for (i = 0; i < 2; i++) {
-	i1 [i] = seg1->VertexId (current->m_nSide, current->Edge () + i);
-	i2 [i] = seg2->VertexId (other->m_nSide, other->m_nEdge + i);
-	v1 [i] = seg1->Vertex (current->m_nSide, current->Edge () + i);
-	v2 [i] = seg2->Vertex (other->m_nSide, other->m_nEdge + i);
+	i1 [i] = seg1->VertexId (current->SideId (), current->Edge () + i);
+	i2 [i] = seg2->VertexId (other->m_nSide, other->Edge () + i);
+	v1 [i] = seg1->Vertex (current->SideId (), current->Edge () + i);
+	v2 [i] = seg2->Vertex (other->m_nSide, other->Edge () + i);
 	match [i] = -1; 
 	}
 
@@ -247,7 +247,7 @@ if (match [0] == match [1]) {
 undoManager.Begin (udSegments);
 // define vert numbers
 for (i = 0; i < 2; i++) 
-	seg1->SetVertexId (current->m_nSide, current->Edge () + i, i2 [match [i]]); 
+	seg1->SetVertexId (current->SideId (), current->Edge () + i, i2 [match [i]]); 
 FixChildren (); 
 undoManager.End ();
 SetLinesToDraw (); 
@@ -420,7 +420,7 @@ else {
 		return; 
 		}
 	otherKey = *other; 
-	otherPoint = other->m_nPoint;
+	otherPoint = other->Point ();
 	thisPoint = current->Point ();
 
 	sideMatcher.SetSide (0, thisKey);
@@ -489,8 +489,8 @@ DLE.MineView ()->Refresh ();
 
 void CSegmentManager::FixChildren (void)
 {
-short nNewSeg = current->m_nSegment; 
-short nNewSide = current->m_nSide; 
+short nNewSeg = current->SegmentId (); 
+short nNewSide = current->SideId (); 
 
 CSegment*	newSegP = Segment (nNewSeg);
 CVertex*		vNewSeg = vertexManager.Vertex (newSegP->m_info.vertexIds [0]);

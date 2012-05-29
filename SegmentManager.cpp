@@ -201,7 +201,7 @@ void CSegmentManager::CopyOtherSegment (void)
 
 if (selections [0].m_nSegment == selections [1].m_nSegment)
 	return; 
-short nSegment = current->m_nSegment; 
+short nSegment = current->SegmentId (); 
 CSegment* segP = current->Segment ();
 CSegment* otherSegP = other->Segment (); 
 undoManager.Begin (udSegments);
@@ -288,7 +288,7 @@ return -1;
 bool CSegmentManager::VertexInUse (ushort nVertex, short nIgnoreSegment)
 {
 if (nIgnoreSegment < 0)
-	nIgnoreSegment = current->m_nSegment;
+	nIgnoreSegment = current->SegmentId ();
 for (short nSegment = 0; 0 <= (nSegment = FindByVertex (nVertex, nSegment)); nSegment++)
 	if (nSegment != nIgnoreSegment)
 		return true;

@@ -405,19 +405,19 @@ if (DLE.IsD1File ()) {
 if (!triggerManager.HaveResources ())
 	return false;
 
-int nLastSeg = current->m_nSegment;
+int nLastSeg = current->SegmentId ();
 undoManager.Begin (udSegments | udWalls);
 if (!segmentManager.Create (*current, -1)) {
 	undoManager.Unroll ();
 	return false;
 	}
-int nNewSeg = current->m_nSegment;
-current->m_nSegment = nLastSeg;
+int nNewSeg = current->SegmentId ();
+current->SegmentId () = nLastSeg;
 if (Create (*current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	triggerManager.Create (WallCount () - 1, TT_SECRET_EXIT);
-	objectManager.SecretSegment () = current->m_nSegment;
+	objectManager.SecretSegment () = current->SegmentId ();
 	segmentManager.SetDefaultTexture (426);
-	current->m_nSegment = nNewSeg;
+	current->SegmentId () = nNewSeg;
 	segmentManager.SetDefaultTexture (426);
 	DLE.MineView ()->Refresh ();
 	undoManager.End ();

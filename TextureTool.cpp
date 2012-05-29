@@ -460,7 +460,7 @@ CSegment* segP = current->Segment ();
 CSide* sideP = current->Side ();
 CWall* wallP = current->Wall ();
 CColor* colorP = current->LightColor ();
-int nSide = current->m_nSide;
+int nSide = current->SideId ();
 short texture1 = sideP->BaseTex ();
 short texture2 = sideP->OvlTex (0);
 m_nColorIndex = ((wallP != null) && (wallP->Type () == WALL_COLORED)) ? wallP->Info ().cloakValue : colorP->m_info.index;
@@ -882,7 +882,7 @@ undoManager.Begin (udSegments);
 CSegment *segP = segmentManager.Segment (0);
 for (short nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 	segP->Index () = 0;
-PasteTexture (current->m_nSegment, current->m_nSide, 1000);
+PasteTexture (current->SegmentId (), current->SideId (), 1000);
 undoManager.End ();
 Refresh ();
 DLE.MineView ()->Refresh ();

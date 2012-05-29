@@ -101,7 +101,7 @@ m_centerPt.y = minRect.y + 166 / 2;
 
 segP = current->Segment ();
 sideP = current->Side ();
-nSide = current->m_nSide;
+nSide = current->SideId ();
 nLine = current->Edge ();
 short nEdges = sideP->VertexCount ();
 
@@ -634,7 +634,7 @@ void CTextureTool::OnAlignReset ()
 {
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-current->Segment ()->SetUV (current->m_nSide, 0.0, 0.0);
+current->Segment ()->SetUV (current->SideId (), 0.0, 0.0);
 m_alignX = 0.0;
 m_alignY = 0.0;
 m_alignAngle = 0.0;
@@ -737,7 +737,7 @@ void CTextureTool::OnAlignAll (void)
 	CSide		* sideP = current->Side (),
 				*childSideP;
 	short		nSegment, 
-				nSide = current->m_nSide,
+				nSide = current->SideId (),
 				nChildLine = 3;
 	double	sAngle, cAngle, angle; 
 
@@ -758,7 +758,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.
 		continue;
 	if (!(bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))))
 		continue;
-	if (nSegment != current->m_nSegment) {
+	if (nSegment != current->SegmentId ()) {
 		segmentManager.Segment (nSegment)->SetUV (nSide, 0, 0);
 		sAngle = atan3 (sideP->m_info.uvls [(nChildLine + 1) % sideP->VertexCount ()].v - sideP->m_info.uvls [nChildLine].v, 
 							 sideP->m_info.uvls [(nChildLine + 1) % sideP->VertexCount ()].u - sideP->m_info.uvls [nChildLine].u); 
@@ -784,15 +784,15 @@ UpdateData (TRUE);
 undoManager.Begin (udSegments);
 #if 1
 // the alignment function will take care of only aligning tagged sides (provided they are all connected)
-AlignChildren (current->m_nSegment, current->m_nSide, true, false);
+AlignChildren (current->SegmentId (), current->SideId (), true, false);
 #else
 if (!segmentManager.HaveTaggedSegments (true))
 	// call recursive function which aligns one at a time
-	AlignChildren (current->m_nSegment, current->m_nSide, true, false);
+	AlignChildren (current->SegmentId (), current->SideId (), true, false);
 else {	// use all marked sides as alignment source
 	bool bStart = true;
 	if (current->Segment ()->IsTagged ()) {
-		AlignChildren (current->m_nSegment, current->m_nSide, true, true);
+		AlignChildren (current->SegmentId (), current->SideId (), true, true);
 		bStart = false;
 		}
 	CSegment* segP = segmentManager.Segment (0);

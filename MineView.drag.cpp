@@ -149,7 +149,7 @@ undoManager.Begin (udVertices | udSegments);
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
 point1 = current->Side ()->VertexIdIndex (current->Point ());
-vert1 = segmentManager.Segment (0) [current->m_nSegment].m_info.vertexIds [point1];
+vert1 = segmentManager.Segment (0) [current->SegmentId ()].m_info.vertexIds [point1];
 // find point to merge with
 for (i = 0; i < vertexManager.Count (); i++) {
 	CVertex& v = vertexManager [i];
@@ -178,7 +178,7 @@ if (count == 1) {
 	// make sure the new line lengths are close enough
 		for (i = 0; i < 3; i++) {
 			point2 = adjacentPointTable [point1][i];
-			vert2 = segmentManager.Segment (current->m_nSegment)->m_info.vertexIds [point2];
+			vert2 = segmentManager.Segment (current->SegmentId ())->m_info.vertexIds [point2];
 			if (Distance (*vertexManager.Vertex (newVert), *vertexManager.Vertex (vert2)) >= 1000.0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;

@@ -28,12 +28,12 @@ static char* vertexIds [2] = {"  vms_vector %hu %d %d %d\n", "  Vertex %hu %d %d
 void CBlockManager::SetupTransformation (CDoubleMatrix& t, CDoubleVector& o)
 {
 CSegment* segP = current->Segment ();
-o = *segP->Vertex (current->m_nSide, current->Point ());
+o = *segP->Vertex (current->SideId (), current->Point ());
 // set x'
-t.m.rVec = *segP->Vertex (current->m_nSide, current->Point () + 1);
+t.m.rVec = *segP->Vertex (current->SideId (), current->Point () + 1);
 t.m.rVec -= o;
 // calculate y'
-CDoubleVector v = *segP->Vertex (current->m_nSide, current->Point () + current->Side ()->VertexCount () - 1);
+CDoubleVector v = *segP->Vertex (current->SideId (), current->Point () + current->Side ()->VertexCount () - 1);
 v -= o;
 t.m.uVec = CrossProduct (t.m.rVec, v);
 t.m.fVec = CrossProduct (t.m.rVec, t.m.uVec);

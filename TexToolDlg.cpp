@@ -86,8 +86,8 @@ if (nVisible < 0)
 	nVisible = (short) TextureIsVisible ();
 if (nVisible > 0) {
 	if (nBaseTex < 0) {
-		short nSegment = m_bOtherSegment ? other->m_nSegment : current->m_nSegment;
-		short nSide = m_bOtherSegment ? other->m_nSide : current->m_nSide;
+		short nSegment = m_bOtherSegment ? other->m_nSegment : current->SegmentId ();
+		short nSide = m_bOtherSegment ? other->m_nSide : current->SideId ();
 		if (nVisible = segmentManager.IsWall (CSideKey (nSegment, nSide))) {
 			CSide *sideP = m_bOtherSegment ? other->Side () : current->Side ();
 			nBaseTex = sideP->BaseTex ();

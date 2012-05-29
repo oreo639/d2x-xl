@@ -325,7 +325,7 @@ void CSegmentTool::OnProp5 () { OnProp (4); }
 void CSegmentTool::OnSide (int nSide)
 {
 CHECKMINE;
-current->m_nSide = m_nSide = nSide;
+current->SideId () = m_nSide = nSide;
 DLE.MineView ()->Refresh ();
 }
 
@@ -341,7 +341,7 @@ void CSegmentTool::OnSide6 () { OnSide (5); }
 void CSegmentTool::OnPoint (int nPoint)
 {
 CHECKMINE;
-current->Edge () = current->Point () = m_nPoint = nPoint;
+current->SetPoint (m_nPoint = nPoint);
 DLE.MineView ()->Refresh ();
 }
 
@@ -379,9 +379,9 @@ int h, i, j;
 // update automatic data
 // update segment number combo box if number of segments has changed
 CSegment *segP = current->Segment ();
-m_bEndOfExit = (segP->ChildId (current->m_nSide) == -2);
-m_nSegment = current->m_nSegment;
-m_nSide = current->m_nSide;
+m_bEndOfExit = (segP->ChildId (current->SideId ()) == -2);
+m_nSegment = current->SegmentId ();
+m_nSide = current->SideId ();
 m_nPoint = current->Point ();
 m_nFunction = segP->m_info.function;
 m_nDamage [0] = segP->m_info.damage [0];
@@ -537,7 +537,7 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::OnDeleteSegment () 
 {
 CHECKMINE;
-segmentManager.Delete (current->m_nSegment);
+segmentManager.Delete (current->SegmentId ());
 DLE.MineView ()->Refresh ();
 }
 
@@ -711,7 +711,7 @@ UpdateData (TRUE);
 void CSegmentTool::OnSetSegment () 
 {
 CHECKMINE;
-current->m_nSegment = CBSegmentId ()->GetCurSel ();
+current->SegmentId () = CBSegmentId ()->GetCurSel ();
 DLE.MineView ()->Refresh ();
 }
 
@@ -898,8 +898,8 @@ int i = LBTriggers ()->GetCurSel ();
 if (i < 0)
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
-current->m_nSegment = (short) (h / 0x10000L);
-current->m_nSide = (short) (h % 0x10000L);
+current->SegmentId () = (short) (h / 0x10000L);
+current->SideId () = (short) (h % 0x10000L);
 DLE.ToolView ()->EditWall ();
 DLE.MineView ()->Refresh ();
 }
@@ -915,10 +915,10 @@ int i = LBTriggers ()->GetCurSel ();
 if ((i < 0) || (i >= LBTriggers ()->GetCount ()))
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
-other->m_nSegment = current->m_nSegment;
-other->m_nSide = current->m_nSide;
-current->m_nSegment = (short) (h / 0x10000L);
-current->m_nSide = (short) (h % 0x10000L);
+other->m_nSegment = current->SegmentId ();
+other->m_nSide = current->SideId ();
+current->SegmentId () = (short) (h / 0x10000L);
+current->SideId () = (short) (h % 0x10000L);
 DLE.ToolView ()->EditTrigger ();
 DLE.MineView ()->Refresh ();
 }

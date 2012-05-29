@@ -75,13 +75,13 @@ do {
 		if (l < r) {
 			Swap (m_objects [l], m_objects [r]);
 			if (current->ObjectId () == l)
-				current->ObjectId () = r;
+				current->SetObjectId (r);
 			else if (current->ObjectId () == r)
-				current->ObjectId () = l;
-			if (other->m_nObject == l)
-				other->m_nObject = r;
-			else if (other->m_nObject == r)
-				other->m_nObject = l;
+				current->SetObjectId (l);
+			if (other->ObjectId () == l)
+				other->SetObjectId (r);
+			else if (other->ObjectId () == r)
+				other->SetObjectId (l);
 			}
 		l++;
 		r--;
@@ -204,7 +204,7 @@ if ((type == OBJ_PLAYER) || (type == OBJ_COOP)) {
 undoManager.Begin (udObjects);
 nObject = Add ();
 if (nObject == 0) {
-	Object (0)->Create (OBJ_PLAYER, (nSegment < 0) ? current->m_nSegment : nSegment);
+	Object (0)->Create (OBJ_PLAYER, (nSegment < 0) ? current->SegmentId () : nSegment);
 	nObject = 0;
 	}
 else {
@@ -214,10 +214,10 @@ else {
 	memcpy (objP, currObjP, sizeof (CGameObject));
 	}
 objP->m_info.flags = 0;                                      // new: 1/27/97
-//objP->m_info.nSegment = current->m_nSegment;
+//objP->m_info.nSegment = current->SegmentId ();
 // set object position in the center of the segment for now
 CVertex center;
-//objP->Position () = segmentManager.CalcCenter (center, current->m_nSegment);
+//objP->Position () = segmentManager.CalcCenter (center, current->SegmentId ());
 //objP->m_location.lastPos = objP->Position ();
 objP->Info ().nSegment = -1;
 current->ObjectId () = nObject;
@@ -303,17 +303,17 @@ undoManager.Begin (udObjects);
 if (objP == null)
 	objP = current->Object ();
 if (Index (objP) == Count ())
-	SecretSegment () = current->m_nSegment;
+	SecretSegment () = current->SegmentId ();
 else {
 	CVertex center;
 	if (nSegment < 0)
-		nSegment = current->m_nSegment;
+		nSegment = current->SegmentId ();
 	// bump position over if this is not the first object in the segment
 	int i, count = 0;
 	for (i = 0; i < Count (); i++)
 		if (Object (i)->Info ().nSegment == nSegment) 
 			count++;
-	objP->Info ().nSegment = current->m_nSegment;
+	objP->Info ().nSegment = current->SegmentId ();
 	objP->Position () = segmentManager.CalcCenter (center, nSegment);
 	if (0 < count) {
 		int dir = ((count - 1) % 6) / 2;

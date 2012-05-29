@@ -178,7 +178,7 @@ if (i == nPoints) { // if all verts are tagged, then untag them
 			break;
 
 		case eSelectSide:
-			current->Segment ()->UnTag (current->m_nSide);
+			current->Segment ()->UnTag (current->SideId ());
 			break; 
 
 		case eSelectSegment:
@@ -196,7 +196,7 @@ else { // otherwise tag all the points
 			break;
 
 		case eSelectSide:
-			current->Segment ()->Tag (current->m_nSide);
+			current->Segment ()->Tag (current->SideId ());
 			break; 
 
 		case eSelectSegment:
@@ -222,9 +222,9 @@ int nHead = 0;
 int nTail = 1;
 
 if (nSegment < 0)
-	nSegment = current->m_nSegment;
+	nSegment = current->SegmentId ();
 if (nSide < 0)
-	nSide = current->m_nSide;
+	nSide = current->SideId ();
 m_sideList [nHead].m_parent = CSideKey (-1, -1);
 m_sideList [nHead].m_child = CSideKey (nSegment, nSide);
 segmentManager.Segment (nSegment)->Tag (nSide, m_tag);

@@ -60,7 +60,7 @@ wndP->GetClientRect (rc);
 if (nBaseTex < 0) {
 	segP = (nSegment < 0) ? current->Segment () : segmentManager.Segment (nSegment);
 	sideP = (nSide < 0) ? current->Side () : segP->m_sides + nSide;
-	int nSide = current->m_nSide;
+	int nSide = current->SideId ();
 	nBaseTex = sideP->BaseTex ();
 	nOvlTex = sideP->OvlTex (0);
 	if (segP->ChildId (nSide) == -1)

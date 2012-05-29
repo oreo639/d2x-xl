@@ -399,7 +399,7 @@ segmentManager.CreatePyramid ();
 
 void CMainFrame::OnViewShiftVertices () 
 {
-current->Segment ()->ShiftVertices (current->m_nSide);
+current->Segment ()->ShiftVertices (current->SideId ());
 }
 
 void CMainFrame::OnViewAlignSideRotation () 

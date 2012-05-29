@@ -145,7 +145,7 @@ m_info.controlType = CT_NONE; /* player 0 only */
 m_info.movementType = MT_PHYSICS;
 m_info.renderType = RT_POLYOBJ;
 m_info.flags	= 0;
-m_info.nSegment = current->m_nSegment;
+m_info.nSegment = current->SegmentId ();
 m_location.pos = location;
 m_location.orient.m.rVec.Set (I2X (1), 0, 0);
 m_location.orient.m.uVec.Set (0, I2X (1), 0);

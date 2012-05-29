@@ -272,7 +272,7 @@ if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 short nSide = m_triggerP->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
-if ((current->m_nSegment == nSegment) && (current->m_nSide == nSide))
+if ((current->SegmentId () == nSegment) && (current->SideId () == nSide))
 	return;
 *((CSideKey *) other) = (*m_triggerP) [m_iTarget];
 DLE.MineView ()->Refresh ();
