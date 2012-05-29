@@ -310,6 +310,8 @@ public:
 
 	short IsSelected (CRect& viewport, long xMouse, long yMouse, short nSide, bool bSegments);
 
+	short Edge (short nSide, ushort v1, ushort v2);
+
 	inline void Link (CSegment* segP) { m_link = segP; }
 
 	inline CSegment* Link (void) { return m_link; }

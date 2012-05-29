@@ -203,9 +203,6 @@ int CTaggingStrategy::Run (short nSegment, short nSide)
 {
 segmentManager.UnTagAll ();
 
-m_sideList.Destroy ();
-m_sideList.Create (segmentManager.VisibleSideCount ());
-
 int nHead = 0;
 int nTail = 1;
 
@@ -251,10 +248,10 @@ while (nHead < nTail) {
 		CSLLIterator<CSideKey, CSideKey> iter (node->m_sides);
 		for (iter.Begin (); *iter != iter.End (); iter++) {
 			CSegment* m_childSegP = segmentManager.Segment (**iter);
-			if (!m_childSegP->IsTagged (iter->m_nSide)) {
+			if (!m_childSegP->IsTagged (iter->m_nSide, m_tag)) {
 				CSide* m_childSideP = segmentManager.Side (**iter);
 				if (Accept ()) {
-					m_childSegP->Tag (iter->m_nSide);
+					m_childSegP->Tag (iter->m_nSide, m_tag);
 					m_sideList [nTail].m_edge = m_edgeKey;
 					m_sideList [nTail].m_parent = parent;
 					m_sideList [nTail++].m_child = **iter;

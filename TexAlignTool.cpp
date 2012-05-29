@@ -810,10 +810,16 @@ UpdateAlignWnd ();
 class CTagByTextures : public CTaggingStrategy {
 	public:
 		short m_nBaseTex, m_nOvlTex;
+		bool	m_bAll;
 		
-		CTagByTextures (short nBaseTex, short nOvlTex) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex) {}
+		CTagByTextures (short nBaseTex, short nOvlTex) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex) { m_bAll = segmentManager.HaveTaggedSegments () || segmentManager.HaveTaggedSides (); }
 
-		virtual bool Accept (void) { (m_childSideP->Shape () <= SIDE_SHAPE_TRIANGLE) && ((m_nBaseTex < 0) || (m_sideP->BaseTex () == m_childSideP->BaseTex ())) && ((m_nOvlTex < 0) || (m_sideP->OvlTex () == m_childSideP->OvlTex ())); }
+		virtual bool Accept (void) { 
+			(m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&
+			(m_childSideP->Shape () <= SIDE_SHAPE_TRIANGLE) && 
+			((m_nBaseTex < 0) || (m_sideP->BaseTex () == m_childSideP->BaseTex ())) && 
+			((m_nOvlTex < 0) || (m_sideP->OvlTex () == m_childSideP->OvlTex ())); 
+			}
 	};
 
 void CTextureTool::AlignChildTextures (short nSegment, short nSide)
@@ -823,20 +829,13 @@ void CTextureTool::AlignChildTextures (short nSegment, short nSide)
 	CTagByTextures tagger (m_bUse1st ? sideP->BaseTex () : -1, m_bUse2nd ? sideP->OvlTex () : -1);
 	int				nSides;
 
-if (tagger.Setup (segmentManager.VisibleSideCount ()))
+if (tagger.Setup (segmentManager.VisibleSideCount (), ALIGNED_MASK))
 	nSides = tagger.Run ();
 else
 	return;
 
-for (int i = 0; i < nSides; i++) {
-	nSegment = tagger.ParentSegment (i);
-	nSide = tagger.ParentSide (i);
-	segP = segmentManager.Segment (nSegment);
-	sideP = segP->Side (nSide);
-
-	short nChildSegment = tagger.ChildSegment (i);
-	short nChildSide = tagger.ChildSide (i);
-	}
+for (int i = 0; i < nSides; i++) 
+	segmentManager.AlignTextures (tagger.ParentSegment (i), tagger.ParentSide (i), tagger.ChildSegment (i), tagger.ChildSide (i), m_bUse1st, m_bUse2nd);
 }
 
 #else

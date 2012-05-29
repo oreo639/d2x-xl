@@ -134,6 +134,10 @@ public:
 
 	inline void UnTag (ubyte mask = TAGGED_MASK) { m_nTag &= ~mask; }
 
+	inline bool IsTagged (ubyte mask = TAGGED_MASK) { return (m_nTag & mask) != 0; }
+
+	short Edge (short i1, short i2);
+
 	CVertex& Vertex (ushort* vertexIds, ubyte nIndex);
 	
 private:
