@@ -263,6 +263,7 @@ void CSide::Reset (short nSide)
 {
 ResetTextures ();
 m_nTag = 0;
+m_nPoint = 0;
 m_info.nChild = 0xFFFF;
 m_info.nWall = NO_WALL;
 if (nSide >= 0) {

@@ -33,6 +33,7 @@ public:
 	ubyte				m_vertexIdIndex [4]; // table of the indices of the side's four vertices' ids in the side's parent segment's vertex id table
 	ubyte				m_nShape;
 	ubyte				m_nTag;
+	ubyte				m_nPoint;
 	CDoubleVector	m_vNormal [3];
 	CVertex			m_vCenter;
 	CSide*			m_link;
@@ -55,6 +56,10 @@ public:
 	void GetTextures (short &nBaseTex, short &nOvlTex) _const_;
 	
 	bool SetTextures (int nBaseTex, int nOvlTex);
+
+	inline ubyte Point (void) { return m_nPoint; }
+	
+	inline ubyte SetPoint (ubyte nPoint) { return m_nPoint = nPoint; }
 	
 	void InitUVL (short nTexture);
 	

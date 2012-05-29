@@ -36,17 +36,25 @@ class CSelection : public CSideKey {
 
 		inline short SegmentId (void) { return m_nSegment; }
 
-		inline short SetSegmentId (short nSegment) { return m_nSegment = nSegment; }
+		inline short SideId (void) { return m_nSide; }
+
+		inline short Edge (void) { return m_nEdge; }
+
+		inline short Point (void) { return m_nPoint; }
+
+		short SetSegmentId (short nSegment);
+
+		short SetSideId (short nSide);
+
+		inline short SetEdge (short nEdge) { return m_nPoint = m_nEdge = nEdge; }
+
+		inline short SetPoint (short nPoint) { return m_nEdge = m_nPoint = nPoint; }
 
 		short ChildId (void);
 
 		CSegment* ChildSeg (void);
 
 		CSide* Side (void);
-
-		inline short SideId (void) { return m_nSide; }
-
-		inline short SetSideId (short nSide) { return m_nSide = nSide; }
 
 		CSide* OppositeSide (void);
 
@@ -63,14 +71,6 @@ class CSelection : public CSideKey {
 		CVertex* Vertex (void);
 
 		inline ushort VertexId (void) { return Segment ()->VertexId (m_nSide, m_nPoint); }
-
-		inline short Point (void) { return m_nPoint; }
-
-		inline short SetPoint (short nPoint) { return m_nEdge = m_nPoint = nPoint; }
-
-		inline short Edge (void) { return m_nEdge; }
-
-		inline short SetEdge (short nEdge) { return m_nPoint = m_nEdge = nEdge; }
 
 		CColor* LightColor (void);
 
