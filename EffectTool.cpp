@@ -203,7 +203,7 @@ Refresh ();
 
 void CEffectTool::OnSetObject ()
 {
-short nOld = current->m_nObject;
+short nOld = current->ObjectId ();
 short nNew = short (CBEffects ()->GetItemData (CBEffects ()->GetCurSel ()));
 if (nOld != nNew) {
 	UpdateData (TRUE);
@@ -233,7 +233,7 @@ return true;
 
 void CEffectTabDlg::DeleteEffect (void)
 {
-if (current->m_nObject == objectManager.Count ()) {
+if (current->ObjectId () == objectManager.Count ()) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}

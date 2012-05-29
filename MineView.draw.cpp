@@ -632,8 +632,8 @@ CHECKMINE;
 	short xMax = ViewWidth ();
 	short yMax = ViewHeight ();
 	short nSide = current->m_nSide;
-	short nLine = current->m_nPoint;
-	short	nPoint = current->m_nPoint;
+	short nLine = current->Point ();
+	short	nPoint = current->Point ();
 	CSide* sideP = segP->Side (nSide);
 	short nVertices = sideP->VertexCount ();
 
@@ -1034,7 +1034,7 @@ else {
 	}
 
 double d = (ViewOption (eViewTexturedWireFrame) || ViewOption (eViewTextured)) ? ViewMatrix ()->Distance (objP->Position ()) : 1e30;
-if (textureManager.Available (1) && objP->HasPolyModel () && modelManager.Setup (objP, m_renderer, DC ()) && ((nObject == current->m_nObject) || (d <= MODEL_DISPLAY_LIMIT))) {
+if (textureManager.Available (1) && objP->HasPolyModel () && modelManager.Setup (objP, m_renderer, DC ()) && ((nObject == current->ObjectId ()) || (d <= MODEL_DISPLAY_LIMIT))) {
 	SelectObjectPen (objP);
 	if (objP->DrawArrow (Renderer (), -1)) { // only render if fully visible (check using the arrow representation)
 		Renderer ().SelectObject ((HBRUSH) GetStockObject (BLACK_BRUSH));
@@ -1042,14 +1042,14 @@ if (textureManager.Available (1) && objP->HasPolyModel () && modelManager.Setup 
 		}
 	}
 else {
-	if ((d > MODEL_DISPLAY_LIMIT) || !objP->DrawSprite (Renderer ()) || (nObject == current->m_nObject)) {
+	if ((d > MODEL_DISPLAY_LIMIT) || !objP->DrawSprite (Renderer ()) || (nObject == current->ObjectId ())) {
 		SelectObjectPen (objP);
-		objP->DrawArrow (Renderer (), (nObject == current->m_nObject));
+		objP->DrawArrow (Renderer (), (nObject == current->ObjectId ()));
 		}
 	}
 
-if ((nObject == current->m_nObject) || (nObject == other->m_nObject))
-	objP->DrawHighlight (Renderer (), (nObject == current->m_nObject));
+if ((nObject == current->ObjectId ()) || (nObject == other->m_nObject))
+	objP->DrawHighlight (Renderer (), (nObject == current->ObjectId ()));
 }
 
 //--------------------------------------------------------------------------
@@ -1462,13 +1462,13 @@ Renderer ().BeginRender (Renderer ().Type () == 0);
 // draw highlighted Segments () (other first, then current)
 if (*current == selections [0]) {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].m_nPoint);
-	DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].m_nPoint);
+		DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].Point ());
+	DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].Point ());
 	}
 else {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].m_nPoint);
-	DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].m_nPoint);
+		DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nEdge, selections [0].Point ());
+	DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nEdge, selections [1].Point ());
 	}
 Renderer ().EndRender ();
 
@@ -1507,7 +1507,7 @@ tunnelMaker.Draw (Renderer (), Pen (penRed), Pen (penBlue), ViewMatrix ());
 if (preferences & PREFS_SHOW_POINT_COORDINATES) 
 	{
    strcat_s (message, sizeof (message), "  point (x, y,z): (");
-   short vertex = segmentManager.Segment (0) [current->m_nSegment].m_info.vertexIds [sideVertexTable [current->m_nSide][current->m_nPoint]];
+   short vertex = segmentManager.Segment (0) [current->m_nSegment].m_info.vertexIds [sideVertexTable [current->m_nSide][current->Point ()]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
 				  vertexManager.Vertex (vertex)->v.x, vertexManager.Vertex (vertex)->v.y, vertexManager.Vertex (vertex)->v.z);
@@ -1540,7 +1540,7 @@ _itoa_s (current->m_nSegment, message + strlen (message), sizeof (message) - str
 strcat_s (message, sizeof (message), " side:");
 _itoa_s ((currSide = current->m_nSide) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " point:");
-_itoa_s (currPoint = current->m_nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (currPoint = current->Point (), message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");
 _itoa_s (current->Segment ()->m_info.vertexIds [current->Side ()->VertexIdIndex (currPoint)], message + strlen (message), sizeof (message) - strlen (message), 10);
 

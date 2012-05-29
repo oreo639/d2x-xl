@@ -152,7 +152,7 @@ CHECKMINE;
 if (PickTexture (point, nTexture))
 	return;
 if (nFlags & MK_SHIFT) {
-	CGameObject *objP = objectManager.Object (current->m_nObject);
+	CGameObject *objP = objectManager.Object (current->ObjectId ());
    if (objP->m_info.renderType != RT_POLYOBJ) 
 		return;
 	objP->rType.polyModelInfo.nOverrideTexture = nTexture;

@@ -631,12 +631,12 @@ void CMineView::HiliteTarget (void)
 CGameObject *objP = current->Object ();
 if ((objP->Type () != OBJ_EFFECT) || (objP->Id () != LIGHTNING_ID))
 	return;
-other->m_nObject = current->m_nObject;
+other->SetObjectId (current->ObjectId ());
 if (nTarget = objP->rType.lightningInfo.nTarget) {
 	CGameObject* objP = objectManager.Object (0);
 	for (i = objectManager.Count (); i; i--, objP++) {
 		if ((objP->Type () == OBJ_EFFECT) && (objP->Id () == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
-			other->m_nObject = i;
+			other->SetObjectId (i);
 			break;
 			return;
 			}
@@ -1129,7 +1129,7 @@ Refresh ();
 
 void CMineView::RefreshObject(short old_object, short new_object) 
 {
-current->m_nObject = new_object;
+current->ObjectId () = new_object;
 DLE.ToolView ()->Refresh ();
 Refresh (false);
 }

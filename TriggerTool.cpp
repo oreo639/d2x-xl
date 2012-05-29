@@ -443,10 +443,10 @@ if (!m_bFindTrigger)
 	nTrigger = m_nTrigger;
 else {
 	if (m_nClass) {
-		if (current->m_nObject == triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject)
+		if (current->ObjectId () == triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject)
 			return false;
 		for (int i = 0, j = triggerManager.ObjTriggerCount (); j; j--, i++) {
-			if (current->m_nObject == triggerManager.ObjTrigger (i)->Info ().nObject) {
+			if (current->ObjectId () == triggerManager.ObjTrigger (i)->Info ().nObject) {
 				m_nTrigger = i;
 				return false;
 				}
@@ -673,7 +673,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if ((m_nTrigger == -1) || (m_nTrigger >= TriggerCount ()))
 	return;
 if (m_nClass) {
-	current->m_nObject = triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject;
+	current->ObjectId () = triggerManager.ObjTrigger (m_nTrigger)->Info ().nObject;
 	}
 else {
 	for (nWall = 0, wallP = wallManager.Wall (0); nWall < wallManager.WallCount (); nWall++, wallP++)
@@ -908,7 +908,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-AddTarget (current->m_nObject, 0);
+AddTarget (current->ObjectId (), 0);
 }
 
 //------------------------------------------------------------------------

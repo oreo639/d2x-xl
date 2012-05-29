@@ -269,7 +269,7 @@ void CSegmentTool::OnSetCoord (void)
 CHECKMINE;
 UpdateData (TRUE);
 undoManager.Begin (udVertices);
-current->Segment ()->Vertex (current->Side ()->VertexIdIndex (current->m_nPoint))->Set (m_nCoord [0], m_nCoord [1], m_nCoord [2]);
+current->Segment ()->Vertex (current->Side ()->VertexIdIndex (current->Point ()))->Set (m_nCoord [0], m_nCoord [1], m_nCoord [2]);
 undoManager.End ();
 DLE.MineView ()->Refresh (false);
 }
@@ -279,7 +279,7 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord (void)
 {
 CHECKMINE;
-CVertex* vertP = current->Segment ()->Vertex (current->Side ()->VertexIdIndex (current->m_nPoint));
+CVertex* vertP = current->Segment ()->Vertex (current->Side ()->VertexIdIndex (current->Point ()));
 m_nCoord [0] = vertP->v.x;
 m_nCoord [1] = vertP->v.y;
 m_nCoord [2] = vertP->v.z;
@@ -341,7 +341,7 @@ void CSegmentTool::OnSide6 () { OnSide (5); }
 void CSegmentTool::OnPoint (int nPoint)
 {
 CHECKMINE;
-current->m_nEdge = current->m_nPoint = m_nPoint = nPoint;
+current->Edge () = current->Point () = m_nPoint = nPoint;
 DLE.MineView ()->Refresh ();
 }
 
@@ -382,7 +382,7 @@ CSegment *segP = current->Segment ();
 m_bEndOfExit = (segP->ChildId (current->m_nSide) == -2);
 m_nSegment = current->m_nSegment;
 m_nSide = current->m_nSide;
-m_nPoint = current->m_nPoint;
+m_nPoint = current->Point ();
 m_nFunction = segP->m_info.function;
 m_nDamage [0] = segP->m_info.damage [0];
 m_nDamage [1] = segP->m_info.damage [1];

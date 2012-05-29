@@ -297,12 +297,13 @@ public:
 	BOOL SetCursor (HCURSOR hCursor);
 //	void UpdateCursor (void);
 
-	inline void Wrap (short& v, short delta, short min, short max) {
+	inline short Wrap (short v, short delta, short min, short max) {
 		v += delta;
 		if (v > max)
 			v = min;
 		else if (v < min)
 			v = max;
+		return v;
 		}
 
 	int FindNearestVertex (long xMouse, long yMouse);

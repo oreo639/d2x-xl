@@ -166,7 +166,7 @@ if (vertexManager.Count () > (MAX_VERTICES - 2)) {
 	return; 
 	}
 if (nLine < 0)
-	nLine = current->m_nEdge;
+	nLine = current->Edge ();
 
 	CSegment*	segP = current->Segment (); 
 	CSide*		sideP = current->Side ();
@@ -632,7 +632,7 @@ current->Get (nSegment, nSide);
 if (sideP->VertexCount() < 2)
 	return false;
 if (nEdge < 0)
-	nEdge = current->m_nEdge;
+	nEdge = current->Edge ();
 
 for (int i = 0; i < 2; i++) 
 	nEdgeVerts [i] = segP->m_info.vertexIds [nSegVerts [i] = sideP->m_vertexIdIndex [(nEdge + i) % sideP->VertexCount ()]]; 
@@ -750,7 +750,7 @@ if (segP->Shape () != SEGMENT_SHAPE_CUBE) {
 
 undoManager.Begin (udSegments | udVertices | udWalls);
 
-short nLine = current->m_nEdge + 1;
+short nLine = current->Edge () + 1;
 CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ());
 if (nLine < current->Side ()->VertexCount ())
 	++nLine;
@@ -796,7 +796,7 @@ for (int i = 0; i < 6; i++) {
 	}
 #endif
 
-short nLine = current->m_nEdge + 1;
+short nLine = current->Edge () + 1;
 CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ());
 if (nLine < current->Side ()->VertexCount ())
 	++nLine;

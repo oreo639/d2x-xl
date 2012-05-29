@@ -74,10 +74,10 @@ do {
 	if (l <= r) {
 		if (l < r) {
 			Swap (m_objects [l], m_objects [r]);
-			if (current->m_nObject == l)
-				current->m_nObject = r;
-			else if (current->m_nObject == r)
-				current->m_nObject = l;
+			if (current->ObjectId () == l)
+				current->ObjectId () = r;
+			else if (current->ObjectId () == r)
+				current->ObjectId () = l;
 			if (other->m_nObject == l)
 				other->m_nObject = r;
 			else if (other->m_nObject == r)
@@ -220,7 +220,7 @@ CVertex center;
 //objP->Position () = segmentManager.CalcCenter (center, current->m_nSegment);
 //objP->m_location.lastPos = objP->Position ();
 objP->Info ().nSegment = -1;
-current->m_nObject = nObject;
+current->ObjectId () = nObject;
 Move (objP);
 // set the id if new object is a player or a coop
 if ((type == OBJ_PLAYER) || (type == OBJ_COOP))
@@ -255,7 +255,7 @@ if (Count () == 1) {
 	return;
 	}
 if (nDelObj < 0)
-	nDelObj = current->m_nObject;
+	nDelObj = current->ObjectId ();
 if (nDelObj == Count ()) {
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("Cannot delete the secret return.");
@@ -263,7 +263,7 @@ if (nDelObj == Count ()) {
 	}
 undoManager.Begin (udObjects);
 if (nDelObj < 0)
-	nDelObj = current->m_nObject;
+	nDelObj = current->ObjectId ();
 triggerManager.DeleteObjTriggers (nDelObj);
 Object (nDelObj)->Backup (opDelete);
 if (nDelObj < --Count ()) {

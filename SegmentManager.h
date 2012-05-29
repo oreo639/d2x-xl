@@ -415,13 +415,13 @@ class CSegmentManager {
 
 		bool Define (short nSegment, ubyte nFunction, short nTexture);
 
-		short ComputeVertices (ushort newVerts [4], int addMode = -1);
+		short ComputeVertices (CSideKey key, ushort newVerts [4], int addMode = -1);
 
-		short ComputeVerticesOrtho (ushort newVerts [4]);
+		short ComputeVerticesOrtho (CSideKey key, ushort newVerts [4]);
 		
-		short ComputeVerticesExtend (ushort newVerts [4]);
+		short ComputeVerticesExtend (CSideKey key, ushort newVerts [4]);
 		
-		short ComputeVerticesMirror (ushort newVerts [4]);
+		short ComputeVerticesMirror (CSideKey key, ushort newVerts [4]);
 
 		bool FindNearbySide (CSideKey thisKey, CSideKey& otherKey, short& thisPoint, short& otherPoint, tVertMatch* match);
 

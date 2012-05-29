@@ -110,7 +110,7 @@ for (i = 0; i < objectManager.Count (); i++) {
 	}
 
 // unhighlight current object and select next object
-i = current->m_nObject;
+i = current->ObjectId ();
 RefreshObject(i, nClosestObj);
 }
 
@@ -237,8 +237,8 @@ if (bAdd && (nVertices [0] <= MAX_VERTEX) && (nVertices [1] <= MAX_VERTEX)) {
 	vertexManager [nVertices [1]].Tag ();
 	current->m_nSegment = nearest->m_nSegment;
 	current->m_nSide = nearest->m_nSide;
-	current->m_nEdge = nearest->m_nEdge;
-	current->m_nPoint = nearest->m_nEdge;
+	current->Edge () = nearest->m_nEdge;
+	current->Point () = nearest->m_nEdge;
 	}
 DLE.ToolView ()->Refresh ();
 Refresh ();
@@ -320,10 +320,8 @@ void CMineView::NextPoint (int dir)
 {
 if (current->Side ()->Shape () > SIDE_SHAPE_TRIANGLE)
 	NextSide (dir);
-else {
-	Wrap (current->m_nPoint, dir, 0, current->Side ()->VertexCount () - 1);
-	current->m_nEdge = current->m_nPoint;
-	}
+else
+	current->SetEdge (current->SetPoint (Wrap (current->Point (), dir, 0, current->Side ()->VertexCount () - 1)));
 Refresh ();
 }
 
@@ -358,10 +356,8 @@ void CMineView::NextLine (int dir)
 {
 if (current->Side ()->Shape () > SIDE_SHAPE_TRIANGLE)
 	NextSide (dir);
-else {
-	Wrap (current->m_nEdge, dir, 0, current->Side ()->VertexCount () - 1);
-	current->m_nPoint = current->m_nEdge;
-	}
+else
+	current->SetPoint (current->SetEdge (Wrap (current->Edge (), dir, 0, current->Side ()->VertexCount () - 1)));
 Refresh ();
 }
 
@@ -480,8 +476,8 @@ return true;
 
 void CMineView::NextObject (int dir) 
 {
-  short oldObject = current->m_nObject;
-  short newObject = current->m_nObject;
+  short oldObject = current->ObjectId ();
+  short newObject = current->ObjectId ();
 
 if (objectManager.Count () > 1) {
 	Wrap (newObject, dir, 0, (short) objectManager.Count () - 1);

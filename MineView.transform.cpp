@@ -300,7 +300,7 @@ if (Perspective ()) {
 	r.m.fVec = sideP->Normal (2);
 	r.m.fVec.Negate ();
 	short nSide = current->m_nSide;
-	short nEdge = current->m_nEdge;
+	short nEdge = current->Edge ();
 	r.m.rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nEdge);
 	r.m.rVec.Normalize ();
 	segP->ComputeCenter (nSide);

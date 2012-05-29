@@ -25,7 +25,7 @@ if (theMine == null) return FALSE;
 if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
 
-	short nVert = current->Side ()->VertexIdIndex (current->m_nPoint);
+	short nVert = current->Side ()->VertexIdIndex (current->Point ());
 	short i = current->Segment ()->m_info.vertexIds [nVert];
 	CVertex& v = vertexManager [i];
 
@@ -90,7 +90,7 @@ if (m_lastMousePos == m_lastDragPos)
 
 int i;
 
-short nVert = current->Side ()->VertexIdIndex (current->m_nPoint);
+short nVert = current->Side ()->VertexIdIndex (current->Point ());
 
 Renderer ().BeginRender (true);
 // unhighlight last point and lines drawing
@@ -148,7 +148,7 @@ CHECKMINE;
 undoManager.Begin (udVertices | udSegments);
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
-point1 = current->Side ()->VertexIdIndex (current->m_nPoint);
+point1 = current->Side ()->VertexIdIndex (current->Point ());
 vert1 = segmentManager.Segment (0) [current->m_nSegment].m_info.vertexIds [point1];
 // find point to merge with
 for (i = 0; i < vertexManager.Count (); i++) {

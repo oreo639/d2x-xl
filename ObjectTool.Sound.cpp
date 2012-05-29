@@ -78,7 +78,7 @@ bool CObjectSoundTool::Refresh (void)
 if (!(m_bInited && theMine))
 	return false;
 
-if (current->m_nObject == objectManager.Count ()) {
+if (current->ObjectId () == objectManager.Count ()) {
 	EnableControls (FALSE);
 	return true;
 	}

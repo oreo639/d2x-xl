@@ -9,7 +9,7 @@ CTunnelMaker tunnelMaker;
 
 //------------------------------------------------------------------------------
 
-#define CURRENT_POINT(a) ((current->m_nPoint + (a))&0x03)
+#define CURRENT_POINT(a) ((current->Point () + (a))&0x03)
 
 //------------------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ int CTunnelMaker::MatchingSide (int j)
   static int ret [4][4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
   int offset;
 
-offset = (4 + selections [0].m_nPoint - selections [1].m_nPoint) % 4;
+offset = (4 + selections [0].Point () - selections [1].Point ()) % 4;
 return ret [offset][j];
 }
 

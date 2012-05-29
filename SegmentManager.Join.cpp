@@ -148,7 +148,7 @@ if (selections [0].m_nSegment== selections [1].m_nSegment) {
 other = &selections [*current == selections [0]];
 seg1 = Segment (current->m_nSegment); 
 seg2 = Segment (other->m_nSegment); 
-vert1 = seg1->m_info.vertexIds [current->Side ()->VertexIdIndex (current->m_nPoint)]; 
+vert1 = seg1->m_info.vertexIds [current->Side ()->VertexIdIndex (current->Point ())]; 
 vert2 = seg2->m_info.vertexIds [other->Side ()->VertexIdIndex (other->m_nPoint)]; 
 // make sure verts are different
 if (vert1== vert2) {
@@ -166,7 +166,7 @@ if (QueryMsg("Are you sure you want to join the current point\n"
 	return; 
 undoManager.Begin (udSegments);
 // define vert numbers
-seg1->m_info.vertexIds [current->Side ()->VertexIdIndex (current->m_nPoint)] = vert2; 
+seg1->m_info.vertexIds [current->Side ()->VertexIdIndex (current->Point ())] = vert2; 
 // delete any unused vertices
 //  vertexManager.DeleteUnused (); 
 FixChildren (); 
@@ -204,9 +204,9 @@ seg1 = Segment (current->m_nSegment);
 seg2 = Segment (other->m_nSegment); 
 
 for (i = 0; i < 2; i++) {
-	i1 [i] = seg1->VertexId (current->m_nSide, current->m_nEdge + i);
+	i1 [i] = seg1->VertexId (current->m_nSide, current->Edge () + i);
 	i2 [i] = seg2->VertexId (other->m_nSide, other->m_nEdge + i);
-	v1 [i] = seg1->Vertex (current->m_nSide, current->m_nEdge + i);
+	v1 [i] = seg1->Vertex (current->m_nSide, current->Edge () + i);
 	v2 [i] = seg2->Vertex (other->m_nSide, other->m_nEdge + i);
 	match [i] = -1; 
 	}
@@ -247,7 +247,7 @@ if (match [0] == match [1]) {
 undoManager.Begin (udSegments);
 // define vert numbers
 for (i = 0; i < 2; i++) 
-	seg1->SetVertexId (current->m_nSide, current->m_nEdge + i, i2 [match [i]]); 
+	seg1->SetVertexId (current->m_nSide, current->Edge () + i, i2 [match [i]]); 
 FixChildren (); 
 undoManager.End ();
 SetLinesToDraw (); 
@@ -350,7 +350,7 @@ class CSideMatcher {
 
 bool CSegmentManager::FindNearbySide (CSideKey thisKey, CSideKey& otherKey, short& thisPoint, short& otherPoint, tVertMatch* match)
 {
-thisPoint = (thisKey == *current) ? current->m_nPoint : 0;
+thisPoint = (thisKey == *current) ? current->Point () : 0;
 otherKey.m_nSegment = -1;
 // find first segment (other than this segment) which shares all points
 // of the current side (points must be < 5.0 away)
@@ -421,7 +421,7 @@ else {
 		}
 	otherKey = *other; 
 	otherPoint = other->m_nPoint;
-	thisPoint = current->m_nPoint;
+	thisPoint = current->Point ();
 
 	sideMatcher.SetSide (0, thisKey);
 	sideMatcher.SetSide (1, otherKey);

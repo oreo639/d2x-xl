@@ -331,11 +331,11 @@ for (i = 0; i < triggerManager.WallTriggerCount (); i++)
 		break;
 		}
 // select current object
-CBObjNo ()->SetCurSel (current->m_nObject);
+CBObjNo ()->SetCurSel (current->ObjectId ());
 
 // if secret object, disable everything but the "move" button
 // and the object list, then return
-if (current->m_nObject == objectManager.Count ()) {
+if (current->ObjectId () == objectManager.Count ()) {
 	CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDC_OBJ_SPAWN_QTY, FALSE);
 	CBObjNo ()->EnableWindow (TRUE);
 	BtnCtrl (IDC_OBJ_MOVE)->EnableWindow (TRUE);
@@ -659,7 +659,7 @@ SetTextureOverride ();
 
 void CObjectTool::OnAdd () 
 {
-if (current->m_nObject == objectManager.Count ()) {
+if (current->ObjectId () == objectManager.Count ()) {
 	ErrorMsg ("Cannot add another secret return.");
 	return;
  }
@@ -678,7 +678,7 @@ Refresh ();
 
 void CObjectTool::OnDelete ()
 {
-if (current->m_nObject == objectManager.Count ()) {
+if (current->ObjectId () == objectManager.Count ()) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
@@ -733,7 +733,7 @@ void CObjectTool::OnReset ()
 CDoubleMatrix* orient;
 
 undoManager.Begin (udObjects);
-if (current->m_nObject == objectManager.Count ()) {
+if (current->ObjectId () == objectManager.Count ()) {
 	orient = &objectManager.SecretOrient ();
 	orient->Set (1, 0, 0, 0, 1, 0, 0, 0, 1);
 } else {
@@ -770,7 +770,7 @@ Refresh ();
 
 void CObjectTool::OnSetObject ()
 {
-short old_object = current->m_nObject;
+short old_object = current->ObjectId ();
 short new_object = CBObjNo ()->GetCurSel ();
 DLE.MineView ()->RefreshObject (old_object, new_object);
 //Refresh ();

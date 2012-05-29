@@ -102,7 +102,7 @@ m_centerPt.y = minRect.y + 166 / 2;
 segP = current->Segment ();
 sideP = current->Side ();
 nSide = current->m_nSide;
-nLine = current->m_nEdge;
+nLine = current->Edge ();
 short nEdges = sideP->VertexCount ();
 
 // get device context handle
@@ -243,8 +243,8 @@ if (segmentManager.IsWall ()) {
 	// highlight current point
 	pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
 	pDC->SelectObject (hPenCurrentPoint);
-	x = m_apts [current->m_nPoint].x;
-	y = m_apts [current->m_nPoint].y;
+	x = m_apts [current->Point ()].x;
+	y = m_apts [current->Point ()].y;
 	pDC->Ellipse((int) (x - 4 * m_zoom), (int) (y - 4 * m_zoom), (int) (x + 4 * m_zoom), (int) (y + 4 * m_zoom));
 	// fill in texture
 	DrawAlignment (pDC);
@@ -320,18 +320,18 @@ void CTextureTool::OnAlignX ()
 UpdateData (TRUE);
 
 	CSide*	sideP = current->Side ();
-	double	delta = sideP->m_info.uvls [current->m_nPoint].u - m_alignX / 20.0;
+	double	delta = sideP->m_info.uvls [current->Point ()].u - m_alignX / 20.0;
 
 if (delta) {
 	UpdateData (TRUE);
 	undoManager.Begin (udSegments);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			sideP->m_info.uvls [current->m_nPoint].u -= delta;
+			sideP->m_info.uvls [current->Point ()].u -= delta;
 			break;
 		case LINE_MODE:
-			sideP->m_info.uvls [current->m_nEdge].u -= delta;
-			sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].u -= delta;
+			sideP->m_info.uvls [current->Edge ()].u -= delta;
+			sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].u -= delta;
 			break;
 		default:
 			for (int i = 0; i < sideP->VertexCount (); i++)
@@ -349,18 +349,18 @@ void CTextureTool::OnAlignY ()
 UpdateData (TRUE);
 
 	CSide*	sideP = current->Side ();
-	double	delta = sideP->m_info.uvls [current->m_nPoint].v - m_alignY / 20.0;
+	double	delta = sideP->m_info.uvls [current->Point ()].v - m_alignY / 20.0;
 
 if (delta) {
 	UpdateData (TRUE);
 	undoManager.Begin (udSegments);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			sideP->m_info.uvls [current->m_nPoint].v -= delta;
+			sideP->m_info.uvls [current->Point ()].v -= delta;
 			break;
 		case LINE_MODE:
-			sideP->m_info.uvls [current->m_nEdge].v -= delta;
-			sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].v -= delta;
+			sideP->m_info.uvls [current->Edge ()].v -= delta;
+			sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].v -= delta;
 			break;
 		default:
 			for (int i = 0; i < sideP->VertexCount (); i++)
@@ -393,8 +393,8 @@ void CTextureTool::RefreshAlignment ()
 {
 	CSide* sideP = current->Side ();
 
-m_alignX = sideP->m_info.uvls [current->m_nPoint].u * 20.0;
-m_alignY = sideP->m_info.uvls [current->m_nPoint].v * 20.0;
+m_alignX = sideP->m_info.uvls [current->Point ()].u * 20.0;
+m_alignY = sideP->m_info.uvls [current->Point ()].v * 20.0;
 
 double dx = sideP->m_info.uvls [1].u - sideP->m_info.uvls [0].u;
 double dy = sideP->m_info.uvls [1].v - sideP->m_info.uvls [0].v;
@@ -438,7 +438,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		Swap (sideP->m_info.uvls [current->m_nEdge].u, sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].u);
+		Swap (sideP->m_info.uvls [current->Edge ()].u, sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].u);
 		break;
 	default:
 		for (int i = 0; i < 2; i++) 
@@ -461,7 +461,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		Swap (sideP->m_info.uvls [current->m_nEdge].v, sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].v);
+		Swap (sideP->m_info.uvls [current->Edge ()].v, sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].v);
 		break;
 	default:
 		for (int i = 0; i < 2; i++) 
@@ -483,17 +483,17 @@ UpdateData (TRUE);
 undoManager.Begin (udSegments);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		sideP->m_info.uvls [current->m_nPoint].u += delta;
+		sideP->m_info.uvls [current->Point ()].u += delta;
 		break;
 	case LINE_MODE:
-		sideP->m_info.uvls [current->m_nEdge].u += delta;
-		sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].u += delta;
+		sideP->m_info.uvls [current->Edge ()].u += delta;
+		sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].u += delta;
 		break;
 	default:
 		for (int i = 0; i < sideP->VertexCount (); i++)
 			sideP->m_info.uvls [i].u += delta;
 	}
-m_alignX = (double) sideP->m_info.uvls [current->m_nPoint].u * 20.0;
+m_alignX = (double) sideP->m_info.uvls [current->Point ()].u * 20.0;
 UpdateData (FALSE);
 undoManager.End ();
 UpdateAlignWnd ();
@@ -510,17 +510,17 @@ UpdateData (TRUE);
 undoManager.Begin (udSegments);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		sideP->m_info.uvls [current->m_nPoint].v += delta;
+		sideP->m_info.uvls [current->Point ()].v += delta;
 		break;
 	case LINE_MODE:
-		sideP->m_info.uvls [current->m_nEdge].v += delta;
-		sideP->m_info.uvls [(current->m_nEdge + 1) % sideP->VertexCount ()].v += delta;
+		sideP->m_info.uvls [current->Edge ()].v += delta;
+		sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].v += delta;
 		break;
 	default:
 		for (int i = 0; i < sideP->VertexCount (); i++)
 			sideP->m_info.uvls [i].v += delta;
 	}
-m_alignY = (double)sideP->m_info.uvls [current->m_nPoint].v * 20.0;
+m_alignY = (double)sideP->m_info.uvls [current->Point ()].v * 20.0;
 UpdateData (FALSE);
 undoManager.End ();
 UpdateAlignWnd ();

@@ -128,7 +128,7 @@ CSegment* newSegP = Segment (nNewSeg);
 ushort newVerts [4]; 
 vertexManager.Add (newVerts, Side (key)->VertexCount ());
 
-short nVertices = ComputeVertices (newVerts, addMode); 
+short nVertices = ComputeVertices (key, newVerts, addMode); 
 
 CSide* orgSideP = segP->Side (nSides [0]);
 CSide* farSideP = newSegP->Side (nSides [0]);
@@ -452,20 +452,17 @@ return nSegment;
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::ComputeVerticesOrtho (ushort newVerts [4])
+short CSegmentManager::ComputeVerticesOrtho (CSideKey key, ushort newVerts [4])
 {
-	CSegment*		segP = current->Segment (); 
-	CSide*			sideP = current->Side ();
+	CSegment*		segP = segmentManager.Segment (key); 
+	CSide*			sideP = segP->Side (key.m_nSide);
 	short				nVertices = sideP->VertexCount ();
 
 	CDoubleVector	A [4]; 
 	short				i, points [4]; 
 
 for (i = 0; i < 4; i++)
-	points [i] = (current->m_nPoint + i) % 4;
-	// METHOD 1: orthogonal with right angle on new side and standard segment side
-// TODO:
-//	int add_segment_mode = ORTHOGONAL; 
+	points [i] = (current->Point () + i) % 4;
 CDoubleVector center = CalcSideCenter (*current); 
 CDoubleVector oppCenter = CalcSideCenter (CSideKey (current->m_nSegment, oppSideTable [current->m_nSide])); 
 CDoubleVector vNormal = CalcSideNormal (*current); 
@@ -477,7 +474,7 @@ CDoubleVector newCenter = center + vNormal;
 // new method: extend points 0 and 1 with vNormal, then move point 0 toward point 1.
 // point 0
 ushort i1, i2;
-segP->GetEdgeVertices (current->m_nSide, current->m_nPoint, i1, i2);
+segP->GetEdgeVertices (current->m_nSide, current->Point (), i1, i2);
 CDoubleVector a = vNormal + *vertexManager.Vertex (i1); 
 // point 1
 CDoubleVector b = vNormal + *vertexManager.Vertex (i2); 
@@ -521,7 +518,7 @@ return nVertices;
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::ComputeVerticesExtend (ushort newVerts [4])
+short CSegmentManager::ComputeVerticesExtend (CSideKey key, ushort newVerts [4])
 {
 	CSegment*		segP = current->Segment (); 
 	CSide*			sideP = current->Side ();
@@ -543,7 +540,7 @@ return nVertices;
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::ComputeVerticesMirror (ushort newVerts [4])
+short CSegmentManager::ComputeVerticesMirror (CSideKey key, ushort newVerts [4])
 {
 	CDoubleVector	A [8], B [8], C [8], D [8], E [8]; 
 	short				i; 
@@ -619,9 +616,9 @@ return nVertices;
 // ----------------------------------------------------------------------------- 
 // Calculate vertices when adding a new segment.
 
-short CSegmentManager::ComputeVertices (ushort newVerts [4], int addMode)
+short CSegmentManager::ComputeVertices (CSideKey key, ushort newVerts [4], int addMode)
 {
-	short	nVertices = current->Side ()->VertexCount ();
+	short	nVertices = segmentManager.Side (key)->VertexCount ();
 
 if (nVertices < 3)
 	return 0;
@@ -629,11 +626,11 @@ if (nVertices < 3)
 if (addMode < 0)
 	addMode = m_nAddMode;
 if (addMode == ORTHOGONAL)
-	nVertices = ComputeVerticesOrtho (newVerts);
+	nVertices = ComputeVerticesOrtho (key, newVerts);
 else if (addMode == EXTEND)
-	nVertices = ComputeVerticesExtend (newVerts);
+	nVertices = ComputeVerticesExtend (key, newVerts);
 else if (addMode == MIRROR)
-	nVertices = ComputeVerticesMirror (newVerts);
+	nVertices = ComputeVerticesMirror (key, newVerts);
 else
 	return 0;
 for (int i = nVertices; i < 4; i++) 

@@ -59,7 +59,7 @@ return (m_nSegment < 0) ? null : segmentManager.Segment (m_nSegment);
 
 // -----------------------------------------------------------------------------
 
-short CSelection::Child (void)
+short CSelection::ChildId (void)
 {
 return Segment ()->ChildId (m_nSide);
 }

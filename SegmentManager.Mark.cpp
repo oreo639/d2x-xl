@@ -142,8 +142,8 @@ switch (selectMode) {
 
 	case eSelectLine:
 		nPoints = 2; 
-		p [0] = segP->VertexId (current->Side ()->VertexIdIndex (current->m_nPoint)); 
-		p [1] = segP->VertexId (current->Side ()->VertexIdIndex (current->m_nPoint + 1)); 
+		p [0] = segP->VertexId (current->Side ()->VertexIdIndex (current->Point ())); 
+		p [1] = segP->VertexId (current->Side ()->VertexIdIndex (current->Point () + 1)); 
 		break; 
 
 	case eSelectSide:
