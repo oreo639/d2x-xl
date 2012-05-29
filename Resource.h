@@ -2,8 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by dle-xp.rc
 //
-#define IDC_TEXTURE_TAG_TEXTURE         10317
-
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
