@@ -6,7 +6,7 @@
 #include "types.h"
 
 // -----------------------------------------------------------------------------
-// Single Sided Linked List
+// Singly Linked List
 
 template < class _T, class _K >
 class CSLLIterator;
@@ -65,10 +65,12 @@ class CSLL {
 		}
 	};
 
+// -----------------------------------------------------------------------------
+
 template < class _T, class _K >
 class CSLLIterator {
 	private:
-		CSLL<_T, _K>&				m_sll;
+		CSLL<_T, _K>&	m_sll;
 		typename CSLL<_T, _K>::CNode<_T>*	m_current;
 
 	public:
@@ -95,4 +97,4 @@ class CSLLIterator {
 
 // -----------------------------------------------------------------------------
 
-#endif //__side_h
+#endif //__SLL_H
