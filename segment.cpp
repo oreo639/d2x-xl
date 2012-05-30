@@ -408,139 +408,90 @@ Reset ();
 
 void CSegment::SetUV (short nSide, double x, double y)
 {
-	CDoubleVector	A [4], G [4]; 
-	// triangle 1 - (0, 1, 2)
-	CDoubleVector	B1 [3], C1 [3], D1 [3], E1 [3]; 
-	// triangle 2 - (0, 2, 3)
-	CDoubleVector	B2 [3], C2 [3], D2 [3], E2 [3], F2 [3]; 
+	CDoubleVector	A [4], C1 [3], C2 [3], D [4];
+	CDoubleVector*	R;
 	int				i; 
-	double			angle1, sinAngle1, cosAngle1; 
-	double			angle2, sinAngle2, cosAngle2; 
+	double			angle; 
 	CSide*			sideP = Side (nSide);
 
-// for testing, x is used to tell how far to convert vector
-// 0, 1, 2, 3 represent B, C, D, E coordinate transformations
-
-// copy side's four points into A
-
-for (i = 0; i < 4; i++)
+for (i = 0; i < sideP->VertexCount(); i++)
 	A [i] = CDoubleVector (*vertexManager.Vertex (m_info.vertexIds [sideP->VertexIdIndex (i)])); 
 
-// subtract point 0 from all points in A to form B points
-for (i = 0; i < 3; i++) {
-	B1 [i] = A [i] - A [0]; 
-	B2 [i] = A [i ? i + 1 : i] - A [0];
+switch (sideP->Shape ()) {
+	case SIDE_SHAPE_TRIANGLE:
+		{
+			CDoubleVector B1 [] = {A [0], A [1], A [2]};
+			GetTriangleUVs (C1, B1);
+		}
+		R = C1;
+		break;
+
+	case SIDE_SHAPE_RECTANGLE:
+		if (Dot (A [3] - A [0], Normal (A [0], A [1], A [2])) > 0) {
+			// Split on 0,2
+			CDoubleVector B1 [] = {A [0], A [1], A [2]};
+			CDoubleVector B2 [] = {A [0], A [2], A [3]};
+			GetTriangleUVs (C1, B1);
+			GetTriangleUVs (C2, B2);
+
+			// Rotate triangle C2 UVs onto C1 UVs so points 0 and 2 match (only need to calculate last point)
+			angle = -atan3 (-C1 [2].v.x, C1 [2].v.y);
+			C2 [2].Rotate (C2 [0], CDoubleVector (0, 0, 1), angle);
+
+			// Combine triangles
+			D [0] = C1 [0], D [1] = C1 [1], D [2] = C1 [2], D [3] = C2 [2];
+			}
+		else {
+			// Split on 1,3
+			CDoubleVector B1 [] = {A [0], A [1], A [3]};
+			CDoubleVector B2 [] = {A [3], A [1], A [2]};
+			GetTriangleUVs (C1, B1);
+			GetTriangleUVs (C2, B2);
+
+			// Rotate and translate triangle C2 UVs onto C1 UVs so points 1 and 3 match
+			angle = atan3 (C1 [1].v.x - C1 [2].v.x, C1 [1].v.y - C1 [2].v.y);
+			C2 [2].Rotate (C2 [0], CDoubleVector (0, 0, 1), angle);
+			C2 [2] += C1 [2];
+
+			// Combine triangles
+			D [0] = C1 [0], D [1] = C1 [1], D [2] = C2 [2], D [3] = C1 [2];
+			}
+		R = D;
+		break;
+
+	default:
+		// No reset operation defined, just return
+		return;
 	}
 
-// calculate angle to put point 1 in x - y plane by spinning on x - axis
-// then rotate B points on x - axis to form C points.
-// check to see if on x - axis already
-angle1 = atan3 (B1 [1].v.z, B1 [1].v.y); 
-sinAngle1 = sin (angle1);
-cosAngle1 = cos (angle1);
-angle2 = atan3 (B2 [1].v.z, B2 [1].v.y); 
-sinAngle2 = sin (angle2);
-cosAngle2 = cos (angle2);
-for (i = 0; i < 3; i++) {
-	C1 [i].Set (B1 [i].v.x, B1 [i].v.y * cosAngle1 + B1 [i].v.z * sinAngle1, -B1 [i].v.y * sinAngle1 + B1 [i].v.z * cosAngle1); 
-	C2 [i].Set (B2 [i].v.x, B2 [i].v.y * cosAngle2 + B2 [i].v.z * sinAngle2, -B2 [i].v.y * sinAngle2 + B2 [i].v.z * cosAngle2); 
-	}
-
-#if UV_DEBUG
-if (abs((int)C [1].z) != 0) {
-	sprintf_s (message, sizeof (message),  "SetUV: point 1 not in x/y plane\n(%f); angle = %f", (float)C [1].z, (float)angle); 
-	DEBUGMSG (message); 
-	}
-#endif
-
-// calculate angle to put point 1 on x axis by spinning on z - axis
-// then rotate C points on z - axis to form D points
-// check to see if on z - axis already
-angle1 = atan3 (C1 [1].v.y, C1 [1].v.x); 
-sinAngle1 = sin (angle1);
-cosAngle1 = cos (angle1);
-angle2 = atan3 (C2 [1].v.y, C2 [1].v.x); 
-sinAngle2 = sin (angle2);
-cosAngle2 = cos (angle2);
-for (i = 0; i < 3; i++) {
-	D1 [i].Set (C1 [i].v.x * cosAngle1 + C1 [i].v.y * sinAngle1, -C1 [i].v.x * sinAngle1 + C1 [i].v.y * cosAngle1, C1 [i].v.z); 
-	D2 [i].Set (C2 [i].v.x * cosAngle2 + C2 [i].v.y * sinAngle2, -C2 [i].v.x * sinAngle2 + C2 [i].v.y * cosAngle2, C2 [i].v.z); 
-	}
-#if UV_DEBUG
-if (abs((int)D [1].y) != 0) {
-	DEBUGMSG (" SetUV: Point 1 not in x axis"); 
-	}
-#endif
-
-// calculate angle to put point 2 in x - y plane by spinning on x - axis
-// the rotate D points on x - axis to form E points
-// check to see if on x - axis already
-angle1 = atan3 (D1 [2].v.z, D1 [2].v.y); 
-sinAngle1 = sin (angle1);
-cosAngle1 = cos (angle1);
-angle2 = atan3 (D2 [2].v.z, D2 [2].v.y); 
-sinAngle2 = sin (angle2);
-cosAngle2 = cos (angle2);
-for (i = 0; i < 3; i++) {
-	E1 [i].Set (D1 [i].v.x, D1 [i].v.y * cosAngle1 + D1 [i].v.z * sinAngle1, -D1 [i].v.y * sinAngle1 + D1 [i].v.z * cosAngle1); 
-	E2 [i].Set (D2 [i].v.x, D2 [i].v.y * cosAngle2 + D2 [i].v.z * sinAngle2, -D2 [i].v.y * sinAngle2 + D2 [i].v.z * cosAngle2); 
-	}
-
-// calculate angle to rotate triangle 2 0->2 vector (initially aligned with the x - axis) onto triangle 1 0->2 vector
-// then rotate E2 points on z - axis to form F2 points
-angle1 = -atan3 (E1 [2].v.y, E1 [2].v.x); 
-sinAngle2 = sin (angle1);
-cosAngle2 = cos (angle1);
-for (i = 0; i < 3; i++) {
-	F2 [i].Set (E2 [i].v.x * cosAngle2 + E2 [i].v.y * sinAngle2, -E2 [i].v.x * sinAngle2 + E2 [i].v.y * cosAngle2, E2 [i].v.z); 
-	}
-
-// finally, combine triangles and store in G
-for (i = 0; i < 3; i++) {
-	G [i] = E1 [i];
-	}
-G [3] = F2 [2];
-
-// now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
-// set v to x axis and u to negative u axis to match default (u, v)
-// (remember to scale by dividing by 640)
+// Scale, translate, store UV values
 CUVL *uvls = m_sides [nSide].m_info.uvls;
-#if UV_DEBUG
-switch (x) {
-	case 0:
-		for (i = 0; i < 4; i++) {
-			uvls [i].v = (B [i].x/640); 
-			uvls [i].u = - (B [i].y/640); 
-			}
-		break; 
-	case 1:
-		for (i = 0; i < 4; i++) {
-			uvls [i].v = (C [i].x/640); 
-			uvls [i].u = 0x400/10 - (C [i].y/640); 
-			}
-		break; 
-	case 2:
-		for (i = 0; i < 4; i++) {
-			uvls [i].v = (D [i].x/640); 
-			uvls [i].u = 2*0x400/10 - (D [i].y/640); 
-			}
-		break; 
-	case 3:
-		for (i = 0; i < 4; i++) {
-			uvls [i].v = (E [i].x/640); 
-			uvls [i].u = 3*0x400/10 - (E [i].y/640); 
-			}
-	break; 
-	}
-#else
 undoManager.Begin (udSegments); 
 m_sides [nSide].LoadTextures ();
-for (i = 0; i < 4; i++, uvls++) {
-	uvls->v = (y + G [i].v.x) / 20.0; 
-	uvls->u = (x - G [i].v.y) / 20.0; 
+for (i = 0; i < sideP->VertexCount (); i++, uvls++) {
+	uvls->u = (x + R [i].v.x) / 20.0; 
+	uvls->v = (y + R [i].v.y) / 20.0; 
 	}
 undoManager.End ();
-#endif
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::GetTriangleUVs (CDoubleVector (&triangleUVs) [3], const CDoubleVector (&triangleVecs) [3])
+{
+	CDoubleVector vec1, vec2, proj, perp;
+
+vec1 = triangleVecs [1] - triangleVecs [0];
+vec2 = triangleVecs [2] - triangleVecs [0];
+proj = vec1;
+if (proj.Mag () == 0) // degenerate face but let's still handle it
+	proj = CDoubleVector (0, 1, 0);
+proj.Normalize ();
+proj *= Dot (proj, vec2);
+perp = vec2 - proj;
+triangleUVs [0] = CDoubleVector (0, 0, 0);
+triangleUVs [1] = CDoubleVector (0, vec1.Mag (), 0);
+triangleUVs [2] = CDoubleVector (-perp.Mag (), proj.Mag (), 0);
 }
 
 // -----------------------------------------------------------------------------

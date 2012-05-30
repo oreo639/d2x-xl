@@ -18,11 +18,15 @@ return Segment (key.m_nSegment)->IsTagged (key.m_nSide);
 
 bool CSegmentManager::IsTagged (short nSegment)
 {
+#if 1
+return Segment (nSegment)->IsTagged ();
+#else
 CSegment *segP = Segment (nSegment);
 for (int i = 0;  i < 8; i++)
-	if (!(vertexManager.Status (segP->m_info.vertexIds [i]) & TAGGED_MASK))
+	if ((segP->VertexId (i) <= MAX_VERTEX) && !segP->Vertex (i)->IsTagged ())
 		return false;
 return true;
+#endif
 }
 
 // ----------------------------------------------------------------------------- 
@@ -37,6 +41,8 @@ void CSegmentManager::Tag (short nSegment)
   CSegment *segP = Segment (nSegment); 
 
 segP->Tag ();
+for (short nSide = 0; nSide < 6; nSide++)
+	segP->Side (nSide)->Tag ();
 for (ushort nVertex = 0; nVertex < 8; nVertex++)
 	segP->Vertex (nVertex)->Status () |= TAGGED_MASK; 
 }
@@ -49,18 +55,38 @@ void CSegmentManager::UpdateTagged (void)
 CSegment* segP = Segment (0);
 short nSegments = Count ();
 
+uint selectMode = DLE.MineView ()->GetSelectMode ();
+
+if ((selectMode != eSelectSide) && (selectMode != eSelectSegment))
+	return;
+
 for (short i = 0; i < nSegments; i++, segP++) {
-	ushort* vertexIds = segP->m_info.vertexIds;
-	short nTagged = 0, nVertices = 0;
 	short j = 0;
-	for (; j < 8; j++) {
-		if ((vertexIds [j] <= MAX_VERTEX) && !(vertexManager.Status (vertexIds [j]) & TAGGED_MASK))
-			break;
+	if (selectMode == eSelectSegment) {
+		ushort* vertexIds = segP->VertexIds ();
+		for (; j < 8; j++) {
+			if ((vertexIds [j] <= MAX_VERTEX) && !vertexManager [vertexIds [j]].IsTagged ())
+				break;
+			}
+		if (j < 8)
+			segP->UnTag (); 
+		else
+			segP->Tag (); 
 		}
-	if (j < 8)
-		segP->UnTag (); 
-	else
-		segP->Tag (); 
+	CSide* sideP = segP->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++) {
+		short h = sideP->VertexCount ();
+		j = 0;
+		if (h > 2) {
+			for (; j < h; j++)
+				if (!segP->Vertex (nSide, j)->IsTagged ())
+					break;
+			}
+		if (j < h)
+			sideP->UnTag ();
+		else
+			sideP->Tag ();
+		}
 	}
 }
 

@@ -173,6 +173,7 @@ public:
 
 	void SetUV (short nSide, double x, double y);
 
+	void GetTriangleUVs (CDoubleVector (&triangleUVs) [3], const CDoubleVector (&triangleVecs) [3]);
 	//void Read (CFileManager* fp, bool bFlag = false) {}
 	//void Write (CFileManager* fp, bool bFlag = false) {}
 
