@@ -57,12 +57,12 @@ class CDLL {
 				}
 			};
 
-		CNode<_T>*	m_root;
+		CNode<_T>*	m_head;
 		CNode<_T>*	m_tail;
 
 	private:
 		CNode<_T>* FindNode (_K key) {
-			for (CNode<_T>* nodeP = m_root; nodeP; nodeP = nodeP->m_link) {
+			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = nodeP->m_link) {
 				if (nodeP->m_data == key)
 					return nodeP;
 				}
@@ -71,21 +71,21 @@ class CDLL {
 
 
 	public:
-		CDLL () : m_root (null), m_tail (null) {}
+		CDLL () : m_head (null), m_tail (null) {}
 
 		~CDLL () { Destroy (); }
 
-		inline CNode<_T>* Root (void) { return m_root; }
+		inline CNode<_T>* Head (void) { return m_head; }
 
 		inline CNode<_T>* Tail (void) { return m_tail; }
 
 		void Destroy (void) {
 			CNode<_T>* linkP;
-			for (CNode<_T>* nodeP = m_root; nodeP; nodeP = linkP) {
+			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = linkP) {
 				linkP = nodeP->GetSucc ();
 				delete nodeP;
 				}
-			m_root = null;
+			m_head = null;
 			m_tail = null;
 			}
 
@@ -108,10 +108,10 @@ class CDLL {
 				return null;
 			CNode<_T>* nodeP = FindNode (key);
 			if (!nodeP)
-				nodeP = m_root;
+				nodeP = m_head;
 			m_current->InsertBefore (nodeP);
-			if (!m_root)
-				m_root = m_tail = m_current;
+			if (!m_head)
+				m_head = m_tail = m_current;
 			else if (m_tail->GetSucc ())
 				m_tail = m_tail->GetSucc ();
 			nodeP->m_data = data;
@@ -124,10 +124,10 @@ class CDLL {
 				return null;
 			CNode<_T>* nodeP = FindNode (key);
 			if (!nodeP)
-				nodeP = m_root;
+				nodeP = m_head;
 			m_current->InsertAfter (nodeP);
-			if (!m_root)
-				m_root = m_tail = m_current;
+			if (!m_head)
+				m_head = m_tail = m_current;
 			else if (m_tail->GetSucc ())
 				m_tail = m_tail->GetSucc ();
 			nodeP->m_data = data;
@@ -135,9 +135,9 @@ class CDLL {
 			}
 
 		_T* Add (_T data) {
-			m_current->InsertBefore (m_root);
-			if (!m_root)
-				m_root = m_tail = m_current;
+			m_current->InsertBefore (m_head);
+			if (!m_head)
+				m_head = m_tail = m_current;
 			else if (m_tail->GetSucc ())
 				m_tail = m_tail->GetSucc ();
 			nodeP->m_data = data;
@@ -146,8 +146,8 @@ class CDLL {
 
 		_T* Append (_T data) {
 			m_current->InsertAfter (m_tail);
-			if (!m_root)
-				m_root = m_tail = m_current;
+			if (!m_head)
+				m_head = m_tail = m_current;
 			else if (m_tail->GetSucc ())
 				m_tail = m_tail->GetSucc ();
 			nodeP->m_data = data;
@@ -155,7 +155,7 @@ class CDLL {
 			}
 
 	inline CDLL<_T, _K>& operator= (CDLL<_T, _K>& other) {
-		m_root = other.m_root;
+		m_head = other.m_head;
 		return *this;
 		}
 	};
@@ -172,7 +172,7 @@ class CDLLIterator {
 		CDLLIterator (CDLL<_T, _K>& dll) : m_dll (dll) {}
 
 		inline _T* Begin (void) { 
-			m_current = m_dll.Root ();
+			m_current = m_dll.Head ();
 			return m_current ? &m_current->m_data : null; 
 			}
 

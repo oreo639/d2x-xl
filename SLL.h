@@ -31,13 +31,13 @@ class CSLL {
 			};
 
 
-		CNode<_T>*	m_root;
+		CNode<_T>*	m_head;
 		CNode<_T>*	m_tail;
 
 	private:
 		CNode<_T>* Find (_K key, CNode<_T>*& predP) {
 			predP = null;
-			for (CNode<_T>* nodeP = m_root; nodeP; nodeP = nodeP->m_succ) {
+			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = nodeP->m_succ) {
 				if (nodeP->m_data == key)
 					return nodeP;
 				predP = nodeP;
@@ -46,26 +46,26 @@ class CSLL {
 			}
 
 	public:
-		CSLL () : m_root (null), m_tail (null) {}
+		CSLL () : m_head (null), m_tail (null) {}
 
 		~CSLL () { Destroy (); }
 
-		inline CNode<_T>* Root (void) { return m_root; }
+		inline CNode<_T>* Head (void) { return m_head; }
 
 		inline CNode<_T>* Tail (void) { return m_tail; }
 
 		void Destroy (void) {
 			CNode<_T>* linkP;
-			for (CNode<_T>* nodeP = m_root; nodeP; nodeP = linkP) {
+			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = linkP) {
 				linkP = nodeP->GetSucc ();
 				delete nodeP;
 				}
-			m_root = null;
+			m_head = null;
 			m_tail = null;
 			}
 
 		_T* Find (_K key) {
-			for (CNode<_T>* nodeP = m_root; nodeP; nodeP = nodeP->GetSucc ()) {
+			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = nodeP->GetSucc ()) {
 				if (nodeP->m_data == key)
 					return &nodeP->m_data;
 				}
@@ -78,8 +78,8 @@ class CSLL {
 				return false;
 			if (predP)
 				predP->SetSucc (nodeP->GetSucc ());
-			if (m_root == nodeP)
-				m_root = nodeP->GetSucc ();
+			if (m_head == nodeP)
+				m_head = nodeP->GetSucc ();
 			if (m_tail == nodeP)
 				m_tail = predP;
 			nodeP->SetSucc (null);
@@ -90,8 +90,8 @@ class CSLL {
 		_T* Add (_T data) {
 			if (!(nodeP = new CNode<_T>))
 				return null;
-			nodeP->SetSucc (m_root);
-			m_root = nodeP;
+			nodeP->SetSucc (m_head);
+			m_head = nodeP;
 			if (!m_tail)
 				m_tail = nodeP;
 			nodeP->m_data = data;
@@ -104,14 +104,14 @@ class CSLL {
 			if (m_tail)
 				m_tail->SetSucc (nodeP);
 			else
-				m_root = nodeP;
+				m_head = nodeP;
 			m_tail = nodeP;
 			nodeP->m_data = data;
 			return &nodeP->m_data;
 			}
 
 	inline CSLL<_T, _K>& operator= (CSLL<_T, _K>& other) {
-		m_root = other.Root ();
+		m_head = other.Head ();
 		m_tail = other.Tail ();
 		return *this;
 		}
@@ -129,7 +129,7 @@ class CSLLIterator {
 		CSLLIterator (CSLL<_T, _K>& sll) : m_sll (sll) {}
 
 		inline _T* Begin (void) { 
-			m_current = m_sll.Root ();
+			m_current = m_sll.Head ();
 			return m_current ? &m_current->m_data : null; 
 			}
 
