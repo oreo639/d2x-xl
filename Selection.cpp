@@ -111,9 +111,9 @@ return objectManager.Object (m_nObject);
 
 // -----------------------------------------------------------------------------
 
-CVertex* CSelection::Vertex (void)
+CVertex* CSelection::Vertex (short offset)
 {
-return Segment ()->Vertex (Side ()->VertexIdIndex (m_nPoint)); 
+return Segment ()->Vertex (Side ()->VertexIdIndex (m_nPoint + offset)); 
 }
 
 // -----------------------------------------------------------------------------

@@ -68,7 +68,7 @@ class CSelection : public CSideKey {
 
 		inline short SetObjectId (short nObject) { return m_nObject = nObject; }
 
-		CVertex* Vertex (void);
+		CVertex* Vertex (short offset = 0);
 
 		inline ushort VertexId (void) { return Segment ()->VertexId (m_nSide, m_nPoint); }
 
