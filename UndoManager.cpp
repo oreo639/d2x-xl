@@ -335,7 +335,7 @@ int CUndoManager::Backup (CGameItem* parent, eEditType editType)
 #if DETAIL_BACKUP
 SetModified (true);
 if (parent->Id () == Id ()) { // item backup up in this batch already, so update the backup
-	CGameItem* backup = parent->Parent ();
+	CGameItem* backup = parent->GetParent ();
 	parent->Copy (backup);
 	backup->SetParent (parent);
 	return parent->Id ();

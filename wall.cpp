@@ -291,7 +291,7 @@ switch (EditType ()) {
 		wallManager.Add (true);
 		// fall through
 	case opModify:
-		*Parent () = *this;
+		*GetParent () = *this;
 		break;
 	}
 }
@@ -308,7 +308,7 @@ switch (EditType ()) {
 		wallManager.Add (false);
 		// fall through
 	case opModify:
-		*Parent () = *this;
+		*GetParent () = *this;
 		break;
 	}
 }

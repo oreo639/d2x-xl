@@ -42,9 +42,10 @@ class CGameItem {
 		eItemType	m_itemType;
 		eEditType	m_editType;
 		CGameItem*	m_parent;
+		CGameItem*	m_link;
 
 	public:
-		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_editType (opNone), m_parent (null), m_prev (null), m_next (null) {}
+		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_editType (opNone), m_parent (null), m_link (null) {}
 
 		inline bool Used (void) { return m_nIndex >= 0; }
 
@@ -68,9 +69,13 @@ class CGameItem {
 
 		virtual void Redo (void) {}
 
-		inline CGameItem* Parent (void) { return m_parent; }
+		inline CGameItem* GetParent (void) { return m_parent; }
 
-		inline void SetParent (CGameItem* parent) { m_parent = parent; }
+		inline CGameItem* SetParent (CGameItem* parent) { return m_parent = parent; }
+
+		inline CGameItem* GetLink (void) { return m_link; }
+
+		inline CGameItem* SetLink (CGameItem* link) { return m_link = link; }
 	};
 
 class CGameItemList : public CDLL< CGameItem*, CGameItem* > {};

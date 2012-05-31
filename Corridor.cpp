@@ -1,3 +1,5 @@
+#if 0
+
 #include "mine.h"
 
 #if 0
@@ -226,6 +228,7 @@ for (i = 0, j = sideP->VertexCount (); i < j; i++) {
 m_frontWalls.Push (key.m_nSide);
 sideP->UnTag ();
 segP->Tag ();
+segmentManager.Create (key);
 checkmem (n = insertsegment (NULL, NULL, segment, nWall, tunnelP->depth)); 
 for (i = 0; i < 4; i++) 
 	insertpnt (n, wallpts [oppwalls [nWall]][i]); 
@@ -1325,3 +1328,5 @@ for (n = l->tagged [tt_edge].Head ()->succ; n != NULL; n = n->succ) {
 plotlevel ();  
 drawopts (); 
 }
+
+#endif

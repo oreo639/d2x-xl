@@ -334,7 +334,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	if (segP->IsSelected (viewport, xMouse, yMouse, 0, true))
 #pragma omp critical
 		{
-		segP->Link (m_selectedSegments);
+		segP->SetLink (m_selectedSegments);
 		m_selectedSegments = segP;
 		}
 	}
@@ -369,7 +369,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 			{
 			if (!bSegmentSelected) {
 				bSegmentSelected = true;
-				segP->Link (m_selectedSegments);
+				segP->SetLink (m_selectedSegments);
 				m_selectedSegments = segP;
 				}
 			}
@@ -378,7 +378,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 #	pragma omp critical
 #endif
 			{
-			sideP->Link (m_selectedSides);
+			sideP->SetLink (m_selectedSides);
 			m_selectedSides = sideP;
 			}
 		sideP->SetParent (nSegment);

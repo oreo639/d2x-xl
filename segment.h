@@ -148,7 +148,6 @@ public:
 	CSide				m_sides [MAX_SIDES_PER_SEGMENT];		// 6 sides 
 	CVertex			m_vCenter;
 	ubyte				m_nShape;
-	CSegment*		m_link;
 
 public:
 	void Upgrade (void);
@@ -313,11 +312,7 @@ public:
 
 	short Edge (short nSide, ushort v1, ushort v2);
 
-	inline void Link (CSegment* segP) { m_link = segP; }
-
-	inline CSegment* Link (void) { return m_link; }
-
-	CSegment () : CGameItem (itSegment), m_link (null) {}
+	CSegment () : CGameItem (itSegment) {}
 
 private:
 	ubyte ReadWalls (CFileManager* fp);

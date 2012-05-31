@@ -1158,7 +1158,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 if (!segmentManager.GatherSelectableSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
 	return false;
 
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	short nEdge = sideP->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, segP->m_info.vertexIds, minDist);
 	if (nEdge >= 0) {
@@ -1217,7 +1217,7 @@ double minDist = 1e30;
 CSegment* nearestSegment = null;
 CSide* nearestSide = null;
 
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
 	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 	CVertex& center = sideP->Center ();
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
@@ -1242,7 +1242,7 @@ if (m_nShowSelectionCandidates > 1) {
 		glEnable (GL_LINE_STIPPLE);
 		glDepthFunc (GL_ALWAYS);
 		}
-	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
 		CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 		short nSide = segP->SideIndex (sideP);
 		short nVertices = sideP->VertexCount ();
@@ -1306,7 +1306,7 @@ if (m_nShowSelectionCandidates > 0) {
 	Renderer ().BeginRender ();
 	if (m_nRenderer)
 		glDepthFunc (GL_ALWAYS);
-	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
 		CSegment* segP = segmentManager.Segment (sideP->GetParent ());
 		short nSide = segP->SideIndex (sideP);
 		CVertex& center = sideP->Center ();
@@ -1346,7 +1346,7 @@ CSegment* nearestSegment = null;
 CSide* nearestSide = null;
 
 short nSegment = -1;
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
 	if (nSegment == sideP->GetParent ())
 		continue;
 	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
@@ -1374,7 +1374,7 @@ if (m_nShowSelectionCandidates > 1) {
 		glEnable (GL_LINE_STIPPLE);
 		}
 	nSegment = -1;
-	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
 		if (nSegment == sideP->GetParent ())
 			continue;
 		CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
@@ -1420,7 +1420,7 @@ if (m_nShowSelectionCandidates > 0) {
 	if (m_nRenderer)
 		glDepthFunc (GL_ALWAYS);
 	nSegment = -1;
-	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->Link ()) {
+	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
 		if (nSegment == sideP->GetParent ())
 			continue;
 		CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());

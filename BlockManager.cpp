@@ -307,7 +307,7 @@ while (!fp.EoF ()) {
 		if (nVertex == 4) {
 			for (nVertex = 0; nVertex < 4; nVertex++)
 				vertexManager.Status (sharedVerts [nVertex]) |= SHARED_MASK;
-			for (CSegment* childSegP = m_oldSegments; childSegP != null; childSegP = dynamic_cast<CSegment*>(childSegP->Link ())) {
+			for (CSegment* childSegP = m_oldSegments; childSegP != null; childSegP = dynamic_cast<CSegment*>(childSegP->GetLink ())) {
 				short nChildSide;
 				for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 					if (childSegP->ChildId (nChildSide) != -1)
@@ -398,13 +398,13 @@ while (m_newSegments != null) {
 		if (m_newSegments->ChildId (nSide) < 0)
 			segmentManager.Join (CSideKey (nSegment, nSide), true);
 		}
-	m_newSegments = dynamic_cast<CSegment*> (m_newSegments->Link ());
+	m_newSegments = dynamic_cast<CSegment*> (m_newSegments->GetLink ());
 	}
 #endif
 
 while (newTriggers != null) {
 	CTrigger* trigP = newTriggers;
-	newTriggers = dynamic_cast<CTrigger*> (trigP->Link ());
+	newTriggers = dynamic_cast<CTrigger*> (trigP->GetLink ());
 	for (j = 0; j < trigP->Count (); j++) {
 		if (trigP->Segment (j) >= 0)
 			trigP->Segment (j) = m_xlatSegNum [trigP->Segment (j)];
@@ -688,7 +688,7 @@ short count = Read (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 
 // int up the new segmentManager.Segment () children
-for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<CSegment*>(newSegP->Link ())) {
+for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<CSegment*>(newSegP->GetLink ())) {
 	// if child has a segment number that was just inserted, set it to the
 	//  segment's offset number, otherwise set it to -1
 	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -696,7 +696,7 @@ for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<
 			newSegP->SetChild (nSide, m_xlatSegNum [newSegP->ChildId (nSide)]);
 		else {
 			CVertex* v1 = vertexManager.Vertex (newSegP->m_info.vertexIds [newSegP->Side (nSide)->VertexIdIndex (0)]);
-			for (CSegment* oldSegP = m_oldSegments; oldSegP != null; oldSegP = dynamic_cast<CSegment*>(oldSegP->Link ())) {
+			for (CSegment* oldSegP = m_oldSegments; oldSegP != null; oldSegP = dynamic_cast<CSegment*>(oldSegP->GetLink ())) {
 				CSide* sideP = oldSegP->Side (0);
 				for (short nChildSide = 0; nChildSide < 6; nChildSide++, sideP++) {
 					for (short nChildVertex = 0; nChildVertex < 4; nChildVertex++) {

@@ -93,7 +93,8 @@ class CSLL {
 			}
 
 		_T* Add (_T data) {
-			if (!(nodeP = new CNode<_T>))
+			CNode<_T>* nodeP = new CNode<_T>;
+			if (!nodeP)
 				return null;
 			nodeP->SetSucc (m_head);
 			m_head = nodeP;
@@ -105,7 +106,8 @@ class CSLL {
 			}
 
 		_T* Append (_T data) {
-			if (!(nodeP = new CNode<_T>))
+			CNode<_T>* nodeP = new CNode<_T>;
+			if (!nodeP)
 				return null;
 			if (m_tail)
 				m_tail->SetSucc (nodeP);

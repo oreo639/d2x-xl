@@ -57,7 +57,7 @@ switch (EditType ()) {
 		vertexManager.Add (&nVertex, 1, false);
 		// fall through
 	case opModify:
-		*Parent () = *this;
+		*GetParent () = *this;
 		break;
 	}
 }
@@ -74,7 +74,7 @@ switch (EditType ()) {
 		vertexManager.Add (false);
 		// fall through
 	case opModify:
-		*Parent () = *this;
+		*GetParent () = *this;
 		break;
 	}
 }
