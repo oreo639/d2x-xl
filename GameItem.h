@@ -4,6 +4,7 @@
 #include "define.h"
 #include "FileManager.h"
 #include "crc.h"
+#include "DLL.h"
 
 # pragma pack(push, packing)
 # pragma pack(1)
@@ -41,10 +42,9 @@ class CGameItem {
 		eItemType	m_itemType;
 		eEditType	m_editType;
 		CGameItem*	m_parent;
-		CGameItem*	m_link;
 
 	public:
-		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_editType (opNone), m_parent (null) {}
+		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_editType (opNone), m_parent (null), m_prev (null), m_next (null) {}
 
 		inline bool Used (void) { return m_nIndex >= 0; }
 
@@ -71,11 +71,9 @@ class CGameItem {
 		inline CGameItem* Parent (void) { return m_parent; }
 
 		inline void SetParent (CGameItem* parent) { m_parent = parent; }
-
-		inline CGameItem* Link (void) { return m_link; }
-
-		inline void SetLink (CGameItem* item) { m_link = item; }
 	};
+
+class CGameItemList : public CDLL< CGameItem, uint > {};
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

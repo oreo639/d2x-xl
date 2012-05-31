@@ -42,7 +42,8 @@ class CEdgeTreeNode {
 
 	CSideKey* Insert (short nSegment, short nSide) {
 		CSideKey	key = CSideKey (nSegment, nSide);
-		return m_sides.Insert (key, key);
+		CSideKey* keyP = m_sides.Find (key);
+		return keyP ? keyP : m_sides.Append (key);
 		}
 
 	inline CEdgeTreeNode& operator= (CEdgeTreeNode& other) {

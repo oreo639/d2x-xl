@@ -551,6 +551,7 @@
     <ClInclude Include="..\ComObj.h" />
     <ClInclude Include="..\dlcDoc.h" />
     <ClInclude Include="..\dle-xp.h" />
+    <ClInclude Include="..\DLL.h" />
     <ClInclude Include="..\FBO.h" />
     <ClInclude Include="..\Frustum.h" />
     <ClInclude Include="..\MainFrame.h" />

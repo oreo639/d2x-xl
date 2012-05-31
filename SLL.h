@@ -16,51 +16,103 @@ class CSLL {
 	public:
 		friend class CSLLIterator<_T, _K>;
 
+
 		template < class _U >
 		class CNode {
 			public:
-				CNode*	m_link;
+				CNode*	m_succ;
 				_U			m_data;
 
-			CNode () : m_link (null) {}
+			CNode () : m_succ (null) {}
+
+			CNode* GetSucc (void) { return m_succ; }
+
+			CNode* SetSucc (CNode* succ) { return m_succ = succ; }
 			};
 
+
 		CNode<_T>*	m_root;
+		CNode<_T>*	m_tail;
+
+	private:
+		CNode<_T>* Find (_K key, CNode<_T>*& predP) {
+			predP = null;
+			for (CNode<_T>* nodeP = m_root; nodeP; nodeP = nodeP->m_succ) {
+				if (nodeP->m_data == key)
+					return nodeP;
+				predP = nodeP;
+				}
+			return null;
+			}
 
 	public:
-		CSLL () : m_root (null) {}
+		CSLL () : m_root (null), m_tail (null) {}
 
 		~CSLL () { Destroy (); }
 
+		inline CNode<_T>* Root (void) { return m_root; }
+
+		inline CNode<_T>* Tail (void) { return m_tail; }
+
 		void Destroy (void) {
 			CNode<_T>* linkP;
-			for (CNode<_T>* listP = m_root; listP; listP = linkP) {
-				linkP = listP->m_link;
-				delete listP;
+			for (CNode<_T>* nodeP = m_root; nodeP; nodeP = linkP) {
+				linkP = nodeP->GetSucc ();
+				delete nodeP;
 				}
 			m_root = null;
+			m_tail = null;
 			}
 
-		_T* Insert (_T data, _K key) {
-			CNode<_T>* tailP = null;
-			CNode<_T>* listP = m_root;
-			for (; listP; listP = listP->m_link) {
-				tailP = listP;
-				if (listP->m_data == key)
-					return &listP->m_data;
+		_T* Find (_K key) {
+			for (CNode<_T>* nodeP = m_root; nodeP; nodeP = nodeP->GetSucc ()) {
+				if (nodeP->m_data == key)
+					return &nodeP->m_data;
 				}
-			if (!(listP = new CNode<_T>))
+			return null;
+			}
+
+		bool Remove (_K key) {
+			CNode<_T>* predP, * nodeP = Find (key, predP);
+			if (!nodeP)
+				return false;
+			if (predP)
+				predP->SetSucc (nodeP->GetSucc ());
+			if (m_root == nodeP)
+				m_root = nodeP->GetSucc ();
+			if (m_tail == nodeP)
+				m_tail = predP;
+			nodeP->SetSucc (null);
+			delete nodeP;
+			return true;
+			}
+
+		_T* Add (_T data) {
+			if (!(nodeP = new CNode<_T>))
 				return null;
-			if (tailP)
-				tailP->m_link = listP;
+			nodeP->SetSucc (m_root);
+			m_root = nodeP;
+			if (!m_tail)
+				m_tail = nodeP;
+			nodeP->m_data = data;
+			return &nodeP->m_data;
+			}
+
+		_T* Append (_T data) {
+			if (!(nodeP = new CNode<_T>))
+				return null;
+			if (m_tail)
+				m_tail->SetSucc (nodeP);
 			else
-				m_root = listP;
-			listP->m_data = data;
-			return &listP->m_data;
+				m_root = nodeP;
+			m_tail = nodeP;
+			nodeP->m_data = data;
+			return &nodeP->m_data;
 			}
 
 	inline CSLL<_T, _K>& operator= (CSLL<_T, _K>& other) {
-		m_root = other.m_root;
+		m_root = other.Root ();
+		m_tail = other.Tail ();
 		return *this;
 		}
 	};
@@ -77,16 +129,16 @@ class CSLLIterator {
 		CSLLIterator (CSLL<_T, _K>& sll) : m_sll (sll) {}
 
 		inline _T* Begin (void) { 
-			m_current = m_sll.m_root;
-			return &m_current->m_data; 
+			m_current = m_sll.Root ();
+			return m_current ? &m_current->m_data : null; 
 			}
 
 		inline _T* End (void) { return null; }
 
-		inline CSLLIterator& operator++() { m_current = m_current->m_link; }
+		inline CSLLIterator& operator++() { m_current = m_current->GetSucc (); }
 		
 		inline CSLLIterator& operator++(int) { 
-			m_current = m_current->m_link; 
+			m_current = m_current->GetSucc (); 
 			return *this;
 			}
 		
