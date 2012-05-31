@@ -643,7 +643,6 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="..\Corridor.cpp" />
     <ClCompile Include="..\Diagnosis.cpp" />
     <ClCompile Include="..\DiagTool.cpp" />
     <ClCompile Include="..\dlcDoc.cpp">

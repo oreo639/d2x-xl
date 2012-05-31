@@ -137,8 +137,8 @@ switch (EditType ()) {
 		SetParent (lightManager.AddVariableLight (-1));
 		// fall through
 	case opModify:
-		if (Parent ())
-			*Parent () = *this;
+		if (GetParent ())
+			*GetParent () = *this;
 		break;
 	case opMove:
 		*lightManager.VariableLight (lightManager.Count ()) = *this;
@@ -158,8 +158,8 @@ switch (EditType ()) {
 		SetParent (lightManager.AddVariableLight (-1));
 		// fall through
 	case opModify:
-		if (Parent ())
-			*Parent () = *this;
+		if (GetParent ())
+			*GetParent () = *this;
 		break;
 	case opMove:
 		*lightManager.VariableLight (Index ()) = *this;

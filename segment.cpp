@@ -775,7 +775,7 @@ switch (EditType ()) {
 		segmentManager.Add ();
 		// fall through
 	case opModify:
-		*Parent () = *this;
+		*GetParent () = *this;
 		break;
 	}
 }
@@ -792,7 +792,7 @@ switch (EditType ()) {
 		segmentManager.Add ();
 		// fall through
 	case opModify:
-		*Parent () = *this;
+		*GetParent () = *this;
 		break;
 	}
 }

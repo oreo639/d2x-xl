@@ -654,9 +654,6 @@
     <ClCompile Include="..\Quaternion.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Corridor.cpp">
-      <Filter>Managers\Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\dle-xp.rc">

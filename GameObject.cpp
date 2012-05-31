@@ -1181,7 +1181,7 @@ switch (EditType ()) {
 		objectManager.Add (false);
 		// fall through
 	case opModify:
-		*Parent () = *this;
+		*GetParent () = *this;
 		break;
 	}
 }
@@ -1198,7 +1198,7 @@ switch (EditType ()) {
 		objectManager.Add (false);
 		// fall through
 	case opModify:
-		*Parent () = *this;
+		*GetParent () = *this;
 		break;
 	}
 }
