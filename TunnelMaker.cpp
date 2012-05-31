@@ -68,16 +68,18 @@ return v;
 
 void CTunnelMaker::UntwistSegment (short nSegment, short nSide) 
 {
-  double		len, minLen = 1e10;
-  short		index, j;
-  CSegment*	segP;
-  short		verts [4], nOppSide = oppSideTable [nSide];
+  double		minLen = 1e10;
+  short		verts [4];
+  short		nOppSide = oppSideTable [nSide];
+  ubyte		oppVertexIndex [4];
 
-segP = segmentManager.Segment (nSegment);
+CSegment* segP = segmentManager.Segment (nSegment);
+segP->CreateOppVertexIndex (nSide, oppVertexIndex);
 // calculate length from point 0 to opp_points
 CVertex* vert0 = segP->Vertex (nSide, 0);
-for (j = 0; j < 4; j++) {
-	len = Distance (*vert0, *segP->Vertex (nOppSide, j));
+short index = 0;
+for (short j = 0; j < 4; j++) {
+	double len = Distance (*vert0, *segP->Vertex (nOppSide, oppVertexIndex [j]));
 	if (len < minLen) {
 		minLen = len;
 		index = j;
@@ -85,10 +87,10 @@ for (j = 0; j < 4; j++) {
 	}
 // swap verts if index != 0
 if (index != 0) {
-	for (j = 0; j < 4; j++)
-		verts [j] = segP->VertexId (nOppSide, j + index);
-	for (j = 0; j < 4; j++)
-		segP->m_info.vertexIds [segP->Side (nOppSide)->VertexIdIndex (j)] = verts [j];
+	for (short j = 0; j < 4; j++)
+		verts [j] = segP->VertexId (oppVertexIndex [(j + index) % 4]);
+	for (short j = 0; j < 4; j++)
+		segP->SetVertexId (oppVertexIndex [j], verts [j]);
 	}
 }
 
@@ -191,34 +193,33 @@ return v;
 
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* orgin, CVertex* normal) 
+void CTunnelMaker::PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* origin, CVertex* normal) 
 {
-double x1,y1,z1,y2,z2;
-// translate coordanites to orgin
-double vx = vertex->v.x - orgin->v.x;
-double vy = vertex->v.y - orgin->v.y;
-double vz = vertex->v.z - orgin->v.z;
-double nx = normal->v.x - orgin->v.x;
-double ny = normal->v.y - orgin->v.y;
-double nz = normal->v.z - orgin->v.z;
+// translate coordinates to origin
+double vx = vertex->v.x - origin->v.x;
+double vy = vertex->v.y - origin->v.y;
+double vz = vertex->v.z - origin->v.z;
+double nx = normal->v.x - origin->v.x;
+double ny = normal->v.y - origin->v.y;
+double nz = normal->v.z - origin->v.z;
 
 // calculate angles to normalize direction
 // spin on z axis to get into the x-z plane
 double zSpin = atan3 (ny,nx);
-x1 = nx * cos (zSpin) + ny * sin (zSpin);
-z1 = nz;
+double x1 = nx * cos (zSpin) + ny * sin (zSpin);
+double z1 = nz;
 // spin on y to get on the x axis
 double ySpin = -atan3 (z1,x1);
 // spin vertex (spin on z then y)
 x1 = vx * cos (zSpin) + vy * sin (zSpin);
-y1 = -vx * sin (zSpin) + vy * cos (zSpin);
+double y1 = -vx * sin (zSpin) + vy * cos (zSpin);
 z1 = vz;
 //  x2 =   x1 * cos (ySpin) - z1 * sin (ySpin);
-y2 = y1;
-z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
+double y2 = y1;
+double z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 // convert to polar
-*radius = sqrt(y2*y2 + z2*z2);  // ignore any x offset
-*angle = atan3 (z2,y2);
+*radius = sqrt(y2 * y2 + z2 * z2);  // ignore any x offset
+*angle = atan3 (z2, y2);
 }
 
 //------------------------------------------------------------------------------
@@ -226,25 +227,27 @@ z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 
 void CTunnelMaker::SetupVertices (void)
 {
+ubyte oppVertexIndex [4];
 ushort nVertex = 0;
 for (short i = 0; i < m_nLength [0]; i++) {
 	CSegment* segP = segmentManager.Segment (m_nSegments [i]);
+	segP->CreateOppVertexIndex (m_info [0].m_nSide, oppVertexIndex);
 	for (short j = 0; j < 4; j++, nVertex++) {
 		if (i == 0) { // 1st segment
 			segP->SetVertexId (m_info [0].m_nSide, j, m_nVertices [nVertex]);
-			segP->SetVertexId (oppSideTable [m_info [0].m_nSide], j, m_info [0].Segment ()->VertexIdIndex (m_info [0].m_nSide, j));
+			segP->SetVertexId (oppVertexIndex [j], m_info [0].Segment ()->VertexId (m_info [0].m_nSide, j));
 			}
 		else if (i == m_nLength [0] - 1) { // last segment
-			segP->SetVertexId (m_info [0].m_nSide, j, m_info [1].Segment ()->VertexIdIndex (m_info [1].m_nSide, MatchingSide (j)));
-			segP->SetVertexId (oppSideTable [m_info [0].m_nSide], j, m_nVertices [nVertex - 4]);
+			segP->SetVertexId (m_info [0].m_nSide, j, m_info [1].Segment ()->VertexId (m_info [1].m_nSide, MatchingSide (j)));
+			segP->SetVertexId (oppVertexIndex [j], m_nVertices [nVertex - 4]);
 			}
 		else {
 			segP->SetVertexId (m_info [0].m_nSide, j, m_nVertices [nVertex]);
-			segP->SetVertexId  (oppSideTable [m_info [0].m_nSide], j, m_nVertices [nVertex - 4]);
+			segP->SetVertexId  (oppVertexIndex [j], m_nVertices [nVertex - 4]);
 			}
 		}
 	}
-// int twisted segments
+// twisted segments
 for (short i = 0; i < m_nLength [0]; i++)
 	UntwistSegment (m_nSegments [i], m_info [0].m_nSide);
 }
@@ -432,18 +435,19 @@ DLE.MineView ()->Refresh ();
 
 void CTunnelMaker::ComputeTunnel (void) 
 {
-  double length;
-  int i,j;
-  CSegment *segP;
-  CVertex vertex;
-  double theta [2][4],radius [2][4]; // polor coordinates of sides
-  double deltaAngle [4];
-  CVertex relSidePoints [2][4]; // side m_points reletave to center of side 1
-  CVertex relPoints [4]; // 4 m_points of nSegment reletave to 1st point
-  CVertex relTunnelPoints [MAX_TUNNEL_SEGMENTS];
-  double y,z;
-  double ySpin,zSpin;
+  double		length;
+  int			i, j;
+  CSegment*	segP;
+  CVertex	vertex;
+  double		theta [2][4],radius [2][4]; // polor coordinates of sides
+  double		deltaAngle [4];
+  CVertex	relSidePoints [2][4]; // side m_points reletave to center of side 1
+  CVertex	relPoints [4]; // 4 m_points of nSegment reletave to 1st point
+  CVertex	relTunnelPoints [MAX_TUNNEL_SEGMENTS];
+  double		y, z;
+  double		ySpin, zSpin;
 
+// setup intermediate points for a cubic bezier curve
 // center of both cubes
 m_points [0] = segmentManager.CalcSideCenter (m_info [0]);
 m_points [3] = segmentManager.CalcSideCenter (m_info [1]);
@@ -484,7 +488,7 @@ for (i = 0; i < 4; i++)
 for (i = 0; i < 2; i++) {
 	segP = m_info [i].Segment ();
 	for (j = 0; j < 4; j++) 
-		relSidePoints [i][j] = *vertexManager.Vertex (segP->m_info.vertexIds [segP->Side (m_info [i].m_nSide)->VertexIdIndex (j)]) - m_points [0];
+		relSidePoints [i][j] = *segP->Vertex (m_info [i].m_nSide, j) - m_points [0];
 	}
 
 for (i = 0; i < m_nLength [0]; i++)
@@ -494,7 +498,7 @@ for (i = 0; i < m_nLength [0]; i++)
 ySpin = -atan3 (relPoints [1].v.z, relPoints [1].v.x); // to y-z plane
 zSpin = atan3 (relPoints [1].v.y, relPoints [1].v.x * cos (ySpin) - relPoints [1].v.z * sin (ySpin)); // to x axis
 
-// spin all m_points reletave to first face (rotation)
+// spin all m_points relative to first face (rotation)
 for (i = 0; i < 4; i++) {
 	SpinPoint (relPoints + i, ySpin, zSpin);
 	for (j = 0; j < 2; j++) 
@@ -506,7 +510,7 @@ for (i = 0; i < m_nLength [0]; i++)
 
 // determine polar coordinates of the 1st side (simply y,z coords)
 for (i = 0; i < 4; i++) {
-	theta [0][i] = atan3 (relSidePoints [0][i].v.z,relSidePoints [0][i].v.y);
+	theta [0][i] = atan3 (relSidePoints [0][i].v.z, relSidePoints [0][i].v.y);
 	y = relSidePoints [0][i].v.y;
 	z = relSidePoints [0][i].v.z;
 	radius [0][i] =_hypot (y, z);
@@ -516,9 +520,6 @@ for (i = 0; i < 4; i++) {
 for (i = 0; i < 4; i++) {
 	// flip orthoginal vector to point into segment
 	vertex = (relPoints [3] * 2) - relPoints [2];
-	//vertex.Set (relPoints [3].v.x - relPoints [2].v.x + relPoints [3].v.x,
-	//				relPoints [3].v.y - relPoints [2].v.y + relPoints [3].v.y,
-	//				relPoints [3].v.z - relPoints [2].v.z + relPoints [3].v.z);
 	PolarPoints (&theta [1][i], &radius [1][i], &relSidePoints [1][i], &relPoints [3], &vertex);
 	}
 
@@ -609,4 +610,4 @@ renderer.EndRender ();
 }
 
 //------------------------------------------------------------------------------
-//eof tunnelgen.cpp
+//eof TunnelMaker.cpp
