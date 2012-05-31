@@ -73,7 +73,7 @@ class CGameItem {
 		inline void SetParent (CGameItem* parent) { m_parent = parent; }
 	};
 
-class CGameItemList : public CDLL< CGameItem, uint > {};
+class CGameItemList : public CDLL< CGameItem*, CGameItem* > {};
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
