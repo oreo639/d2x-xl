@@ -33,6 +33,7 @@ class CSLL {
 
 		CNode<_T>*	m_head;
 		CNode<_T>*	m_tail;
+		uint			m_length;
 
 	private:
 		CNode<_T>* Find (_K key, CNode<_T>*& predP) {
@@ -46,13 +47,15 @@ class CSLL {
 			}
 
 	public:
-		CSLL () : m_head (null), m_tail (null) {}
+		CSLL () : m_head (null), m_tail (null), m_length (0) {}
 
 		~CSLL () { Destroy (); }
 
 		inline CNode<_T>* Head (void) { return m_head; }
 
 		inline CNode<_T>* Tail (void) { return m_tail; }
+
+		inline uint Length (void) { return m_length; }
 
 		void Destroy (void) {
 			CNode<_T>* linkP;
@@ -62,6 +65,7 @@ class CSLL {
 				}
 			m_head = null;
 			m_tail = null;
+			m_length = 0;
 			}
 
 		_T* Find (_K key) {
@@ -84,6 +88,7 @@ class CSLL {
 				m_tail = predP;
 			nodeP->SetSucc (null);
 			delete nodeP;
+			--m_length;
 			return true;
 			}
 
@@ -94,6 +99,7 @@ class CSLL {
 			m_head = nodeP;
 			if (!m_tail)
 				m_tail = nodeP;
+			++m_length;
 			nodeP->m_data = data;
 			return &nodeP->m_data;
 			}
@@ -106,6 +112,7 @@ class CSLL {
 			else
 				m_head = nodeP;
 			m_tail = nodeP;
+			++m_length;
 			nodeP->m_data = data;
 			return &nodeP->m_data;
 			}
@@ -113,6 +120,7 @@ class CSLL {
 	inline CSLL<_T, _K>& operator= (CSLL<_T, _K>& other) {
 		m_head = other.Head ();
 		m_tail = other.Tail ();
+		m_length = other.Length ();
 		return *this;
 		}
 	};

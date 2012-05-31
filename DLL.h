@@ -59,6 +59,7 @@ class CDLL {
 
 		CNode<_T>*	m_head;
 		CNode<_T>*	m_tail;
+		uint			m_length;
 
 	private:
 		CNode<_T>* FindNode (_K key) {
@@ -71,13 +72,15 @@ class CDLL {
 
 
 	public:
-		CDLL () : m_head (null), m_tail (null) {}
+		CDLL () : m_head (null), m_tail (null), m_length (0) {}
 
 		~CDLL () { Destroy (); }
 
 		inline CNode<_T>* Head (void) { return m_head; }
 
 		inline CNode<_T>* Tail (void) { return m_tail; }
+
+		inline uint Length (void) { return m_length; }
 
 		void Destroy (void) {
 			CNode<_T>* linkP;
@@ -87,6 +90,7 @@ class CDLL {
 				}
 			m_head = null;
 			m_tail = null;
+			m_length = 0;
 			}
 
 		_T* Find (_K key) {
@@ -100,6 +104,7 @@ class CDLL {
 				return false;
 			nodeP->Unlink ();
 			delete nodeP;
+			--m_length;
 			return true;
 			}
 
@@ -114,6 +119,7 @@ class CDLL {
 				m_head = m_tail = m_current;
 			else if (m_tail->GetSucc ())
 				m_tail = m_tail->GetSucc ();
+			++m_length;
 			nodeP->m_data = data;
 			return &nodeP->m_data;
 			}
@@ -130,6 +136,7 @@ class CDLL {
 				m_head = m_tail = m_current;
 			else if (m_tail->GetSucc ())
 				m_tail = m_tail->GetSucc ();
+			++m_length;
 			nodeP->m_data = data;
 			return &nodeP->m_data;
 			}
