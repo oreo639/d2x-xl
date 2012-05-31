@@ -321,7 +321,6 @@ void CTunnelMaker::Create (void)
 //  undoManager.UpdateBuffer(0);
 
 double		length;
-int			i;
 
 if (!m_bActive) {
 	m_nMaxSegments = SEGMENT_LIMIT - segmentManager.Count ();
@@ -359,17 +358,17 @@ if (!m_bActive) {
 		return;
 		}
 	// base nSegment length on distance between cubes
-	for (i = 0; i < 2; i++) {
-		m_info [i].m_length = (length / 3);
-		if (m_info [i].m_length < MIN_TUNNEL_LENGTH)
-			m_info [i].m_length = MIN_TUNNEL_LENGTH;
-		else if (m_info [i].m_length > MAX_TUNNEL_LENGTH)
-			m_info [i].m_length = MAX_TUNNEL_LENGTH;
-		}
+	length *= 0.5;
+	if (length < MIN_TUNNEL_LENGTH)
+		length = MIN_TUNNEL_LENGTH;
+	else if (length > MAX_TUNNEL_LENGTH)
+		length = MAX_TUNNEL_LENGTH;
+	m_info [0].m_length = 
+	m_info [1].m_length = length;
+
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("Place the current segment on one of the segment end points.\n\n"
-				    "Use the ']' and '[' keys to adjust the length of the red\n"
-				    "segment segment.\n\n"
+		"Use the CTRL+8 and CTRL+9 keys to adjust the length of the red segment.\n\n"
 				    "Press 'P' to rotate the point connections.\n\n"
 				    "Press 'G' or select Tools/Tunnel Generator when you are finished.");
 
@@ -461,7 +460,8 @@ m_points [2] *= m_info [1].m_length;
 m_points [2] += m_points [3];
 
 // calculate number of segments (min=1)
-length = Distance (*m_points, m_points [3]);
+
+length = Distance (m_points [0], m_points [3]);
 m_nLength [1] = m_nLength [0];
 m_nLength [0] = (int) ((fabs (m_info [0].m_length) + fabs (m_info [1].m_length)) / 20 + length / 40.0);
 m_nLength [0] = min (m_nLength [0], m_nMaxSegments - 1);
