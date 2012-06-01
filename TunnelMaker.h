@@ -24,7 +24,7 @@ class CCubicBezier {
 		double Blend (int i, int n, double u); 
 
 	public:
-		CCubicBezier () : m_length ({1.0, 1.0}) {}
+		CCubicBezier () {m_length [0] = m_length [1] = 1.0; }
 
 		CDoubleVector Compute (double u); 
 
@@ -97,17 +97,12 @@ class CTunnelSegment {
 		CTunnelBase		m_base [2];
 
 	public:
-		short									m_nLength [2]; // current length, previous length [segments]
+		short									m_nPathLength; // current path length
 		CDynamicArray<CTunnelElement>	m_elements;
-
-		inline short MaxSegments (void) {
-			short h = SEGMENT_LIMIT - segmentManager.Count ();
-			return (h > MAX_TUNNEL_SEGMENTS) ? MAX_TUNNEL_SEGMENTS : h;
-			}
 
 		void Setup (CCubicBezier& bezier, CTunnelBase base [2]);
 
-		void Compute (void);
+		void Compute (short nPathLength);
 
 		void Realize (void);
 
@@ -149,7 +144,7 @@ class CTunnelMaker {
 	private:
 		bool									m_bActive;
 		CCubicBezier&						m_bezier;
-		int									m_nMaxSegments;
+		short									m_nPathLength;
 		CTunnelBase							m_base [2];
 		CDynamicArray<CTunnelSegment>	m_tunnel;
 
@@ -172,7 +167,7 @@ class CTunnelMaker {
 
 		void Destroy (void);
 
-		inline int Length (void) { return m_nLength [0]; }
+		short PathLength (void);
 
 		void ComputeTunnel (void); 
 
@@ -180,6 +175,11 @@ class CTunnelMaker {
 
 	private:
 		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal); 
+
+		inline short MaxSegments (void) {
+			short h = SEGMENT_LIMIT - segmentManager.Count ();
+			return (h > MAX_TUNNEL_SEGMENTS) ? MAX_TUNNEL_SEGMENTS : h;
+			}
 	};
 
 extern CTunnelMaker tunnelMaker;
