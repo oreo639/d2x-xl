@@ -109,7 +109,7 @@ class CTunnelPath {
 		short							m_nPathLength;
 		CDynamicArray<ushort>	m_vertices;
 
-		CTunnelPath () {}
+		CTunnelPath () : m_nPathLength (0) {}
 
 		void CTunnelPath::Setup (CPathBase base [2]);
 

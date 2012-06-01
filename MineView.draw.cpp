@@ -909,7 +909,7 @@ void CMineView::DrawTunnel (void)
 
 renderer.SelectPen (penRed + 1);
 Renderer ().SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
-tunnelMaker.ComputeTunnel ();
+tunnelMaker.Create ();
 renderer.BeginRender ();
 points [1].Transform (ViewMatrix ());
 points [1].Project (ViewMatrix ());

@@ -701,7 +701,7 @@ CPathBase base [2];
 current->Segment ()->ComputeNormals (current->SideId ());
 base [0].m_normal = current->Side ()->Normal ();
 other->Segment ()->ComputeNormals (other->SideId ());
-base [0].m_normal = other->Side ()->Normal ();
+base [1].m_normal = other->Side ()->Normal ();
 
 for (int i = 0; i < 4; i++) {
 	base [0].m_nId = current->Segment ()->VertexId (current->SideId (), current->Point () + i);
