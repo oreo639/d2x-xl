@@ -288,22 +288,21 @@ return v;
 void CTunnelSegment::SetupVertices (void)
 {
 ubyte oppVertexIndex [4];
-ushort nVertex = 0;
 for (short i = 0; i < m_nPathLength; i++) {
 	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
 	segP->CreateOppVertexIndex (m_base [0].m_nSide, oppVertexIndex);
-	for (short j = 0; j < 4; j++, nVertex++) {
+	for (short j = 0; j < 4; j++) {
 		if (i == 0) { // 1st segment
-			segP->SetVertexId (m_base [0].m_nSide, j, m_elements [i].m_nVertices [nVertex]);
+			segP->SetVertexId (m_base [0].m_nSide, j, m_elements [i].m_nVertices [j]);
 			segP->SetVertexId (oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j));
 			}
 		else if (i == m_nPathLength - 1) { // last segment
 			segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, MatchingSide (j)));
-			segP->SetVertexId (oppVertexIndex [j], m_elements [i - 1].m_nVertices [nVertex]);
+			segP->SetVertexId (oppVertexIndex [j], m_elements [i - 1].m_nVertices [j]);
 			}
 		else {
-			segP->SetVertexId (m_base [0].m_nSide, j, m_elements [i].m_nVertices [nVertex]);
-			segP->SetVertexId  (oppVertexIndex [j], m_elements [i - 1].m_nVertices [nVertex]);
+			segP->SetVertexId (m_base [0].m_nSide, j, m_elements [i].m_nVertices [j]);
+			segP->SetVertexId  (oppVertexIndex [j], m_elements [i - 1].m_nVertices [j]);
 			}
 		}
 	}
@@ -565,6 +564,8 @@ if (!m_bActive) {
 	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
 	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (0), 2);
 	m_bezier.SetPoint (m_base [1].GetPoint (), 3);
+	m_bezier.SetLength (length, 0);
+	m_bezier.SetLength (length, 1);
 
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("Place the current segment on one of the segment end points.\n\n"
