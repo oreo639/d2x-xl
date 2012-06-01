@@ -72,16 +72,37 @@ m_normal = segmentManager.CalcSideNormal (*this);
 
 //------------------------------------------------------------------------------
 
+void CTunnelPath::Remove (int i)
+{
+while (i >= 0) {
+	segmentManager.Remove (m_elements [i].m_nSegment);
+	for (int j = 0; j < 4; j++)
+		vertexManager.Delete (m_elements [i].m_nVertices [j]);
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelPath::Destroy (void)
+{
+Remove (m_nLength [0]);
+m_nLength [0] = 0;
+m_path.Destroy ();
+m_elements.Destroy ();
+}
+
+//------------------------------------------------------------------------------
+
 void CTunnelPath::Compute (CTunnelBase base [2]) 
 {
   double		length;
   int			i, j;
   CSegment*	segP;
   CVertex	vertex;
-  double		theta [2][4],radius [2][4]; // polor coordinates of sides
+  double		theta [2][4], radius [2][4]; // polor coordinates of sides
   double		deltaAngle [4];
-  CVertex	relSidePoints [2][4]; // side m_bezierPoints reletave to center of side 1
-  CVertex	relPoints [4]; // 4 m_bezierPoints of nSegment reletave to 1st point
+  CVertex	relSidePoints [2][4]; // side points reletave to center of side 1
+  CVertex	relPoints [4]; // 4 points of segment reletave to 1st point
   CVertex	relTunnelPoints [MAX_TUNNEL_SEGMENTS];
   double		y, z;
   double		ySpin, zSpin;
@@ -97,8 +118,8 @@ m_bezier.SetPoint (base [1].GetPoint (), 3);
 length = Distance (base [0].GetPoint (), base [1].GetPoint ());
 m_nLength [1] = m_nLength [0];
 m_nLength [0] = int (m_bezier.Length () + length / 40.0);
-if (m_nLength [0] > m_nMaxSegments - 1)
-	m_nLength [0] = m_nMaxSegments - 1;
+if (m_nLength [0] > MaxSegments () - 1)
+	m_nLength [0] = MaxSegments () - 1;
 
 if (m_nLength [1] != m_nLength [0]) { // recompute
 	if (m_nLength [1] > 0)

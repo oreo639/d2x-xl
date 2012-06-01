@@ -64,6 +64,16 @@ class CTunnelBase : public CSideKey {
 	};
 
 //------------------------------------------------------------------------
+// A single segment of a tunnel
+
+class CTunnelElement {
+	public:
+		CDoubleVector	m_node; // path point (segment center)
+		ushort			m_nVertices [4];
+		short				m_nSegment;
+	};
+
+//------------------------------------------------------------------------
 
 class CTunnelPath {
 	private:
@@ -72,9 +82,18 @@ class CTunnelPath {
 	public:
 		short									m_nLength [2]; // current length, previous length [segments]
 		CDynamicArray<CDoubleVector>	m_path;
+		CDynamicArray<CTunnelElement>	m_elements;
 
-	void Compute (CTunnelBase base [2]);
+		void Compute (CTunnelBase base [2]);
 
+		void Remove (int i);
+
+		void Destroy (void);
+
+		inline short MaxSegments (void) {
+			short h = SEGMENT_LIMIT - segmentManager.Count ();
+			return (h > MAX_TUNNEL_SEGMENTS) ? MAX_TUNNEL_SEGMENTS : h;
+			}
 	};
 
 //------------------------------------------------------------------------
@@ -84,16 +103,6 @@ public:
 	double	m_length;
 
 	CSegment _const_ * Segment (void) _const_ { return segmentManager.Segment (m_nSegment); }
-	};
-
-//------------------------------------------------------------------------
-// A single segment of a tunnel
-
-class CTunnelElement {
-	public:
-		CDoubleVector	m_node; // path point (segment center)
-		ushort			m_nCorners [4];
-		short				m_nSegment;
 	};
 
 //------------------------------------------------------------------------
