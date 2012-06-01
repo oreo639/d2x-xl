@@ -103,12 +103,13 @@ m_nPathLength = 0;
 
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Release (int i)
+void CTunnelSegment::Release (int i, bool bVertices)
 {
 while (--i >= 0) {
 	segmentManager.Remove (m_elements [i].m_nSegment);
-	for (int j = 0; j < 4; j++)
-		vertexManager.Delete (m_elements [i].m_nVertices [j]);
+	if (bVertices)
+		for (int j = 0; j < 4; j++)
+			vertexManager.Delete (m_elements [i].m_nVertices [j]);
 	}
 }
 
@@ -422,8 +423,38 @@ SetupVertices ();
 
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Create (short nPathLength, CDynamicArray<CTunnelPath> paths) 
+void CTunnelSegment::Create (short nPathLength, CDynamicArray<CTunnelPath>& paths) 
 {
+if (m_nPathLength != nPathLength) { // recompute
+	if (m_nPathLength > 0)
+		Release (m_nPathLength, false);
+	if ((nPathLength > m_nPathLength) && !m_elements.Resize (nPathLength, false))
+		return;
+	m_nPathLength = nPathLength;
+	for (int i = 0; i < m_nPathLength; i++) {
+		m_elements [i].m_nSegment = segmentManager.Add ();
+		segmentManager.Segment (m_elements [i].m_nSegment)->m_info.bTunnel = 1;
+		}
+	}
+
+ubyte oppVertexIndex [4];
+m_base [0].Segment ()->CreateOppVertexIndex (m_base [0].m_nSide, oppVertexIndex);
+for (short j = 0; j < 4; j++) {
+	// find the path starting at the current corner vertex of the tunnel segment's start side
+	ushort nId = m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j);
+	uint h = 0, l = paths.Length ();
+	for (; h < l; h++)
+		if (paths [h].m_base [0].m_nId == nId)
+			break;
+	if (h == l)
+		continue;
+	CTunnelPath& path = paths [h];
+	for (short i = 0; i < m_nPathLength; i++) {
+	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
+		segP->SetVertexId (m_base [0].m_nSide, j, path.m_vertices [j]);
+		segP->SetVertexId (m_base [1].m_nSide, oppVertexIndex [j], path.m_vertices [j]);
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -539,14 +570,16 @@ bool CTunnelPath::Create (short nPathLength)
 if (m_nPathLength != nPathLength) { // recompute
 	if (m_nPathLength > 0)
 		Release (m_nPathLength);
-	if ((nPathLength > m_nPathLength) && !m_vertices.Resize (nPathLength, false))
+	if ((nPathLength > m_nPathLength) && !m_vertices.Resize (nPathLength + 2, false))
 		return false;
 	m_nPathLength = nPathLength;
-	vertexManager.Add (m_vertices.Buffer (), m_nPathLength);
+	vertexManager.Add (&m_vertices [1], m_nPathLength);
 	}
 
 // calculate nSegment m_bezierPoints
-for (int i = 0; i <= m_nPathLength; i++) 
+m_vertices [0] = m_base [0].m_nId;
+m_vertices [m_nPathLength + 1] = m_base [1].m_nId;
+for (int i = 1; i <= m_nPathLength; i++) 
 	vertexManager [m_vertices [i]] = m_bezier.Compute ((double) i / (double) m_nPathLength);
 return true;
 }
@@ -713,7 +746,7 @@ if (PathLength () <= 0)
 	return false;
 for (int i = 0; i < 4; i++)
 	m_paths [i].Create (m_nPathLength);
-m_segments [0].Create (m_nPathLength);
+m_segments [0].Create (m_nPathLength, m_paths);
 return true;
 }
 

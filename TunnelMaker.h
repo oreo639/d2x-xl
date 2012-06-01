@@ -138,11 +138,11 @@ class CTunnelSegment {
 
 		void Create (short nPathLength);
 
-		void Create (short nPathLength, CDynamicArray<CTunnelPath> paths);
+		void Create (short nPathLength, CDynamicArray<CTunnelPath>& paths);
 
 		void Realize (void);
 
-		void Release (int i);
+		void Release (int i, bool bVertices = true);
 
 		void Destroy (void);
 
