@@ -512,95 +512,6 @@ renderer.EndRender ();
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Stretch (void) 
-{
-
-//undoManager.UpdateBuffer(0);
-
-if (current->SegmentId () == m_info [0].m_nSegment)
-	if (m_info [0].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
-		m_info [0].m_length += TUNNEL_INTERVAL;
-if (current->SegmentId () == m_info [1].m_nSegment)
-	if (m_info [1].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
-		m_info [1].m_length += TUNNEL_INTERVAL;
-DLE.MineView ()->Refresh ();
-}
-
-//------------------------------------------------------------------------------
-
-void CTunnelSegment::Shrink (void) 
-{
-
-//  undoManager.UpdateBuffer(0);
-
-if (current->SegmentId () == m_info [0].m_nSegment)
-	if (m_info [0].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
-		m_info [0].m_length -= TUNNEL_INTERVAL;
-if (current->SegmentId () == m_info [1].m_nSegment)
-	if (m_info [1].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
-		m_info [1].m_length -= TUNNEL_INTERVAL;
-DLE.MineView ()->Refresh ();
-}
-
-//------------------------------------------------------------------------------
-// Action - Spins m_bezierPoints which lie in the y-z plane orthagonal to a normal
-//          Uses normal as center for translating m_bezierPoints.
-//
-// Changes - Chooses axis to normalizes on based on "normal" direction
-//------------------------------------------------------------------------------
-
-CDoubleVector CTunnelMaker::RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
-{
-  double			ySpin,zSpin;
-  char			spinAxis;
-  CVertex		v, n = *normal - *origin, v1, v2;
-
-  // translate coordanites to orgin
-  // choose rotation order
-if (fabs(n.v.z) > fabs(n.v.y))
-	spinAxis = 'Y';
-else 
-	spinAxis = 'Z';
-spinAxis = 'Y';
-
-// start by defining vertex in rectangular coordinates (xz plane)
-v.Set (0, radius * cos (angle), radius * sin (angle));
-
-switch(spinAxis) {
- case 'Y':
-   // calculate angles to normalize direction
-   // spin on y axis to get into the y-z plane
-   ySpin = -atan3 (n.v.z, n.v.x);
-   v1.Set (n.v.x * cos (ySpin) - n.v.z * sin (ySpin), n.v.y, n.v.x * sin (ySpin) + n.v.z * cos (ySpin));
-   // spin on z to get on the x axis
-   zSpin = atan3 (v1.v.y,v1.v.x);
-   // spin vertex back in negative direction (z first then y)
-	zSpin = -zSpin;
-   v2.Set ((double) v.v.x * cos (zSpin) + (double) v.v.y * sin (zSpin), (double) -v.v.x * sin (zSpin) + (double) v.v.y * cos (zSpin), double (v.v.z));
-	ySpin = -ySpin;
-   v1.Set (v2.v.x * cos (ySpin) - v2.v.z * sin (ySpin), v2.v.y, v2.v.x * sin (ySpin) + v2.v.z * cos (ySpin));
-   break;
-
- case 'Z':
-   // calculate angles to normalize direction
-   // spin on z axis to get into the x-z plane
-   zSpin = atan3 (n.v.y, n.v.x);
-   v1.Set (n.v.x * cos (zSpin) + n.v.y * sin (zSpin), -n.v.x * sin (zSpin) + n.v.y * cos (zSpin), n.v.z);
-   // spin on y to get on the x axis
-   ySpin = -atan3 (v1.v.z,v1.v.x);
-   // spin vertex back in negative direction (y first then z)
-	ySpin = -ySpin;
-   v2.Set ((double) v.v.x * cos (ySpin) - (double) v.v.z * sin (ySpin), double (v.v.y), (double) v.v.x * sin (ySpin) + (double) v.v.z * cos (ySpin));
-	zSpin = -zSpin;
-   v1.Set (v2.v.x * cos (zSpin) + v2.v.y * sin (zSpin), -v2.v.x * sin (zSpin) + v2.v.y * cos (zSpin), v2.v.z);
-   break;
-	}
-v = *normal + v1;
-return v;
-}
-
-//------------------------------------------------------------------------------
-
 void CTunnelMaker::Destroy (void)
 {
 if (m_bActive) {
@@ -640,9 +551,11 @@ if (!m_bActive) {
 		return;
 		}
 
-	dynamic_cast<CSideKey&> (m_info [0]) = dynamic_cast<CSideKey&> (selections [0]);
-	dynamic_cast<CSideKey&> (m_info [1]) = dynamic_cast<CSideKey&> (selections [1]);
-	double length = Distance (segmentManager.CalcSideCenter (m_info [0]), segmentManager.CalcSideCenter (m_info [1]));
+	dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (selections [0]);
+	dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (selections [1]);
+	m_base [0].Setup ();
+	m_base [1].Setup ();
+	double length = Distance (segmentManager.CalcSideCenter (m_base [0]), segmentManager.CalcSideCenter (m_base [1]));
 	if (length < 50) {
 		ErrorMsg ("End points of segment are too close.\n\n"
 					 "Hint: Select two sides which are further apart\n"
@@ -656,8 +569,6 @@ if (!m_bActive) {
 		length = MIN_TUNNEL_LENGTH;
 	else if (length > MAX_TUNNEL_LENGTH)
 		length = MAX_TUNNEL_LENGTH;
-	m_info [0].m_length = 
-	m_info [1].m_length = length;
 
 	// setup intermediate points for a cubic bezier curve
 	m_bezier.SetPoint (m_base [0].GetPoint (), 0);
@@ -672,6 +583,7 @@ if (!m_bActive) {
 				    "Press 'G' or select Tools/Tunnel Generator when you are finished.");
 
 	m_tunnel.Create (1);
+	m_tunnel [0].Setup (m_bezier, m_base);
 	undoManager.Lock ();
 	m_bActive = true;
 	}
@@ -694,17 +606,33 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------------
 
+void CTunnelMaker::ComputeTunnel (void)
+{
+m_tunnel [0].Compute ();
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* view)
+{
+m_tunnel [0].Draw (renderer, redPen, bluePen, view);
+}
+
+//------------------------------------------------------------------------------
+
 void CTunnelMaker::Stretch (void) 
 {
 
 //undoManager.UpdateBuffer(0);
 
-if (current->SegmentId () == m_info [0].m_nSegment)
-	if (m_info [0].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
-		m_info [0].m_length += TUNNEL_INTERVAL;
-if (current->SegmentId () == m_info [1].m_nSegment)
-	if (m_info [1].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
-		m_info [1].m_length += TUNNEL_INTERVAL;
+if (current->SegmentId () == m_base [0].m_nSegment) {
+	if (m_bezier.GetLength (0) < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+		m_bezier.SetLength (m_bezier.GetLength (0) + TUNNEL_INTERVAL, 0);
+	}
+if (current->SegmentId () == m_base [1].m_nSegment) {
+	if (m_bezier.GetLength (1) < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+		m_bezier.SetLength (m_bezier.GetLength (1) + TUNNEL_INTERVAL, 1);
+	}
 DLE.MineView ()->Refresh ();
 }
 
@@ -715,12 +643,14 @@ void CTunnelMaker::Shrink (void)
 
 //  undoManager.UpdateBuffer(0);
 
-if (current->SegmentId () == m_info [0].m_nSegment)
+if (current->SegmentId () == m_base [0].m_nSegment) {
 	if (m_bezier.GetLength (0) > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
 		m_bezier.SetLength (m_bezier.GetLength (0) - TUNNEL_INTERVAL, 0);
-if (current->SegmentId () == m_info [1].m_nSegment)
-	if (m_info [1].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
-		m_info [1].m_length -= TUNNEL_INTERVAL;
+	}
+if (current->SegmentId () == m_base [1].m_nSegment) {
+	if (m_bezier.GetLength (1) > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
+		m_bezier.SetLength (m_bezier.GetLength (1) - TUNNEL_INTERVAL, 1);
+	}
 DLE.MineView ()->Refresh ();
 }
 
