@@ -94,7 +94,7 @@ if ((m_nSegment >= 0) && (m_nSide >= 0)) {
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Setup (CCubicBezier& bezier, CTunnelBase base [2])
+void CTunnelSegment::Setup (CCubicBezier* bezier, CTunnelBase base [2])
 {
 m_bezier = bezier;
 memcpy (m_base, base, sizeof (m_base));
@@ -316,7 +316,6 @@ for (short i = 0; i < m_nPathLength; i++)
 
 void CTunnelSegment::Compute (short nPathLength) 
 {
-  double		length;
   int			i, j;
   CSegment*	segP;
   CVertex	vertex;
@@ -336,27 +335,27 @@ if (m_nPathLength != nPathLength) { // recompute
 	m_nPathLength = nPathLength;
 	for (i = 0; i < m_nPathLength; i++) {
 		m_elements [i].m_nSegment = segmentManager.Add ();
-		segmentManager.Segment (m_elements [i].m_nSegment)->m_base.bTunnel = 1;
+		segmentManager.Segment (m_elements [i].m_nSegment)->m_info.bTunnel = 1;
 		vertexManager.Add (&m_elements [i].m_nVertices [0], 4);
 		}
 	}
 
 // calculate nSegment m_bezierPoints
 for (i = 0; i <= m_nPathLength; i++) 
-	m_elements [i].m_node = m_bezier.Compute ((double) i / (double) m_nPathLength);
+	m_elements [i].m_node = m_bezier->Compute ((double) i / (double) m_nPathLength);
 
 // make all points relative to first face (translation)
 for (i = 0; i < 4; i++) 
-	relPoints [i] = m_bezier.GetPoint (i) - m_bezier.GetPoint (0);
+	relPoints [i] = m_bezier->GetPoint (i) - m_bezier->GetPoint (0);
 
 for (i = 0; i < 2; i++) {
 	segP = segmentManager.Segment (m_base [i]);
 	for (j = 0; j < 4; j++) 
-		relSidePoints [i][j] = *segP->Vertex (m_base [i].m_nSide, j) - m_bezier.GetPoint (0);
+		relSidePoints [i][j] = *segP->Vertex (m_base [i].m_nSide, j) - m_bezier->GetPoint (0);
 	}
 
 for (i = 0; i < m_nPathLength; i++)
-	m_elements [i].m_relNode = m_elements [i].m_node - m_bezier.GetPoint (0);
+	m_elements [i].m_relNode = m_elements [i].m_node - m_bezier->GetPoint (0);
 
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
 ySpin = -atan3 (relPoints [1].v.z, relPoints [1].v.x); // to y-z plane
@@ -417,7 +416,7 @@ for (i = 0; i < m_nPathLength - 1; i++) {
 		// spin vertices
 		SpinBackPoint (vertP, ySpin, zSpin);
 		// translate point back
-		*vertP += m_bezier.GetPoint (0);
+		*vertP += m_bezier->GetPoint (0);
 		}
 	}
 SetupVertices ();
@@ -432,8 +431,8 @@ for (short i = 0; i < m_nPathLength; i++) {
 	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
 	// copy current segment
 	*segP = *segmentManager.Segment (current->SegmentId ());
-	for (int i = 0; i < 6; i++)
-		segP->SetChild (i, -1);
+	for (int j = 0; j < 6; j++)
+		segP->SetChild (j, -1);
 	segP->m_info.bTunnel = 0;
 	if (i == 0) {
 		segP->SetChild (oppSideTable [m_base [0].m_nSide], m_base [0].m_nSegment);
@@ -461,12 +460,12 @@ void CTunnelSegment::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CVi
 CDC* pDC = renderer.DC ();
 CViewMatrix* viewMatrix = renderer.ViewMatrix ();
 
-Compute ();
+Compute (m_nPathLength);
 
 renderer.BeginRender ();
 for (int i = 0; i < 4; i++) {
-	m_bezier.Transform (viewMatrix);
-	m_bezier.Project (viewMatrix);
+	m_bezier->Transform (viewMatrix);
+	m_bezier->Project (viewMatrix);
 	}
 for (int i = 0; i < m_nPathLength; i++) {
 	for (int j = 0; j < 4; j++) {
@@ -482,18 +481,18 @@ renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 renderer.SelectPen (penRed + 1);
 
 CMineView* mineView = DLE.MineView ();
-if (m_bezier.GetPoint (1).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-	if (m_bezier.GetPoint (0).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-		renderer.MoveTo (m_bezier.GetPoint (0).m_screen.x, m_bezier.GetPoint (0).m_screen.y);
-		renderer.LineTo (m_bezier.GetPoint (1).m_screen.x, m_bezier.GetPoint (1).m_screen.y);
-		renderer.Ellipse (m_bezier.GetPoint (1), 4, 4);
+if (m_bezier->GetPoint (1).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+	if (m_bezier->GetPoint (0).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+		renderer.MoveTo (m_bezier->GetPoint (0).m_screen.x, m_bezier->GetPoint (0).m_screen.y);
+		renderer.LineTo (m_bezier->GetPoint (1).m_screen.x, m_bezier->GetPoint (1).m_screen.y);
+		renderer.Ellipse (m_bezier->GetPoint (1), 4, 4);
 		}
 	}
-if (m_bezier.GetPoint (2).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-	if (m_bezier.GetPoint (3).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-		renderer.MoveTo (m_bezier.GetPoint (3).m_screen.x, m_bezier.GetPoint (3).m_screen.y);
-		renderer.LineTo (m_bezier.GetPoint (2).m_screen.x, m_bezier.GetPoint (2).m_screen.y);
-		renderer.Ellipse (m_bezier.GetPoint (2), 4, 4);
+if (m_bezier->GetPoint (2).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+	if (m_bezier->GetPoint (3).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+		renderer.MoveTo (m_bezier->GetPoint (3).m_screen.x, m_bezier->GetPoint (3).m_screen.y);
+		renderer.LineTo (m_bezier->GetPoint (2).m_screen.x, m_bezier->GetPoint (2).m_screen.y);
+		renderer.Ellipse (m_bezier->GetPoint (2), 4, 4);
 		}
 	}
 renderer.SelectPen (penBlue + 1);
@@ -577,7 +576,7 @@ if (!m_bActive) {
 				    "Press 'G' or select Tools/Tunnel Generator when you are finished.");
 
 	m_tunnel.Create (1);
-	m_tunnel [0].Setup (m_bezier, m_base);
+	m_tunnel [0].Setup (&m_bezier, m_base);
 	undoManager.Lock ();
 	m_bActive = true;
 	}
@@ -589,7 +588,7 @@ else {
 	else {
 		Destroy ();
 		undoManager.Begin (udSegments | udVertices);
-		m_tunnel [0].Compute ();
+		m_tunnel [0].Compute (m_nPathLength);
 		m_tunnel [0].Realize ();
 		undoManager.End ();
 		}
@@ -656,18 +655,6 @@ if (current->SegmentId () == m_base [1].m_nSegment) {
 		m_bezier.SetLength (m_bezier.GetLength (1) - TUNNEL_INTERVAL, 1);
 	}
 DLE.MineView ()->Refresh ();
-}
-
-//------------------------------------------------------------------------------
-
-void CTunnelMaker::Compute (CTunnelBase base [2]) 
-{
-}
-
-//------------------------------------------------------------------------------
-
-void CTunnelMaker::ComputeTunnel (void) 
-{
 }
 
 //------------------------------------------------------------------------------

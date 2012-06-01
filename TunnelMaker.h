@@ -32,7 +32,7 @@ class CCubicBezier {
 
 		inline CVertex& GetPoint (int i) { return m_points [i]; }
 
-		inline double SetLength (double length, int i) { m_length [i] = length; }
+		inline double SetLength (double length, int i) { return m_length [i] = length; }
 
 		inline double GetLength (int i) { return fabs (m_length [i]); }
 
@@ -93,14 +93,14 @@ class CTunnelElement {
 
 class CTunnelSegment {
 	private:
-		CCubicBezier&	m_bezier;
+		CCubicBezier*	m_bezier;
 		CTunnelBase		m_base [2];
 
 	public:
 		short									m_nPathLength; // current path length
 		CDynamicArray<CTunnelElement>	m_elements;
 
-		void Setup (CCubicBezier& bezier, CTunnelBase base [2]);
+		void Setup (CCubicBezier* bezier, CTunnelBase base [2]);
 
 		void Compute (short nPathLength);
 
@@ -143,12 +143,14 @@ public:
 class CTunnelMaker {
 	private:
 		bool									m_bActive;
-		CCubicBezier&						m_bezier;
+		CCubicBezier						m_bezier;
 		short									m_nPathLength;
 		CTunnelBase							m_base [2];
 		CDynamicArray<CTunnelSegment>	m_tunnel;
 
 	public:
+		CTunnelMaker () {}
+
 		void Create (void); 
 
 		bool Active (bool bMsg = true) { 
