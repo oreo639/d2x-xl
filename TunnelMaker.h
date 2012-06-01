@@ -154,6 +154,8 @@ class CTunnelMaker {
 
 		void Create (void); 
 
+		void Setup (void);
+		
 		bool Active (bool bMsg = true) { 
 			if (!m_bActive)
 				return false; 
@@ -187,6 +189,8 @@ class CTunnelMaker {
 			short h = SEGMENT_LIMIT - segmentManager.Count ();
 			return (h > MAX_TUNNEL_SEGMENTS) ? MAX_TUNNEL_SEGMENTS : h;
 			}
+
+		void Update (void);
 	};
 
 extern CTunnelMaker tunnelMaker;

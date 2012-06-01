@@ -539,33 +539,7 @@ if (!m_bActive) {
 		return;
 		}
 
-	dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (selections [0]);
-	dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (selections [1]);
-	m_base [0].Setup ();
-	m_base [1].Setup ();
-	double length = Distance (segmentManager.CalcSideCenter (m_base [0]), segmentManager.CalcSideCenter (m_base [1]));
-	if (length < 50) {
-		ErrorMsg ("End points of segment are too close.\n\n"
-					 "Hint: Select two sides which are further apart\n"
-					 "using the spacebar and left/right arrow keys,\n"
-					 "then try again.");
-		return;
-		}
-	// base nSegment length on distance between cubes
-	length *= 0.5;
-	if (length < MIN_TUNNEL_LENGTH)
-		length = MIN_TUNNEL_LENGTH;
-	else if (length > MAX_TUNNEL_LENGTH)
-		length = MAX_TUNNEL_LENGTH;
-
-	// setup intermediate points for a cubic bezier curve
-	m_nGranularity = 0;
-	m_bezier.SetLength (length, 0);
-	m_bezier.SetLength (length, 1);
-	m_bezier.SetPoint (m_base [0].GetPoint (), 0);
-	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
-	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
-	m_bezier.SetPoint (m_base [1].GetPoint (), 3);
+	Setup ();
 
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("Place the current segment on one of the segment end points.\n\n"
@@ -597,6 +571,48 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------------
 
+void CTunnelMaker::Setup (void)
+{
+dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (selections [0]);
+dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (selections [1]);
+m_base [0].Setup ();
+m_base [1].Setup ();
+double length = Distance (segmentManager.CalcSideCenter (m_base [0]), segmentManager.CalcSideCenter (m_base [1]));
+if (length < 50) {
+	ErrorMsg ("End points of segment are too close.\n\n"
+					"Hint: Select two sides which are further apart\n"
+					"using the spacebar and left/right arrow keys,\n"
+					"then try again.");
+	return;
+	}
+// base nSegment length on distance between cubes
+length *= 0.5;
+if (length < MIN_TUNNEL_LENGTH)
+	length = MIN_TUNNEL_LENGTH;
+else if (length > MAX_TUNNEL_LENGTH)
+	length = MAX_TUNNEL_LENGTH;
+
+// setup intermediate points for a cubic bezier curve
+m_nGranularity = 0;
+m_bezier.SetLength (length, 0);
+m_bezier.SetLength (length, 1);
+m_bezier.SetPoint (m_base [0].GetPoint (), 0);
+m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
+m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
+m_bezier.SetPoint (m_base [1].GetPoint (), 3);
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelMaker::Update (void) 
+{ 
+if ((*((CSideKey*) current) != *((CSideKey*) &m_base [0]) && *((CSideKey*) current) != *((CSideKey*) &m_base [1])) ||
+    (*((CSideKey*) other) != *((CSideKey*) &m_base [0]) && *((CSideKey*) other) != *((CSideKey*) &m_base [1])))
+	Setup ();
+}
+
+//------------------------------------------------------------------------------
+
 short CTunnelMaker::PathLength (void)
 {
 m_nPathLength = short (m_bezier.Length () / 20.0 + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 20.0) + m_nGranularity;
@@ -618,9 +634,12 @@ m_tunnel [0].Compute (PathLength ());
 
 void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix)
 {
-if (m_bActive && (PathLength () > 0)) {
-	m_tunnel [0].Compute (m_nPathLength);
-	m_tunnel [0].Draw (renderer, redPen, bluePen, viewMatrix);
+if (m_bActive) {
+	Update ();
+	if (PathLength () > 0) {
+		m_tunnel [0].Compute (m_nPathLength);
+		m_tunnel [0].Draw (renderer, redPen, bluePen, viewMatrix);
+		}
 	}
 }
 
