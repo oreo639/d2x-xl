@@ -606,9 +606,14 @@ m_tunnel [0].Setup (&m_bezier, m_base);
 
 void CTunnelMaker::Update (void) 
 { 
-if ((*((CSideKey*) current) != *((CSideKey*) &m_base [0]) && *((CSideKey*) current) != *((CSideKey*) &m_base [1])) ||
-    (*((CSideKey*) other) != *((CSideKey*) &m_base [0]) && *((CSideKey*) other) != *((CSideKey*) &m_base [1])))
-	Setup ();
+if ((*((CSideKey*) current) == *((CSideKey*) &m_base [0]) || *((CSideKey*) current) == *((CSideKey*) &m_base [1])) &&
+    (*((CSideKey*) other) == *((CSideKey*) &m_base [0]) || *((CSideKey*) other) == *((CSideKey*) &m_base [1])))
+	return;
+if (*((CSideKey*) current) == *((CSideKey*) other))
+	return;
+if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
+	return;
+Setup ();
 }
 
 //------------------------------------------------------------------------------
