@@ -602,6 +602,8 @@ short CTunnelMaker::PathLength (void)
 m_nPathLength = short (m_bezier.Length () / 20.0 + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 20.0) + m_nGranularity;
 if (m_nPathLength > MaxSegments () - 1)
 	m_nPathLength = MaxSegments () - 1;
+else if (m_nPathLength < 3)
+	m_nPathLength = 3;
 return m_nPathLength;
 }
 
