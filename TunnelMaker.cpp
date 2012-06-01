@@ -103,7 +103,7 @@ m_nPathLength = 0;
 
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Remove (int i)
+void CTunnelSegment::Release (int i)
 {
 while (--i >= 0) {
 	segmentManager.Remove (m_elements [i].m_nSegment);
@@ -116,7 +116,7 @@ while (--i >= 0) {
 
 void CTunnelSegment::Destroy (void)
 {
-Remove (m_nPathLength);
+Release (m_nPathLength);
 m_nPathLength = 0;
 m_elements.Destroy ();
 }
@@ -327,7 +327,7 @@ void CTunnelSegment::Compute (short nPathLength)
 
 if (m_nPathLength != nPathLength) { // recompute
 	if (m_nPathLength > 0)
-		Remove (m_nPathLength);
+		Release (m_nPathLength);
 	if ((nPathLength > m_nPathLength) && !m_elements.Resize (nPathLength, false))
 		return;
 	m_nPathLength = nPathLength;
@@ -500,6 +500,48 @@ renderer.EndRender ();
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+void CTunnelPath::Setup (CPathBase base [2])
+{
+memcpy (m_base, base, sizeof (m_base));
+m_bezier.SetLength (m_base [0].m_length, 0);
+m_bezier.SetLength (m_base [1].m_length, 1);
+m_bezier.SetPoint (m_base [0].m_pos, 0);
+m_bezier.SetPoint (m_base [0].m_pos + m_base [0].m_normal * m_base [0].m_length, 1);
+m_bezier.SetPoint (m_base [1].m_pos + m_base [1].m_normal * m_base [1].m_length, 2);
+m_bezier.SetPoint (m_base [1].m_pos, 3);
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelPath::Release (int l)
+{
+while (--l >= 0)
+	vertexManager.Delete (m_vertices [l]);
+}
+
+//------------------------------------------------------------------------------
+
+bool CTunnelPath::Create (short nPathLength)
+{
+if (m_nPathLength != nPathLength) { // recompute
+	if (m_nPathLength > 0)
+		Release (m_nPathLength);
+	if ((nPathLength > m_nPathLength) && !m_vertices.Resize (nPathLength, false))
+		return false;
+	m_nPathLength = nPathLength;
+	vertexManager.Add (m_vertices.Buffer (), m_nPathLength);
+	}
+
+// calculate nSegment m_bezierPoints
+for (int i = 0; i <= m_nPathLength; i++) 
+	vertexManager [m_vertices [i]] = m_bezier.Compute ((double) i / (double) m_nPathLength);
+return true;
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 void CTunnelMaker::Destroy (void)
 {
 if (m_bActive) {
@@ -511,12 +553,6 @@ DLE.MineView ()->Refresh (false);
 }
 
 //------------------------------------------------------------------------------
-// MENU - Tunnel Generator
-//
-// Action - This is like a super "join" feature which uses tunnels to
-//          connect the cubes.  The number of cubes is determined
-//          automatically.
-//------------------------------------------------------------------------------
 
 void CTunnelMaker::Create (void) 
 {
@@ -525,7 +561,7 @@ if (!m_bActive) {
 	if (nMaxSegments > MAX_TUNNEL_SEGMENTS)
 		nMaxSegments = MAX_TUNNEL_SEGMENTS;
 	else if (nMaxSegments < 3) {
-		ErrorMsg ("Insufficient number of free vertices and/or segments\nto use the segment generator.");
+		ErrorMsg ("Insufficient number of free vertices and/or segments\nto use the tunnel generator.");
 		return;
 		}
 	// make sure there are no children on either segment/side

@@ -106,7 +106,7 @@ class CTunnelSegment {
 
 		void Realize (void);
 
-		void Remove (int i);
+		void Release (int i);
 
 		void Destroy (void);
 
@@ -130,14 +130,39 @@ class CTunnelSegment {
 	};
 
 //------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
-class CTunnelInfo : public CSideKey {
-public:
-	double	m_length;
-
-	CSegment * Segment (void) { return segmentManager.Segment (m_nSegment); }
+class CPathBase {
+	public:
+		CVertex	m_pos;
+		CVertex	m_normal;
+		ushort	m_nId;
+		double	m_length;
 	};
 
+//------------------------------------------------------------------------
+
+class CTunnelPath {
+	public:
+		CCubicBezier				m_bezier;
+		CPathBase					m_base [2];
+		ushort						m_nId;
+		ushort						m_nEnd;
+		short							m_nPathLength;
+		CDynamicArray<ushort>	m_vertices;
+
+		CTunnelPath () {}
+
+		void CTunnelPath::Setup (CPathBase base [2]);
+
+		void Release (int l);
+
+		bool Create (short nPathLength);
+	};
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
 class CTunnelMaker {
