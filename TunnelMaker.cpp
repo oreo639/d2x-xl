@@ -32,7 +32,7 @@ return i;
 
 double CTunnelMaker::Coeff (int n, int i) 
 {
-return ((double)Faculty (n) / ((double)Faculty (i) * (double) Faculty (n-i)));
+return ((double) Faculty (n) / ((double) Faculty (i) * (double) Faculty (n-i)));
 }
 
 //------------------------------------------------------------------------------
@@ -193,32 +193,35 @@ return v;
 
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* origin, CVertex* normal) 
+void CTunnelMaker::PolarPoints (double* angle, double* radius, CVertex* vertex, CVertex* origin, CVertex* normal) 
 {
 // translate coordinates to origin
+CDoubleVector v = *vertex - *origin;
+CDoubleVector n = *normal - *origin;
+#if 0
 double vx = vertex->v.x - origin->v.x;
 double vy = vertex->v.y - origin->v.y;
 double vz = vertex->v.z - origin->v.z;
 double nx = normal->v.x - origin->v.x;
 double ny = normal->v.y - origin->v.y;
 double nz = normal->v.z - origin->v.z;
-
+#endif
 // calculate angles to normalize direction
 // spin on z axis to get into the x-z plane
-double zSpin = atan3 (ny,nx);
-double x1 = nx * cos (zSpin) + ny * sin (zSpin);
-double z1 = nz;
+double zSpin = atan3 (n.v.y, n.v.x);
+double x1 = n.v.x * cos (zSpin) + n.v.y * sin (zSpin);
+double z1 = n.v.z;
 // spin on y to get on the x axis
-double ySpin = -atan3 (z1,x1);
+double ySpin = -atan3 (z1, x1);
 // spin vertex (spin on z then y)
-x1 = vx * cos (zSpin) + vy * sin (zSpin);
-double y1 = -vx * sin (zSpin) + vy * cos (zSpin);
-z1 = vz;
+x1 = v.v.x * cos (zSpin) + v.v.y * sin (zSpin);
+double y1 = -v.v.x * sin (zSpin) + v.v.y * cos (zSpin);
+z1 = v.v.z;
 //  x2 =   x1 * cos (ySpin) - z1 * sin (ySpin);
 double y2 = y1;
 double z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 // convert to polar
-*radius = sqrt(y2 * y2 + z2 * z2);  // ignore any x offset
+*radius = sqrt (y2 * y2 + z2 * z2);  // ignore any x offset
 *angle = atan3 (z2, y2);
 }
 
