@@ -459,8 +459,6 @@ void CTunnelSegment::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CVi
 {
 CDC* pDC = renderer.DC ();
 
-Compute (m_nPathLength);
-
 renderer.BeginRender ();
 for (int i = 0; i < 4; i++) {
 	m_bezier->Transform (viewMatrix);
@@ -587,7 +585,7 @@ else {
 	else {
 		Destroy ();
 		undoManager.Begin (udSegments | udVertices);
-		m_tunnel [0].Compute (m_nPathLength);
+		m_tunnel [0].Compute (PathLength ());
 		m_tunnel [0].Realize ();
 		undoManager.End ();
 		}
@@ -617,8 +615,10 @@ m_tunnel [0].Compute (PathLength ());
 
 void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix)
 {
-if (m_nPathLength > 0)
+if (m_bActive && (PathLength () > 0)) {
+	m_tunnel [0].Compute (m_nPathLength);
 	m_tunnel [0].Draw (renderer, redPen, bluePen, viewMatrix);
+	}
 }
 
 //------------------------------------------------------------------------------
