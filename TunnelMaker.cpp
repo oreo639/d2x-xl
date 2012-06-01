@@ -455,6 +455,8 @@ for (short j = 0; j < 4; j++) {
 		segP->SetVertexId (h, path.m_vertices [i]);
 		}
 	}
+for (short i = 0; i < m_nPathLength; i++)
+	UntwistSegment (m_elements [i].m_nSegment, m_base [0].m_nSide);
 }
 
 //------------------------------------------------------------------------------
@@ -708,10 +710,12 @@ base [0].m_normal = selections [0].Side ()->Normal ();
 selections [1].Segment ()->ComputeNormals (selections [1].SideId ());
 base [1].m_normal = selections [1].Side ()->Normal ();
 
+ubyte oppVertexIndex [4];
+selections [1].Segment ()->CreateOppVertexIndex (selections [1].SideId (), oppVertexIndex);
 for (int i = 0; i < 4; i++) {
 	base [0].m_nId = selections [0].Segment ()->VertexId (selections [0].SideId (), selections [0].Point () + i);
 	base [0].m_pos = vertexManager [base [0].m_nId];
-	base [1].m_nId = selections [1].Segment ()->VertexId (selections [1].SideId (), selections [1].Point () + i);
+	base [1].m_nId = selections [1].Segment ()->VertexId (selections [1].SideId (), oppVertexIndex [(selections [1].Point () + i) % 4]);
 	base [1].m_pos = vertexManager [base [1].m_nId];
 	m_paths [i].Setup (base);
 	}
