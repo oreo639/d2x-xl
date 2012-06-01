@@ -172,7 +172,8 @@ class CTunnelMaker {
 		short									m_nPathLength;
 		short									m_nGranularity;
 		CTunnelBase							m_base [2];
-		CDynamicArray<CTunnelSegment>	m_tunnel;
+		CDynamicArray<CTunnelSegment>	m_segments;
+		CDynamicArray<CTunnelPath>		m_paths;
 
 	public:
 		CTunnelMaker () : m_nPathLength (0) {}

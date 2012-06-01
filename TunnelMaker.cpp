@@ -545,8 +545,8 @@ return true;
 void CTunnelMaker::Destroy (void)
 {
 if (m_bActive) {
-	for (uint i = 0; i < m_tunnel.Length (); i++)
-		m_tunnel [i].Destroy ();
+	for (uint i = 0; i < m_segments.Length (); i++)
+		m_segments [i].Destroy ();
 	m_bActive = false;
 	}
 DLE.MineView ()->Refresh (false);
@@ -575,7 +575,23 @@ if (!m_bActive) {
 		return;
 		}
 
-	m_tunnel.Create (1);
+	if (!(m_segments.Create (1) && m_paths.Create (4)))
+		return;
+
+	CPathBase base [2];
+
+	current->Segment ()->ComputeNormals (current->SideId ());
+	base [0].m_normal = current->Side ()->Normal ();
+	other->Segment ()->ComputeNormals (other->SideId ());
+	base [0].m_normal = other->Side ()->Normal ();
+
+	for (int i = 0; i < 4; i++) {
+		base [0].m_nId = current->Segment ()->VertexId (current->SideId (), current->Point () + i);
+		base [0].m_pos = vertexManager [base [0].m_nId];
+		base [1].m_nId = other->Segment ()->VertexId (other->SideId (), other->Point () + i);
+		base [1].m_pos = vertexManager [base [1].m_nId];
+		m_paths [i].Setup (base);
+		}
 	Setup ();
 	undoManager.Lock ();
 
@@ -595,8 +611,8 @@ else {
 	else {
 		Destroy ();
 		undoManager.Begin (udSegments | udVertices);
-		m_tunnel [0].Compute (PathLength ());
-		m_tunnel [0].Realize ();
+		m_segments [0].Compute (PathLength ());
+		m_segments [0].Realize ();
 		undoManager.End ();
 		}
 	}
@@ -635,7 +651,7 @@ m_bezier.SetPoint (m_base [0].GetPoint (), 0);
 m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
 m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
 m_bezier.SetPoint (m_base [1].GetPoint (), 3);
-m_tunnel [0].Setup (&m_bezier, m_base);
+m_segments [0].Setup (&m_bezier, m_base);
 }
 
 //------------------------------------------------------------------------------
@@ -668,7 +684,7 @@ return m_nPathLength;
 
 void CTunnelMaker::ComputeTunnel (void)
 {
-m_tunnel [0].Compute (PathLength ());
+m_segments [0].Compute (PathLength ());
 }
 
 //------------------------------------------------------------------------------
@@ -678,8 +694,8 @@ void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CView
 if (m_bActive) {
 	Update ();
 	if (PathLength () > 0) {
-		m_tunnel [0].Compute (m_nPathLength);
-		m_tunnel [0].Draw (renderer, redPen, bluePen, viewMatrix);
+		m_segments [0].Compute (m_nPathLength);
+		m_segments [0].Draw (renderer, redPen, bluePen, viewMatrix);
 		}
 	}
 }
