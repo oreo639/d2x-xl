@@ -94,23 +94,18 @@ if ((m_nSegment >= 0) && (m_nSide >= 0)) {
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Setup (CCubicBezier* bezier, CTunnelBase base [2])
+void CTunnelSegment::Setup (CTunnelBase base [2])
 {
-m_bezier = bezier;
 memcpy (m_base, base, sizeof (m_base));
 m_nPathLength = 0;
 }
 
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Release (bool bVertices)
+void CTunnelSegment::Release (void)
 {
-for (int i = m_nPathLength; --i >= 0; ) {
+for (int i = m_nPathLength; --i >= 0; )
 	segmentManager.Remove (m_elements [i].m_nSegment);
-	if (bVertices)
-		for (int j = 0; j < 4; j++)
-			vertexManager.Delete (m_elements [i].m_nVertices [j]);
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -314,7 +309,7 @@ for (short i = 0; i < m_nPathLength; i++)
 
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Create (short nPathLength) 
+void CTunnelSegment::Create (CTunnelPath& path) 
 {
   int			i, j;
   CSegment*	segP;
@@ -326,35 +321,30 @@ void CTunnelSegment::Create (short nPathLength)
   double		y, z;
   double		ySpin, zSpin;
 
-if (m_nPathLength != nPathLength) { // recompute
+if (m_nPathLength != path.Length ()) { // recompute
 	if (m_nPathLength > 0)
 		Release ();
-	if ((nPathLength > m_nPathLength) && !m_elements.Resize (nPathLength, false))
+	if ((path.Length () > m_nPathLength) && !m_elements.Resize (path.Length (), false))
 		return;
-	m_nPathLength = nPathLength;
+	m_nPathLength = path.Length ();
 	for (i = 0; i < m_nPathLength; i++) {
 		m_elements [i].m_nSegment = segmentManager.Add ();
 		segmentManager.Segment (m_elements [i].m_nSegment)->m_info.bTunnel = 1;
-		vertexManager.Add (&m_elements [i].m_nVertices [0], 4);
 		}
 	}
 
-// calculate nSegment m_bezierPoints
-for (i = 0; i <= m_nPathLength; i++) 
-	m_elements [i].m_node = m_bezier->Compute ((double) i / (double) m_nPathLength);
-
 // make all points relative to first face (translation)
 for (i = 0; i < 4; i++) 
-	relPoints [i] = m_bezier->GetPoint (i) - m_bezier->GetPoint (0);
+	relPoints [i] = path.Bezier ().GetPoint (i) - path.Bezier ().GetPoint (0);
 
 for (i = 0; i < 2; i++) {
 	segP = segmentManager.Segment (m_base [i]);
 	for (j = 0; j < 4; j++) 
-		relSidePoints [i][j] = *segP->Vertex (m_base [i].m_nSide, j) - m_bezier->GetPoint (0);
+		relSidePoints [i][j] = *segP->Vertex (m_base [i].m_nSide, j) - path.Bezier ().GetPoint (0);
 	}
 
 for (i = 0; i < m_nPathLength; i++)
-	m_elements [i].m_relNode = m_elements [i].m_node - m_bezier->GetPoint (0);
+	m_elements [i].m_relNode = m_elements [i].m_node - path.Bezier ().GetPoint (0);
 
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
 ySpin = -atan3 (relPoints [1].v.z, relPoints [1].v.x); // to y-z plane
@@ -415,48 +405,10 @@ for (i = 0; i < m_nPathLength - 1; i++) {
 		// spin vertices
 		SpinBackPoint (vertP, ySpin, zSpin);
 		// translate point back
-		*vertP += m_bezier->GetPoint (0);
+		*vertP += path.Bezier ().GetPoint (0);
 		}
 	}
 SetupVertices ();
-}
-
-//------------------------------------------------------------------------------
-
-void CTunnelSegment::Create (short nPathLength, CDynamicArray<CTunnelPath>& paths) 
-{
-if (m_nPathLength != nPathLength) { // recompute
-	if (m_nPathLength > 0)
-		Release (false);
-	if ((nPathLength > m_nPathLength) && !m_elements.Resize (nPathLength, false))
-		return;
-	m_nPathLength = nPathLength;
-	for (int i = 0; i < m_nPathLength; i++) {
-		m_elements [i].m_nSegment = segmentManager.Add ();
-		segmentManager.Segment (m_elements [i].m_nSegment)->m_info.bTunnel = 1;
-		}
-	}
-
-ubyte oppVertexIndex [4];
-m_base [0].Segment ()->CreateOppVertexIndex (m_base [0].m_nSide, oppVertexIndex);
-for (short j = 0; j < 4; j++) {
-	// find the path starting at the current corner vertex of the tunnel segment's start side
-	ushort nId = m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j);
-	uint nPath = 0, l = paths.Length ();
-	for (; nPath < l; nPath++)
-		if (paths [nPath].m_base [0].m_nId == nId)
-			break;
-	if (nPath == l)
-		continue;
-	CTunnelPath& path = paths [nPath];
-	for (short i = 0, h = oppVertexIndex [j]; i < m_nPathLength; i++) {
-		CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
-		segP->SetVertexId (m_base [0].m_nSide, j, path.m_vertices [i + 1]);
-		segP->SetVertexId (h, path.m_vertices [i]);
-		}
-	}
-for (short i = 0; i < m_nPathLength; i++)
-	UntwistSegment (m_elements [i].m_nSegment, m_base [0].m_nSide);
 }
 
 //------------------------------------------------------------------------------
@@ -498,8 +450,8 @@ CDC* pDC = renderer.DC ();
 
 renderer.BeginRender ();
 for (int i = 0; i < 4; i++) {
-	m_bezier->Transform (viewMatrix);
-	m_bezier->Project (viewMatrix);
+	path.Bezier ().Transform (viewMatrix);
+	path.Bezier ().Project (viewMatrix);
 	}
 for (int i = 0; i < m_nPathLength; i++) {
 	for (int j = 0; j < 4; j++) {
@@ -515,18 +467,18 @@ renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 renderer.SelectPen (penRed + 1);
 
 CMineView* mineView = DLE.MineView ();
-if (m_bezier->GetPoint (1).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-	if (m_bezier->GetPoint (0).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-		renderer.MoveTo (m_bezier->GetPoint (0).m_screen.x, m_bezier->GetPoint (0).m_screen.y);
-		renderer.LineTo (m_bezier->GetPoint (1).m_screen.x, m_bezier->GetPoint (1).m_screen.y);
-		renderer.Ellipse (m_bezier->GetPoint (1), 4, 4);
+if (path.Bezier ().GetPoint (1).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+	if (path.Bezier ().GetPoint (0).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+		renderer.MoveTo (path.Bezier ().GetPoint (0).m_screen.x, path.Bezier ().GetPoint (0).m_screen.y);
+		renderer.LineTo (path.Bezier ().GetPoint (1).m_screen.x, path.Bezier ().GetPoint (1).m_screen.y);
+		renderer.Ellipse (path.Bezier ().GetPoint (1), 4, 4);
 		}
 	}
-if (m_bezier->GetPoint (2).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-	if (m_bezier->GetPoint (3).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-		renderer.MoveTo (m_bezier->GetPoint (3).m_screen.x, m_bezier->GetPoint (3).m_screen.y);
-		renderer.LineTo (m_bezier->GetPoint (2).m_screen.x, m_bezier->GetPoint (2).m_screen.y);
-		renderer.Ellipse (m_bezier->GetPoint (2), 4, 4);
+if (path.Bezier ().GetPoint (2).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+	if (path.Bezier ().GetPoint (3).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+		renderer.MoveTo (path.Bezier ().GetPoint (3).m_screen.x, path.Bezier ().GetPoint (3).m_screen.y);
+		renderer.LineTo (path.Bezier ().GetPoint (2).m_screen.x, path.Bezier ().GetPoint (2).m_screen.y);
+		renderer.Ellipse (path.Bezier ().GetPoint (2), 4, 4);
 		}
 	}
 renderer.SelectPen (penBlue + 1);
@@ -539,15 +491,27 @@ renderer.EndRender ();
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CTunnelPath::Setup (CPathBase base [2])
+bool CTunnelPath::Setup (CTunnelBase base [2])
 {
-memcpy (m_base, base, sizeof (m_base));
-m_bezier.SetLength (m_base [0].m_length, 0);
-m_bezier.SetLength (m_base [1].m_length, 1);
-m_bezier.SetPoint (m_base [0].m_pos, 0);
-m_bezier.SetPoint (m_base [0].m_pos + m_base [0].m_normal * m_base [0].m_length, 1);
-m_bezier.SetPoint (m_base [1].m_pos + m_base [1].m_normal * m_base [1].m_length, 2);
-m_bezier.SetPoint (m_base [1].m_pos, 3);
+m_base [0].Setup ();
+m_base [1].Setup ();
+double length = Distance (m_bezier.GetPoint (0), m_bezier.GetPoint (0));
+if (length < 50.0)
+	return false;
+length *= 0.5;
+if (length < MIN_TUNNEL_LENGTH)
+	length = MIN_TUNNEL_LENGTH;
+else if (length > MAX_TUNNEL_LENGTH)
+	length = MAX_TUNNEL_LENGTH;
+
+// setup intermediate points for a cubic bezier curve
+m_nGranularity = 0;
+m_bezier.SetLength (length, 0);
+m_bezier.SetLength (length, 1);
+m_bezier.SetPoint (m_base [0].GetPoint (), 0);
+m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
+m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
+m_bezier.SetPoint (m_base [1].GetPoint (), 3);
 }
 
 //------------------------------------------------------------------------------
@@ -561,7 +525,7 @@ Release ();
 
 void CTunnelPath::Release (void)
 {
-for (int i = m_nPathLength; i > 0; i--)
+for (int i = m_nPathLength; --i >= 0; )
 	vertexManager.Delete (m_vertices [i]);
 }
 
@@ -572,21 +536,15 @@ bool CTunnelPath::Create (short nPathLength)
 if (m_nPathLength != nPathLength) { // recompute
 	if (m_nPathLength > 0)
 		Release ();
-	if ((nPathLength > m_nPathLength) && !m_vertices.Resize (nPathLength + 2, false))
+	if ((nPathLength > m_nPathLength) && !m_vertices.Resize (nPathLength, false))
 		return false;
 	m_nPathLength = nPathLength;
 	vertexManager.Add (&m_vertices [1], m_nPathLength);
 	}
 
 // calculate nSegment m_bezierPoints
-m_vertices [0] = m_base [0].m_nId;
-m_vertices [m_nPathLength + 1] = m_base [1].m_nId;
-for (int i = 1; i <= m_nPathLength; i++) {
-#ifdef _DEBUG
-	CVertex v = m_bezier.Compute ((double) i / (double) m_nPathLength);
-#endif
+for (int i = 0; i < m_nPathLength; i++) 
 	vertexManager [m_vertices [i]] = m_bezier.Compute ((double) i / (double) m_nPathLength);
-	}
 return true;
 }
 
@@ -599,8 +557,6 @@ void CTunnelMaker::Reset (void)
 if (m_bActive) {
 	for (uint i = 0; i < m_segments.Length (); i++)
 		m_segments [i].Destroy ();
-	for (uint i = 0; i < m_paths.Length (); i++)
-		m_paths [i].Destroy ();
 	m_bActive = false;
 	}
 DLE.MineView ()->Refresh (false);
@@ -612,7 +568,6 @@ void CTunnelMaker::Destroy (void)
 {
 m_bActive = false;
 m_segments.Destroy ();
-m_paths.Destroy ();
 }
 
 //------------------------------------------------------------------------------
@@ -638,7 +593,7 @@ if (!m_bActive) {
 		return;
 		}
 
-	if (!(m_segments.Create (1) && m_paths.Create (4)))
+	if (!m_segments.Create (1))
 		return;
 
 	Setup ();
@@ -678,51 +633,14 @@ dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (selections [0]);
 dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (selections [1]);
 m_base [0].Setup ();
 m_base [1].Setup ();
-double length = Distance (segmentManager.CalcSideCenter (m_base [0]), segmentManager.CalcSideCenter (m_base [1]));
-if (length < 50) {
+
+if (m_path.Setup (m_base)) 
+	m_segments [0].Setup (m_base);
+else
 	ErrorMsg ("End points of segment are too close.\n\n"
-					"Hint: Select two sides which are further apart\n"
-					"using the spacebar and left/right arrow keys,\n"
-					"then try again.");
-	return;
-	}
-// base nSegment length on distance between cubes
-length *= 0.5;
-if (length < MIN_TUNNEL_LENGTH)
-	length = MIN_TUNNEL_LENGTH;
-else if (length > MAX_TUNNEL_LENGTH)
-	length = MAX_TUNNEL_LENGTH;
-
-// setup intermediate points for a cubic bezier curve
-m_nGranularity = 0;
-m_bezier.SetLength (length, 0);
-m_bezier.SetLength (length, 1);
-m_bezier.SetPoint (m_base [0].GetPoint (), 0);
-m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
-m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
-m_bezier.SetPoint (m_base [1].GetPoint (), 3);
-m_segments [0].Setup (&m_bezier, m_base);
-
-CPathBase base [2];
-
-selections [0].Segment ()->ComputeNormals (selections [0].SideId ());
-base [0].m_normal = -selections [0].Side ()->Normal ();
-selections [1].Segment ()->ComputeNormals (selections [1].SideId ());
-base [1].m_normal = -selections [1].Side ()->Normal ();
-base [0].m_length =
-base [1].m_length = length;
-
-ubyte oppVertexIndex [4];
-selections [1].Segment ()->CreateOppVertexIndex (selections [1].SideId (), oppVertexIndex);
-for (int i = 0; i < 4; i++) {
-	base [0].m_nId = selections [0].Segment ()->VertexId (selections [0].SideId (), selections [0].Point () + i);
-	base [0].m_pos = vertexManager [base [0].m_nId];
-	base [1].m_nId = selections [1].Segment ()->VertexId (selections [1].SideId (), oppVertexIndex [(selections [1].Point () + i) % 4]);
-	base [1].m_pos = vertexManager [base [1].m_nId];
-	base [0].m_length =
-	base [1].m_length = Distance (base [0].m_pos, base [1].m_pos) * 0.5;
-	m_paths [i].Setup (base);
-	}
+				 "Hint: Select two sides which are further apart\n"
+				 "using the spacebar and left/right arrow keys,\n"
+				 "then try again.");
 }
 
 //------------------------------------------------------------------------------
@@ -743,7 +661,7 @@ Setup ();
 
 short CTunnelMaker::PathLength (void)
 {
-m_nPathLength = short (m_bezier.Length () / 20.0 + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 20.0) + m_nGranularity;
+m_nPathLength = short (m_path.Bezier ().Length () / 20.0 + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 20.0) + m_nGranularity;
 if (m_nPathLength > MaxSegments () - 1)
 	m_nPathLength = MaxSegments () - 1;
 else if (m_nPathLength < 3)
@@ -757,9 +675,8 @@ bool CTunnelMaker::Create (void)
 {
 if (PathLength () <= 0) 
 	return false;
-for (int i = 0; i < 4; i++)
-	m_paths [i].Create (m_nPathLength);
-m_segments [0].Create (m_nPathLength, m_paths);
+m_path.Create (m_nPathLength);
+m_segments [0].Create (m_path);
 return true;
 }
 
@@ -795,16 +712,16 @@ DLE.MineView ()->Refresh ();
 void CTunnelMaker::Stretch (void) 
 {
 if (current->SegmentId () == m_base [0].m_nSegment) {
-	if (m_bezier.GetLength (0) > (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+	if (m_path.Bezier ().GetLength (0) > (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
 		return;
-	m_bezier.SetLength (m_bezier.GetLength (0) + TUNNEL_INTERVAL, 0);
-	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
+	m_path.Bezier ().SetLength (m_path.Bezier ().GetLength (0) + TUNNEL_INTERVAL, 0);
+	m_path.Bezier ().SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_path.Bezier ().GetLength (0), 1);
 	}
 else if (current->SegmentId () == m_base [1].m_nSegment) {
-	if (m_bezier.GetLength (1) > (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+	if (m_path.Bezier ().GetLength (1) > (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
 		return;
-	m_bezier.SetLength (m_bezier.GetLength (1) + TUNNEL_INTERVAL, 1);
-	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
+	m_path.Bezier ().SetLength (m_path.Bezier ().GetLength (1) + TUNNEL_INTERVAL, 1);
+	m_path.Bezier ().SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_path.Bezier ().GetLength (1), 2);
 	}
 else
 	return;
@@ -816,16 +733,16 @@ DLE.MineView ()->Refresh ();
 void CTunnelMaker::Shrink (void) 
 {
 if (current->SegmentId () == m_base [0].m_nSegment) {
-	if (m_bezier.GetLength (0) < (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL)) 
+	if (m_path.Bezier ().GetLength (0) < (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL)) 
 		return;
-	m_bezier.SetLength (m_bezier.GetLength (0) - TUNNEL_INTERVAL, 0);
-	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
+	m_path.Bezier ().SetLength (m_path.Bezier ().GetLength (0) - TUNNEL_INTERVAL, 0);
+	m_path.Bezier ().SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_path.Bezier ().GetLength (0), 1);
 	}
 else if (current->SegmentId () == m_base [1].m_nSegment) {
-	if (m_bezier.GetLength (1) < (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
+	if (m_path.Bezier ().GetLength (1) < (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
 		return;
-	m_bezier.SetLength (m_bezier.GetLength (1) - TUNNEL_INTERVAL, 1);
-	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
+	m_path.Bezier ().SetLength (m_path.Bezier ().GetLength (1) - TUNNEL_INTERVAL, 1);
+	m_path.Bezier ().SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_path.Bezier ().GetLength (1), 2);
 	}
 else
 	return;

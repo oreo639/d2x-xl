@@ -103,21 +103,23 @@ class CPathBase {
 class CTunnelPath {
 	public:
 		CCubicBezier				m_bezier;
-		CPathBase					m_base [2];
-		ushort						m_nId;
-		ushort						m_nEnd;
+		CTunnelBase					m_base [2];
 		short							m_nPathLength;
 		CDynamicArray<ushort>	m_vertices;
 
 		CTunnelPath () : m_nPathLength (0) {}
 
-		void CTunnelPath::Setup (CPathBase base [2]);
+		bool Setup (CTunnelBase base [2]);
 
 		void Destroy (void);
 
 		void Release (void);
 
 		bool Create (short nPathLength);
+
+		inline short Length (void) { return m_nPathLength; }
+
+		inline CCubicBezier& Bezier () { return m_bezier; }
 	};
 
 //------------------------------------------------------------------------
@@ -126,23 +128,18 @@ class CTunnelPath {
 // A string of connected tunnel segments from a start to an end point 
 
 class CTunnelSegment {
-	private:
-		CCubicBezier*	m_bezier;
-		CTunnelBase		m_base [2];
-
 	public:
 		short									m_nPathLength; // current path length
+		CTunnelBase							m_base [2];
 		CDynamicArray<CTunnelElement>	m_elements;
 
-		void Setup (CCubicBezier* bezier, CTunnelBase base [2]);
+		void Setup (CTunnelBase base [2]);
 
-		void Create (short nPathLength);
-
-		void Create (short nPathLength, CDynamicArray<CTunnelPath>& paths);
+		void Create (CTunnelPath& path);
 
 		void Realize (void);
 
-		void Release (bool bVertices = true);
+		void Release (void);
 
 		void Destroy (void);
 
@@ -172,12 +169,11 @@ class CTunnelSegment {
 class CTunnelMaker {
 	private:
 		bool									m_bActive;
-		CCubicBezier						m_bezier;
 		short									m_nPathLength;
 		short									m_nGranularity;
 		CTunnelBase							m_base [2];
 		CDynamicArray<CTunnelSegment>	m_segments;
-		CDynamicArray<CTunnelPath>		m_paths;
+		CTunnelPath							m_path;
 
 	public:
 		CTunnelMaker () : m_nPathLength (0) {}
@@ -214,13 +210,13 @@ class CTunnelMaker {
 
 		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix);
 
-	private:
-		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal); 
-
 		inline short MaxSegments (void) {
 			short h = SEGMENT_LIMIT - segmentManager.Count ();
 			return (h > MAX_TUNNEL_SEGMENTS) ? MAX_TUNNEL_SEGMENTS : h;
 			}
+
+	private:
+		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal); 
 
 		void Update (void);
 	};
