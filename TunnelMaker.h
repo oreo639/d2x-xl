@@ -117,6 +117,8 @@ class CTunnelPath {
 
 		bool Create (short nPathLength);
 
+		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix);
+
 		inline short Length (void) { return m_nPathLength; }
 
 		inline CCubicBezier& Bezier () { return m_bezier; }

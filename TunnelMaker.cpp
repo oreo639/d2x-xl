@@ -449,10 +449,6 @@ void CTunnelSegment::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CVi
 CDC* pDC = renderer.DC ();
 
 renderer.BeginRender ();
-for (int i = 0; i < 4; i++) {
-	path.Bezier ().Transform (viewMatrix);
-	path.Bezier ().Project (viewMatrix);
-	}
 for (int i = 0; i < m_nPathLength; i++) {
 	for (int j = 0; j < 4; j++) {
 		CVertex&v = vertexManager [m_elements [i].m_nVertices [j]];
@@ -464,24 +460,8 @@ renderer.EndRender ();
 
 renderer.BeginRender (true);
 renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
-renderer.SelectPen (penRed + 1);
-
-CMineView* mineView = DLE.MineView ();
-if (path.Bezier ().GetPoint (1).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-	if (path.Bezier ().GetPoint (0).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-		renderer.MoveTo (path.Bezier ().GetPoint (0).m_screen.x, path.Bezier ().GetPoint (0).m_screen.y);
-		renderer.LineTo (path.Bezier ().GetPoint (1).m_screen.x, path.Bezier ().GetPoint (1).m_screen.y);
-		renderer.Ellipse (path.Bezier ().GetPoint (1), 4, 4);
-		}
-	}
-if (path.Bezier ().GetPoint (2).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-	if (path.Bezier ().GetPoint (3).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-		renderer.MoveTo (path.Bezier ().GetPoint (3).m_screen.x, path.Bezier ().GetPoint (3).m_screen.y);
-		renderer.LineTo (path.Bezier ().GetPoint (2).m_screen.x, path.Bezier ().GetPoint (2).m_screen.y);
-		renderer.Ellipse (path.Bezier ().GetPoint (2), 4, 4);
-		}
-	}
 renderer.SelectPen (penBlue + 1);
+CMineView* mineView = DLE.MineView ();
 for (int i = 0; i < m_nPathLength; i++)
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
 renderer.EndRender ();
@@ -505,13 +485,13 @@ else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
 // setup intermediate points for a cubic bezier curve
-m_nGranularity = 0;
 m_bezier.SetLength (length, 0);
 m_bezier.SetLength (length, 1);
 m_bezier.SetPoint (m_base [0].GetPoint (), 0);
 m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
 m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
 m_bezier.SetPoint (m_base [1].GetPoint (), 3);
+return true;
 }
 
 //------------------------------------------------------------------------------
@@ -546,6 +526,41 @@ if (m_nPathLength != nPathLength) { // recompute
 for (int i = 0; i < m_nPathLength; i++) 
 	vertexManager [m_vertices [i]] = m_bezier.Compute ((double) i / (double) m_nPathLength);
 return true;
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelPath::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix) 
+{
+CDC* pDC = renderer.DC ();
+
+renderer.BeginRender ();
+for (int i = 0; i < 4; i++) {
+	Bezier ().Transform (viewMatrix);
+	Bezier ().Project (viewMatrix);
+	}
+renderer.EndRender ();
+
+renderer.BeginRender (true);
+renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
+renderer.SelectPen (penRed + 1);
+
+CMineView* mineView = DLE.MineView ();
+if (Bezier ().GetPoint (1).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+	if (Bezier ().GetPoint (0).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+		renderer.MoveTo (Bezier ().GetPoint (0).m_screen.x, Bezier ().GetPoint (0).m_screen.y);
+		renderer.LineTo (Bezier ().GetPoint (1).m_screen.x, Bezier ().GetPoint (1).m_screen.y);
+		renderer.Ellipse (Bezier ().GetPoint (1), 4, 4);
+		}
+	}
+if (Bezier ().GetPoint (2).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+	if (Bezier ().GetPoint (3).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+		renderer.MoveTo (Bezier ().GetPoint (3).m_screen.x, Bezier ().GetPoint (3).m_screen.y);
+		renderer.LineTo (Bezier ().GetPoint (2).m_screen.x, Bezier ().GetPoint (2).m_screen.y);
+		renderer.Ellipse (Bezier ().GetPoint (2), 4, 4);
+		}
+	}
+renderer.EndRender ();
 }
 
 //------------------------------------------------------------------------------
@@ -633,6 +648,7 @@ dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (selections [0]);
 dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (selections [1]);
 m_base [0].Setup ();
 m_base [1].Setup ();
+m_nGranularity = 0;
 
 if (m_path.Setup (m_base)) 
 	m_segments [0].Setup (m_base);
@@ -686,8 +702,10 @@ void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CView
 {
 if (m_bActive) {
 	Update ();
-	if (Create ())
+	if (Create ()) {
+		m_path.Draw (renderer, redPen, bluePen, viewMatrix);
 		m_segments [0].Draw (renderer, redPen, bluePen, viewMatrix);
+		}
 	}
 }
 
