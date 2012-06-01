@@ -476,7 +476,7 @@ bool CTunnelPath::Setup (CTunnelBase base [2])
 {
 m_base [0].Setup ();
 m_base [1].Setup ();
-double length = Distance (m_bezier.GetPoint (0), m_bezier.GetPoint (1));
+double length = Distance (m_base [0].m_point, m_base [1].m_point);
 if (length < 50.0)
 	return false;
 length *= 0.5;

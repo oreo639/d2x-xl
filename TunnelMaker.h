@@ -90,16 +90,6 @@ class CTunnelElement {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-class CPathBase {
-	public:
-		CVertex	m_pos;
-		CVertex	m_normal;
-		ushort	m_nId;
-		double	m_length;
-	};
-
-//------------------------------------------------------------------------
-
 class CTunnelPath {
 	public:
 		CCubicBezier				m_bezier;
