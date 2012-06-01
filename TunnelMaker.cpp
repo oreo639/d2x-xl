@@ -559,6 +559,7 @@ if (!m_bActive) {
 		length = MAX_TUNNEL_LENGTH;
 
 	// setup intermediate points for a cubic bezier curve
+	m_nGranularity = 0;
 	m_bezier.SetLength (length, 0);
 	m_bezier.SetLength (length, 1);
 	m_bezier.SetPoint (m_base [0].GetPoint (), 0);
@@ -598,7 +599,7 @@ DLE.MineView ()->Refresh ();
 
 short CTunnelMaker::PathLength (void)
 {
-m_nPathLength = short (m_bezier.Length () / 20.0 + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 20.0);
+m_nPathLength = short (m_bezier.Length () / 20.0 + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 20.0) + m_nGranularity;
 if (m_nPathLength > MaxSegments () - 1)
 	m_nPathLength = MaxSegments () - 1;
 return m_nPathLength;
@@ -623,11 +624,24 @@ if (m_bActive && (PathLength () > 0)) {
 
 //------------------------------------------------------------------------------
 
+void CTunnelMaker::Finer (void) 
+{
+++m_nGranularity;
+DLE.MineView ()->Refresh ();
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelMaker::Coarser (void) 
+{
+--m_nGranularity;
+DLE.MineView ()->Refresh ();
+}
+
+//------------------------------------------------------------------------------
+
 void CTunnelMaker::Stretch (void) 
 {
-
-//undoManager.UpdateBuffer(0);
-
 if (current->SegmentId () == m_base [0].m_nSegment) {
 	if (m_bezier.GetLength (0) > (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
 		return;
@@ -649,9 +663,6 @@ DLE.MineView ()->Refresh ();
 
 void CTunnelMaker::Shrink (void) 
 {
-
-//  undoManager.UpdateBuffer(0);
-
 if (current->SegmentId () == m_base [0].m_nSegment) {
 	if (m_bezier.GetLength (0) < (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL)) 
 		return;

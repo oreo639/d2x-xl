@@ -904,7 +904,6 @@ if (nSegment >= 0 && nSegment <= segmentManager.Count () && nSide >= 0 && nSide 
 
 void CMineView::DrawTunnel (void) 
 {
-	int h, i, j;
 	CVertex points [4];
 	CRenderer& renderer = DLE.MineView ()->Renderer ();
 

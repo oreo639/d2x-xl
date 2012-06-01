@@ -165,6 +165,8 @@ BEGIN_MESSAGE_MAP (CMainFrame, CFrameWnd)
 	ON_COMMAND (ID_TOOLS_CURVEGENERATOR, OnTunnelGenerator)
 	ON_COMMAND (ID_SPLINE_INCREASE, OnIncSpline)
 	ON_COMMAND (ID_SPLINE_DECREASE, OnDecSpline)
+	ON_COMMAND (ID_FINER_TUNNEL, OnFinerTunnel)
+	ON_COMMAND (ID_COARSER_TUNNEL, OnCoarserTunnel)
 	ON_UPDATE_COMMAND_UI (ID_VIEW_TOGGLEVIEWS, OnUpdateToggleViews)
 	ON_UPDATE_COMMAND_UI (ID_VIEW_TOGGLETEXPANE, OnUpdateToggleTexPane)
 	ON_UPDATE_COMMAND_UI (ID_FILE_EXTBLKFMT, OnUpdateExtBlkFmt)
@@ -329,6 +331,16 @@ tunnelMaker.Stretch ();
 void CMainFrame::OnDecSpline () 
 {
 tunnelMaker.Shrink ();
+}
+
+void CMainFrame::OnFinerTunnel () 
+{
+tunnelMaker.Finer ();
+}
+
+void CMainFrame::OnCoarserTunnel () 
+{
+tunnelMaker.Coarser ();
 }
 
 void CMainFrame::OnRedraw () 

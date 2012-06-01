@@ -145,6 +145,7 @@ class CTunnelMaker {
 		bool									m_bActive;
 		CCubicBezier						m_bezier;
 		short									m_nPathLength;
+		short									m_nGranularity;
 		CTunnelBase							m_base [2];
 		CDynamicArray<CTunnelSegment>	m_tunnel;
 
@@ -160,6 +161,10 @@ class CTunnelMaker {
 				ErrorMsg (szTunnelMakerError); 
 			return true;
 			}
+
+		void Coarser (void);
+
+		void Finer (void);
 
 		void Stretch (void); 
 

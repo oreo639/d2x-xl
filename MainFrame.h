@@ -360,6 +360,8 @@ public:
 	afx_msg void OnCreatePyramid (); 
 	afx_msg void OnIncSpline ();
 	afx_msg void OnDecSpline ();
+	afx_msg void OnFinerTunnel ();
+	afx_msg void OnCoarserTunnel ();
 	afx_msg void OnUpdateToggleViews (CCmdUI* pCmdUI);
 	afx_msg void OnUpdateToggleTexPane(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtBlkFmt (CCmdUI* pCmdUI);
