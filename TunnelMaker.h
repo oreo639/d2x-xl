@@ -95,7 +95,7 @@ class CTunnelPath {
 		CCubicBezier				m_bezier;
 		CTunnelBase					m_base [2];
 		short							m_nPathLength;
-		CDynamicArray<ushort>	m_vertices;
+		CDynamicArray<CVertex>	m_vertices;
 
 		CTunnelPath () : m_nPathLength (0) {}
 
@@ -112,6 +112,8 @@ class CTunnelPath {
 		inline short Length (void) { return m_nPathLength; }
 
 		inline CCubicBezier& Bezier () { return m_bezier; }
+
+		inline CVertex& operator[] (uint i) { return m_vertices [i]; }
 	};
 
 //------------------------------------------------------------------------

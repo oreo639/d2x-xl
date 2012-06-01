@@ -104,8 +104,11 @@ m_nPathLength = 0;
 
 void CTunnelSegment::Release (void)
 {
-for (int i = m_nPathLength; --i >= 0; )
+for (int i = m_nPathLength; --i >= 0; ) {
 	segmentManager.Remove (m_elements [i].m_nSegment);
+	for (int j = 0; j < 4; j++)
+		vertexManager.Delete (m_elements [i].m_nVertices [j]);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -330,6 +333,7 @@ if (m_nPathLength != path.Length ()) { // recompute
 	for (i = 0; i < m_nPathLength; i++) {
 		m_elements [i].m_nSegment = segmentManager.Add ();
 		segmentManager.Segment (m_elements [i].m_nSegment)->m_info.bTunnel = 1;
+		vertexManager.Add (m_elements [i].m_nVertices, 4);
 		}
 	}
 
@@ -343,9 +347,6 @@ for (i = 0; i < 2; i++) {
 		relSidePoints [i][j] = *segP->Vertex (m_base [i].m_nSide, j) - path.Bezier ().GetPoint (0);
 	}
 
-for (i = 0; i < m_nPathLength; i++)
-	m_elements [i].m_relNode = m_elements [i].m_node - path.Bezier ().GetPoint (0);
-
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
 ySpin = -atan3 (relPoints [1].v.z, relPoints [1].v.x); // to y-z plane
 zSpin = atan3 (relPoints [1].v.y, relPoints [1].v.x * cos (ySpin) - relPoints [1].v.z * sin (ySpin)); // to x axis
@@ -358,7 +359,7 @@ for (i = 0; i < 4; i++) {
 	}
 
 for (i = 0; i < m_nPathLength; i++) 
-	SpinPoint (&m_elements [i].m_relNode, ySpin, zSpin);
+	SpinPoint (&path [i], ySpin, zSpin);
 
 // determine polar coordinates of the 1st side (simply y,z coords)
 for (i = 0; i < 4; i++) {
@@ -401,7 +402,7 @@ for (i = 0; i < m_nPathLength - 1; i++) {
 		double h = (double) i / (double) m_nPathLength;
 		double angle  = h * deltaAngle [j] + theta [0][j];
 		double length = h * radius [1][MatchingSide (j)] + (((double) m_nPathLength - (double) i) / (double) m_nPathLength) * radius [0][j];
-		*vertP = RectPoints (angle, length, &m_elements [i].m_relNode, &m_elements [i + 1].m_relNode);
+		*vertP = RectPoints (angle, length, &path [i], &path [i + 1]);
 		// spin vertices
 		SpinBackPoint (vertP, ySpin, zSpin);
 		// translate point back
@@ -504,14 +505,6 @@ Release ();
 
 //------------------------------------------------------------------------------
 
-void CTunnelPath::Release (void)
-{
-for (int i = m_nPathLength; --i >= 0; )
-	vertexManager.Delete (m_vertices [i]);
-}
-
-//------------------------------------------------------------------------------
-
 bool CTunnelPath::Create (short nPathLength)
 {
 if (m_nPathLength != nPathLength) { // recompute
@@ -520,12 +513,12 @@ if (m_nPathLength != nPathLength) { // recompute
 	if ((nPathLength > m_nPathLength) && !m_vertices.Resize (nPathLength, false))
 		return false;
 	m_nPathLength = nPathLength;
-	vertexManager.Add (&m_vertices [1], m_nPathLength);
 	}
 
 // calculate nSegment m_bezierPoints
-for (int i = 0; i < m_nPathLength; i++) 
-	vertexManager [m_vertices [i]] = m_bezier.Compute ((double) i / (double) m_nPathLength);
+for (int i = 0; i < m_nPathLength; i++) {
+	m_vertices [i] = m_bezier.Compute ((double) i / (double) m_nPathLength) - m_bezier.GetPoint (0);
+	}
 return true;
 }
 
