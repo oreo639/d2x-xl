@@ -26,7 +26,7 @@ class CCubicBezier {
 	public:
 		CCubicBezier () : m_length ({1.0, 1.0}) {}
 
-		CDoubleVector Compute (double u, int nPoints, CDoubleVector* p); 
+		CDoubleVector Compute (double u); 
 
 		inline void SetPoint (CDoubleVector p, int i) { m_points [i] = p; }
 
@@ -47,6 +47,7 @@ class CTunnelBase : public CSideKey {
 	public:
 		CDoubleVector	m_point;
 		CDoubleVector	m_normal;
+		CDoubleVector	m_vertices [4];
 
 		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSideKey (key) { Compute (); }
 
@@ -61,6 +62,11 @@ class CTunnelBase : public CSideKey {
 		inline CDoubleVector GetNormal (void) { return m_normal; }
 
 		inline void SetNormal (CDoubleVector normal) { m_normal = normal; }
+
+		inline CSegment* Segment (void) { return (m_nSegment < 0) ? null : segmentManager.Segment (m_nSegment); }
+
+		inline CSide* Side (void) { return (m_nSide < 0) ? null : segmentManager.Side (m_nSide); }
+
 	};
 
 //------------------------------------------------------------------------
@@ -69,6 +75,7 @@ class CTunnelBase : public CSideKey {
 class CTunnelElement {
 	public:
 		CDoubleVector	m_node; // path point (segment center)
+		CDoubleVector	m_relNode; // path point (segment center) relative to start side center
 		ushort			m_nVertices [4];
 		short				m_nSegment;
 	};
@@ -78,21 +85,40 @@ class CTunnelElement {
 class CTunnelPath {
 	private:
 		CCubicBezier						m_bezier;
+		CTunnelBase							m_base [2];
 
 	public:
 		short									m_nLength [2]; // current length, previous length [segments]
 		CDynamicArray<CTunnelElement>	m_elements;
 
-		void Compute (CTunnelBase base [2]);
+		inline short MaxSegments (void) {
+			short h = SEGMENT_LIMIT - segmentManager.Count ();
+			return (h > MAX_TUNNEL_SEGMENTS) ? MAX_TUNNEL_SEGMENTS : h;
+			}
+
+		void Setup (CTunnelBase base [2]);
+
+		void Compute (void);
+
+		void Realize (void);
 
 		void Remove (int i);
 
 		void Destroy (void);
 
-		inline short MaxSegments (void) {
-			short h = SEGMENT_LIMIT - segmentManager.Count ();
-			return (h > MAX_TUNNEL_SEGMENTS) ? MAX_TUNNEL_SEGMENTS : h;
-			}
+		void UntwistSegment (short nSegment, short nSide); 
+
+		void SpinPoint (CVertex* point, double ySpin, double zSpin); 
+
+		void SpinBackPoint (CVertex* point, double ySpin, double zSpin); 
+
+		int MatchingSide (int j); 
+
+		void PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* origin, CVertex* normal); 
+
+		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal);
+
+		void SetupVertices (void);
 	};
 
 //------------------------------------------------------------------------
@@ -101,7 +127,7 @@ class CTunnelInfo : public CSideKey {
 public:
 	double	m_length;
 
-	CSegment _const_ * Segment (void) _const_ { return segmentManager.Segment (m_nSegment); }
+	CSegment * Segment (void) { return segmentManager.Segment (m_nSegment); }
 	};
 
 //------------------------------------------------------------------------
@@ -148,29 +174,7 @@ class CTunnelMaker {
 		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* view);
 
 	private:
-		long Faculty (int n); 
-
-		double Coeff (int n, int i); 
-
-		double Blend (int i, int n, double u); 
-
-		CVertex BezierFcn (double u, int npts, CVertex* p); 
-
-		void UntwistSegment (short nSegment, short nSide); 
-
-		void SpinPoint (CVertex* point, double ySpin, double zSpin); 
-
-		void SpinBackPoint (CVertex* point, double ySpin, double zSpin); 
-
-		int MatchingSide (int j); 
-
 		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal); 
-
-		void PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* origin, CVertex* normal); 
-
-		void SetupVertices (void);
-
-		void Remove (int l);
 	};
 
 extern CTunnelMaker tunnelMaker;
