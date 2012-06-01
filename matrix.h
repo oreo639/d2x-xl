@@ -131,6 +131,7 @@ public:
 	CDoubleVector Angles (void);
 	
 	void Clear (void);
+
 	CDoubleMatrix& Set (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
 	CDoubleMatrix& Set (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh);
 
@@ -154,11 +155,10 @@ public:
 		}
 
 	inline CDoubleVector& CDoubleMatrix::operator[] (const size_t i) { return ((CDoubleVector*) &m) [i]; }
-
-
-
+	
 	const double Det (void);
 	const CDoubleMatrix Inverse (void);
+	const CDoubleMatrix Transformation (CDoubleMatrix& mDest, CDoubleMatrix& mSource);
 	const CDoubleMatrix Adjoint (void);
 	inline const CDoubleMatrix Transpose (void);
 	void Rotate (double angle, char axis);

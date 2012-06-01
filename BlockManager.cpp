@@ -73,8 +73,8 @@ short CBlockManager::Read (CFileManager& fp)
 {
 	int				i, j, scanRes;
 	short				origVertCount;
-	CDoubleMatrix	t;
-	CDoubleVector	xAxis, yAxis, zAxis, origin;
+	CDoubleMatrix	t, r;
+	CDoubleVector	/*xAxis, yAxis, zAxis,*/ origin;
 	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0;
 	int				byteBuf; // needed for scanning ubyte values
 	CTrigger			* newTriggers = null;
@@ -86,15 +86,15 @@ origVertCount = vertexManager.Count ();
 // set origin
 SetupTransformation (t, origin);
 // now take the determinant
-xAxis.Set (t.m.uVec.v.y * t.m.fVec.v.z - t.m.fVec.v.y * t.m.uVec.v.z, 
-			  t.m.fVec.v.y * t.m.rVec.v.z - t.m.rVec.v.y * t.m.fVec.v.z, 
-			  t.m.rVec.v.y * t.m.uVec.v.z - t.m.uVec.v.y * t.m.rVec.v.z);
-yAxis.Set (t.m.fVec.v.x * t.m.uVec.v.z - t.m.uVec.v.x * t.m.fVec.v.z, 
-			  t.m.rVec.v.x * t.m.fVec.v.z - t.m.fVec.v.x * t.m.rVec.v.z,
-			  t.m.uVec.v.x * t.m.rVec.v.z - t.m.rVec.v.x * t.m.uVec.v.z);
-zAxis.Set (t.m.uVec.v.x * t.m.fVec.v.y - t.m.fVec.v.x * t.m.uVec.v.y,
-			  t.m.fVec.v.x * t.m.rVec.v.y - t.m.rVec.v.x * t.m.fVec.v.y,
-			  t.m.rVec.v.x * t.m.uVec.v.y - t.m.uVec.v.x * t.m.rVec.v.y);
+r.m.rVec.Set (t.m.uVec.v.y * t.m.fVec.v.z - t.m.fVec.v.y * t.m.uVec.v.z, 
+			     t.m.fVec.v.y * t.m.rVec.v.z - t.m.rVec.v.y * t.m.fVec.v.z, 
+			     t.m.rVec.v.y * t.m.uVec.v.z - t.m.uVec.v.y * t.m.rVec.v.z);
+r.m.uVec.Set (t.m.fVec.v.x * t.m.uVec.v.z - t.m.uVec.v.x * t.m.fVec.v.z, 
+			     t.m.rVec.v.x * t.m.fVec.v.z - t.m.fVec.v.x * t.m.rVec.v.z,
+			     t.m.uVec.v.x * t.m.rVec.v.z - t.m.rVec.v.x * t.m.uVec.v.z);
+r.m.fVec.Set (t.m.uVec.v.x * t.m.fVec.v.y - t.m.fVec.v.x * t.m.uVec.v.y,
+			     t.m.fVec.v.x * t.m.rVec.v.y - t.m.rVec.v.x * t.m.fVec.v.y,
+			     t.m.rVec.v.x * t.m.uVec.v.y - t.m.uVec.v.x * t.m.rVec.v.y);
 
 nNewSegs = 0;
 memset (m_xlatSegNum, 0xff, sizeof (m_xlatSegNum));
@@ -268,7 +268,8 @@ while (!fp.EoF ()) {
 		// adjust vertices relative to origin
 		CDoubleVector v;
 		v.Set (X2D (x), X2D (y), X2D (z));
-		v.Set (v ^ xAxis, v ^ yAxis, v ^ zAxis);
+		//v.Set (Dot (v, xAxis), Dot (v, yAxis), Dot (v, zAxis));
+		v = r * v;
 		v += origin;
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
@@ -526,9 +527,11 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 			if (m_bExtended) {
 				if (segP->m_info.vertexIds [i] > MAX_VERTEX)
 					fprintf (fp.File (), "  Vertex %hu 0 0 0 \n", segP->m_info.vertexIds [i]);
-				else
+				else {
+					v = m * v;
 					fprintf (fp.File (), "  Vertex %hu %d %d %d\n", 
-								segP->m_info.vertexIds [i], D2X (v ^ m.m.rVec), D2X (v ^ m.m.uVec), D2X (v ^ m.m.fVec));
+								segP->m_info.vertexIds [i], D2X (v.v.x), D2X (v.v.y), D2X (v.v.z));
+					}
 				}
 			else {
 			fprintf (fp.File (), "  vms_vector %hu %d %d %d\n", 

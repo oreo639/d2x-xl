@@ -47,7 +47,7 @@ vecQuat.w = 0.0;
 resQuat = vecQuat * GetConjugate ();
 resQuat = *this * resQuat;
  
-return (CDoubleVector(resQuat.x, resQuat.y, resQuat.z));
+return (CDoubleVector (resQuat.x, resQuat.y, resQuat.z));
 }
 
 // -----------------------------------------------------------------------------

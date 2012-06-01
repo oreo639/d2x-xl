@@ -295,6 +295,18 @@ return result;
 }
 
 // -----------------------------------------------------------------------------
+// Compute the matrix to transform the coordinate system mSource to mDest
+
+const CDoubleMatrix Transformation (CDoubleMatrix& mDest, CDoubleMatrix& mSource)
+{
+	CDoubleMatrix i, t;
+	
+i = mSource.Inverse ();
+t = mDest * i;
+return t;
+}
+
+// -----------------------------------------------------------------------------
 
 const CDoubleMatrix CDoubleMatrix::Adjoint (void) 
 {
