@@ -87,7 +87,6 @@ void CTunnelPath::Destroy (void)
 {
 Remove (m_nLength [0]);
 m_nLength [0] = 0;
-m_path.Destroy ();
 m_elements.Destroy ();
 }
 
@@ -124,12 +123,13 @@ if (m_nLength [0] > MaxSegments () - 1)
 if (m_nLength [1] != m_nLength [0]) { // recompute
 	if (m_nLength [1] > 0)
 		Remove (m_nLength [1]);
+	if (m_nLength [0] > m_nLength [1]) 
+		m_elements.Resize (m_nLength [0], false);
 	for (i = 0; i < m_nLength [0]; i++) {
-		m_nSegments [i] = segmentManager.Add ();
-		segmentManager.Segment (m_nSegments [i])->m_info.bTunnel = 1;
-		//segmentManager.Segment (m_nSegments [i])->Setup ();
+		m_elements [i].m_nSegment = segmentManager.Add ();
+		segmentManager.Segment (m_elements [i].m_nSegment)->m_info.bTunnel = 1;
+		vertexManager.Add (&m_elements [i].m_nVertices [0], 4);
 		}
-	vertexManager.Add (&m_nVertices [0], (m_nLength [0] - 1) * 4);
 	}
 
 // calculate nSegment m_bezierPoints

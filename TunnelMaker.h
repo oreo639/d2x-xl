@@ -81,7 +81,6 @@ class CTunnelPath {
 
 	public:
 		short									m_nLength [2]; // current length, previous length [segments]
-		CDynamicArray<CDoubleVector>	m_path;
 		CDynamicArray<CTunnelElement>	m_elements;
 
 		void Compute (CTunnelBase base [2]);
