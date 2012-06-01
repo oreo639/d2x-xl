@@ -539,7 +539,9 @@ if (!m_bActive) {
 		return;
 		}
 
+	m_tunnel.Create (1);
 	Setup ();
+	undoManager.Lock ();
 
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("Place the current segment on one of the segment end points.\n\n"
@@ -547,9 +549,6 @@ if (!m_bActive) {
 				    "Press 'P' to rotate the point connections.\n\n"
 				    "Press 'G' or select Tools/Tunnel Generator when you are finished.");
 
-	m_tunnel.Create (1);
-	m_tunnel [0].Setup (&m_bezier, m_base);
-	undoManager.Lock ();
 	m_bActive = true;
 	}
 else {
@@ -600,6 +599,7 @@ m_bezier.SetPoint (m_base [0].GetPoint (), 0);
 m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
 m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
 m_bezier.SetPoint (m_base [1].GetPoint (), 3);
+m_tunnel [0].Setup (&m_bezier, m_base);
 }
 
 //------------------------------------------------------------------------------
