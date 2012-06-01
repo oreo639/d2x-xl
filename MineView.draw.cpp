@@ -940,6 +940,9 @@ if (IN_RANGE (points [2].m_screen.x, m_viewMax.x) && IN_RANGE (points [2].m_scre
 		renderer.BeginRender ();
 		}
 	}
+#if 1
+tunnelMaker.Draw (Renderer (), Pen (penRed), Pen (penBlue), ViewMatrix ());
+#else
 j = MAX_VERTICES;
 for (h = tunnelMaker.Length () * 4, i = 0; i < h; i++) {
 	vertexManager [--j].Transform (ViewMatrix ());
@@ -951,6 +954,7 @@ renderer.SelectPen (penBlue + 1);
 for (i = 0; i < tunnelMaker.Length (); i++, segP--)
 	DrawSegmentWireFrame (segP, false, false, 1);
 renderer.EndRender ();
+#endif
 }
 
 //--------------------------------------------------------------------------

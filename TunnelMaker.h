@@ -110,7 +110,7 @@ class CTunnelSegment {
 
 		void Destroy (void);
 
-		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* view);
+		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix);
 
 	private:
 		void UntwistSegment (short nSegment, short nSide); 
@@ -173,7 +173,7 @@ class CTunnelMaker {
 
 		void ComputeTunnel (void); 
 
-		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* view);
+		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix);
 
 	private:
 		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal); 

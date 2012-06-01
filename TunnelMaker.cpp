@@ -455,10 +455,9 @@ SetupVertices ();
 
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* view) 
+void CTunnelSegment::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix) 
 {
 CDC* pDC = renderer.DC ();
-CViewMatrix* viewMatrix = renderer.ViewMatrix ();
 
 Compute (m_nPathLength);
 
@@ -616,9 +615,9 @@ m_tunnel [0].Compute (PathLength ());
 
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* view)
+void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix)
 {
-m_tunnel [0].Draw (renderer, redPen, bluePen, view);
+m_tunnel [0].Draw (renderer, redPen, bluePen, viewMatrix);
 }
 
 //------------------------------------------------------------------------------
