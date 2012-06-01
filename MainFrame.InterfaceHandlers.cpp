@@ -312,7 +312,7 @@ ToolView ()->EditReactor ();
 void CMainFrame::OnTunnelGenerator () 
 {
 ShowTools ();
-tunnelMaker.Create ();
+tunnelMaker.Run ();
 }
 
 void CMainFrame::OnTxtFilters () 

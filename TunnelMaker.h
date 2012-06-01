@@ -89,6 +89,40 @@ class CTunnelElement {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
+
+class CPathBase {
+	public:
+		CVertex	m_pos;
+		CVertex	m_normal;
+		ushort	m_nId;
+		double	m_length;
+	};
+
+//------------------------------------------------------------------------
+
+class CTunnelPath {
+	public:
+		CCubicBezier				m_bezier;
+		CPathBase					m_base [2];
+		ushort						m_nId;
+		ushort						m_nEnd;
+		short							m_nPathLength;
+		CDynamicArray<ushort>	m_vertices;
+
+		CTunnelPath () {}
+
+		void CTunnelPath::Setup (CPathBase base [2]);
+
+		void Destroy (void);
+
+		void Release (int l);
+
+		bool Create (short nPathLength);
+	};
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 // A string of connected tunnel segments from a start to an end point 
 
 class CTunnelSegment {
@@ -102,7 +136,9 @@ class CTunnelSegment {
 
 		void Setup (CCubicBezier* bezier, CTunnelBase base [2]);
 
-		void Compute (short nPathLength);
+		void Create (short nPathLength);
+
+		void Create (short nPathLength, CDynamicArray<CTunnelPath> paths);
 
 		void Realize (void);
 
@@ -133,38 +169,6 @@ class CTunnelSegment {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-class CPathBase {
-	public:
-		CVertex	m_pos;
-		CVertex	m_normal;
-		ushort	m_nId;
-		double	m_length;
-	};
-
-//------------------------------------------------------------------------
-
-class CTunnelPath {
-	public:
-		CCubicBezier				m_bezier;
-		CPathBase					m_base [2];
-		ushort						m_nId;
-		ushort						m_nEnd;
-		short							m_nPathLength;
-		CDynamicArray<ushort>	m_vertices;
-
-		CTunnelPath () {}
-
-		void CTunnelPath::Setup (CPathBase base [2]);
-
-		void Release (int l);
-
-		bool Create (short nPathLength);
-	};
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
 class CTunnelMaker {
 	private:
 		bool									m_bActive;
@@ -178,7 +182,9 @@ class CTunnelMaker {
 	public:
 		CTunnelMaker () : m_nPathLength (0) {}
 
-		void Create (void); 
+		void Run (void); 
+
+		void Destroy (void);
 
 		void Setup (void);
 		
@@ -200,11 +206,11 @@ class CTunnelMaker {
 
 		void Realize (void);
 
-		void Destroy (void);
+		void Reset (void);
 
 		short PathLength (void);
 
-		void ComputeTunnel (void); 
+		bool Create (void); 
 
 		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix);
 
