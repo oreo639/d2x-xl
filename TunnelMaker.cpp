@@ -561,7 +561,7 @@ Release ();
 
 void CTunnelPath::Release (void)
 {
-for (int i = m_nPathLength + 1; i > 0; i--)
+for (int i = m_nPathLength; i > 0; i--)
 	vertexManager.Delete (m_vertices [i]);
 }
 
@@ -706,9 +706,11 @@ m_segments [0].Setup (&m_bezier, m_base);
 CPathBase base [2];
 
 selections [0].Segment ()->ComputeNormals (selections [0].SideId ());
-base [0].m_normal = selections [0].Side ()->Normal ();
+base [0].m_normal = -selections [0].Side ()->Normal ();
 selections [1].Segment ()->ComputeNormals (selections [1].SideId ());
-base [1].m_normal = selections [1].Side ()->Normal ();
+base [1].m_normal = -selections [1].Side ()->Normal ();
+base [0].m_length =
+base [1].m_length = length;
 
 ubyte oppVertexIndex [4];
 selections [1].Segment ()->CreateOppVertexIndex (selections [1].SideId (), oppVertexIndex);
@@ -717,6 +719,8 @@ for (int i = 0; i < 4; i++) {
 	base [0].m_pos = vertexManager [base [0].m_nId];
 	base [1].m_nId = selections [1].Segment ()->VertexId (selections [1].SideId (), oppVertexIndex [(selections [1].Point () + i) % 4]);
 	base [1].m_pos = vertexManager [base [1].m_nId];
+	base [0].m_length =
+	base [1].m_length = Distance (base [0].m_pos, base [1].m_pos) * 0.5;
 	m_paths [i].Setup (base);
 	}
 }
