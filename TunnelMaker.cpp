@@ -61,27 +61,48 @@ return v;
 }
 
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
+
+void CCubicBezier::Transform (CViewMatrix* viewMatrix)
+{
+for (int i = 0; i < 4; i++)
+	m_points [i].Transform (viewMatrix);
+}
+
 //------------------------------------------------------------------------------
 
-void CTunnelBase::Compute (void)
+void CCubicBezier::Project (CViewMatrix* viewMatrix)
 {
-m_point = segmentManager.CalcSideCenter (*this);
-m_normal = segmentManager.CalcSideNormal (*this);
+for (int i = 0; i < 4; i++)
+	m_points [i].Project (viewMatrix);
 }
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CTunnelPath::Setup (CTunnelBase base [2])
+void CTunnelBase::Setup (void)
 {
+if ((m_nSegment >= 0) && (m_nSide >= 0)) {
+	m_point = segmentManager.CalcSideCenter (*this);
+	m_normal = segmentManager.CalcSideNormal (*this);
+	for (int i = 0; i < 4; i++)
+		m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
+	}
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+void CTunnelSegment::Setup (CCubicBezier& bezier, CTunnelBase base [2])
+{
+m_bezier = bezier;
 memcpy (m_base, base, sizeof (m_base));
 }
 
 //------------------------------------------------------------------------------
 
-void CTunnelPath::Remove (int i)
+void CTunnelSegment::Remove (int i)
 {
 while (i >= 0) {
 	segmentManager.Remove (m_elements [i].m_nSegment);
@@ -92,7 +113,7 @@ while (i >= 0) {
 
 //------------------------------------------------------------------------------
 
-void CTunnelPath::Destroy (void)
+void CTunnelSegment::Destroy (void)
 {
 Remove (m_nLength [0]);
 m_nLength [0] = 0;
@@ -103,7 +124,7 @@ m_elements.Destroy ();
 // SpinPoint () - spin on y-axis then z-axis
 //------------------------------------------------------------------------------
 
-void CTunnelPath::SpinPoint (CVertex* point, double ySpin, double zSpin) 
+void CTunnelSegment::SpinPoint (CVertex* point, double ySpin, double zSpin) 
 {
 double tx = point->v.x * cos (ySpin) - point->v.z * sin (ySpin);
 double ty = point->v.y;
@@ -115,7 +136,7 @@ point->Set (tx * cos (zSpin) + ty * sin (zSpin), ty * cos (zSpin) - tx * sin (zS
 // SpinBackPoint () - spin on z-axis then y-axis
 //------------------------------------------------------------------------------
 
-void CTunnelPath::SpinBackPoint (CVertex* point, double ySpin, double zSpin) 
+void CTunnelSegment::SpinBackPoint (CVertex* point, double ySpin, double zSpin) 
 {
 double tx = point->v.x * cos (-zSpin) + point->v.y * sin (-zSpin);
 double ty = -point->v.x * sin (-zSpin) + point->v.y * cos (-zSpin);
@@ -129,7 +150,7 @@ point->Set (tx * cos (-ySpin) - tz * sin (-ySpin), ty, tx * sin (-ySpin) + tz * 
 // Action - Returns matching side depending on the current m_bezierPoints
 //------------------------------------------------------------------------------
 
-int CTunnelPath::MatchingSide (int j) 
+int CTunnelSegment::MatchingSide (int j) 
 {
   static int ret [4][4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
   int offset;
@@ -140,7 +161,7 @@ return ret [offset][j];
 
 //------------------------------------------------------------------------------
 
-void CTunnelPath::UntwistSegment (short nSegment, short nSide) 
+void CTunnelSegment::UntwistSegment (short nSegment, short nSide) 
 {
   double		minLen = 1e10;
   short		verts [4];
@@ -170,7 +191,7 @@ if (index != 0) {
 
 //------------------------------------------------------------------------------
 
-void CTunnelPath::PolarPoints (double* angle, double* radius, CVertex* vertex, CVertex* origin, CVertex* normal) 
+void CTunnelSegment::PolarPoints (double* angle, double* radius, CVertex* vertex, CVertex* origin, CVertex* normal) 
 {
 // translate coordinates to origin
 #if 0
@@ -210,7 +231,7 @@ double z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 // Changes - Chooses axis to normalizes on m_based on "normal" direction
 //------------------------------------------------------------------------------
 
-CDoubleVector CTunnelPath::RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
+CDoubleVector CTunnelSegment::RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
 {
   double			ySpin, zSpin;
   char			spinAxis;
@@ -263,7 +284,7 @@ return v;
 //------------------------------------------------------------------------------
 // define segment vert numbers
 
-void CTunnelPath::SetupVertices (void)
+void CTunnelSegment::SetupVertices (void)
 {
 ubyte oppVertexIndex [4];
 ushort nVertex = 0;
@@ -292,7 +313,7 @@ for (short i = 0; i < m_nLength [0]; i++)
 
 //------------------------------------------------------------------------------
 
-void CTunnelPath::Compute (void) 
+void CTunnelSegment::Compute (void) 
 {
   double		length;
   int			i, j;
@@ -305,12 +326,6 @@ void CTunnelPath::Compute (void)
   CVertex	relTunnelPoints [MAX_TUNNEL_SEGMENTS];
   double		y, z;
   double		ySpin, zSpin;
-
-// setup intermediate points for a cubic bezier curve
-m_bezier.SetPoint (m_base [0].GetPoint (), 0);
-m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
-m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (0), 2);
-m_bezier.SetPoint (m_base [1].GetPoint (), 3);
 
 // calculate number of segments (min=1)
 
@@ -416,7 +431,7 @@ SetupVertices ();
 
 //------------------------------------------------------------------------------
 
-void CTunnelPath::Realize (void)
+void CTunnelSegment::Realize (void)
 {
 ushort nVertex = 0;
 for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
@@ -443,6 +458,88 @@ for (short nSegment = 0; nSegment < m_nLength [0]; nSegment++) {
 	// define child bitmask, special, matcen, value, and wall bitmask
 	}
 SetupVertices ();
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelSegment::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* view) 
+{
+CDC* pDC = renderer.DC ();
+CViewMatrix* viewMatrix = renderer.ViewMatrix ();
+
+Compute ();
+
+renderer.BeginRender ();
+for (int i = 0; i < 4; i++) {
+	m_bezier.Transform (viewMatrix);
+	m_bezier.Project (viewMatrix);
+	}
+for (int i = 0; i < m_nLength [0]; i++) {
+	for (int j = 0; j < 4; j++) {
+		CVertex&v = vertexManager [m_elements [i].m_nVertices [j]];
+		v.Transform (viewMatrix);
+		v.Project (viewMatrix);
+		}
+	}
+renderer.EndRender ();
+
+renderer.BeginRender (true);
+renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
+renderer.SelectPen (penRed + 1);
+
+CMineView* mineView = DLE.MineView ();
+if (m_bezier.GetPoint (1).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+	if (m_bezier.GetPoint (0).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+		renderer.MoveTo (m_bezier.GetPoint (0).m_screen.x, m_bezier.GetPoint (0).m_screen.y);
+		renderer.LineTo (m_bezier.GetPoint (1).m_screen.x, m_bezier.GetPoint (1).m_screen.y);
+		renderer.Ellipse (m_bezier.GetPoint (1), 4, 4);
+		}
+	}
+if (m_bezier.GetPoint (2).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+	if (m_bezier.GetPoint (3).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
+		renderer.MoveTo (m_bezier.GetPoint (3).m_screen.x, m_bezier.GetPoint (3).m_screen.y);
+		renderer.LineTo (m_bezier.GetPoint (2).m_screen.x, m_bezier.GetPoint (2).m_screen.y);
+		renderer.Ellipse (m_bezier.GetPoint (2), 4, 4);
+		}
+	}
+renderer.SelectPen (penBlue + 1);
+for (int i = 0; i < m_nLength [0]; i++)
+	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
+renderer.EndRender ();
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+void CTunnelSegment::Stretch (void) 
+{
+
+//undoManager.UpdateBuffer(0);
+
+if (current->SegmentId () == m_info [0].m_nSegment)
+	if (m_info [0].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+		m_info [0].m_length += TUNNEL_INTERVAL;
+if (current->SegmentId () == m_info [1].m_nSegment)
+	if (m_info [1].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+		m_info [1].m_length += TUNNEL_INTERVAL;
+DLE.MineView ()->Refresh ();
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelSegment::Shrink (void) 
+{
+
+//  undoManager.UpdateBuffer(0);
+
+if (current->SegmentId () == m_info [0].m_nSegment)
+	if (m_info [0].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
+		m_info [0].m_length -= TUNNEL_INTERVAL;
+if (current->SegmentId () == m_info [1].m_nSegment)
+	if (m_info [1].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
+		m_info [1].m_length -= TUNNEL_INTERVAL;
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------------
@@ -504,23 +601,11 @@ return v;
 
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::Remove (int l)
-{
-undoManager.Lock ();
-for (int i = l; i > 0; )
-	segmentManager.Remove (m_nSegments [--i]);
-for (int i = (l - 1) * 4; i > 0; )
-	vertexManager.Delete (m_nVertices [--i]);
-undoManager.Unlock ();
-}
-
-//------------------------------------------------------------------------------
-
 void CTunnelMaker::Destroy (void)
 {
 if (m_bActive) {
-	Remove (m_nLength [0]);
-	m_nLength [0] = 0;
+	for (uint i = 0; i < m_tunnel.Length (); i++)
+		m_tunnel [i].Destroy ();
 	m_bActive = false;
 	}
 DLE.MineView ()->Refresh (false);
@@ -536,11 +621,6 @@ DLE.MineView ()->Refresh (false);
 
 void CTunnelMaker::Create (void) 
 {
-
-//  undoManager.UpdateBuffer(0);
-
-double		length;
-
 if (!m_bActive) {
 	m_nMaxSegments = SEGMENT_LIMIT - segmentManager.Count ();
 	if (m_nMaxSegments > MAX_TUNNEL_SEGMENTS)
@@ -562,7 +642,7 @@ if (!m_bActive) {
 
 	dynamic_cast<CSideKey&> (m_info [0]) = dynamic_cast<CSideKey&> (selections [0]);
 	dynamic_cast<CSideKey&> (m_info [1]) = dynamic_cast<CSideKey&> (selections [1]);
-	length = Distance (segmentManager.CalcSideCenter (m_info [0]), segmentManager.CalcSideCenter (m_info [1]));
+	double length = Distance (segmentManager.CalcSideCenter (m_info [0]), segmentManager.CalcSideCenter (m_info [1]));
 	if (length < 50) {
 		ErrorMsg ("End points of segment are too close.\n\n"
 					 "Hint: Select two sides which are further apart\n"
@@ -579,13 +659,19 @@ if (!m_bActive) {
 	m_info [0].m_length = 
 	m_info [1].m_length = length;
 
+	// setup intermediate points for a cubic bezier curve
+	m_bezier.SetPoint (m_base [0].GetPoint (), 0);
+	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
+	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (0), 2);
+	m_bezier.SetPoint (m_base [1].GetPoint (), 3);
+
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("Place the current segment on one of the segment end points.\n\n"
 		"Use the CTRL+8 and CTRL+9 keys to adjust the length of the red segment.\n\n"
 				    "Press 'P' to rotate the point connections.\n\n"
 				    "Press 'G' or select Tools/Tunnel Generator when you are finished.");
 
-	m_nLength [0] = m_nLength [1] = 0;
+	m_tunnel.Create (1);
 	undoManager.Lock ();
 	m_bActive = true;
 	}
@@ -597,8 +683,8 @@ else {
 	else {
 		Destroy ();
 		undoManager.Begin (udSegments | udVertices);
-		ComputeTunnel ();
-		Realize ();
+		m_tunnel [0].Compute ();
+		m_tunnel [0].Realize ();
 		undoManager.End ();
 		}
 	}
@@ -630,8 +716,8 @@ void CTunnelMaker::Shrink (void)
 //  undoManager.UpdateBuffer(0);
 
 if (current->SegmentId () == m_info [0].m_nSegment)
-	if (m_info [0].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
-		m_info [0].m_length -= TUNNEL_INTERVAL;
+	if (m_bezier.GetLength (0) > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
+		m_bezier.SetLength (m_bezier.GetLength (0) - TUNNEL_INTERVAL, 0);
 if (current->SegmentId () == m_info [1].m_nSegment)
 	if (m_info [1].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
 		m_info [1].m_length -= TUNNEL_INTERVAL;
@@ -640,310 +726,14 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------------
 
-void CTunnelPath::Compute (CTunnelBase base [2]) 
+void CTunnelMaker::Compute (CTunnelBase base [2]) 
 {
-  double		length;
-  int			i, j;
-  CSegment*	segP;
-  CVertex	vertex;
-  double		theta [2][4],radius [2][4]; // polor coordinates of sides
-  double		deltaAngle [4];
-  CVertex	relSidePoints [2][4]; // side m_bezierPoints reletave to center of side 1
-  CVertex	relPoints [4]; // 4 m_bezierPoints of nSegment reletave to 1st point
-  CVertex	relTunnelPoints [MAX_TUNNEL_SEGMENTS];
-  double		y, z;
-  double		ySpin, zSpin;
-
-// setup intermediate points for a cubic bezier curve
-// center of both cubes
-m_bezierPoints [0] = segmentManager.CalcSideCenter (base [0]);
-m_bezierPoints [3] = segmentManager.CalcSideCenter (base [1]);
-// point orthogonal to center of current segment
-m_bezierPoints [1] = segmentManager.CalcSideNormal (base [0]);
-m_bezierPoints [1] *= m_info [0].m_length;
-m_bezierPoints [1] += m_bezierPoints [0];
-// point orthogonal to center of other segment
-m_bezierPoints [2] = segmentManager.CalcSideNormal (base [1]);
-m_bezierPoints [2] *= m_info [1].m_length;
-m_bezierPoints [2] += m_bezierPoints [3];
-
-// calculate number of segments (min=1)
-
-length = Distance (m_bezierPoints [0], m_bezierPoints [3]);
-m_nLength [1] = m_nLength [0];
-m_nLength [0] = (int) ((fabs (m_info [0].m_length) + fabs (m_info [1].m_length)) / 20 + length / 40.0);
-m_nLength [0] = min (m_nLength [0], m_nMaxSegments - 1);
-
-if (m_nLength [1] != m_nLength [0]) {
-	if (m_nLength [1] > 0)
-		Remove (m_nLength [1]);
-	for (i = 0; i < m_nLength [0]; i++) {
-		m_nSegments [i] = segmentManager.Add ();
-		segmentManager.Segment (m_nSegments [i])->m_info.bTunnel = 1;
-		//segmentManager.Segment (m_nSegments [i])->Setup ();
-		}
-	vertexManager.Add (&m_nVertices [0], (m_nLength [0] - 1) * 4);
-	}
-
-// calculate nSegment m_bezierPoints
-for (i = 0; i <= m_nLength [0]; i++) 
-	m_tunnelPoints [i] = Bezier ((double) i / (double) m_nLength [0], 4, m_bezierPoints);
-
-// make all points relative to first face (translation)
-for (i = 0; i < 4; i++) 
-	relPoints [i] = m_bezierPoints [i] - m_bezierPoints [0];
-
-for (i = 0; i < 2; i++) {
-	segP = m_info [i].Segment ();
-	for (j = 0; j < 4; j++) 
-		relSidePoints [i][j] = *segP->Vertex (m_info [i].m_nSide, j) - m_bezierPoints [0];
-	}
-
-for (i = 0; i < m_nLength [0]; i++)
-	relTunnelPoints [i] = m_tunnelPoints [i] - m_bezierPoints [0];
-
-// determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
-ySpin = -atan3 (relPoints [1].v.z, relPoints [1].v.x); // to y-z plane
-zSpin = atan3 (relPoints [1].v.y, relPoints [1].v.x * cos (ySpin) - relPoints [1].v.z * sin (ySpin)); // to x axis
-
-// spin all m_bezierPoints relative to first face (rotation)
-for (i = 0; i < 4; i++) {
-	SpinPoint (relPoints + i, ySpin, zSpin);
-	for (j = 0; j < 2; j++) 
-		SpinPoint (relSidePoints [j] + i, ySpin, zSpin);
-	}
-
-for (i = 0; i < m_nLength [0]; i++) 
-	SpinPoint (relTunnelPoints + i, ySpin, zSpin);
-
-// determine polar coordinates of the 1st side (simply y,z coords)
-for (i = 0; i < 4; i++) {
-	theta [0][i] = atan3 (relSidePoints [0][i].v.z, relSidePoints [0][i].v.y);
-	y = relSidePoints [0][i].v.y;
-	z = relSidePoints [0][i].v.z;
-	radius [0][i] =_hypot (y, z);
-	}
-
-// determine polar coordinates of the 2nd side by rotating to x-axis first
-for (i = 0; i < 4; i++) {
-	// flip orthoginal vector to point into segment
-	vertex = (relPoints [3] * 2) - relPoints [2];
-	PolarPoints (&theta [1][i], &radius [1][i], &relSidePoints [1][i], &relPoints [3], &vertex);
-	}
-
-// figure out the angle differences to be in range (-pi to pi)
-for (j = 0; j < 4; j++) {
-	deltaAngle [j] = theta [1][MatchingSide (j)] - theta [0][j];
-	if (deltaAngle [j] < M_PI) 
-		deltaAngle [j] += 2 * M_PI;
-	if (deltaAngle [j] > M_PI) 
-		deltaAngle [j] -= 2 * M_PI;
-	}
-
-// make sure delta angles do not cross PI & -PI
-for (i = 1; i < 4; i++) {
-	if (deltaAngle [i] > deltaAngle [0] + M_PI) 
-		deltaAngle [i] -= 2 * M_PI;
-	if (deltaAngle [i] < deltaAngle [0] - M_PI) 
-		deltaAngle [i] += 2 * M_PI;
-	}
-
-// calculate segment vertices as weighted average between the two sides
-// then spin vertices in the direction of the segment vector
-ushort nVertex = 0;
-for (i = 0; i < m_nLength [0] - 1; i++) {
-	for (j = 0; j < 4; j++) {
-		CVertex* vertP = vertexManager.Vertex (m_nVertices [nVertex++]);
-		double h = (double) i / (double) m_nLength [0];
-		double angle  = h * deltaAngle [j] + theta [0][j];
-		double length = h * radius [1][MatchingSide (j)] + (((double) m_nLength [0] - (double) i) / (double) m_nLength [0]) * radius [0][j];
-		*vertP = RectPoints (angle, length, &relTunnelPoints [i], &relTunnelPoints [i+1]);
-		// spin vertices
-		SpinBackPoint (vertP, ySpin, zSpin);
-		// translate point back
-		*vertP += m_bezierPoints [0];
-		}
-	}
-SetupVertices ();
 }
 
 //------------------------------------------------------------------------------
 
 void CTunnelMaker::ComputeTunnel (void) 
 {
-  double		length;
-  int			i, j;
-  CSegment*	segP;
-  CVertex	vertex;
-  double		theta [2][4],radius [2][4]; // polor coordinates of sides
-  double		deltaAngle [4];
-  CVertex	relSidePoints [2][4]; // side m_bezierPoints reletave to center of side 1
-  CVertex	relPoints [4]; // 4 m_bezierPoints of nSegment reletave to 1st point
-  CVertex	relTunnelPoints [MAX_TUNNEL_SEGMENTS];
-  double		y, z;
-  double		ySpin, zSpin;
-
-// setup intermediate points for a cubic bezier curve
-// center of both cubes
-m_bezierPoints [0] = segmentManager.CalcSideCenter (m_info [0]);
-m_bezierPoints [3] = segmentManager.CalcSideCenter (m_info [1]);
-// point orthogonal to center of current segment
-m_bezierPoints [1] = segmentManager.CalcSideNormal (m_info [0]);
-m_bezierPoints [1] *= m_info [0].m_length;
-m_bezierPoints [1] += m_bezierPoints [0];
-// point orthogonal to center of other segment
-m_bezierPoints [2] = segmentManager.CalcSideNormal (m_info [1]);
-m_bezierPoints [2] *= m_info [1].m_length;
-m_bezierPoints [2] += m_bezierPoints [3];
-
-// calculate number of segments (min=1)
-
-length = Distance (m_bezierPoints [0], m_bezierPoints [3]);
-m_nLength [1] = m_nLength [0];
-m_nLength [0] = (int) ((fabs (m_info [0].m_length) + fabs (m_info [1].m_length)) / 20 + length / 40.0);
-m_nLength [0] = min (m_nLength [0], m_nMaxSegments - 1);
-
-if (m_nLength [1] != m_nLength [0]) {
-	if (m_nLength [1] > 0)
-		Remove (m_nLength [1]);
-	for (i = 0; i < m_nLength [0]; i++) {
-		m_nSegments [i] = segmentManager.Add ();
-		segmentManager.Segment (m_nSegments [i])->m_info.bTunnel = 1;
-		//segmentManager.Segment (m_nSegments [i])->Setup ();
-		}
-	vertexManager.Add (&m_nVertices [0], (m_nLength [0] - 1) * 4);
-	}
-
-// calculate nSegment m_bezierPoints
-for (i = 0; i <= m_nLength [0]; i++) 
-	m_tunnelPoints [i] = BezierFcn ((double) i / (double) m_nLength [0], 4, m_bezierPoints);
-
-// make all points relative to first face (translation)
-for (i = 0; i < 4; i++) 
-	relPoints [i] = m_bezierPoints [i] - m_bezierPoints [0];
-
-for (i = 0; i < 2; i++) {
-	segP = m_info [i].Segment ();
-	for (j = 0; j < 4; j++) 
-		relSidePoints [i][j] = *segP->Vertex (m_info [i].m_nSide, j) - m_bezierPoints [0];
-	}
-
-for (i = 0; i < m_nLength [0]; i++)
-	relTunnelPoints [i] = m_tunnelPoints [i] - m_bezierPoints [0];
-
-// determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
-ySpin = -atan3 (relPoints [1].v.z, relPoints [1].v.x); // to y-z plane
-zSpin = atan3 (relPoints [1].v.y, relPoints [1].v.x * cos (ySpin) - relPoints [1].v.z * sin (ySpin)); // to x axis
-
-// spin all m_bezierPoints relative to first face (rotation)
-for (i = 0; i < 4; i++) {
-	SpinPoint (relPoints + i, ySpin, zSpin);
-	for (j = 0; j < 2; j++) 
-		SpinPoint (relSidePoints [j] + i, ySpin, zSpin);
-	}
-
-for (i = 0; i < m_nLength [0]; i++) 
-	SpinPoint (relTunnelPoints + i, ySpin, zSpin);
-
-// determine polar coordinates of the 1st side (simply y,z coords)
-for (i = 0; i < 4; i++) {
-	theta [0][i] = atan3 (relSidePoints [0][i].v.z, relSidePoints [0][i].v.y);
-	y = relSidePoints [0][i].v.y;
-	z = relSidePoints [0][i].v.z;
-	radius [0][i] =_hypot (y, z);
-	}
-
-// determine polar coordinates of the 2nd side by rotating to x-axis first
-for (i = 0; i < 4; i++) {
-	// flip orthoginal vector to point into segment
-	vertex = (relPoints [3] * 2) - relPoints [2];
-	PolarPoints (&theta [1][i], &radius [1][i], &relSidePoints [1][i], &relPoints [3], &vertex);
-	}
-
-// figure out the angle differences to be in range (-pi to pi)
-for (j = 0; j < 4; j++) {
-	deltaAngle [j] = theta [1][MatchingSide (j)] - theta [0][j];
-	if (deltaAngle [j] < M_PI) 
-		deltaAngle [j] += 2 * M_PI;
-	if (deltaAngle [j] > M_PI) 
-		deltaAngle [j] -= 2 * M_PI;
-	}
-
-// make sure delta angles do not cross PI & -PI
-for (i = 1; i < 4; i++) {
-	if (deltaAngle [i] > deltaAngle [0] + M_PI) 
-		deltaAngle [i] -= 2 * M_PI;
-	if (deltaAngle [i] < deltaAngle [0] - M_PI) 
-		deltaAngle [i] += 2 * M_PI;
-	}
-
-// calculate segment vertices as weighted average between the two sides
-// then spin vertices in the direction of the segment vector
-ushort nVertex = 0;
-for (i = 0; i < m_nLength [0] - 1; i++) {
-	for (j = 0; j < 4; j++) {
-		CVertex* vertP = vertexManager.Vertex (m_nVertices [nVertex++]);
-		double h = (double) i / (double) m_nLength [0];
-		double angle  = h * deltaAngle [j] + theta [0][j];
-		double length = h * radius [1][MatchingSide (j)] + (((double) m_nLength [0] - (double) i) / (double) m_nLength [0]) * radius [0][j];
-		*vertP = RectPoints (angle, length, &relTunnelPoints [i], &relTunnelPoints [i+1]);
-		// spin vertices
-		SpinBackPoint (vertP, ySpin, zSpin);
-		// translate point back
-		*vertP += m_bezierPoints [0];
-		}
-	}
-SetupVertices ();
-}
-
-//------------------------------------------------------------------------------
-
-void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* view) 
-{
-if (!m_bActive)
-	return;
-
-CDC* pDC = renderer.DC ();
-CViewMatrix* viewMatrix = renderer.ViewMatrix ();
-
-tunnelMaker.ComputeTunnel ();
-
-renderer.BeginRender ();
-for (int i = 0; i < 4; i++) {
-	m_bezierPoints [i].Transform (viewMatrix);
-	m_bezierPoints [i].Project (viewMatrix);
-	}
-int h = (tunnelMaker.Length () - 1) * 4;
-for (int i = 0; i < h; i++) {
-	vertexManager [m_nVertices [i]].Transform (viewMatrix);
-	vertexManager [m_nVertices [i]].Project (viewMatrix);
-	}
-renderer.EndRender ();
-
-renderer.BeginRender (true);
-renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
-renderer.SelectPen (penRed + 1);
-
-CMineView* mineView = DLE.MineView ();
-if (m_bezierPoints [1].InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-	if (m_bezierPoints [0].InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-		renderer.MoveTo (m_bezierPoints [0].m_screen.x, m_bezierPoints [0].m_screen.y);
-		renderer.LineTo (m_bezierPoints [1].m_screen.x, m_bezierPoints [1].m_screen.y);
-		renderer.Ellipse (m_bezierPoints [1], 4, 4);
-		}
-	}
-if (m_bezierPoints [2].InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-	if (m_bezierPoints [3].InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
-		renderer.MoveTo (m_bezierPoints [3].m_screen.x, m_bezierPoints [3].m_screen.y);
-		renderer.LineTo (m_bezierPoints [2].m_screen.x, m_bezierPoints [2].m_screen.y);
-		renderer.Ellipse (m_bezierPoints [2], 4, 4);
-		}
-	}
-renderer.SelectPen (penBlue + 1);
-h = tunnelMaker.Length ();
-for (int i = 0; i < h; i++)
-	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_nSegments [i]), false, false, 1);
-renderer.EndRender ();
 }
 
 //------------------------------------------------------------------------------

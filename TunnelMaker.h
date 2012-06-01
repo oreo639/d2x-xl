@@ -13,8 +13,8 @@ extern char szTunnelMakerError [];
 //------------------------------------------------------------------------
 
 class CCubicBezier {
-	CDoubleVector	m_points [4];
-	double			m_length [2];
+	CVertex	m_points [4];
+	double	m_length [2];
 
 	private:
 		long Faculty (int n); 
@@ -30,13 +30,17 @@ class CCubicBezier {
 
 		inline void SetPoint (CDoubleVector p, int i) { m_points [i] = p; }
 
-		inline CDoubleVector& GetPoint (int i) { return m_points [i]; }
+		inline CVertex& GetPoint (int i) { return m_points [i]; }
 
 		inline double SetLength (double length, int i) { m_length [i] = length; }
 
 		inline double GetLength (int i) { return fabs (m_length [i]); }
 
 		inline double Length (void) { return GetLength (0) + GetLength (1); }
+
+		void Transform (CViewMatrix* viewMatrix);
+
+		void Project (CViewMatrix* viewMatrix);
 	};	
 
 //------------------------------------------------------------------------
@@ -45,15 +49,15 @@ class CCubicBezier {
 
 class CTunnelBase : public CSideKey {
 	public:
-		CDoubleVector	m_point;
-		CDoubleVector	m_normal;
-		CDoubleVector	m_vertices [4];
+		CVertex	m_point;
+		CVertex	m_normal;
+		CVertex	m_vertices [4];
 
-		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSideKey (key) { Compute (); }
+		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSideKey (key) {}
 
 		CTunnelBase (CDoubleVector point, CDoubleVector normal) : m_point (point), m_normal (normal), CSideKey (-1, -1) {}
 
-		void Compute (void);
+		void Setup (void);
 
 		inline CDoubleVector GetPoint (void) { return m_point; }
 
@@ -70,22 +74,27 @@ class CTunnelBase : public CSideKey {
 	};
 
 //------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 // A single segment of a tunnel
 
 class CTunnelElement {
 	public:
-		CDoubleVector	m_node; // path point (segment center)
-		CDoubleVector	m_relNode; // path point (segment center) relative to start side center
-		ushort			m_nVertices [4];
-		short				m_nSegment;
+		CVertex	m_node; // path point (segment center)
+		CVertex	m_relNode; // path point (segment center) relative to start side center
+		ushort	m_nVertices [4];
+		short		m_nSegment;
 	};
 
 //------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+// A string of connected tunnel segments from a start to an end point 
 
-class CTunnelPath {
+class CTunnelSegment {
 	private:
-		CCubicBezier						m_bezier;
-		CTunnelBase							m_base [2];
+		CCubicBezier&	m_bezier;
+		CTunnelBase		m_base [2];
 
 	public:
 		short									m_nLength [2]; // current length, previous length [segments]
@@ -96,7 +105,7 @@ class CTunnelPath {
 			return (h > MAX_TUNNEL_SEGMENTS) ? MAX_TUNNEL_SEGMENTS : h;
 			}
 
-		void Setup (CTunnelBase base [2]);
+		void Setup (CCubicBezier& bezier, CTunnelBase base [2]);
 
 		void Compute (void);
 
@@ -106,6 +115,9 @@ class CTunnelPath {
 
 		void Destroy (void);
 
+		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* view);
+
+	private:
 		void UntwistSegment (short nSegment, short nSide); 
 
 		void SpinPoint (CVertex* point, double ySpin, double zSpin); 
@@ -119,6 +131,7 @@ class CTunnelPath {
 		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal);
 
 		void SetupVertices (void);
+
 	};
 
 //------------------------------------------------------------------------
@@ -131,21 +144,13 @@ public:
 	};
 
 //------------------------------------------------------------------------
-// A string of connected tunnel segments from a start to an end point 
-
-class CTunnelSegment {
-	public:
-		CTunnelBase							m_start, m_end;
-		CDynamicArray<CTunnelElement>	m_elements;
-	};
-
-//------------------------------------------------------------------------
 
 class CTunnelMaker {
 	private:
 		bool									m_bActive;
+		CCubicBezier&						m_bezier;
 		int									m_nMaxSegments;
-		CTunnelInfo							m_info [2];
+		CTunnelBase							m_base [2];
 		CDynamicArray<CTunnelSegment>	m_tunnel;
 
 	public:
