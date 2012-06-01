@@ -115,7 +115,7 @@ class CTunnelPath {
 
 		void Destroy (void);
 
-		void Release (int l);
+		void Release (void);
 
 		bool Create (short nPathLength);
 	};
@@ -142,7 +142,7 @@ class CTunnelSegment {
 
 		void Realize (void);
 
-		void Release (int i, bool bVertices = true);
+		void Release (bool bVertices = true);
 
 		void Destroy (void);
 

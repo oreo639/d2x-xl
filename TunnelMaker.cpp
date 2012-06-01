@@ -103,9 +103,9 @@ m_nPathLength = 0;
 
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Release (int i, bool bVertices)
+void CTunnelSegment::Release (bool bVertices)
 {
-while (--i >= 0) {
+for (int i = m_nPathLength; --i >= 0; ) {
 	segmentManager.Remove (m_elements [i].m_nSegment);
 	if (bVertices)
 		for (int j = 0; j < 4; j++)
@@ -117,7 +117,7 @@ while (--i >= 0) {
 
 void CTunnelSegment::Destroy (void)
 {
-Release (m_nPathLength);
+Release ();
 m_nPathLength = 0;
 m_elements.Destroy ();
 }
@@ -328,7 +328,7 @@ void CTunnelSegment::Create (short nPathLength)
 
 if (m_nPathLength != nPathLength) { // recompute
 	if (m_nPathLength > 0)
-		Release (m_nPathLength);
+		Release ();
 	if ((nPathLength > m_nPathLength) && !m_elements.Resize (nPathLength, false))
 		return;
 	m_nPathLength = nPathLength;
@@ -427,7 +427,7 @@ void CTunnelSegment::Create (short nPathLength, CDynamicArray<CTunnelPath>& path
 {
 if (m_nPathLength != nPathLength) { // recompute
 	if (m_nPathLength > 0)
-		Release (m_nPathLength, false);
+		Release (false);
 	if ((nPathLength > m_nPathLength) && !m_elements.Resize (nPathLength, false))
 		return;
 	m_nPathLength = nPathLength;
@@ -552,15 +552,15 @@ m_bezier.SetPoint (m_base [1].m_pos, 3);
 
 void CTunnelPath::Destroy (void)
 {
-Release (m_nPathLength);
+Release ();
 }
 
 //------------------------------------------------------------------------------
 
-void CTunnelPath::Release (int l)
+void CTunnelPath::Release (void)
 {
-while (--l >= 1)
-	vertexManager.Delete (m_vertices [l]);
+for (int i = m_nPathLength + 1; i > 0; i--)
+	vertexManager.Delete (m_vertices [i]);
 }
 
 //------------------------------------------------------------------------------
@@ -569,7 +569,7 @@ bool CTunnelPath::Create (short nPathLength)
 {
 if (m_nPathLength != nPathLength) { // recompute
 	if (m_nPathLength > 0)
-		Release (m_nPathLength + 1);
+		Release ();
 	if ((nPathLength > m_nPathLength) && !m_vertices.Resize (nPathLength + 2, false))
 		return false;
 	m_nPathLength = nPathLength;
