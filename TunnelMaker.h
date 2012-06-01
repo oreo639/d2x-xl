@@ -137,7 +137,7 @@ class CTunnelSegment {
 
 		void Setup (CTunnelBase base [2]);
 
-		void Create (CTunnelPath& path);
+		bool Create (CTunnelPath& path);
 
 		void Realize (void);
 
@@ -184,7 +184,7 @@ class CTunnelMaker {
 
 		void Destroy (void);
 
-		void Setup (void);
+		bool Setup (void);
 		
 		bool Active (bool bMsg = true) { 
 			if (!m_bActive)
@@ -220,7 +220,7 @@ class CTunnelMaker {
 	private:
 		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal); 
 
-		void Update (void);
+		bool Update (void);
 	};
 
 extern CTunnelMaker tunnelMaker;

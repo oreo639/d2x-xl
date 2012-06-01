@@ -309,7 +309,7 @@ for (short i = 0; i < m_nPathLength; i++)
 
 //------------------------------------------------------------------------------
 
-void CTunnelSegment::Create (CTunnelPath& path) 
+bool CTunnelSegment::Create (CTunnelPath& path) 
 {
   int			i, j;
   CSegment*	segP;
@@ -325,7 +325,7 @@ if (m_nPathLength != path.Length ()) { // recompute
 	if (m_nPathLength > 0)
 		Release ();
 	if ((path.Length () > m_nPathLength) && !m_elements.Resize (path.Length (), false))
-		return;
+		return false;
 	m_nPathLength = path.Length ();
 	for (i = 0; i < m_nPathLength; i++) {
 		m_elements [i].m_nSegment = segmentManager.Add ();
@@ -409,6 +409,7 @@ for (i = 0; i < m_nPathLength - 1; i++) {
 		}
 	}
 SetupVertices ();
+return true;
 }
 
 //------------------------------------------------------------------------------
@@ -475,7 +476,7 @@ bool CTunnelPath::Setup (CTunnelBase base [2])
 {
 m_base [0].Setup ();
 m_base [1].Setup ();
-double length = Distance (m_bezier.GetPoint (0), m_bezier.GetPoint (0));
+double length = Distance (m_bezier.GetPoint (0), m_bezier.GetPoint (1));
 if (length < 50.0)
 	return false;
 length *= 0.5;
@@ -608,10 +609,13 @@ if (!m_bActive) {
 		return;
 		}
 
-	if (!m_segments.Create (1))
+	if (!m_segments.Create (1)) {
+		m_bActive = false;
 		return;
+		}
 
-	Setup ();
+	if (!Setup ())
+		return;
 	undoManager.Lock ();
 
 	if (!DLE.ExpertMode ())
@@ -642,7 +646,7 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::Setup (void)
+bool CTunnelMaker::Setup (void)
 {
 dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (selections [0]);
 dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (selections [1]);
@@ -650,27 +654,32 @@ m_base [0].Setup ();
 m_base [1].Setup ();
 m_nGranularity = 0;
 
-if (m_path.Setup (m_base)) 
+if (m_path.Setup (m_base)) {
 	m_segments [0].Setup (m_base);
-else
-	ErrorMsg ("End points of segment are too close.\n\n"
-				 "Hint: Select two sides which are further apart\n"
-				 "using the spacebar and left/right arrow keys,\n"
-				 "then try again.");
+	return true;
+	}
+ErrorMsg ("End points of segment are too close.\n\n"
+				"Hint: Select two sides which are further apart\n"
+				"using the spacebar and left/right arrow keys,\n"
+				"then try again.");
+Destroy ();
+return false;
 }
 
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::Update (void) 
+bool CTunnelMaker::Update (void) 
 { 
+if (!m_bActive)
+	return false;
 if ((*((CSideKey*) current) == *((CSideKey*) &m_base [0]) || *((CSideKey*) current) == *((CSideKey*) &m_base [1])) &&
     (*((CSideKey*) other) == *((CSideKey*) &m_base [0]) || *((CSideKey*) other) == *((CSideKey*) &m_base [1])))
-	return;
+	return true;
 if (*((CSideKey*) current) == *((CSideKey*) other))
-	return;
+	return true;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
-	return;
-Setup ();
+	return true;
+return Setup ();
 }
 
 //------------------------------------------------------------------------------
@@ -691,21 +700,19 @@ bool CTunnelMaker::Create (void)
 {
 if (PathLength () <= 0) 
 	return false;
-m_path.Create (m_nPathLength);
-m_segments [0].Create (m_path);
-return true;
+if (m_path.Create (m_nPathLength) && m_segments [0].Create (m_path))
+	return true;
+Destroy ();
+return false;
 }
 
 //------------------------------------------------------------------------------
 
 void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix)
 {
-if (m_bActive) {
-	Update ();
-	if (Create ()) {
-		m_path.Draw (renderer, redPen, bluePen, viewMatrix);
-		m_segments [0].Draw (renderer, redPen, bluePen, viewMatrix);
-		}
+if (Update () && Create ()) {
+	m_path.Draw (renderer, redPen, bluePen, viewMatrix);
+	m_segments [0].Draw (renderer, redPen, bluePen, viewMatrix);
 	}
 }
 
