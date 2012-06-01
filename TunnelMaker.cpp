@@ -322,7 +322,6 @@ void CTunnelSegment::Compute (short nPathLength)
   double		deltaAngle [4];
   CVertex	relSidePoints [2][4]; // side points reletave to center of side 1
   CVertex	relPoints [4]; // 4 points of segment reletave to 1st point
-  CVertex	relTunnelPoints [MAX_TUNNEL_SEGMENTS];
   double		y, z;
   double		ySpin, zSpin;
 
@@ -368,7 +367,7 @@ for (i = 0; i < 4; i++) {
 	}
 
 for (i = 0; i < m_nPathLength; i++) 
-	SpinPoint (relTunnelPoints + i, ySpin, zSpin);
+	SpinPoint (&m_elements [i].m_relNode, ySpin, zSpin);
 
 // determine polar coordinates of the 1st side (simply y,z coords)
 for (i = 0; i < 4; i++) {
@@ -411,7 +410,7 @@ for (i = 0; i < m_nPathLength - 1; i++) {
 		double h = (double) i / (double) m_nPathLength;
 		double angle  = h * deltaAngle [j] + theta [0][j];
 		double length = h * radius [1][MatchingSide (j)] + (((double) m_nPathLength - (double) i) / (double) m_nPathLength) * radius [0][j];
-		*vertP = RectPoints (angle, length, &relTunnelPoints [i], &relTunnelPoints [i+1]);
+		*vertP = RectPoints (angle, length, &m_elements [i].m_relNode, &m_elements [i + 1].m_relNode);
 		// spin vertices
 		SpinBackPoint (vertP, ySpin, zSpin);
 		// translate point back
@@ -560,12 +559,12 @@ if (!m_bActive) {
 		length = MAX_TUNNEL_LENGTH;
 
 	// setup intermediate points for a cubic bezier curve
-	m_bezier.SetPoint (m_base [0].GetPoint (), 0);
-	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
-	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (0), 2);
-	m_bezier.SetPoint (m_base [1].GetPoint (), 3);
 	m_bezier.SetLength (length, 0);
 	m_bezier.SetLength (length, 1);
+	m_bezier.SetPoint (m_base [0].GetPoint (), 0);
+	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
+	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
+	m_bezier.SetPoint (m_base [1].GetPoint (), 3);
 
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("Place the current segment on one of the segment end points.\n\n"
@@ -599,7 +598,7 @@ DLE.MineView ()->Refresh ();
 
 short CTunnelMaker::PathLength (void)
 {
-m_nPathLength = short (m_bezier.Length () + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 40.0);
+m_nPathLength = short (m_bezier.Length () / 20.0 + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 20.0);
 if (m_nPathLength > MaxSegments () - 1)
 	m_nPathLength = MaxSegments () - 1;
 return m_nPathLength;
@@ -630,13 +629,19 @@ void CTunnelMaker::Stretch (void)
 //undoManager.UpdateBuffer(0);
 
 if (current->SegmentId () == m_base [0].m_nSegment) {
-	if (m_bezier.GetLength (0) < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
-		m_bezier.SetLength (m_bezier.GetLength (0) + TUNNEL_INTERVAL, 0);
+	if (m_bezier.GetLength (0) > (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+		return;
+	m_bezier.SetLength (m_bezier.GetLength (0) + TUNNEL_INTERVAL, 0);
+	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
 	}
-if (current->SegmentId () == m_base [1].m_nSegment) {
-	if (m_bezier.GetLength (1) < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
-		m_bezier.SetLength (m_bezier.GetLength (1) + TUNNEL_INTERVAL, 1);
+else if (current->SegmentId () == m_base [1].m_nSegment) {
+	if (m_bezier.GetLength (1) > (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+		return;
+	m_bezier.SetLength (m_bezier.GetLength (1) + TUNNEL_INTERVAL, 1);
+	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
 	}
+else
+	return;
 DLE.MineView ()->Refresh ();
 }
 
@@ -648,13 +653,19 @@ void CTunnelMaker::Shrink (void)
 //  undoManager.UpdateBuffer(0);
 
 if (current->SegmentId () == m_base [0].m_nSegment) {
-	if (m_bezier.GetLength (0) > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
-		m_bezier.SetLength (m_bezier.GetLength (0) - TUNNEL_INTERVAL, 0);
+	if (m_bezier.GetLength (0) < (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL)) 
+		return;
+	m_bezier.SetLength (m_bezier.GetLength (0) - TUNNEL_INTERVAL, 0);
+	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
 	}
-if (current->SegmentId () == m_base [1].m_nSegment) {
-	if (m_bezier.GetLength (1) > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
-		m_bezier.SetLength (m_bezier.GetLength (1) - TUNNEL_INTERVAL, 1);
+else if (current->SegmentId () == m_base [1].m_nSegment) {
+	if (m_bezier.GetLength (1) < (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
+		return;
+	m_bezier.SetLength (m_bezier.GetLength (1) - TUNNEL_INTERVAL, 1);
+	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
 	}
+else
+	return;
 DLE.MineView ()->Refresh ();
 }
 
