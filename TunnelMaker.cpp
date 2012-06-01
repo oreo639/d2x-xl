@@ -105,7 +105,7 @@ m_nPathLength = 0;
 
 void CTunnelSegment::Remove (int i)
 {
-while (i >= 0) {
+while (--i >= 0) {
 	segmentManager.Remove (m_elements [i].m_nSegment);
 	for (int j = 0; j < 4; j++)
 		vertexManager.Delete (m_elements [i].m_nVertices [j]);
