@@ -475,8 +475,6 @@ renderer.EndRender ();
 
 bool CTunnelPath::Setup (CTunnelBase base [2])
 {
-m_base [0].Setup ();
-m_base [1].Setup ();
 double length = Distance (m_base [0].m_point, m_base [1].m_point);
 if (length < 50.0)
 	return false;
@@ -500,7 +498,6 @@ return true;
 
 void CTunnelPath::Destroy (void)
 {
-Release ();
 }
 
 //------------------------------------------------------------------------------
@@ -508,8 +505,6 @@ Release ();
 bool CTunnelPath::Create (short nPathLength)
 {
 if (m_nPathLength != nPathLength) { // recompute
-	if (m_nPathLength > 0)
-		Release ();
 	if ((nPathLength > m_nPathLength) && !m_vertices.Resize (nPathLength, false))
 		return false;
 	m_nPathLength = nPathLength;
