@@ -617,7 +617,8 @@ m_tunnel [0].Compute (PathLength ());
 
 void CTunnelMaker::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix)
 {
-m_tunnel [0].Draw (renderer, redPen, bluePen, viewMatrix);
+if (m_nPathLength > 0)
+	m_tunnel [0].Draw (renderer, redPen, bluePen, viewMatrix);
 }
 
 //------------------------------------------------------------------------------

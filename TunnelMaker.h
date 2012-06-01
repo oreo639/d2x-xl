@@ -149,7 +149,7 @@ class CTunnelMaker {
 		CDynamicArray<CTunnelSegment>	m_tunnel;
 
 	public:
-		CTunnelMaker () {}
+		CTunnelMaker () : m_nPathLength (0) {}
 
 		void Create (void); 
 
