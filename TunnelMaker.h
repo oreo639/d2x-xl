@@ -9,6 +9,75 @@
 extern char szTunnelMakerError [];
 
 //------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+class CCubicBezier {
+	CDoubleVector	m_points [4];
+	double			m_length [2];
+
+	private:
+		long Faculty (int n); 
+
+		double Coeff (int n, int i); 
+
+		double Blend (int i, int n, double u); 
+
+	public:
+		CCubicBezier () : m_length ({1.0, 1.0}) {}
+
+		CDoubleVector Compute (double u, int nPoints, CDoubleVector* p); 
+
+		inline void SetPoint (CDoubleVector p, int i) { m_points [i] = p; }
+
+		inline CDoubleVector& GetPoint (int i) { return m_points [i]; }
+
+		inline double SetLength (double length, int i) { m_length [i] = length; }
+
+		inline double GetLength (int i) { return fabs (m_length [i]); }
+
+		inline double Length (void) { return GetLength (0) + GetLength (1); }
+	};	
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+class CTunnelBase : public CSideKey {
+	public:
+		CDoubleVector	m_point;
+		CDoubleVector	m_normal;
+
+		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSideKey (key) { Compute (); }
+
+		CTunnelBase (CDoubleVector point, CDoubleVector normal) : m_point (point), m_normal (normal), CSideKey (-1, -1) {}
+
+		void Compute (void);
+
+		inline CDoubleVector GetPoint (void) { return m_point; }
+
+		inline void SetPoint (CDoubleVector point) { m_point = point; }
+
+		inline CDoubleVector GetNormal (void) { return m_normal; }
+
+		inline void SetNormal (CDoubleVector normal) { m_normal = normal; }
+	};
+
+//------------------------------------------------------------------------
+
+class CTunnelPath {
+	private:
+		CCubicBezier						m_bezier;
+
+	public:
+		short									m_nLength [2]; // current length, previous length [segments]
+		CDynamicArray<CDoubleVector>	m_path;
+
+	void Compute (CTunnelBase base [2]);
+
+	};
+
+//------------------------------------------------------------------------
 
 class CTunnelInfo : public CSideKey {
 public:
@@ -18,18 +87,32 @@ public:
 	};
 
 //------------------------------------------------------------------------
+// A single segment of a tunnel
+
+class CTunnelElement {
+	public:
+		CDoubleVector	m_node; // path point (segment center)
+		ushort			m_nCorners [4];
+		short				m_nSegment;
+	};
+
+//------------------------------------------------------------------------
+// A string of connected tunnel segments from a start to an end point 
+
+class CTunnelSegment {
+	public:
+		CTunnelBase							m_start, m_end;
+		CDynamicArray<CTunnelElement>	m_elements;
+	};
+
+//------------------------------------------------------------------------
 
 class CTunnelMaker {
 	private:
-		bool		m_bActive;
-		int		m_nMaxSegments;
-		CVertex	m_points [4];
-		CVertex	m_tunnelPoints [MAX_TUNNEL_SEGMENTS];
-		short		m_nSegments [MAX_TUNNEL_SEGMENTS];
-		ushort	m_nVertices [MAX_TUNNEL_SEGMENTS * 4];
-		short		m_nLength [2];
-
-		CTunnelInfo	m_info [2];
+		bool									m_bActive;
+		int									m_nMaxSegments;
+		CTunnelInfo							m_info [2];
+		CDynamicArray<CTunnelSegment>	m_tunnel;
 
 	public:
 		void Create (void); 
