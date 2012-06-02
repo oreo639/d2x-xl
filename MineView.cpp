@@ -193,6 +193,7 @@ m_lightTimer =
 m_selectTimer = -1;
 m_nFrameRate = 100;
 m_xRenderOffs = m_yRenderOffs = 0;
+m_clickState = 0;
 }
 
 //------------------------------------------------------------------------------
