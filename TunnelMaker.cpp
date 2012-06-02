@@ -533,6 +533,7 @@ m = m_base [1].m_orientation * m_unRotate;
 CQuaternion q;
 q.FromMatrix (m);
 q.ToAxisAngle (m_rotAxis, m_rotAngle);
+m = q.ToMatrix ();
 
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);

@@ -52,19 +52,16 @@ return (CDoubleVector (resQuat.x, resQuat.y, resQuat.z));
 
 // -----------------------------------------------------------------------------
 
-void CQuaternion::FromAxisAngle (const CDoubleVector &v, double angle)
+void CQuaternion::FromAxisAngle (CDoubleVector axis, double angle)
 {
-double sinAngle;
-angle *= 0.5f;
-CDoubleVector vn (v);
-vn.Normalize ();
- 
-sinAngle = sin (angle);
- 
-x = (vn.v.x * sinAngle);
-y = (vn.v.y * sinAngle);
-z = (vn.v.z * sinAngle);
+axis.Normalize ();
+angle *= 0.5;
+double sina = sin (angle);
+x = axis.v.x * sina;
+y = axis.v.y * sina;
+z = axis.v.z * sina;
 w = cos (angle);
+Normalize ();
 }
 
 // -----------------------------------------------------------------------------
@@ -102,14 +99,14 @@ void CQuaternion::FromMatrix (CDoubleMatrix& m)
 {
 #if 1
 
-	double s, t = m.m.rVec.x + m.m.uVec.y + m.m.fVec.z + 1.0;
+	double s, t = m.m.rVec.v.x + m.m.uVec.v.y + m.m.fVec.v.z + 1.0;
 	
 if (t > 0.0) {
 	s = 0.5 / sqrt (t);
    w = 0.25 / s;
-   x = (m.m.fVec.v.z - m.m.uVec.v.z) * s;
-   y = (m.m.rVec.v.y - m.m.fVec.v.y) * s;
-   z = (m.m.uVec.v.x - m.m.rVec.v.x) * s;
+   x = (m.m.fVec.v.y - m.m.uVec.v.z) * s;
+   y = (m.m.rVec.v.z - m.m.fVec.v.x) * s;
+   z = (m.m.uVec.v.x - m.m.rVec.v.y) * s;
 	}
 else {
 	int column = (m.m.rVec.v.x >= m.m.uVec.v.y) ? (m.m.rVec.v.x >= m.m.fVec.v.z) ? 0 : 2 : (m.m.uVec.v.y >= m.m.fVec.v.z) ? 1 : 2;
@@ -184,33 +181,49 @@ Normalize ();
 
 CDoubleMatrix CQuaternion::ToMatrix (void)
 {
-double x2 = x * x;
-double y2 = y * y;
-double z2 = z * z;
-double xy = x * y;
-double xz = x * z;
-double yz = y * z;
-double wx = w * x;
-double wy = w * y;
-double wz = w * z;
+double x2 = x * x * 2.0;
+double y2 = y * y * 2.0;
+double z2 = z * z * 2.0;
+double xy = x * y * 2.0;
+double xz = x * z * 2.0;
+double yz = y * z * 2.0;
+double xw = x * w * 2.0;
+double yw = y * w * 2.0;
+double zw = z * w * 2.0;
  
 // This calculation would be a lot more complicated for non-unit length quaternions
 // Note: The constructor of Matrix4 expects the Matrix in column-major format like expected by
 //   OpenGL
-return CDoubleMatrix (1.0 - 2.0 * (y2 + z2), 2.0 * (xy + wz), 2.0 * (xz - wy), 
-							 2.0 * (xy - wz), 1.0 - 2.0 * (x2 + z2), 2.0 * (yz + wx), 
-							 2.0 * (xz + wy), 2.0 * (yz - wx), 1.0 - 2.0 * (x2 + y2));
+return CDoubleMatrix (1.0 - y2 - z2, xy - zw, xz + yw, 
+							 xy + zw, 1.0 - x2 - z2, yz - xw, 
+							 xz - yw, yz + xw, 1.0 - x2 - y2);
 }
 
 // -----------------------------------------------------------------------------
 
 void CQuaternion::ToAxisAngle (CDoubleVector& axis, double& angle)
 {
+#if 1
+
+Normalize ();
+
+angle = acos (w) * 2.0 * PI;
+double sina = sqrt (1.0 - w * w);
+if (fabs (sina) < 1e-10)
+	sina = 1.0;
+axis.v.x = x / sina;
+axis.v.y = y / sina;
+axis.v.z = z / sina;
+
+#else
+
 double scale = sqrt (x * x + y * y + z * z);
 axis.v.x = x / scale;
 axis.v.y = y / scale;
 axis.v.z = z / scale;
 angle = acos (w) * 2.0;
+
+#endif
 }
 
 // -----------------------------------------------------------------------------

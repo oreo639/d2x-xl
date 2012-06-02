@@ -26,7 +26,7 @@ class CQuaternion {
 
 	CDoubleVector CQuaternion::operator* (const CDoubleVector &vec);
 
-	void FromAxisAngle (const CDoubleVector &v, double angle);
+	void FromAxisAngle (CDoubleVector axis, double angle);
 
 	void FromEuler (double pitch, double yaw, double roll);
 
