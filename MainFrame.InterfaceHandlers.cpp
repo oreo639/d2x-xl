@@ -63,6 +63,7 @@ BEGIN_MESSAGE_MAP (CMainFrame, CFrameWnd)
 	ON_COMMAND (ID_VIEW_ZOOMOUT, OnViewZoomout)
 	ON_COMMAND (ID_VIEW_FITTOVIEW, OnViewFitToView)
 	ON_COMMAND (ID_VIEW_TOGGLE_PERSPECTIVE, OnViewTogglePerspective)
+	ON_COMMAND (ID_MAKE_POINTS_PARALLEL, OnMakePointsParallel)
 	ON_COMMAND (ID_VIEW_COLLAPSE_EDGE, OnViewCollapseEdge)
 	ON_COMMAND (ID_VIEW_CREATE_WEDGE, OnViewCreateWedge)
 	ON_COMMAND (ID_VIEW_CREATE_PYRAMID, OnViewCreatePyramid)
@@ -143,6 +144,7 @@ BEGIN_MESSAGE_MAP (CMainFrame, CFrameWnd)
 	ON_COMMAND (ID_SEL_SEGMENT_BACKWARDS_KEY, OnSelSegmentBackwardsKey)
 	ON_COMMAND (ID_SEL_OTHER_SEGMENT, OnSelOtherSegment)
 	ON_COMMAND (ID_SEL_OTHER_SIDE, OnSelOtherSide)
+	ON_COMMAND (ID_MAKE_POINTS_PARALLEL, OnMakePointsParallel)
 	ON_COMMAND (ID_VIEW_COLLAPSE_EDGE, OnCollapseEdge)
 	ON_COMMAND (ID_VIEW_CREATE_WEDGE, OnCreateWedge)
 	ON_COMMAND (ID_VIEW_CREATE_PYRAMID, OnCreatePyramid)
@@ -391,6 +393,11 @@ MineView ()->FitToView ();
 void CMainFrame::OnViewTogglePerspective () 
 {
 DLE.ToolView ()->SettingsTool ()->TogglePerspective ();
+}
+
+void CMainFrame::OnMakePointsParallel () 
+{
+current->Segment ()->MakeCoplanar (current->SideId ());
 }
 
 void CMainFrame::OnViewCollapseEdge () 

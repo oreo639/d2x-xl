@@ -3172,6 +3172,8 @@ BEGIN
         MENUITEM "Collapse to &Wedge",          ID_VIEW_CREATE_WEDGE
         MENUITEM "Collapse to &Pyramid",        ID_VIEW_CREATE_PYRAMID
         MENUITEM SEPARATOR
+        MENUITEM "Make Points P&arallel",       ID_MAKE_POINTS_PARALLEL
+        MENUITEM SEPARATOR
         MENUITEM "&Undo",                       ID_EDIT_UNDO
         MENUITEM "&Redo",                       ID_EDIT_REDO
     END

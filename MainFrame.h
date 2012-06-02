@@ -279,6 +279,7 @@ public:
 	afx_msg void OnViewZoomout();
 	afx_msg void OnViewFitToView();
 	afx_msg void OnViewTogglePerspective();
+	afx_msg void OnMakePointsParallel ();
 	afx_msg void OnViewCollapseEdge();
 	afx_msg void OnViewCreateWedge();
 	afx_msg void OnViewCreatePyramid();

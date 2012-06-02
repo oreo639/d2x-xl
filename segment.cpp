@@ -1207,6 +1207,24 @@ return -1;
 }
 
 // -----------------------------------------------------------------------------
+
+void CSegment::MakeCoplanar (short nSide)
+{
+	CSide* sideP = Side (nSide);
+
+sideP->ComputeNormals (VertexIds (), ComputeCenter ());
+if (sideP->Normal (0) == sideP->Normal (1))
+	return;
+CDoubleVector v0 = sideP->Center ();
+CDoubleVector n = sideP->Normal ();
+for (short i = 0, j = sideP->VertexCount (); i < j; i++) {
+	CDoubleVector v = *Vertex (nSide, j) - v0;
+	double d = Dot (v, n);
+	*Vertex (nSide, j) -= n * d;
+	}
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 

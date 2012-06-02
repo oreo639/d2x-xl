@@ -1029,6 +1029,8 @@ if (m_mouseState == eMouseStateButtonDown) {
 				segmentManager.CreateWedge ();
 			else if (nChoice == ID_VIEW_CREATE_PYRAMID)
 				segmentManager.CreatePyramid ();
+			else if (nChoice == ID_MAKE_POINTS_PARALLEL)
+				current->Segment ()->MakeCoplanar (current->SideId ());
 			else if (nChoice == ID_EDIT_UNDO)
 				undoManager.Undo ();
 			else if (nChoice == ID_EDIT_REDO)
