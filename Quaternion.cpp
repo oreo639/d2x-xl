@@ -100,6 +100,44 @@ static inline double Sign (double x) {return (x >= 0.0f) ? +1.0f : -1.0f;}
 
 void CQuaternion::FromMatrix (CDoubleMatrix& m)
 {
+#if 1
+
+	double s, t = m.m.rVec.x + m.m.uVec.y + m.m.fVec.z + 1.0;
+	
+if (t > 0.0) {
+	s = 0.5 / sqrt (t);
+   w = 0.25 / s;
+   x = (m.m.fVec.v.z - m.m.uVec.v.z) * s;
+   y = (m.m.rVec.v.y - m.m.fVec.v.y) * s;
+   z = (m.m.uVec.v.x - m.m.rVec.v.x) * s;
+	}
+else {
+	int column = (m.m.rVec.v.x >= m.m.uVec.v.y) ? (m.m.rVec.v.x >= m.m.fVec.v.z) ? 0 : 2 : (m.m.uVec.v.y >= m.m.fVec.v.z) ? 1 : 2;
+	if (column == 0) {
+      s = sqrt (1.0 + m.m.rVec.v.x - m.m.uVec.v.y - m.m.fVec.v.z) * 2;
+      x = 0.5 / s;
+      y = (m.m.rVec.v.y + m.m.uVec.v.x) / s;
+      z = (m.m.rVec.v.z + m.m.fVec.v.y) / s;
+      w = (m.m.uVec.v.z + m.m.fVec.v.z) / s;
+		}
+	else if (column == 1) {
+      s = sqrt (1.0 + m.m.uVec.v.y - m.m.rVec.v.x - m.m.fVec.v.z) * 2;
+      x = (m.m.rVec.v.y + m.m.uVec.v.x) / s;
+      y = 0.5 / s;
+      z = (m.m.uVec.v.z + m.m.fVec.v.z) / s;
+      w = (m.m.rVec.v.z + m.m.fVec.v.y) / s;
+		}
+	else {
+      s = sqrt (1.0 + m.m.fVec.v.z - m.m.rVec.v.x - m.m.uVec.v.y) * 2;
+      x = (m.m.rVec.v.z + m.m.fVec.v.y) / s;
+      y = (m.m.uVec.v.z + m.m.fVec.v.z) / s;
+      z = 0.5 / s;
+      w = (m.m.rVec.v.y + m.m.uVec.v.x) / s;
+		}
+	}
+
+#else
+
 x = ( m.m.rVec.v.x + m.m.uVec.v.y + m.m.fVec.v.z + 1.0f) / 4.0f;
 y = ( m.m.rVec.v.x - m.m.uVec.v.y - m.m.fVec.v.z + 1.0f) / 4.0f;
 z = (-m.m.rVec.v.x + m.m.uVec.v.y - m.m.fVec.v.z + 1.0f) / 4.0f;
@@ -136,6 +174,9 @@ else if (w >= x && w >= y && w >= z) {
     z *= Sign (m.m.fVec.v.y + m.m.uVec.v.z);
     //w *= +1.0f;
 	}
+
+#endif
+
 Normalize ();
 }
 

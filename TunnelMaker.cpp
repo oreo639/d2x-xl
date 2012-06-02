@@ -91,7 +91,7 @@ m_normal = sideP->Normal () * sign;
 m_point = segP->ComputeCenter (m_nSide);
 for (int i = 0; i < 4; i++)
 	m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
-m_orientation.m.fVec = m_normal * sign;
+m_orientation.m.fVec = m_normal;
 m_orientation.m.rVec = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
 m_orientation.m.rVec.Normalize ();
 m_orientation.m.rVec *= -sign;
