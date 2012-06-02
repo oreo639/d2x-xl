@@ -65,7 +65,7 @@ class CTunnelBase : public CSideKey {
 
 		inline void SetPoint (CDoubleVector point) { m_point = point; }
 
-		inline CDoubleVector GetNormal (void) { return m_normal * m_sign; }
+		inline CDoubleVector GetNormal (void) { return m_normal * -m_sign; }
 
 		inline void SetNormal (CDoubleVector normal) { m_normal = normal; }
 
