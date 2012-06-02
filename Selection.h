@@ -46,9 +46,9 @@ class CSelection : public CSideKey {
 
 		short SetSideId (short nSide);
 
-		inline short SetEdge (short nEdge) { return m_nPoint = m_nEdge = nEdge; }
+		inline short SetEdge (short nEdge) { return Side ()->m_nPoint = m_nPoint = m_nEdge = nEdge; }
 
-		inline short SetPoint (short nPoint) { return m_nEdge = m_nPoint = nPoint; }
+		inline short SetPoint (short nPoint) { return Side ()->m_nPoint = m_nEdge = m_nPoint = nPoint; }
 
 		short ChildId (void);
 

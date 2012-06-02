@@ -1215,8 +1215,13 @@ void CSegment::MakeCoplanar (short nSide)
 sideP->ComputeNormals (VertexIds (), ComputeCenter ());
 if (sideP->Normal (0) == sideP->Normal (1))
 	return;
-CDoubleVector v0 = sideP->Center ();
-CDoubleVector n = sideP->Normal ();
+CDoubleVector v0 = *Vertex (nSide, sideP->m_nPoint);
+CDoubleVector v1 = *Vertex (nSide, sideP->m_nPoint) - v0;
+CDoubleVector v2 = *Vertex (nSide, sideP->m_nPoint) - v0;
+CDoubleVector n = Normal (v0, v1, v2);
+v1 = sideP->Center () - v0;
+if (Dot (v1, n) < 0.0)
+	n.Negate ();
 for (short i = 0, j = sideP->VertexCount (); i < j; i++) {
 	CDoubleVector v = *Vertex (nSide, i) - v0;
 	double d = Dot (v, n);
