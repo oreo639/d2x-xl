@@ -845,9 +845,11 @@ void CSegment::Tag (ubyte mask)
 {
 for (int i = 0; i < 6; i++)
 	Side (i)->Tag (mask);
+#if 0
 for (int i = 0; i < 8; i++)
 	if (VertexId (i) <= MAX_VERTEX)
 		Vertex (i)->Tag (mask);
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -856,9 +858,11 @@ void CSegment::UnTag (ubyte mask)
 {
 for (int i = 0; i < 6; i++)
 	Side (i)->UnTag (mask);
+#if 0
 for (int i = 0; i < 8; i++)
 	if (VertexId (i) <= MAX_VERTEX)
 		Vertex (i)->UnTag (mask);
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -867,9 +871,11 @@ void CSegment::ToggleTag (ubyte mask)
 {
 for (int i = 0; i < 6; i++)
 	Side (i)->ToggleTag (mask);
+#if 0
 for (int i = 0; i < 8; i++)
 	if (VertexId (i) <= MAX_VERTEX)
 		Vertex (i)->ToggleTag (mask);
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -877,8 +883,10 @@ for (int i = 0; i < 8; i++)
 void CSegment::Tag (short nSide, ubyte mask)
 {
 Side (nSide)->Tag (mask);
+#if 0
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 	Vertex (nSide, i)->Tag (mask);
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -886,8 +894,10 @@ for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 void CSegment::UnTag (short nSide, ubyte mask)
 {
 Side (nSide)->UnTag (mask);
+#if 0
 for (int i = 0, j = Side (nSide)->VertexCount (); i < j; i++)
 	Vertex (nSide, i)->UnTag (mask);
+#endif
 }
 
 // -----------------------------------------------------------------------------

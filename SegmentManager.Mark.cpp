@@ -73,9 +73,8 @@ for (short i = 0; i < nSegments; i++, segP++) {
 		else
 			segP->Tag (); 
 		}
-	CSide* sideP = segP->Side (0);
 	for (short nSide = 0; nSide < 6; nSide++) {
-		short h = sideP->VertexCount ();
+		short h = segP->Side (nSide)->VertexCount ();
 		j = 0;
 		if (h > 2) {
 			for (; j < h; j++)
@@ -83,9 +82,9 @@ for (short i = 0; i < nSegments; i++, segP++) {
 					break;
 			}
 		if (j < h)
-			sideP->UnTag ();
+			segP->UnTag (nSide);
 		else
-			sideP->Tag ();
+			segP->Tag (nSide);
 		}
 	}
 }
@@ -205,11 +204,13 @@ if (i == nPoints) { // if all verts are tagged, then untag them
 
 		case eSelectSide:
 			current->Segment ()->UnTag (current->SideId ());
+			current->Segment ()->UnTagVertices (TAGGED_MASK, current->SideId ());
 			break; 
 
 		case eSelectSegment:
 		default:
 			current->Segment ()->UnTag ();
+			current->Segment ()->UnTagVertices (TAGGED_MASK, -1);
 			break; 
 		}
 	}
@@ -223,11 +224,13 @@ else { // otherwise tag all the points
 
 		case eSelectSide:
 			current->Segment ()->Tag (current->SideId ());
+			current->Segment ()->TagVertices (TAGGED_MASK, current->SideId ());
 			break; 
 
 		case eSelectSegment:
 		default:
 			current->Segment ()->Tag ();
+			current->Segment ()->TagVertices (TAGGED_MASK, -1);
 			break; 
 		}
 	}

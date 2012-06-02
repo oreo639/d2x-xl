@@ -475,6 +475,7 @@ renderer.EndRender ();
 
 bool CTunnelPath::Setup (CTunnelBase base [2])
 {
+memcpy (m_base, base, sizeof (m_base));
 double length = Distance (m_base [0].m_point, m_base [1].m_point);
 if (length < 50.0)
 	return false;
