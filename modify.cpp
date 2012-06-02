@@ -119,14 +119,14 @@ return true;
 
 bool CMine::EditGeoRotRight (void)
 {
-return SpinSelection (theMine->RotateRate ());
+return SpinSelection (-theMine->RotateRate ());
 }
 
 //------------------------------------------------------------------------------
 
 bool CMine::EditGeoRotLeft (void)
 {
-return SpinSelection (-theMine->RotateRate ());
+return SpinSelection (theMine->RotateRate ());
 }
 
 //------------------------------------------------------------------------------
