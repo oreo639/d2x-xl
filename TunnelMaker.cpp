@@ -340,17 +340,14 @@ if (m_nSteps != path.Steps ()) { // recompute
 		}
 	}
 
+#if 1
+
 CDoubleVector t = path.Bezier ().GetPoint (0); // translation
 
-for (i = 0; i < 2; i++) {
-	segP = segmentManager.Segment (m_base [i]);
-	for (j = 0; j < 4; j++) {
-		CVertex v = *segP->Vertex (m_base [i].m_nSide, j) - t;
-		relSidePoints [i][j] = path.m_unRotate * v;
-		}
+segP = segmentManager.Segment (m_base [0]);
+for (j = 0; j < 4; j++) {
+	relSidePoints [0][j] = *segP->Vertex (m_base [0].m_nSide, j) - m_base [0].m_point;
 	}
-
-#if 1
 
 CQuaternion q;
 CDoubleMatrix r = path.m_base [0].m_orientation;
@@ -363,11 +360,21 @@ for (i = 0; i < m_nSteps; i++) {
 	for (j = 0; j < 4; j++) {
 		CVertex& v = vertexManager [m_elements [i].m_nVertices [j]];
 		v = r * relSidePoints [0][j];
-		v += t;
+		v += path [i];
+		v = v;
 		}
 	}
 
 #else
+
+CDoubleVector t = path.Bezier ().GetPoint (0); // translation
+
+for (i = 0; i < 2; i++) {
+	segP = segmentManager.Segment (m_base [i]);
+	for (j = 0; j < 4; j++) {
+		relSidePoints [i][j] = *segP->Vertex (m_base [i].m_nSide, j) - t;
+		}
+	}
 
 double	theta [2][4], radius [2][4]; // polor coordinates of sides
 double	deltaAngle [4];
@@ -553,7 +560,7 @@ if (m_nSteps != nPathLength) { // recompute
 
 // calculate nSegment m_bezierPoints
 for (int i = 0; i < m_nSteps; i++) {
-	m_vertices [i] = m_bezier.Compute ((double) i / (double) m_nSteps) - m_bezier.GetPoint (0);
+	m_vertices [i] = m_bezier.Compute ((double) i / (double) m_nSteps)/* - m_bezier.GetPoint (0)*/;
 	}
 return true;
 }
@@ -562,17 +569,14 @@ return true;
 
 double CTunnelPath::Length (int nSteps)
 {
-	CVertex& v1 = m_vertices [0];
-	double length = Distance (v1, m_base [0].m_point);
+	double length = Distance (m_vertices [0], m_base [0].m_point);
 
 if (nSteps <= 0)
 	nSteps = m_nSteps;
-for (int i = 1; i < nSteps; i++) {
-	CVertex& v0 = v1;
-	v1 = m_vertices [i];
-	length += Distance (v1, v0);
-	}
-length += Distance (m_base [1].m_point, v1);
+for (int i = 1; i < nSteps; i++) 
+	length += Distance (m_vertices [i], m_vertices [i - 1]);
+if (nSteps == m_nSteps)
+	length += Distance (m_base [1].m_point, m_vertices [m_nSteps - 1]);
 return length;
 }
 
