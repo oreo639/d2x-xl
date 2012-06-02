@@ -47,12 +47,14 @@ class CSelection : public CSideKey {
 		short SetSideId (short nSide);
 
 		inline short SetEdge (short nEdge) { 
-			Side ()->m_nPoint = (ubyte) nEdge;
+			if (Side () != null)
+				Side ()->m_nPoint = (ubyte) nEdge;
 			return m_nPoint = m_nEdge = nEdge; 
 			}
 
 		inline short SetPoint (short nPoint) { 
-			Side ()->m_nPoint = (ubyte) nPoint;
+			if (Side () != null)
+				Side ()->m_nPoint = (ubyte) nPoint;
 			return m_nEdge = m_nPoint = nPoint; 
 			}
 
