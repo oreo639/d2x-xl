@@ -2,6 +2,7 @@
 
 #include "mine.h"
 #include "dle-xp.h"
+#include "Quaternion.h"
 
 //------------------------------------------------------------------------------
 
@@ -87,10 +88,10 @@ CSide* sideP = segP->Side (m_nSide);
 segP->ComputeNormals (m_nSide);
 for (int i = 0; i < 4; i++)
 	m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
-m_orient.m.fVec = m_normal;
-m_orient.m.rVec = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
-m_orient.m.uVec = CrossProduct (m_orient.m.fVec, m_orient.m.rVec);
-m_orient.m.uVec.Normalize ();
+m_orientation.m.fVec = m_normal;
+m_orientation.m.rVec = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
+m_orientation.m.uVec = CrossProduct (m_orientation.m.fVec, m_orientation.m.rVec);
+m_orientation.m.uVec.Normalize ();
 }
 
 //------------------------------------------------------------------------------
@@ -320,12 +321,8 @@ bool CTunnelSegment::Create (CTunnelPath& path)
   int			i, j;
   CSegment*	segP;
   CVertex	vertex;
-  double		theta [2][4], radius [2][4]; // polor coordinates of sides
-  double		deltaAngle [4];
   CVertex	relSidePoints [2][4]; // side points relative to center of side 1
-  CVertex	relPoints [4]; // 4 points of segment relative to 1st point
-  double		y, z;
-  double		ySpin, zSpin;
+  CVertex	relBezierPoints [4]; // 4 points of segment relative to 1st point
 
 if (m_nSteps != path.Steps ()) { // recompute
 	if (m_nSteps > 0)
@@ -340,23 +337,51 @@ if (m_nSteps != path.Steps ()) { // recompute
 		}
 	}
 
-// make all points relative to first face (translation)
-for (i = 0; i < 4; i++) 
-	relPoints [i] = path.Bezier ().GetPoint (i) - path.Bezier ().GetPoint (0);
+CDoubleVector t = path.Bezier ().GetPoint (0); // translation
 
 for (i = 0; i < 2; i++) {
 	segP = segmentManager.Segment (m_base [i]);
-	for (j = 0; j < 4; j++) 
-		relSidePoints [i][j] = *segP->Vertex (m_base [i].m_nSide, j) - path.Bezier ().GetPoint (0);
+	for (j = 0; j < 4; j++) {
+		CVertex v = *segP->Vertex (m_base [i].m_nSide, j) - t;
+		relSidePoints [i][j] = path.m_unRotate * v;
+		}
 	}
 
+#if 1
+
+CQuaternion q;
+CDoubleMatrix r = path.m_base [0].m_orientation;
+double l = path.Length ();
+
+for (i = 0; i < m_nSteps; i++) {
+	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
+	q.FromAxisAngle (path.m_rotAxis, path.m_rotAngle * path.Length (i) / l);
+	r = q.ToMatrix ();
+	for (j = 0; j < 4; j++) {
+		CVertex& v = vertexManager [m_elements [i].m_nVertices [j]];
+		v = r * relSidePoints [0][j];
+		v += t;
+		}
+	}
+
+#else
+
+double	theta [2][4], radius [2][4]; // polor coordinates of sides
+double	deltaAngle [4];
+double	y, z;
+double	ySpin, zSpin;
+
+// make all points relative to first face (translation)
+for (i = 0; i < 4; i++) 
+	relBezierPoints [i] = path.Bezier ().GetPoint (i) - path.Bezier ().GetPoint (0);
+
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
-ySpin = -atan3 (relPoints [1].v.z, relPoints [1].v.x); // to y-z plane
-zSpin = atan3 (relPoints [1].v.y, relPoints [1].v.x * cos (ySpin) - relPoints [1].v.z * sin (ySpin)); // to x axis
+ySpin = -atan3 (relBezierPoints [1].v.z, relBezierPoints [1].v.x); // to y-z plane
+zSpin = atan3 (relBezierPoints [1].v.y, relBezierPoints [1].v.x * cos (ySpin) - relBezierPoints [1].v.z * sin (ySpin)); // to x axis
 
 // spin all m_bezierPoints relative to first face (rotation)
 for (i = 0; i < 4; i++) {
-	SpinPoint (relPoints + i, ySpin, zSpin);
+	SpinPoint (relBezierPoints + i, ySpin, zSpin);
 	for (j = 0; j < 2; j++) 
 		SpinPoint (relSidePoints [j] + i, ySpin, zSpin);
 	}
@@ -375,8 +400,8 @@ for (i = 0; i < 4; i++) {
 // determine polar coordinates of the 2nd side by rotating to x-axis first
 for (i = 0; i < 4; i++) {
 	// flip orthogonal vector to point into segment
-	vertex = (relPoints [3] * 2) - relPoints [2];
-	PolarPoints (&theta [1][i], &radius [1][i], &relSidePoints [1][i], &relPoints [3], &vertex);
+	vertex = (relBezierPoints [3] * 2) - relBezierPoints [2];
+	PolarPoints (&theta [1][i], &radius [1][i], &relSidePoints [1][i], &relBezierPoints [3], &vertex);
 	}
 
 // figure out the angle differences to be in range (-pi to pi)
@@ -412,6 +437,8 @@ for (i = 0; i < m_nSteps - 1; i++) {
 		*vertP += path.Bezier ().GetPoint (0);
 		}
 	}
+
+#endif
 SetupVertices ();
 return true;
 }
@@ -487,6 +514,13 @@ if (length < MIN_TUNNEL_LENGTH)
 	length = MIN_TUNNEL_LENGTH;
 else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
+
+m_unRotate = m_base [0].m_orientation.Inverse ();
+CDoubleMatrix m;
+m = m_base [1].m_orientation * m_unRotate;
+CQuaternion q;
+q.FromMatrix (m);
+q.ToAxisAngle (m_rotAxis, m_rotAngle);
 
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);

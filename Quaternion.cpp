@@ -52,7 +52,7 @@ return (CDoubleVector (resQuat.x, resQuat.y, resQuat.z));
 
 // -----------------------------------------------------------------------------
 
-void CQuaternion::FromAxis (const CDoubleVector &v, double angle)
+void CQuaternion::FromAxisAngle (const CDoubleVector &v, double angle)
 {
 double sinAngle;
 angle *= 0.5f;

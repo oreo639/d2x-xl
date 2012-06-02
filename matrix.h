@@ -158,13 +158,14 @@ public:
 	
 	const double Det (void);
 	const CDoubleMatrix Inverse (void);
-	const CDoubleMatrix Transformation (CDoubleMatrix& mDest, CDoubleMatrix& mSource);
 	const CDoubleMatrix Adjoint (void);
 	inline const CDoubleMatrix Transpose (void);
 	void Rotate (double angle, char axis);
 	void Scale (double scale);
 	void MapUnitSquareToQuad (CLongVector a [4]);
 };
+
+const CDoubleMatrix Transformation (CDoubleMatrix& mDest, CDoubleMatrix& mSource);
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

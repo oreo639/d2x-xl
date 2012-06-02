@@ -52,7 +52,7 @@ class CTunnelBase : public CSideKey {
 		CVertex			m_point;
 		CVertex			m_normal;
 		CVertex			m_vertices [4];
-		CDoubleMatrix	m_orient; // orientation of tunnel end side
+		CDoubleMatrix	m_orientation; // orientation of tunnel end side
 
 		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSideKey (key) {}
 
@@ -97,7 +97,9 @@ class CTunnelPath {
 		CTunnelBase					m_base [2];
 		short							m_nSteps;
 		CDynamicArray<CVertex>	m_vertices;
-		CDoubleMatrix				m_orientation [2]; 
+		CDoubleMatrix				m_unRotate; // for unrotating base vertices
+		CDoubleVector				m_rotAxis; // rotation angle and axis for transforming the start point orientation to the end point orientation
+		double						m_rotAngle;
 
 		CTunnelPath () : m_nSteps (0) {}
 
