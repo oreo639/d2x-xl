@@ -685,7 +685,7 @@ void CTextureTool::OnAlignStretch2Fit ()
 
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-if (!segmentManager.HaveTaggedSides ()) {
+if (!segmentManager.HasTaggedSides ()) {
 	for (i = 0; i < sideP->VertexCount (); i++) {
 		sideP->m_info.uvls [i].u = defaultUVLs [i].u;
 		sideP->m_info.uvls [i].v = defaultUVLs [i].v;
@@ -743,7 +743,7 @@ void CTextureTool::OnAlignAll (void)
 
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-bool bAll = !segmentManager.HaveTaggedSegments (true);
+bool bAll = !segmentManager.HasTaggedSegments (true);
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++)
 	 segP->Index () = 0;
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
@@ -786,7 +786,7 @@ undoManager.Begin (udSegments);
 // the alignment function will take care of only aligning tagged sides (provided they are all connected)
 AlignChildren (current->SegmentId (), current->SideId (), true, false);
 #else
-if (!segmentManager.HaveTaggedSegments (true))
+if (!segmentManager.HasTaggedSegments (true))
 	// call recursive function which aligns one at a time
 	AlignChildren (current->SegmentId (), current->SideId (), true, false);
 else {	// use all marked sides as alignment source

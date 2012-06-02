@@ -632,7 +632,7 @@ CSegment *segP = segmentManager.Segment (0);
 CSide *sideP;
 CTrigger* triggerP;
 ubyte nType = current->Trigger () ? current->Trigger ()->Type () : 255;
-bool bAll = !segmentManager.HaveTaggedSegments ();
+bool bAll = !segmentManager.HasTaggedSegments ();
 int i, j, nDeleted = 0;
 for (i = segmentManager.Count (); i; i--, segP++) {
 	sideP = segP->m_sides;

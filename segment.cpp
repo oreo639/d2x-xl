@@ -839,6 +839,24 @@ else {
 	}
 }
 
+// ------------------------------------------------------------------------ 
+
+bool CSegment::HasTaggedVertices (ubyte mask, short nSide)
+{
+if (nSide < 0) {
+	for (int i = 0; i < 8; i++)
+		if ((m_info.vertexIds [i] <= MAX_VERTEX) && vertexManager [m_info.vertexIds [i]].IsTagged (mask))
+			return true;
+	}
+else {
+	CSide* sideP = Side (nSide);
+	for (int i = 0, j = sideP->VertexCount (); i < j; i++)
+		if (vertexManager [m_info.vertexIds [sideP->VertexIdIndex (i)]].IsTagged (mask))
+			return true;
+	}
+return false;
+}
+
 // -----------------------------------------------------------------------------
 
 void CSegment::Tag (ubyte mask)

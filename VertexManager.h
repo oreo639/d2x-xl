@@ -98,6 +98,8 @@ class CVertexManager  {
 
 		void UnTagAll (ubyte mask = TAGGED_MASK);
 
+		bool HasTaggedVertices (ubyte mask = TAGGED_MASK);
+
 		CDoubleVector GetCenter (void);
 
 		void SetCenter (CDoubleVector v);

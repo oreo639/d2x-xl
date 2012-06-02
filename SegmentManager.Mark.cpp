@@ -121,7 +121,7 @@ DLE.MineView ()->Refresh ();
 
 // ------------------------------------------------------------------------ 
 
-bool CSegmentManager::HaveTaggedSides (void)
+bool CSegmentManager::HasTaggedSides (void)
 {
 int nSegments = segmentManager.Count ();
 for (int nSegment = 0; nSegment < nSegments; nSegment++) {

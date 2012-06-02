@@ -293,9 +293,11 @@ class CSegmentManager {
 
 		short	TaggedCount (bool bSides = false, bool bCheck = false);
 
-		bool HaveTaggedSegments (bool bSides = false) { return TaggedCount (bSides, true) > 0; }
+		bool HasTaggedSegments (bool bSides = false) { return TaggedCount (bSides, true) > 0; }
 
-		bool HaveTaggedSides (void);
+		bool HasTaggedSides (void);
+
+		bool HasTaggedVertices (short nSide = -1);
 
 		int AlignTextures (short nStartSeg, short nStartSide, short nChildSeg, short nChildSide, int bAlign1st, int bAlign2nd);
 
@@ -399,9 +401,11 @@ class CSegmentManager {
 	
 		inline CSide* SelectedSides (void) { return m_selectedSides; }
 	
-		void CSegmentManager::GatherEdges (CAVLTree <CEdgeTreeNode, uint>& edgeTree);
+		void GatherEdges (CAVLTree <CEdgeTreeNode, uint>& edgeTree);
 
-		uint CSegmentManager::VisibleSideCount (void);
+		uint VisibleSideCount (void);
+
+		void MakePointsParallel (void);
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);
@@ -504,7 +508,7 @@ class CTagByTextures : public CTaggingStrategy {
 		short m_nBaseTex, m_nOvlTex;
 		bool	m_bAll, m_bIgnorePlane;
 		
-		CTagByTextures (short nBaseTex, short nOvlTex, bool bIgnorePlane = true) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex), m_bIgnorePlane (bIgnorePlane) { m_bAll = !segmentManager.HaveTaggedSegments (true); }
+		CTagByTextures (short nBaseTex, short nOvlTex, bool bIgnorePlane = true) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex), m_bIgnorePlane (bIgnorePlane) { m_bAll = !segmentManager.HasTaggedSegments (true); }
 
 		virtual bool Accept (void) { 
 			return (m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&

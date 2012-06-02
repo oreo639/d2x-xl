@@ -297,7 +297,7 @@ if (Prop (nProp)->GetCheck ())
 else
 	m_nProps &= ~(1 << nProp);
 
-BOOL bTagged = segmentManager.HaveTaggedSegments ();
+BOOL bTagged = segmentManager.HasTaggedSegments ();
 
 undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
@@ -548,7 +548,7 @@ void CSegmentTool::OnSetOwner (void)
 CHECKMINE;
 
 	BOOL	bChangeOk = TRUE;
-	BOOL	bTagged = segmentManager.HaveTaggedSegments ();
+	BOOL	bTagged = segmentManager.HasTaggedSegments ();
 
 undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
@@ -572,7 +572,7 @@ void CSegmentTool::OnSetGroup (void)
 CHECKMINE;
 
 	BOOL	bChangeOk = TRUE;
-	BOOL	bTagged = segmentManager.HaveTaggedSegments ();
+	BOOL	bTagged = segmentManager.HasTaggedSegments ();
 
 undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
@@ -607,7 +607,7 @@ if (DLE.IsStdLevel () && !segmentFuncs [nNewFunction].bStandard) {
 	}
 
 	BOOL		bChangeOk = TRUE;
-	BOOL		bTagged = segmentManager.HaveTaggedSegments ();
+	BOOL		bTagged = segmentManager.HasTaggedSegments ();
 	int		nSegment, nMinSeg, nMaxSeg;
 
 DLE.MineView ()->DelayRefresh (true);
@@ -996,7 +996,7 @@ segmentManager.CreatePyramid ();
 void CSegmentTool::OnSplitSegmentIn8 ()
 {
 CHECKMINE;
-BOOL bTagged = segmentManager.HaveTaggedSegments ();
+BOOL bTagged = segmentManager.HasTaggedSegments ();
 
 undoManager.Begin (udSegments | udVertices | udWalls);
 DLE.MineView ()->DelayRefresh (true);

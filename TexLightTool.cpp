@@ -329,7 +329,7 @@ if (lightManager.ApplyFaceLightSettingsGlobally ()) {
 	CSegment*	segP = segmentManager.Segment (0);
 	CSide*		sideP;
 	CWall			*wallP;
-	bool			bAll = !segmentManager.HaveTaggedSides ();
+	bool			bAll = !segmentManager.HasTaggedSides ();
 
 	for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {

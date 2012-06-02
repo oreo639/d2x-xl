@@ -397,7 +397,7 @@ DLE.ToolView ()->SettingsTool ()->TogglePerspective ();
 
 void CMainFrame::OnMakePointsParallel () 
 {
-current->Segment ()->MakeCoplanar (current->SideId ());
+segmentManager.MakePointsParallel ();
 }
 
 void CMainFrame::OnViewCollapseEdge () 

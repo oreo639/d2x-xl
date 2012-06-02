@@ -157,6 +157,17 @@ for (int i = Count (); i; i--, v++)
 
 // ----------------------------------------------------------------------------- 
 
+bool CVertexManager::HasTaggedVertices (ubyte mask)
+{
+CVertex* v = &m_vertices [0];
+for (int i = Count (); i; i--, v++)
+	if (v->IsTagged (mask))
+		return true;
+return false;
+}
+
+// ----------------------------------------------------------------------------- 
+
 void CVertexManager::Clear (void)
 {
 CVertex* v = &m_vertices [0];

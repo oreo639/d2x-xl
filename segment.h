@@ -248,6 +248,8 @@ public:
 
 	void UnTagVertices (ubyte mask = TAGGED_MASK, short nSide = -1);
 
+	bool HasTaggedVertices (ubyte mask = TAGGED_MASK, short nSide = -1);
+
 	inline bool IsD2X (void) { return (m_info.function >= SEGMENT_FUNC_TEAM_BLUE) || (m_info.props != 0); }
 
 	bool HasVertex (ushort nVertex);

@@ -934,7 +934,7 @@ if (!(m_bUse1st || m_bUse2nd))
 					nSide;
 	CSegment*	segP = segmentManager.Segment (0);
 	CSide*		sideP;
-	bool			bAll = !segmentManager.HaveTaggedSegments (true);
+	bool			bAll = !segmentManager.HasTaggedSegments (true);
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;

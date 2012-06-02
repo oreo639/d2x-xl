@@ -128,7 +128,7 @@ UpdateData (TRUE);
 // make sure there are marked blocks
 theMine->m_nNoLightDeltas = m_nNoLightDeltas;
 lightManager.SetRenderDepth (m_staticRenderDepth, m_deltaRenderDepth);
-if (bAll = !segmentManager.HaveTaggedSides ())
+if (bAll = !segmentManager.HasTaggedSides ())
 	STATUSMSG (" illuminating entire mine ...");
 undoManager.Begin (udLight | udSegments);
 if (m_bIlluminate)

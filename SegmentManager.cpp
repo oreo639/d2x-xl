@@ -443,6 +443,45 @@ return nSides;
 }
 
 // -----------------------------------------------------------------------------
+
+void CSegmentManager::MakePointsParallel (void)
+{
+if (!vertexManager.HasTaggedVertices ())
+	current->Segment ()->MakeCoplanar (current->SideId ());
+else {
+	double dist, d;
+	ushort nTagged = 0;
+
+	current->Segment ()->ComputeNormals (current->SideId ());
+	CDoubleVector n = current->Side ()->Normal ();
+	CDoubleVector v0 = *current->Vertex ();
+
+	if (current->Segment ()->HasTaggedVertices (current->SideId ()))
+		dist = 0.0;
+	else {
+		d = 0.0;
+		for (ushort i = 0, j = vertexManager.Count (); i < j; i++) {
+			CVertex& v = vertexManager [i];
+			if (v.IsTagged ()) {
+				++nTagged;
+				v -= v0;
+				d += Dot (v, n);
+				}
+			}
+		}
+	dist = d / double (nTagged);
+
+	for (ushort i = 0, j = vertexManager.Count (); i < j; i++) {
+		CVertex& v = vertexManager [i];
+		if (v.IsTagged ()) {
+			d = Dot (v, n);
+			v -= n * (d - dist);
+			}
+		}
+	}
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 //eof segmentmanager.cpp
