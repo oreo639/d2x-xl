@@ -446,6 +446,7 @@ return nSides;
 
 void CSegmentManager::MakePointsParallel (void)
 {
+undoManager.Begin (udVertices);
 if (!vertexManager.HasTaggedVertices ())
 	current->Segment ()->MakeCoplanar (current->SideId ());
 else {
@@ -479,6 +480,7 @@ else {
 			}
 		}
 	}
+undoManager.End ();
 }
 
 // -----------------------------------------------------------------------------
