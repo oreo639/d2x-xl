@@ -371,7 +371,7 @@ for (i = 0; i < 4; i++) {
 
 // determine polar coordinates of the 2nd side by rotating to x-axis first
 for (i = 0; i < 4; i++) {
-	// flip orthoginal vector to point into segment
+	// flip orthogonal vector to point into segment
 	vertex = (relPoints [3] * 2) - relPoints [2];
 	PolarPoints (&theta [1][i], &radius [1][i], &relSidePoints [1][i], &relPoints [3], &vertex);
 	}
