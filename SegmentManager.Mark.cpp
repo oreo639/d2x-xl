@@ -264,6 +264,8 @@ segmentManager.ComputeNormals (false);
 
 CEdgeList edgeList;
 
+bool bTagVertices = DLE.MineView ()->SelectMode (eSelectPoint);
+
 while (nHead < nTail) {
 	m_parent = m_sideList [nHead++].m_child;
 	m_segP = segmentManager.Segment (m_parent);
@@ -295,6 +297,8 @@ while (nHead < nTail) {
 				m_childSideP = segmentManager.Side (m_child);
 				if (Accept ()) {
 					m_childSegP->Tag (iter->m_nSide, m_tag);
+					if (bTagVertices)
+						m_childSegP->TagVertices (m_tag, iter->m_nSide);
 					m_sideList [nTail].m_edge = m_edgeKey;
 					m_sideList [nTail].m_parent = m_parent;
 					m_sideList [nTail++].m_child = m_child;

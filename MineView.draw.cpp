@@ -459,6 +459,7 @@ else if (!bSparse) {
 	float			penWeight;
 	bool			bSegmentIsTagged = segP->IsTagged ();
 	bool			bSideTagged [2] = {false, false};
+	bool			bFullWireFrame = !bTagged || bSegmentIsTagged || (m_viewOption != eViewTextured);
 
 #ifdef _DEBUG
 if (segmentManager.Index (segP) == nDbgSeg)
@@ -473,12 +474,14 @@ for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
 		bSideTagged [1] = segP->IsTagged (short (side1)) || segP->IsTagged (short (side2));
 		if (bSideTagged [0] != bSideTagged [1]) {
 			if (bSideTagged [1])
-				Renderer ().SelectPen (penOrange + 1, 2.0f);
+				Renderer ().SelectPen (penOrange + 1, ViewOption (eViewTexturedWireFrame) ? 3.0f : 2.0f);
 			else
 				Renderer ().SelectPen (pen + 1, penWeight);
 			}
 		}
 
+	 if (!(bFullWireFrame || bSideTagged [1]))
+		continue;
 	CVertex& v1 = vertexManager [vertexIds [i1]];
 	CVertex& v2 = vertexManager [vertexIds [i2]];
 	if (!bOrtho) {
@@ -544,13 +547,12 @@ for (int i = 0; i < 8; i++, vertexIds++)
 
 bool CMineView::SelectWireFramePen (CSegment* segP)
 {
-return false;
-if (segP->IsTagged ()) { // check the segment and all of its sides
-	Renderer ().SelectPen (penOrange + 1); //SelectMode (eSelectBlock) ? penRed + 1 : penGold + 1);
+if (segP->IsTagged ()) { 
+	Renderer ().SelectPen (penOrange + 1); 
 	return true;
 	}
 
-if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextured)) {
+if (ViewFlag (eViewMineSpecial) && (m_viewOption != eViewTextured)) {
 	switch (segP->m_info.function) {
 		case SEGMENT_FUNC_PRODUCER:
 		case SEGMENT_FUNC_SPEEDBOOST:
@@ -586,6 +588,12 @@ if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextured)) {
 		return true;
 		}
 	}
+
+if (segP->IsTagged (short (-1))) {
+	Renderer ().SelectPen (penGray + 1); 
+	return true;
+	}
+
 return false;
 }
 

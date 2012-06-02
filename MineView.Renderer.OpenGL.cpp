@@ -256,6 +256,8 @@ else {
 	glScalef (1.0f, -1.0f, -1.0f);
 	ViewMatrix ()->GetProjection ();
 	glEnable (GL_DEPTH_TEST);
+	glEnable (GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset (1.0f, 1.0f);
 	}
 }
 
@@ -331,6 +333,7 @@ for (int i = 0; i < 3; i++) {
 shaderManager.Deploy (-1);
 glDisable (GL_DEPTH_TEST);
 glDisable (GL_LINE_STIPPLE);
+glDisable (GL_POLYGON_OFFSET_FILL);
 glDepthFunc (GL_LESS);
 if (bSwapBuffers) {
 	if (RTT ()) {
