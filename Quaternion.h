@@ -30,7 +30,7 @@ class CQuaternion {
 
 	CQuaternion& FromEuler (double pitch, double yaw, double roll);
 
-	CDoubleMatrix& FromMatrix (CDoubleMatrix& m);
+	CQuaternion& FromMatrix (CDoubleMatrix& m);
 
 	CDoubleMatrix& ToMatrix (CDoubleMatrix& m);
 

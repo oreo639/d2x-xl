@@ -358,7 +358,7 @@ double l = path.Length ();
 for (i = 0; i < m_nSteps; i++) {
 	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
 	q.FromAxisAngle (path.m_rotAxis, path.m_rotAngle * path.Length (i) / l);
-	r = q.ToMatrix ();
+	q.ToMatrix (r);
 	for (j = 0; j < 4; j++) {
 		CVertex& v = vertexManager [m_elements [i].m_nVertices [j]];
 		v = r * relSidePoints [0][j];
@@ -533,7 +533,6 @@ m = m_base [1].m_orientation * m_unRotate;
 CQuaternion q;
 q.FromMatrix (m);
 q.ToAxisAngle (m_rotAxis, m_rotAngle);
-m = q.ToMatrix ();
 
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);

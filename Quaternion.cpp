@@ -96,7 +96,7 @@ return *this;
 
 static inline double Sign (double x) {return (x >= 0.0f) ? +1.0f : -1.0f;}
 
-CDoubleMatrix& CQuaternion::FromMatrix (CDoubleMatrix& m)
+CQuaternion& CQuaternion::FromMatrix (CDoubleMatrix& m)
 {
 #if 1
 
