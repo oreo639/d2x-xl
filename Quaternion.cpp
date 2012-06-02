@@ -21,27 +21,26 @@ if ((fabs (mag2) > 1e-30) && (fabs (mag2 - 1.0) > 1e-30)) {
 
 // -----------------------------------------------------------------------------
 
-CQuaternion CQuaternion::operator* (CQuaternion rq)
+CQuaternion CQuaternion::operator* (CQuaternion other)
 {
 	// the constructor takes its arguments as (x, y, z, w)
-return CQuaternion (w * rq.x + x * rq.w + y * rq.z - z * rq.y,
-                    w * rq.y + y * rq.w + z * rq.x - x * rq.z,
-                    w * rq.z + z * rq.w + x * rq.y - y * rq.x,
-                    w * rq.w - x * rq.x - y * rq.y - z * rq.z);
+return CQuaternion (w * other.x + x * other.w + y * other.z - z * other.y,
+                    w * other.y + y * other.w + z * other.x - x * other.z,
+                    w * other.z + z * other.w + x * other.y - y * other.x,
+                    w * other.w - x * other.x - y * other.y - z * other.z);
 }
 
 // -----------------------------------------------------------------------------
 
 // Multiplying a quaternion q with a vector v applies the q-rotation to v
-CDoubleVector CQuaternion::operator* (const CDoubleVector &vec)
+CDoubleVector CQuaternion::operator* (CDoubleVector v)
 {
-CDoubleVector vn (vec);
-vn.Normalize ();
+v.Normalize ();
  
 CQuaternion vecQuat, resQuat;
-vecQuat.x = vn.v.x;
-vecQuat.y = vn.v.y;
-vecQuat.z = vn.v.z;
+vecQuat.x = v.v.x;
+vecQuat.y = v.v.y;
+vecQuat.z = v.v.z;
 vecQuat.w = 0.0;
  
 resQuat = vecQuat * GetConjugate ();

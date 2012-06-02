@@ -22,9 +22,9 @@ class CQuaternion {
 
 	void Normalize (void);
 
-	CQuaternion CQuaternion::operator* (CQuaternion rq);
+	CQuaternion CQuaternion::operator* (CQuaternion other);
 
-	CDoubleVector CQuaternion::operator* (const CDoubleVector &vec);
+	CDoubleVector CQuaternion::operator* (CDoubleVector v);
 
 	void FromAxisAngle (CDoubleVector axis, double angle);
 
