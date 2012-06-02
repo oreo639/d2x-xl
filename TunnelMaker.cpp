@@ -88,6 +88,7 @@ CSegment* segP = segmentManager.Segment (m_nSegment);
 CSide* sideP = segP->Side (m_nSide);
 segP->ComputeNormals (m_nSide);
 m_normal = sideP->Normal () * sign;
+segP->CreateOppVertexIndex (m_nSide, m_oppVertexIndex);
 m_point = segP->ComputeCenter (m_nSide);
 for (int i = 0; i < 4; i++)
 	m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
@@ -295,22 +296,20 @@ return v;
 
 void CTunnelSegment::SetupVertices (void)
 {
-ubyte oppVertexIndex [4];
 for (short i = 0; i < m_nSteps; i++) {
 	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
-	segP->CreateOppVertexIndex (m_base [0].m_nSide, oppVertexIndex);
 	for (short j = 0; j < 4; j++) {
 		if (i == 0) { // 1st segment
 			segP->SetVertexId (m_base [0].m_nSide, j, m_elements [i].m_nVertices [j]);
-			segP->SetVertexId (oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j));
+			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, m_base [1].m_oppVertexIndex [j]));
 			}
 		else if (i == m_nSteps - 1) { // last segment
-			segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, MatchingSide (j)));
-			segP->SetVertexId (oppVertexIndex [j], m_elements [i - 1].m_nVertices [j]);
+			segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, j)); //MatchingSide (j)));
+			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_elements [i - 1].m_nVertices [j]);
 			}
 		else {
 			segP->SetVertexId (m_base [0].m_nSide, j, m_elements [i].m_nVertices [j]);
-			segP->SetVertexId  (oppVertexIndex [j], m_elements [i - 1].m_nVertices [j]);
+			segP->SetVertexId  (m_base [0].m_oppVertexIndex [j], m_elements [i - 1].m_nVertices [j]);
 			}
 		}
 	}

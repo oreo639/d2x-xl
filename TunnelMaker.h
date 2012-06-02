@@ -52,6 +52,7 @@ class CTunnelBase : public CSideKey {
 		CVertex			m_point;
 		CVertex			m_normal;
 		CVertex			m_vertices [4];
+		ubyte				m_oppVertexIndex [4];
 		CDoubleMatrix	m_orientation; // orientation of tunnel end side
 		double			m_sign;
 
