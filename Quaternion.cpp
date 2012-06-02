@@ -51,7 +51,7 @@ return (CDoubleVector (resQuat.x, resQuat.y, resQuat.z));
 
 // -----------------------------------------------------------------------------
 
-void CQuaternion::FromAxisAngle (CDoubleVector axis, double angle)
+CQuaternion& CQuaternion::FromAxisAngle (CDoubleVector axis, double angle)
 {
 axis.Normalize ();
 angle *= 0.5;
@@ -61,11 +61,12 @@ y = axis.v.y * sina;
 z = axis.v.z * sina;
 w = cos (angle);
 Normalize ();
+return *this;
 }
 
 // -----------------------------------------------------------------------------
 
-void CQuaternion::FromEuler (double pitch, double yaw, double roll)
+CQuaternion& CQuaternion::FromEuler (double pitch, double yaw, double roll)
 {
 	// Basically we create 3 Quaternions, one for pitch, one for yaw, one for roll
 	// and multiply those together.
@@ -88,13 +89,14 @@ z = cosr * cosp * siny - sinr * sinp * cosy;
 w = cosr * cosp * cosy + sinr * sinp * siny;
  
 Normalize ();
+return *this;
 }
 
 // -----------------------------------------------------------------------------
 
 static inline double Sign (double x) {return (x >= 0.0f) ? +1.0f : -1.0f;}
 
-void CQuaternion::FromMatrix (CDoubleMatrix& m)
+CDoubleMatrix& CQuaternion::FromMatrix (CDoubleMatrix& m)
 {
 #if 1
 
@@ -174,11 +176,12 @@ else if (w >= x && w >= y && w >= z) {
 #endif
 
 Normalize ();
+return *this;
 }
 
 // -----------------------------------------------------------------------------
 
-CDoubleMatrix CQuaternion::ToMatrix (void)
+CDoubleMatrix& CQuaternion::ToMatrix (CDoubleMatrix& m)
 {
 double x2 = x * x * 2.0;
 double y2 = y * y * 2.0;
@@ -193,9 +196,10 @@ double zw = z * w * 2.0;
 // This calculation would be a lot more complicated for non-unit length quaternions
 // Note: The constructor of Matrix4 expects the Matrix in column-major format like expected by
 //   OpenGL
-return CDoubleMatrix (1.0 - y2 - z2, xy - zw, xz + yw, 
-							 xy + zw, 1.0 - x2 - z2, yz - xw, 
-							 xz - yw, yz + xw, 1.0 - x2 - y2);
+m.Set (1.0 - y2 - z2, xy - zw, xz + yw, 
+		 xy + zw, 1.0 - x2 - z2, yz - xw, 
+		 xz - yw, yz + xw, 1.0 - x2 - y2);
+return m;
 }
 
 // -----------------------------------------------------------------------------

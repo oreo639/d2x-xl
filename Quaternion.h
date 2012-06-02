@@ -26,13 +26,13 @@ class CQuaternion {
 
 	CDoubleVector CQuaternion::operator* (CDoubleVector v);
 
-	void FromAxisAngle (CDoubleVector axis, double angle);
+	CQuaternion& FromAxisAngle (CDoubleVector axis, double angle);
 
-	void FromEuler (double pitch, double yaw, double roll);
+	CQuaternion& FromEuler (double pitch, double yaw, double roll);
 
-	void FromMatrix (CDoubleMatrix& m);
+	CDoubleMatrix& FromMatrix (CDoubleMatrix& m);
 
-	CDoubleMatrix ToMatrix (void);
+	CDoubleMatrix& ToMatrix (CDoubleMatrix& m);
 
 	void ToAxisAngle (CDoubleVector& axis, double& angle);
 	};
