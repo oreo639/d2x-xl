@@ -315,8 +315,8 @@ for (short i = 0; i < m_nSteps; i++) {
 		}
 	}
 // twisted segments
-for (short i = 0; i < m_nSteps; i++)
-	UntwistSegment (m_elements [i].m_nSegment, m_base [0].m_nSide);
+//for (short i = 0; i < m_nSteps; i++)
+//	UntwistSegment (m_elements [i].m_nSegment, m_base [0].m_nSide);
 }
 
 //------------------------------------------------------------------------------
@@ -324,10 +324,7 @@ for (short i = 0; i < m_nSteps; i++)
 bool CTunnelSegment::Create (CTunnelPath& path) 
 {
   int			i, j;
-  CSegment*	segP;
   CVertex	vertex;
-  CVertex	relSidePoints [2][4]; // side points relative to center of side 1
-  CVertex	relBezierPoints [4]; // 4 points of segment relative to 1st point
 
 if (m_nSteps != path.Steps ()) { // recompute
 	if (m_nSteps > 0)
@@ -344,11 +341,12 @@ if (m_nSteps != path.Steps ()) { // recompute
 
 #if 1
 
+CVertex relSidePoints [4]; // side points relative to center of side 1
 CDoubleVector t = path.Bezier ().GetPoint (0); // translation
 
-segP = segmentManager.Segment (m_base [0]);
+CSegment* segP = segmentManager.Segment (m_base [0]);
 for (j = 0; j < 4; j++) {
-	relSidePoints [0][j] = *segP->Vertex (m_base [0].m_nSide, j) - m_base [0].m_point;
+	relSidePoints [j] = *segP->Vertex (m_base [0].m_nSide, j) - m_base [0].m_point;
 	}
 
 CQuaternion q;
@@ -357,11 +355,11 @@ double l = path.Length ();
 
 for (i = 0; i < m_nSteps; i++) {
 	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
-	q.FromAxisAngle (path.m_rotAxis, path.m_rotAngle * path.Length (i) / l);
-	q.ToMatrix (r);
+	//q.FromAxisAngle (path.m_rotAxis, path.m_rotAngle * path.Length (i) / l);
+	//q.ToMatrix (r);
 	for (j = 0; j < 4; j++) {
 		CVertex& v = vertexManager [m_elements [i].m_nVertices [j]];
-		v = r * relSidePoints [0][j];
+		v = /*r **/ relSidePoints [j];
 		v += path [i];
 		v = v;
 		}
@@ -369,6 +367,8 @@ for (i = 0; i < m_nSteps; i++) {
 
 #else
 
+CVertex relSidePoints [2][4]; // side points relative to center of side 1
+CVertex relBezierPoints [4]; // 4 points of segment relative to 1st point
 CDoubleVector t = path.Bezier ().GetPoint (0); // translation
 
 for (i = 0; i < 2; i++) {
