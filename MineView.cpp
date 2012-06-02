@@ -843,6 +843,10 @@ if (change.x || change.y) {
 						Pan ('Y', -d);
 					}
 				}
+			else if (m_clickState & MK_LBUTTON) {
+				SetMouseState (eMouseStateRubberBand);
+				UpdateRubberRect (point);
+				}
 			else if (nFlags & MK_SHIFT)
 				SetMouseState (eMouseStateSelect);
 			else if ((m_mouseState == eMouseStatePan) || (m_mouseState == eMouseStateRotate) || (m_mouseState == eMouseStateSelect))
@@ -867,7 +871,11 @@ if (change.x || change.y) {
 			break;
 
 		case eMouseStateSelect:
-			if (!(nFlags & MK_SHIFT))
+			if (m_clickState & MK_LBUTTON) {
+				SetMouseState (eMouseStateRubberBand);
+				UpdateRubberRect (point);
+				}			
+			else if (!(nFlags & MK_SHIFT))
 				SetMouseState (eMouseStateIdle);
 			if (SelectMode (eSelectPoint) || SelectMode (eSelectLine) || SelectMode (eSelectSide) || SelectMode (eSelectSegment))
 				Invalidate (FALSE);
@@ -931,9 +939,10 @@ if (change.x || change.y) {
 
 void CMineView::OnLButtonDown (UINT nFlags, CPoint point)
 {
+RecordMousePos (m_clickPos, point);
+m_clickState |= MK_LBUTTON;
 if ((m_mouseState != eMouseStateSelect) || !(nFlags & MK_SHIFT))
 	SetMouseState (eMouseStateButtonDown);
-RecordMousePos (m_clickPos, point);
 m_clickState = nFlags;
 //m_selectTimer = SetTimer (4, 500U, null);
 CView::OnLButtonDown (nFlags, point);
@@ -943,11 +952,12 @@ CView::OnLButtonDown (nFlags, point);
 
 void CMineView::OnLButtonUp (UINT nFlags, CPoint point)
 {
+RecordMousePos (m_releasePos, point);
+m_clickState &= ~MK_LBUTTON;
 if (m_selectTimer != -1) {
 	KillTimer (m_selectTimer);
 	m_selectTimer = -1;
 	}
-RecordMousePos (m_releasePos, point);
 m_releaseState = nFlags;
 if (m_mouseState == eMouseStateButtonDown) {
 	if (m_clickState & MK_CONTROL)
@@ -985,6 +995,7 @@ CView::OnRButtonDown (nFlags, point);
 void CMineView::OnRButtonUp (UINT nFlags, CPoint point)
 {
 	static char* showSelectionCandidates [] = {"Show Selection Candidates: Off", "Show Selection Candidates: Circles", "Show Selection Candidates: Full"};
+
 RecordMousePos (m_releasePos, point);
 m_releaseState = nFlags;
 if (m_mouseState == eMouseStateButtonDown) {
@@ -1109,15 +1120,17 @@ void CMineView::TagRubberBandedVertices (void)
 {
 CHECKMINE;
 
+	bool bTag = (m_clickState & MK_SHIFT) == 0;
+
 for (int i = 0, j = vertexManager.Count (); i < j; i++) {
 	CVertex& v = vertexManager [i];
 	if (BETWEEN (m_clickPos.x, v.m_screen.x, m_releasePos.x) &&
 		 BETWEEN (m_clickPos.y, v.m_screen.y, m_releasePos.y) &&
 		 VertexVisible (i)) {
-		if (m_clickState & MK_SHIFT)
-			vertexManager.Status (i) &= ~TAGGED_MASK;
+		if (bTag)
+			vertexManager [i].Tag ();
 		else
-			vertexManager.Status (i) |= TAGGED_MASK;
+			vertexManager [i].UnTag ();
 		m_bUpdate = true;
 		}
 	}
@@ -1129,7 +1142,7 @@ Refresh ();
 //==========================================================================
 //==========================================================================
 
-void CMineView::RefreshObject(short oldObject, short newObject) 
+void CMineView::RefreshObject (short oldObject, short newObject) 
 {
 current->SetObjectId (newObject);
 DLE.ToolView ()->Refresh ();
