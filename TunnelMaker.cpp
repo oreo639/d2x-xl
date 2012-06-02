@@ -82,12 +82,15 @@ for (int i = 0; i < 4; i++)
 
 void CTunnelBase::Setup (void)
 {
-if ((m_nSegment >= 0) && (m_nSide >= 0)) {
-	m_point = segmentManager.CalcSideCenter (*this);
-	m_normal = segmentManager.CalcSideNormal (*this);
-	for (int i = 0; i < 4; i++)
-		m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
-	}
+CSegment* segP = segmentManager.Segment (m_nSegment);
+CSide* sideP = segP->Side (m_nSide);
+segP->ComputeNormals (m_nSide);
+for (int i = 0; i < 4; i++)
+	m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
+m_orient.m.fVec = m_normal;
+m_orient.m.rVec = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
+m_orient.m.uVec = CrossProduct (m_orient.m.fVec, m_orient.m.rVec);
+m_orient.m.uVec.Normalize ();
 }
 
 //------------------------------------------------------------------------------
@@ -97,14 +100,14 @@ if ((m_nSegment >= 0) && (m_nSide >= 0)) {
 void CTunnelSegment::Setup (CTunnelBase base [2])
 {
 memcpy (m_base, base, sizeof (m_base));
-m_nPathLength = 0;
+m_nSteps = 0;
 }
 
 //------------------------------------------------------------------------------
 
 void CTunnelSegment::Release (void)
 {
-for (int i = m_nPathLength; --i >= 0; ) {
+for (int i = m_nSteps; --i >= 0; ) {
 	segmentManager.Remove (m_elements [i].m_nSegment);
 	for (int j = 0; j < 4; j++)
 		vertexManager.Delete (m_elements [i].m_nVertices [j]);
@@ -116,7 +119,7 @@ for (int i = m_nPathLength; --i >= 0; ) {
 void CTunnelSegment::Destroy (void)
 {
 Release ();
-m_nPathLength = 0;
+m_nSteps = 0;
 m_elements.Destroy ();
 }
 
@@ -287,7 +290,7 @@ return v;
 void CTunnelSegment::SetupVertices (void)
 {
 ubyte oppVertexIndex [4];
-for (short i = 0; i < m_nPathLength; i++) {
+for (short i = 0; i < m_nSteps; i++) {
 	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
 	segP->CreateOppVertexIndex (m_base [0].m_nSide, oppVertexIndex);
 	for (short j = 0; j < 4; j++) {
@@ -295,7 +298,7 @@ for (short i = 0; i < m_nPathLength; i++) {
 			segP->SetVertexId (m_base [0].m_nSide, j, m_elements [i].m_nVertices [j]);
 			segP->SetVertexId (oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j));
 			}
-		else if (i == m_nPathLength - 1) { // last segment
+		else if (i == m_nSteps - 1) { // last segment
 			segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, MatchingSide (j)));
 			segP->SetVertexId (oppVertexIndex [j], m_elements [i - 1].m_nVertices [j]);
 			}
@@ -306,7 +309,7 @@ for (short i = 0; i < m_nPathLength; i++) {
 		}
 	}
 // twisted segments
-for (short i = 0; i < m_nPathLength; i++)
+for (short i = 0; i < m_nSteps; i++)
 	UntwistSegment (m_elements [i].m_nSegment, m_base [0].m_nSide);
 }
 
@@ -324,13 +327,13 @@ bool CTunnelSegment::Create (CTunnelPath& path)
   double		y, z;
   double		ySpin, zSpin;
 
-if (m_nPathLength != path.Length ()) { // recompute
-	if (m_nPathLength > 0)
+if (m_nSteps != path.Steps ()) { // recompute
+	if (m_nSteps > 0)
 		Release ();
-	if ((path.Length () > m_nPathLength) && !m_elements.Resize (path.Length (), false))
+	if ((path.Steps () > m_nSteps) && !m_elements.Resize (path.Steps (), false))
 		return false;
-	m_nPathLength = path.Length ();
-	for (i = 0; i < m_nPathLength; i++) {
+	m_nSteps = path.Steps ();
+	for (i = 0; i < m_nSteps; i++) {
 		m_elements [i].m_nSegment = segmentManager.Add ();
 		segmentManager.Segment (m_elements [i].m_nSegment)->m_info.bTunnel = 1;
 		vertexManager.Add (m_elements [i].m_nVertices, 4);
@@ -358,7 +361,7 @@ for (i = 0; i < 4; i++) {
 		SpinPoint (relSidePoints [j] + i, ySpin, zSpin);
 	}
 
-for (i = 0; i < m_nPathLength; i++) 
+for (i = 0; i < m_nSteps; i++) 
 	SpinPoint (&path [i], ySpin, zSpin);
 
 // determine polar coordinates of the 1st side (simply y,z coords)
@@ -396,12 +399,12 @@ for (i = 1; i < 4; i++) {
 // calculate segment vertices as weighted average between the two sides
 // then spin vertices in the direction of the segment vector
 ushort nVertex = 0;
-for (i = 0; i < m_nPathLength - 1; i++) {
+for (i = 0; i < m_nSteps - 1; i++) {
 	for (j = 0; j < 4; j++) {
 		CVertex* vertP = vertexManager.Vertex (m_elements [i].m_nVertices [j]);
-		double h = (double) i / (double) m_nPathLength;
+		double h = (double) i / (double) m_nSteps;
 		double angle  = h * deltaAngle [j] + theta [0][j];
-		double length = h * radius [1][MatchingSide (j)] + (((double) m_nPathLength - (double) i) / (double) m_nPathLength) * radius [0][j];
+		double length = h * radius [1][MatchingSide (j)] + (((double) m_nSteps - (double) i) / (double) m_nSteps) * radius [0][j];
 		*vertP = RectPoints (angle, length, &path [i], &path [i + 1]);
 		// spin vertices
 		SpinBackPoint (vertP, ySpin, zSpin);
@@ -418,7 +421,7 @@ return true;
 void CTunnelSegment::Realize (void)
 {
 ushort nVertex = 0;
-for (short i = 0; i < m_nPathLength; i++) {
+for (short i = 0; i < m_nSteps; i++) {
 	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
 	// copy current segment
 	*segP = *segmentManager.Segment (current->SegmentId ());
@@ -430,7 +433,7 @@ for (short i = 0; i < m_nPathLength; i++) {
 		segP->SetChild (m_base [0].m_nSide, m_elements [1].m_nSegment);
 		m_base [0].Segment ()->SetChild (m_base [0].m_nSide, m_elements [0].m_nSegment);
 		} 
-	else if (i == m_nPathLength - 1) {
+	else if (i == m_nSteps - 1) {
 		segP->SetChild (oppSideTable [m_base [0].m_nSide], m_elements [i - 1].m_nSegment); // previous tunnel segment
 		segP->SetChild (m_base [0].m_nSide, m_base [1].m_nSegment);
 		m_base [1].Segment ()->SetChild (m_base [1].m_nSide, m_elements [i].m_nSegment);
@@ -451,7 +454,7 @@ void CTunnelSegment::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CVi
 CDC* pDC = renderer.DC ();
 
 renderer.BeginRender ();
-for (int i = 0; i < m_nPathLength; i++) {
+for (int i = 0; i < m_nSteps; i++) {
 	for (int j = 0; j < 4; j++) {
 		CVertex&v = vertexManager [m_elements [i].m_nVertices [j]];
 		v.Transform (viewMatrix);
@@ -464,7 +467,7 @@ renderer.BeginRender (true);
 renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 renderer.SelectPen (penBlue + 1);
 CMineView* mineView = DLE.MineView ();
-for (int i = 0; i < m_nPathLength; i++)
+for (int i = 0; i < m_nSteps; i++)
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
 renderer.EndRender ();
 }
@@ -505,17 +508,35 @@ void CTunnelPath::Destroy (void)
 
 bool CTunnelPath::Create (short nPathLength)
 {
-if (m_nPathLength != nPathLength) { // recompute
-	if ((nPathLength > m_nPathLength) && !m_vertices.Resize (nPathLength, false))
+if (m_nSteps != nPathLength) { // recompute
+	if ((nPathLength > m_nSteps) && !m_vertices.Resize (nPathLength, false))
 		return false;
-	m_nPathLength = nPathLength;
+	m_nSteps = nPathLength;
 	}
 
 // calculate nSegment m_bezierPoints
-for (int i = 0; i < m_nPathLength; i++) {
-	m_vertices [i] = m_bezier.Compute ((double) i / (double) m_nPathLength) - m_bezier.GetPoint (0);
+for (int i = 0; i < m_nSteps; i++) {
+	m_vertices [i] = m_bezier.Compute ((double) i / (double) m_nSteps) - m_bezier.GetPoint (0);
 	}
 return true;
+}
+
+//------------------------------------------------------------------------------
+
+double CTunnelPath::Length (int nSteps)
+{
+	CVertex& v1 = m_vertices [0];
+	double length = Distance (v1, m_base [0].m_point);
+
+if (nSteps <= 0)
+	nSteps = m_nSteps;
+for (int i = 1; i < nSteps; i++) {
+	CVertex& v0 = v1;
+	v1 = m_vertices [i];
+	length += Distance (v1, v0);
+	}
+length += Distance (m_base [1].m_point, v1);
+return length;
 }
 
 //------------------------------------------------------------------------------
@@ -675,12 +696,12 @@ return Setup ();
 
 short CTunnelMaker::PathLength (void)
 {
-m_nPathLength = short (m_path.Bezier ().Length () / 20.0 + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 20.0) + m_nGranularity;
-if (m_nPathLength > MaxSegments () - 1)
-	m_nPathLength = MaxSegments () - 1;
-else if (m_nPathLength < 3)
-	m_nPathLength = 3;
-return m_nPathLength;
+m_nSteps = short (m_path.Bezier ().Length () / 20.0 + Distance (m_base [0].GetPoint (), m_base [1].GetPoint ()) / 20.0) + m_nGranularity;
+if (m_nSteps > MaxSegments () - 1)
+	m_nSteps = MaxSegments () - 1;
+else if (m_nSteps < 3)
+	m_nSteps = 3;
+return m_nSteps;
 }
 
 //------------------------------------------------------------------------------
@@ -689,7 +710,7 @@ bool CTunnelMaker::Create (void)
 {
 if (PathLength () <= 0) 
 	return false;
-if (m_path.Create (m_nPathLength) && m_segments [0].Create (m_path))
+if (m_path.Create (m_nSteps) && m_segments [0].Create (m_path))
 	return true;
 Destroy ();
 return false;

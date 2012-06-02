@@ -49,9 +49,10 @@ class CCubicBezier {
 
 class CTunnelBase : public CSideKey {
 	public:
-		CVertex	m_point;
-		CVertex	m_normal;
-		CVertex	m_vertices [4];
+		CVertex			m_point;
+		CVertex			m_normal;
+		CVertex			m_vertices [4];
+		CDoubleMatrix	m_orient; // orientation of tunnel end side
 
 		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSideKey (key) {}
 
@@ -94,10 +95,11 @@ class CTunnelPath {
 	public:
 		CCubicBezier				m_bezier;
 		CTunnelBase					m_base [2];
-		short							m_nPathLength;
+		short							m_nSteps;
 		CDynamicArray<CVertex>	m_vertices;
+		CDoubleMatrix				m_orientation [2]; 
 
-		CTunnelPath () : m_nPathLength (0) {}
+		CTunnelPath () : m_nSteps (0) {}
 
 		bool Setup (CTunnelBase base [2]);
 
@@ -109,7 +111,11 @@ class CTunnelPath {
 
 		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix);
 
-		inline short Length (void) { return m_nPathLength; }
+		inline short Steps (void) { return m_nSteps; }
+
+		double Length (int nSteps = -1);
+
+		inline double Scale (int nStep) { return Length (nStep) / Length (); }
 
 		inline CCubicBezier& Bezier () { return m_bezier; }
 
@@ -123,7 +129,7 @@ class CTunnelPath {
 
 class CTunnelSegment {
 	public:
-		short									m_nPathLength; // current path length
+		short									m_nSteps; // current path length
 		CTunnelBase							m_base [2];
 		CDynamicArray<CTunnelElement>	m_elements;
 
@@ -163,14 +169,14 @@ class CTunnelSegment {
 class CTunnelMaker {
 	private:
 		bool									m_bActive;
-		short									m_nPathLength;
+		short									m_nSteps;
 		short									m_nGranularity;
 		CTunnelBase							m_base [2];
 		CDynamicArray<CTunnelSegment>	m_segments;
 		CTunnelPath							m_path;
 
 	public:
-		CTunnelMaker () : m_nPathLength (0) {}
+		CTunnelMaker () : m_nSteps (0) {}
 
 		void Run (void); 
 
