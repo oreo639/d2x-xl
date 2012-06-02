@@ -249,7 +249,12 @@ class CDoubleVector {
 
 	inline const double SqrMag (void) { return v.x * v.x + v.y * v.y + v.z * v.z; }
 	inline const double Mag (void) { return sqrt (SqrMag ()); }
-	inline const CDoubleVector& Normalize (void) { *this /= Mag (); return *this; }
+	inline const CDoubleVector& Normalize (void) { 
+		double m = Mag ();
+		if (m != 0.0)
+			*this /= m; 
+		return *this; 
+		}
 	inline const CDoubleVector Negate (void) { v.x = -v.x, v.y = -v.y, v.z = -v.z; return *this; }
 	void Rotate (CDoubleVector& origin, CDoubleVector& normal, double angle);
 };
