@@ -83,6 +83,7 @@ for (int i = 0; i < 4; i++)
 
 void CTunnelBase::Setup (double sign)
 {
+m_sign = sign;
 CSegment* segP = segmentManager.Segment (m_nSegment);
 CSide* sideP = segP->Side (m_nSide);
 segP->ComputeNormals (m_nSide);
@@ -93,7 +94,7 @@ for (int i = 0; i < 4; i++)
 m_orientation.m.fVec = m_normal * sign;
 m_orientation.m.rVec = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
 m_orientation.m.rVec.Normalize ();
-m_orientation.m.rVec *= sign;
+m_orientation.m.rVec *= -sign;
 m_orientation.m.uVec = CrossProduct (m_orientation.m.fVec, m_orientation.m.rVec);
 m_orientation.m.uVec.Normalize ();
 }
@@ -702,8 +703,8 @@ bool CTunnelMaker::Setup (void)
 {
 dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (selections [0]);
 dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (selections [1]);
-m_base [0].Setup (1.0);
-m_base [1].Setup (-1.0);
+m_base [0].Setup (-1.0);
+m_base [1].Setup (1.0);
 m_nGranularity = 0;
 
 if (m_path.Setup (m_base)) {

@@ -53,6 +53,7 @@ class CTunnelBase : public CSideKey {
 		CVertex			m_normal;
 		CVertex			m_vertices [4];
 		CDoubleMatrix	m_orientation; // orientation of tunnel end side
+		double			m_sign;
 
 		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSideKey (key) {}
 
@@ -64,7 +65,7 @@ class CTunnelBase : public CSideKey {
 
 		inline void SetPoint (CDoubleVector point) { m_point = point; }
 
-		inline CDoubleVector GetNormal (void) { return m_normal; }
+		inline CDoubleVector GetNormal (void) { return m_normal * m_sign; }
 
 		inline void SetNormal (CDoubleVector normal) { m_normal = normal; }
 
