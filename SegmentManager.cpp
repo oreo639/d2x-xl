@@ -450,33 +450,33 @@ undoManager.Begin (udVertices);
 if (!vertexManager.HasTaggedVertices ())
 	current->Segment ()->MakeCoplanar (current->SideId ());
 else {
-	double dist, d;
-	ushort nTagged = 0;
+	double dist;
 
 	current->Segment ()->ComputeNormals (current->SideId ());
 	CDoubleVector n = current->Side ()->Normal ();
 	CDoubleVector v0 = *current->Vertex ();
 
-	if (current->Segment ()->HasTaggedVertices (current->SideId ()))
+	if (current->Segment ()->HasTaggedVertices (TAGGED_MASK, current->SideId ()))
 		dist = 0.0;
 	else {
-		d = 0.0;
+		double d = 0.0;
+		ushort nTagged = 0;
 		for (ushort i = 0, j = vertexManager.Count (); i < j; i++) {
 			CVertex& v = vertexManager [i];
 			if (v.IsTagged ()) {
 				++nTagged;
-				v -= v0;
-				d += Dot (v, n);
+				CDoubleVector h = v - v0;
+				d += Dot (h, n);
 				}
 			}
+		dist = d / double (nTagged);
 		}
-	dist = d / double (nTagged);
 
 	for (ushort i = 0, j = vertexManager.Count (); i < j; i++) {
 		CVertex& v = vertexManager [i];
 		if (v.IsTagged ()) {
-			d = Dot (v, n);
-			v -= n * (d - dist);
+			CDoubleVector h = v - v0;
+			v -= n * (Dot (h, n) - dist);
 			}
 		}
 	}
