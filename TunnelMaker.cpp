@@ -301,10 +301,10 @@ for (short i = 0; i < m_nSteps; i++) {
 	for (short j = 0; j < 4; j++) {
 		if (i == 0) { // 1st segment
 			segP->SetVertexId (m_base [0].m_nSide, j, m_elements [i].m_nVertices [j]);
-			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, m_base [1].m_oppVertexIndex [j]));
+			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j));
 			}
 		else if (i == m_nSteps - 1) { // last segment
-			segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, j)); //MatchingSide (j)));
+			segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [j])); //MatchingSide (j)));
 			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_elements [i - 1].m_nVertices [j]);
 			}
 		else {
@@ -354,11 +354,11 @@ double l = path.Length ();
 
 for (i = 0; i < m_nSteps; i++) {
 	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
-	//q.FromAxisAngle (path.m_rotAxis, path.m_rotAngle * path.Length (i) / l);
-	//q.ToMatrix (r);
+	q.FromAxisAngle (path.m_rotAxis, path.m_rotAngle * path.Length (i) / l);
+	q.ToMatrix (r);
 	for (j = 0; j < 4; j++) {
 		CVertex& v = vertexManager [m_elements [i].m_nVertices [j]];
-		v = /*r **/ relSidePoints [j];
+		v = r * relSidePoints [j];
 		v += path [i];
 		v = v;
 		}
