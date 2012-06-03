@@ -279,7 +279,20 @@ m_orientation.m.uVec.Normalize ();
 
 bool CTunnelSegment::Create (CTunnelPath& path, short nSegments, short nVertices)
 {
-if (!(m_nVertices.Resize (nVertices) && (m_elements.Resize (nSegments))))
+if (!m_elements.Resize (nSegments))
+	return false;
+for (short i = 0; i < nSegments; i++) {
+	CTunnelElement& element = m_elements [i];
+	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
+	for (short j = 0; j < 4; j++) 
+		element.m_nVertices [j] = m_nVertices [vertexIndex [j]];
+	}
+if (nVertices == 0) {
+	path.m_nStartVertices.ShareBuffer (m_nVertices);
+	return true;
+	}
+
+if (!m_nVertices.Resize (nVertices))
 	return false;
 if (!vertexManager.Add (&m_nVertices [0], nVertices))
 	return false;
@@ -288,9 +301,6 @@ for (short i = 0; i < nSegments; i++) {
 	if (0 > (element.m_nSegment = segmentManager.Add ()))
 		return false;
 	segmentManager.Segment (element.m_nSegment)->m_info.bTunnel = 1;
-	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
-	for (short j = 0; j < 4; j++) 
-		element.m_nVertices [j] = m_nVertices [vertexIndex [j]];
 	}
 return true;
 }
@@ -421,10 +431,9 @@ if (m_nSteps != path.Steps ()) { // recompute
 	if ((path.Steps () > m_nSteps) && !m_segments.Resize (path.Steps () + 1, false))
 		return false;
 	m_nSteps = path.Steps ();
-	for (int i = 1; i <= m_nSteps; i++) {
-		if (!m_segments [i].Create (path, nSegments, nVertices))
+	for (int i = 0; i <= m_nSteps; i++) {
+		if (!m_segments [i].Create (path, nSegments, i ? nVertices : 0))
 			return false;
-		path.m_nStartVertices.ShareBuffer (m_segments [0].m_nVertices);
 		}
 	}
 
