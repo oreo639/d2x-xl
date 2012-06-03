@@ -378,11 +378,9 @@ if (index != 0) {
 
 void CTunnel::SetupVertices (void)
 {
-	CTunnelElement * e0, * e1;
-
-for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
-	e1 = null;
-	for (uint nElement = 0, h = m_segments [nSegment].m_elements.Length (); nElement < h; nElement++) {
+for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElement < nElements; nElement++) {
+	CTunnelElement * e0, * e1 = null;
+	for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
 		e0 = e1;
 		e1 = &m_segments [nSegment].m_elements [nElement];
 		CSegment* segP = segmentManager.Segment (e1->m_nSegment);
