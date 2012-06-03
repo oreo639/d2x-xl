@@ -86,7 +86,7 @@ class CTunnelPathNode {
 		CDoubleMatrix	m_orientation;
 		double			m_angle; // rotation angle around z axis
 
-	void CreateOrientation (CVertex& fVec, CDoubleMatrix& mOrient, double zAngle);
+	void CreateOrientation (CVertex fVec, CDoubleMatrix& mOrient, double zAngle);
 	};
 
 //------------------------------------------------------------------------

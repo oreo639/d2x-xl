@@ -587,7 +587,7 @@ renderer.EndRender ();
 // around forward by the given angle.
 // Adaptation of code created by Achim Stremplat
 
-void CTunnelPathNode::CreateOrientation (CVertex& fVec, CDoubleMatrix& mOrigin, double angle)
+void CTunnelPathNode::CreateOrientation (CVertex fVec, CDoubleMatrix& mOrigin, double angle)
 {
 m_orientation.m.fVec = fVec;
 m_orientation.m.fVec.Normalize ();
@@ -659,15 +659,21 @@ void CTunnelPath::Destroy (void)
 bool CTunnelPath::Create (short nPathLength)
 {
 if (m_nSteps != nPathLength) { // recompute
-	if ((nPathLength > m_nSteps) && !m_vertices.Resize (nPathLength, false))
+	if ((nPathLength > m_nSteps) && !m_nodes.Resize (nPathLength + 2, false))
 		return false;
 	m_nSteps = nPathLength;
 	}
 
 // calculate nSegment m_bezierPoints
-for (int i = 0; i < m_nSteps; i++) {
-	m_vertices [i] = m_bezier.Compute ((double) i / (double) m_nSteps)/* - m_bezier.GetPoint (0)*/;
-	}
+m_nodes [0].m_vertex = m_base [0].m_point;
+for (int i = 1; i <= m_nSteps; i++) 
+	m_nodes [i].m_vertex = m_bezier.Compute ((double) i / (double) m_nSteps)/* - m_bezier.GetPoint (0)*/;
+m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
+double l = Length ();
+m_nodes [0].m_orientation = m_base [0].m_orientation;
+for (int i = 1; i < m_nSteps; i++) 
+	m_nodes [i].CreateOrientation (Average (m_nodes [i].m_vertex - m_nodes [i - 1].m_vertex, m_nodes [i + 1].m_vertex - m_nodes [i].m_vertex), m_base [0].m_orientation, m_angle * l / Length (i));
+m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation;
 return true;
 }
 
