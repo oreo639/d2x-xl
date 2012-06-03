@@ -93,15 +93,23 @@ class CTunnelElement {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+class CTunnelPathNode {
+	public:
+		CVertex			m_vertex;
+		CDoubleMatrix	m_orientation;
+		double			m_angle; // rotation angle around z axis
+
+	void CreateOrientation (CVertex& fVec, CDoubleMatrix& mOrient, double zAngle);
+	};
+
 class CTunnelPath {
 	public:
-		CCubicBezier				m_bezier;
-		CTunnelBase					m_base [2];
-		short							m_nSteps;
-		CDynamicArray<CVertex>	m_vertices;
-		CDoubleMatrix				m_unRotate; // for unrotating base vertices
-		CDoubleVector				m_rotAxis; // rotation angle and axis for transforming the start point orientation to the end point orientation
-		double						m_rotAngle;
+		CCubicBezier							m_bezier;
+		CTunnelBase								m_base [2];
+		short										m_nSteps;
+		CDynamicArray<CTunnelPathNode>	m_nodes;
+		CDoubleMatrix							m_unRotate; // for unrotating base vertices
+		double									m_angle;
 
 		CTunnelPath () : m_nSteps (0) {}
 
@@ -123,7 +131,7 @@ class CTunnelPath {
 
 		inline CCubicBezier& Bezier () { return m_bezier; }
 
-		inline CVertex& operator[] (uint i) { return m_vertices [i]; }
+		inline CVertex& operator[] (uint i) { return m_nodes [i].m_vertex; }
 	};
 
 //------------------------------------------------------------------------

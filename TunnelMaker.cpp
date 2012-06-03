@@ -5,6 +5,43 @@
 #include "Quaternion.h"
 
 //------------------------------------------------------------------------------
+/*
+The tunnel maker creates a structure of connected segments leading from an arbitrary number of start sides 
+to an end point given by the center of an end side. The start point is the center of the current side.
+
+The start sides consist of all tagged sides that are directly or indirectly connected to the 
+current side (via edges or other connected, tagged sides) and are at an angle of 22.5° or less to the 
+current side.
+
+The tunnel path is determined by cubic bezier curve from the start to the end point of the tunnel and 
+the normals of the current and other side. Its granularity (number of segments) and curvature can be 
+changed interactively by pressing ALT+8 / ALT+9 (granularity) and CTRL+8 / CTRL+9 (curvature via length 
+of start and end normals).
+
+The tunnel vertices are computed by gathering all start vertices and rotating them to the proper 
+orientation for each tunnel path point. 
+
+The rotation matrixes are built from the tangent vector of each path point (average of the two path 
+vectors starting and ending at that point) and a rotation angle around the rotation matrix' forward vector. 
+The rotation angle is computed from the total z rotation angle between the start and the end points 
+orientation, and is scaled by the factor of the path length at the current node to the total path length.
+
+Start and end orientations are created from the current and other sides' normals (forward) and current 
+edges (right; right = <side vertex @ side's current point + 1> - <side vertex @ side's current point>).
+The end sides orientation is properly flipped to point in the direction of the tunnel path.
+
+The total procedure is:
+
+- gather all start sides and vertices
+- construct start and end orientations
+- compute overall z rotation angle
+- compute tunnel path
+- for each path node:
+     - construct rotation matrix from average (<current node> - <previous node>, <next node - current node>) 
+       and weighted z rotation
+     - compute tunnel vertices at current path node by rotating the start vertices using the node's rotation matrix
+	  - assign current path node's tunnel vertices to the tunnel segments related to the current path node
+*/
 
 CTunnelMaker tunnelMaker;
 
@@ -513,6 +550,46 @@ renderer.EndRender ();
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+// Derive a rotation matrix from a source rotation matrix, a z rotation angle and a forward vector.
+// First construct arbitrary right and up vectors from the forward vector, then rotate up and right
+// around forward by the given angle.
+// Adaptation of code created by Achim Stremplat
+
+void CTunnelPathNode::CreateOrientation (CVertex& fVec, CDoubleMatrix& mOrigin, double angle)
+{
+m_orientation.m.fVec = fVec;
+m_orientation.m.fVec.Normalize ();
+CVertex v0 = CrossProduct (mOrigin.m.uVec, m_orientation.m.fVec);
+double l = v0.Mag (); 
+if (l >= 0.1) 
+	v0 /= l;
+else {
+	v0 = CrossProduct (mOrigin.m.rVec, m_orientation.m.fVec);
+	v0.Normalize ();
+	}
+CVertex v1 = CrossProduct (m_orientation.m.fVec, v0);
+double a = Dot (v0, mOrigin.m.rVec) + Dot (v1, mOrigin.m.uVec); 
+double b = Dot (v1, mOrigin.m.rVec) - Dot (v0, mOrigin.m.uVec); 
+double q = sqrt (a * a + b * b); 
+double r, s;
+if (q >= 0.001) { 
+	r = a / q;  
+	s = b / q;  
+	}
+else {  
+	r = 1.0;  
+	s = 0.0;  
+	}
+m_orientation.m.rVec = v0 * r + v1 * s;
+m_orientation.m.uVec = v1 * r - v0 * s;
+// rotate right and up vector around forward vector
+m_orientation.m.rVec.Rotate (m_orientation.m.fVec, angle);
+m_orientation.m.uVec.Rotate (m_orientation.m.fVec, angle);
+}
+ 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CTunnelPath::Setup (CTunnelBase base [2])
 {
@@ -527,11 +604,7 @@ else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
 m_unRotate = m_base [0].m_orientation.Inverse ();
-CDoubleMatrix t;
-t = m_base [1].m_orientation * m_unRotate;
-CQuaternion q;
-q.FromMatrix (t);
-q.ToAxisAngle (m_rotAxis, m_rotAngle);
+m_angle = ZAngle (m_base [1].m_orientation, m_base [0].m_orientation, 0.0);
 
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);
