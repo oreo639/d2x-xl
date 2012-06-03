@@ -864,8 +864,8 @@ DLE.MineView ()->Refresh ();
 
 bool CTunnelMaker::Setup (void)
 {
-dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (selections [0]);
-dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (selections [1]);
+dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (*current);
+dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (*other);
 m_base [0].Setup (-1.0);
 m_base [1].Setup (1.0);
 m_nGranularity = 0;
