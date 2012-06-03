@@ -354,8 +354,13 @@ double l = path.Length ();
 
 for (i = 0; i < m_nSteps; i++) {
 	CSegment* segP = segmentManager.Segment (m_elements [i].m_nSegment);
-	q.FromAxisAngle (path.m_rotAxis, path.m_rotAngle * path.Length (i) / l);
-	q.ToMatrix (r);
+
+CDoubleMatrix m;
+m = m_base [1].m_orientation * m_unRotate;
+CQuaternion q;
+q.FromMatrix (m);
+q.ToAxisAngle (m_rotAxis, m_rotAngle);
+
 	for (j = 0; j < 4; j++) {
 		CVertex& v = vertexManager [m_elements [i].m_nVertices [j]];
 		v = r * relSidePoints [j];
@@ -377,7 +382,7 @@ for (i = 0; i < 2; i++) {
 		}
 	}
 
-double	theta [2][4], radius [2][4]; // polor coordinates of sides
+double	theta [2][4], radius [2][4]; // polar coordinates of sides
 double	deltaAngle [4];
 double	y, z;
 double	ySpin, zSpin;
@@ -527,11 +532,6 @@ else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
 m_unRotate = m_base [0].m_orientation.Inverse ();
-CDoubleMatrix m;
-m = m_base [1].m_orientation * m_unRotate;
-CQuaternion q;
-q.FromMatrix (m);
-q.ToAxisAngle (m_rotAxis, m_rotAngle);
 
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);
