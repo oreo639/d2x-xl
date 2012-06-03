@@ -379,12 +379,13 @@ if (index != 0) {
 void CTunnel::SetupVertices (void)
 {
 for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElement < nElements; nElement++) {
-	CTunnelElement * e0, * e1 = null;
-	for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
+	CTunnelElement * e0, * e1 = &m_segments [0].m_elements [nElement];
+	for (short nSegment = 1; nSegment <= m_nSteps + 1; nSegment++) {
 		e0 = e1;
 		e1 = &m_segments [nSegment].m_elements [nElement];
 		CSegment* segP = segmentManager.Segment (e1->m_nSegment);
 		for (short nVertex = 0; nVertex < 4; nVertex++) {
+#if 0
 			if (nSegment == 0) { // 1st segment
 				segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
 				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, nElement));
@@ -393,7 +394,9 @@ for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElemen
 				segP->SetVertexId (m_base [0].m_nSide, nVertex, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [nVertex])); 
 				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
 				}
-			else {
+			else 
+#endif
+				{
 				segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
 				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
 				}
@@ -426,7 +429,7 @@ if (m_nSteps != path.Steps ()) { // recompute
 
 #if 1
 
-for (int i = 1; i <= m_nSteps; i++) {
+for (int i = 0; i <= m_nSteps + 1; i++) {
 	CDoubleMatrix& rotation = path [i].m_orientation;
 	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
@@ -435,7 +438,7 @@ for (int i = 1; i <= m_nSteps; i++) {
 		v = path.m_unRotate * v;
 		v = rotation * v;
 		v += translation;
-		vertexManager [m_segments [i - 1].m_nVertices [j]] = v;
+		vertexManager [m_segments [i].m_nVertices [j]] = v;
 #ifdef _DEBUG
 		v = v;
 #endif
@@ -825,13 +828,11 @@ if (!m_bActive) {
 		return;
 		}
 
-	if (!m_tunnel.Create (m_path)) {
+	if (!(Setup () && m_tunnel.Create (m_path))) {
 		m_bActive = false;
 		return;
 		}
 
-	if (!Setup ())
-		return;
 	undoManager.Lock ();
 
 	if (!DLE.ExpertMode ())
