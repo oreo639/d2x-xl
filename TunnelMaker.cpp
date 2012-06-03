@@ -55,6 +55,141 @@ CTunnelMaker tunnelMaker;
 char szTunnelMakerError [] = "You must exit tunnel creation before performing this function";
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// SpinPoint () - spin on y-axis then z-axis
+//------------------------------------------------------------------------------
+
+void CTunnel::SpinPoint (CVertex* point, double ySpin, double zSpin) 
+{
+double tx = point->v.x * cos (ySpin) - point->v.z * sin (ySpin);
+double ty = point->v.y;
+double tz = point->v.x * sin (ySpin) + point->v.z * cos (ySpin);
+point->Set (tx * cos (zSpin) + ty * sin (zSpin), ty * cos (zSpin) - tx * sin (zSpin), tz);
+}
+
+//------------------------------------------------------------------------------
+// SpinBackPoint () - spin on z-axis then y-axis
+//------------------------------------------------------------------------------
+
+void CTunnel::SpinBackPoint (CVertex* point, double ySpin, double zSpin) 
+{
+double tx = point->v.x * cos (-zSpin) + point->v.y * sin (-zSpin);
+double ty = -point->v.x * sin (-zSpin) + point->v.y * cos (-zSpin);
+double tz = point->v.z;
+point->Set (tx * cos (-ySpin) - tz * sin (-ySpin), ty, tx * sin (-ySpin) + tz * cos (-ySpin));
+}
+
+//------------------------------------------------------------------------------
+// MatchingSide ()
+//
+// Action - Returns matching side depending on the current m_bezierPoints
+//------------------------------------------------------------------------------
+
+int CTunnel::MatchingSide (int j) 
+{
+  static int ret [4][4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
+  int offset;
+
+offset = (4 + selections [0].Point () - selections [1].Point ()) % 4;
+return ret [offset][j];
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnel::PolarPoints (double* angle, double* radius, CVertex* vertex, CVertex* origin, CVertex* normal) 
+{
+// translate coordinates to origin
+#if 0
+double vx = vertex->v.x - origin->v.x;
+double vy = vertex->v.y - origin->v.y;
+double vz = vertex->v.z - origin->v.z;
+double nx = normal->v.x - origin->v.x;
+double ny = normal->v.y - origin->v.y;
+double nz = normal->v.z - origin->v.z;
+#endif
+CDoubleVector v = *vertex - *origin;
+CDoubleVector n = *normal - *origin;
+// calculate angles to normalize direction
+// spin on z axis to get into the x-z plane
+double zSpin = atan3 (n.v.y, n.v.x);
+double zSpinSin = sin (zSpin);
+double zSpinCos = cos (zSpin);
+double x1 = n.v.x * zSpinCos + n.v.y * zSpinSin;
+double z1 = n.v.z;
+// spin on y to get on the x axis
+double ySpin = -atan3 (z1, x1);
+// spin vertex (spin on z then y)
+x1 = v.v.x * zSpinCos + v.v.y * zSpinSin;
+double y1 = -v.v.x * zSpinSin + v.v.y * zSpinCos;
+z1 = v.v.z;
+double y2 = y1;
+double z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
+// convert to polar
+*radius = sqrt (y2 * y2 + z2 * z2);  // ignore any x offset
+*angle = atan3 (z2, y2);
+}
+
+//------------------------------------------------------------------------------
+// Action - Spins m_bezierPoints which lie in the y-z plane orthagonal to a normal
+//          Uses normal as center for translating m_bezierPoints.
+//
+// Changes - Chooses axis to normalizes on m_based on "normal" direction
+//------------------------------------------------------------------------------
+
+CDoubleVector CTunnel::RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
+{
+  double			ySpin, zSpin;
+  char			spinAxis;
+  CVertex		v, n = *normal - *origin, v1, v2;
+
+  // translate coordanites to orgin
+  // choose rotation order
+if (fabs(n.v.z) > fabs(n.v.y))
+	spinAxis = 'Y';
+else 
+	spinAxis = 'Z';
+spinAxis = 'Y';
+
+// start by defining vertex in rectangular coordinates (xz plane)
+v.Set (0, radius * cos (angle), radius * sin (angle));
+
+switch(spinAxis) {
+ case 'Y':
+   // calculate angles to normalize direction
+   // spin on y axis to get into the y-z plane
+   ySpin = -atan3 (n.v.z, n.v.x);
+   v1.Set (n.v.x * cos (ySpin) - n.v.z * sin (ySpin), n.v.y, n.v.x * sin (ySpin) + n.v.z * cos (ySpin));
+   // spin on z to get on the x axis
+   zSpin = atan3 (v1.v.y,v1.v.x);
+   // spin vertex back in negative direction (z first then y)
+	zSpin = -zSpin;
+   v2.Set ((double) v.v.x * cos (zSpin) + (double) v.v.y * sin (zSpin), (double) -v.v.x * sin (zSpin) + (double) v.v.y * cos (zSpin), double (v.v.z));
+	ySpin = -ySpin;
+   v1.Set (v2.v.x * cos (ySpin) - v2.v.z * sin (ySpin), v2.v.y, v2.v.x * sin (ySpin) + v2.v.z * cos (ySpin));
+   break;
+
+ case 'Z':
+   // calculate angles to normalize direction
+   // spin on z axis to get into the x-z plane
+   zSpin = atan3 (n.v.y, n.v.x);
+   v1.Set (n.v.x * cos (zSpin) + n.v.y * sin (zSpin), -n.v.x * sin (zSpin) + n.v.y * cos (zSpin), n.v.z);
+   // spin on y to get on the x axis
+   ySpin = -atan3 (v1.v.z,v1.v.x);
+   // spin vertex back in negative direction (y first then z)
+	ySpin = -ySpin;
+   v2.Set ((double) v.v.x * cos (ySpin) - (double) v.v.z * sin (ySpin), double (v.v.y), (double) v.v.x * sin (ySpin) + (double) v.v.z * cos (ySpin));
+	zSpin = -zSpin;
+   v1.Set (v2.v.x * cos (zSpin) + v2.v.y * sin (zSpin), -v2.v.x * sin (zSpin) + v2.v.y * cos (zSpin), v2.v.z);
+   break;
+	}
+v = *normal + v1;
+return v;
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 long CCubicBezier::Faculty (int n) 
 {
@@ -209,45 +344,6 @@ m_segments.Destroy ();
 }
 
 //------------------------------------------------------------------------------
-// SpinPoint () - spin on y-axis then z-axis
-//------------------------------------------------------------------------------
-
-void CTunnel::SpinPoint (CVertex* point, double ySpin, double zSpin) 
-{
-double tx = point->v.x * cos (ySpin) - point->v.z * sin (ySpin);
-double ty = point->v.y;
-double tz = point->v.x * sin (ySpin) + point->v.z * cos (ySpin);
-point->Set (tx * cos (zSpin) + ty * sin (zSpin), ty * cos (zSpin) - tx * sin (zSpin), tz);
-}
-
-//------------------------------------------------------------------------------
-// SpinBackPoint () - spin on z-axis then y-axis
-//------------------------------------------------------------------------------
-
-void CTunnel::SpinBackPoint (CVertex* point, double ySpin, double zSpin) 
-{
-double tx = point->v.x * cos (-zSpin) + point->v.y * sin (-zSpin);
-double ty = -point->v.x * sin (-zSpin) + point->v.y * cos (-zSpin);
-double tz = point->v.z;
-point->Set (tx * cos (-ySpin) - tz * sin (-ySpin), ty, tx * sin (-ySpin) + tz * cos (-ySpin));
-}
-
-//------------------------------------------------------------------------------
-// MatchingSide ()
-//
-// Action - Returns matching side depending on the current m_bezierPoints
-//------------------------------------------------------------------------------
-
-int CTunnel::MatchingSide (int j) 
-{
-  static int ret [4][4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
-  int offset;
-
-offset = (4 + selections [0].Point () - selections [1].Point ()) % 4;
-return ret [offset][j];
-}
-
-//------------------------------------------------------------------------------
 
 void CTunnel::UntwistSegment (short nSegment, short nSide) 
 {
@@ -278,116 +374,26 @@ if (index != 0) {
 }
 
 //------------------------------------------------------------------------------
-
-void CTunnel::PolarPoints (double* angle, double* radius, CVertex* vertex, CVertex* origin, CVertex* normal) 
-{
-// translate coordinates to origin
-#if 0
-double vx = vertex->v.x - origin->v.x;
-double vy = vertex->v.y - origin->v.y;
-double vz = vertex->v.z - origin->v.z;
-double nx = normal->v.x - origin->v.x;
-double ny = normal->v.y - origin->v.y;
-double nz = normal->v.z - origin->v.z;
-#endif
-CDoubleVector v = *vertex - *origin;
-CDoubleVector n = *normal - *origin;
-// calculate angles to normalize direction
-// spin on z axis to get into the x-z plane
-double zSpin = atan3 (n.v.y, n.v.x);
-double zSpinSin = sin (zSpin);
-double zSpinCos = cos (zSpin);
-double x1 = n.v.x * zSpinCos + n.v.y * zSpinSin;
-double z1 = n.v.z;
-// spin on y to get on the x axis
-double ySpin = -atan3 (z1, x1);
-// spin vertex (spin on z then y)
-x1 = v.v.x * zSpinCos + v.v.y * zSpinSin;
-double y1 = -v.v.x * zSpinSin + v.v.y * zSpinCos;
-z1 = v.v.z;
-double y2 = y1;
-double z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
-// convert to polar
-*radius = sqrt (y2 * y2 + z2 * z2);  // ignore any x offset
-*angle = atan3 (z2, y2);
-}
-
-//------------------------------------------------------------------------------
-// Action - Spins m_bezierPoints which lie in the y-z plane orthagonal to a normal
-//          Uses normal as center for translating m_bezierPoints.
-//
-// Changes - Chooses axis to normalizes on m_based on "normal" direction
-//------------------------------------------------------------------------------
-
-CDoubleVector CTunnel::RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
-{
-  double			ySpin, zSpin;
-  char			spinAxis;
-  CVertex		v, n = *normal - *origin, v1, v2;
-
-  // translate coordanites to orgin
-  // choose rotation order
-if (fabs(n.v.z) > fabs(n.v.y))
-	spinAxis = 'Y';
-else 
-	spinAxis = 'Z';
-spinAxis = 'Y';
-
-// start by defining vertex in rectangular coordinates (xz plane)
-v.Set (0, radius * cos (angle), radius * sin (angle));
-
-switch(spinAxis) {
- case 'Y':
-   // calculate angles to normalize direction
-   // spin on y axis to get into the y-z plane
-   ySpin = -atan3 (n.v.z, n.v.x);
-   v1.Set (n.v.x * cos (ySpin) - n.v.z * sin (ySpin), n.v.y, n.v.x * sin (ySpin) + n.v.z * cos (ySpin));
-   // spin on z to get on the x axis
-   zSpin = atan3 (v1.v.y,v1.v.x);
-   // spin vertex back in negative direction (z first then y)
-	zSpin = -zSpin;
-   v2.Set ((double) v.v.x * cos (zSpin) + (double) v.v.y * sin (zSpin), (double) -v.v.x * sin (zSpin) + (double) v.v.y * cos (zSpin), double (v.v.z));
-	ySpin = -ySpin;
-   v1.Set (v2.v.x * cos (ySpin) - v2.v.z * sin (ySpin), v2.v.y, v2.v.x * sin (ySpin) + v2.v.z * cos (ySpin));
-   break;
-
- case 'Z':
-   // calculate angles to normalize direction
-   // spin on z axis to get into the x-z plane
-   zSpin = atan3 (n.v.y, n.v.x);
-   v1.Set (n.v.x * cos (zSpin) + n.v.y * sin (zSpin), -n.v.x * sin (zSpin) + n.v.y * cos (zSpin), n.v.z);
-   // spin on y to get on the x axis
-   ySpin = -atan3 (v1.v.z,v1.v.x);
-   // spin vertex back in negative direction (y first then z)
-	ySpin = -ySpin;
-   v2.Set ((double) v.v.x * cos (ySpin) - (double) v.v.z * sin (ySpin), double (v.v.y), (double) v.v.x * sin (ySpin) + (double) v.v.z * cos (ySpin));
-	zSpin = -zSpin;
-   v1.Set (v2.v.x * cos (zSpin) + v2.v.y * sin (zSpin), -v2.v.x * sin (zSpin) + v2.v.y * cos (zSpin), v2.v.z);
-   break;
-	}
-v = *normal + v1;
-return v;
-}
-
-//------------------------------------------------------------------------------
 // define segment vert numbers
 
 void CTunnel::SetupVertices (void)
 {
 for (short i = 0; i < m_nSteps; i++) {
-	CSegment* segP = segmentManager.Segment (m_segments [i].m_elements [0].m_nSegment);
-	for (short j = 0; j < 4; j++) {
-		if (i == 0) { // 1st segment
-			segP->SetVertexId (m_base [0].m_nSide, j, m_segments [i].m_elements [0].m_nVertices [j]);
-			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j));
-			}
-		else if (i == m_nSteps - 1) { // last segment
-			segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [j])); //MatchingSide (j)));
-			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_segments [i - 1].m_elements [0].m_nVertices [j]);
-			}
-		else {
-			segP->SetVertexId (m_base [0].m_nSide, j, m_segments [i].m_elements [0].m_nVertices [j]);
-			segP->SetVertexId  (m_base [0].m_oppVertexIndex [j], m_segments [i - 1].m_elements [0].m_nVertices [j]);
+	for (uint j = 0, h = m_segments.Length (); j < h; j++) {
+		CSegment* segP = segmentManager.Segment (m_segments [i].m_elements [j].m_nSegment);
+		for (short j = 0; j < 4; j++) {
+			if (i == 0) { // 1st segment
+				segP->SetVertexId (m_base [0].m_nSide, j, m_segments [i].m_elements [j].m_nVertices [j]);
+				segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j));
+				}
+			else if (i == m_nSteps - 1) { // last segment
+				segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [j])); //MatchingSide (j)));
+				segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_segments [i - 1].m_elements [j].m_nVertices [j]);
+				}
+			else {
+				segP->SetVertexId (m_base [0].m_nSide, j, m_segments [i].m_elements [j].m_nVertices [j]);
+				segP->SetVertexId  (m_base [0].m_oppVertexIndex [j], m_segments [i - 1].m_elements [j].m_nVertices [j]);
+				}
 			}
 		}
 	}
@@ -410,7 +416,7 @@ if (m_nSteps != path.Steps ()) { // recompute
 		return false;
 	m_nSteps = path.Steps ();
 	for (int i = 0; i < m_nSteps; i++) {
-		if (!m_segments [i].Create (nSegments, nVertices))
+		if (!m_segments [i].Create (path, nSegments, nVertices))
 			return false;
 		}
 	}
