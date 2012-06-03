@@ -99,7 +99,7 @@ class CTunnelPath {
 		CDynamicArray<CTunnelPathNode>	m_nodes;
 		CDoubleMatrix							m_unRotate; // for unrotating base vertices
 		double									m_angle;
-		CSLL<CSideKey,CSideKey>				m_startSides;
+		CSLL<CSideKey,CSideKey>				m_nStartSides;
 		CSLL<ushort,ushort>					m_nStartVertices;
 
 		CTunnelPath () : m_nSteps (0) {}

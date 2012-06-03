@@ -394,7 +394,7 @@ for (short i = 0; i < m_nSteps; i++) {
 
 bool CTunnel::Create (CTunnelPath& path) 
 {
-	short nSegments = path.m_startSides.Length ();
+	short nSegments = path.m_nStartSides.Length ();
 	short nVertices = path.m_nStartVertices.Length ();
 
 if (m_nSteps != path.Steps ()) { // recompute
@@ -658,6 +658,8 @@ return true;
 
 void CTunnelPath::Destroy (void)
 {
+m_nStartSides.Destroy ();
+m_nStartVertices.Destroy ();
 }
 
 //------------------------------------------------------------------------------
@@ -751,6 +753,7 @@ void CTunnelMaker::Destroy (void)
 {
 m_bActive = false;
 m_tunnel.Destroy ();
+m_path.Destroy ();
 }
 
 //------------------------------------------------------------------------------
