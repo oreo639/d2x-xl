@@ -93,6 +93,8 @@ class CTunnelPathNode {
 
 class CTunnelStartSide : public CSideKey {
 	public:
+		CTunnelStartSide () {}
+
 		short m_nVertexIndex [4];
 	};
 

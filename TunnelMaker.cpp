@@ -146,7 +146,7 @@ if (!(m_nVertices.Resize (nVertices) && (m_elements.Resize (nSegments))))
 	return false;
 for (short i = 0; i < nSegments; i++) {
 	if (0 > (m_elements [i].m_nSegment = segmentManager.Add ()))
-		return -1;
+		return false;
 	segmentManager.Segment (m_elements [i].m_nSegment)->m_info.bTunnel = 1;
 	}
 if (!vertexManager.Add (&m_nVertices [0], nVertices))
@@ -426,11 +426,10 @@ double l = path.Length ();
 for (int i = 1; i <= m_nSteps; i++) {
 	CDoubleMatrix& rotation = path [i].m_orientation;
 	CDoubleVector& translation = path [i].m_vertex;
-	CSLLIterator<ushort, ushort> iter (path.m_nStartVertices);
-	ushort j = 0;
-	for (iter.Begin (); *iter != iter.End (); iter++, j++) {
-		CVertex v = vertexManager [**iter];
-		v = rotation * relSidePoints [j];
+	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
+		CVertex v = vertexManager [path.m_nStartVertices [j]];
+		v = path.m_unRotate * relSidePoints [j];
+		v = rotation * v;
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
 #ifdef _DEBUG
@@ -687,9 +686,6 @@ ushort j = 0;
 for (iter.Begin (); *iter != iter.End (); iter++)
 	m_nStartVertices [j++] = **iter;
 
-for (int i = 0; i < nSides; i++) {
-	CSegment* segP = segmentManager.Segment (m_startSides [i]);
-
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);
 m_bezier.SetLength (length, 1);
@@ -825,7 +821,7 @@ if (!m_bActive) {
 		return;
 		}
 
-	if (!m_tunnel.Create (1)) {
+	if (!m_tunnel.Create (m_path)) {
 		m_bActive = false;
 		return;
 		}
