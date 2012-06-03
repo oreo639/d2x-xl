@@ -6,14 +6,15 @@
 
 //------------------------------------------------------------------------------
 /*
-The tunnel maker creates a structure of connected segments leading from an arbitrary number of start sides 
-to an end point given by the center of an end side. The start point is the center of the current side.
+The tunnel maker creates a structure of connected segments leading from an arbitrary number of start 
+sides to an end point. The start point is the center of the 'current' side. The end point is the 
+center of the 'other' side.
 
 The start sides consist of all tagged sides that are directly or indirectly connected to the 
 current side (via edges or other connected, tagged sides) and are at an angle of 22.5° or less to the 
 current side.
 
-The tunnel path is determined by cubic bezier curve from the start to the end point of the tunnel and 
+The tunnel path is determined by a cubic bezier curve from the start to the end point of the tunnel and 
 the normals of the current and other side. Its granularity (number of segments) and curvature can be 
 changed interactively by pressing ALT+8 / ALT+9 (granularity) and CTRL+8 / CTRL+9 (curvature via length 
 of start and end normals).
