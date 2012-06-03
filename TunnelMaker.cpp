@@ -387,7 +387,7 @@ for (short i = 0; i < m_nSteps; i++) {
 				segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j));
 				}
 			else if (i == m_nSteps - 1) { // last segment
-				segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [j])); //MatchingSide (j)));
+				segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [j])); 
 				segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_segments [i - 1].m_elements [j].m_nVertices [j]);
 				}
 			else {
@@ -422,18 +422,6 @@ if (m_nSteps != path.Steps ()) { // recompute
 	}
 
 #if 1
-
-CVertex relSidePoints [4]; // side points relative to center of side 1
-CDoubleVector t = path.Bezier ().GetPoint (0); // translation
-
-CSegment* segP = segmentManager.Segment (m_base [0]);
-for (int j = 0; j < 4; j++) {
-	relSidePoints [j] = *segP->Vertex (m_base [0].m_nSide, j) - m_base [0].m_point;
-	}
-
-CQuaternion q;
-CDoubleMatrix r = path.m_base [0].m_orientation;
-double l = path.Length ();
 
 for (int i = 1; i <= m_nSteps; i++) {
 	CDoubleMatrix& rotation = path [i].m_orientation;
