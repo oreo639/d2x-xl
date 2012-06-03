@@ -40,7 +40,7 @@ CFixVector::CFixVector (CDoubleVector& _v) {
 //  Rotates a vertex around a center point perpendicular to direction vector.
 // -----------------------------------------------------------------------------
 
-void CFixVector::Rotate (CFixVector& origin, CFixVector& normal, double angle) 
+void CFixVector::Rotate (CFixVector& origin, CFixVector& axis, double angle) 
 {
 
   double				zSpin, ySpin, h;
@@ -48,7 +48,7 @@ void CFixVector::Rotate (CFixVector& origin, CFixVector& normal, double angle)
 
   // translate coordanites to origin
 v0 = CDoubleVector (*this - origin);
-vn = CDoubleVector (normal - origin);
+vn = CDoubleVector (axis - origin);
 
 // calculate angles to normalize direction
 // spin on z axis to get into the x-z plane
@@ -83,7 +83,7 @@ CDoubleVector::CDoubleVector (CFixVector _v) {
 //  Rotates a vertex around a center point perpendicular to direction vector.
 // -----------------------------------------------------------------------------
 
-void CDoubleVector::Rotate (CDoubleVector& origin, CDoubleVector& normal, double angle) 
+void CDoubleVector::Rotate (CDoubleVector& origin, CDoubleVector& axis, double angle) 
 {
 
   double				zSpin, ySpin, h;
@@ -91,7 +91,7 @@ void CDoubleVector::Rotate (CDoubleVector& origin, CDoubleVector& normal, double
 
   // translate coordinates to origin
 v0 = CDoubleVector (*this - origin);
-vn = CDoubleVector (normal - origin);
+vn = CDoubleVector (axis - origin);
 
 // calculate angles to normalize direction
 // spin on z axis to get into the x-z plane

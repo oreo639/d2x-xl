@@ -151,7 +151,7 @@ inline const int operator^ (const CFixVector& other) const;
 
 inline const int Mag (void);
 inline const CFixVector& Normalize (void) { *this /= Mag (); return *this; }
-void Rotate (CFixVector& origin, CFixVector& normal, double angle);
+void Rotate (CFixVector& origin, CFixVector& axis, double angle);
 inline const CFixVector Negate (void) { v.x = -v.x, v.y = -v.y, v.z = -v.z; return *this; }
 };
 
@@ -256,7 +256,7 @@ class CDoubleVector {
 		return *this; 
 		}
 	inline const CDoubleVector Negate (void) { v.x = -v.x, v.y = -v.y, v.z = -v.z; return *this; }
-	void Rotate (CDoubleVector& origin, CDoubleVector& normal, double angle);
+	void Rotate (CDoubleVector& origin, CDoubleVector& axis, double angle);
 	void Rotate (CDoubleVector axis, double angle);
 };
 
