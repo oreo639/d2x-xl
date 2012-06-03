@@ -76,6 +76,15 @@ class CSLL {
 			return null;
 			}
 
+		int Index (_K key) {
+			int index = 0;
+			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = nodeP->GetSucc (), index++) {
+				if (nodeP->m_data == key)
+					return index;
+				}
+			return -1;
+			}
+
 		bool Remove (_K key) {
 			CNode<_T>* predP, * nodeP = Find (key, predP);
 			if (!nodeP)

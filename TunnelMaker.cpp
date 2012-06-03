@@ -654,32 +654,45 @@ tagger.Run ();
 if (!bTagged)
 	current->Side ()->UnTag ();
 
-// copy the collected sides
+// copy the collected sides to an array
+// gather all vertices of the start sides
+// create indices into the start vertex array for every start side's corner
 if (!(m_nStartSides.Create (nSides)))
 	return false;
-for (int i = 0; i < nSides; i++)
-	m_nStartSides [i] = tagger.m_sideList [i].m_child;
 
-// gather all vertices of the start sides
 CSLL<ushort,ushort>	startVertices;
 
 for (int i = 0; i < nSides; i++) {
-	CSegment* segP = segmentManager.Segment (m_nStartSides [i]);
+	m_nStartSides [i] = tagger.m_sideList [i].m_child;
 	short nSide = m_nStartSides [i].m_nSide;
+	CSegment* segP = segmentManager.Segment (m_nStartSides [i]);
 	for (int j = 0, h = segP->Side (nSide)->VertexCount (); j < h; j++) {
 		ushort nId = segP->VertexId (nSide, j);
-		if (!(startVertices.Find (nId) || startVertices.Append (nId)))
-			return false; // out of memory
+		int nIndex = startVertices.Index (nId);
+		if (nIndex < 0) {
+			if (!startVertices.Append (nId))
+				return false; // out of memory
+			nIndex = startVertices.Length () - 1;
+			}
+		m_nStartSides [i].m_nVertexIndex [j] = nIndex;
 		}
+	}
+
+
+for (int i = 0; i < nSides; i++) {
 	}
 
 if (!(m_nStartVertices.Create (startVertices.Length ())))
 	return false;
 
+// copy the start vertices to an array
 CSLLIterator<ushort, ushort> iter (startVertices);
 ushort j = 0;
 for (iter.Begin (); *iter != iter.End (); iter++)
 	m_nStartVertices [j++] = **iter;
+
+for (int i = 0; i < nSides; i++) {
+	CSegment* segP = segmentManager.Segment (m_nStartSides [i]);
 
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);
