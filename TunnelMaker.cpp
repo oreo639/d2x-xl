@@ -431,7 +431,7 @@ for (int i = 1; i <= m_nSteps; i++) {
 		v = path.m_unRotate * v;
 		v = rotation * v;
 		v += translation;
-		vertexManager [m_segments [i].m_nVertices [j]] = v;
+		vertexManager [m_segments [i - 1].m_nVertices [j]] = v;
 #ifdef _DEBUG
 		v = v;
 #endif
