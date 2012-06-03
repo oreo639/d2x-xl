@@ -424,19 +424,23 @@ if (m_nSteps != path.Steps ()) { // recompute
 	for (int i = 1; i <= m_nSteps; i++) {
 		if (!m_segments [i].Create (path, nSegments, nVertices))
 			return false;
+		m_segments [0].m_nVertices.ShareBuffer (path.m_nStartVertices);
 		}
 	}
 
 #if 1
 
-for (int i = 0; i < m_nSteps + 1; i++) {
+for (int i = 1; i <= m_nSteps; i++) {
+	double angle = path [i].m_angle;
 	CDoubleMatrix& rotation = path [i].m_orientation;
 	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
 		v -= path.m_base [0].m_point;
-		v = path.m_unRotate * v;
-		v = rotation * v;
+		if (angle != 0.0) {
+			v = path.m_unRotate * v;
+			v = rotation * v;
+			}
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
 #ifdef _DEBUG
@@ -713,12 +717,12 @@ m_nStartVertices.Destroy ();
 
 //------------------------------------------------------------------------------
 
-bool CTunnelPath::Create (short nPathLength)
+bool CTunnelPath::Create (short nSteps)
 {
-if (m_nSteps != nPathLength) { // recompute
-	if ((nPathLength > m_nSteps) && !m_nodes.Resize (nPathLength + 1, false))
+if (m_nSteps != nSteps) { // recompute
+	if ((nSteps > m_nSteps) && !m_nodes.Resize (nSteps + 1, false))
 		return false;
-	m_nSteps = nPathLength;
+	m_nSteps = nSteps;
 	}
 
 // calculate nSegment m_bezierPoints
@@ -728,7 +732,7 @@ for (int i = 1; i < m_nSteps; i++)
 m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
 double l = Length ();
 m_nodes [0].m_orientation = m_base [0].m_orientation;
-for (int i = 1; i <= m_nSteps; i++) 
+for (int i = 1; i < m_nSteps; i++) 
 	m_nodes [i].CreateOrientation (Average (m_nodes [i].m_vertex - m_nodes [i - 1].m_vertex, m_nodes [i + 1].m_vertex - m_nodes [i].m_vertex), m_base [0].m_orientation, m_angle * l / Length (i));
 m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation;
 return true;
