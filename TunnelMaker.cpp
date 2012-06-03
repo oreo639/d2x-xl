@@ -395,7 +395,7 @@ for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
 				}
 			else {
 				segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
-				segP->SetVertexId  (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
+				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
 				}
 			}
 		}
@@ -430,7 +430,8 @@ for (int i = 1; i <= m_nSteps; i++) {
 	CDoubleMatrix& rotation = path [i].m_orientation;
 	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
-		CVertex v = vertexManager [path.m_nStartVertices [j]] - path.m_base [0].m_point;
+		CVertex v = vertexManager [path.m_nStartVertices [j]];
+		v -= path.m_base [0].m_point;
 		v = path.m_unRotate * v;
 		v = rotation * v;
 		v += translation;
@@ -676,7 +677,7 @@ for (int nStartSide = 0; nStartSide < nSides; nStartSide++) {
 				return false; // out of memory
 			nIndex = startVertices.Length () - 1;
 			}
-		m_startSides [nSide].m_nVertexIndex [nVertex] = nIndex;
+		m_startSides [nStartSide].m_nVertexIndex [nVertex] = nIndex;
 		}
 	}
 
