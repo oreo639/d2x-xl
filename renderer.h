@@ -153,9 +153,10 @@ class CRenderer {
 		CDC*				m_pDC;
 		bool				m_bOrtho;
 		bool				m_bRTT;
+		bool				m_bHaveRTT;
 
 	public:
-		CRenderer (CRenderData& renderData) : m_renderData (renderData), m_pParent (null), m_pDC (null), m_bOrtho (false), m_bRTT (false) {}
+		CRenderer (CRenderData& renderData) : m_renderData (renderData), m_pParent (null), m_pDC (null), m_bOrtho (false), m_bRTT (false), m_bHaveRTT (false) {}
 
 		inline void SetData (CRenderData& renderData) { m_renderData = renderData; }
 
