@@ -52,7 +52,7 @@ CTunnelMaker tunnelMaker;
 
 //------------------------------------------------------------------------------
 
-char szTunnelMakerError [] = "You must exit tunnel creation before preforming this function";
+char szTunnelMakerError [] = "You must exit tunnel creation before performing this function";
 
 //------------------------------------------------------------------------------
 
