@@ -100,7 +100,8 @@ CQuaternion& CQuaternion::FromMatrix (CDoubleMatrix& m)
 {
 #if 1
 
-	double s, t = m.m.rVec.v.x + m.m.uVec.v.y + m.m.fVec.v.z + 1.0;
+	double s;
+	double t = m.m.rVec.v.x + m.m.uVec.v.y + m.m.fVec.v.z + 1.0;
 	
 if (t > 0.0) {
 	s = 0.5 / sqrt (t);
@@ -112,21 +113,21 @@ if (t > 0.0) {
 else {
 	int column = (m.m.rVec.v.x >= m.m.uVec.v.y) ? (m.m.rVec.v.x >= m.m.fVec.v.z) ? 0 : 2 : (m.m.uVec.v.y >= m.m.fVec.v.z) ? 1 : 2;
 	if (column == 0) {
-      s = sqrt (1.0 + m.m.rVec.v.x - m.m.uVec.v.y - m.m.fVec.v.z) * 2;
+      s = sqrt (1.0 + m.m.rVec.v.x - m.m.uVec.v.y - m.m.fVec.v.z) * 2.0;
       x = 0.5 / s;
       y = (m.m.rVec.v.y + m.m.uVec.v.x) / s;
       z = (m.m.rVec.v.z + m.m.fVec.v.y) / s;
       w = (m.m.uVec.v.z + m.m.fVec.v.z) / s;
 		}
 	else if (column == 1) {
-      s = sqrt (1.0 + m.m.uVec.v.y - m.m.rVec.v.x - m.m.fVec.v.z) * 2;
+      s = sqrt (1.0 + m.m.uVec.v.y - m.m.rVec.v.x - m.m.fVec.v.z) * 2.0;
       x = (m.m.rVec.v.y + m.m.uVec.v.x) / s;
       y = 0.5 / s;
       z = (m.m.uVec.v.z + m.m.fVec.v.z) / s;
       w = (m.m.rVec.v.z + m.m.fVec.v.y) / s;
 		}
 	else {
-      s = sqrt (1.0 + m.m.fVec.v.z - m.m.rVec.v.x - m.m.uVec.v.y) * 2;
+      s = sqrt (1.0 + m.m.fVec.v.z - m.m.rVec.v.x - m.m.uVec.v.y) * 2.0;
       x = (m.m.rVec.v.z + m.m.fVec.v.y) / s;
       y = (m.m.uVec.v.z + m.m.fVec.v.z) / s;
       z = 0.5 / s;
