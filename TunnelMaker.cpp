@@ -664,19 +664,19 @@ if (!(m_startSides.Create (nSides)))
 
 CSLL<ushort,ushort>	startVertices;
 
-for (int i = 0; i < nSides; i++) {
-	m_startSides [i] = tagger.m_sideList [i].m_child;
-	short nSide = m_startSides [i].m_nSide;
-	CSegment* segP = segmentManager.Segment (m_startSides [i]);
-	for (int j = 0, h = segP->Side (nSide)->VertexCount (); j < h; j++) {
-		ushort nId = segP->VertexId (nSide, j);
+for (int nStartSide = 0; nStartSide < nSides; nStartSide++) {
+	m_startSides [nStartSide] = tagger.m_sideList [nStartSide].m_child;
+	short nSide = m_startSides [nStartSide].m_nSide;
+	CSegment* segP = segmentManager.Segment (m_startSides [nStartSide]);
+	for (int nVertex = 0, nVertexCount = segP->Side (nSide)->VertexCount (); nVertex < nVertexCount; nVertex++) {
+		ushort nId = segP->VertexId (nSide, nVertex);
 		int nIndex = startVertices.Index (nId);
 		if (nIndex < 0) {
 			if (!startVertices.Append (nId))
 				return false; // out of memory
 			nIndex = startVertices.Length () - 1;
 			}
-		m_startSides [i].m_nVertexIndex [j] = nIndex;
+		m_startSides [nSide].m_nVertexIndex [nVertex] = nIndex;
 		}
 	}
 
