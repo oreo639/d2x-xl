@@ -428,7 +428,7 @@ for (int i = 1; i <= m_nSteps; i++) {
 	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
-		v = path.m_unRotate * relSidePoints [j];
+		v = path.m_unRotate * v;
 		v = rotation * v;
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
