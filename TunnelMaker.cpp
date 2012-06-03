@@ -644,6 +644,43 @@ else if (length > MAX_TUNNEL_LENGTH)
 m_unRotate = m_base [0].m_orientation.Inverse ();
 m_angle = ZAngle (m_base [1].m_orientation, m_base [0].m_orientation, 0.0);
 
+// collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
+CTagTunnelStart tagger;
+bool bTagged = current->Side ()->IsTagged ();
+if (!bTagged)
+	current->Side ()->Tag ();
+int nSides = tagger.Setup (segmentManager.TaggedSideCount (), TUNNEL_MASK);
+tagger.Run ();
+if (!bTagged)
+	current->Side ()->UnTag ();
+
+// copy the collected sides
+if (!(m_nStartSides.Create (nSides)))
+	return false;
+for (int i = 0; i < nSides; i++)
+	m_nStartSides [i] = tagger.m_sideList [i].m_child;
+
+// gather all vertices of the start sides
+CSLL<ushort,ushort>	startVertices;
+
+for (int i = 0; i < nSides; i++) {
+	CSegment* segP = segmentManager.Segment (m_nStartSides [i]);
+	short nSide = m_nStartSides [i].m_nSide;
+	for (int j = 0, h = segP->Side (nSide)->VertexCount (); j < h; j++) {
+		ushort nId = segP->VertexId (nSide, j);
+		if (!(startVertices.Find (nId) || startVertices.Append (nId)))
+			return false; // out of memory
+		}
+	}
+
+if (!(m_nStartVertices.Create (startVertices.Length ())))
+	return false;
+
+CSLLIterator<ushort, ushort> iter (startVertices);
+ushort j = 0;
+for (iter.Begin (); *iter != iter.End (); iter++)
+	m_nStartVertices [j++] = **iter;
+
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);
 m_bezier.SetLength (length, 1);

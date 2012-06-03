@@ -150,6 +150,22 @@ for (short i = 0; i < nSegments; i++, segP++) {
 return nCount; 
 }
 
+// ------------------------------------------------------------------------ 
+
+ushort CSegmentManager::TaggedSideCount (void)
+{
+int nCount = 0; 
+CSegment* segP = Segment (0);
+short nSegments = Count ();
+for (short i = 0; i < nSegments; i++, segP++) {
+	CSide* sideP = segP->Side (0);
+	for (short j = 0; j < 6; j++, sideP++)
+		if ((sideP->Shape () <= SIDE_SHAPE_TRIANGLE) && sideP->IsTagged ())
+			++nCount; 
+	}
+return nCount; 
+}
+
 // ------------------------------------------------------------------------
 
 void CSegmentManager::TagSelected (void)

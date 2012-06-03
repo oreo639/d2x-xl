@@ -293,6 +293,8 @@ class CSegmentManager {
 
 		short	TaggedCount (bool bSides = false, bool bCheck = false);
 
+		ushort TaggedSideCount (void);
+
 		bool HasTaggedSegments (bool bSides = false) { return TaggedCount (bSides, true) > 0; }
 
 		bool HasTaggedSides (void);
@@ -516,6 +518,20 @@ class CTagByTextures : public CTaggingStrategy {
 					 (m_bIgnorePlane || (m_parent.m_nSide == m_child.m_nSide)) &&
 					 ((m_nBaseTex < 0) || (m_childSideP->BaseTex () == m_nBaseTex)) && 
 					 ((m_nOvlTex < 0) || (m_childSideP->OvlTex () == m_nOvlTex)); 
+			}
+	};
+
+// -----------------------------------------------------------------------------
+
+class CTagTunnelStart : public CTaggingStrategy {
+	public:
+		double	m_maxAngle;
+		CSide*	m_startSideP;
+		
+		CTagTunnelStart () : m_maxAngle (cos (Radians (22.5))), m_startSideP (current->Side ()) {}
+
+		virtual bool Accept (void) { 
+			return (m_segP->IsTagged () || m_sideP->IsTagged ()) && !m_childSegP->HasChild (m_child.m_nSide) && (Dot (m_childSideP->Normal (), m_startSideP->Normal ()) >= m_maxAngle);
 			}
 	};
 

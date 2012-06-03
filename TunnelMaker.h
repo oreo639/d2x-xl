@@ -99,8 +99,8 @@ class CTunnelPath {
 		CDynamicArray<CTunnelPathNode>	m_nodes;
 		CDoubleMatrix							m_unRotate; // for unrotating base vertices
 		double									m_angle;
-		CSLL<CSideKey,CSideKey>				m_nStartSides;
-		CSLL<ushort,ushort>					m_nStartVertices;
+		CDynamicArray<CSideKey>				m_nStartSides;
+		CDynamicArray<ushort>				m_nStartVertices;
 
 		CTunnelPath () : m_nSteps (0) {}
 
@@ -134,6 +134,7 @@ class CTunnelElement {
 	public:
 		short		m_nSegment;
 		ushort	m_nVertices [4];
+		ushort	m_nVertexIndex [4]; // indices of the element's base side's vertices in the tunnel base's vertex list
 	};
 
 //------------------------------------------------------------------------

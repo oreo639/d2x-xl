@@ -321,6 +321,7 @@ inline double Degrees (double a) {
 #define NEW_MASK     ubyte (0x20) // used on vertexStatus      
 #define SHARED_MASK	ubyte (0x10)
 #define ALIGNED_MASK	ubyte (0x08)
+#define TUNNEL_MASK	ubyte (0x04)
 
 // -----------------------------------------------------------------------------
 
