@@ -394,7 +394,7 @@ for (short i = 0; i < m_nSteps; i++) {
 
 bool CTunnel::Create (CTunnelPath& path) 
 {
-	short nSegments = path.m_nStartSides.Length ();
+	short nSegments = path.m_startSides.Length ();
 	short nVertices = path.m_nStartVertices.Length ();
 
 if (m_nSteps != path.Steps ()) { // recompute
@@ -657,15 +657,15 @@ if (!bTagged)
 // copy the collected sides to an array
 // gather all vertices of the start sides
 // create indices into the start vertex array for every start side's corner
-if (!(m_nStartSides.Create (nSides)))
+if (!(m_startSides.Create (nSides)))
 	return false;
 
 CSLL<ushort,ushort>	startVertices;
 
 for (int i = 0; i < nSides; i++) {
-	m_nStartSides [i] = tagger.m_sideList [i].m_child;
-	short nSide = m_nStartSides [i].m_nSide;
-	CSegment* segP = segmentManager.Segment (m_nStartSides [i]);
+	m_startSides [i] = tagger.m_sideList [i].m_child;
+	short nSide = m_startSides [i].m_nSide;
+	CSegment* segP = segmentManager.Segment (m_startSides [i]);
 	for (int j = 0, h = segP->Side (nSide)->VertexCount (); j < h; j++) {
 		ushort nId = segP->VertexId (nSide, j);
 		int nIndex = startVertices.Index (nId);
@@ -674,12 +674,8 @@ for (int i = 0; i < nSides; i++) {
 				return false; // out of memory
 			nIndex = startVertices.Length () - 1;
 			}
-		m_nStartSides [i].m_nVertexIndex [j] = nIndex;
+		m_startSides [i].m_nVertexIndex [j] = nIndex;
 		}
-	}
-
-
-for (int i = 0; i < nSides; i++) {
 	}
 
 if (!(m_nStartVertices.Create (startVertices.Length ())))
@@ -692,7 +688,7 @@ for (iter.Begin (); *iter != iter.End (); iter++)
 	m_nStartVertices [j++] = **iter;
 
 for (int i = 0; i < nSides; i++) {
-	CSegment* segP = segmentManager.Segment (m_nStartSides [i]);
+	CSegment* segP = segmentManager.Segment (m_startSides [i]);
 
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);
@@ -708,7 +704,7 @@ return true;
 
 void CTunnelPath::Destroy (void)
 {
-m_nStartSides.Destroy ();
+m_startSides.Destroy ();
 m_nStartVertices.Destroy ();
 }
 
