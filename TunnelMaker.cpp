@@ -736,7 +736,7 @@ double CTunnelPath::Length (int nSteps)
 if (nSteps <= 0)
 	nSteps = m_nSteps;
 nSteps += 2;
-for (int i = 0; i < nSteps; i++) 
+for (int i = 1; i < nSteps; i++) 
 	length += Distance (m_nodes [i].m_vertex, m_nodes [i - 1].m_vertex);
 return length;
 }
