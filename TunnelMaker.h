@@ -79,19 +79,6 @@ class CTunnelBase : public CSideKey {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-// A single segment of a tunnel
-
-class CTunnelElement {
-	public:
-		CVertex	m_node; // path point (segment center)
-		CVertex	m_relNode; // path point (segment center) relative to start side center
-		ushort	m_nVertices [4];
-		short		m_nSegment;
-	};
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
 
 class CTunnelPathNode {
 	public:
@@ -102,6 +89,8 @@ class CTunnelPathNode {
 	void CreateOrientation (CVertex& fVec, CDoubleMatrix& mOrient, double zAngle);
 	};
 
+//------------------------------------------------------------------------
+
 class CTunnelPath {
 	public:
 		CCubicBezier							m_bezier;
@@ -110,6 +99,8 @@ class CTunnelPath {
 		CDynamicArray<CTunnelPathNode>	m_nodes;
 		CDoubleMatrix							m_unRotate; // for unrotating base vertices
 		double									m_angle;
+		CSLL<CSideKey,CSideKey>				m_startSides;
+		CSLL<ushort,ushort>					m_nStartVertices;
 
 		CTunnelPath () : m_nSteps (0) {}
 
@@ -137,17 +128,42 @@ class CTunnelPath {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-// A string of connected tunnel segments from a start to an end point 
+// A single segment of a tunnel
+
+class CTunnelElement {
+	public:
+		short		m_nSegment;
+		ushort	m_nVertices [4];
+	};
+
+//------------------------------------------------------------------------
 
 class CTunnelSegment {
 	public:
+		CDynamicArray<ushort>			m_nVertices;
+		CDynamicArray<CTunnelElement>	m_elements;
+
+		CTunnelSegment () {}
+
+		bool CTunnelSegment::Create (short nSegments, short nVertices);
+		
+		void CTunnelSegment::Release (void);
+
+		void Draw (void);
+	};
+
+//------------------------------------------------------------------------
+// A string of connected tunnel segments from a start to an end point 
+
+class CTunnel {
+	public:
 		short									m_nSteps; // current path length
 		CTunnelBase							m_base [2];
-		CDynamicArray<CTunnelElement>	m_elements;
+		CDynamicArray<CTunnelSegment>	m_segments;
 
 		void Setup (CTunnelBase base [2]);
 
-		bool Create (CTunnelPath& path);
+		bool Create (CTunnelPath& path, short nSegments, short nVertices);
 
 		void Realize (void);
 
@@ -180,12 +196,12 @@ class CTunnelSegment {
 
 class CTunnelMaker {
 	private:
-		bool									m_bActive;
-		short									m_nSteps;
-		short									m_nGranularity;
-		CTunnelBase							m_base [2];
-		CDynamicArray<CTunnelSegment>	m_segments;
-		CTunnelPath							m_path;
+		bool					m_bActive;
+		short					m_nSteps;
+		short					m_nGranularity;
+		CTunnelBase			m_base [2];
+		CTunnel				m_tunnel;
+		CTunnelPath			m_path;
 
 	public:
 		CTunnelMaker () : m_nSteps (0) {}

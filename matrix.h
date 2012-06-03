@@ -167,6 +167,8 @@ public:
 
 const CDoubleMatrix Transformation (CDoubleMatrix& mDest, CDoubleMatrix& mSource);
 
+double ZAngle (CDoubleMatrix& m0, CDoubleMatrix& m1, double angle0);
+
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
