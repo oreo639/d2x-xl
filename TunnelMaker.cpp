@@ -312,7 +312,7 @@ for (uint i = m_nVertices.Length (); --i > 0; )
 void CTunnelSegment::Draw (void)
 {
 CMineView* mineView = DLE.MineView ();
-for (uint i = m_elements.Length (); --i >= 0; ) 
+for (int i = (int) m_elements.Length (); --i >= 0; ) 
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
 }
 
