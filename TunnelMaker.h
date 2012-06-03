@@ -150,6 +150,9 @@ class CTunnelElement {
 	public:
 		short		m_nSegment;
 		ushort	m_nVertices [4];
+
+	CTunnelElement () : m_nSegment (short (0x7fff)) {}
+
 	};
 
 //------------------------------------------------------------------------
