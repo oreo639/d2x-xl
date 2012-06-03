@@ -379,20 +379,23 @@ if (index != 0) {
 void CTunnel::SetupVertices (void)
 {
 for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
+	CTunnelElement * e0, * e1 = null;
 	for (uint nElement = 0, h = m_segments [nSegment].m_elements.Length (); nElement < h; nElement++) {
-		CSegment* segP = segmentManager.Segment (m_segments [nSegment].m_elements [nElement].m_nSegment);
+		e0 = e1;
+		e1 = &m_segments [nSegment].m_elements [nElement];
+		CSegment* segP = segmentManager.Segment (e1->m_nSegment);
 		for (short nVertex = 0; nVertex < 4; nVertex++) {
 			if (nSegment == 0) { // 1st segment
-				segP->SetVertexId (m_base [0].m_nSide, nVertex, m_segments [nSegment].m_elements [nElement].m_nVertices [nVertex]);
+				segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
 				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, nElement));
 				}
 			else if (nSegment == m_nSteps - 1) { // last segment
-				segP->SetVertexId (m_base [0].m_nSide, nVertex, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [nElement])); 
-				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], m_segments [nSegment - 1].m_elements [nElement].m_nVertices [nVertex]);
+				segP->SetVertexId (m_base [0].m_nSide, nVertex, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [nVertex])); 
+				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
 				}
 			else {
-				segP->SetVertexId (m_base [0].m_nSide, nVertex, m_segments [nSegment].m_elements [nElement].m_nVertices [nVertex]);
-				segP->SetVertexId  (m_base [0].m_oppVertexIndex [nVertex], m_segments [nSegment - 1].m_elements [nElement].m_nVertices [nVertex]);
+				segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
+				segP->SetVertexId  (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
 				}
 			}
 		}
