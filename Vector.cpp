@@ -118,24 +118,21 @@ v1 += origin;
 
 void CDoubleVector::Rotate (CDoubleVector axis, double angle)
 {
-	double			a, l;
-	CDoubleVector	vp, vs, vs2, e1, e2, axis;
+	CDoubleVector	vs2;
 
 axis.Normalize ();
 double a = Dot (axis, *this);
-vp = axis * a;
-vs = *this - vp;
+CDoubleVector vp = axis * a;
+CDoubleVector vs = *this - vp;
 double l = Mag ();
 if (l != 0.0) { 
-	e1 = vs / l; 
-	e2 = CrossProduct (axis, e1);
+	CDoubleVector e1 = vs / l; 
+	CDoubleVector e2 = CrossProduct (axis, e1);
 	e1 *= (cos (angle) * l);
 	e2 *= (sin (angle) * l);
-	vs2 = e1 + e2;
+	vs = e1 + e2;
 	}
-else 
-	vs2 = vs;
-*this = vp + vs2;
+*this = vp + vs;
 }
  
 // -----------------------------------------------------------------------------
