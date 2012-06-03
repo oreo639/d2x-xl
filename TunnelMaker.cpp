@@ -281,16 +281,19 @@ bool CTunnelSegment::Create (CTunnelPath& path, short nSegments, short nVertices
 {
 if (!m_elements.Resize (nSegments))
 	return false;
+if (nVertices == 0) 
+	path.m_nStartVertices.ShareBuffer (m_nVertices);
+else if (!m_nVertices.Resize (nVertices))
+	return false;
+
 for (short i = 0; i < nSegments; i++) {
 	CTunnelElement& element = m_elements [i];
 	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
 	for (short j = 0; j < 4; j++) 
 		element.m_nVertices [j] = m_nVertices [vertexIndex [j]];
 	}
-if (nVertices == 0) {
-	path.m_nStartVertices.ShareBuffer (m_nVertices);
+if (nVertices == 0)
 	return true;
-	}
 
 if (!m_nVertices.Resize (nVertices))
 	return false;
