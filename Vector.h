@@ -257,6 +257,7 @@ class CDoubleVector {
 		}
 	inline const CDoubleVector Negate (void) { v.x = -v.x, v.y = -v.y, v.z = -v.z; return *this; }
 	void Rotate (CDoubleVector& origin, CDoubleVector& normal, double angle);
+	void Rotate (CDoubleVector axis, double angle);
 };
 
 // -----------------------------------------------------------------------------

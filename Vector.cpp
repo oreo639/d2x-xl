@@ -89,7 +89,7 @@ void CDoubleVector::Rotate (CDoubleVector& origin, CDoubleVector& normal, double
   double				zSpin, ySpin, h;
   CDoubleVector	v0, v1, v2, v3, vn;
 
-  // translate coordanites to origin
+  // translate coordinates to origin
 v0 = CDoubleVector (*this - origin);
 vn = CDoubleVector (normal - origin);
 
@@ -114,6 +114,30 @@ v1 += origin;
 *this = v1;
 }
 
+// -----------------------------------------------------------------------------  
+
+void CDoubleVector::Rotate (CDoubleVector axis, double angle)
+{
+	double			a, l;
+	CDoubleVector	vp, vs, vs2, e1, e2, axis;
+
+axis.Normalize ();
+double a = Dot (axis, *this);
+vp = axis * a;
+vs = *this - vp;
+double l = Mag ();
+if (l != 0.0) { 
+	e1 = vs / l; 
+	e2 = CrossProduct (axis, e1);
+	e1 *= (cos (angle) * l);
+	e2 *= (sin (angle) * l);
+	vs2 = e1 + e2;
+	}
+else 
+	vs2 = vs;
+*this = vp + vs2;
+}
+ 
 // -----------------------------------------------------------------------------
 
 CDoubleVector& PointLineIntersection (CDoubleVector& intersection, const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) 
