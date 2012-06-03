@@ -14,40 +14,45 @@
 // -----------------------------------------------------------------------------
 
 class CSideKey {
-public:
-	short	m_nSegment;
-	short	m_nSide;
+	public:
+		short	m_nSegment;
+		short	m_nSide;
 
-	CSideKey (short nSegment = -1, short nSide = -1) : m_nSegment(nSegment), m_nSide(nSide) {}
+		CSideKey (short nSegment = -1, short nSide = -1) : m_nSegment(nSegment), m_nSide(nSide) {}
 
-	CSideKey (CSideKey& other) : m_nSegment (other.m_nSegment), m_nSide (other.m_nSide) {}
+		CSideKey (CSideKey& other) : m_nSegment (other.m_nSegment), m_nSide (other.m_nSide) {}
 
-	inline bool operator == (CSideKey& other) { return (m_nSegment == other.m_nSegment) && (m_nSide == other.m_nSide); }
+		CSideKey& operator = (CSideKey other) { 
+			m_nSegment = other.m_nSegment, m_nSide = other.m_nSide; 
+			return *this;
+			}
 	
-	inline bool operator != (CSideKey& other) { return (m_nSegment != other.m_nSegment) || (m_nSide != other.m_nSide); }
+		inline bool operator == (CSideKey& other) { return (m_nSegment == other.m_nSegment) && (m_nSide == other.m_nSide); }
 	
-	inline bool operator < (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide < other.m_nSide)); }
+		inline bool operator != (CSideKey& other) { return (m_nSegment != other.m_nSegment) || (m_nSide != other.m_nSide); }
 	
-	inline bool operator <= (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide <= other.m_nSide)); }
+		inline bool operator < (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide < other.m_nSide)); }
 	
-	inline bool operator > (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide > other.m_nSide)); }
+		inline bool operator <= (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide <= other.m_nSide)); }
 	
-	inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
+		inline bool operator > (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide > other.m_nSide)); }
+	
+		inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
 
-	void Read (CFileManager* fp) {
-		m_nSegment = fp->ReadInt16 ();
-		m_nSide = fp->ReadInt16 ();
-		}
+		void Read (CFileManager* fp) {
+			m_nSegment = fp->ReadInt16 ();
+			m_nSide = fp->ReadInt16 ();
+			}
 
-	void Write (CFileManager* fp) {
-		fp->Write (m_nSegment);
-		fp->Write (m_nSide);
-		}
+		void Write (CFileManager* fp) {
+			fp->Write (m_nSegment);
+			fp->Write (m_nSide);
+			}
 
-	void Clear (void) {
-		m_nSegment = m_nSide = -1;
-		}
-};
+		void Clear (void) {
+			m_nSegment = m_nSide = -1;
+			}
+	};
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

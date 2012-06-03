@@ -95,6 +95,13 @@ class CTunnelStartSide : public CSideKey {
 	public:
 		CTunnelStartSide () {}
 
+		CTunnelStartSide (CSideKey& other) : CSideKey (other) {}
+
+		CSideKey& operator = (CSideKey other) { 
+			m_nSegment = other.m_nSegment, m_nSide = other.m_nSide; 
+			return *this;
+			}
+	
 		short m_nVertexIndex [4];
 	};
 
