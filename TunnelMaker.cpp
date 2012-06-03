@@ -378,20 +378,21 @@ if (index != 0) {
 
 void CTunnel::SetupVertices (void)
 {
-for (short i = 0; i < m_nSteps; i++) {
-	for (uint j = 0, h = m_segments.Length (); j < h; j++) {
-		for (short n = 0; n < 4; n++) {
-			if (i == 0) { // 1st segment
-				segP->SetVertexId (m_base [0].m_nSide, n, m_segments [i].m_elements [j].m_nVertices [n]);
-				segP->SetVertexId (m_base [0].m_oppVertexIndex [n], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j));
+for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
+	for (uint nElement = 0, h = m_segments [nSegment].m_elements.Length (); nElement < h; nElement++) {
+		CSegment* segP = segmentManager.Segment (m_segments [nSegment].m_elements [nElement].m_nSegment);
+		for (short nVertex = 0; nVertex < 4; nVertex++) {
+			if (nSegment == 0) { // 1st segment
+				segP->SetVertexId (m_base [0].m_nSide, nVertex, m_segments [nSegment].m_elements [nElement].m_nVertices [nVertex]);
+				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, nElement));
 				}
-			else if (i == m_nSteps - 1) { // last segment
-				segP->SetVertexId (m_base [0].m_nSide, n, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [j])); 
-				segP->SetVertexId (m_base [0].m_oppVertexIndex [n], m_segments [i - 1].m_elements [j].m_nVertices [n]);
+			else if (nSegment == m_nSteps - 1) { // last segment
+				segP->SetVertexId (m_base [0].m_nSide, nVertex, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [nElement])); 
+				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], m_segments [nSegment - 1].m_elements [nElement].m_nVertices [nVertex]);
 				}
 			else {
-				segP->SetVertexId (m_base [0].m_nSide, n, m_segments [i].m_elements [j].m_nVertices [n]);
-				segP->SetVertexId  (m_base [0].m_oppVertexIndex [n], m_segments [i - 1].m_elements [j].m_nVertices [n]);
+				segP->SetVertexId (m_base [0].m_nSide, nVertex, m_segments [nSegment].m_elements [nElement].m_nVertices [nVertex]);
+				segP->SetVertexId  (m_base [0].m_oppVertexIndex [nVertex], m_segments [nSegment - 1].m_elements [nElement].m_nVertices [nVertex]);
 				}
 			}
 		}
@@ -426,7 +427,7 @@ for (int i = 1; i <= m_nSteps; i++) {
 	CDoubleMatrix& rotation = path [i].m_orientation;
 	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
-		CVertex v = vertexManager [path.m_nStartVertices [j]];
+		CVertex v = vertexManager [path.m_nStartVertices [j]] - path.m_base [0].m_point;
 		v = path.m_unRotate * v;
 		v = rotation * v;
 		v += translation;
