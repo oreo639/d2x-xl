@@ -424,7 +424,7 @@ if (m_nSteps != path.Steps ()) { // recompute
 	for (int i = 1; i <= m_nSteps; i++) {
 		if (!m_segments [i].Create (path, nSegments, nVertices))
 			return false;
-		m_segments [0].m_nVertices.ShareBuffer (path.m_nStartVertices);
+		path.m_nStartVertices.ShareBuffer (m_segments [0].m_nVertices);
 		}
 	}
 
@@ -577,7 +577,7 @@ void CTunnel::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatri
 CDC* pDC = renderer.DC ();
 
 renderer.BeginRender ();
-for (int i = 0; i < m_nSteps; i++) {
+for (int i = 0; i <= m_nSteps; i++) {
 	for (int j = 0; j < 4; j++) {
 		CVertex&v = vertexManager [m_segments [i].m_nVertices [j]];
 		v.Transform (viewMatrix);
