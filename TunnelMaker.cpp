@@ -380,7 +380,7 @@ void CTunnel::SetupVertices (void)
 {
 for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElement < nElements; nElement++) {
 	CTunnelElement * e0, * e1 = &m_segments [0].m_elements [nElement];
-	for (short nSegment = 1; nSegment <= m_nSteps + 1; nSegment++) {
+	for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		e0 = e1;
 		e1 = &m_segments [nSegment].m_elements [nElement];
 		CSegment* segP = segmentManager.Segment (e1->m_nSegment);
@@ -418,10 +418,10 @@ bool CTunnel::Create (CTunnelPath& path)
 if (m_nSteps != path.Steps ()) { // recompute
 	if (m_nSteps > 0)
 		Release ();
-	if ((path.Steps () > m_nSteps) && !m_segments.Resize (path.Steps () + 2, false))
+	if ((path.Steps () > m_nSteps) && !m_segments.Resize (path.Steps () + 1, false))
 		return false;
 	m_nSteps = path.Steps ();
-	for (int i = 0; i < m_nSteps + 2; i++) {
+	for (int i = 1; i <= m_nSteps; i++) {
 		if (!m_segments [i].Create (path, nSegments, nVertices))
 			return false;
 		}
@@ -429,7 +429,7 @@ if (m_nSteps != path.Steps ()) { // recompute
 
 #if 1
 
-for (int i = 0; i <= m_nSteps + 1; i++) {
+for (int i = 0; i < m_nSteps + 1; i++) {
 	CDoubleMatrix& rotation = path [i].m_orientation;
 	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
@@ -716,21 +716,21 @@ m_nStartVertices.Destroy ();
 bool CTunnelPath::Create (short nPathLength)
 {
 if (m_nSteps != nPathLength) { // recompute
-	if ((nPathLength > m_nSteps) && !m_nodes.Resize (nPathLength + 2, false))
+	if ((nPathLength > m_nSteps) && !m_nodes.Resize (nPathLength + 1, false))
 		return false;
 	m_nSteps = nPathLength;
 	}
 
 // calculate nSegment m_bezierPoints
 m_nodes [0].m_vertex = m_base [0].m_point;
-for (int i = 1; i <= m_nSteps; i++) 
+for (int i = 1; i < m_nSteps; i++) 
 	m_nodes [i].m_vertex = m_bezier.Compute ((double) i / (double) m_nSteps)/* - m_bezier.GetPoint (0)*/;
-m_nodes [m_nSteps + 1].m_vertex = m_base [1].m_point;
+m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
 double l = Length ();
 m_nodes [0].m_orientation = m_base [0].m_orientation;
 for (int i = 1; i <= m_nSteps; i++) 
 	m_nodes [i].CreateOrientation (Average (m_nodes [i].m_vertex - m_nodes [i - 1].m_vertex, m_nodes [i + 1].m_vertex - m_nodes [i].m_vertex), m_base [0].m_orientation, m_angle * l / Length (i));
-m_nodes [m_nSteps + 1].m_orientation = m_base [1].m_orientation;
+m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation;
 return true;
 }
 
