@@ -122,7 +122,7 @@ class CTunnelPath {
 
 		inline CCubicBezier& Bezier () { return m_bezier; }
 
-		inline CVertex& operator[] (uint i) { return m_nodes [i].m_vertex; }
+		inline CTunnelPathNode& operator[] (uint i) { return m_nodes [i]; }
 	};
 
 //------------------------------------------------------------------------
@@ -163,7 +163,7 @@ class CTunnel {
 
 		void Setup (CTunnelBase base [2]);
 
-		bool Create (CTunnelPath& path, short nSegments, short nVertices);
+		bool Create (CTunnelPath& path);
 
 		void Realize (void);
 

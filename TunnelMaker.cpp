@@ -369,19 +369,19 @@ return v;
 void CTunnel::SetupVertices (void)
 {
 for (short i = 0; i < m_nSteps; i++) {
-	CSegment* segP = segmentManager.Segment (m_segments [i].m_nSegment);
+	CSegment* segP = segmentManager.Segment (m_segments [i].m_elements [0].m_nSegment);
 	for (short j = 0; j < 4; j++) {
 		if (i == 0) { // 1st segment
-			segP->SetVertexId (m_base [0].m_nSide, j, m_segments [i].m_nVertices [j]);
+			segP->SetVertexId (m_base [0].m_nSide, j, m_segments [i].m_elements [0].m_nVertices [j]);
 			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, j));
 			}
 		else if (i == m_nSteps - 1) { // last segment
 			segP->SetVertexId (m_base [0].m_nSide, j, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [j])); //MatchingSide (j)));
-			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_segments [i - 1].m_nVertices [j]);
+			segP->SetVertexId (m_base [0].m_oppVertexIndex [j], m_segments [i - 1].m_elements [0].m_nVertices [j]);
 			}
 		else {
-			segP->SetVertexId (m_base [0].m_nSide, j, m_segments [i].m_nVertices [j]);
-			segP->SetVertexId  (m_base [0].m_oppVertexIndex [j], m_segments [i - 1].m_nVertices [j]);
+			segP->SetVertexId (m_base [0].m_nSide, j, m_segments [i].m_elements [0].m_nVertices [j]);
+			segP->SetVertexId  (m_base [0].m_oppVertexIndex [j], m_segments [i - 1].m_elements [0].m_nVertices [j]);
 			}
 		}
 	}
@@ -392,10 +392,10 @@ for (short i = 0; i < m_nSteps; i++) {
 
 //------------------------------------------------------------------------------
 
-bool CTunnel::Create (CTunnelPath& path, short nSegments, short nVertices) 
+bool CTunnel::Create (CTunnelPath& path) 
 {
-  int			i, j;
-  CVertex	vertex;
+	short nSegments = path.m_startSides.Length ();
+	short nVertices = path.m_nStartVertices.Length ();
 
 if (m_nSteps != path.Steps ()) { // recompute
 	if (m_nSteps > 0)
@@ -403,7 +403,7 @@ if (m_nSteps != path.Steps ()) { // recompute
 	if ((path.Steps () > m_nSteps) && !m_segments.Resize (path.Steps (), false))
 		return false;
 	m_nSteps = path.Steps ();
-	for (i = 0; i < m_nSteps; i++) {
+	for (int i = 0; i < m_nSteps; i++) {
 		if (!m_segments [i].Create (nSegments, nVertices))
 			return false;
 		}
@@ -415,7 +415,7 @@ CVertex relSidePoints [4]; // side points relative to center of side 1
 CDoubleVector t = path.Bezier ().GetPoint (0); // translation
 
 CSegment* segP = segmentManager.Segment (m_base [0]);
-for (j = 0; j < 4; j++) {
+for (int j = 0; j < 4; j++) {
 	relSidePoints [j] = *segP->Vertex (m_base [0].m_nSide, j) - m_base [0].m_point;
 	}
 
@@ -423,13 +423,19 @@ CQuaternion q;
 CDoubleMatrix r = path.m_base [0].m_orientation;
 double l = path.Length ();
 
-for (i = 0; i < m_nSteps; i++) {
-	uint l = m_segments [i].m_nVertices.Length ();
-	for (uint j = 0; j < l; j++) {
-		CVertex& v = vertexManager [m_segments [i].m_nVertices [j]];
-		v = r * relSidePoints [j];
-		v += path [i];
+for (int i = 1; i <= m_nSteps; i++) {
+	CDoubleMatrix& rotation = path [i].m_orientation;
+	CDoubleVector& translation = path [i].m_vertex;
+	CSLLIterator<ushort, ushort> iter (path.m_nStartVertices);
+	ushort j = 0;
+	for (iter.Begin (); *iter != iter.End (); iter++, j++) {
+		CVertex v = vertexManager [**iter];
+		v = rotation * relSidePoints [j];
+		v += translation;
+		vertexManager [m_segments [i].m_nVertices [j]] = v;
+#ifdef _DEBUG
 		v = v;
+#endif
 		}
 	}
 
@@ -668,12 +674,12 @@ if (m_nSteps != nPathLength) { // recompute
 m_nodes [0].m_vertex = m_base [0].m_point;
 for (int i = 1; i <= m_nSteps; i++) 
 	m_nodes [i].m_vertex = m_bezier.Compute ((double) i / (double) m_nSteps)/* - m_bezier.GetPoint (0)*/;
-m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
+m_nodes [m_nSteps + 1].m_vertex = m_base [1].m_point;
 double l = Length ();
 m_nodes [0].m_orientation = m_base [0].m_orientation;
-for (int i = 1; i < m_nSteps; i++) 
+for (int i = 1; i <= m_nSteps; i++) 
 	m_nodes [i].CreateOrientation (Average (m_nodes [i].m_vertex - m_nodes [i - 1].m_vertex, m_nodes [i + 1].m_vertex - m_nodes [i].m_vertex), m_base [0].m_orientation, m_angle * l / Length (i));
-m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation;
+m_nodes [m_nSteps + 1].m_orientation = m_base [1].m_orientation;
 return true;
 }
 
@@ -681,14 +687,13 @@ return true;
 
 double CTunnelPath::Length (int nSteps)
 {
-	double length = Distance (m_vertices [0], m_base [0].m_point);
+	double length = 0.0;
 
 if (nSteps <= 0)
 	nSteps = m_nSteps;
-for (int i = 1; i < nSteps; i++) 
-	length += Distance (m_vertices [i], m_vertices [i - 1]);
-if (nSteps == m_nSteps)
-	length += Distance (m_base [1].m_point, m_vertices [m_nSteps - 1]);
+nSteps += 2;
+for (int i = 0; i < nSteps; i++) 
+	length += Distance (m_nodes [i].m_vertex, m_nodes [i - 1].m_vertex);
 return length;
 }
 
@@ -734,8 +739,7 @@ renderer.EndRender ();
 void CTunnelMaker::Reset (void)
 {
 if (m_bActive) {
-	for (uint i = 0; i < m_tunnel.Length (); i++)
-		m_tunnel [i].Destroy ();
+	m_tunnel.Destroy ();
 	m_bActive = false;
 	}
 DLE.MineView ()->Refresh (false);
