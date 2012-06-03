@@ -139,18 +139,24 @@ m_orientation.m.uVec.Normalize ();
 }
 
 //------------------------------------------------------------------------------
+// create a tunnel segment (tunnel 'slice') and correlate each element's vertices
+// with its corresponding vertices
 
-bool CTunnelSegment::Create (short nSegments, short nVertices)
+bool CTunnelSegment::Create (CTunnelPath& path, short nSegments, short nVertices)
 {
 if (!(m_nVertices.Resize (nVertices) && (m_elements.Resize (nSegments))))
 	return false;
-for (short i = 0; i < nSegments; i++) {
-	if (0 > (m_elements [i].m_nSegment = segmentManager.Add ()))
-		return false;
-	segmentManager.Segment (m_elements [i].m_nSegment)->m_info.bTunnel = 1;
-	}
 if (!vertexManager.Add (&m_nVertices [0], nVertices))
 	return false;
+for (short i = 0; i < nSegments; i++) {
+	CTunnelElement& element = m_elements [i];
+	if (0 > (element.m_nSegment = segmentManager.Add ()))
+		return false;
+	segmentManager.Segment (element.m_nSegment)->m_info.bTunnel = 1;
+	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
+	for (short j = 0; j < 4; j++) 
+		element.m_nVertices [j] = m_nVertices [vertexIndex [j]];
+	}
 return true;
 }
 
@@ -394,8 +400,8 @@ for (short i = 0; i < m_nSteps; i++) {
 
 bool CTunnel::Create (CTunnelPath& path) 
 {
-	short nSegments = path.m_startSides.Length ();
-	short nVertices = path.m_nStartVertices.Length ();
+	short nSegments = (short) path.m_startSides.Length ();
+	short nVertices = (short) path.m_nStartVertices.Length ();
 
 if (m_nSteps != path.Steps ()) { // recompute
 	if (m_nSteps > 0)

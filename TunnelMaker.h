@@ -161,7 +161,7 @@ class CTunnelSegment {
 
 		CTunnelSegment () {}
 
-		bool CTunnelSegment::Create (short nSegments, short nVertices);
+		bool CTunnelSegment::Create (CTunnelPath& path, short nSegments, short nVertices);
 		
 		void CTunnelSegment::Release (void);
 
