@@ -418,10 +418,10 @@ bool CTunnel::Create (CTunnelPath& path)
 if (m_nSteps != path.Steps ()) { // recompute
 	if (m_nSteps > 0)
 		Release ();
-	if ((path.Steps () > m_nSteps) && !m_segments.Resize (path.Steps (), false))
+	if ((path.Steps () > m_nSteps) && !m_segments.Resize (path.Steps () + 2, false))
 		return false;
 	m_nSteps = path.Steps ();
-	for (int i = 0; i < m_nSteps; i++) {
+	for (int i = 0; i < m_nSteps + 2; i++) {
 		if (!m_segments [i].Create (path, nSegments, nVertices))
 			return false;
 		}
@@ -586,7 +586,7 @@ renderer.BeginRender (true);
 renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 renderer.SelectPen (penBlue + 1);
 CMineView* mineView = DLE.MineView ();
-for (int i = 0; i < m_nSteps; i++)
+for (int i = 1; i <= m_nSteps; i++)
 	m_segments [i].Draw ();
 renderer.EndRender ();
 }
@@ -828,7 +828,7 @@ if (!m_bActive) {
 		return;
 		}
 
-	if (!(Setup () && m_tunnel.Create (m_path))) {
+	if (!Setup ()) {
 		m_bActive = false;
 		return;
 		}
