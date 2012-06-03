@@ -22,11 +22,6 @@ class CSideKey {
 
 		CSideKey (CSideKey& other) : m_nSegment (other.m_nSegment), m_nSide (other.m_nSide) {}
 
-		CSideKey& operator = (CSideKey other) { 
-			m_nSegment = other.m_nSegment, m_nSide = other.m_nSide; 
-			return *this;
-			}
-	
 		inline bool operator == (CSideKey& other) { return (m_nSegment == other.m_nSegment) && (m_nSide == other.m_nSide); }
 	
 		inline bool operator != (CSideKey& other) { return (m_nSegment != other.m_nSegment) || (m_nSide != other.m_nSide); }
