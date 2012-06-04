@@ -47,7 +47,7 @@ class CCubicBezier {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-class CTunnelBase : public CSideKey {
+class CTunnelBase : public CSelection {
 	public:
 		CVertex			m_point;
 		CVertex			m_normal;
@@ -56,11 +56,13 @@ class CTunnelBase : public CSideKey {
 		CDoubleMatrix	m_rotation; // orientation of tunnel end side
 		double			m_sign;
 
-		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSideKey (key) {}
+		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSelection (key) {}
 
-		CTunnelBase (CDoubleVector point, CDoubleVector normal) : m_point (point), m_normal (normal), CSideKey (-1, -1) {}
+		CTunnelBase (CDoubleVector point, CDoubleVector normal) : m_point (point), m_normal (normal), CSelection (CSideKey (-1, -1)) {}
 
 		void Setup (double sign);
+
+		bool Update (void);
 
 		inline CDoubleVector GetPoint (void) { return m_point; }
 
@@ -73,7 +75,6 @@ class CTunnelBase : public CSideKey {
 		inline CSegment* Segment (void) { return (m_nSegment < 0) ? null : segmentManager.Segment (m_nSegment); }
 
 		inline CSide* Side (void) { return (m_nSide < 0) ? null : segmentManager.Side (m_nSide); }
-
 	};
 
 //------------------------------------------------------------------------

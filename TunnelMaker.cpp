@@ -273,6 +273,26 @@ m_rotation.m.uVec.Normalize ();
 }
 
 //------------------------------------------------------------------------------
+
+bool CTunnelBase::Update (void)
+{
+	CSelection* selection;
+
+if (*((CSideKey*) this) == *((CSideKey*) current))
+	selection = current;
+else if (*((CSideKey*) this) == *((CSideKey*) other))
+	selection = other;
+else
+	return true;
+if (Edge () != selection->Edge ())
+	return true;
+for (int i = 0; i < 4; i++)
+	if (m_vertices [i] != *selection->Vertex (i))
+		return true;
+return false;
+}
+
+//------------------------------------------------------------------------------
 // create a tunnel segment (tunnel 'slice') and correlate each element's vertices
 // with its corresponding vertices
 
@@ -968,14 +988,11 @@ bool CTunnelMaker::Update (void)
 { 
 if (!m_bActive)
 	return false;
-if ((*((CSideKey*) current) == *((CSideKey*) &m_base [0]) || *((CSideKey*) current) == *((CSideKey*) &m_base [1])) &&
-    (*((CSideKey*) other) == *((CSideKey*) &m_base [0]) || *((CSideKey*) other) == *((CSideKey*) &m_base [1])))
-	return true;
-if (*((CSideKey*) current) == *((CSideKey*) other))
-	return true;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
 	return true;
-return Setup ();
+if (m_base [0].Update () || m_base [1].Update ())
+	return Setup ();
+return true;
 }
 
 //------------------------------------------------------------------------------

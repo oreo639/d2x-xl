@@ -21,8 +21,8 @@ class CSelection : public CSideKey {
 		short	m_nIndex;
 
 	public:
-		CSelection() :
-			CSideKey (0, DEFAULT_SIDE),
+		CSelection (CSideKey key = CSideKey (0, DEFAULT_SIDE)) :
+			CSideKey (key),
 			m_nEdge (DEFAULT_EDGE),
 			m_nPoint (DEFAULT_POINT),
 			m_nObject (DEFAULT_OBJECT)
