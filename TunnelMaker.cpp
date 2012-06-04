@@ -701,10 +701,6 @@ else if (length > MAX_TUNNEL_LENGTH)
 
 CDoubleMatrix identity;
 m_unRotate = m_base [0].m_rotation.Inverse ();
-CDoubleVector startAngles = m_base [0].m_rotation.Angles ();
-CDoubleVector endAngles = m_base [1].m_rotation.Angles ();
-m_startAngle = startAngles.v.y;
-m_deltaAngle = endAngles.v.y - m_startAngle;
 
 // collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
 CTagTunnelStart tagger;
@@ -784,10 +780,13 @@ for (int i = 0; i <= m_nSteps; i++) {
 	}
 
 double l = Length ();
-m_nodes [0].m_rotation = m_base [0].m_rotation * m_unRotate; //.Inverse ();
-for (int i = 1; i < m_nSteps; i++) 
-	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex [1] - m_nodes [i - 1].m_vertex [1], m_nodes [0].m_rotation, m_startAngle + m_deltaAngle * l / Length (i));
+m_nodes [0].m_rotation.Clear ();
 m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation * m_unRotate; //.Inverse ();
+
+m_deltaAngle = m_nodes [m_nSteps].m_rotation.Angles ().v.y;
+
+for (int i = 1; i < m_nSteps; i++) 
+	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex [1] - m_nodes [i - 1].m_vertex [1], m_nodes [0].m_rotation, m_deltaAngle * l / Length (i));
 return true;
 }
 
