@@ -642,6 +642,38 @@ m_orientation.m.uVec.Rotate (m_orientation.m.fVec, angle);
 }
  
 //------------------------------------------------------------------------------
+
+void CTunnelPathNode::Draw (CRenderer& renderer, CViewMatrix* viewMatrix) 
+{
+CDC* pDC = renderer.DC ();
+
+CVertex v [3] = { m_orientation.m.rVec, m_orientation.m.uVec, m_orientation.m.fVec };
+
+renderer.BeginRender ();
+m_vertex.Transform (viewMatrix);
+m_vertex.Project (viewMatrix);
+for (int i = 0; i < 3; i++) {
+	v [i] *= 5.0;
+	v [i] += m_vertex;
+	v [i].Transform (viewMatrix);
+	v [i].Project (viewMatrix);
+	}
+renderer.EndRender ();
+
+renderer.BeginRender (true);
+renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
+static ePenColor pens [3] = { penOrange, penMedGreen, penMedBlue };
+
+renderer.Ellipse (m_vertex, 4, 4);
+for (int i = 0; i < 3; i++) {
+	renderer.SelectPen (pens [i] + 1);
+	renderer.MoveTo (m_vertex.m_screen.x, m_vertex.m_screen.y);
+	renderer.LineTo (v [i].m_screen.x, v [i].m_screen.y);
+	}
+renderer.EndRender ();
+}
+
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
@@ -658,7 +690,9 @@ else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
 m_unRotate = m_base [0].m_orientation.Inverse ();
-m_angle = ZAngle (m_base [1].m_orientation, m_base [0].m_orientation, 0.0);
+CDoubleMatrix identity;
+m_startAngle = ZAngle (m_base [0].m_orientation, identity, 0.0);
+m_deltaAngle = ZAngle (m_base [1].m_orientation, m_base [0].m_orientation, 0.0);
 
 // collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
 CTagTunnelStart tagger;
@@ -739,7 +773,7 @@ m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
 double l = Length ();
 m_nodes [0].m_orientation = m_base [0].m_orientation;
 for (int i = 1; i < m_nSteps; i++) 
-	m_nodes [i].CreateOrientation (Average (m_nodes [i].m_vertex - m_nodes [i - 1].m_vertex, m_nodes [i + 1].m_vertex - m_nodes [i].m_vertex), m_base [0].m_orientation, m_angle * l / Length (i));
+	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_base [0].m_orientation, m_startAngle + m_deltaAngle * l / Length (i));
 m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation;
 return true;
 }
@@ -762,6 +796,13 @@ return length;
 
 void CTunnelPath::Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix) 
 {
+#ifdef _DEBUG
+
+for (int i = 0; i <= m_nSteps; i++) 
+	m_nodes [i].Draw (renderer, viewMatrix);
+
+#else
+
 CDC* pDC = renderer.DC ();
 
 renderer.BeginRender ();
@@ -774,6 +815,7 @@ renderer.EndRender ();
 renderer.BeginRender (true);
 renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 renderer.SelectPen (penRed + 1);
+
 
 CMineView* mineView = DLE.MineView ();
 if (Bezier ().GetPoint (1).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
@@ -791,6 +833,8 @@ if (Bezier ().GetPoint (2).InRange (mineView->ViewMax ().x, mineView->ViewMax ()
 		}
 	}
 renderer.EndRender ();
+
+#endif
 }
 
 //------------------------------------------------------------------------------

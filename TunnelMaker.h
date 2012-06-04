@@ -87,6 +87,8 @@ class CTunnelPathNode {
 		double			m_angle; // rotation angle around z axis
 
 	void CreateOrientation (CVertex fVec, CDoubleMatrix& mOrient, double zAngle);
+
+	void Draw (CRenderer& renderer, CViewMatrix* viewMatrix);
 	};
 
 //------------------------------------------------------------------------
@@ -114,7 +116,8 @@ class CTunnelPath {
 		short										m_nSteps;
 		CDynamicArray<CTunnelPathNode>	m_nodes;
 		CDoubleMatrix							m_unRotate; // for unrotating base vertices
-		double									m_angle;
+		double									m_startAngle;
+		double									m_deltaAngle;
 		CDynamicArray<CTunnelStartSide>	m_startSides;
 		CDynamicArray<ushort>				m_nStartVertices;
 
