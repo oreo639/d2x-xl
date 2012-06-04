@@ -115,6 +115,8 @@ class CTunnelPath {
 		CTunnelBase								m_base [2];
 		short										m_nSteps;
 		CDynamicArray<CTunnelPathNode>	m_nodes;
+		CDoubleMatrix							m_unRotate;
+		double									m_startAngle;
 		double									m_deltaAngle;
 		CDynamicArray<CTunnelStartSide>	m_startSides;
 		CDynamicArray<ushort>				m_nStartVertices;

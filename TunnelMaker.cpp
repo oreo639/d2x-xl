@@ -445,6 +445,7 @@ for (int i = 0; i <= m_nSteps; i++) {
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
 		v -= path.m_base [0].m_point;
+		v = path.m_unRotate * v;
 		v = rotation * v;
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
@@ -638,7 +639,7 @@ m_orientation.m.uVec = v1 * r - v0 * s;
 // rotate right and up vector around forward vector
 m_orientation.m.rVec.Rotate (m_orientation.m.fVec, angle);
 m_orientation.m.uVec.Rotate (m_orientation.m.fVec, angle);
-m_orientation = m_orientation.Inverse ();
+//m_orientation = m_orientation.Inverse ();
 }
  
 //------------------------------------------------------------------------------
@@ -647,7 +648,9 @@ void CTunnelPathNode::Draw (CRenderer& renderer, CViewMatrix* viewMatrix)
 {
 CDC* pDC = renderer.DC ();
 
-CVertex v [3] = { m_orientation.m.rVec, m_orientation.m.uVec, m_orientation.m.fVec };
+CDoubleMatrix m;
+m = m_orientation; //.Inverse ();
+CVertex v [3] = { m.m.rVec, m.m.uVec, m.m.fVec };
 
 renderer.BeginRender ();
 m_vertex.Transform (viewMatrix);
@@ -690,7 +693,9 @@ else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
 CDoubleMatrix identity;
-m_deltaAngle = ZAngle (m_base [1].m_orientation, m_base [0].m_orientation, 0.0);
+m_unRotate = m_base [0].m_orientation.Inverse ();
+m_startAngle = atan2 (m_base [0].m_orientation.m.uVec.v.y, m_base [0].m_orientation.m.uVec.v.x);
+m_deltaAngle = atan2 (m_base [1].m_orientation.m.uVec.v.y, m_base [1].m_orientation.m.uVec.v.x) - m_startAngle;
 
 // collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
 CTagTunnelStart tagger;
@@ -769,10 +774,10 @@ for (int i = 1; i < m_nSteps; i++)
 	m_nodes [i].m_vertex = m_bezier.Compute ((double) i / (double) m_nSteps)/* - m_bezier.GetPoint (0)*/;
 m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
 double l = Length ();
-m_nodes [0].m_orientation = m_base [0].m_orientation.Inverse ();
+m_nodes [0].m_orientation = m_base [0].m_orientation; //.Inverse ();
 for (int i = 1; i < m_nSteps; i++) 
-	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_base [0].m_orientation, m_deltaAngle * l / Length (i));
-m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation.Inverse ();
+	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_base [0].m_orientation, m_startAngle + m_deltaAngle * l / Length (i));
+m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation; //.Inverse ();
 return true;
 }
 
