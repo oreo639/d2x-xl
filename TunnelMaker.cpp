@@ -654,7 +654,7 @@ void CTunnelPathNode::Draw (CRenderer& renderer, CViewMatrix* viewMatrix)
 CDC* pDC = renderer.DC ();
 
 CDoubleMatrix m;
-m = m_rotation; //.Inverse ();
+m = m_rotation.Inverse ();
 CVertex v [3] = { m.m.rVec, m.m.uVec, m.m.fVec };
 
 renderer.BeginRender ();
@@ -782,7 +782,7 @@ m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation.Inverse ();
 m_deltaAngle = m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z;
 
 for (int i = 0; i <= m_nSteps; i++) 
-	m_nodes [i].CreateOrientation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
+	m_nodes [i].CreateOrientation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_nodes [0].m_rotation, m_deltaAngle * Length (i + 1) / l);
 return true;
 }
 
