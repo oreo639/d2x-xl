@@ -611,17 +611,19 @@ renderer.EndRender ();
 
 void CTunnelPathNode::CreateOrientation (CVertex fVec, CDoubleMatrix& mOrigin, double angle)
 {
-m_orientation.m.fVec = fVec;
-m_orientation.m.fVec.Normalize ();
-CVertex v0 = CrossProduct (mOrigin.m.uVec, m_orientation.m.fVec);
+	CDoubleMatrix	o;
+	
+o.m.fVec = fVec;
+o.m.fVec.Normalize ();
+CVertex v0 = CrossProduct (mOrigin.m.uVec, o.m.fVec);
 double l = v0.Mag (); 
 if (l >= 0.1) 
 	v0 /= l;
 else {
-	v0 = CrossProduct (mOrigin.m.rVec, m_orientation.m.fVec);
+	v0 = CrossProduct (mOrigin.m.rVec, o.m.fVec);
 	v0.Normalize ();
 	}
-CVertex v1 = CrossProduct (m_orientation.m.fVec, v0);
+CVertex v1 = CrossProduct (o.m.fVec, v0);
 double a = Dot (v0, mOrigin.m.rVec) + Dot (v1, mOrigin.m.uVec); 
 double b = Dot (v1, mOrigin.m.rVec) - Dot (v0, mOrigin.m.uVec); 
 double q = sqrt (a * a + b * b); 
@@ -634,11 +636,17 @@ else {
 	r = 1.0;  
 	s = 0.0;  
 	}
-m_orientation.m.rVec = v0 * r + v1 * s;
-m_orientation.m.uVec = v1 * r - v0 * s;
+o.m.rVec = v0 * r + v1 * s;
+o.m.uVec = v1 * r - v0 * s;
 // rotate right and up vector around forward vector
-m_orientation.m.rVec.Rotate (m_orientation.m.fVec, angle);
-m_orientation.m.uVec.Rotate (m_orientation.m.fVec, angle);
+#if 1
+m_orientation = o;
+#else
+CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
+m_orientation = o * zr;
+#endif
+//m_orientation.m.rVec.Rotate (m_orientation.m.fVec, angle);
+//m_orientation.m.uVec.Rotate (m_orientation.m.fVec, angle);
 //m_orientation = m_orientation.Inverse ();
 }
  
@@ -696,8 +704,8 @@ CDoubleMatrix identity;
 m_unRotate = m_base [0].m_orientation.Inverse ();
 CDoubleVector startAngles = m_base [0].m_orientation.Angles ();
 CDoubleVector endAngles = m_base [1].m_orientation.Angles ();
-m_startAngle = startAngles.v.z;
-m_deltaAngle = endAngles.v.z - m_startAngle;
+m_startAngle = startAngles.v.y;
+m_deltaAngle = endAngles.v.y - m_startAngle;
 
 // collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
 CTagTunnelStart tagger;
@@ -773,7 +781,7 @@ if (m_nSteps != nSteps) { // recompute
 // calculate nSegment m_bezierPoints
 m_nodes [0].m_vertex = m_base [0].m_point;
 for (int i = 1; i < m_nSteps; i++) 
-	m_nodes [i].m_vertex = m_bezier.Compute ((double) i / (double) m_nSteps)/* - m_bezier.GetPoint (0)*/;
+	m_nodes [i].m_vertex = m_bezier.Compute ((double) i / (double) m_nSteps);
 m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
 double l = Length ();
 m_nodes [0].m_orientation = m_base [0].m_orientation; //.Inverse ();
