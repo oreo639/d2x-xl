@@ -440,16 +440,13 @@ if (m_nSteps != path.Steps ()) { // recompute
 #if 1
 
 for (int i = 1; i <= m_nSteps; i++) {
-	double angle = path [i].m_angle;
 	CDoubleMatrix& rotation = path [i].m_orientation;
 	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
 		v -= path.m_base [0].m_point;
-		if (angle != 0.0) {
-			v = path.m_unRotate * v;
-			v = rotation * v;
-			}
+		v = path.m_unRotate * v;
+		v = rotation * v;
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
 #ifdef _DEBUG
