@@ -459,21 +459,4 @@ return a;
 }
 
 // -----------------------------------------------------------------------------
-
-double ZAngle (CDoubleMatrix& m0, CDoubleMatrix& m1, double angle0)
-{
-CDoubleVector n = CrossProduct (m0.m.rVec, m1.m.rVec);
-double angle = Dot (n, m0.m.fVec);
-if (angle < 1e-6)
-	angle = 0.0;
-else
-	angle = (angle < 0.0f) ? -acos (Dot (m0.m.rVec, m1.m.rVec)) : acos (Dot (m0.m.rVec, m1.m.rVec)); 
-while (angle - angle0 < -PI) 
-	angle += 2 * PI; 
-while (angle - angle0 > PI) 
-	angle -= 2 * PI; 
-return angle; 
-}
- 
-// -----------------------------------------------------------------------------
 // eof

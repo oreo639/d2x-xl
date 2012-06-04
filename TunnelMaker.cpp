@@ -38,8 +38,7 @@ The total procedure is:
 - compute overall z rotation angle
 - compute tunnel path
 - for each path node:
-     - construct rotation matrix from average (<current node> - <previous node>, <next node - current node>) 
-       and weighted z rotation
+     - construct rotation matrix from start rotation, forward vector <next node - previous node> and weighted z rotation
      - compute tunnel vertices at current path node by rotating the start vertices using the node's rotation matrix
 	  - assign current path node's tunnel vertices to the tunnel segments related to the current path node
 */
