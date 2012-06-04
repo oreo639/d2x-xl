@@ -771,7 +771,7 @@ m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
 double l = Length ();
 m_nodes [0].m_orientation = m_base [0].m_orientation.Inverse ();
 for (int i = 1; i < m_nSteps; i++) 
-	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_base [0].m_orientation, m_startAngle + m_deltaAngle * l / Length (i));
+	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_base [0].m_orientation, m_deltaAngle * l / Length (i));
 m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation.Inverse ();
 return true;
 }
