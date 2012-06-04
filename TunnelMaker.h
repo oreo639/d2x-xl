@@ -53,7 +53,7 @@ class CTunnelBase : public CSideKey {
 		CVertex			m_normal;
 		CVertex			m_vertices [4];
 		ubyte				m_oppVertexIndex [4];
-		CDoubleMatrix	m_orientation; // orientation of tunnel end side
+		CDoubleMatrix	m_rotation; // orientation of tunnel end side
 		double			m_sign;
 
 		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSideKey (key) {}
@@ -82,8 +82,8 @@ class CTunnelBase : public CSideKey {
 
 class CTunnelPathNode {
 	public:
-		CVertex			m_vertex;
-		CDoubleMatrix	m_orientation;
+		CVertex			m_vertex [2]; // absolute and unrotated vertices
+		CDoubleMatrix	m_rotation;
 		double			m_angle; // rotation angle around z axis
 
 	void CreateOrientation (CVertex fVec, CDoubleMatrix& mOrient, double zAngle);

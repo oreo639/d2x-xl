@@ -265,12 +265,12 @@ segP->CreateOppVertexIndex (m_nSide, m_oppVertexIndex);
 m_point = segP->ComputeCenter (m_nSide);
 for (int i = 0; i < 4; i++)
 	m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
-m_orientation.m.fVec = m_normal;
-m_orientation.m.rVec = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
-m_orientation.m.rVec.Normalize ();
-m_orientation.m.rVec *= -sign;
-m_orientation.m.uVec = CrossProduct (m_orientation.m.fVec, m_orientation.m.rVec);
-m_orientation.m.uVec.Normalize ();
+m_rotation.m.fVec = m_normal;
+m_rotation.m.rVec = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
+m_rotation.m.rVec.Normalize ();
+m_rotation.m.rVec *= -sign;
+m_rotation.m.uVec = CrossProduct (m_rotation.m.fVec, m_rotation.m.rVec);
+m_rotation.m.uVec.Normalize ();
 }
 
 //------------------------------------------------------------------------------
@@ -440,8 +440,8 @@ if (m_nSteps != path.Steps ()) { // recompute
 #if 1
 
 for (int i = 0; i <= m_nSteps; i++) {
-	CDoubleMatrix& rotation = path [i].m_orientation;
-	CDoubleVector& translation = path [i].m_vertex;
+	CDoubleMatrix& rotation = path [i].m_rotation;
+	CDoubleVector& translation = path [i].m_vertex [0];
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
 		v -= path.m_base [0].m_point;
@@ -639,14 +639,14 @@ o.m.rVec = v0 * r + v1 * s;
 o.m.uVec = v1 * r - v0 * s;
 // rotate right and up vector around forward vector
 #if 1
-m_orientation = o * mOrigin.Inverse ();
+m_rotation = o * mOrigin.Inverse ();
 #else
 CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
-m_orientation = o * zr;
+m_rotation = o * zr;
 #endif
-//m_orientation.m.rVec.Rotate (m_orientation.m.fVec, angle);
-//m_orientation.m.uVec.Rotate (m_orientation.m.fVec, angle);
-//m_orientation = m_orientation.Inverse ();
+//m_rotation.m.rVec.Rotate (m_rotation.m.fVec, angle);
+//m_rotation.m.uVec.Rotate (m_rotation.m.fVec, angle);
+//m_rotation = m_rotation.Inverse ();
 }
  
 //------------------------------------------------------------------------------
@@ -656,15 +656,15 @@ void CTunnelPathNode::Draw (CRenderer& renderer, CViewMatrix* viewMatrix)
 CDC* pDC = renderer.DC ();
 
 CDoubleMatrix m;
-m = m_orientation; //.Inverse ();
+m = m_rotation; //.Inverse ();
 CVertex v [3] = { m.m.rVec, m.m.uVec, m.m.fVec };
 
 renderer.BeginRender ();
-m_vertex.Transform (viewMatrix);
-m_vertex.Project (viewMatrix);
+m_vertex [0].Transform (viewMatrix);
+m_vertex [0].Project (viewMatrix);
 for (int i = 0; i < 3; i++) {
 	v [i] *= 5.0;
-	v [i] += m_vertex;
+	v [i] += m_vertex [0];
 	v [i].Transform (viewMatrix);
 	v [i].Project (viewMatrix);
 	}
@@ -674,10 +674,10 @@ renderer.BeginRender (true);
 renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 static ePenColor pens [3] = { penOrange, penMedGreen, penMedBlue };
 
-renderer.Ellipse (m_vertex, 4, 4);
+renderer.Ellipse (m_vertex [0], 4, 4);
 for (int i = 0; i < 3; i++) {
 	renderer.SelectPen (pens [i] + 1);
-	renderer.MoveTo (m_vertex.m_screen.x, m_vertex.m_screen.y);
+	renderer.MoveTo (m_vertex [0].m_screen.x, m_vertex [0].m_screen.y);
 	renderer.LineTo (v [i].m_screen.x, v [i].m_screen.y);
 	}
 renderer.EndRender ();
@@ -700,9 +700,9 @@ else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
 CDoubleMatrix identity;
-m_unRotate = m_base [0].m_orientation.Inverse ();
-CDoubleVector startAngles = m_base [0].m_orientation.Angles ();
-CDoubleVector endAngles = m_base [1].m_orientation.Angles ();
+m_unRotate = m_base [0].m_rotation.Inverse ();
+CDoubleVector startAngles = m_base [0].m_rotation.Angles ();
+CDoubleVector endAngles = m_base [1].m_rotation.Angles ();
 m_startAngle = startAngles.v.y;
 m_deltaAngle = endAngles.v.y - m_startAngle;
 
@@ -778,15 +778,16 @@ if (m_nSteps != nSteps) { // recompute
 	}
 
 // calculate nSegment m_bezierPoints
-m_nodes [0].m_vertex = m_base [0].m_point;
-for (int i = 1; i < m_nSteps; i++) 
-	m_nodes [i].m_vertex = m_bezier.Compute ((double) i / (double) m_nSteps);
-m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
+for (int i = 0; i <= m_nSteps; i++) {
+	m_nodes [i].m_vertex [0] = m_bezier.Compute ((double) i / (double) m_nSteps);
+	m_nodes [i].m_vertex [1] = m_unRotate * m_nodes [i].m_vertex [0];
+	}
+
 double l = Length ();
-m_nodes [0].m_orientation = m_base [0].m_orientation; //.Inverse ();
+m_nodes [0].m_rotation = m_base [0].m_rotation * m_unRotate; //.Inverse ();
 for (int i = 1; i < m_nSteps; i++) 
-	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_base [0].m_orientation, m_startAngle + m_deltaAngle * l / Length (i));
-m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation; //.Inverse ();
+	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex [1] - m_nodes [i - 1].m_vertex [1], m_nodes [0].m_rotation, m_startAngle + m_deltaAngle * l / Length (i));
+m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation * m_unRotate; //.Inverse ();
 return true;
 }
 
@@ -800,7 +801,7 @@ if (nSteps <= 0)
 	nSteps = m_nSteps;
 nSteps += 2;
 for (int i = 1; i < nSteps; i++) 
-	length += Distance (m_nodes [i].m_vertex, m_nodes [i - 1].m_vertex);
+	length += Distance (m_nodes [i].m_vertex [1], m_nodes [i - 1].m_vertex [1]);
 return length;
 }
 
