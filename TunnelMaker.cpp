@@ -639,7 +639,7 @@ m_orientation.m.uVec = v1 * r - v0 * s;
 // rotate right and up vector around forward vector
 m_orientation.m.rVec.Rotate (m_orientation.m.fVec, angle);
 m_orientation.m.uVec.Rotate (m_orientation.m.fVec, angle);
-m_orientation.Invert ();
+m_orientation = m_orientation.Inverse ();
 }
  
 //------------------------------------------------------------------------------
@@ -772,10 +772,10 @@ for (int i = 1; i < m_nSteps; i++)
 	m_nodes [i].m_vertex = m_bezier.Compute ((double) i / (double) m_nSteps)/* - m_bezier.GetPoint (0)*/;
 m_nodes [m_nSteps].m_vertex = m_base [1].m_point;
 double l = Length ();
-m_nodes [0].m_orientation = m_base [0].m_orientation;
+m_nodes [0].m_orientation = m_base [0].m_orientation.Inverse ();
 for (int i = 1; i < m_nSteps; i++) 
 	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_base [0].m_orientation, m_startAngle + m_deltaAngle * l / Length (i));
-m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation;
+m_nodes [m_nSteps].m_orientation = m_base [1].m_orientation.Inverse ();
 return true;
 }
 
