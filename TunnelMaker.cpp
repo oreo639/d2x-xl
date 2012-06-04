@@ -440,7 +440,7 @@ if (m_nSteps != path.Steps ()) { // recompute
 
 for (int i = 0; i <= m_nSteps; i++) {
 	CDoubleMatrix& rotation = path [i].m_rotation;
-	CDoubleVector& translation = path [i].m_vertex [0];
+	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
 		v -= path.m_base [0].m_point;
@@ -639,11 +639,10 @@ o.m.rVec = v0 * r + v1 * s;
 o.m.uVec = v1 * r - v0 * s;
 // rotate right and up vector around forward vector
 #if 1
-m_rotation = o.Inverse (); /** mOrigin.Inverse ()*/;
-#else
 CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
 m_rotation = o * zr;
 #endif
+m_rotation = o.Inverse ();
 //m_rotation.m.rVec.Rotate (m_rotation.m.fVec, angle);
 //m_rotation.m.uVec.Rotate (m_rotation.m.fVec, angle);
 //m_rotation = m_rotation.Inverse ();
@@ -660,11 +659,11 @@ m = m_rotation; //.Inverse ();
 CVertex v [3] = { m.m.rVec, m.m.uVec, m.m.fVec };
 
 renderer.BeginRender ();
-m_vertex [0].Transform (viewMatrix);
-m_vertex [0].Project (viewMatrix);
+m_vertex.Transform (viewMatrix);
+m_vertex.Project (viewMatrix);
 for (int i = 0; i < 3; i++) {
 	v [i] *= 5.0;
-	v [i] += m_vertex [0];
+	v [i] += m_vertex;
 	v [i].Transform (viewMatrix);
 	v [i].Project (viewMatrix);
 	}
@@ -674,10 +673,10 @@ renderer.BeginRender (true);
 renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 static ePenColor pens [3] = { penOrange, penMedGreen, penMedBlue };
 
-renderer.Ellipse (m_vertex [0], 4, 4);
+renderer.Ellipse (m_vertex, 4, 4);
 for (int i = 0; i < 3; i++) {
 	renderer.SelectPen (pens [i] + 1);
-	renderer.MoveTo (m_vertex [0].m_screen.x, m_vertex [0].m_screen.y);
+	renderer.MoveTo (m_vertex.m_screen.x, m_vertex.m_screen.y);
 	renderer.LineTo (v [i].m_screen.x, v [i].m_screen.y);
 	}
 renderer.EndRender ();
@@ -700,7 +699,6 @@ else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
 CDoubleMatrix identity;
-m_unRotate = m_base [0].m_rotation.Inverse ();
 
 // collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
 CTagTunnelStart tagger;
@@ -775,19 +773,17 @@ if (m_nSteps != nSteps) { // recompute
 
 // calculate nSegment m_bezierPoints
 for (int i = 0; i <= m_nSteps; i++) 
-	m_nodes [i].m_vertex [0] = m_bezier.Compute ((double) i / (double) m_nSteps);
-CDoubleVector t = m_nodes [0].m_vertex [0];
-for (int i = 0; i <= m_nSteps; i++) 
-	m_nodes [i].m_vertex [1] = /*m_unRotate **/ (m_nodes [i].m_vertex [0] - t);
+	m_nodes [i].m_vertex = m_bezier.Compute ((double) i / (double) m_nSteps);
+CDoubleVector t = m_nodes [0].m_vertex;
 
 double l = Length ();
-m_nodes [0].m_rotation = m_base [0].m_rotation.Inverse ();/* * m_unRotate*/; 
-m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation.Inverse ();/* * m_unRotate*/; 
+m_nodes [0].m_rotation = m_base [0].m_rotation.Inverse ();
+m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation.Inverse ();
 
 m_deltaAngle = m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z;
 
 for (int i = 0; i <= m_nSteps; i++) 
-	m_nodes [i].CreateOrientation ((i == 0) ? /*m_unRotate **/ m_base [0].m_normal : (i == m_nSteps) ? /*m_unRotate **/ m_base [1].m_normal : m_nodes [i + 1].m_vertex [0] - m_nodes [i - 1].m_vertex [0], m_nodes [0].m_rotation, m_deltaAngle * l / Length (i));
+	m_nodes [i].CreateOrientation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
 return true;
 }
 
@@ -797,11 +793,11 @@ double CTunnelPath::Length (int nSteps)
 {
 	double length = 0.0;
 
-if (nSteps <= 0)
-	nSteps = m_nSteps;
-nSteps += 2;
+if (nSteps < 0)
+	nSteps = m_nSteps + 2;
+nSteps;
 for (int i = 1; i < nSteps; i++) 
-	length += Distance (m_nodes [i].m_vertex [1], m_nodes [i - 1].m_vertex [1]);
+	length += Distance (m_nodes [i].m_vertex, m_nodes [i - 1].m_vertex);
 return length;
 }
 

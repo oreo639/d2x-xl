@@ -82,7 +82,7 @@ class CTunnelBase : public CSideKey {
 
 class CTunnelPathNode {
 	public:
-		CVertex			m_vertex [2]; // absolute and unrotated vertices
+		CVertex			m_vertex; // absolute and unrotated vertices
 		CDoubleMatrix	m_rotation;
 		double			m_angle; // rotation angle around z axis
 
@@ -115,7 +115,6 @@ class CTunnelPath {
 		CTunnelBase								m_base [2];
 		short										m_nSteps;
 		CDynamicArray<CTunnelPathNode>	m_nodes;
-		CDoubleMatrix							m_unRotate;
 		double									m_startAngle;
 		double									m_deltaAngle;
 		CDynamicArray<CTunnelStartSide>	m_startSides;
