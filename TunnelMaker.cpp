@@ -311,9 +311,9 @@ void CTunnelSegment::Release (void)
 {
 if (!(m_nVertices.Buffer () && (m_elements.Buffer ())))
 	return;
-for (uint i = m_elements.Length (); --i > 0; ) 
+for (uint i = m_elements.Length (); --i >= 0; ) 
 	segmentManager.Remove (m_elements [i].m_nSegment);
-for (uint i = m_nVertices.Length (); --i > 0; ) 
+for (uint i = m_nVertices.Length (); --i >= 0; ) 
 	vertexManager.Delete (m_nVertices [i]);
 }
 
@@ -432,20 +432,19 @@ if (m_nSteps != path.Steps ()) { // recompute
 		return false;
 	m_nSteps = path.Steps ();
 	for (int i = 0; i <= m_nSteps; i++) {
-		if (!m_segments [i].Create (path, nSegments, i ? nVertices : 0))
+		if (!m_segments [i].Create (path, nSegments, nVertices))
 			return false;
 		}
 	}
 
 #if 1
 
-for (int i = 1; i <= m_nSteps; i++) {
+for (int i = 0; i <= m_nSteps; i++) {
 	CDoubleMatrix& rotation = path [i].m_orientation;
 	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
 		v -= path.m_base [0].m_point;
-		//v = path.m_unRotate * v;
 		v = rotation * v;
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
@@ -690,9 +689,7 @@ if (length < MIN_TUNNEL_LENGTH)
 else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
-m_unRotate = m_base [0].m_orientation.Inverse ();
 CDoubleMatrix identity;
-m_startAngle = 0.0; //ZAngle (m_base [0].m_orientation, identity, 0.0);
 m_deltaAngle = ZAngle (m_base [1].m_orientation, m_base [0].m_orientation, 0.0);
 
 // collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
