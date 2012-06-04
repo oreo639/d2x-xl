@@ -774,19 +774,20 @@ if (m_nSteps != nSteps) { // recompute
 	}
 
 // calculate nSegment m_bezierPoints
-for (int i = 0; i <= m_nSteps; i++) {
+for (int i = 0; i <= m_nSteps; i++) 
 	m_nodes [i].m_vertex [0] = m_bezier.Compute ((double) i / (double) m_nSteps);
-	m_nodes [i].m_vertex [1] = m_unRotate * m_nodes [i].m_vertex [0];
-	}
+CDoubleVector t = m_nodes [0].m_vertex [0];
+for (int i = 0; i <= m_nSteps; i++) 
+	m_nodes [i].m_vertex [1] = m_unRotate * (m_nodes [i].m_vertex [0] - t);
 
 double l = Length ();
-m_nodes [0].m_rotation.Clear ();
+m_nodes [0].m_rotation.Clear (); //  = m_base [0].m_rotation * m_unRotate; 
 m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation * m_unRotate; //.Inverse ();
 
 m_deltaAngle = m_nodes [m_nSteps].m_rotation.Angles ().v.y;
 
-for (int i = 1; i < m_nSteps; i++) 
-	m_nodes [i].CreateOrientation (m_nodes [i + 1].m_vertex [1] - m_nodes [i - 1].m_vertex [1], m_nodes [0].m_rotation, m_deltaAngle * l / Length (i));
+for (int i = 0; i <= m_nSteps; i++) 
+	m_nodes [i].CreateOrientation ((i == 0) ? m_unRotate * m_base [0].m_normal :  (i == m_nSteps) ? m_unRotate * m_base [1].m_normal : m_nodes [i + 1].m_vertex [1] - m_nodes [i - 1].m_vertex [1], m_nodes [0].m_rotation, m_deltaAngle * l / Length (i));
 return true;
 }
 
