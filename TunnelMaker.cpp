@@ -311,9 +311,9 @@ void CTunnelSegment::Release (void)
 {
 if (!(m_nVertices.Buffer () && (m_elements.Buffer ())))
 	return;
-for (uint i = m_elements.Length (); --i >= 0; ) 
+for (int i = (int) m_elements.Length (); --i >= 0; ) 
 	segmentManager.Remove (m_elements [i].m_nSegment);
-for (uint i = m_nVertices.Length (); --i >= 0; ) 
+for (int i = (int) m_nVertices.Length (); --i >= 0; ) 
 	vertexManager.Delete (m_nVertices [i]);
 }
 
