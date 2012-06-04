@@ -59,7 +59,7 @@ inline double ClampAngle (double angle)
 {
 while (angle < -PI)
 	angle += 2.0 * PI;
-while (angle > -PI)
+while (angle > PI)
 	angle -= 2.0 * PI;
 return angle;
 }

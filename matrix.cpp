@@ -452,9 +452,6 @@ else {
 	a.v.x = 0.0;
 	a.v.z = atan2 (m.uVec.v.x, m.uVec.v.y);
 	}
-double dot = Dot (m.rVec, id.m.rVec);
-if (dot < 0.0)
-	a.v.z = -a.v.z;
 return a;
 }
 
