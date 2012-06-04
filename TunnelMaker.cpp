@@ -608,20 +608,36 @@ renderer.EndRender ();
 // First construct arbitrary right and up vectors from the forward vector, then rotate up and right
 // around forward by the given angle.
 
-void CTunnelPathNode::CreateOrientation (CVertex fVec, CDoubleMatrix& mOrigin, double angle)
+void CTunnelPathNode::CreateRotation (CVertex fVec, CDoubleMatrix& mOrigin, double angle)
 {
 	CDoubleMatrix	m;
 	
 m.m.fVec = fVec;
 m.m.fVec.Normalize ();
-CVertex v0 = CrossProduct (mOrigin.m.uVec, m.m.fVec);
-double l = v0.Mag (); 
-if (l >= 0.1) 
-	v0 /= l;
-else {
-	v0 = CrossProduct (mOrigin.m.rVec, m.m.fVec);
-	v0.Normalize ();
+m.m.rVec = CrossProduct (mOrigin.m.uVec, m.m.fVec);
+double l = m.m.rVec.Mag (); 
+if (l >= 0.1) {
+	m.m.rVec /= l;
+	m.m.uVec = CrossProduct (m.m.rVec, m.m.fVec);
+	m.m.rVec = CrossProduct (m.m.uVec, m.m.fVec);
 	}
+else {
+	m.m.uVec = CrossProduct (mOrigin.m.rVec, m.m.fVec);
+	m.m.uVec.Normalize ();
+	m.m.rVec = CrossProduct (m.m.uVec, m.m.fVec);
+	m.m.uVec = CrossProduct (m.m.rVec, m.m.fVec);
+	}
+#if 1
+if (m.m.fVec != CrossProduct (m.m.rVec, m.m.uVec))
+	m.m.rVec.Negate ();
+#endif
+#if 1
+angle -= m.Angles ().v.z - mOrigin.Angles ().v.z;
+while (angle <= -PI)
+	angle += PI;
+while (angle >= PI)
+	angle -= PI;
+#else
 CVertex v1 = CrossProduct (m.m.fVec, v0);
 double a = Dot (v0, mOrigin.m.rVec) + Dot (v1, mOrigin.m.uVec); 
 double b = Dot (v1, mOrigin.m.rVec) - Dot (v0, mOrigin.m.uVec); 
@@ -637,6 +653,7 @@ else {
 	}
 m.m.rVec = v0 * r + v1 * s;
 m.m.uVec = v1 * r - v0 * s;
+#endif
 // rotate right and up vector around forward vector
 #if 1
 CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
@@ -781,8 +798,9 @@ m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation.Inverse ();
 
 m_deltaAngle = m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z;
 
-for (int i = 0; i <= m_nSteps; i++) 
-	m_nodes [i].CreateOrientation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, m_nodes [0].m_rotation, m_deltaAngle * Length (i + 1) / l);
+for (int i = 1; i <= m_nSteps; i++) 
+	m_nodes [i].CreateRotation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, 
+											 m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
 return true;
 }
 
@@ -793,9 +811,8 @@ double CTunnelPath::Length (int nSteps)
 	double length = 0.0;
 
 if (nSteps < 0)
-	nSteps = m_nSteps + 2;
-nSteps;
-for (int i = 1; i < nSteps; i++) 
+	nSteps = m_nSteps;
+for (int i = 1; i <= nSteps; i++) 
 	length += Distance (m_nodes [i].m_vertex, m_nodes [i - 1].m_vertex);
 return length;
 }
