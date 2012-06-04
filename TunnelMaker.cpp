@@ -54,6 +54,17 @@ CTunnelMaker tunnelMaker;
 char szTunnelMakerError [] = "You must exit tunnel creation before performing this function";
 
 //------------------------------------------------------------------------------
+
+inline double ClampAngle (double angle)
+{
+while (angle < -PI)
+	angle += 2.0 * PI;
+while (angle > -PI)
+	angle -= 2.0 * PI;
+return angle;
+}
+
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 // SpinPoint () - spin on y-axis then z-axis
@@ -652,11 +663,13 @@ if (m.m.fVec != CrossProduct (m.m.rVec, m.m.uVec))
 	m.m.rVec.Negate ();
 #endif
 #if 1
-angle -= m.Angles ().v.z - mOrigin.Angles ().v.z;
+angle -= ClampAngle (m.Angles ().v.z - mOrigin.Angles ().v.z);
+#if 0
 while (angle < -PI)
 	angle += PI;
 while (angle > PI)
 	angle -= PI;
+#endif
 #else
 CVertex v1 = CrossProduct (m.m.fVec, v0);
 double a = Dot (v0, mOrigin.m.rVec) + Dot (v1, mOrigin.m.uVec); 
@@ -816,8 +829,13 @@ double l = Length ();
 m_nodes [0].m_rotation = m_base [0].m_rotation.Inverse ();
 m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation.Inverse ();
 
-m_deltaAngle = m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z;
-
+m_deltaAngle = ClampAngle (m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z);
+#if 0
+while (m_deltaAngle < -PI * 1.5)
+	m_deltaAngle += PI * 0.5;
+while (m_deltaAngle > PI * 1.5)
+	m_deltaAngle -= PI * 0.5;
+#endif
 for (int i = 1; i <= m_nSteps; i++) 
 	m_nodes [i].CreateRotation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, 
 											 m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
