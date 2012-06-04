@@ -610,19 +610,19 @@ renderer.EndRender ();
 
 void CTunnelPathNode::CreateOrientation (CVertex fVec, CDoubleMatrix& mOrigin, double angle)
 {
-	CDoubleMatrix	o;
+	CDoubleMatrix	m;
 	
-o.m.fVec = fVec;
-o.m.fVec.Normalize ();
-CVertex v0 = CrossProduct (mOrigin.m.uVec, o.m.fVec);
+m.m.fVec = fVec;
+m.m.fVec.Normalize ();
+CVertex v0 = CrossProduct (mOrigin.m.uVec, m.m.fVec);
 double l = v0.Mag (); 
 if (l >= 0.1) 
 	v0 /= l;
 else {
-	v0 = CrossProduct (mOrigin.m.rVec, o.m.fVec);
+	v0 = CrossProduct (mOrigin.m.rVec, m.m.fVec);
 	v0.Normalize ();
 	}
-CVertex v1 = CrossProduct (o.m.fVec, v0);
+CVertex v1 = CrossProduct (m.m.fVec, v0);
 double a = Dot (v0, mOrigin.m.rVec) + Dot (v1, mOrigin.m.uVec); 
 double b = Dot (v1, mOrigin.m.rVec) - Dot (v0, mOrigin.m.uVec); 
 double q = sqrt (a * a + b * b); 
@@ -635,14 +635,13 @@ else {
 	r = 1.0;  
 	s = 0.0;  
 	}
-o.m.rVec = v0 * r + v1 * s;
-o.m.uVec = v1 * r - v0 * s;
+m.m.rVec = v0 * r + v1 * s;
+m.m.uVec = v1 * r - v0 * s;
 // rotate right and up vector around forward vector
 #if 1
 CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
-m_rotation = o * zr;
 #endif
-m_rotation = o.Inverse ();
+m_rotation = m.Mul (zr).Inverse ();
 //m_rotation.m.rVec.Rotate (m_rotation.m.fVec, angle);
 //m_rotation.m.uVec.Rotate (m_rotation.m.fVec, angle);
 //m_rotation = m_rotation.Inverse ();
