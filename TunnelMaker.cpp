@@ -445,7 +445,7 @@ for (int i = 1; i <= m_nSteps; i++) {
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
 		v -= path.m_base [0].m_point;
-		v = path.m_unRotate * v;
+		//v = path.m_unRotate * v;
 		v = rotation * v;
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
@@ -639,6 +639,7 @@ m_orientation.m.uVec = v1 * r - v0 * s;
 // rotate right and up vector around forward vector
 m_orientation.m.rVec.Rotate (m_orientation.m.fVec, angle);
 m_orientation.m.uVec.Rotate (m_orientation.m.fVec, angle);
+m_orientation.Invert ();
 }
  
 //------------------------------------------------------------------------------
@@ -691,7 +692,7 @@ else if (length > MAX_TUNNEL_LENGTH)
 
 m_unRotate = m_base [0].m_orientation.Inverse ();
 CDoubleMatrix identity;
-m_startAngle = ZAngle (m_base [0].m_orientation, identity, 0.0);
+m_startAngle = 0.0; //ZAngle (m_base [0].m_orientation, identity, 0.0);
 m_deltaAngle = ZAngle (m_base [1].m_orientation, m_base [0].m_orientation, 0.0);
 
 // collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
