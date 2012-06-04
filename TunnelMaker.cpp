@@ -445,8 +445,9 @@ for (int i = 0; i <= m_nSteps; i++) {
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
 		v -= path.m_base [0].m_point;
-		//v = path.m_unRotate * v;
+		v = path.m_base [0].m_rotation * v;
 		v = rotation * v;
+		CDoubleVector a = rotation.Angles ();
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
 #ifdef _DEBUG
@@ -639,7 +640,7 @@ o.m.rVec = v0 * r + v1 * s;
 o.m.uVec = v1 * r - v0 * s;
 // rotate right and up vector around forward vector
 #if 1
-m_rotation = o * mOrigin.Inverse ();
+m_rotation = o.Inverse (); /** mOrigin.Inverse ()*/;
 #else
 CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
 m_rotation = o * zr;
@@ -778,16 +779,16 @@ for (int i = 0; i <= m_nSteps; i++)
 	m_nodes [i].m_vertex [0] = m_bezier.Compute ((double) i / (double) m_nSteps);
 CDoubleVector t = m_nodes [0].m_vertex [0];
 for (int i = 0; i <= m_nSteps; i++) 
-	m_nodes [i].m_vertex [1] = m_unRotate * (m_nodes [i].m_vertex [0] - t);
+	m_nodes [i].m_vertex [1] = /*m_unRotate **/ (m_nodes [i].m_vertex [0] - t);
 
 double l = Length ();
-m_nodes [0].m_rotation.Clear (); //  = m_base [0].m_rotation * m_unRotate; 
-m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation * m_unRotate; //.Inverse ();
+m_nodes [0].m_rotation = m_base [0].m_rotation.Inverse ();/* * m_unRotate*/; 
+m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation.Inverse ();/* * m_unRotate*/; 
 
-m_deltaAngle = m_nodes [m_nSteps].m_rotation.Angles ().v.y;
+m_deltaAngle = m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z;
 
 for (int i = 0; i <= m_nSteps; i++) 
-	m_nodes [i].CreateOrientation ((i == 0) ? m_unRotate * m_base [0].m_normal :  (i == m_nSteps) ? m_unRotate * m_base [1].m_normal : m_nodes [i + 1].m_vertex [1] - m_nodes [i - 1].m_vertex [1], m_nodes [0].m_rotation, m_deltaAngle * l / Length (i));
+	m_nodes [i].CreateOrientation ((i == 0) ? /*m_unRotate **/ m_base [0].m_normal : (i == m_nSteps) ? /*m_unRotate **/ m_base [1].m_normal : m_nodes [i + 1].m_vertex [0] - m_nodes [i - 1].m_vertex [0], m_nodes [0].m_rotation, m_deltaAngle * l / Length (i));
 return true;
 }
 
