@@ -633,9 +633,9 @@ if (m.m.fVec != CrossProduct (m.m.rVec, m.m.uVec))
 #endif
 #if 1
 angle -= m.Angles ().v.z - mOrigin.Angles ().v.z;
-while (angle <= -PI)
+while (angle < -PI)
 	angle += PI;
-while (angle >= PI)
+while (angle > PI)
 	angle -= PI;
 #else
 CVertex v1 = CrossProduct (m.m.fVec, v0);
