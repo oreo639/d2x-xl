@@ -445,7 +445,7 @@ for (int i = 0; i <= m_nSteps; i++) {
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
 		v -= path.m_base [0].m_point;
-		v = path.m_unRotate * v;
+		//v = path.m_unRotate * v;
 		v = rotation * v;
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
@@ -607,7 +607,6 @@ renderer.EndRender ();
 // Derive a rotation matrix from a source rotation matrix, a z rotation angle and a forward vector.
 // First construct arbitrary right and up vectors from the forward vector, then rotate up and right
 // around forward by the given angle.
-// Adaptation of code created by Achim Stremplat
 
 void CTunnelPathNode::CreateOrientation (CVertex fVec, CDoubleMatrix& mOrigin, double angle)
 {
@@ -640,7 +639,7 @@ o.m.rVec = v0 * r + v1 * s;
 o.m.uVec = v1 * r - v0 * s;
 // rotate right and up vector around forward vector
 #if 1
-m_orientation = o;
+m_orientation = o * mOrigin.Inverse ();
 #else
 CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
 m_orientation = o * zr;
