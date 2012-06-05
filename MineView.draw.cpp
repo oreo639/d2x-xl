@@ -1,4 +1,4 @@
-// dlcView.cpp: implementation of the CMineView class
+// MineView.Draw.cpp: Mine rendering
 //
 
 #include "stdafx.h"

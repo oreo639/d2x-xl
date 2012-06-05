@@ -355,8 +355,14 @@ for (int i = (int) m_nVertices.Length (); --i >= 0; )
 void CTunnelSegment::Draw (void)
 {
 CMineView* mineView = DLE.MineView ();
+if (mineView->GetRenderer ()) {
+	glLineStipple (1, 0x183f);  // dot dash
+	glEnable (GL_LINE_STIPPLE);
+	}
 for (int i = (int) m_elements.Length (); --i >= 0; ) 
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
+if (mineView->GetRenderer ()) 
+	glDisable (GL_LINE_STIPPLE);
 }
 
 //------------------------------------------------------------------------------
@@ -665,7 +671,7 @@ if (m.Handedness () != mOrigin.Handedness ())
 	m.m.rVec.Negate ();
 angle -= ClampAngle (m.Angles ().v.z - mOrigin.Angles ().v.z);
 // rotate right and up vector around forward vector
-CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
+CDoubleMatrix zr; // (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
 m_rotation = m.Mul (zr).Inverse ();
 }
  

@@ -327,6 +327,7 @@ public:
 
 	CRenderer& Renderer (void) { return *m_renderer; }
 	void SetRenderer (int nRenderer);
+	inline int GetRenderer (void) { return m_nRenderer; }
 	void SetPerspective (int nPerspective);
 
 	inline int Perspective (void) { return Renderer ().Perspective (); }
