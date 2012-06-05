@@ -292,12 +292,12 @@ bool CTunnelBase::Update (void)
 {
 	CSelection* selection;
 
-if (*((CSideKey*) this) == *((CSideKey*) current))
-	selection = current;
-else if (*((CSideKey*) this) == *((CSideKey*) other))
-	selection = other;
-else
+if (CSideKey (*this) == CSideKey (selections [m_nSelection]))
+	selection = &selections [m_nSelection];
+else {
+	*this = selections [m_nSelection];
 	return true;
+	}
 if (Edge () != selection->Edge ())
 	return true;
 for (int i = 0; i < 4; i++)
@@ -658,7 +658,7 @@ void CTunnelPathNode::CreateRotation (CVertex fVec, CDoubleMatrix& mOrigin, doub
 	
 m.m.fVec = fVec;
 m.m.fVec.Normalize ();
-m.m.rVec = CrossProduct (mOrigin.m.uVec, m.m.fVec);
+m.m.rVec = CrossProduct (CDoubleVector (0.0, 1.0, 0.0), m.m.fVec);
 double l = m.m.rVec.Mag (); 
 if (l >= 0.1) {
 	m.m.rVec /= l;
@@ -666,30 +666,27 @@ if (l >= 0.1) {
 	m.m.rVec = CrossProduct (m.m.uVec, m.m.fVec);
 	}
 else {
-	m.m.uVec = CrossProduct (mOrigin.m.rVec, m.m.fVec);
+	m.m.uVec = CrossProduct (CDoubleVector (1.0, 0.0, 0.0), m.m.fVec);
 	m.m.uVec.Normalize ();
 	m.m.rVec = CrossProduct (m.m.uVec, m.m.fVec);
 	m.m.uVec = CrossProduct (m.m.rVec, m.m.fVec);
 	}
 if (m.Handedness () != mOrigin.Handedness ())
 	m.m.rVec.Negate ();
-angle -= ClampAngle (m.Angles ().v.z - mOrigin.Angles ().v.z);
+angle = ClampAngle (angle - m.Angles ().v.z - mOrigin.Angles ().v.z);
 // rotate right and up vector around forward vector
 #if 1
+#	if 1
 CQuaternion q;
 q.FromAxisAngle (m.m.fVec, angle);
-#	if 1
 m.m.rVec = q * m.m.rVec;
 m.m.uVec = q * m.m.uVec;
 #	else
 m.m.rVec.Rotate (CDoubleVector (0.0, 0.0, 0.0), m.m.fVec, angle);
 m.m.uVec.Rotate (CDoubleVector (0.0, 0.0, 0.0), m.m.fVec, angle);
 #	endif
-m_rotation = m.Inverse ();
-#else
-CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
-m_rotation = m.Mul (zr).Inverse ();
 #endif
+m_rotation = m.Inverse ();
 }
  
 //------------------------------------------------------------------------------
