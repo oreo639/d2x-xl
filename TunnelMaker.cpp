@@ -678,11 +678,14 @@ angle -= ClampAngle (m.Angles ().v.z - mOrigin.Angles ().v.z);
 #if 1
 CQuaternion q;
 q.FromAxisAngle (m.m.fVec, angle);
+#	if 1
 m.m.rVec = q * m.m.rVec;
 m.m.uVec = q * m.m.uVec;
+#	else
+m.m.rVec.Rotate (CDoubleVector (0.0, 0.0, 0.0), m.m.fVec, angle);
+m.m.uVec.Rotate (CDoubleVector (0.0, 0.0, 0.0), m.m.fVec, angle);
+#	endif
 m_rotation = m.Inverse ();
-//m.m.rVec.Rotate (CDoubleVector (0.0, 0.0, 0.0), m.m.fVec, angle);
-//m.m.uVec.Rotate (CDoubleVector (0.0, 0.0, 0.0), m.m.fVec, angle);
 #else
 CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
 m_rotation = m.Mul (zr).Inverse ();
