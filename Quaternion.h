@@ -5,20 +5,23 @@
 #include "Vector.h"
 #include "Matrix.h"
 
-class CQuaternion {
+class CQuaternion : public CDoubleVector {
 	public:
-		double x, y, z, w;
+		double m_w;
 
-	CQuaternion () : x (0.0), y (0.0), z (0.0), w (0.0) {}
+	CQuaternion () : m_w (0.0) {}
 
-	CQuaternion (double x, double y, double z, double w) : x (x), y (y), z (z), w (w) {}
+	CQuaternion (double x, double y, double z, double w) : CDoubleVector (x, y, z), m_w (w) {}
+
+	CQuaternion (CDoubleVector v, double w) : CDoubleVector (v), m_w (w) {}
 
 	CQuaternion& operator= (CQuaternion other) {
-		x = other.x, y = other.y, z = other.z, w = other.w; 
+		v = other.v;
+		m_w = other.m_w;
 		return *this;
 		}
 
-	CQuaternion GetConjugate (void) { return CQuaternion (-x, -y, -z, w); };
+	CQuaternion GetConjugate (void) { return CQuaternion (-*this, m_w); };
 
 	void Normalize (void);
 

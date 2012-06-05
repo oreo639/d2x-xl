@@ -83,7 +83,7 @@ CDoubleVector::CDoubleVector (CFixVector _v) {
 //  Rotates a vertex around a center point perpendicular to direction vector.
 // -----------------------------------------------------------------------------
 
-void CDoubleVector::Rotate (CDoubleVector& origin, CDoubleVector& axis, double angle) 
+void CDoubleVector::Rotate (CDoubleVector origin, CDoubleVector axis, double angle) 
 {
 
   double				zSpin, ySpin, h;
