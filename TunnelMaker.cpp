@@ -675,6 +675,8 @@ else {
 	m.m.rVec = CrossProduct (m.m.uVec, m.m.fVec);
 	m.m.uVec = CrossProduct (m.m.rVec, m.m.fVec);
 	}
+m.m.rVec.Normalize ();
+m.m.uVec.Normalize ();
 if (m.Handedness () != mOrigin.Handedness ())
 	m.m.rVec.Negate ();
 // rotate right and up vector around forward vector
