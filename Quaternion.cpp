@@ -51,13 +51,7 @@ return CQuaternion (m_w * other.v.x + v.x * other.m_w + v.y * other.v.z - v.z * 
 // Multiplying a quaternion q with a vector v applies the q-rotation to v
 CDoubleVector CQuaternion::operator* (CDoubleVector v)
 {
-v.Normalize ();
- 
-CQuaternion q, result;
-dynamic_cast<CDoubleVector&>(*this) = v;
-q.m_w = 0.0;
- 
-return *this * (q * GetConjugate ());
+return *this * (CQuaternion (::Normalize (v), 0.0) * GetConjugate ());
 }
 
 // -----------------------------------------------------------------------------
