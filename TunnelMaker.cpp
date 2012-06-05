@@ -264,8 +264,11 @@ for (int i = 0; i < 4; i++)
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CTunnelBase::Setup (double sign)
+void CTunnelBase::Setup (int nSelection, double sign)
 {
+if (m_nSelection < 0)
+	m_nSelection = nSelection;
+*((CSideKey*) this) = selections [nSelection];
 m_sign = sign;
 CSegment* segP = segmentManager.Segment (m_nSegment);
 CSide* sideP = segP->Side (m_nSide);
@@ -658,43 +661,12 @@ else {
 	m.m.rVec = CrossProduct (m.m.uVec, m.m.fVec);
 	m.m.uVec = CrossProduct (m.m.rVec, m.m.fVec);
 	}
-#if 1
 if (m.Handedness () != mOrigin.Handedness ())
 	m.m.rVec.Negate ();
-#endif
-#if 1
 angle -= ClampAngle (m.Angles ().v.z - mOrigin.Angles ().v.z);
-#if 0
-while (angle < -PI)
-	angle += PI;
-while (angle > PI)
-	angle -= PI;
-#endif
-#else
-CVertex v1 = CrossProduct (m.m.fVec, v0);
-double a = Dot (v0, mOrigin.m.rVec) + Dot (v1, mOrigin.m.uVec); 
-double b = Dot (v1, mOrigin.m.rVec) - Dot (v0, mOrigin.m.uVec); 
-double q = sqrt (a * a + b * b); 
-double r, s;
-if (q >= 0.001) { 
-	r = a / q;  
-	s = b / q;  
-	}
-else {  
-	r = 1.0;  
-	s = 0.0;  
-	}
-m.m.rVec = v0 * r + v1 * s;
-m.m.uVec = v1 * r - v0 * s;
-#endif
 // rotate right and up vector around forward vector
-#if 1
 CDoubleMatrix zr (cos (angle), -sin (angle), 0.0, sin (angle), cos (angle), 0.0, 0.0, 0.0, 1.0);
-#endif
 m_rotation = m.Mul (zr).Inverse ();
-//m_rotation.m.rVec.Rotate (m_rotation.m.fVec, angle);
-//m_rotation.m.uVec.Rotate (m_rotation.m.fVec, angle);
-//m_rotation = m_rotation.Inverse ();
 }
  
 //------------------------------------------------------------------------------
@@ -838,7 +810,7 @@ while (m_deltaAngle > PI * 1.5)
 #endif
 for (int i = 1; i <= m_nSteps; i++) 
 	m_nodes [i].CreateRotation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, 
-											 m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
+										 m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
 return true;
 }
 
@@ -982,10 +954,8 @@ DLE.MineView ()->Refresh ();
 
 bool CTunnelMaker::Setup (void)
 {
-dynamic_cast<CSideKey&> (m_base [0]) = dynamic_cast<CSideKey&> (*current);
-dynamic_cast<CSideKey&> (m_base [1]) = dynamic_cast<CSideKey&> (*other);
-m_base [0].Setup (-1.0);
-m_base [1].Setup (1.0);
+m_base [0].Setup (current != &selections [0], -1.0);
+m_base [1].Setup (current == &selections [0], 1.0);
 m_nGranularity = 0;
 
 if (m_path.Setup (m_base)) {

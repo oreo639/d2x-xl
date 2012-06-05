@@ -49,6 +49,7 @@ class CCubicBezier {
 
 class CTunnelBase : public CSelection {
 	public:
+		int				m_nSelection;
 		CVertex			m_point;
 		CVertex			m_normal;
 		CVertex			m_vertices [4];
@@ -56,11 +57,11 @@ class CTunnelBase : public CSelection {
 		CDoubleMatrix	m_rotation; // orientation of tunnel end side
 		double			m_sign;
 
-		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSelection (key) {}
+		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSelection (key), m_nSelection (-1) {}
 
-		CTunnelBase (CDoubleVector point, CDoubleVector normal) : m_point (point), m_normal (normal), CSelection (CSideKey (-1, -1)) {}
+		CTunnelBase (CDoubleVector point, CDoubleVector normal) : m_nSelection (-1), m_point (point), m_normal (normal), CSelection (CSideKey (-1, -1)) {}
 
-		void Setup (double sign);
+		void Setup (int nSelection, double sign);
 
 		bool Update (void);
 
