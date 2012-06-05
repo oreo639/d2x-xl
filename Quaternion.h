@@ -21,9 +21,11 @@ class CQuaternion : public CDoubleVector {
 		return *this;
 		}
 
+	inline double Angle (void) { return m_w; }
+
 	CQuaternion GetConjugate (void) { return CQuaternion (-*this, m_w); };
 
-	void Normalize (void);
+	CQuaternion& Normalize (void);
 
 	CQuaternion CQuaternion::operator* (CQuaternion other);
 
