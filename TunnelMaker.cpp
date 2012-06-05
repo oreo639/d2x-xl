@@ -57,9 +57,9 @@ char szTunnelMakerError [] = "You must exit tunnel creation before performing th
 
 inline double ClampAngle (double angle)
 {
-while (angle < -2.0 * PI)
+while (angle < -PI)
 	angle += 2.0 * PI;
-while (angle > 2.0 * PI)
+while (angle > PI)
 	angle -= 2.0 * PI;
 return angle;
 }
