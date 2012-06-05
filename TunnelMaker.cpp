@@ -686,9 +686,8 @@ double a1 = m.Angles ().v.z;
 if (bRotate) 
 #endif
 	{
-	angle = ClampAngle (angle - (m.Angles ().v.z - mOrigin.Angles ().v.z));
 	CQuaternion q;
-	q.FromAxisAngle (m.m.fVec, angle);
+	q.FromAxisAngle (m.m.fVec, ClampAngle (angle + mOrigin.Angles ().v.z - m.Angles ().v.z));
 	m.m.rVec = q * m.m.rVec;
 	m.m.uVec = q * m.m.uVec;
 	}
@@ -834,7 +833,7 @@ while (m_deltaAngle < -PI * 1.5)
 while (m_deltaAngle > PI * 1.5)
 	m_deltaAngle -= PI * 0.5;
 #endif
-for (int i = 1; i < m_nSteps; i++) 
+for (int i = 1; i <= m_nSteps; i++) 
 	m_nodes [i].CreateRotation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, 
 										 m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
 return true;
