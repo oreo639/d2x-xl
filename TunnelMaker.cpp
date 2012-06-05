@@ -57,9 +57,9 @@ char szTunnelMakerError [] = "You must exit tunnel creation before performing th
 
 inline double ClampAngle (double angle)
 {
-while (angle < -PI)
+while (angle < -2.0 * PI)
 	angle += 2.0 * PI;
-while (angle > PI)
+while (angle > 2.0 * PI)
 	angle -= 2.0 * PI;
 return angle;
 }
@@ -659,7 +659,7 @@ else {
 	m.m.uVec = CrossProduct (m.m.rVec, m.m.fVec);
 	}
 #if 1
-if (m.m.fVec != CrossProduct (m.m.rVec, m.m.uVec))
+if (m.Handedness () != mOrigin.Handedness ())
 	m.m.rVec.Negate ();
 #endif
 #if 1

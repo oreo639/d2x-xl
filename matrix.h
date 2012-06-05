@@ -155,6 +155,8 @@ public:
 		}
 
 	inline CDoubleVector& CDoubleMatrix::operator[] (const size_t i) { return ((CDoubleVector*) &m) [i]; }
+
+	inline int Handedness (void) { return m.fVec == CrossProduct (m.rVec, m.uVec); } // 0: left handed, 1: right handed
 	
 	const double Det (void);
 	const CDoubleMatrix Inverse (void);
