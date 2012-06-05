@@ -652,6 +652,10 @@ renderer.EndRender ();
 // First construct arbitrary right and up vectors from the forward vector, then rotate up and right
 // around forward by the given angle.
 
+#ifdef _DEBUG
+static bool bRotate = true;
+#endif
+
 void CTunnelPathNode::CreateRotation (CVertex fVec, CDoubleMatrix& mOrigin, double angle)
 {
 	CDoubleMatrix	m;
@@ -673,19 +677,19 @@ else {
 	}
 if (m.Handedness () != mOrigin.Handedness ())
 	m.m.rVec.Negate ();
-angle = ClampAngle (angle - m.Angles ().v.z - mOrigin.Angles ().v.z);
 // rotate right and up vector around forward vector
-#if 1
-#	if 1
-CQuaternion q;
-q.FromAxisAngle (m.m.fVec, angle);
-m.m.rVec = q * m.m.rVec;
-m.m.uVec = q * m.m.uVec;
-#	else
-m.m.rVec.Rotate (CDoubleVector (0.0, 0.0, 0.0), m.m.fVec, angle);
-m.m.uVec.Rotate (CDoubleVector (0.0, 0.0, 0.0), m.m.fVec, angle);
-#	endif
+#ifdef _DEBUG
+double a0 = mOrigin.Angles ().v.z;
+double a1 = m.Angles ().v.z;
+if (bRotate) 
 #endif
+	{
+	angle = ClampAngle (angle - (m.Angles ().v.z - mOrigin.Angles ().v.z));
+	CQuaternion q;
+	q.FromAxisAngle (m.m.fVec, angle);
+	m.m.rVec = q * m.m.rVec;
+	m.m.uVec = q * m.m.uVec;
+	}
 m_rotation = m.Inverse ();
 }
  
@@ -828,7 +832,7 @@ while (m_deltaAngle < -PI * 1.5)
 while (m_deltaAngle > PI * 1.5)
 	m_deltaAngle -= PI * 0.5;
 #endif
-for (int i = 1; i <= m_nSteps; i++) 
+for (int i = 1; i < m_nSteps; i++) 
 	m_nodes [i].CreateRotation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, 
 										 m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
 return true;
