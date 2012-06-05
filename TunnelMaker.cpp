@@ -354,15 +354,19 @@ for (int i = (int) m_nVertices.Length (); --i >= 0; )
 
 void CTunnelSegment::Draw (void)
 {
+#ifdef _DEBUG
 CMineView* mineView = DLE.MineView ();
 if (mineView->GetRenderer ()) {
-	glLineStipple (1, 0x183f);  // dot dash
+	glLineStipple (1, 0x0c3f);  // dot dash
 	glEnable (GL_LINE_STIPPLE);
 	}
+#endif
 for (int i = (int) m_elements.Length (); --i >= 0; ) 
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
+#ifdef _DEBUG
 if (mineView->GetRenderer ()) 
 	glDisable (GL_LINE_STIPPLE);
+#endif
 }
 
 //------------------------------------------------------------------------------
