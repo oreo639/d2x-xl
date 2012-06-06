@@ -832,6 +832,7 @@ else {
 	m_info.childFlags = 0;
 	m_info.wallFlags = 0;
 	m_info.flags = 0;
+	m_info.bTunnel = 0;
 	for (int i = 0; i < 8; i++)
 		m_info.vertexIds [i] = i;
 	m_nShape = SIDE_SHAPE_RECTANGLE;

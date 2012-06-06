@@ -482,15 +482,14 @@ if (bFull) {
 	ushort j = 0;
 	for (iter.Begin (); *iter != iter.End (); iter++)
 		m_nStartVertices [j++] = **iter;
+	// setup intermediate points for a cubic bezier curve
+	m_bezier.SetLength (length, 0);
+	m_bezier.SetLength (length, 1);
+	m_bezier.SetPoint (m_base [0].GetPoint (), 0);
+	m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
+	m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
+	m_bezier.SetPoint (m_base [1].GetPoint (), 3);
 	}
-
-// setup intermediate points for a cubic bezier curve
-m_bezier.SetLength (length, 0);
-m_bezier.SetLength (length, 1);
-m_bezier.SetPoint (m_base [0].GetPoint (), 0);
-m_bezier.SetPoint (m_base [0].GetPoint () + m_base [0].GetNormal () * m_bezier.GetLength (0), 1);
-m_bezier.SetPoint (m_base [1].GetPoint () + m_base [1].GetNormal () * m_bezier.GetLength (1), 2);
-m_bezier.SetPoint (m_base [1].GetPoint (), 3);
 return true;
 }
 
