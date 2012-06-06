@@ -63,7 +63,7 @@ class CTunnelBase : public CSelection {
 
 		void Setup (int nSelection, double sign);
 
-		bool Update (void);
+		int Update (void);
 
 		inline CDoubleVector GetPoint (void) { return m_point; }
 
@@ -126,7 +126,7 @@ class CTunnelPath {
 
 		CTunnelPath () : m_nSteps (0) {}
 
-		bool Setup (CTunnelBase base [2]);
+		bool Setup (CTunnelBase base [2], bool bFull);
 
 		void Destroy (void);
 
@@ -235,7 +235,7 @@ class CTunnelMaker {
 
 		void Destroy (void);
 
-		bool Setup (void);
+		bool Setup (bool bFull);
 		
 		bool Active (bool bMsg = true) { 
 			if (!m_bActive)

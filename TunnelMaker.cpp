@@ -288,24 +288,22 @@ m_rotation.m.uVec.Normalize ();
 
 //------------------------------------------------------------------------------
 
-bool CTunnelBase::Update (void)
+int CTunnelBase::Update (void)
 {
 	CSelection* selection;
 
-if (CSideKey (*this) == CSideKey (*current))
-	selection = current;
-else if (CSideKey (*this) == CSideKey (*other))
-	selection = other;
+if (CSideKey (*this) == CSideKey (selections [m_nSelection]))
+	selection = &selections [m_nSelection];
 else {
 	*this = selections [m_nSelection];
-	return true;
+	return -1;
 	}
 if (Edge () != selection->Edge ())
-	return true;
+	return 1;
 for (int i = 0; i < 4; i++)
 	if (m_vertices [i] != *selection->Vertex (i))
-		return true;
-return false;
+		return 1;
+return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -732,9 +730,10 @@ renderer.EndRender ();
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-bool CTunnelPath::Setup (CTunnelBase base [2])
+bool CTunnelPath::Setup (CTunnelBase base [2], bool bFull)
 {
 memcpy (m_base, base, sizeof (m_base));
+
 double length = Distance (m_base [0].m_point, m_base [1].m_point);
 if (length < 50.0)
 	return false;
@@ -744,50 +743,52 @@ if (length < MIN_TUNNEL_LENGTH)
 else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
-CDoubleMatrix identity;
+if (bFull) {
+	CDoubleMatrix identity;
 
-// collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
-CTagTunnelStart tagger;
-bool bTagged = current->Side ()->IsTagged ();
-if (!bTagged)
-	current->Side ()->Tag ();
-int nSides = tagger.Setup (segmentManager.TaggedSideCount (), TUNNEL_MASK);
-tagger.Run ();
-if (!bTagged)
-	current->Side ()->UnTag ();
+	// collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
+	CTagTunnelStart tagger;
+	bool bTagged = current->Side ()->IsTagged ();
+	if (!bTagged)
+		current->Side ()->Tag ();
+	int nSides = tagger.Setup (segmentManager.TaggedSideCount (), TUNNEL_MASK);
+	tagger.Run ();
+	if (!bTagged)
+		current->Side ()->UnTag ();
 
-// copy the collected sides to an array
-// gather all vertices of the start sides
-// create indices into the start vertex array for every start side's corner
-if (!(m_startSides.Create (nSides)))
-	return false;
+	// copy the collected sides to an array
+	// gather all vertices of the start sides
+	// create indices into the start vertex array for every start side's corner
+	if (!(m_startSides.Create (nSides)))
+		return false;
 
-CSLL<ushort,ushort>	startVertices;
+	CSLL<ushort,ushort>	startVertices;
 
-for (int nStartSide = 0; nStartSide < nSides; nStartSide++) {
-	m_startSides [nStartSide] = tagger.m_sideList [nStartSide].m_child;
-	short nSide = m_startSides [nStartSide].m_nSide;
-	CSegment* segP = segmentManager.Segment (m_startSides [nStartSide]);
-	for (int nVertex = 0, nVertexCount = segP->Side (nSide)->VertexCount (); nVertex < nVertexCount; nVertex++) {
-		ushort nId = segP->VertexId (nSide, nVertex);
-		int nIndex = startVertices.Index (nId);
-		if (nIndex < 0) {
-			if (!startVertices.Append (nId))
-				return false; // out of memory
-			nIndex = startVertices.Length () - 1;
+	for (int nStartSide = 0; nStartSide < nSides; nStartSide++) {
+		m_startSides [nStartSide] = tagger.m_sideList [nStartSide].m_child;
+		short nSide = m_startSides [nStartSide].m_nSide;
+		CSegment* segP = segmentManager.Segment (m_startSides [nStartSide]);
+		for (int nVertex = 0, nVertexCount = segP->Side (nSide)->VertexCount (); nVertex < nVertexCount; nVertex++) {
+			ushort nId = segP->VertexId (nSide, nVertex);
+			int nIndex = startVertices.Index (nId);
+			if (nIndex < 0) {
+				if (!startVertices.Append (nId))
+					return false; // out of memory
+				nIndex = startVertices.Length () - 1;
+				}
+			m_startSides [nStartSide].m_nVertexIndex [nVertex] = nIndex;
 			}
-		m_startSides [nStartSide].m_nVertexIndex [nVertex] = nIndex;
 		}
+
+	if (!(m_nStartVertices.Create (startVertices.Length ())))
+		return false;
+
+	// copy the start vertices to an array
+	CSLLIterator<ushort, ushort> iter (startVertices);
+	ushort j = 0;
+	for (iter.Begin (); *iter != iter.End (); iter++)
+		m_nStartVertices [j++] = **iter;
 	}
-
-if (!(m_nStartVertices.Create (startVertices.Length ())))
-	return false;
-
-// copy the start vertices to an array
-CSLLIterator<ushort, ushort> iter (startVertices);
-ushort j = 0;
-for (iter.Begin (); *iter != iter.End (); iter++)
-	m_nStartVertices [j++] = **iter;
 
 // setup intermediate points for a cubic bezier curve
 m_bezier.SetLength (length, 0);
@@ -1006,7 +1007,7 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------------
 
-bool CTunnelMaker::Setup (void)
+bool CTunnelMaker::Setup (bool bFull)
 {
 m_base [0].Setup (current != &selections [0], -1.0);
 m_base [1].Setup (current == &selections [0], 1.0);
