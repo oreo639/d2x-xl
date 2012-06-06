@@ -444,7 +444,7 @@ CDoubleVector CDoubleMatrix::Angles (void)
 
 a.v.y = -asin (m.rVec.v.z);
 double cosY = cos (a.v.y);
-if (fabs (cosY) > 1e-10) { // gimbal lock?
+if (fabs (cosY) > 1e-6) { // gimbal lock?
 	a.v.x = atan2 (-m.uVec.v.z / cosY, m.fVec.v.z / cosY);
 	a.v.z = atan2 (-m.rVec.v.y / cosY, m.rVec.v.x / cosY);
 	}
