@@ -67,136 +67,6 @@ return angle;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// SpinPoint () - spin on y-axis then z-axis
-//------------------------------------------------------------------------------
-
-void CTunnel::SpinPoint (CVertex* point, double ySpin, double zSpin) 
-{
-double tx = point->v.x * cos (ySpin) - point->v.z * sin (ySpin);
-double ty = point->v.y;
-double tz = point->v.x * sin (ySpin) + point->v.z * cos (ySpin);
-point->Set (tx * cos (zSpin) + ty * sin (zSpin), ty * cos (zSpin) - tx * sin (zSpin), tz);
-}
-
-//------------------------------------------------------------------------------
-// SpinBackPoint () - spin on z-axis then y-axis
-//------------------------------------------------------------------------------
-
-void CTunnel::SpinBackPoint (CVertex* point, double ySpin, double zSpin) 
-{
-double tx = point->v.x * cos (-zSpin) + point->v.y * sin (-zSpin);
-double ty = -point->v.x * sin (-zSpin) + point->v.y * cos (-zSpin);
-double tz = point->v.z;
-point->Set (tx * cos (-ySpin) - tz * sin (-ySpin), ty, tx * sin (-ySpin) + tz * cos (-ySpin));
-}
-
-//------------------------------------------------------------------------------
-// MatchingSide ()
-//
-// Action - Returns matching side depending on the current m_bezierPoints
-//------------------------------------------------------------------------------
-
-int CTunnel::MatchingSide (int j) 
-{
-  static int ret [4][4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
-  int offset;
-
-offset = (4 + selections [0].Point () - selections [1].Point ()) % 4;
-return ret [offset][j];
-}
-
-//------------------------------------------------------------------------------
-
-void CTunnel::PolarPoints (double* angle, double* radius, CVertex* vertex, CVertex* origin, CVertex* normal) 
-{
-// translate coordinates to origin
-#if 0
-double vx = vertex->v.x - origin->v.x;
-double vy = vertex->v.y - origin->v.y;
-double vz = vertex->v.z - origin->v.z;
-double nx = normal->v.x - origin->v.x;
-double ny = normal->v.y - origin->v.y;
-double nz = normal->v.z - origin->v.z;
-#endif
-CDoubleVector v = *vertex - *origin;
-CDoubleVector n = *normal - *origin;
-// calculate angles to normalize direction
-// spin on z axis to get into the x-z plane
-double zSpin = atan3 (n.v.y, n.v.x);
-double zSpinSin = sin (zSpin);
-double zSpinCos = cos (zSpin);
-double x1 = n.v.x * zSpinCos + n.v.y * zSpinSin;
-double z1 = n.v.z;
-// spin on y to get on the x axis
-double ySpin = -atan3 (z1, x1);
-// spin vertex (spin on z then y)
-x1 = v.v.x * zSpinCos + v.v.y * zSpinSin;
-double y1 = -v.v.x * zSpinSin + v.v.y * zSpinCos;
-z1 = v.v.z;
-double y2 = y1;
-double z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
-// convert to polar
-*radius = sqrt (y2 * y2 + z2 * z2);  // ignore any x offset
-*angle = atan3 (z2, y2);
-}
-
-//------------------------------------------------------------------------------
-// Action - Spins m_bezierPoints which lie in the y-z plane orthagonal to a normal
-//          Uses normal as center for translating m_bezierPoints.
-//
-// Changes - Chooses axis to normalizes on m_based on "normal" direction
-//------------------------------------------------------------------------------
-
-CDoubleVector CTunnel::RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
-{
-  double			ySpin, zSpin;
-  char			spinAxis;
-  CVertex		v, n = *normal - *origin, v1, v2;
-
-  // translate coordanites to orgin
-  // choose rotation order
-if (fabs(n.v.z) > fabs(n.v.y))
-	spinAxis = 'Y';
-else 
-	spinAxis = 'Z';
-spinAxis = 'Y';
-
-// start by defining vertex in rectangular coordinates (xz plane)
-v.Set (0, radius * cos (angle), radius * sin (angle));
-
-switch(spinAxis) {
- case 'Y':
-   // calculate angles to normalize direction
-   // spin on y axis to get into the y-z plane
-   ySpin = -atan3 (n.v.z, n.v.x);
-   v1.Set (n.v.x * cos (ySpin) - n.v.z * sin (ySpin), n.v.y, n.v.x * sin (ySpin) + n.v.z * cos (ySpin));
-   // spin on z to get on the x axis
-   zSpin = atan3 (v1.v.y,v1.v.x);
-   // spin vertex back in negative direction (z first then y)
-	zSpin = -zSpin;
-   v2.Set ((double) v.v.x * cos (zSpin) + (double) v.v.y * sin (zSpin), (double) -v.v.x * sin (zSpin) + (double) v.v.y * cos (zSpin), double (v.v.z));
-	ySpin = -ySpin;
-   v1.Set (v2.v.x * cos (ySpin) - v2.v.z * sin (ySpin), v2.v.y, v2.v.x * sin (ySpin) + v2.v.z * cos (ySpin));
-   break;
-
- case 'Z':
-   // calculate angles to normalize direction
-   // spin on z axis to get into the x-z plane
-   zSpin = atan3 (n.v.y, n.v.x);
-   v1.Set (n.v.x * cos (zSpin) + n.v.y * sin (zSpin), -n.v.x * sin (zSpin) + n.v.y * cos (zSpin), n.v.z);
-   // spin on y to get on the x axis
-   ySpin = -atan3 (v1.v.z,v1.v.x);
-   // spin vertex back in negative direction (y first then z)
-	ySpin = -ySpin;
-   v2.Set ((double) v.v.x * cos (ySpin) - (double) v.v.z * sin (ySpin), double (v.v.y), (double) v.v.x * sin (ySpin) + (double) v.v.z * cos (ySpin));
-	zSpin = -zSpin;
-   v1.Set (v2.v.x * cos (zSpin) + v2.v.y * sin (zSpin), -v2.v.x * sin (zSpin) + v2.v.y * cos (zSpin), v2.v.z);
-   break;
-	}
-v = *normal + v1;
-return v;
-}
-
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -399,36 +269,6 @@ m_segments.Destroy ();
 }
 
 //------------------------------------------------------------------------------
-
-void CTunnel::UntwistSegment (short nSegment, short nSide) 
-{
-  double		minLen = 1e10;
-  short		verts [4];
-  short		nOppSide = oppSideTable [nSide];
-  ubyte		oppVertexIndex [4];
-
-CSegment* segP = segmentManager.Segment (nSegment);
-segP->CreateOppVertexIndex (nSide, oppVertexIndex);
-// calculate length from point 0 to opp_points
-CVertex* vert0 = segP->Vertex (nSide, 0);
-short index = 0;
-for (short j = 0; j < 4; j++) {
-	double len = Distance (*vert0, *segP->Vertex (nOppSide, oppVertexIndex [j]));
-	if (len < minLen) {
-		minLen = len;
-		index = j;
-		}
-	}
-// swap verts if index != 0
-if (index != 0) {
-	for (short j = 0; j < 4; j++)
-		verts [j] = segP->VertexId (oppVertexIndex [(j + index) % 4]);
-	for (short j = 0; j < 4; j++)
-		segP->SetVertexId (oppVertexIndex [j], verts [j]);
-	}
-}
-
-//------------------------------------------------------------------------------
 // define segment vert numbers
 
 void CTunnel::SetupVertices (void)
@@ -440,22 +280,8 @@ for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElemen
 		e1 = &m_segments [nSegment].m_elements [nElement];
 		CSegment* segP = segmentManager.Segment (e1->m_nSegment);
 		for (short nVertex = 0; nVertex < 4; nVertex++) {
-#if 0
-			if (nSegment == 0) { // 1st segment
-				segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
-				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], m_base [0].Segment ()->VertexId (m_base [0].m_nSide, nElement));
-				}
-			else if (nSegment == m_nSteps - 1) { // last segment
-				segP->SetVertexId (m_base [0].m_nSide, nVertex, m_base [1].Segment ()->VertexId (m_base [1].m_nSide, m_base [1].m_oppVertexIndex [nVertex])); 
-				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
-				}
-			else 
-#endif
-				{
-				segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
-				segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
-				//UntwistSegment (e1->m_nSegment, m_base [0].m_nSide);
-				}
+			segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
+			segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
 			}
 		}
 	}
@@ -480,8 +306,6 @@ if (m_nSteps != path.Steps ()) { // recompute
 		}
 	}
 
-#if 1
-
 for (int i = 0; i <= m_nSteps; i++) {
 	CDoubleMatrix& rotation = path [i].m_rotation;
 	CDoubleVector& translation = path [i].m_vertex;
@@ -499,92 +323,6 @@ for (int i = 0; i <= m_nSteps; i++) {
 		}
 	}
 
-#else
-
-CVertex relSidePoints [2][4]; // side points relative to center of side 1
-CVertex relBezierPoints [4]; // 4 points of segment relative to 1st point
-CDoubleVector t = path.Bezier ().GetPoint (0); // translation
-
-for (i = 0; i < 2; i++) {
-	segP = segmentManager.Segment (m_base [i]);
-	for (j = 0; j < 4; j++) {
-		relSidePoints [i][j] = *segP->Vertex (m_base [i].m_nSide, j) - t;
-		}
-	}
-
-double	theta [2][4], radius [2][4]; // polor coordinates of sides
-double	deltaAngle [4];
-double	y, z;
-double	ySpin, zSpin;
-
-// make all points relative to first face (translation)
-for (i = 0; i < 4; i++) 
-	relBezierPoints [i] = path.Bezier ().GetPoint (i) - path.Bezier ().GetPoint (0);
-
-// determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
-ySpin = -atan3 (relBezierPoints [1].v.z, relBezierPoints [1].v.x); // to y-z plane
-zSpin = atan3 (relBezierPoints [1].v.y, relBezierPoints [1].v.x * cos (ySpin) - relBezierPoints [1].v.z * sin (ySpin)); // to x axis
-
-// spin all m_bezierPoints relative to first face (rotation)
-for (i = 0; i < 4; i++) {
-	SpinPoint (relBezierPoints + i, ySpin, zSpin);
-	for (j = 0; j < 2; j++) 
-		SpinPoint (relSidePoints [j] + i, ySpin, zSpin);
-	}
-
-for (i = 0; i < m_nSteps; i++) 
-	SpinPoint (&path [i], ySpin, zSpin);
-
-// determine polar coordinates of the 1st side (simply y,z coords)
-for (i = 0; i < 4; i++) {
-	theta [0][i] = atan3 (relSidePoints [0][i].v.z, relSidePoints [0][i].v.y);
-	y = relSidePoints [0][i].v.y;
-	z = relSidePoints [0][i].v.z;
-	radius [0][i] =_hypot (y, z);
-	}
-
-// determine polar coordinates of the 2nd side by rotating to x-axis first
-for (i = 0; i < 4; i++) {
-	// flip orthogonal vector to point into segment
-	vertex = (relBezierPoints [3] * 2) - relBezierPoints [2];
-	PolarPoints (&theta [1][i], &radius [1][i], &relSidePoints [1][i], &relBezierPoints [3], &vertex);
-	}
-
-// figure out the angle differences to be in range (-pi to pi)
-for (j = 0; j < 4; j++) {
-	deltaAngle [j] = theta [1][MatchingSide (j)] - theta [0][j];
-	if (deltaAngle [j] < M_PI) 
-		deltaAngle [j] += 2 * M_PI;
-	if (deltaAngle [j] > M_PI) 
-		deltaAngle [j] -= 2 * M_PI;
-	}
-
-// make sure delta angles do not cross PI & -PI
-for (i = 1; i < 4; i++) {
-	if (deltaAngle [i] > deltaAngle [0] + M_PI) 
-		deltaAngle [i] -= 2 * M_PI;
-	if (deltaAngle [i] < deltaAngle [0] - M_PI) 
-		deltaAngle [i] += 2 * M_PI;
-	}
-
-// calculate segment vertices as weighted average between the two sides
-// then spin vertices in the direction of the segment vector
-ushort nVertex = 0;
-for (i = 0; i < m_nSteps - 1; i++) {
-	for (j = 0; j < 4; j++) {
-		CVertex* vertP = vertexManager.Vertex (m_segments [i].m_nVertices [j]);
-		double h = (double) i / (double) m_nSteps;
-		double angle  = h * deltaAngle [j] + theta [0][j];
-		double length = h * radius [1][MatchingSide (j)] + (((double) m_nSteps - (double) i) / (double) m_nSteps) * radius [0][j];
-		*vertP = RectPoints (angle, length, &path [i], &path [i + 1]);
-		// spin vertices
-		SpinBackPoint (vertP, ySpin, zSpin);
-		// translate point back
-		*vertP += path.Bezier ().GetPoint (0);
-		}
-	}
-
-#endif
 SetupVertices ();
 return true;
 }
@@ -648,53 +386,6 @@ renderer.EndRender ();
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// Derive a rotation matrix from a source rotation matrix, a z rotation angle and a forward vector.
-// First construct arbitrary right and up vectors from the forward vector, then rotate up and right
-// around forward by the given angle.
-
-#ifdef _DEBUG
-static bool bRotate = true;
-#endif
-
-void CTunnelPathNode::CreateRotation (CVertex fVec, CDoubleMatrix& mOrigin, double angle)
-{
-	CDoubleMatrix	m;
-	
-m.m.fVec = fVec;
-m.m.fVec.Normalize ();
-m.m.rVec = CrossProduct (CDoubleVector (0.0, 1.0, 0.0), m.m.fVec);
-double l = m.m.rVec.Mag (); 
-if (l >= 0.1) {
-	m.m.rVec /= l;
-	m.m.uVec = CrossProduct (m.m.rVec, m.m.fVec);
-	m.m.rVec = CrossProduct (m.m.uVec, m.m.fVec);
-	}
-else {
-	m.m.uVec = CrossProduct (CDoubleVector (1.0, 0.0, 0.0), m.m.fVec);
-	m.m.uVec.Normalize ();
-	m.m.rVec = CrossProduct (m.m.uVec, m.m.fVec);
-	m.m.uVec = CrossProduct (m.m.rVec, m.m.fVec);
-	}
-m.m.rVec.Normalize ();
-m.m.uVec.Normalize ();
-if (m.Handedness () != mOrigin.Handedness ())
-	m.m.rVec.Negate ();
-// rotate right and up vector around forward vector
-#ifdef _DEBUG
-double a0 = mOrigin.Angles ().v.z;
-double a1 = m.Angles ().v.z;
-if (bRotate) 
-#endif
-	{
-	CQuaternion q;
-	q.FromAxisAngle (m.m.fVec, ClampAngle (angle + mOrigin.Angles ().v.z - m.Angles ().v.z));
-	m.m.rVec = q * m.m.rVec;
-	m.m.uVec = q * m.m.uVec;
-	}
-m_rotation = m.Inverse ();
-}
- 
-//------------------------------------------------------------------------------
 
 void CTunnelPathNode::Draw (CRenderer& renderer, CViewMatrix* viewMatrix) 
 {
@@ -737,7 +428,7 @@ bool CTunnelPath::Setup (CTunnelBase base [2], bool bFull)
 memcpy (m_base, base, sizeof (m_base));
 
 double length = Distance (m_base [0].m_point, m_base [1].m_point);
-if (length < 50.0)
+if (length < 40.0)
 	return false;
 length *= 0.5;
 if (length < MIN_TUNNEL_LENGTH)
@@ -837,10 +528,6 @@ m_deltaAngle = ClampAngle (m_base [1].m_rotation.Angles ().v.z - m_base [0].m_ro
 // Then rotate the r and u vectors around the z axis by the z angle difference
 CTunnelPathNode * n0, * n1 = &m_nodes [0];
 for (int i = 1; i <= m_nSteps; i++) {
-#if 0
-	m_nodes [i].CreateRotation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, 
-										 m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
-#else
 	n0 = n1;
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
@@ -864,7 +551,6 @@ for (int i = 1; i <= m_nSteps; i++) {
 		n1->m_rotation.m.rVec.Negate ();
 		n1->m_rotation.m.uVec.Negate ();
 		}
-#endif
 	}
 for (int i = 0; i <= m_nSteps; i++) 
 	m_nodes [i].m_rotation = m_nodes [i].m_rotation.Inverse ();
@@ -1019,7 +705,7 @@ if (m_path.Setup (m_base, bFull)) {
 	m_tunnel.Setup (m_base);
 	return true;
 	}
-ErrorMsg ("End points of segment are too close.\n\n"
+ErrorMsg ("End points of segments are too close.\n\n"
 				"Hint: Select two sides which are further apart\n"
 				"using the spacebar and left/right arrow keys,\n"
 				"then try again.");
