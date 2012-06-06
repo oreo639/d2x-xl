@@ -76,6 +76,9 @@ class CTunnelBase : public CSelection {
 		inline CSegment* Segment (void) { return (m_nSegment < 0) ? null : segmentManager.Segment (m_nSegment); }
 
 		inline CSide* Side (void) { return (m_nSide < 0) ? null : segmentManager.Side (m_nSide); }
+
+	private:
+		int Update (void);
 	};
 
 //------------------------------------------------------------------------

@@ -288,6 +288,14 @@ m_rotation.m.uVec.Normalize ();
 
 //------------------------------------------------------------------------------
 
+int CTunnelBase::Update (void)
+{
+*((CSelection*) this) = selections [m_nSelection];
+return 1;
+}
+
+//------------------------------------------------------------------------------
+
 int CTunnelBase::Update (bool bUpdateSegment)
 {
 	CSelection* selection;
@@ -296,14 +304,14 @@ if (CSideKey (*this) == CSideKey (selections [m_nSelection]))
 	selection = &selections [m_nSelection];
 else {
 	if (bUpdateSegment)
-		*this = selections [m_nSelection];
+		Update ();
 	return -1;
 	}
 if (Edge () != selection->Edge ())
-	return 1;
+	return Update ();
 for (int i = 0; i < 4; i++)
 	if (m_vertices [i] != *selection->Vertex (i))
-		return 1;
+		return Update ();
 return 0;
 }
 
