@@ -256,7 +256,7 @@ m_nSteps = 0;
 void CTunnel::Release (void)
 {
 if (m_segments.Buffer ())
-	for (int i = m_nSteps; i >= 0; i++)
+	for (int i = m_nSteps; i >= 0; i--)
 		m_segments [i].Release ();
 }
 
