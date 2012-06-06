@@ -63,7 +63,7 @@ class CTunnelBase : public CSelection {
 
 		void Setup (int nSelection, double sign);
 
-		int Update (bool bUpdateSegment);
+		bool Update (bool bStart);
 
 		inline CDoubleVector GetPoint (void) { return m_point; }
 
@@ -76,9 +76,6 @@ class CTunnelBase : public CSelection {
 		inline CSegment* Segment (void) { return (m_nSegment < 0) ? null : segmentManager.Segment (m_nSegment); }
 
 		inline CSide* Side (void) { return (m_nSide < 0) ? null : segmentManager.Side (m_nSide); }
-
-	private:
-		int Update (void);
 	};
 
 //------------------------------------------------------------------------

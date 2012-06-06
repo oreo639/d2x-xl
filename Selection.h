@@ -14,7 +14,7 @@
 // -----------------------------------------------------------------------------
 
 class CSelection : public CSideKey {
-	private:
+	protected:
 		short m_nEdge;
 		short m_nPoint;
 		short m_nObject;

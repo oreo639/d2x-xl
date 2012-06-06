@@ -287,32 +287,28 @@ m_rotation.m.uVec.Normalize ();
 }
 
 //------------------------------------------------------------------------------
+// Determine whether the tunnel needs to be updated
+// For the start side, only update when the current edge or a vertex of the start side have changed
+// For the end side, also update when the segment and/or side have changed
 
-int CTunnelBase::Update (void)
-{
-*((CSelection*) this) = selections [m_nSelection];
-return 1;
-}
-
-//------------------------------------------------------------------------------
-
-int CTunnelBase::Update (bool bUpdateSegment)
+bool CTunnelBase::Update (bool bStart)
 {
 	CSelection* selection;
+	bool			bNewSide = CSideKey (*this) != CSideKey (selections [m_nSelection]);
 
-if (CSideKey (*this) == CSideKey (selections [m_nSelection]))
-	selection = &selections [m_nSelection];
-else {
-	if (bUpdateSegment)
-		Update ();
-	return -1;
+if (!bStart && bNewSide) {
+	*((CSelection*) this) = selections [m_nSelection];
+	return true;
 	}
-if (Edge () != selection->Edge ())
-	return Update ();
+selection = &selections [m_nSelection];
+if (!(bStart && bNewSide) && (Edge () != selection->Edge ())) {
+	m_nEdge = selection->Edge ();
+	return true;
+	}
 for (int i = 0; i < 4; i++)
 	if (m_vertices [i] != *selection->Vertex (i))
-		return Update ();
-return 0;
+		return true;
+return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1042,7 +1038,7 @@ if (!m_bActive)
 	return false;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
 	return true;
-if ((m_base [0].Update (false) > 0) || m_base [1].Update (true))
+if (m_base [0].Update (true) || m_base [1].Update (false))
 	return Setup (false);
 return true;
 }
