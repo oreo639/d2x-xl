@@ -128,8 +128,6 @@ class CTunnelPath {
 
 		void Destroy (void);
 
-		void Release (void);
-
 		bool Create (short nPathLength);
 
 		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix);
