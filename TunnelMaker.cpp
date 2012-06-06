@@ -170,18 +170,18 @@ int CTunnelBase::Update (bool bStart)
 
 if (!bStart && bNewSide) {
 	*((CSelection*) this) = selections [m_nSelection];
-	return -1;
+	return m_bUpdate = -1;
 	}
 selection = &selections [m_nSelection];
 if (!(bStart && bNewSide) && (Edge () != selection->Edge ())) {
 	m_nEdge = selection->Edge ();
-	return 1;
+	return m_bUpdate = 1;
 	}
 CSegment* segP = segmentManager.Segment (m_nSegment);
 for (int i = 0; i < 4; i++)
 	if (m_vertices [i] != *segP->Vertex (m_nSide, i))
-		return 1;
-return 0;
+		return m_bUpdate = 1;
+return m_bUpdate = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -190,6 +190,7 @@ return 0;
 
 bool CTunnelSegment::Create (CTunnelPath& path, short nSegments, short nVertices)
 {
+Release ();
 if (!(m_elements.Resize (nSegments) && m_nVertices.Resize (nVertices)))
 	return false;
 if (!vertexManager.Add (&m_nVertices [0], nVertices))
@@ -318,11 +319,11 @@ if (m_nSteps != path.Steps ()) { // allocate sufficient memory for required segm
 CMineView* mineView = DLE.MineView ();
 CViewMatrix* viewMatrix = mineView->ViewMatrix ();
 mineView->Renderer ().BeginRender (false);
-for (int i = 0; i <= m_nSteps; i++) {
-	CDoubleMatrix& rotation = path [i].m_rotation;
-	CDoubleVector& translation = path [i].m_vertex;
-	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
-		CVertex v = vertexManager [path.m_nStartVertices [j]];
+for (int nSegment = 0; nSegment <= m_nSteps; nSegment++) {
+	CDoubleMatrix& rotation = path [nSegment].m_rotation;
+	CDoubleVector& translation = path [nSegment].m_vertex;
+	for (uint nVertex = 0, l = path.m_nStartVertices.Length (); nVertex < l; nVertex++) {
+		CVertex v = vertexManager [path.m_nStartVertices [nVertex]];
 		v -= path.m_base [0].m_point; // un-translate (make relative to tunnel start)
 		v = path.m_base [0].m_rotation * v; // un-rotate
 		v = rotation * v; // rotate (
@@ -330,7 +331,7 @@ for (int i = 0; i <= m_nSteps; i++) {
 		v += translation;
 		v.Transform (viewMatrix);
 		v.Project (viewMatrix);
-		vertexManager [m_segments [i].m_nVertices [j]] = v;
+		vertexManager [m_segments [nSegment].m_nVertices [nVertex]] = v;
 #ifdef _DEBUG
 		v = v;
 #endif
@@ -739,8 +740,12 @@ if (bFull) {
 	}
 else {
 	m_base [0].Setup (-1, -1.0);
-	m_base [1].m_nSelection = -1;
-	m_base [1].Setup (current != &selections [0], 1.0);
+	if (m_base [1].m_bUpdate > 0) 
+		m_base [1].Setup (-1, 1.0);
+	else if (m_base [1].m_bUpdate < 0) {
+		m_base [1].m_nSelection = -1;
+		m_base [1].Setup (current != &selections [0], 1.0);
+		}
 	}
 m_nGranularity = 0;
 

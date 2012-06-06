@@ -76,6 +76,7 @@ Count ()--;
 undoManager.Begin (udVertices);
 if (nDelVert < --Count ()) {
 	Vertex (nDelVert)->v = Vertex (Count ())->v;
+	//Vertex (Count ())->Status ()
 	Vertex (nDelVert)->Status () = 0;
 	segmentManager.UpdateVertices (Count (), nDelVert);
 	}

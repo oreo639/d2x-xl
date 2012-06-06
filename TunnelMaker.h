@@ -56,6 +56,7 @@ class CTunnelBase : public CSelection {
 		ubyte				m_oppVertexIndex [4];
 		CDoubleMatrix	m_rotation; // orientation of tunnel end side
 		double			m_sign;
+		int				m_bUpdate;
 
 		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSelection (key), m_nSelection (-1) {}
 
