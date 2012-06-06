@@ -227,6 +227,7 @@ for (int i = (int) m_nVertices.Length (); --i >= 0; ) {
 void CTunnelSegment::Draw (void)
 {
 CMineView* mineView = DLE.MineView ();
+mineView->Renderer ().BeginRender (false);
 #ifdef _DEBUG
 if (mineView->GetRenderer ()) {
 	glLineStipple (1, 0x0c3f);  // dot dash
@@ -235,6 +236,7 @@ if (mineView->GetRenderer ()) {
 #endif
 for (int i = (int) m_elements.Length (); --i >= 0; ) 
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
+mineView->Renderer ().EndRender ();
 #ifdef _DEBUG
 if (mineView->GetRenderer ()) 
 	glDisable (GL_LINE_STIPPLE);
@@ -274,7 +276,7 @@ m_segments.Destroy ();
 // corresponding segments. Each segment's tunnel vertex ids have been computed
 // when preparing the tunnel path and have been stored in CTunnelElement::m_nVertices.
 
-void CTunnel::SetupVertices (void)
+void CTunnel::AssignVertices (void)
 {
 for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElement < nElements; nElement++) {
 	CTunnelElement * e0, * e1 = &m_segments [0].m_elements [nElement];
@@ -313,6 +315,9 @@ if (m_nSteps != path.Steps ()) { // allocate sufficient memory for required segm
 // The rotation is relative to the base coordinate system (identity matrix), but the vertices are relative to the 
 // start point and start rotation, so each vertex has to be un-translated and un-rotated before rotating and translating
 // it with the current path node's orientation matrix and position.
+CMineView* mineView = DLE.MineView ();
+CViewMatrix* viewMatrix = mineView->ViewMatrix ();
+mineView->Renderer ().BeginRender (false);
 for (int i = 0; i <= m_nSteps; i++) {
 	CDoubleMatrix& rotation = path [i].m_rotation;
 	CDoubleVector& translation = path [i].m_vertex;
@@ -323,14 +328,16 @@ for (int i = 0; i <= m_nSteps; i++) {
 		v = rotation * v; // rotate (
 		CDoubleVector a = rotation.Angles ();
 		v += translation;
+		v.Transform (viewMatrix);
+		v.Project (viewMatrix);
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
 #ifdef _DEBUG
 		v = v;
 #endif
 		}
 	}
-
-SetupVertices ();
+mineView->Renderer ().EndRender ();
+AssignVertices ();
 return true;
 }
 
@@ -382,7 +389,7 @@ for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
 			}
 		}
 	}
-SetupVertices ();
+AssignVertices ();
 }
 
 //------------------------------------------------------------------------------
@@ -546,8 +553,8 @@ for (int i = 0; i <= m_nSteps; i++)
 CDoubleVector t = m_nodes [0].m_vertex;
 
 double l = Length ();
-m_nodes [0].m_rotation = m_base [0].m_rotation/*.Inverse ()*/;
-m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation/*.Inverse ()*/;
+m_nodes [0].m_rotation = m_base [0].m_rotation;
+m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation;
 
 m_deltaAngle = ClampAngle (m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z);
 // Compute each path node's rotation matrix from the previous node's rotation matrix

@@ -195,7 +195,7 @@ class CTunnel {
 		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix);
 
 	private:
-		void SetupVertices (void);
+		void AssignVertices (void);
 	};
 
 //------------------------------------------------------------------------
