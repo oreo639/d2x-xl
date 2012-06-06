@@ -288,14 +288,15 @@ m_rotation.m.uVec.Normalize ();
 
 //------------------------------------------------------------------------------
 
-int CTunnelBase::Update (void)
+int CTunnelBase::Update (bool bUpdateSegment)
 {
 	CSelection* selection;
 
 if (CSideKey (*this) == CSideKey (selections [m_nSelection]))
 	selection = &selections [m_nSelection];
 else {
-	*this = selections [m_nSelection];
+	if (bUpdateSegment)
+		*this = selections [m_nSelection];
 	return -1;
 	}
 if (Edge () != selection->Edge ())
@@ -972,7 +973,7 @@ if (!m_bActive) {
 		return;
 		}
 
-	if (!Setup ()) {
+	if (!Setup (true)) {
 		m_bActive = false;
 		return;
 		}
@@ -1013,7 +1014,7 @@ m_base [0].Setup (current != &selections [0], -1.0);
 m_base [1].Setup (current == &selections [0], 1.0);
 m_nGranularity = 0;
 
-if (m_path.Setup (m_base)) {
+if (m_path.Setup (m_base, bFull)) {
 	m_tunnel.Setup (m_base);
 	return true;
 	}
@@ -1033,8 +1034,8 @@ if (!m_bActive)
 	return false;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
 	return true;
-if (m_base [0].Update () || m_base [1].Update ())
-	return Setup ();
+if ((m_base [0].Update (false) > 0) || m_base [1].Update (true))
+	return Setup (false);
 return true;
 }
 
