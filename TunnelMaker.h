@@ -63,7 +63,7 @@ class CTunnelBase : public CSelection {
 
 		void Setup (int nSelection, double sign);
 
-		bool Update (bool bStart);
+		int Update (bool bStart);
 
 		inline CDoubleVector GetPoint (void) { return m_point; }
 

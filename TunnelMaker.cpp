@@ -163,25 +163,25 @@ m_rotation.m.uVec.Normalize ();
 // For the start side, only update when the current edge or a vertex of the start side have changed
 // For the end side, also update when the segment and/or side have changed
 
-bool CTunnelBase::Update (bool bStart)
+int CTunnelBase::Update (bool bStart)
 {
 	CSelection* selection;
 	bool			bNewSide = CSideKey (*this) != CSideKey (selections [m_nSelection]);
 
 if (!bStart && bNewSide) {
 	*((CSelection*) this) = selections [m_nSelection];
-	return true;
+	return -1;
 	}
 selection = &selections [m_nSelection];
 if (!(bStart && bNewSide) && (Edge () != selection->Edge ())) {
 	m_nEdge = selection->Edge ();
-	return true;
+	return 1;
 	}
 CSegment* segP = segmentManager.Segment (m_nSegment);
 for (int i = 0; i < 4; i++)
 	if (m_vertices [i] != *segP->Vertex (m_nSide, i))
-		return true;
-return false;
+		return 1;
+return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -482,6 +482,7 @@ if (bFull) {
 	ushort j = 0;
 	for (iter.Begin (); *iter != iter.End (); iter++)
 		m_nStartVertices [j++] = **iter;
+
 	// setup intermediate points for a cubic bezier curve
 	m_bezier.SetLength (length, 0);
 	m_bezier.SetLength (length, 1);
@@ -697,8 +698,15 @@ DLE.MineView ()->Refresh ();
 
 bool CTunnelMaker::Setup (bool bFull)
 {
-m_base [0].Setup (bFull ? (current != &selections [0]) : -1, -1.0);
-m_base [1].Setup (current == &selections [m_base [0].m_nSelection], 1.0);
+if (bFull) {
+	m_base [0].Setup (current != &selections [0], -1.0);
+	m_base [1].Setup (current == &selections [0], 1.0);
+	}
+else {
+	m_base [0].Setup (-1, -1.0);
+	m_base [1].m_nSelection = -1;
+	m_base [1].Setup (current != &selections [0], 1.0);
+	}
 m_nGranularity = 0;
 
 if (m_path.Setup (m_base, bFull)) {
@@ -721,8 +729,10 @@ if (!m_bActive)
 	return false;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
 	return true;
-if (m_base [0].Update (true) || m_base [1].Update (false))
+if (m_base [0].Update (true))
 	return Setup (false);
+int i = m_base [1].Update (false);
+	return Setup (i < 0);
 return true;
 }
 
