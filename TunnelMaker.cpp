@@ -698,7 +698,7 @@ DLE.MineView ()->Refresh ();
 bool CTunnelMaker::Setup (bool bFull)
 {
 m_base [0].Setup (bFull ? (current != &selections [0]) : -1, -1.0);
-m_base [1].Setup (current == &selections [0], 1.0);
+m_base [1].Setup (current == &selections [m_base [0].m_nSelection], 1.0);
 m_nGranularity = 0;
 
 if (m_path.Setup (m_base, bFull)) {
