@@ -270,7 +270,9 @@ m_segments.Destroy ();
 }
 
 //------------------------------------------------------------------------------
-// define segment vert numbers
+// Walk through all tunnel segments and assign the tunnel vertices to their 
+// corresponding segments. Each segment's tunnel vertex ids have been computed
+// when preparing the tunnel path and have been stored in CTunnelElement::m_nVertices.
 
 void CTunnel::SetupVertices (void)
 {
@@ -295,7 +297,7 @@ bool CTunnel::Create (CTunnelPath& path)
 	short nSegments = (short) path.m_startSides.Length ();
 	short nVertices = (short) path.m_nStartVertices.Length ();
 
-if (m_nSteps != path.Steps ()) { // recompute
+if (m_nSteps != path.Steps ()) { // allocate sufficient memory for required segments and vertices
 	if (m_nSteps > 0)
 		Release ();
 	if ((path.Steps () > m_nSteps) && !m_segments.Resize (path.Steps () + 1, false))
@@ -307,14 +309,18 @@ if (m_nSteps != path.Steps ()) { // recompute
 		}
 	}
 
+// Compute all tunnel vertices by rotating the base vertices using each path node's orientation (== rotation matrix)
+// The rotation is relative to the base coordinate system (identity matrix), but the vertices are relative to the 
+// start point and start rotation, so each vertex has to be un-translated and un-rotated before rotating and translating
+// it with the current path node's orientation matrix and position.
 for (int i = 0; i <= m_nSteps; i++) {
 	CDoubleMatrix& rotation = path [i].m_rotation;
 	CDoubleVector& translation = path [i].m_vertex;
 	for (uint j = 0, l = path.m_nStartVertices.Length (); j < l; j++) {
 		CVertex v = vertexManager [path.m_nStartVertices [j]];
-		v -= path.m_base [0].m_point;
-		v = path.m_base [0].m_rotation * v;
-		v = rotation * v;
+		v -= path.m_base [0].m_point; // un-translate (make relative to tunnel start)
+		v = path.m_base [0].m_rotation * v; // un-rotate
+		v = rotation * v; // rotate (
 		CDoubleVector a = rotation.Angles ();
 		v += translation;
 		vertexManager [m_segments [i].m_nVertices [j]] = v;
@@ -329,32 +335,52 @@ return true;
 }
 
 //------------------------------------------------------------------------------
+// Connect all tunnel segments with all adjacent other tunnel segments and base segments.
+// No segments will be connected with the tunnel's end segment to avoid geometry distortions.
 
-void CTunnel::Realize (void)
+void CTunnel::Realize (CTunnelPath& path)
 {
 ushort nVertex = 0;
-for (short i = 0; i < m_nSteps; i++) {
-	CSegment* segP = segmentManager.Segment (m_segments [i].m_elements [0].m_nSegment);
-	// copy current segment
-	*segP = *segmentManager.Segment (current->SegmentId ());
-	for (int j = 0; j < 6; j++)
-		segP->SetChild (j, -1);
-	segP->m_info.bTunnel = 0;
-	if (i == 0) {
-		segP->SetChild (oppSideTable [m_base [0].m_nSide], m_base [0].m_nSegment);
-		segP->SetChild (m_base [0].m_nSide, m_segments [1].m_elements [0].m_nSegment);
-		m_base [0].Segment ()->SetChild (m_base [0].m_nSide, m_segments [0].m_elements [0].m_nSegment);
-		} 
-	else if (i == m_nSteps - 1) {
-		segP->SetChild (oppSideTable [m_base [0].m_nSide], m_segments [i - 1].m_elements [0].m_nSegment); // previous tunnel segment
-		segP->SetChild (m_base [0].m_nSide, m_base [1].m_nSegment);
-		m_base [1].Segment ()->SetChild (m_base [1].m_nSide, m_segments [i].m_elements [0].m_nSegment);
+short nElements = (short) m_segments [0].m_elements.Length ();
+for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
+	short nStartSeg = path.m_startSides [nSegment].m_nSegment;
+	short nStartSide = m_base [0].m_nSide;
+	CSegment* startSegP = segmentManager.Segment (nStartSeg);
+
+	for (short iElement = 0; iElement < nElements; iElement++) {
+		CTunnelElement& e0 = m_segments [nSegment].m_elements [iElement];
+		CSegment* segP = segmentManager.Segment (e0.m_nSegment);
+		*segP = *startSegP;
+		for (int j = 0; j < 6; j++)
+			segP->SetChild (j, -1);
+		segP->m_info.bTunnel = 0;
+		if (nSegment == 0) {
+			segP->SetChild (oppSideTable [nStartSide], nStartSeg);
+			segP->SetChild (nStartSide, m_segments [nSegment + 1].m_elements [iElement].m_nSegment);
+			startSegP->SetChild (nStartSide, e0.m_nSegment);
+			} 
+#if 0
+		else if (nSegment == m_nSteps - 1) {
+			segP->SetChild (oppSideTable [m_base [0].m_nSide], m_segments [nSegment - 1].m_elements [0].m_nSegment); // previous tunnel segment
+			segP->SetChild (m_base [0].m_nSide, m_base [1].m_nSegment);
+			m_base [1].Segment ()->SetChild (m_base [1].m_nSide, e0.m_nSegment);
+			}
+#endif
+		else {
+			segP->SetChild (oppSideTable [nStartSide], m_segments [nSegment - 1].m_elements [iElement].m_nSegment); // previous tunnel segment
+			segP->SetChild (nStartSide, m_segments [nSegment + 1].m_elements [iElement].m_nSegment); // next tunnel segment
+			}
+		for (short jElement = 0; jElement < nElements; jElement++) {
+			if (jElement == iElement)
+				continue;
+			short nChildSeg = m_segments [nSegment].m_elements [jElement].m_nSegment;
+			short nChildSide, nSide = segP->CommonSides (nChildSeg, nChildSide);
+			if (nSide < 0)
+				continue;
+			segP->SetChild (nSide, nChildSeg);
+			segmentManager.Segment (nChildSeg)->SetChild (e0.m_nSegment, nSide);
+			}
 		}
-	else  {
-		segP->SetChild (oppSideTable [m_base [0].m_nSide], m_segments [i - 1].m_elements [0].m_nSegment); // previous tunnel segment
-		segP->SetChild (m_base [0].m_nSide, m_segments [i + 1].m_elements [0].m_nSegment); // next tunnel segment
-		}
-	// define child bitmask, special, matcen, value, and wall bitmask
 	}
 SetupVertices ();
 }
@@ -685,7 +711,7 @@ else {
 		Reset ();
 		undoManager.Begin (udSegments | udVertices);
 		if (Create ())
-			m_tunnel.Realize ();
+			m_tunnel.Realize (m_path);
 		undoManager.End ();
 		Destroy ();
 		}
