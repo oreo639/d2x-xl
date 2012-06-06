@@ -320,28 +320,18 @@ return false;
 
 bool CTunnelSegment::Create (CTunnelPath& path, short nSegments, short nVertices)
 {
-if (!m_elements.Resize (nSegments))
+if (!(m_elements.Resize (nSegments) && m_nVertices.Resize (nVertices)))
 	return false;
-if (!nVertices) 
-	path.m_nStartVertices.ShareBuffer (m_nVertices);
-else if (!(m_nVertices.Resize (nVertices) && vertexManager.Add (&m_nVertices [0], nVertices))) 
+if (!vertexManager.Add (&m_nVertices [0], nVertices))
 	return false;
-
-for (short i = 0; i < nSegments; i++) {
-	CTunnelElement& element = m_elements [i];
-	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
-	for (short j = 0; j < 4; j++) 
-		element.m_nVertices [j] = m_nVertices [vertexIndex [j]];
-	}
-
-if (nVertices == 0)
-	return true;
-
 for (short i = 0; i < nSegments; i++) {
 	CTunnelElement& element = m_elements [i];
 	if (0 > (element.m_nSegment = segmentManager.Add ()))
 		return false;
 	segmentManager.Segment (element.m_nSegment)->m_info.bTunnel = 1;
+	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
+	for (short j = 0; j < 4; j++) 
+		element.m_nVertices [j] = m_nVertices [vertexIndex [j]];
 	}
 return true;
 }
@@ -352,10 +342,14 @@ void CTunnelSegment::Release (void)
 {
 if (!(m_nVertices.Buffer () && (m_elements.Buffer ())))
 	return;
-for (int i = (int) m_elements.Length (); --i >= 0; ) 
+for (int i = (int) m_elements.Length (); --i >= 0; ) {
 	segmentManager.Remove (m_elements [i].m_nSegment);
-for (int i = (int) m_nVertices.Length (); --i >= 0; ) 
+	m_elements [i].m_nSegment = SEGMENT_LIMIT + 1;
+	}
+for (int i = (int) m_nVertices.Length (); --i >= 0; ) {
 	vertexManager.Delete (m_nVertices [i]);
+	m_nVertices [i] = MAX_VERTEX + 1;
+	}
 }
 
 //------------------------------------------------------------------------------
