@@ -821,8 +821,8 @@ for (int i = 0; i <= m_nSteps; i++)
 CDoubleVector t = m_nodes [0].m_vertex;
 
 double l = Length ();
-m_nodes [0].m_rotation = m_base [0].m_rotation.Inverse ();
-m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation.Inverse ();
+m_nodes [0].m_rotation = m_base [0].m_rotation/*.Inverse ()*/;
+m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation/*.Inverse ()*/;
 
 m_deltaAngle = ClampAngle (m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z);
 #if 0
@@ -836,28 +836,41 @@ while (m_deltaAngle > PI * 1.5)
 // Then rotate the r and u vectors by the difference angles of the preceding and the current nodes' rotation matrices' z axis
 // To do that, compute the angle using the dot product and the rotation vector from the two z axii perpendicular vector
 // and rotate using a quaternion
-CTunnelPathNode& n0 = m_nodes [0];
-for (int i = 1; i < m_nSteps; i++) {
+CTunnelPathNode * n0, * n1 = &m_nodes [0];
+for (int i = 1; i <= m_nSteps; i++) {
 #if 0
 	m_nodes [i].CreateRotation ((i == 0) ? m_base [0].m_normal : (i == m_nSteps) ? m_base [1].m_normal : m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex, 
 										 m_nodes [0].m_rotation, m_deltaAngle * Length (i) / l);
 #else
-CTunnelPathNode& n1 = m_nodes [i];
-n1.m_angle = m_deltaAngle * Length (i) / l;
-CQuaternion q (n0.m_rotation.m.fVec, n1.m_angle - n0.m_angle);
-n1.m_rotation.m.rVec = q * n1.m_rotation.m.rVec;
-n1.m_rotation.m.uVec = q * n1.m_rotation.m.uVec;
-n1.m_rotation.m.fVec = m_nodes [i + 1].m_vertex - n0.m_vertex;
-double dot = Dot (n1.m_rotation.m.fVec.Normalize (), n0.m_rotation.m.fVec);
-if (dot) {
-	CDoubleVector v = CrossProduct (n1.m_rotation.m.fVec, n0.m_rotation.m.fVec);
-	q.FromAxisAngle (v.Normalize (), dot);
-	n1.m_rotation.m.rVec = q * n1.m_rotation.m.rVec;
-	n1.m_rotation.m.uVec = q * n1.m_rotation.m.uVec;
-	}
 n0 = n1;
+n1 = &m_nodes [i];
+if (i < m_nSteps)
+	n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - n0->m_vertex;
+double dot = Dot (n1->m_rotation.m.fVec.Normalize (), n0->m_rotation.m.fVec);
+if (fabs (dot) > 1e-6) {
+	//CDoubleVector v = CrossProduct (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec);
+	CDoubleVector v = Normal (n1->m_vertex, n1->m_rotation.m.fVec - n1->m_vertex, n1->m_vertex - n0->m_rotation.m.fVec);
+	double a = acos (dot);
+	CQuaternion q (v.Normalize (), acos (dot));
+	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
+	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
+	n1->m_rotation.m.rVec.Normalize ();
+	n1->m_rotation.m.uVec.Normalize ();
+	}
+n1->m_angle = m_deltaAngle * Length (i) / l;
+CQuaternion q (n0->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
+n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec;
+n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;
+n1->m_rotation.m.rVec.Normalize ();
+n1->m_rotation.m.uVec.Normalize ();
+if (Dot (n1->m_rotation.m.rVec, n0->m_rotation.m.rVec) < 0.0) {
+	n1->m_rotation.m.rVec.Negate ();
+	n1->m_rotation.m.uVec.Negate ();
+	}
 #endif
 	}
+for (int i = 0; i <= m_nSteps; i++) 
+	m_nodes [i].m_rotation = m_nodes [i].m_rotation.Inverse ();
 return true;
 }
 

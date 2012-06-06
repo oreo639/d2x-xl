@@ -479,6 +479,7 @@ class CTaggingStrategy {
 
 	inline bool Setup (int nSides, ubyte tag = TAGGED_MASK) { 
 		m_tag = tag;
+		m_edgeTree.Destroy ();
 		return m_sideList.Create (nSides) != null; 
 		}
 	inline uint EdgeKey (ushort v1, ushort v2) { return m_edgeKey.Compose (v1, v2); }
