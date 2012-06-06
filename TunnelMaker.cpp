@@ -266,9 +266,11 @@ for (int i = 0; i < 4; i++)
 
 void CTunnelBase::Setup (int nSelection, double sign)
 {
-if (m_nSelection < 0)
-	m_nSelection = nSelection;
-*((CSideKey*) this) = selections [nSelection];
+if (nSelection >= 0) {
+	if (m_nSelection < 0)
+		m_nSelection = nSelection;
+	*((CSideKey*) this) = selections [nSelection];
+	}
 m_sign = sign;
 CSegment* segP = segmentManager.Segment (m_nSegment);
 CSide* sideP = segP->Side (m_nSide);
@@ -1015,8 +1017,7 @@ DLE.MineView ()->Refresh ();
 
 bool CTunnelMaker::Setup (bool bFull)
 {
-if (bFull)
-	m_base [0].Setup (current != &selections [0], -1.0);
+m_base [0].Setup (bFull ? (current != &selections [0]) : -1, -1.0);
 m_base [1].Setup (current == &selections [0], 1.0);
 m_nGranularity = 0;
 
