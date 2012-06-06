@@ -532,7 +532,7 @@ class CTagTunnelStart : public CTaggingStrategy {
 		CTagTunnelStart () : m_maxAngle (cos (Radians (22.5))), m_startSideP (current->Side ()) {}
 
 		virtual bool Accept (void) { 
-			return (m_segP->IsTagged () || m_sideP->IsTagged ()) && !m_childSegP->HasChild (m_child.m_nSide) && (Dot (m_childSideP->Normal (), m_startSideP->Normal ()) >= m_maxAngle);
+			return (m_childSegP->IsTagged () || m_childSideP->IsTagged ()) && !m_childSegP->HasChild (m_child.m_nSide) && (Dot (m_childSideP->Normal (), m_startSideP->Normal ()) >= m_maxAngle);
 			}
 	};
 
