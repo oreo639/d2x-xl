@@ -226,8 +226,8 @@ for (int i = (int) m_nVertices.Length (); --i >= 0; ) {
 
 void CTunnelSegment::Draw (void)
 {
-#ifdef _DEBUG
 CMineView* mineView = DLE.MineView ();
+#ifdef _DEBUG
 if (mineView->GetRenderer ()) {
 	glLineStipple (1, 0x0c3f);  // dot dash
 	glEnable (GL_LINE_STIPPLE);
