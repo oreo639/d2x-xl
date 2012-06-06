@@ -90,8 +90,6 @@ class CTunnelPathNode {
 
 	CTunnelPathNode () : m_angle (0.0) {}
 
-	void CreateRotation (CVertex fVec, CDoubleMatrix& mOrient, double zAngle);
-
 	void Draw (CRenderer& renderer, CViewMatrix* viewMatrix);
 	};
 
@@ -199,18 +197,6 @@ class CTunnel {
 		void Draw (CRenderer& renderer, CPen* redPen, CPen* bluePen, CViewMatrix* viewMatrix);
 
 	private:
-		void UntwistSegment (short nSegment, short nSide); 
-
-		void SpinPoint (CVertex* point, double ySpin, double zSpin); 
-
-		void SpinBackPoint (CVertex* point, double ySpin, double zSpin); 
-
-		int MatchingSide (int j); 
-
-		void PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* origin, CVertex* normal); 
-
-		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal);
-
 		void SetupVertices (void);
 
 	};
