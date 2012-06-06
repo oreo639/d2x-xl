@@ -305,8 +305,9 @@ if (!(bStart && bNewSide) && (Edge () != selection->Edge ())) {
 	m_nEdge = selection->Edge ();
 	return true;
 	}
+CSegment* segP = segmentManager.Segment (m_nSegment);
 for (int i = 0; i < 4; i++)
-	if (m_vertices [i] != *selection->Vertex (i))
+	if (m_vertices [i] != *segP->Vertex (m_nSide, i))
 		return true;
 return false;
 }
