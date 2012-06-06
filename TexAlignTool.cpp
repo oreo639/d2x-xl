@@ -819,10 +819,9 @@ void CTextureTool::AlignChildTextures (short nSegment, short nSide)
 	CTagByTextures tagger (m_bUse1st ? sideP->BaseTex () : -1, m_bUse2nd ? sideP->OvlTex () : -1, bool (m_bIgnorePlane));
 	int				nSides;
 
-if (tagger.Setup (segmentManager.VisibleSideCount (), ALIGNED_MASK))
-	nSides = tagger.Run ();
-else
+if (!tagger.Setup (segmentManager.VisibleSideCount (), ALIGNED_MASK))
 	return;
+nSides = tagger.Run ();
 
 for (int i = 0; i < nSides; i++) 
 	segmentManager.AlignTextures (tagger.ParentSegment (i), tagger.ParentSide (i), tagger.ChildSegment (i), tagger.ChildSide (i), m_bUse1st, m_bUse2nd);

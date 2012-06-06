@@ -466,13 +466,15 @@ else if (length > MAX_TUNNEL_LENGTH)
 if (bFull) {
 	CDoubleMatrix identity;
 
-	// collect all tagged sides that don't have child segments, are directly or indirectly connected to the start side and are at an angle of <= 22.5° to the start side
+	// collect all tagged sides that don't have child segments, are directly or indirectly 
+	// connected to the start side and are at an angle of <= 22.5° to the start side
 	CTagTunnelStart tagger;
 	bool bTagged = current->Side ()->IsTagged ();
 	if (!bTagged)
 		current->Side ()->Tag ();
-	int nSides = tagger.Setup (segmentManager.TaggedSideCount (), TUNNEL_MASK);
-	tagger.Run ();
+	if (!tagger.Setup (segmentManager.TaggedSideCount (), TUNNEL_MASK))
+		return false;
+	int nSides = tagger.Run ();
 	if (!bTagged)
 		current->Side ()->UnTag ();
 
