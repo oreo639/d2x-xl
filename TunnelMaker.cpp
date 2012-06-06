@@ -729,9 +729,10 @@ if (!m_bActive)
 	return false;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
 	return true;
-if (m_base [0].Update (true))
+if (m_base [0].Update (true) > 0)
 	return Setup (false);
 int i = m_base [1].Update (false);
+if (i)
 	return Setup (i < 0);
 return true;
 }
