@@ -126,7 +126,7 @@ class CTunnelPath {
 
 		CTunnelPath () : m_nSteps (0) {}
 
-		bool Setup (CTunnelBase base [2], bool bFull);
+		bool Setup (CTunnelBase base [2], bool bFull, bool bPath);
 
 		void Destroy (void);
 

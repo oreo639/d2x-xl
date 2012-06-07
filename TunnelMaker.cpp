@@ -477,7 +477,7 @@ renderer.EndRender ();
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-bool CTunnelPath::Setup (CTunnelBase base [2], bool bFull)
+bool CTunnelPath::Setup (CTunnelBase base [2], bool bFull, bool bPath)
 {
 memcpy (m_base, base, sizeof (m_base));
 
@@ -537,7 +537,9 @@ if (bFull) {
 	ushort j = 0;
 	for (iter.Begin (); *iter != iter.End (); iter++)
 		m_nStartVertices [j++] = **iter;
+	}
 
+if (bFull || bPath) {
 	// setup intermediate points for a cubic bezier curve
 	m_bezier.SetLength (length, 0);
 	m_bezier.SetLength (length, 1);
@@ -773,6 +775,8 @@ DLE.MineView ()->Refresh ();
 
 bool CTunnelMaker::Setup (bool bFull)
 {
+	bool bPath = false;
+
 if (bFull) {
 	m_base [0].Setup (current, -1.0, true);
 	m_base [1].Setup (other, 1.0, false);
@@ -783,12 +787,12 @@ else {
 		m_base [1].Setup (null, 1.0, false);
 	else if (m_base [1].m_bUpdate < 0) {
 		m_base [1].Setup (current, 1.0, false);
-		bFull = true;
+		bPath = true;
 		}
 	}
 m_nGranularity = 0;
 
-if (m_path.Setup (m_base, bFull)) {
+if (m_path.Setup (m_base, bFull, bPath)) {
 	m_tunnel.Setup (m_base);
 	return true;
 	}
