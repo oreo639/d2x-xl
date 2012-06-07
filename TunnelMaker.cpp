@@ -566,9 +566,12 @@ m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation;
 CQuaternion q;
 
 #if 1
+// revert the end orientation's z rotation in regard to the start orientation by 
+// determining the angle of the two matrices' z axii (forward vectors) and rotating
+// the end matrix around the perpendicular of the two matrices' z axii.
 CDoubleMatrix m = m_base [1].m_rotation;
 double dot = Dot (m.m.fVec, m_base [0].m_rotation.m.fVec);
-if (fabs (dot) > 1e-6) {
+if (dot < 0.999) { // dot >= 0.999 ~ parallel
 	q.FromAxisAngle (CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), acos (dot));
 	m.m.rVec = q * m.m.rVec;
 	m.m.uVec = q * m.m.uVec;
@@ -607,7 +610,7 @@ for (int i = 1; i < m_nSteps; i++) {
 	// rotate the previous matrix around the perpendicular of the previous and the current forward vector
 	// to orient it properly for the current path node
 	double dot = Dot (n1->m_rotation.m.fVec.Normalize (), n0->m_rotation.m.fVec); // angle of current and previous forward vectors
-	if (fabs (dot) > 1e-6) {
+	if (dot < 0.999) { // dot >= 0.999 ~ parallel
 		CDoubleVector axis = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec); // get rotation axis between the two forward vectors
 		q.FromAxisAngle (axis, acos (dot));
 		n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
