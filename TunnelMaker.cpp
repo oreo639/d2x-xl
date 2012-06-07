@@ -334,9 +334,9 @@ for (int nSegment = 0; nSegment <= m_nSteps; nSegment++) {
 		v.Transform (viewMatrix);
 		v.Project (viewMatrix);
 #ifdef _DEBUG
-		v->Tag ();
+		v.Tag ();
 #else
-		v->UnTag ();
+		v.UnTag ();
 #endif
 		vertexManager [m_segments [nSegment].m_nVertices [nVertex]] = v;
 #ifdef _DEBUG
