@@ -454,11 +454,11 @@ a.v.x = bGimbalLock ? 0.0 : atan2 (-m.uVec.v.z / cosY, m.fVec.v.z / cosY);
 #if 1
 double dot;
 if (fabs (dot = Dot (m.fVec, id.m.rVec)) > 0.999) 
-	a.v.z = acos (Dot (m.uVec, id.m.uVec)) /** Sign (dot)*/;
+	a.v.z = acos (Dot (m.uVec, id.m.uVec)) * Sign (dot);
 if (fabs (dot = Dot (m.fVec, id.m.fVec)) > 0.999)
-	a.v.z = acos (Dot (m.uVec, id.m.uVec)) /** Sign (dot)*/;
+	a.v.z = acos (Dot (m.uVec, id.m.uVec)) * Sign (dot);
 else if (fabs (dot = Dot (m.fVec, id.m.uVec)) > 0.999)
-	a.v.z = acos (Dot (m.uVec, id.m.fVec)) /** Sign (dot)*/;
+	a.v.z = acos (Dot (m.uVec, id.m.fVec)) * Sign (dot);
 else
 #endif
 	a.v.z = bGimbalLock ? atan2 (m.uVec.v.x, m.uVec.v.y) : atan2 (-m.rVec.v.y / cosY, m.rVec.v.x / cosY);

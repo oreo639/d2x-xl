@@ -563,16 +563,38 @@ double l = Length ();
 m_nodes [0].m_rotation = m_base [0].m_rotation;
 m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation;
 
+CQuaternion q;
+
+#if 1
+CDoubleMatrix m = m_base [1].m_rotation;
+double dot = Dot (m.m.fVec, m_base [0].m_rotation.m.fVec);
+if (dot < 1e-6) {
+	q.FromAxisAngle (CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), acos (dot));
+	m.m.rVec = q * m.m.rVec;
+#ifdef _DEBUG
+	m.m.uVec = q * m.m.uVec;
+	m.m.fVec = q * m.m.fVec;
+	m_base [1].m_rotation = m;
+#endif
+	}
+m_deltaAngle = acos (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
+#else
+#	ifdef _DEBUG
+double a0 = m_base [0].m_rotation.Angles ().v.z;
+double a1 = m_base [1].m_rotation.Angles ().v.z;
+m_deltaAngle = ClampAngle (a1 - a0);
+#	else
 m_deltaAngle = ClampAngle (m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z);
+#	endif
+#endif
 // Compute each path node's rotation matrix from the previous node's rotation matrix
 // First rotate the r and u vectors by the difference angles of the preceding and the current nodes' rotation matrices' z axis
 // To do that, compute the angle using the dot product and the rotation vector from the two z axii perpendicular vector
 // and rotate using a quaternion
 // Then rotate the r and u vectors around the z axis by the z angle difference
 CTunnelPathNode * n0, * n1 = &m_nodes [0];
-CQuaternion q;
 
-for (int i = 1; i <= m_nSteps; i++) {
+for (int i = 1; i < m_nSteps; i++) {
 	n0 = n1;
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
