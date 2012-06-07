@@ -251,6 +251,7 @@ if (mineView->GetRenderer ())
 
 void CTunnel::Setup (CTunnelBase base [2])
 {
+Release ();
 Destroy ();
 memcpy (m_base, base, sizeof (m_base));
 }
@@ -268,7 +269,6 @@ if (m_segments.Buffer ())
 
 void CTunnel::Destroy (void)
 {
-Release ();
 m_nSteps = 0;
 m_segments.Destroy ();
 }
@@ -748,10 +748,9 @@ if (!m_bActive) {
 else {
 	// ask if user wants to keep the new nSegment
 	undoManager.Unlock ();
-	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES) 
-		Destroy ();
-	else {
-		Reset ();
+	m_tunnel.Release ();
+	Destroy ();
+	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) == IDYES) {
 		undoManager.Begin (udSegments | udVertices);
 		if (Create ())
 			m_tunnel.Realize (m_path);
