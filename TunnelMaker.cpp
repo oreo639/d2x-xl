@@ -333,6 +333,11 @@ for (int nSegment = 0; nSegment <= m_nSteps; nSegment++) {
 		v += translation;
 		v.Transform (viewMatrix);
 		v.Project (viewMatrix);
+#ifdef _DEBUG
+		v->Tag ();
+#else
+		v->UnTag ();
+#endif
 		vertexManager [m_segments [nSegment].m_nVertices [nVertex]] = v;
 #ifdef _DEBUG
 		v = v;
@@ -574,6 +579,8 @@ for (int i = 1; i < m_nSteps; i++) {
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
 		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - n1->m_vertex; //n0->m_vertex;
 
+	// rotate the previous matrix around the perpendicular of the previous and the current forward vector
+	// to orient it properly for the current path node
 	double dot = Dot (n1->m_rotation.m.fVec.Normalize (), n0->m_rotation.m.fVec); // angle of current and previous forward vectors
 	if (fabs (dot) > 1e-6) {
 		CDoubleVector axis = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec); // get rotation axis between the two forward vectors
@@ -583,14 +590,14 @@ for (int i = 1; i < m_nSteps; i++) {
 		n1->m_rotation.m.rVec.Normalize ();
 		n1->m_rotation.m.uVec.Normalize ();
 		}
-#if 1
+	// twist the current matrix around the forward vector 
 	n1->m_angle = m_deltaAngle * Length (i) / l;
 	q.FromAxisAngle (n1->m_rotation.m.fVec, n0->m_angle - n1->m_angle);
 	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
 	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
 	n1->m_rotation.m.rVec.Normalize ();
 	n1->m_rotation.m.uVec.Normalize ();
-#endif
+
 #if 0
 	if (Dot (n1->m_rotation.m.rVec, n0->m_rotation.m.rVec) < 0.0) {
 		n1->m_rotation.m.rVec.Negate ();
@@ -639,7 +646,6 @@ renderer.EndRender ();
 renderer.BeginRender (true);
 renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
 renderer.SelectPen (penRed + 1);
-
 
 CMineView* mineView = DLE.MineView ();
 if (Bezier ().GetPoint (1).InRange (mineView->ViewMax ().x, mineView->ViewMax ().y, renderer.Type ())) {
