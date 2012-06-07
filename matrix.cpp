@@ -437,28 +437,31 @@ s.Set (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 1.0);
 
 // -----------------------------------------------------------------------------
 
+static CDoubleMatrix id;
+
+inline double Sign (double v) { return (v < 0.0) ? -1.0 : 1.0; }
+
 CDoubleVector CDoubleMatrix::Angles (void)
 {
 	CDoubleVector a;
-	CDoubleMatrix id;
 
 a.v.y = -asin (m.rVec.v.z);
 double cosY = cos (a.v.y);
-if ((fabs (cosY) > 1e-3) /*&& (fabs (1.0 - cosY) > 1e-3)*/) { // gimbal lock?
-	a.v.x = atan2 (-m.uVec.v.z / cosY, m.fVec.v.z / cosY);
+
+bool bGimbalLock = fabs (cosY) <= 1e-3;
+
+a.v.x = bGimbalLock ? 0.0 : atan2 (-m.uVec.v.z / cosY, m.fVec.v.z / cosY);
 #if 1
-	if ((fabs (Dot (m.fVec, CDoubleVector (1.0, 0.0, 0.0))) > 0.999) || (fabs (Dot (m.fVec, CDoubleVector (0.0, 0.0, 1.0))) > 0.999))
-		a.v.z = acos (Dot (m.uVec, CDoubleVector (0.0, 1.0, 0.0)));
-	else if (fabs (Dot (m.fVec, CDoubleVector (0.0, 1.0, 0.0))) > 0.999)
-		a.v.z = acos (Dot (m.uVec, CDoubleVector (0.0, 0.0, 1.0)));
-	else
+double dot;
+if (fabs (dot = Dot (m.fVec, id.m.rVec)) > 0.999) 
+	a.v.z = acos (Dot (m.uVec, id.m.uVec)) /** Sign (dot)*/;
+if (fabs (dot = Dot (m.fVec, id.m.fVec)) > 0.999)
+	a.v.z = acos (Dot (m.uVec, id.m.uVec)) /** Sign (dot)*/;
+else if (fabs (dot = Dot (m.fVec, id.m.uVec)) > 0.999)
+	a.v.z = acos (Dot (m.uVec, id.m.fVec)) /** Sign (dot)*/;
+else
 #endif
-	a.v.z = atan2 (-m.rVec.v.y / cosY, m.rVec.v.x / cosY);
-	}
-else {
-	a.v.x = 0.0;
-	a.v.z = atan2 (m.uVec.v.x, m.uVec.v.y);
-	}
+	a.v.z = bGimbalLock ? atan2 (m.uVec.v.x, m.uVec.v.y) : atan2 (-m.rVec.v.y / cosY, m.rVec.v.x / cosY);
 return a;
 }
 

@@ -573,7 +573,7 @@ m_deltaAngle = ClampAngle (m_base [1].m_rotation.Angles ().v.z - m_base [0].m_ro
 CTunnelPathNode * n0, * n1 = &m_nodes [0];
 CQuaternion q;
 
-for (int i = 1; i < m_nSteps; i++) {
+for (int i = 1; i <= m_nSteps; i++) {
 	n0 = n1;
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
