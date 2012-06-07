@@ -565,44 +565,45 @@ m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation;
 
 CQuaternion q;
 
-#if 1
 // revert the end orientation's z rotation in regard to the start orientation by 
 // determining the angle of the two matrices' z axii (forward vectors) and rotating
 // the end matrix around the perpendicular of the two matrices' z axii.
 CDoubleMatrix m = m_base [1].m_rotation;
 double dot = Dot (m.m.fVec, m_base [0].m_rotation.m.fVec);
 if (dot < 0.999) { // dot >= 0.999 ~ parallel
-	q.FromAxisAngle (CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), acos (dot));
-	m.m.rVec = q * m.m.rVec;
-	m.m.uVec = q * m.m.uVec;
-#if 1 //def _DEBUG
+	q.FromAxisAngle (CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), -acos (dot));
 	m.m.fVec = q * m.m.fVec;
+	m.m.rVec = q * m.m.rVec;
+	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.0)
+		m.m.rVec.Negate ();
+#if 0 //def _DEBUG
+	m.m.uVec = q * m.m.uVec;
+#endif
+	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.0)
+		m.m.rVec.Negate ();
+#if 0//def _DEBUG
+	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.0) {
+		m.m.uVec.Negate ();
+		m.m.fVec.Negate ();
+		}
 	m_nodes [m_nSteps].m_rotation = m;
 #endif
 	}
 m_deltaAngle = acos (dot = Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
 #if 1
-if (Dot (m.m.rVec, m_base [0].m_rotation.m.uVec) >= 0.0)
-	m_deltaAngle = -m_deltaAngle;
+if (Dot (m.m.rVec, m_base [0].m_rotation.m.uVec) < 0.0)
+	m_deltaAngle += PI;
 #endif
-#else
-#	ifdef _DEBUG
-double a0 = m_base [0].m_rotation.Angles ().v.z;
-double a1 = m_base [1].m_rotation.Angles ().v.z;
-m_deltaAngle = ClampAngle (a1 - a0);
-#	else
-m_deltaAngle = ClampAngle (m_base [1].m_rotation.Angles ().v.z - m_base [0].m_rotation.Angles ().v.z);
-#	endif
-#endif
+
 // Compute each path node's rotation matrix from the previous node's rotation matrix
 // First rotate the r and u vectors by the difference angles of the preceding and the current nodes' rotation matrices' z axis
 // To do that, compute the angle using the dot product and the rotation vector from the two z axii perpendicular vector
 // and rotate using a quaternion
 // Then rotate the r and u vectors around the z axis by the z angle difference
 CTunnelPathNode * n0, * n1 = &m_nodes [0];
+	n0 = n1;
 
 for (int i = 1; i < m_nSteps; i++) {
-	n0 = n1;
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
 		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - n1->m_vertex; //n0->m_vertex;
@@ -620,7 +621,7 @@ for (int i = 1; i < m_nSteps; i++) {
 		}
 	// twist the current matrix around the forward vector 
 	n1->m_angle = m_deltaAngle * Length (i) / l;
-	q.FromAxisAngle (n1->m_rotation.m.fVec, n0->m_angle - n1->m_angle);
+	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle /*- n0->m_angle*/);
 	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
 	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
 	n1->m_rotation.m.rVec.Normalize ();
