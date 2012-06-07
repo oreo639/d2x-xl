@@ -615,13 +615,6 @@ for (int i = 1; i < m_nSteps; i++) {
 	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
 	n1->m_rotation.m.rVec.Normalize ();
 	n1->m_rotation.m.uVec.Normalize ();
-
-#if 0
-	if (Dot (n1->m_rotation.m.rVec, n0->m_rotation.m.rVec) < 0.0) {
-		n1->m_rotation.m.rVec.Negate ();
-		n1->m_rotation.m.uVec.Negate ();
-		}
-#endif
 	}
 for (int i = 0; i <= m_nSteps; i++) 
 	m_nodes [i].m_rotation = m_nodes [i].m_rotation.Inverse ();
@@ -749,14 +742,15 @@ else {
 	// ask if user wants to keep the new nSegment
 	undoManager.Unlock ();
 	m_tunnel.Release ();
-	Destroy ();
 	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) == IDYES) {
 		undoManager.Begin (udSegments | udVertices);
-		if (Create ())
+		if (Setup (false) && Create ())
 			m_tunnel.Realize (m_path);
+		else
+			m_tunnel.Release ();
 		undoManager.End ();
-		Destroy ();
 		}
+	Destroy ();
 	}
 segmentManager.SetLinesToDraw ();
 DLE.MineView ()->Refresh ();
