@@ -576,24 +576,13 @@ if (dot < 0.999) { // dot >= 0.999 ~ parallel
 	m.m.rVec = q * m.m.rVec;
 	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.0)
 		m.m.rVec.Negate ();
-#if 0 //def _DEBUG
-	m.m.uVec = q * m.m.uVec;
-#endif
 	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.0)
 		m.m.rVec.Negate ();
-#if 0//def _DEBUG
-	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.0) {
-		m.m.uVec.Negate ();
-		m.m.fVec.Negate ();
-		}
-	m_nodes [m_nSteps].m_rotation = m;
-#endif
 	}
 m_deltaAngle = acos (dot = Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
-#if 1
-if (Dot (m.m.rVec, m_base [0].m_rotation.m.uVec) < 0.0)
+// make sure a rotation angle > 180° isn't computed as 360° - angle
+if (Dot (m.m.rVec, m_base [0].m_rotation.m.uVec) < 0.0) 
 	m_deltaAngle += PI;
-#endif
 
 // Compute each path node's rotation matrix from the previous node's rotation matrix
 // First rotate the r and u vectors by the difference angles of the preceding and the current nodes' rotation matrices' z axis
