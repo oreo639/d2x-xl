@@ -406,9 +406,7 @@ Reset ();
 
 // -----------------------------------------------------------------------------
 
-#if 1
-
-// -----------------------------------------------------------------------------
+#if 0
 
 void CSegment::SetUV (short nSide, double x, double y)
 {
@@ -547,6 +545,7 @@ undoManager.End ();
 #endif
 }
 
+// -----------------------------------------------------------------------------
 
 #else
 
@@ -623,7 +622,8 @@ undoManager.End ();
 
 void CSegment::GetTriangleUVs (CDoubleVector (&triangleUVs) [3], const CDoubleVector (&triangleVecs) [3])
 {
-	CDoubleVector vec1, vec2, proj, perp;
+	CDoubleVector vec1, vec2, proj, rej;
+	double projSF;
 
 vec1 = triangleVecs [1] - triangleVecs [0];
 vec2 = triangleVecs [2] - triangleVecs [0];
@@ -631,11 +631,12 @@ proj = vec1;
 if (proj.Mag () == 0) // degenerate face but let's still handle it
 	proj = CDoubleVector (0, 1, 0);
 proj.Normalize ();
-proj *= Dot (proj, vec2);
-perp = vec2 - proj;
+projSF = Dot (proj, vec2);
+proj *= projSF;
+rej = vec2 - proj;
 triangleUVs [0] = CDoubleVector (0, 0, 0);
 triangleUVs [1] = CDoubleVector (0, vec1.Mag (), 0);
-triangleUVs [2] = CDoubleVector (-perp.Mag (), proj.Mag (), 0);
+triangleUVs [2] = CDoubleVector (-rej.Mag (), projSF, 0);
 }
 
 #endif

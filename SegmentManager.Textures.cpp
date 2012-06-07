@@ -110,6 +110,9 @@ if (bAlign1st) {
 		childSideP->m_info.uvls [i] -= uv; 
 	// find difference between parent point0 and child point1
 	uv = childSideP->m_info.uvls [(nChildEdge + 1) % nChildEdgeCount] - sideP->m_info.uvls [nEdge]; 
+	// "round" to the -20 to 20 neighborhood
+	uv.u = fmod (uv.u, 1);
+	uv.v = fmod (uv.v, 1);
 	// find the angle formed by the two lines
 	double sAngle = atan3 (sideP->m_info.uvls [(nEdge + 1) % nEdgeCount].v - sideP->m_info.uvls [nEdge].v, 
 								  sideP->m_info.uvls [(nEdge + 1) % nEdgeCount].u - sideP->m_info.uvls [nEdge].u); 
