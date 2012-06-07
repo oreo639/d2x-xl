@@ -390,11 +390,23 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 			if (jElement == iElement)
 				continue;
 			short nChildSeg = m_segments [nSegment].m_elements [jElement].m_nSegment;
+#ifdef _DEBUG
+			if (segmentManager.Segment (22)->Side (1)->VertexIdIndex (0) != 0)
+				nChildSeg = nChildSeg;
+#endif
 			short nChildSide, nSide = segP->CommonSides (nChildSeg, nChildSide);
+#ifdef _DEBUG
+			if (segmentManager.Segment (22)->Side (1)->VertexIdIndex (0) != 0)
+				nChildSeg = nChildSeg;
+#endif
 			if (nSide < 0)
 				continue;
 			segP->SetChild (nSide, nChildSeg);
-			segmentManager.Segment (nChildSeg)->SetChild (e0.m_nSegment, nChildSide);
+			segmentManager.Segment (nChildSeg)->SetChild (nChildSide, e0.m_nSegment);
+#ifdef _DEBUG
+			if (segmentManager.Segment (22)->Side (1)->VertexIdIndex (0) != 0)
+				nChildSeg = nChildSeg;
+#endif
 			}
 		}
 	}
