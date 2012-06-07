@@ -82,6 +82,7 @@ class CEdgeIndex {
 
 	CEdgeIndex () { Reset (); }
 	void Reset (void) { 
+		m_nEdge = 0xffff;
 		m_sides [0] = m_sides [1] = 0xff;
 		m_nSides = 0; 
 		}

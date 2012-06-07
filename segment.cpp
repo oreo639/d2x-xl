@@ -1465,8 +1465,10 @@ for (int i = 0; i < m_nEdges; i++)
 	if (m_edgeList [i].m_nEdge == nEdge) {
 		if (m_edgeList [i].m_nSides == 2)
 			return -1;
-		m_edgeList [i].m_sides [1] = nSide;
-		m_edgeList [i].m_nSides = 2;
+		if (m_edgeList [i].m_sides [0] != nSide) {
+			m_edgeList [i].m_sides [1] = nSide;
+			m_edgeList [i].m_nSides = 2;
+			}
 		return i;
 		}
 m_edgeList [m_nEdges].m_nEdge = nEdge;

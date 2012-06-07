@@ -54,22 +54,6 @@ CTunnelMaker tunnelMaker;
 char szTunnelMakerError [] = "You must exit tunnel creation before performing this function";
 
 //------------------------------------------------------------------------------
-
-inline double ClampAngle (double angle)
-{
-#if 0
-while (angle < -PI)
-	angle += 2.0 * PI;
-while (angle > PI)
-	angle -= 2.0 * PI;
-#endif
-return angle;
-}
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
@@ -189,7 +173,7 @@ return m_bUpdate = 0;
 // create a tunnel segment (tunnel 'slice') and correlate each element's vertices
 // with its corresponding vertices
 
-bool CTunnelSegment::Create (CTunnelPath& path, short nSegments, short nVertices)
+bool CTunnelSegment::Create (CTunnelPath& path, short nSegments, short nVertices, bool bSegment)
 {
 Release ();
 if (!(m_elements.Resize (nSegments) && m_nVertices.Resize (nVertices)))
@@ -198,7 +182,9 @@ if (!vertexManager.Add (&m_nVertices [0], nVertices))
 	return false;
 for (short i = 0; i < nSegments; i++) {
 	CTunnelElement& element = m_elements [i];
-	if (0 > (element.m_nSegment = segmentManager.Add ()))
+	if (!bSegment)
+		element.m_nSegment = SEGMENT_LIMIT;
+	else if (0 > (element.m_nSegment = segmentManager.Add ()))
 		return false;
 	segmentManager.Segment (element.m_nSegment)->m_info.bTunnel = 1;
 	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
@@ -308,7 +294,7 @@ if (m_nSteps != path.Steps ()) { // allocate sufficient memory for required segm
 		return false;
 	m_nSteps = path.Steps ();
 	for (int i = 0; i <= m_nSteps; i++) {
-		if (!m_segments [i].Create (path, nSegments, nVertices))
+		if (!m_segments [i].Create (path, nSegments, nVertices, i > 0))
 			return false;
 		}
 	}
@@ -356,7 +342,7 @@ void CTunnel::Realize (CTunnelPath& path)
 {
 ushort nVertex = 0;
 short nElements = (short) m_segments [0].m_elements.Length ();
-for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
+for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 	short nStartSide = m_base [0].m_nSide;
 
 	for (short iElement = 0; iElement < nElements; iElement++) {
@@ -366,25 +352,28 @@ for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
 		CSegment* segP = segmentManager.Segment (e0.m_nSegment);
 
 		*segP = *startSegP;
+		segP->Tag ();
 		for (int j = 0; j < 6; j++)
 			segP->SetChild (j, -1);
 		segP->m_info.bTunnel = 0;
-		if (nSegment == 0) {
-			segP->SetChild (oppSideTable [nStartSide], nStartSeg);
-			segP->SetChild (nStartSide, m_segments [nSegment + 1].m_elements [iElement].m_nSegment);
-			startSegP->SetChild (nStartSide, e0.m_nSegment);
-			} 
-#if 0
-		else if (nSegment == m_nSteps - 1) {
-			segP->SetChild (oppSideTable [m_base [0].m_nSide], m_segments [nSegment - 1].m_elements [0].m_nSegment); // previous tunnel segment
-			segP->SetChild (m_base [0].m_nSide, m_base [1].m_nSegment);
-			m_base [1].Segment ()->SetChild (m_base [1].m_nSide, e0.m_nSegment);
-			}
-#endif
-		else {
+		if (nSegment > 1)
 			segP->SetChild (oppSideTable [nStartSide], m_segments [nSegment - 1].m_elements [iElement].m_nSegment); // previous tunnel segment
+		else {
+			startSegP->SetChild (nStartSide, e0.m_nSegment);
+			segP->SetChild (oppSideTable [nStartSide], nStartSeg);
+			} 
+		if (nSegment < m_nSteps)
 			segP->SetChild (nStartSide, m_segments [nSegment + 1].m_elements [iElement].m_nSegment); // next tunnel segment
-			}
+		}
+	}
+
+AssignVertices ();
+
+for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
+	for (short iElement = 0; iElement < nElements; iElement++) {
+		CTunnelElement& e0 = m_segments [nSegment].m_elements [iElement];
+		CSegment* segP = segmentManager.Segment (e0.m_nSegment);
+
 		for (short jElement = 0; jElement < nElements; jElement++) {
 			if (jElement == iElement)
 				continue;
@@ -393,11 +382,10 @@ for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
 			if (nSide < 0)
 				continue;
 			segP->SetChild (nSide, nChildSeg);
-			segmentManager.Segment (nChildSeg)->SetChild (e0.m_nSegment, nSide);
+			segmentManager.Segment (nChildSeg)->SetChild (e0.m_nSegment, nChildSide);
 			}
 		}
 	}
-AssignVertices ();
 }
 
 //------------------------------------------------------------------------------
