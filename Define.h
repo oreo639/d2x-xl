@@ -74,6 +74,13 @@ return (int) ((double) n / (double) m * 65536.0);
 
 // -----------------------------------------------------------------------------
 
+inline double Sign (double v) 
+{ 
+return (v < 0.0) ? -1.0 : 1.0; 
+}
+
+// -----------------------------------------------------------------------------
+
 inline int FixLog (int x) 
 {
 return (x >= 1) ? (int) (log ((double) x) + 0.5) : 0; // round (assume value is positive)

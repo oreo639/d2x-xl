@@ -175,6 +175,7 @@ return m_bUpdate = 0;
 
 void CTunnelElement::Untwist (short nSide) 
 {
+#if 0
   double		minLen = 1e10;
   short		nOppSide = oppSideTable [nSide];
   ubyte		oppVertexIndex [4];
@@ -199,6 +200,7 @@ if (index != 0) {
 	for (short j = 0; j < 4; j++)
 		segP->SetVertexId (nSide, j, vertexIds [j]);
 	}
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -615,13 +617,21 @@ if (dot < 0.999) { // dot >= 0.999 ~ parallel
 	m.m.rVec = q * m.m.rVec;
 	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.0)
 		m.m.rVec.Negate ();
-	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.0)
-		m.m.rVec.Negate ();
 	}
-m_deltaAngle = acos (dot = Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
+
 // make sure a rotation angle > 180° isn't computed as 360° - angle
+#if 0
+m_deltaAngle = acos (dot = Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
+if (fabs (m_deltaAngle) > 0.001) {
+	q.FromAxisAngle (m_base [0].m_rotation.m.fVec, m_deltaAngle);
+	m.m.rVec = q * m_base [0].m_rotation.m.rVec;
+	if (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec) < 0.0)
+		m_deltaAngle += PI * Sign (m_deltaAngle);
+	}
+#else
 if (Dot (m.m.rVec, m_base [0].m_rotation.m.uVec) < 0.0) 
-	m_deltaAngle += PI;
+	m_deltaAngle += PI * Sign (m_deltaAngle);
+#endif
 
 // Compute each path node's rotation matrix from the previous node's rotation matrix
 // First rotate the r and u vectors by the difference angles of the preceding and the current nodes' rotation matrices' z axis
@@ -631,7 +641,7 @@ if (Dot (m.m.rVec, m_base [0].m_rotation.m.uVec) < 0.0)
 CTunnelPathNode * n0, * n1 = &m_nodes [0];
 	n0 = n1;
 
-for (int i = 1; i <= m_nSteps; i++) {
+for (int i = 1; i < m_nSteps; i++) {
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
 		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - n1->m_vertex; //n0->m_vertex;

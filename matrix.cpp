@@ -439,8 +439,6 @@ s.Set (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 1.0);
 
 static CDoubleMatrix id;
 
-inline double Sign (double v) { return (v < 0.0) ? -1.0 : 1.0; }
-
 CDoubleVector CDoubleMatrix::Angles (void)
 {
 	CDoubleVector a;
