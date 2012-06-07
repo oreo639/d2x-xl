@@ -1190,7 +1190,7 @@ for (int i = 0; i < j; i++)
 }
 
 // -----------------------------------------------------------------------------
-// all vertex id table entries with index > nIndex have been move down once in
+// all vertex id table entries with index > nIndex have been moved down once in
 // the table. Update the sides' vertex id indices accordingly.
 
 void CSegment::UpdateVertexIdIndex (ubyte nIndex)
@@ -1460,7 +1460,7 @@ Id () = undoManager.Backup (this, editType);
 
 int CEdgeList::Add (ubyte nSide, ubyte v1, ubyte v2)
 {
-ushort nEdge = (v1 < v2) ? ushort (v1) + (ushort (v2) << 8) : ushort (v2) + (ushort (v1) << 8);
+ushort nEdge = (v1 < v2) ? ushort (v2) + (ushort (v1) << 8) : ushort (v1) + (ushort (v2) << 8);
 for (int i = 0; i < m_nEdges; i++)
 	if (m_edgeList [i].m_nEdge == nEdge) {
 		if (m_edgeList [i].m_nSides == 2)
@@ -1471,6 +1471,8 @@ for (int i = 0; i < m_nEdges; i++)
 			}
 		return i;
 		}
+if (m_nEdges == 12)
+	return -1;
 m_edgeList [m_nEdges].m_nEdge = nEdge;
 m_edgeList [m_nEdges].m_sides [0] = nSide;
 m_edgeList [m_nEdges].m_nSides = 1;

@@ -351,7 +351,19 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		CTunnelElement& e0 = m_segments [nSegment].m_elements [iElement];
 		CSegment* segP = segmentManager.Segment (e0.m_nSegment);
 
-		*segP = *startSegP;
+		segP->m_info.function = startSegP->m_info.function;
+		segP->m_info.props = startSegP->m_info.props;
+		segP->m_info.owner = startSegP->m_info.owner;
+		segP->m_info.group = startSegP->m_info.group;
+		segP->m_nShape = startSegP->m_nShape;
+		for (short nSide = 0; nSide < 6; nSide++) {
+			segP->m_sides [nSide].m_info.nBaseTex = startSegP->m_sides [nSide].m_info.nBaseTex;
+			segP->m_sides [nSide].m_info.nOvlTex = startSegP->m_sides [nSide].m_info.nOvlTex;
+			memcpy (segP->m_sides [nSide].m_info.uvls, startSegP->m_sides [nSide].m_info.uvls, sizeof (segP->m_sides [nSide].m_info.uvls));
+			memcpy (segP->m_sides [nSide].m_info.uvlDeltas, startSegP->m_sides [nSide].m_info.uvlDeltas, sizeof (segP->m_sides [nSide].m_info.uvlDeltas));
+			segP->m_sides [nSide].m_nShape = startSegP->m_sides [nSide].m_nShape;
+			}
+
 		segP->Tag ();
 		for (int j = 0; j < 6; j++)
 			segP->SetChild (j, -1);
