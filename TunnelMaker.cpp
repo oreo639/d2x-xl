@@ -571,13 +571,15 @@ double dot = Dot (m.m.fVec, m_base [0].m_rotation.m.fVec);
 if (dot < 1e-6) {
 	q.FromAxisAngle (CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), acos (dot));
 	m.m.rVec = q * m.m.rVec;
-#ifdef _DEBUG
 	m.m.uVec = q * m.m.uVec;
+#if 0//def _DEBUG
 	m.m.fVec = q * m.m.fVec;
 	m_base [1].m_rotation = m;
 #endif
 	}
 m_deltaAngle = acos (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
+if (Dot (m.m.uVec, m_base [0].m_rotation.m.uVec) < 0.0)
+	m_deltaAngle = -m_deltaAngle;
 #else
 #	ifdef _DEBUG
 double a0 = m_base [0].m_rotation.Angles ().v.z;
