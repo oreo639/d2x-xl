@@ -448,9 +448,10 @@ if ((fabs (cosY) > 1e-3) /*&& (fabs (1.0 - cosY) > 1e-3)*/) { // gimbal lock?
 	a.v.x = atan2 (-m.uVec.v.z / cosY, m.fVec.v.z / cosY);
 #if 1
 	if (fabs (Dot (m.fVec, CDoubleVector (1.0, 0.0, 0.0))) > 0.999)
-		a.v.z = Dot (m.uVec, CDoubleVector (0.0, 1.0, 0.0));
+		a.v.z = acos (Dot (m.uVec, CDoubleVector (0.0, 1.0, 0.0)));
 	else if (fabs (Dot (m.fVec, CDoubleVector (0.0, 1.0, 0.0))) > 0.999)
-		a.v.z = Dot (m.uVec, CDoubleVector (1.0, 0.0, 0.0));
+		a.v.z = acos (Dot (m.uVec, CDoubleVector (1.0, 0.0, 0.0)));
+	else
 #endif
 	a.v.z = atan2 (-m.rVec.v.y / cosY, m.rVec.v.x / cosY);
 	}
