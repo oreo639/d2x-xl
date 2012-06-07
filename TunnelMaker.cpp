@@ -807,12 +807,13 @@ if (!m_bActive)
 	return false;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
 	return true;
-if ((current - selections == m_base [0].m_nSelection) && (m_base [0].Update (current) > 0))
-	return Setup (false);
-if (current - selections != m_base [0].m_nSelection) {
-	int i = m_base [1].Update (current);
-	if (i)
-		return Setup (i < 0);
+if (current - selections == m_base [0].m_nSelection) {
+	if (m_base [0].Update (current) > 0)
+		return Setup (false);
+	}
+else {
+	if (m_base [1].Update (current))
+		return Setup (false);
 	}
 return true;
 }
