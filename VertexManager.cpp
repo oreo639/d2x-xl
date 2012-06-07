@@ -74,11 +74,13 @@ Count ()--;
 #else //USE_FREELIST
 
 undoManager.Begin (udVertices);
-if (nDelVert < --Count ()) {
-	Vertex (nDelVert)->v = Vertex (Count ())->v;
-	//Vertex (Count ())->Status ()
-	Vertex (nDelVert)->Status () = 0;
-	segmentManager.UpdateVertices (Count (), nDelVert);
+if (nDelVert < Count ()) {
+	if (nDelVert < --Count ()) {
+		Vertex (nDelVert)->v = Vertex (Count ())->v;
+		//Vertex (Count ())->Status ()
+		Vertex (nDelVert)->Status () = 0;
+		segmentManager.UpdateVertices (Count (), nDelVert);
+		}
 	}
 undoManager.End ();
 

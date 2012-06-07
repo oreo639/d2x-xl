@@ -38,25 +38,27 @@ void CSegmentManager::Remove (short nDelSeg)
 m_free += nDelSeg;
 Count ()--;
 #else
-if (nDelSeg < --Count ()) {
-	// move the last segment in the segment list to the deleted segment's position
-	if (current->SegmentId () == Count ())
-		current->SetSegmentId (nDelSeg);
-	if (other->m_nSegment == Count ())
-		other->SetSegmentId (nDelSeg);
-	*Segment (nDelSeg) = *Segment (Count ());
-	// update all trigger targets pointing at the moved segment
-	triggerManager.UpdateTargets (Count (), nDelSeg);
-	objectManager.UpdateSegments (Count (), nDelSeg);
-	// update all walls inside the moved segment
-	CSide* sideP = Segment (nDelSeg)->Side (0);
-	for (int i = 0; i < 6; i++, sideP++) {
-		CSegment* segP = sideP->Child ();
-		if (segP != null)
-			segP->UpdateChildren (Count (), nDelSeg);
-		CWall* wallP = sideP->Wall ();
-		if (wallP != null)
-			wallP->m_nSegment = nDelSeg;
+if (nDelSeg < Count ()) {
+	if (nDelSeg < --Count ()) {
+		// move the last segment in the segment list to the deleted segment's position
+		if (current->SegmentId () == Count ())
+			current->SetSegmentId (nDelSeg);
+		if (other->m_nSegment == Count ())
+			other->SetSegmentId (nDelSeg);
+		*Segment (nDelSeg) = *Segment (Count ());
+		// update all trigger targets pointing at the moved segment
+		triggerManager.UpdateTargets (Count (), nDelSeg);
+		objectManager.UpdateSegments (Count (), nDelSeg);
+		// update all walls inside the moved segment
+		CSide* sideP = Segment (nDelSeg)->Side (0);
+		for (int i = 0; i < 6; i++, sideP++) {
+			CSegment* segP = sideP->Child ();
+			if (segP != null)
+				segP->UpdateChildren (Count (), nDelSeg);
+			CWall* wallP = sideP->Wall ();
+			if (wallP != null)
+				wallP->m_nSegment = nDelSeg;
+			}
 		}
 	}
 #endif
