@@ -141,7 +141,7 @@ void CTunnelBase::Setup (CSelection* selection, double sign, bool bStart)
 m_bStart = bStart;
 if (selection) {
 	m_nSelection = selection - &selections [0];
-	*this = *selection;
+	*((CSelection*) this) = *selection;
 	}
 m_sign = sign;
 CSegment* segP = segmentManager.Segment (m_nSegment);
@@ -782,9 +782,9 @@ if (!m_bActive)
 	return false;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
 	return true;
-if ((current == &selections [m_base [0].m_nSelection]) && (m_base [0].Update (current) > 0))
+if ((current - selections == m_base [0].m_nSelection) && (m_base [0].Update (current) > 0))
 	return Setup (false);
-if (current != &selections [m_base [0].m_nSelection]) {
+if (current - selections != m_base [0].m_nSelection) {
 	int i = m_base [1].Update (current);
 	if (i)
 		return Setup (i < 0);
