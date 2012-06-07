@@ -357,11 +357,11 @@ void CTunnel::Realize (CTunnelPath& path)
 ushort nVertex = 0;
 short nElements = (short) m_segments [0].m_elements.Length ();
 for (short nSegment = 0; nSegment < m_nSteps; nSegment++) {
-	short nStartSeg = path.m_startSides [nSegment].m_nSegment;
 	short nStartSide = m_base [0].m_nSide;
 	CSegment* startSegP = segmentManager.Segment (nStartSeg);
 
 	for (short iElement = 0; iElement < nElements; iElement++) {
+		short nStartSeg = path.m_startSides [nElement].m_nSegment;
 		CTunnelElement& e0 = m_segments [nSegment].m_elements [iElement];
 		CSegment* segP = segmentManager.Segment (e0.m_nSegment);
 		*segP = *startSegP;
