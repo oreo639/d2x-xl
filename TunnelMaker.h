@@ -56,15 +56,16 @@ class CTunnelBase : public CSelection {
 		ubyte				m_oppVertexIndex [4];
 		CDoubleMatrix	m_rotation; // orientation of tunnel end side
 		double			m_sign;
+		bool				m_bStart;
 		int				m_bUpdate;
 
 		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSelection (key), m_nSelection (-1) {}
 
 		CTunnelBase (CDoubleVector point, CDoubleVector normal) : m_nSelection (-1), m_point (point), m_normal (normal), CSelection (CSideKey (-1, -1)) {}
 
-		void Setup (int nSelection, double sign);
+		void Setup (CSelection* selection, double sign, bool bStart);
 
-		int Update (bool bStart);
+		int Update (CSelection* selection);
 
 		inline CDoubleVector GetPoint (void) { return m_point; }
 

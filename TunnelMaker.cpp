@@ -136,12 +136,12 @@ for (int i = 0; i < 4; i++)
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CTunnelBase::Setup (int nSelection, double sign)
+void CTunnelBase::Setup (CSelection* selection, double sign, bool bStart)
 {
-if (nSelection >= 0) {
-	if (m_nSelection < 0)
-		m_nSelection = nSelection;
-	*((CSideKey*) this) = selections [m_nSelection];
+m_bStart = bStart;
+if (selection) {
+	m_nSelection = selection - &selections [0];
+	*this = *selection;
 	}
 m_sign = sign;
 CSegment* segP = segmentManager.Segment (m_nSegment);
@@ -158,6 +158,7 @@ m_rotation.m.rVec.Normalize ();
 //m_rotation.m.rVec *= -sign;
 m_rotation.m.uVec = CrossProduct (m_rotation.m.fVec, m_rotation.m.rVec);
 m_rotation.m.uVec.Normalize ();
+m_bUpdate = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -165,17 +166,16 @@ m_rotation.m.uVec.Normalize ();
 // For the start side, only update when the current edge or a vertex of the start side have changed
 // For the end side, also update when the segment and/or side have changed
 
-int CTunnelBase::Update (bool bStart)
+int CTunnelBase::Update (CSelection* selection)
 {
 	CSelection* selection;
-	bool			bNewSide = CSideKey (*this) != CSideKey (selections [m_nSelection]);
+	bool			bNewSide = CSideKey (*this) != CSideKey (*selection);
 
-if (!bStart && bNewSide) {
-	*((CSelection*) this) = selections [m_nSelection];
+if (!m_bStart && bNewSide) {
+	*((CSelection*) this) = *((CSelection*) selection);
 	return m_bUpdate = -1;
 	}
-selection = &selections [m_nSelection];
-if (!(bStart && bNewSide) && (Edge () != selection->Edge ())) {
+if (!(m_bStart && bNewSide) && (Edge () != selection->Edge ())) {
 	m_nEdge = selection->Edge ();
 	return m_bUpdate = 1;
 	}
@@ -750,18 +750,16 @@ DLE.MineView ()->Refresh ();
 bool CTunnelMaker::Setup (bool bFull)
 {
 if (bFull) {
-	m_base [0].m_nSelection = -1;
-	m_base [0].Setup (current != &selections [0], -1.0);
-	m_base [1].m_nSelection = -1;
-	m_base [1].Setup (current == &selections [0], 1.0);
+	m_base [0].Setup (current, -1.0, true);
+	m_base [1].Setup (other, 1.0, false);
 	}
 else {
-	m_base [0].Setup (-1, -1.0);
+	m_base [0].Setup (null, -1.0, true);
 	if (m_base [1].m_bUpdate > 0) 
-		m_base [1].Setup (-1, 1.0);
+		m_base [1].Setup (null, 1.0, false);
 	else if (m_base [1].m_bUpdate < 0) {
 		m_base [1].m_nSelection = -1;
-		m_base [1].Setup (current != &selections [0], 1.0);
+		m_base [1].Setup (current, 1.0, false);
 		}
 	}
 m_nGranularity = 0;
@@ -771,9 +769,9 @@ if (m_path.Setup (m_base, bFull)) {
 	return true;
 	}
 ErrorMsg ("End points of segments are too close.\n\n"
-				"Hint: Select two sides which are further apart\n"
-				"using the spacebar and left/right arrow keys,\n"
-				"then try again.");
+			 "Hint: Select two sides which are further apart\n"
+			 "using the spacebar and left/right arrow keys,\n"
+			 "then try again.");
 Destroy ();
 return false;
 }
@@ -786,11 +784,13 @@ if (!m_bActive)
 	return false;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
 	return true;
-if (m_base [0].Update (true) > 0)
+if ((current == &selections [m_base [0].m_nSelection]) && (m_base [0].Update (current) > 0))
 	return Setup (false);
-int i = m_base [1].Update (false);
-if (i)
-	return Setup (i < 0);
+if (current != &selections [m_base [0].m_nSelection]) {
+	int i = m_base [1].Update (current);
+	if (i)
+		return Setup (i < 0);
+	}
 return true;
 }
 
