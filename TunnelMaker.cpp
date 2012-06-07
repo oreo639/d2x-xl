@@ -141,7 +141,7 @@ void CTunnelBase::Setup (int nSelection, double sign)
 if (nSelection >= 0) {
 	if (m_nSelection < 0)
 		m_nSelection = nSelection;
-	*((CSideKey*) this) = selections [nSelection];
+	*((CSideKey*) this) = selections [m_nSelection];
 	}
 m_sign = sign;
 CSegment* segP = segmentManager.Segment (m_nSegment);
@@ -566,35 +566,37 @@ m_deltaAngle = ClampAngle (m_base [1].m_rotation.Angles ().v.z - m_base [0].m_ro
 // and rotate using a quaternion
 // Then rotate the r and u vectors around the z axis by the z angle difference
 CTunnelPathNode * n0, * n1 = &m_nodes [0];
-n0 = n1;
+CQuaternion q;
+
 for (int i = 1; i < m_nSteps; i++) {
+	n0 = n1;
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
-		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i].m_vertex; //n0->m_vertex;
+		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - n1->m_vertex; //n0->m_vertex;
 
 	double dot = Dot (n1->m_rotation.m.fVec.Normalize (), n0->m_rotation.m.fVec); // angle of current and previous forward vectors
 	if (fabs (dot) > 1e-6) {
-		CDoubleVector v = CrossProduct (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec); // get rotation axis between the two forward vectors
-		//dot = acos (dot);
-		CQuaternion q;
-		q.FromAxisAngle (v.Normalize (), acos (dot));
+		CDoubleVector axis = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec); // get rotation axis between the two forward vectors
+		q.FromAxisAngle (axis, acos (dot));
 		n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
 		n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;
 		n1->m_rotation.m.rVec.Normalize ();
 		n1->m_rotation.m.uVec.Normalize ();
 		}
-
+#if 1
 	n1->m_angle = m_deltaAngle * Length (i) / l;
-	CQuaternion q;
-	q.FromAxisAngle (n0->m_rotation.m.fVec, n1->m_angle); //(n1->m_angle - n0->m_angle));
-	n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec;
-	n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;
+	q.FromAxisAngle (n1->m_rotation.m.fVec, n0->m_angle - n1->m_angle);
+	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
+	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
 	n1->m_rotation.m.rVec.Normalize ();
 	n1->m_rotation.m.uVec.Normalize ();
+#endif
+#if 0
 	if (Dot (n1->m_rotation.m.rVec, n0->m_rotation.m.rVec) < 0.0) {
 		n1->m_rotation.m.rVec.Negate ();
 		n1->m_rotation.m.uVec.Negate ();
 		}
+#endif
 	}
 for (int i = 0; i <= m_nSteps; i++) 
 	m_nodes [i].m_rotation = m_nodes [i].m_rotation.Inverse ();

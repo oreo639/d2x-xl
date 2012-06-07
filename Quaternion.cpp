@@ -22,14 +22,6 @@ return *this;
 
 CQuaternion CQuaternion::operator* (CQuaternion other)
 {
-#if 1
-//qr.scalar = v3_dot( &qa->vector, &qb->vector );
-//v3_cross(  &va, &qa->vector, &qb->vector );
-//v3_scalef( &vb, &qa->vector, &qb->scalar );
-//v3_scalef( &vc, &qb->vector, &qa->scaler );
-//v3_add(    &va,         &va, &vb );
-//v3_add(    &qr->vector, &va, &vc );
-//quaternion_normalise( qr );
 double w = Angle () * other.Angle () - Dot (*this, other);
 CDoubleVector va = CrossProduct (*this, other);
 CDoubleVector vb = *((CDoubleVector*) this) * other.Angle ();
@@ -38,12 +30,6 @@ va += vb;
 va += vc;
 CQuaternion q (va, w);
 return q.Normalize ();
-#else
-return CQuaternion (m_w * other.v.x + v.x * other.m_w + v.y * other.v.z - v.z * other.v.y,
-                    m_w * other.v.y + v.y * other.m_w + v.z * other.v.x - v.x * other.v.z,
-                    m_w * other.v.z + v.z * other.m_w + v.x * other.v.y - v.y * other.v.x,
-                    m_w * other.m_w - v.x * other.v.x - v.y * other.v.y - v.z * other.v.z);
-#endif
 }
 
 // -----------------------------------------------------------------------------
