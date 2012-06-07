@@ -126,7 +126,7 @@ class CTunnelPath {
 
 		CTunnelPath () : m_nSteps (0) {}
 
-		bool Setup (CTunnelBase base [2], bool bFull, bool bPath);
+		bool Setup (CTunnelBase base [2], bool bStartSides, bool bPath);
 
 		void Destroy (void);
 
@@ -157,6 +157,7 @@ class CTunnelElement {
 
 	CTunnelElement () : m_nSegment (short (SEGMENT_LIMIT)) {}
 
+	void Untwist (short nSide);
 	};
 
 //------------------------------------------------------------------------
@@ -220,7 +221,7 @@ class CTunnelMaker {
 
 		void Destroy (void);
 
-		bool Setup (bool bFull);
+		bool Setup (bool bStartSides);
 		
 		bool Active (bool bMsg = true) { 
 			if (!m_bActive)

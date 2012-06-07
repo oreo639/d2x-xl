@@ -170,6 +170,40 @@ return m_bUpdate = 0;
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+void CTunnelElement::Untwist (short nSide) 
+{
+  double		minLen = 1e10;
+  short		nOppSide = oppSideTable [nSide];
+  ubyte		oppVertexIndex [4];
+
+CSegment* segP = segmentManager.Segment (m_nSegment);
+segP->CreateOppVertexIndex (nSide, oppVertexIndex);
+
+CVertex* v0 = segP->Vertex (nSide, 0);
+short index = 0;
+for (short j = 0; j < 4; j++) {
+	double len = Distance (*v0, *segP->Vertex (nOppSide, oppVertexIndex [j]));
+	if (len < minLen) {
+		minLen = len;
+		index = j;
+		}
+	}
+
+if (index != 0) {
+	short vertexIds [4];
+	for (short j = 0; j < 4; j++)
+		vertexIds [j] = segP->VertexId (nSide, index + j);
+	for (short j = 0; j < 4; j++)
+		segP->SetVertexId (nSide, j, vertexIds [j]);
+	}
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // create a tunnel segment (tunnel 'slice') and correlate each element's vertices
 // with its corresponding vertices
 
@@ -275,6 +309,8 @@ for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElemen
 		for (short nVertex = 0; nVertex < 4; nVertex++) {
 			segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
 			segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
+			if (nSegment == m_nSteps)
+				e1->Untwist (m_base [0].m_nSide);
 			}
 		}
 	}
@@ -390,23 +426,11 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 			if (jElement == iElement)
 				continue;
 			short nChildSeg = m_segments [nSegment].m_elements [jElement].m_nSegment;
-#ifdef _DEBUG
-			if (segmentManager.Segment (22)->Side (1)->VertexIdIndex (0) != 0)
-				nChildSeg = nChildSeg;
-#endif
 			short nChildSide, nSide = segP->CommonSides (nChildSeg, nChildSide);
-#ifdef _DEBUG
-			if (segmentManager.Segment (22)->Side (1)->VertexIdIndex (0) != 0)
-				nChildSeg = nChildSeg;
-#endif
 			if (nSide < 0)
 				continue;
 			segP->SetChild (nSide, nChildSeg);
 			segmentManager.Segment (nChildSeg)->SetChild (nChildSide, e0.m_nSegment);
-#ifdef _DEBUG
-			if (segmentManager.Segment (22)->Side (1)->VertexIdIndex (0) != 0)
-				nChildSeg = nChildSeg;
-#endif
 			}
 		}
 	}
@@ -477,7 +501,7 @@ renderer.EndRender ();
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-bool CTunnelPath::Setup (CTunnelBase base [2], bool bFull, bool bPath)
+bool CTunnelPath::Setup (CTunnelBase base [2], bool bStartSides, bool bPath)
 {
 memcpy (m_base, base, sizeof (m_base));
 
@@ -490,7 +514,7 @@ if (length < MIN_TUNNEL_LENGTH)
 else if (length > MAX_TUNNEL_LENGTH)
 	length = MAX_TUNNEL_LENGTH;
 
-if (bFull) {
+if (bStartSides) {
 	CDoubleMatrix identity;
 
 	// collect all tagged sides that don't have child segments, are directly or indirectly 
@@ -539,7 +563,7 @@ if (bFull) {
 		m_nStartVertices [j++] = **iter;
 	}
 
-if (bFull || bPath) {
+if (bStartSides || bPath) {
 	// setup intermediate points for a cubic bezier curve
 	m_bezier.SetLength (length, 0);
 	m_bezier.SetLength (length, 1);
@@ -607,7 +631,7 @@ if (Dot (m.m.rVec, m_base [0].m_rotation.m.uVec) < 0.0)
 CTunnelPathNode * n0, * n1 = &m_nodes [0];
 	n0 = n1;
 
-for (int i = 1; i < m_nSteps; i++) {
+for (int i = 1; i <= m_nSteps; i++) {
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
 		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - n1->m_vertex; //n0->m_vertex;
@@ -773,11 +797,11 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------------
 
-bool CTunnelMaker::Setup (bool bFull)
+bool CTunnelMaker::Setup (bool bStartSides)
 {
 	bool bPath = false;
 
-if (bFull) {
+if (bStartSides) {
 	m_base [0].Setup (current, -1.0, true);
 	m_base [1].Setup (other, 1.0, false);
 	}
@@ -792,7 +816,7 @@ else {
 	}
 m_nGranularity = 0;
 
-if (m_path.Setup (m_base, bFull, bPath)) {
+if (m_path.Setup (m_base, bStartSides, bPath)) {
 	m_tunnel.Setup (m_base);
 	return true;
 	}
