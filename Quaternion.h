@@ -23,7 +23,7 @@ class CQuaternion : public CDoubleVector {
 
 	inline double Angle (void) { return m_w; }
 
-	CQuaternion GetConjugate (void) { return CQuaternion (-*this, m_w); };
+	CQuaternion GetConjugate (void) { return CQuaternion (-*((CDoubleVector*) this), m_w); };
 
 	CQuaternion& Normalize (void);
 

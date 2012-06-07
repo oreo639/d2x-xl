@@ -32,7 +32,7 @@ CQuaternion CQuaternion::operator* (CQuaternion other)
 //quaternion_normalise( qr );
 double w = Angle () * other.Angle () - Dot (*this, other);
 CDoubleVector va = CrossProduct (*this, other);
-CDoubleVector vb = dynamic_cast<CDoubleVector&>(*this) * other.Angle ();
+CDoubleVector vb = *((CDoubleVector*) this) * other.Angle ();
 CDoubleVector vc = CDoubleVector (other) * Angle ();
 va += vb;
 va += vc;
@@ -51,7 +51,7 @@ return CQuaternion (m_w * other.v.x + v.x * other.m_w + v.y * other.v.z - v.z * 
 // Multiplying a quaternion q with a vector v applies the q-rotation to v
 CDoubleVector CQuaternion::operator* (CDoubleVector v)
 {
-return *this * (CQuaternion (::Normalize (v), 0.0) * GetConjugate ());
+return (*this * CQuaternion (::Normalize (v), 0.0)) * GetConjugate ();
 }
 
 // -----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ CQuaternion& CQuaternion::FromAxisAngle (CDoubleVector axis, double angle)
 {
 axis.Normalize ();
 angle *= 0.5;
-dynamic_cast<CDoubleVector&>(*this) = axis * sin (angle);
+*((CDoubleVector*) this) = axis * sin (angle);
 m_w = cos (angle);
 Normalize ();
 return *this;

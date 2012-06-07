@@ -57,10 +57,12 @@ char szTunnelMakerError [] = "You must exit tunnel creation before performing th
 
 inline double ClampAngle (double angle)
 {
+#if 0
 while (angle < -PI)
 	angle += 2.0 * PI;
 while (angle > PI)
 	angle -= 2.0 * PI;
+#endif
 return angle;
 }
 
@@ -250,8 +252,8 @@ if (mineView->GetRenderer ())
 
 void CTunnel::Setup (CTunnelBase base [2])
 {
+Destroy ();
 memcpy (m_base, base, sizeof (m_base));
-m_nSteps = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -564,22 +566,27 @@ m_deltaAngle = ClampAngle (m_base [1].m_rotation.Angles ().v.z - m_base [0].m_ro
 // and rotate using a quaternion
 // Then rotate the r and u vectors around the z axis by the z angle difference
 CTunnelPathNode * n0, * n1 = &m_nodes [0];
-for (int i = 1; i <= m_nSteps; i++) {
-	n0 = n1;
+n0 = n1;
+for (int i = 1; i < m_nSteps; i++) {
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
-		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - n0->m_vertex;
+		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i].m_vertex; //n0->m_vertex;
+
 	double dot = Dot (n1->m_rotation.m.fVec.Normalize (), n0->m_rotation.m.fVec); // angle of current and previous forward vectors
 	if (fabs (dot) > 1e-6) {
 		CDoubleVector v = CrossProduct (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec); // get rotation axis between the two forward vectors
-		CQuaternion q (v.Normalize (), acos (dot));
-		n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec; // rotate right and up vectors accordingly
-		n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
+		//dot = acos (dot);
+		CQuaternion q;
+		q.FromAxisAngle (v.Normalize (), acos (dot));
+		n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
+		n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;
 		n1->m_rotation.m.rVec.Normalize ();
 		n1->m_rotation.m.uVec.Normalize ();
 		}
+
 	n1->m_angle = m_deltaAngle * Length (i) / l;
-	CQuaternion q (n0->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
+	CQuaternion q;
+	q.FromAxisAngle (n0->m_rotation.m.fVec, n1->m_angle); //(n1->m_angle - n0->m_angle));
 	n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec;
 	n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;
 	n1->m_rotation.m.rVec.Normalize ();
@@ -659,7 +666,7 @@ renderer.EndRender ();
 void CTunnelMaker::Reset (void)
 {
 if (m_bActive) {
-	m_tunnel.Destroy ();
+	m_tunnel.Release ();
 	m_bActive = false;
 	}
 DLE.MineView ()->Refresh (false);
