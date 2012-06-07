@@ -168,8 +168,7 @@ m_bUpdate = 0;
 
 int CTunnelBase::Update (CSelection* selection)
 {
-	CSelection* selection;
-	bool			bNewSide = CSideKey (*this) != CSideKey (*selection);
+	bool bNewSide = CSideKey (*this) != CSideKey (*selection);
 
 if (!m_bStart && bNewSide) {
 	*((CSelection*) this) = *((CSelection*) selection);
@@ -758,7 +757,6 @@ else {
 	if (m_base [1].m_bUpdate > 0) 
 		m_base [1].Setup (null, 1.0, false);
 	else if (m_base [1].m_bUpdate < 0) {
-		m_base [1].m_nSelection = -1;
 		m_base [1].Setup (current, 1.0, false);
 		}
 	}
