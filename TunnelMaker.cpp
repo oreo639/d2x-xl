@@ -610,28 +610,35 @@ CQuaternion q;
 // determining the angle of the two matrices' z axii (forward vectors) and rotating
 // the end matrix around the perpendicular of the two matrices' z axii.
 CDoubleMatrix m = m_base [1].m_rotation;
-double dot = Dot (m.m.fVec, m_base [0].m_rotation.m.fVec);
-if (dot < 0.999) { // dot >= 0.999 ~ parallel
-	q.FromAxisAngle (CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), -acos (dot));
+double twist = Dot (m.m.fVec, m_base [0].m_rotation.m.fVec);
+CDoubleVector twistAxis;
+
+if (twist < 0.999) { // dot >= 0.999 ~ parallel
+	q.FromAxisAngle (twistAxis = CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), -acos (twist));
 	m.m.fVec = q * m.m.fVec;
 	m.m.rVec = q * m.m.rVec;
-	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.0)
+	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.999)
 		m.m.rVec.Negate ();
 	}
 
-// make sure a rotation angle > 180° isn't computed as 360° - angle
-#if 0
-m_deltaAngle = acos (dot = Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
+// determine correct rotation direction
+// First transform start side's right vector to the end side's right vector
+// by rotating it around the forward (z) vector rotation axis by the forward vector difference angle
+// then rotate it around the forward vector by the twist angle
+// correct the twist angle by the difference angle of the result right vector and the end side's right vector
+m_deltaAngle = acos (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
 if (fabs (m_deltaAngle) > 0.001) {
-	q.FromAxisAngle (m_base [0].m_rotation.m.fVec, m_deltaAngle);
-	m.m.rVec = q * m_base [0].m_rotation.m.rVec;
-	if (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec) < 0.0)
-		m_deltaAngle += PI * Sign (m_deltaAngle);
+	if (twist < 0.999) { // dot >= 0.999 ~ parallel
+		q.FromAxisAngle (twistAxis, acos (twist));
+		m.m.rVec = q * m_base [0].m_rotation.m.rVec;
+		}
+	q.FromAxisAngle (m_base [1].m_rotation.m.fVec, m_deltaAngle);
+	m.m.rVec = q * m.m.rVec;
+	if (Dot (m.m.rVec, m_base [1].m_rotation.m.uVec) < 0.0) 
+		m_deltaAngle += acos (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec));
+	else
+		m_deltaAngle -= acos (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec));
 	}
-#else
-if (Dot (m.m.rVec, m_base [0].m_rotation.m.uVec) < 0.0) 
-	m_deltaAngle += PI * Sign (m_deltaAngle);
-#endif
 
 // Compute each path node's rotation matrix from the previous node's rotation matrix
 // First rotate the r and u vectors by the difference angles of the preceding and the current nodes' rotation matrices' z axis
