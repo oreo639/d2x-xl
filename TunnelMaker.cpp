@@ -783,6 +783,7 @@ else {
 		m_base [1].Setup (null, 1.0, false);
 	else if (m_base [1].m_bUpdate < 0) {
 		m_base [1].Setup (current, 1.0, false);
+		bFull = true;
 		}
 	}
 m_nGranularity = 0;
