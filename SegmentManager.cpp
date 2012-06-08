@@ -401,15 +401,15 @@ void CSegmentManager::GatherEdges (CAVLTree <CEdgeTreeNode, uint>& edgeTree)
 	short			nSegments = Count ();
 
 for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
-	int nEdges = segP->BuildEdgeList (edgeList, true);
+	int nEdges = segP->BuildEdgeList (edgeList, false);
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
 		ubyte side1, side2, i1, i2;
 		edgeList.Get (nEdge, side1, side2, i1, i2);
 		ushort v1 = segP->VertexId (i1);
 		ushort v2 = segP->VertexId (i2);
-		uint key = (v1 < v2) ? v1 + (uint (v2) << 16) : v2 + (uint (v1) << 16);
+		uint key = edgeList.Key (v1, v2);
 #ifdef _DEBUG
-		if (key == 111 + uint (116) * 65536)
+		if (key == edgeList.Key (23, 5))
 			key = key;
 #endif
 		bool bVisible [2] = { (side1 < 6) && segP->Side (side1)->IsVisible (), (side2 < 6) && segP->Side (side2)->IsVisible () };

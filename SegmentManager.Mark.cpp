@@ -287,7 +287,7 @@ while (nHead < nTail) {
 	m_segP = segmentManager.Segment (m_parent);
 	m_sideP = segmentManager.Side (m_parent);
 	edgeList.Reset ();
-	if (!m_segP->BuildEdgeList (edgeList, ubyte (m_parent.m_nSide), true))
+	if (!m_segP->BuildEdgeList (edgeList, ubyte (m_parent.m_nSide), false))
 		continue;
 	int nEdges = edgeList.Count ();
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {

@@ -1461,7 +1461,7 @@ Id () = undoManager.Backup (this, editType);
 
 int CEdgeList::Add (ubyte nSide, ubyte v1, ubyte v2)
 {
-ushort nEdge = (v1 < v2) ? ushort (v2) + (ushort (v1) << 8) : ushort (v1) + (ushort (v2) << 8);
+ushort nEdge = Key (v1, v2);
 for (int i = 0; i < m_nEdges; i++)
 	if (m_edgeList [i].m_nEdge == nEdge) {
 		if (m_edgeList [i].m_nSides == 2)
@@ -1484,7 +1484,7 @@ return ++m_nEdges;
 
 int CEdgeList::Find (int i, ubyte& side1, ubyte& side2, ubyte v1, ubyte v2)
 { 
-ushort nEdge = (v1 < v2) ? ushort (v1) + (ushort (v2) << 8) : ushort (v2) + (ushort (v1) << 8);
+ushort nEdge = Key (v1, v2);
 for (; i < m_nEdges; i++) {
 	if (m_edgeList [i].m_nEdge == nEdge) {
 		side1 = m_edgeList [i].m_sides [0];
