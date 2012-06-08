@@ -667,6 +667,8 @@ if (twist < 0.999) { // dot >= 0.999 ~ parallel
 // by rotating it around the forward (z) vector rotation axis by the forward vector difference angle
 // then rotate it around the forward vector by the twist angle
 // correct the twist angle by the difference angle of the result right vector and the end side's right vector
+// A simpler way might be to also rotate the end orientation's up vector back and check its angle with 
+// the start side's up vector: If their angle is > 90° and the twist angle is < 90°, add 180° to the twist angle
 m_deltaAngle = acos (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
 if (fabs (m_deltaAngle) > 0.001) {
 	if (twist < 0.999) { // dot >= 0.999 ~ parallel
