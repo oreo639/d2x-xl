@@ -1009,6 +1009,7 @@ return false;
 
 void CSegment::Tag (ubyte mask)
 {
+m_info.flags |= mask;
 for (int i = 0; i < 6; i++)
 	Side (i)->Tag (mask);
 #if 0
@@ -1022,6 +1023,7 @@ for (int i = 0; i < 8; i++)
 
 void CSegment::UnTag (ubyte mask)
 {
+m_info.flags &= ~mask;
 for (int i = 0; i < 6; i++)
 	Side (i)->UnTag (mask);
 #if 0
@@ -1035,6 +1037,7 @@ for (int i = 0; i < 8; i++)
 
 void CSegment::ToggleTag (ubyte mask)
 {
+m_info.flags ^= mask;
 for (int i = 0; i < 6; i++)
 	Side (i)->ToggleTag (mask);
 #if 0

@@ -409,7 +409,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 		ushort v2 = segP->VertexId (i2);
 		uint key = edgeList.Key (v1, v2);
 #ifdef _DEBUG
-		if (key == edgeList.Key (23, 5))
+		if (key == edgeList.Key (0, 4))
 			key = key;
 #endif
 		bool bVisible [2] = { (side1 < 6) && segP->Side (side1)->IsVisible (), (side2 < 6) && segP->Side (side2)->IsVisible () };

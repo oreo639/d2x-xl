@@ -447,8 +447,12 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		for (int j = 0; j < 6; j++)
 			segP->SetChild (j, -1);
 		segP->m_info.bTunnel = 0;
-		if (nSegment > 1)
+		if (nSegment > 1) 
+#if 1
+			segmentManager.Link (nStartSeg, nStartSide, e0.m_nSegment, oppSideTable [nStartSide], 1e-6);
+#else
 			segP->SetChild (oppSideTable [nStartSide], m_segments [nSegment - 1].m_elements [iElement].m_nSegment); // previous tunnel segment
+#endif
 		else {
 			startSegP->SetChild (nStartSide, e0.m_nSegment);
 			segP->SetChild (oppSideTable [nStartSide], nStartSeg);
