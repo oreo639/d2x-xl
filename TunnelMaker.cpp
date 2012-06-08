@@ -41,6 +41,39 @@ The total procedure is:
      - construct rotation matrix from start rotation, forward vector <next node - previous node> and weighted z rotation
      - compute tunnel vertices at current path node by rotating the start vertices using the node's rotation matrix
 	  - assign current path node's tunnel vertices to the tunnel segments related to the current path node
+
+A few implementation details.
+
+First a path of reference points ("nodes") between the start and end point is created by use of a cubic bezier function. 
+Then a set of base vertices is computed by taking the vertices of all start sides and subtracting the tunnel start point 
+from them (so now they are relative to the start point). Then the orientation (rotation) matrices for each path node is 
+created. They are interpolated between the start and end node's orientations. These get computed from the start and end 
+sides' normal (forward), the current edge (right) and their perpendicular vector (up). The end side's normal gets negated 
+to point to the proper direction. To determine the z rotation angle between the start and end orientations, the end 
+orientation's x and y rotations are undone in relation to the start orientation by computing the angles between the two 
+orientation matrices' z (forward) axes and rotating the end side's orientation matrix around the perpendicular vector of 
+the start and end orientations' z axis. Now the start and end sides' forward vectors are identical (minus slight aberrations 
+caused by limitiations in double floating point arithmetic), and the their z axis rotation ("twist") can be computed from 
+the angle between their right axes. The only problem remaining is to determine whether the rotation is clockwise or counter 
+clockwise. To determine that, I rotate and twist the start matrix right vector back into the end position (by reversing the 
+previous unrotation and applying the twist angle rotation). If the result of this transformation has a dot product > 0.999 
+with the end orientation's right vector, I am done. Otherwise I add the difference angle between the two to the twist angle.
+
+Each path node orientation has two base parameters: The direction of its forward vector (here the vector of the previous to 
+the next path node is used to smoothly average the angle of the perpendicular plane in regard to the forward vector) and the 
+twist (angle around forward vector) relative to the start orientation. To interpolate a path node orientation, it's twist is 
+computed by scaling the total twist with the quotient of the path length at that node and the total path length 
+(twist * length / total_length). The required x and y rotations are done via a quaternion based rotation around a rotation 
+axis which is perpendicular to the current path node's and the base side orientation's forward vectors and the angle between 
+these two vectors. The base orientation's right and up vectors are rotated around this axis (the forward vector doesn't need 
+to, since we have it already). Next, the local twist is applied by rotating the local up and right vectors around the forward 
+vector by the current twist angle.
+
+This yields a rotation matrix in the current coordinate system (based on the identity matrix) for each path node. To compute 
+the cross section at each path node, the start vertices simply need to be rotated using these rotation matrixes (their inverse, 
+to be precise). What remains to be done is to enter the proper vertex indices in each tunnel segment (which was quite straight 
+forward with the data structures I have devised).
+
 */
 
 CTunnelMaker tunnelMaker;
