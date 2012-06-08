@@ -689,9 +689,9 @@ if (fabs (m_deltaAngle) > 0.001) {
 // and rotate using a quaternion
 // Then rotate the r and u vectors around the z axis by the z angle difference
 CTunnelPathNode * n0, * n1 = &m_nodes [0];
-	n0 = n1;
 
 for (int i = 1; i < m_nSteps; i++) {
+	n0 = n1;
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) // last matrix is the end side's matrix - use it's forward vector
 		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - n1->m_vertex; //n0->m_vertex;
@@ -709,7 +709,7 @@ for (int i = 1; i < m_nSteps; i++) {
 		}
 	// twist the current matrix around the forward vector 
 	n1->m_angle = m_deltaAngle * Length (i) / l;
-	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle /*- n0->m_angle*/);
+	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
 	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
 	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
 	n1->m_rotation.m.rVec.Normalize ();
