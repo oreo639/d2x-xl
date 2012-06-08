@@ -475,6 +475,7 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 // here these sides get the tunnel start vertices assigned
 ushort* buffer = m_segments [0].m_nVertices.Buffer ();
 m_segments [0].m_nVertices.SetBuffer (path.m_nStartVertices.Buffer ());
+path.m_nStartVertices.SetBuffer (buffer);
 m_segments [0].AssignVertices (path);
 
 AssignVertices ();
