@@ -248,6 +248,7 @@ if (index != 0) {
 
 void CTunnelSegment::AssignVertices (CTunnelPath& path)
 {
+short nSegments = short (m_elements.Length ());
 for (short i = 0; i < nSegments; i++) {
 	CTunnelElement& element = m_elements [i];
 	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
