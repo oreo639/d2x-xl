@@ -46,18 +46,22 @@ A few implementation details.
 
 First a path of reference points ("nodes") between the start and end point is created by use of a cubic bezier function. 
 Then a set of base vertices is computed by taking the vertices of all start sides and subtracting the tunnel start point 
-from them (so now they are relative to the start point). Then the orientation (rotation) matrices for each path node is 
-created. They are interpolated between the start and end node's orientations. These get computed from the start and end 
-sides' normal (forward), the current edge (right) and their perpendicular vector (up). The end side's normal gets negated 
-to point to the proper direction. To determine the z rotation angle between the start and end orientations, the end 
-orientation's x and y rotations are undone in relation to the start orientation by computing the angles between the two 
-orientation matrices' z (forward) axes and rotating the end side's orientation matrix around the perpendicular vector of 
-the start and end orientations' z axis. Now the start and end sides' forward vectors are identical (minus slight aberrations 
-caused by limitiations in double floating point arithmetic), and the their z axis rotation ("twist") can be computed from 
-the angle between their right axes. The only problem remaining is to determine whether the rotation is clockwise or counter 
-clockwise. To determine that, I rotate and twist the start matrix right vector back into the end position (by reversing the 
-previous unrotation and applying the twist angle rotation). If the result of this transformation has a dot product > 0.999 
-with the end orientation's right vector, I am done. Otherwise I add the difference angle between the two to the twist angle.
+from them (so now they are relative to the start point). 
+
+Then the orientation (rotation) matrices for each path node is created. They are interpolated between the start and end 
+node's orientations. These get computed from the start and end sides' normal (forward), the current edge (right) and 
+their perpendicular vector (up). The end side's normal gets negated to point to the proper direction. 
+
+To determine the z rotation angle between the start and end orientations, the end orientation's x and y rotations are undone 
+in relation to the start orientation by computing the angles between the two orientation matrices' z (forward) axes and 
+rotating the end side's orientation matrix around the perpendicular vector of the start and end orientations' z axis. Now the 
+start and end sides' forward vectors are identical (minus slight aberrations caused by limitiations in double floating point 
+arithmetic), and the their z axis rotation ("twist") can be computed from the angle between their right axes. 
+
+The only problem remaining is to determine whether the rotation is clockwise or counter clockwise. To determine that, the start 
+matrix right vector is rotated and twisted back into the end position (by reversing the previous unrotation and applying the twist 
+angle rotation). If the result of this transformation has a dot product > 0.999 with the end orientation's right vector, I am done. 
+Otherwise difference angle between the two vectors is added to the twist angle.
 
 Each path node orientation has two base parameters: The direction of its forward vector (here the vector of the previous to 
 the next path node is used to smoothly average the angle of the perpendicular plane in regard to the forward vector) and the 
