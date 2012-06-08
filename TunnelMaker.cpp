@@ -245,6 +245,18 @@ if (index != 0) {
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+
+void CTunnelSegment::AssignVertices (CTunnelPath& path)
+{
+for (short i = 0; i < nSegments; i++) {
+	CTunnelElement& element = m_elements [i];
+	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
+	for (short j = 0; j < 4; j++) 
+		element.m_nVertices [j] = m_nVertices [vertexIndex [j]];
+	}
+}
+
+//------------------------------------------------------------------------------
 // create a tunnel segment (tunnel 'slice') and correlate each element's vertices
 // with its corresponding vertices
 
@@ -259,13 +271,13 @@ for (short i = 0; i < nSegments; i++) {
 	CTunnelElement& element = m_elements [i];
 	if (!bSegment)
 		element.m_nSegment = SEGMENT_LIMIT;
-	else if (0 > (element.m_nSegment = segmentManager.Add ()))
-		return false;
-	segmentManager.Segment (element.m_nSegment)->m_info.bTunnel = 1;
-	short* vertexIndex = path.m_startSides [i].m_nVertexIndex;
-	for (short j = 0; j < 4; j++) 
-		element.m_nVertices [j] = m_nVertices [vertexIndex [j]];
+	else {
+		if (0 > (element.m_nSegment = segmentManager.Add ()))
+			return false;
+		segmentManager.Segment (element.m_nSegment)->m_info.bTunnel = 1;
+		}
 	}
+AssignVertices (path);
 return true;
 }
 
@@ -463,6 +475,8 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 ushort* buffer = m_segments [0].m_nVertices.Buffer ();
 m_segments [0].m_nVertices.SetBuffer (path.m_nStartVertices.Buffer ());
 path.m_nStartVertices.SetBuffer (buffer);
+m_segments [0].AssignVertices (path);
+
 AssignVertices ();
 
 for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
