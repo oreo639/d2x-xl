@@ -84,6 +84,8 @@ class CVertexManager  {
 
 		void Delete (ushort nDelVert, bool bUndo = true);
 
+		void Delete (ushort* vertices, short nVertices);
+
 		void DeleteUnused (void);
 
 		void SetIndex (void);

@@ -89,6 +89,14 @@ undoManager.End ();
 
 // ----------------------------------------------------------------------------- 
 
+void CVertexManager::Delete (ushort* vertices, short nVertices)
+{
+while (--nVertices >= 0)
+	Delete (vertices [nVertices]);
+}
+
+// ----------------------------------------------------------------------------- 
+
 void CVertexManager::DeleteUnused (void)
 {
 UnTagAll (NEW_MASK);
