@@ -173,9 +173,10 @@ return m_bUpdate = 0;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+#if 0
+
 void CTunnelElement::Untwist (short nSide) 
 {
-#if 0
   double		minLen = 1e10;
   short		nOppSide = oppSideTable [nSide];
   ubyte		oppVertexIndex [4];
@@ -200,8 +201,9 @@ if (index != 0) {
 	for (short j = 0; j < 4; j++)
 		segP->SetVertexId (nSide, j, vertexIds [j]);
 	}
-#endif
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -311,8 +313,10 @@ for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElemen
 		for (short nVertex = 0; nVertex < 4; nVertex++) {
 			segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
 			segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
+#if 0 // A hack that is not required anymore ...
 			if (nSegment == m_nSteps)
 				e1->Untwist (m_base [0].m_nSide);
+#endif
 			}
 		}
 	}
