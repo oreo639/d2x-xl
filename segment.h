@@ -100,7 +100,7 @@ class CEdgeList {
 				m_edgeList [i].Reset ();
 			}
 
-		static inline ushort Key (ushort v1, ushort v2) { return (v1 < v2) ? v2 + (v1 << 16) : v1 + (v2 << 16); }
+		static inline ushort Key (ushort v1, ushort v2) { return (v1 < v2) ? v2 + (v1 << 8) : v1 + (v2 << 8); }
 
 		inline void Reset (void) { m_nEdges = 0; }
 
