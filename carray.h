@@ -181,7 +181,8 @@ class CDynamicArray : public CQuickSort < _T > {
 				if (!(m_data.buffer = buffer))
 					Init ();
 				else {
-					m_data.length = length;
+					if (length != 0xffffffff)
+						m_data.length = length;
 					m_data.nMode = nMode;
 					}
 				}

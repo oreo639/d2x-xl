@@ -450,18 +450,19 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		if (nSegment > 1) 
 			segP->SetChild (oppSideTable [nStartSide], m_segments [nSegment - 1].m_elements [iElement].m_nSegment); // previous tunnel segment
 		else {
-#if 1
-			segmentManager.Link (nStartSeg, nStartSide, e0.m_nSegment, oppSideTable [nStartSide], 1e-6);
-#else
 			startSegP->SetChild (nStartSide, e0.m_nSegment);
 			segP->SetChild (oppSideTable [nStartSide], nStartSeg);
-#endif
 			} 
 		if (nSegment < m_nSteps)
 			segP->SetChild (nStartSide, m_segments [nSegment + 1].m_elements [iElement].m_nSegment); // next tunnel segment
 		}
 	}
 
+// the tunnel start segments' back sides have separate vertices than the tunnel start
+// here these sides get the tunnel start vertices assigned
+ushort* buffer = m_segments [0].m_nVertices.Buffer ();
+m_segments [0].m_nVertices.SetBuffer (path.m_nStartVertices.Buffer ());
+path.m_nStartVertices.SetBuffer (buffer);
 AssignVertices ();
 
 for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
@@ -481,6 +482,7 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 			}
 		}
 	}
+m_segments [0].Release ();
 }
 
 //------------------------------------------------------------------------------
