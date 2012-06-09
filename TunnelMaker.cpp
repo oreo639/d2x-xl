@@ -304,8 +304,8 @@ void CTunnelSegment::Draw (void)
 {
 CMineView* mineView = DLE.MineView ();
 mineView->Renderer ().BeginRender (false);
-#if 1 //def _DEBUG
-if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) {
+#ifdef _DEBUG
+if (mineView->GetRenderer ()) {
 	glLineStipple (1, 0x0c3f);  // dot dash
 	glEnable (GL_LINE_STIPPLE);
 	}
@@ -313,8 +313,8 @@ if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) |
 for (int i = (int) m_elements.Length (); --i >= 0; ) 
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
 mineView->Renderer ().EndRender ();
-#if 1 //def _DEBUG
-if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) 
+#ifdef _DEBUG
+if (mineView->GetRenderer ()) 
 	glDisable (GL_LINE_STIPPLE);
 #endif
 }
@@ -793,7 +793,11 @@ for (int i = 1; i < m_nSteps; i++) {
 	// rotate the previous matrix around the perpendicular of the previous and the current forward vector
 	// to orient it properly for the current path node
 	double dot = Dot (n1->m_rotation.m.fVec.Normalize (), n0->m_rotation.m.fVec); // angle of current and previous forward vectors
-	if (dot < 0.999) { // dot >= 0.999 ~ parallel
+	if (dot >= 0.999) { // dot >= 0.999 ~ parallel
+		n1->m_rotation.m.rVec = n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
+		n1->m_rotation.m.uVec = n0->m_rotation.m.uVec;
+		}
+	else {
 		CDoubleVector axis = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec); // get rotation axis between the two forward vectors
 		q.FromAxisAngle (axis, acos (dot));
 		n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
@@ -803,11 +807,13 @@ for (int i = 1; i < m_nSteps; i++) {
 		}
 	// twist the current matrix around the forward vector 
 	n1->m_angle = m_deltaAngle * Length (i) / l;
-	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
-	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
-	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
-	n1->m_rotation.m.rVec.Normalize ();
-	n1->m_rotation.m.uVec.Normalize ();
+	if (fabs (n1->m_angle - n0->m_angle) > 0.001) {
+		q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
+		n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
+		n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
+		n1->m_rotation.m.rVec.Normalize ();
+		n1->m_rotation.m.uVec.Normalize ();
+		}
 	}
 for (int i = 0; i <= m_nSteps; i++) 
 	m_nodes [i].m_rotation = m_nodes [i].m_rotation.Inverse ();

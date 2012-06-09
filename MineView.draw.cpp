@@ -219,10 +219,8 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 		if ((nSegment == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 			nDbgSeg = nDbgSeg;
 #endif
-#if 0
 		if (segP->m_info.bTunnel)
 			continue;
-#endif
 		if (segP->ChildId (nSide) != -1) { // not a solid side
 			CWall* wallP = sideP->Wall ();
 			if (wallP == null) // no wall either
