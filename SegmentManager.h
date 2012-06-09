@@ -62,7 +62,7 @@ class CEdgeTreeNode {
 class CEdgeKey {
 	public:
 		uint	m_key;
-		uint Compose (ushort v1, ushort v2) { return m_key = CEdgeList::Key (v1, v2); }
+		uint Compose (ushort v1, ushort v2) { return m_key = (v1 < v2) ? (uint (v1) << 16) + v2 : (uint (v2) << 16) + v1; }
 		ushort V1 (void) { return ushort (m_key & 0xffff); }
 		ushort V2 (void) { return ushort (m_key >> 16); }
 		inline uint Key (void) { return m_key; }

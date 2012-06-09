@@ -287,6 +287,10 @@ while (nHead < nTail) {
 	m_segP = segmentManager.Segment (m_parent);
 	m_sideP = segmentManager.Side (m_parent);
 	edgeList.Reset ();
+#ifdef _DEBUG
+	if ((m_child.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (m_child.m_nSide == nDbgSide)))
+		nDbgSeg = nDbgSeg;
+#endif
 	if (!m_segP->BuildEdgeList (edgeList, ubyte (m_parent.m_nSide), false))
 		continue;
 	int nEdges = edgeList.Count ();
@@ -309,9 +313,21 @@ while (nHead < nTail) {
 		for (iter.Begin (); *iter != iter.End (); iter++) {
 			m_child = **iter;
 			m_childSegP = segmentManager.Segment (m_child);
+#ifdef _DEBUG
+			if ((m_child.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (m_child.m_nSide == nDbgSide)))
+				nDbgSeg = nDbgSeg;
+#endif
 			if (!m_childSegP->IsTagged (iter->m_nSide, m_tag)) {
+#ifdef _DEBUG
+				if ((m_child.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (m_child.m_nSide == nDbgSide)))
+					nDbgSeg = nDbgSeg;
+#endif
 				m_childSideP = segmentManager.Side (m_child);
 				if (Accept ()) {
+#ifdef _DEBUG
+					if ((m_child.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (m_child.m_nSide == nDbgSide)))
+						nDbgSeg = nDbgSeg;
+#endif
 					m_childSegP->Tag (iter->m_nSide, m_tag);
 					if (bTagVertices)
 						m_childSegP->TagVertices (m_tag, iter->m_nSide);
