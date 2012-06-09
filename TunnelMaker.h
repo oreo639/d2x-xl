@@ -194,7 +194,7 @@ class CTunnel {
 
 		bool Create (CTunnelPath& path);
 
-		void Realize (CTunnelPath& path);
+		void Realize (CTunnelPath& path, bool bFinalize);
 
 		void Release (void);
 

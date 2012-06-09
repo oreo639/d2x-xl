@@ -304,8 +304,8 @@ void CTunnelSegment::Draw (void)
 {
 CMineView* mineView = DLE.MineView ();
 mineView->Renderer ().BeginRender (false);
-#ifdef _DEBUG
-if (mineView->GetRenderer ()) {
+#if 1 //def _DEBUG
+if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) {
 	glLineStipple (1, 0x0c3f);  // dot dash
 	glEnable (GL_LINE_STIPPLE);
 	}
@@ -313,8 +313,8 @@ if (mineView->GetRenderer ()) {
 for (int i = (int) m_elements.Length (); --i >= 0; ) 
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
 mineView->Renderer ().EndRender ();
-#ifdef _DEBUG
-if (mineView->GetRenderer ()) 
+#if 1 //def _DEBUG
+if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) 
 	glDisable (GL_LINE_STIPPLE);
 #endif
 }
@@ -422,7 +422,11 @@ for (int nSegment = 0; nSegment <= m_nSteps; nSegment++) {
 		}
 	}
 mineView->Renderer ().EndRender ();
+#if 1
+Realize (path, false);
+#else
 AssignVertices ();
+#endif
 return true;
 }
 
@@ -430,7 +434,7 @@ return true;
 // Connect all tunnel segments with all adjacent other tunnel segments and base segments.
 // No segments will be connected with the tunnel's end segment to avoid geometry distortions.
 
-void CTunnel::Realize (CTunnelPath& path)
+void CTunnel::Realize (CTunnelPath& path, bool bFinalize)
 {
 ushort nVertex = 0;
 short nElements = (short) m_segments [0].m_elements.Length ();
@@ -448,12 +452,17 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		segP->m_info.owner = startSegP->m_info.owner;
 		segP->m_info.group = startSegP->m_info.group;
 		segP->m_nShape = startSegP->m_nShape;
-		for (short nSide = 0; nSide < 6; nSide++) {
-			segP->m_sides [nSide].m_info.nBaseTex = startSegP->m_sides [nSide].m_info.nBaseTex;
-			segP->m_sides [nSide].m_info.nOvlTex = startSegP->m_sides [nSide].m_info.nOvlTex;
-			memcpy (segP->m_sides [nSide].m_info.uvls, startSegP->m_sides [nSide].m_info.uvls, sizeof (segP->m_sides [nSide].m_info.uvls));
-			memcpy (segP->m_sides [nSide].m_info.uvlDeltas, startSegP->m_sides [nSide].m_info.uvlDeltas, sizeof (segP->m_sides [nSide].m_info.uvlDeltas));
-			segP->m_sides [nSide].m_nShape = startSegP->m_sides [nSide].m_nShape;
+		CSide* sideP = segP->Side (0);
+		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+#if 1
+			sideP->ResetTextures ();
+#else
+			memcpy (sideP->m_info.uvls, startSegP->m_sides [nSide].m_info.uvls, sizeof (sideP->m_info.uvls));
+			memcpy (sideP->m_info.uvlDeltas, startSegP->m_sides [nSide].m_info.uvlDeltas, sizeof (sideP->m_info.uvlDeltas));
+#endif
+			sideP->m_info.nBaseTex = startSegP->m_sides [nSide].m_info.nBaseTex;
+			sideP->m_info.nOvlTex = startSegP->m_sides [nSide].m_info.nOvlTex;
+			sideP->m_nShape = startSegP->m_sides [nSide].m_nShape;
 			}
 
 		segP->Tag ();
@@ -462,7 +471,7 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		segP->m_info.bTunnel = 0;
 		if (nSegment > 1) 
 			segP->SetChild (oppSideTable [nStartSide], m_segments [nSegment - 1].m_elements [iElement].m_nSegment); // previous tunnel segment
-		else {
+		else if (bFinalize) {
 			startSegP->SetChild (nStartSide, e0.m_nSegment);
 			segP->SetChild (oppSideTable [nStartSide], nStartSeg);
 			} 
@@ -471,12 +480,15 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		}
 	}
 
-// the tunnel start segments' back sides have separate vertices than the tunnel start
+// the tunnel start segments' back sides have separate vertices from the tunnel start
 // here these sides get the tunnel start vertices assigned
-ushort* buffer = m_segments [0].m_nVertices.Buffer ();
-m_segments [0].m_nVertices.SetBuffer (path.m_nStartVertices.Buffer ());
-path.m_nStartVertices.SetBuffer (buffer);
-m_segments [0].AssignVertices (path);
+ushort* buffer = null;
+if (bFinalize) {
+	buffer = m_segments [0].m_nVertices.Buffer ();
+	m_segments [0].m_nVertices.SetBuffer (path.m_nStartVertices.Buffer ());
+	path.m_nStartVertices.SetBuffer (buffer);
+	m_segments [0].AssignVertices (path);
+	}
 
 AssignVertices ();
 
@@ -485,6 +497,9 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		CTunnelElement& e0 = m_segments [nSegment].m_elements [iElement];
 		CSegment* segP = segmentManager.Segment (e0.m_nSegment);
 
+		CSide* sideP = segP->Side (0);
+		for (short nSide = 0; nSide < 6; nSide++, sideP++)
+			if (sideP->IsVisible ())
 		for (short jElement = 0; jElement < nElements; jElement++) {
 			if (jElement == iElement)
 				continue;
@@ -497,7 +512,9 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 			}
 		}
 	}
-vertexManager.Delete (buffer, nElements);
+
+if (bFinalize)
+	vertexManager.Delete (buffer, nElements);
 }
 
 //------------------------------------------------------------------------------
@@ -944,7 +961,7 @@ else {
 	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) == IDYES) {
 		undoManager.Begin (udSegments | udVertices);
 		if (Setup (false) && Create ())
-			m_tunnel.Realize (m_path);
+			m_tunnel.Realize (m_path, true);
 		else
 			m_tunnel.Release ();
 		undoManager.End ();

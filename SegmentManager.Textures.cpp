@@ -38,9 +38,47 @@ INFOMSG (message);
 return true;
 }
 
+//------------------------------------------------------------------------------
+
+void CSegmentManager::AlignTextures (short nSegment, short nSide, int bUse1st, int bUse2nd, int bIgnorePlane, bool bStart, bool bTagged)
+{
+if (bStart) {
+	segmentManager.UnTagAll (ALIGNED_MASK);
+	CSegment* segP = segmentManager.Segment (0);
+	for (int i = 0; i < segmentManager.Count (); i++, segP++)
+		for (short j = 0; j < 6; j++)
+			// if we're aligning marked sides, consider untagged already aligned
+			if ((segP->Side (j)->Shape () > SIDE_SHAPE_TRIANGLE) || (bTagged && !segmentManager.IsTagged (CSideKey (i, j))))
+				segP->Tag (j, ALIGNED_MASK);
+	}
+// mark current side as aligned
+segmentManager.Segment (nSegment)->Tag (nSide, ALIGNED_MASK);
+// call recursive function which aligns one at a time
+AlignChildTextures (nSegment, nSide, bUse1st, bUse2nd);
+}
+
+//------------------------------------------------------------------------------
+
+void CSegmentManager::AlignChildTextures (short nSegment, short nSide, int bUse1st, int bUse2nd, int bIgnorePlane)
+{
+	CSegment*		segP = segmentManager.Segment (nSegment);
+	CSide*			sideP = segP->Side (nSide);
+	CTagByTextures tagger (bUse1st ? sideP->BaseTex () : -1, bUse2nd ? sideP->OvlTex () : -1, bool (bIgnorePlane));
+	int				nSides;
+
+if (!tagger.Setup (segmentManager.VisibleSideCount (), ALIGNED_MASK))
+	return;
+nSides = tagger.Run ();
+
+for (int i = 0; i < nSides; i++) 
+	segmentManager.AlignSideTextures (tagger.ParentSegment (i), tagger.ParentSide (i), tagger.ChildSegment (i), tagger.ChildSide (i), bUse1st, bUse2nd);
+
+segmentManager.UnTagAll (TAGGED_MASK | ALIGNED_MASK);
+}
+
 // ------------------------------------------------------------------------ 
 
-int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nChildSeg, short nChildSide, int bAlign1st, int bAlign2nd)
+int CSegmentManager::AlignSideTextures (short nStartSeg, short nStartSide, short nChildSeg, short nChildSide, int bAlign1st, int bAlign2nd)
 {
 #ifdef _DEBUG
 if ((nStartSeg < 0) || (nStartSeg >= Count ()))

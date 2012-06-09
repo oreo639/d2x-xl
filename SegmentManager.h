@@ -304,7 +304,11 @@ class CSegmentManager {
 
 		bool HasTaggedVertices (short nSide = -1);
 
-		int AlignTextures (short nStartSeg, short nStartSide, short nChildSeg, short nChildSide, int bAlign1st, int bAlign2nd);
+		void AlignTextures (short nSegment, short nSide, int bUse1st, int bUse2nd, int bIgnorePlane, bool bStart, bool bTagged);
+
+		void AlignChildTextures (short nSegment, short nSide, int bUse1st, int bUse2nd, int bIgnorePlane);
+
+		int AlignSideTextures (short nStartSeg, short nStartSide, short nChildSeg, short nChildSide, int bAlign1st, int bAlign2nd);
 
 		CSide* OppSide (void);
 
