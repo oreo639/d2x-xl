@@ -407,11 +407,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 		edgeList.Get (nEdge, side1, side2, i1, i2);
 		ushort v1 = segP->VertexId (i1);
 		ushort v2 = segP->VertexId (i2);
-		uint key = edgeList.Key (v1, v2);
-#ifdef _DEBUG
-		if (key == edgeList.Key (0, 4))
-			key = key;
-#endif
+		uint key = CEdgeKey::Key (v1, v2);
 		bool bVisible [2] = { (side1 < 6) && segP->Side (side1)->IsVisible (), (side2 < 6) && segP->Side (side2)->IsVisible () };
 		if ((bVisible [0] || bVisible [1])) {
 			CEdgeTreeNode node (key);
