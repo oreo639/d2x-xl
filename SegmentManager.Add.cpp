@@ -278,7 +278,7 @@ for (int i = 0; i < nSegments; i++, segP++) {
 #endif
 // auto align textures new segment
 for (short nNewSide = 0; nNewSide < 6; nNewSide++)
-	AlignTextures (key.m_nSegment, nNewSide, nNewSeg, nNewSide, true, true); 
+	AlignSideTextures (key.m_nSegment, nNewSide, nNewSeg, nNewSide, true, true); 
 // set current segment to new segment
 key.m_nSegment = nNewSeg; 
 Segment (key)->Backup (opAdd);

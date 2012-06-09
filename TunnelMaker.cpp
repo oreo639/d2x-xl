@@ -497,9 +497,12 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		CTunnelElement& e0 = m_segments [nSegment].m_elements [iElement];
 		CSegment* segP = segmentManager.Segment (e0.m_nSegment);
 
+		// align the textures nicely
 		CSide* sideP = segP->Side (0);
-		for (short nSide = 0; nSide < 6; nSide++, sideP++)
+		for (short nSide = 0; nSide < 6; nSide++, sideP++) { 
 			if (sideP->IsVisible ())
+				segmentManager.AlignTextures (e0.m_nSegment, nSide, 1, 0, 1, 1, 0);
+			}
 		for (short jElement = 0; jElement < nElements; jElement++) {
 			if (jElement == iElement)
 				continue;

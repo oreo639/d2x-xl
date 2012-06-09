@@ -54,7 +54,7 @@ if (bStart) {
 // mark current side as aligned
 segmentManager.Segment (nSegment)->Tag (nSide, ALIGNED_MASK);
 // call recursive function which aligns one at a time
-AlignChildTextures (nSegment, nSide, bUse1st, bUse2nd);
+AlignChildTextures (nSegment, nSide, bUse1st, bUse2nd, bIgnorePlane);
 }
 
 //------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ void CSegmentManager::AlignChildTextures (short nSegment, short nSide, int bUse1
 {
 	CSegment*		segP = segmentManager.Segment (nSegment);
 	CSide*			sideP = segP->Side (nSide);
-	CTagByTextures tagger (bUse1st ? sideP->BaseTex () : -1, bUse2nd ? sideP->OvlTex () : -1, bool (bIgnorePlane));
+	CTagByTextures tagger (bUse1st ? sideP->BaseTex () : -1, bUse2nd ? sideP->OvlTex () : -1, bIgnorePlane);
 	int				nSides;
 
 if (!tagger.Setup (segmentManager.VisibleSideCount (), ALIGNED_MASK))
