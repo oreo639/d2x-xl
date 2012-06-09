@@ -304,8 +304,8 @@ void CTunnelSegment::Draw (void)
 {
 CMineView* mineView = DLE.MineView ();
 mineView->Renderer ().BeginRender (false);
-#ifdef _DEBUG
-if (mineView->GetRenderer ()) {
+#if 1 //def _DEBUG
+if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) {
 	glLineStipple (1, 0x0c3f);  // dot dash
 	glEnable (GL_LINE_STIPPLE);
 	}
@@ -313,8 +313,8 @@ if (mineView->GetRenderer ()) {
 for (int i = (int) m_elements.Length (); --i >= 0; ) 
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
 mineView->Renderer ().EndRender ();
-#ifdef _DEBUG
-if (mineView->GetRenderer ()) 
+#if 1 //def _DEBUG
+if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) 
 	glDisable (GL_LINE_STIPPLE);
 #endif
 }

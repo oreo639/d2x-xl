@@ -190,7 +190,7 @@ glewInit (); // must happen after OpenGL context creation!
 shaderManager.Setup ();
 textureManager.InitShaders ();
 if (m_bHaveRTT = CFBO::Setup ()) {
-	m_bHaveRTT = m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 1, 2);
+	m_bHaveRTT = m_renderBuffers.Create (GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN), 1, 2) != 0;
 	m_sideKeys = new rgbColor [GetSystemMetrics (SM_CXSCREEN) * GetSystemMetrics (SM_CYSCREEN)];
 	}
 return TRUE;
@@ -628,7 +628,7 @@ for (int i = 0, j = nOvlAlignment; i < nVertices; i++, j = (j + 1) % nVertices) 
 			colors [i].r = 
 			colors [i].g = 
 			colors [i].b = 1.0f;
-		colors [i].a = alpha;
+		colors [i].a = (!segP->m_info.bTunnel || (alpha < 0.7f)) ? alpha : 0.7f;
 		}
 	}
 
