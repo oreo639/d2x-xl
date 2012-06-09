@@ -143,6 +143,9 @@ class CTunnelPath {
 		inline CCubicBezier& Bezier () { return m_bezier; }
 
 		inline CTunnelPathNode& operator[] (uint i) { return m_nodes [i]; }
+
+	private:
+		bool GatherStartSides (void);
 	};
 
 //------------------------------------------------------------------------
