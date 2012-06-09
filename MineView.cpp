@@ -1036,6 +1036,8 @@ if (m_mouseState == eMouseStateButtonDown) {
 				blockManager.QuickCopy ();
 			else if (nChoice == ID_EDIT_QUICKPASTE)
 				blockManager.QuickPaste ();
+			else if (nChoice == ID_EDIT_DELETEBLOCK)
+				blockManager.Delete ();
 			else if (nChoice == ID_VIEW_COLLAPSE_EDGE)
 				segmentManager.CollapseEdge ();
 			else if (nChoice == ID_VIEW_CREATE_WEDGE)

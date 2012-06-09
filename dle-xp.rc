@@ -3167,6 +3167,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Quick &Copy",                 ID_EDIT_QUICKCOPY
         MENUITEM "Quick &Paste",                ID_EDIT_QUICKPASTE
+        MENUITEM "&Delete Block",               ID_EDIT_DELETEBLOCK
         MENUITEM SEPARATOR
         MENUITEM "Collapse &Edge",              ID_VIEW_COLLAPSE_EDGE
         MENUITEM "Collapse to &Wedge",          ID_VIEW_CREATE_WEDGE
