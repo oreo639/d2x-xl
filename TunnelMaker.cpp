@@ -679,6 +679,8 @@ if (twist < 0.999) { // dot >= 0.999 ~ parallel
 	q.FromAxisAngle (twistAxis = CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), -acos (twist));
 	m.m.fVec = q * m.m.fVec;
 	m.m.rVec = q * m.m.rVec;
+	m.m.fVec.Normalize ();
+	m.m.rVec.Normalize ();
 	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.999)
 		m.m.rVec.Negate ();
 	}
@@ -695,13 +697,15 @@ if (fabs (m_deltaAngle) > 0.001) {
 	if (twist < 0.999) { // dot >= 0.999 ~ parallel
 		q.FromAxisAngle (twistAxis, acos (twist));
 		m.m.rVec = q * m_base [0].m_rotation.m.rVec;
+		m.m.rVec.Normalize ();
 		}
 	q.FromAxisAngle (m_base [1].m_rotation.m.fVec, m_deltaAngle);
 	m.m.rVec = q * m.m.rVec;
+	m.m.rVec.Normalize ();
 	if (Dot (m.m.rVec, m_base [1].m_rotation.m.uVec) < 0.0) 
-		m_deltaAngle += acos (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec));
-	else
-		m_deltaAngle -= acos (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec));
+		m_deltaAngle += acos (Clamp (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec), -1.0, 1.0));
+	else 
+		m_deltaAngle -= acos (Clamp (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec), -1.0, 1.0));
 	}
 
 // Compute each path node's rotation matrix from the previous node's rotation matrix
