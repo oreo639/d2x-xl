@@ -710,25 +710,6 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::AlignChildren (short nSegment, short nSide, bool bStart, bool bTagged)
-{
-if (bStart) {
-	segmentManager.UnTagAll (ALIGNED_MASK);
-	CSegment* segP = segmentManager.Segment (0);
-	for (int i = 0; i < segmentManager.Count (); i++, segP++)
-		for (short j = 0; j < 6; j++)
-			// if we're aligning marked sides, consider untagged already aligned
-			if ((segP->Side (j)->Shape () > SIDE_SHAPE_TRIANGLE) || (bTagged && !segmentManager.IsTagged (CSideKey (i, j))))
-				segP->Tag (j, ALIGNED_MASK);
-	}
-// mark current side as aligned
-segmentManager.Segment (nSegment)->Tag (nSide, ALIGNED_MASK);
-// call recursive function which aligns one at a time
-AlignChildTextures (nSegment, nSide);
-}
-
-//------------------------------------------------------------------------------
-
 void CTextureTool::OnAlignAll (void)
 {
 // set all segment sides as not aligned yet
@@ -769,7 +750,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.
 		for (int i = 0; i < childSideP->VertexCount (); i++) 
 			childSideP->m_info.uvls [i].Rotate (angle); 
 		}
-	AlignChildren (nSegment, nSide, false, false);
+	segmentManager.AlignTextures (nSegment, nSide, m_bUse1st, m_bUse2nd, m_bIgnorePlane, false, false);
 	}
 undoManager.End ();
 UpdateAlignWnd ();

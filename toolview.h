@@ -1554,10 +1554,6 @@ class CTextureTool : public CTexToolDlg
 		void DrawTexture (short texture1, short texture2, int x0, int y0);
 		void DrawAlignment (CDC *pDC);
 		int ScrollSpeed (ushort texture,int *x,int *y);
-		int AlignTextures (short startSegment, short startSide, short only_child);
-		void AlignChildTextures (short nSegment, short nSide);
-		void AlignChildren (short nSegment, short nSide, bool bStart, bool bTagged);
-		CSideKey FindAdjacentSide (CSideKey side, short nLine, short depth = -1, short nFirstSegment = -1);
 		void SetWallColor (void);
 
 		inline CScrollBar *HScrollAlign (void)
