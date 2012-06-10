@@ -804,15 +804,23 @@ void CTunnelPath::Twist (CTunnelPathNode * n0, CTunnelPathNode * n1, double scal
 {
 // twist the current matrix around the forward vector 
 n1->m_angle = m_deltaAngle * scale;
-
+#if 1
 if (m_nPivot >= 0) {
 	int nNode = n1 - &m_nodes [0];
+	double angle = 0.0;
 	if (nNode <= m_nPivot)
-		n1->m_angle += m_corrAngles [0] * double (m_nPivot - nNode) / double (m_nPivot);
+		angle += m_corrAngles [0] * double (m_nPivot - nNode) / double (m_nPivot);
 	if (nNode >= m_nPivot)
-		n1->m_angle += m_corrAngles [1] * double (nNode - m_nPivot) / double (m_nSteps - m_nPivot);
+		angle += m_corrAngles [1] * double (nNode - m_nPivot) / double (m_nSteps - m_nPivot);
+	CQuaternion q;
+	q.FromAxisAngle (n1->m_rotation.m.fVec, angle);
+	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
+	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
+	n1->m_rotation.m.rVec.Normalize ();
+	n1->m_rotation.m.uVec.Normalize ();
 	}
-
+#endif
+return;
 #if ITERATE
 if (fabs (n1->m_angle - n0->m_angle) > 1e-6) 
 #else
@@ -857,14 +865,15 @@ if (fabs (n1->m_angle) > 1e-6)
 
 double CTunnelPath::CorrAngle (CDoubleMatrix& rotation, int nNode)
 {
-CDoubleVector v = m_nodes [nNode].m_vertex - m_nodes [nNode - 1].m_vertex;
+CDoubleVector v = m_nodes [nNode + 1].m_vertex - m_nodes [nNode].m_vertex;
 v.Normalize ();
 CDoubleVector rotAxis;
-rotAxis = CrossProduct (rotation.m.fVec, -v);
+rotAxis = nNode ? CrossProduct (rotation.m.fVec, -v) : CrossProduct (v, -rotation.m.fVec);
 rotAxis.Normalize ();
 
-double corrAngle = acos (Dot (rotAxis, rotation.m.uVec));
-if (Dot (rotation.m.rVec, rotAxis) < 0.0)
+double corrAngle = acos (Dot (rotAxis, rotation.m.rVec));
+double dot = Dot (rotation.m.uVec, rotAxis);
+if (nNode ? (dot > 0.0) : (dot > 0.0))
 	corrAngle = -corrAngle;
 return corrAngle;
 }
@@ -878,9 +887,10 @@ CQuaternion q;
 // revert the end orientation's z rotation in regard to the start orientation by 
 // determining the angle of the two matrices' z axii (forward vectors) and rotating
 // the end matrix around the perpendicular of the two matrices' z axii.
-m_corrAngles [0] = CorrAngle (m_base [0].m_rotation, 1);
-m_corrAngles [1] = CorrAngle (m_base [1].m_rotation, m_nSteps);
-m_nPivot = (m_corrAngles [0] + m_corrAngles [1] == 0.0) ? -1 : int (double (m_nSteps) * m_corrAngles [0] / (m_corrAngles [0] + m_corrAngles [1]) + 0.5);
+m_corrAngles [0] = CorrAngle (m_base [0].m_rotation, 0);
+m_corrAngles [1] = CorrAngle (m_base [1].m_rotation, m_nSteps - 1);
+double corrAngle = fabs (m_corrAngles [0]) + fabs (m_corrAngles [1]);
+m_nPivot = (corrAngle < 0.001) ? -1 : int (double (m_nSteps) * fabs (m_corrAngles [0]) / corrAngle + 0.5);
 	
 CDoubleMatrix m = m_base [1].m_rotation;
 CDoubleVector rotAxis;
@@ -972,7 +982,7 @@ do {
 		if (i < m_nSteps) { // last matrix is the end side's matrix - use it's forward vector
 			n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex; //n0->m_vertex; //n1->m_vertex;
 			n1->m_rotation.m.fVec.Normalize ();
-	#if 0
+	#if 1
 			double dot = Dot (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec);
 			if (dot > 0.999999) {
 				n1->m_rotation.m.rVec = n0->m_rotation.m.rVec;
@@ -992,7 +1002,7 @@ do {
 	#if TWIST_FIRST
 		Twist (n0, n1, m_deltaAngle * Length (i) / l);
 	#endif
-		Bend (n0, n1);
+		//Bend (n0, n1);
 	#if !TWIST_FIRST
 		Twist (n0, n1, Length (i) / l);
 	#endif
