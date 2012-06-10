@@ -847,7 +847,7 @@ for (int i = 1; i <= m_nSteps; i++) {
 	n1->m_angle = /*2.0 * */m_deltaAngle * Length (i) / l;
 	if (fabs (n1->m_angle /*- n0->m_angle*/) > 1e-6) 
 		{
-		q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle /*- n0->m_angle*/);
+		q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle/* - n0->m_angle*/);
 		n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
 		n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
 		n1->m_rotation.m.rVec.Normalize ();
