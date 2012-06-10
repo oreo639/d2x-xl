@@ -1014,7 +1014,7 @@ do {
 	#if TWIST_FIRST
 		Twist (n0, n1, m_deltaAngle * Length (i) / l);
 	#endif
-		//Bend (n0, n1);
+		Bend (n0, n1);
 	#if !TWIST_FIRST
 		Twist (n0, n1, Length (i) / l);
 	#endif
