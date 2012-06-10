@@ -847,6 +847,7 @@ return twistAngle;
 //------------------------------------------------------------------------------
 
 #define ITERATE 0
+#define TWIST_FIRST 1
 
 bool CTunnelPath::Create (short nSteps)
 {
@@ -886,11 +887,11 @@ for (int i = 1; i <= m_nSteps; i++) {
 		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex; //n0->m_vertex; //n1->m_vertex;
 		n1->m_rotation.m.fVec.Normalize ();
 		}
-#if 0
+#if TWIST_FIRST
 	Twist (n0, n1, m_deltaAngle * Length (i) / l);
 #endif
 	Bend (n0, n1);
-#if 1
+#if !TWIST_FIRST
 	Twist (n0, n1, m_deltaAngle * Length (i) / l);
 #endif
 	}
