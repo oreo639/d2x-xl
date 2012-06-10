@@ -808,9 +808,9 @@ n1->m_angle = m_deltaAngle * scale;
 if (m_nPivot >= 0) {
 	int nNode = n1 - &m_nodes [0];
 	double angle = 0.0;
-	if (nNode <= m_nPivot)
+	if (nNode < m_nPivot)
 		angle += m_corrAngles [0] * double (m_nPivot - nNode) / double (m_nPivot);
-	if (nNode >= m_nPivot)
+	else if (nNode > m_nPivot)
 		angle += m_corrAngles [1] * double (nNode - m_nPivot) / double (m_nSteps - m_nPivot);
 	CQuaternion q;
 	q.FromAxisAngle (n1->m_rotation.m.fVec, angle);
@@ -915,7 +915,6 @@ if (bendAngle > 1e-6) { // dot >= 0.999999 ~ parallel
 // the start side's up vector: If their angle is > 90° and the bendAngle angle is < 90°, add 180° to the bendAngle angle
 double twistAngle = acos (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
 
-
 if (fabs (twistAngle) > 1e-6) {
 	if (bendAngle <= 1e-6) // ~ parallel
 		m.m.rVec = m_base [0].m_rotation.m.rVec;
@@ -974,7 +973,7 @@ do {
 	m_nodes [0].m_axis = m_base [0].m_rotation.m.rVec;
 
 	m_deltaAngle += error;
-	for (int i = 1; i <= m_nSteps; i++) {
+	for (int i = 1; i < m_nSteps; i++) {
 	#if ITERATE
 		n0 = n1;
 	#endif
