@@ -82,6 +82,9 @@ forward with the data structures I have devised).
 
 CTunnelMaker tunnelMaker;
 
+#define ITERATE 1
+#define TWIST_FIRST 1
+
 //------------------------------------------------------------------------------
 
 #define CURRENT_POINT(a) ((current->Point () + (a))&0x03)
@@ -304,19 +307,20 @@ void CTunnelSegment::Draw (void)
 {
 CMineView* mineView = DLE.MineView ();
 mineView->Renderer ().BeginRender (false);
-#if 1 //def _DEBUG
-if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) {
+#ifdef NDEBUG
+if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) 
+#endif
+	{
 	glLineStipple (1, 0x0c3f);  // dot dash
 	glEnable (GL_LINE_STIPPLE);
 	}
-#endif
 for (int i = (int) m_elements.Length (); --i >= 0; ) 
 	mineView->DrawSegmentWireFrame (segmentManager.Segment (m_elements [i].m_nSegment), false, false, 1);
 mineView->Renderer ().EndRender ();
-#if 1 //def _DEBUG
+#ifdef NDEBUG
 if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) 
-	glDisable (GL_LINE_STIPPLE);
 #endif
+	glDisable (GL_LINE_STIPPLE);
 }
 
 //------------------------------------------------------------------------------
@@ -410,7 +414,7 @@ for (int nSegment = 0; nSegment <= m_nSteps; nSegment++) {
 		v += translation;
 		v.Transform (viewMatrix);
 		v.Project (viewMatrix);
-#ifdef _DEBUG
+#if 0 //def _DEBUG
 		v.Tag ();
 #else
 		v.UnTag ();
@@ -760,9 +764,21 @@ else if (dot <= -0.999) { // dot >= 1e-6 ~ parallel
 	}
 else {
 	CQuaternion q;
+#ifdef _DEBUG
+	CDoubleVector v0 (n1->m_rotation.m.fVec);
+	CDoubleVector v1 (-n0->m_rotation.m.fVec);
+	double a = acos (dot);
+	CDoubleVector axis = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec);
+	axis.Normalize ();
+#endif
 	q.FromAxisAngle (CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec), acos (dot));
+#if TWIST_FIRST
+	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec; // rotate right and up vectors accordingly
+	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
+#else
 	n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
 	n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;
+#endif
 	n1->m_rotation.m.rVec.Normalize ();
 	n1->m_rotation.m.uVec.Normalize ();
 	}
@@ -786,8 +802,13 @@ if (fabs (n1->m_angle) > 1e-6)
 #else
 	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle);
 #endif
+#if TWIST_FIRST
+	n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec;
+	n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;
+#else
 	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
 	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
+#endif
 	n1->m_rotation.m.rVec.Normalize ();
 	n1->m_rotation.m.uVec.Normalize ();
 	}
@@ -846,9 +867,6 @@ return twistAngle;
 
 //------------------------------------------------------------------------------
 
-#define ITERATE 0
-#define TWIST_FIRST 1
-
 bool CTunnelPath::Create (short nSteps)
 {
 if (m_nSteps != nSteps) { // recompute
@@ -884,7 +902,7 @@ for (int i = 1; i <= m_nSteps; i++) {
 #endif
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) { // last matrix is the end side's matrix - use it's forward vector
-		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex; //n0->m_vertex; //n1->m_vertex;
+		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i/* - 1*/].m_vertex; //n0->m_vertex; //n1->m_vertex;
 		n1->m_rotation.m.fVec.Normalize ();
 		}
 #if TWIST_FIRST
