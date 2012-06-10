@@ -797,15 +797,20 @@ if (fabs (n1->m_angle) > 1e-6)
 #endif
 	{
 	CQuaternion q;
-#if ITERATE
-	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
-#else
-	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle);
-#endif
 #if TWIST_FIRST
+#	if ITERATE
+	q.FromAxisAngle (n0->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
+#	else
+	q.FromAxisAngle (n0->m_rotation.m.fVec, n1->m_angle);
+#	endif
 	n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec;
 	n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;
 #else
+#	if ITERATE
+	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
+#	else
+	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle);
+#	endif
 	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
 	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
 #endif
