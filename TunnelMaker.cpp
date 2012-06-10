@@ -436,6 +436,8 @@ return true;
 
 void CTunnel::Realize (CTunnelPath& path, bool bFinalize)
 {
+DLE.MineView ()->DelayRefresh (true);
+
 ushort nVertex = 0;
 short nElements = (short) m_segments [0].m_elements.Length ();
 for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
@@ -455,7 +457,7 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		CSide* sideP = segP->Side (0);
 		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 #if 1
-			sideP->ResetTextures ();
+			segP->SetUV (nSide, 0.0, 0.0);
 #else
 			memcpy (sideP->m_info.uvls, startSegP->m_sides [nSide].m_info.uvls, sizeof (sideP->m_info.uvls));
 			memcpy (sideP->m_info.uvlDeltas, startSegP->m_sides [nSide].m_info.uvlDeltas, sizeof (sideP->m_info.uvlDeltas));
@@ -518,6 +520,8 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 
 if (bFinalize)
 	vertexManager.Delete (buffer, nElements);
+
+DLE.MineView ()->DelayRefresh (false);
 }
 
 //------------------------------------------------------------------------------
@@ -782,8 +786,8 @@ if (twist < 0.999) { // dot >= 0.999 ~ parallel
 // A simpler way might be to also rotate the end orientation's up vector back and check its angle with 
 // the start side's up vector: If their angle is > 90° and the twist angle is < 90°, add 180° to the twist angle
 m_deltaAngle = acos (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
-if (fabs (m_deltaAngle) > 0.001) {
-	if (twist < 0.999) { // dot >= 0.999 ~ parallel
+if (fabs (m_deltaAngle) > 1e-6) {
+	if (twist < 0.999999) { // dot >= 0.999 ~ parallel
 		q.FromAxisAngle (twistAxis, acos (twist));
 		m.m.rVec = q * m_base [0].m_rotation.m.rVec;
 		m.m.rVec.Normalize ();
@@ -813,7 +817,7 @@ for (int i = 1; i < m_nSteps; i++) {
 	// rotate the previous matrix around the perpendicular of the previous and the current forward vector
 	// to orient it properly for the current path node
 	double dot = Dot (n1->m_rotation.m.fVec.Normalize (), n0->m_rotation.m.fVec); // angle of current and previous forward vectors
-	if (dot >= 0.999) { // dot >= 0.999 ~ parallel
+	if (dot >= 0.999999) { // dot >= 1e-6 ~ parallel
 		n1->m_rotation.m.rVec = n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
 		n1->m_rotation.m.uVec = n0->m_rotation.m.uVec;
 		}
@@ -827,7 +831,7 @@ for (int i = 1; i < m_nSteps; i++) {
 		}
 	// twist the current matrix around the forward vector 
 	n1->m_angle = m_deltaAngle * Length (i) / l;
-	if (fabs (n1->m_angle - n0->m_angle) > 0.001) {
+	if (fabs (n1->m_angle - n0->m_angle) > 1e-6) {
 		q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
 		n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
 		n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
@@ -956,6 +960,7 @@ if (!m_bActive) {
 				    "Press 'G' or select Tools/Tunnel Generator when you are finished.");
 
 	m_bActive = true;
+	DLE.MineView ()->Refresh ();
 	}
 else {
 	// ask if user wants to keep the new nSegment
