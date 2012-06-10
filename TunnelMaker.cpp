@@ -923,11 +923,16 @@ for (int i = 1; i <= m_nSteps; i++) {
 #endif
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) { // last matrix is the end side's matrix - use it's forward vector
-		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i/* - 1*/].m_vertex; //n0->m_vertex; //n1->m_vertex;
+		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex; //n0->m_vertex; //n1->m_vertex;
 		n1->m_rotation.m.fVec.Normalize ();
+		n1->m_rotation.m.rVec = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec);
+		n1->m_rotation.m.rVec.Normalize ();
+		n1->m_rotation.m.uVec = CrossProduct (n1->m_rotation.m.fVec, n1->m_rotation.m.rVec);
+		n1->m_rotation.m.uVec.Normalize ();
+		if (n1->m_rotation.Handedness () != n0->m_rotation.Handedness ())
+			n1->m_rotation.m.rVec = -n1->m_rotation.m.rVec;
 		}
-	//n1->m_vertex = m_nodes [i - 1].m_vertex + n0->m_rotation.m.fVec * n1->m_rotation.m.fVec.Mag ();
-	//n1->m_rotation.m.fVec = n0->m_rotation.m.fVec;
+#if 0
 #if TWIST_FIRST
 	Twist (n0, n1, m_deltaAngle * Length (i) / l);
 #endif
@@ -935,29 +940,9 @@ for (int i = 1; i <= m_nSteps; i++) {
 #if !TWIST_FIRST
 	Twist (n0, n1, m_deltaAngle * Length (i) / l);
 #endif
+#endif
 	}
 
-#if 0
-for (int i = 1; i <= m_nSteps; i++) {
-#if ITERATE
-	n0 = n1;
-#endif
-	n1 = &m_nodes [i];
-	if (i < m_nSteps) { // last matrix is the end side's matrix - use it's forward vector
-		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i/* - 1*/].m_vertex; //n0->m_vertex; //n1->m_vertex;
-		n1->m_rotation.m.fVec.Normalize ();
-		}
-	//n1->m_vertex = m_nodes [i - 1].m_vertex + n0->m_rotation.m.fVec * n1->m_rotation.m.fVec.Mag ();
-	//n1->m_rotation.m.fVec = n0->m_rotation.m.fVec;
-#if TWIST_FIRST
-	Twist (n0, n1, m_deltaAngle * Length (i) / l);
-#endif
-	//Bend (n0, n1);
-#if !TWIST_FIRST
-	Twist (n0, n1, m_deltaAngle * Length (i) / l + n0->m_angle);
-#endif
-	}
-#endif
 
 #ifdef _DEBUG
 double error = acos (Dot (m_base [1].m_rotation.m.rVec, m_nodes [m_nSteps].m_rotation.m.rVec));
