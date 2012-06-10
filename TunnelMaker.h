@@ -149,11 +149,13 @@ class CTunnelPath {
 	private:
 		bool GatherStartSides (void);
 
+		bool BendAxis (CTunnelPathNode * n0, CTunnelPathNode * n1);
+
 		void Bend (CTunnelPathNode * n0, CTunnelPathNode * n1);
 
 		void Twist (CTunnelPathNode * n0, CTunnelPathNode * n1, double angle);
 
-		double CorrAngle (CDoubleMatrix& rotation, int nNode);
+		double CorrAngle (CDoubleMatrix& rotation, CTunnelPathNode* n0, CTunnelPathNode* n1);
 
 		double TotalTwist (void);
 	};
