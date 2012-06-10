@@ -754,6 +754,23 @@ m_nStartVertices.Destroy ();
 
 void CTunnelPath::Bend (CTunnelPathNode * n0, CTunnelPathNode * n1)
 {
+#if 1
+double dot = Dot (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec);
+if (dot > 0.999999) {
+	n1->m_rotation.m.rVec = n0->m_rotation.m.rVec;
+	n1->m_rotation.m.uVec = n0->m_rotation.m.uVec;
+	}
+else {
+	n1->m_rotation.m.rVec = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec);
+	n1->m_rotation.m.rVec.Normalize ();
+	n1->m_rotation.m.uVec = CrossProduct (n1->m_rotation.m.fVec, n1->m_rotation.m.rVec);
+	n1->m_rotation.m.uVec.Normalize ();
+	if (n1->m_rotation.Handedness () != n0->m_rotation.Handedness ())
+		n1->m_rotation.m.rVec = -n1->m_rotation.m.rVec;
+	}
+
+#else
+
 // rotate the previous matrix around the perpendicular of the previous and the current forward vector
 // to orient it properly for the current path node
 double dot = Dot (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec); // angle of current and previous forward vectors
@@ -796,6 +813,9 @@ else {
 	n1->m_rotation.m.rVec.Normalize ();
 	n1->m_rotation.m.uVec.Normalize ();
 	}
+
+#endif
+
 }
 
 //------------------------------------------------------------------------------
@@ -820,7 +840,7 @@ if (m_nPivot >= 0) {
 	n1->m_rotation.m.uVec.Normalize ();
 	}
 #endif
-return;
+
 #if ITERATE
 if (fabs (n1->m_angle - n0->m_angle) > 1e-6) 
 #else
@@ -892,6 +912,12 @@ m_corrAngles [1] = CorrAngle (m_base [1].m_rotation, m_nSteps - 1);
 double corrAngle = fabs (m_corrAngles [0]) + fabs (m_corrAngles [1]);
 m_nPivot = (corrAngle < 0.001) ? -1 : int (double (m_nSteps) * fabs (m_corrAngles [0]) / corrAngle + 0.5);
 	
+#if 1
+
+return (m_base [1].Point () - m_base [0].Point ()) * PI * 0.5;
+
+#else
+
 CDoubleMatrix m = m_base [1].m_rotation;
 CDoubleVector rotAxis;
 double bendAngle = acos (Clamp (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec), -1.0, 1.0));
@@ -935,6 +961,8 @@ if (fabs (twistAngle) > 1e-6) {
 		twistAngle += acos (Clamp (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec), -1.0, 1.0));
 	}
 return twistAngle /*+ corrAngle*/;
+
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -981,21 +1009,6 @@ do {
 		if (i < m_nSteps) { // last matrix is the end side's matrix - use it's forward vector
 			n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex; //n0->m_vertex; //n1->m_vertex;
 			n1->m_rotation.m.fVec.Normalize ();
-	#if 1
-			double dot = Dot (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec);
-			if (dot > 0.999999) {
-				n1->m_rotation.m.rVec = n0->m_rotation.m.rVec;
-				n1->m_rotation.m.uVec = n0->m_rotation.m.uVec;
-				}
-			else {
-				n1->m_rotation.m.rVec = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec);
-				n1->m_rotation.m.rVec.Normalize ();
-				n1->m_rotation.m.uVec = CrossProduct (n1->m_rotation.m.fVec, n1->m_rotation.m.rVec);
-				n1->m_rotation.m.uVec.Normalize ();
-				if (n1->m_rotation.Handedness () != n0->m_rotation.Handedness ())
-					n1->m_rotation.m.rVec = -n1->m_rotation.m.rVec;
-				}
-	#endif
 			}
 	#if 1
 	#if TWIST_FIRST
