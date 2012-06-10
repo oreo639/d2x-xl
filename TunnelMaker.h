@@ -146,6 +146,12 @@ class CTunnelPath {
 
 	private:
 		bool GatherStartSides (void);
+
+		void Bend (CTunnelPathNode * n0, CTunnelPathNode * n1);
+
+		void Twist (CTunnelPathNode * n0, CTunnelPathNode * n1, double angle);
+
+		double CTunnelPath::TotalTwist (void);
 	};
 
 //------------------------------------------------------------------------
