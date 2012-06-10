@@ -628,7 +628,7 @@ for (int i = 0, j = nOvlAlignment; i < nVertices; i++, j = (j + 1) % nVertices) 
 			colors [i].r = 
 			colors [i].g = 
 			colors [i].b = 1.0f;
-		colors [i].a = (!segP->m_info.bTunnel || (alpha < 0.8f)) ? alpha : 0.8f;
+		colors [i].a = segP->m_info.bTunnel ? alpha * 0.7f : alpha;
 		}
 	}
 
