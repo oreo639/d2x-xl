@@ -831,9 +831,11 @@ if (fabs (n1->m_angle) > 1e-6)
 	n1->m_rotation.m.rVec.Normalize ();
 	n1->m_rotation.m.uVec.Normalize ();
 	double angle = Dot (n1->m_rotation.m.rVec, n1->m_axis);
-	angle = acos (angle * scale);
+	angle = acos (angle) * scale;
+	if (Dot (n1->m_rotation.m.uVec, n1->m_axis) < 0.0)
+		angle = -angle;
 	q.FromAxisAngle (n1->m_rotation.m.fVec, angle);
-#if 1
+#if 0
 	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
 	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
 	n1->m_rotation.m.rVec.Normalize ();
@@ -851,9 +853,18 @@ CQuaternion q;
 // revert the end orientation's z rotation in regard to the start orientation by 
 // determining the angle of the two matrices' z axii (forward vectors) and rotating
 // the end matrix around the perpendicular of the two matrices' z axii.
+CDoubleVector v = m_nodes [2].m_vertex - m_nodes [0].m_vertex;
+v.Normalize ();
+CDoubleVector rotAxis;
+rotAxis = CrossProduct (v, m_base [0].m_rotation.m.fVec);
+rotAxis.Normalize ();
+
+double startAngle = acos (Dot (rotAxis, m_base [0].m_rotation.m.rVec));
+if (Dot (m_base [0].m_rotation.m.uVec, rotAxis) < 0.0)
+	startAngle = -startAngle;
+	
 CDoubleMatrix m = m_base [1].m_rotation;
 double bendAngle = acos (Clamp (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec), -1.0, 1.0));
-CDoubleVector rotAxis;
 
 if (bendAngle > 1e-6) { // dot >= 0.999999 ~ parallel
 	q.FromAxisAngle (rotAxis = CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), -bendAngle);
@@ -873,6 +884,8 @@ if (bendAngle > 1e-6) { // dot >= 0.999999 ~ parallel
 // A simpler way might be to also rotate the end orientation's up vector back and check its angle with 
 // the start side's up vector: If their angle is > 90° and the bendAngle angle is < 90°, add 180° to the bendAngle angle
 double twistAngle = acos (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
+
+
 if (fabs (twistAngle) > 1e-6) {
 	if (bendAngle <= 1e-6) // ~ parallel
 		m.m.rVec = m_base [0].m_rotation.m.rVec;
@@ -892,7 +905,7 @@ if (fabs (twistAngle) > 1e-6) {
 	else 
 		twistAngle += acos (Clamp (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec), -1.0, 1.0));
 	}
-return twistAngle;
+return twistAngle + startAngle;
 }
 
 //------------------------------------------------------------------------------
@@ -939,7 +952,7 @@ do {
 		if (i < m_nSteps) { // last matrix is the end side's matrix - use it's forward vector
 			n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex; //n0->m_vertex; //n1->m_vertex;
 			n1->m_rotation.m.fVec.Normalize ();
-	#if 0
+	#if 1
 			double dot = Dot (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec);
 			if (dot > 0.999999) {
 				n1->m_rotation.m.rVec = n0->m_rotation.m.rVec;
@@ -959,7 +972,7 @@ do {
 	#if TWIST_FIRST
 		Twist (n0, n1, m_deltaAngle * Length (i) / l);
 	#endif
-		Bend (n0, n1);
+		//Bend (n0, n1);
 	#if !TWIST_FIRST
 		Twist (n0, n1, Length (i) / l);
 	#endif
@@ -968,7 +981,7 @@ do {
 #ifdef _DEBUG
 	error = acos (Dot (m_base [1].m_rotation.m.rVec, m_nodes [m_nSteps].m_rotation.m.rVec));
 #endif
-} while (0); //while (fabs (error) > 1e-6);
+} while (0); //(fabs (error) > 0.001);
 for (int i = 0; i <= m_nSteps; i++) 
 	m_nodes [i].m_rotation = m_nodes [i].m_rotation.Inverse ();
 return true;
