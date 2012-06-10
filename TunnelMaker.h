@@ -120,8 +120,6 @@ class CTunnelPath {
 		CTunnelBase								m_base [2];
 		short										m_nSteps;
 		CDynamicArray<CTunnelPathNode>	m_nodes;
-		double									m_corrAngles [2];
-		int										m_nPivot; // transition index from corrAngle [0] to corrAngle [1]
 		double									m_deltaAngle;
 		CDynamicArray<CTunnelStartSide>	m_startSides;
 		CDynamicArray<ushort>				m_nStartVertices;
