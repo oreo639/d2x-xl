@@ -83,7 +83,7 @@ forward with the data structures I have devised).
 CTunnelMaker tunnelMaker;
 
 #define ITERATE 1
-#define TWIST_FIRST 1
+#define TWIST_FIRST 0
 
 //------------------------------------------------------------------------------
 
@@ -305,6 +305,7 @@ for (int i = (int) m_nVertices.Length (); --i >= 0; ) {
 
 void CTunnelSegment::Draw (void)
 {
+#if 0
 CMineView* mineView = DLE.MineView ();
 mineView->Renderer ().BeginRender (false);
 #ifdef NDEBUG
@@ -321,6 +322,7 @@ mineView->Renderer ().EndRender ();
 if (mineView->GetRenderer () && (mineView->ViewOption (eViewTexturedWireFrame) || mineView->ViewOption (eViewTextured))) 
 #endif
 	glDisable (GL_LINE_STIPPLE);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -566,12 +568,13 @@ CDC* pDC = renderer.DC ();
 
 CDoubleMatrix m;
 m = m_rotation.Inverse ();
-CVertex v [3] = { m.m.rVec, m.m.uVec, m.m.fVec };
+CVertex v [4] = { m.m.rVec, m.m.uVec, m.m.fVec, m_axis };
 
 renderer.BeginRender ();
 m_vertex.Transform (viewMatrix);
 m_vertex.Project (viewMatrix);
-for (int i = 0; i < 3; i++) {
+for (int i = 0; i < 4; i++) {
+	v [i].Normalize ();
 	v [i] *= 5.0;
 	v [i] += m_vertex;
 	v [i].Transform (viewMatrix);
@@ -581,10 +584,10 @@ renderer.EndRender ();
 
 renderer.BeginRender (true);
 renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
-static ePenColor pens [3] = { penOrange, penMedGreen, penMedBlue };
+static ePenColor pens [4] = { penOrange, penMedGreen, penMedBlue, penRed };
 
 renderer.Ellipse (m_vertex, 4, 4);
-for (int i = 0; i < 3; i++) {
+for (int i = 0; i < 4; i++) {
 	renderer.SelectPen (pens [i] + 1);
 	renderer.MoveTo (m_vertex.m_screen.x, m_vertex.m_screen.y);
 	renderer.LineTo (v [i].m_screen.x, v [i].m_screen.y);
@@ -766,12 +769,22 @@ else {
 	CQuaternion q;
 #ifdef _DEBUG
 	CDoubleVector v0 (n1->m_rotation.m.fVec);
-	CDoubleVector v1 (-n0->m_rotation.m.fVec);
+	CDoubleVector v1 (/*(dot < 0.0) ? n0->m_rotation.m.fVec :*/ -n0->m_rotation.m.fVec);
 	double a = acos (dot);
-	CDoubleVector axis = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec);
+	CDoubleVector axis = CrossProduct (v0, v1);
+	axis.Normalize ();
+	CDoubleVector vi;
+	axis = Perpendicular (vi, v0, v1);
 	axis.Normalize ();
 #endif
-	q.FromAxisAngle (CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec), acos (dot));
+	double bendAngle = acos (dot);
+	q.FromAxisAngle (n1->m_axis = CrossProduct (n1->m_rotation.m.fVec, /*(dot < 0.0) ? n0->m_rotation.m.fVec :*/ -n0->m_rotation.m.fVec), bendAngle);
+	CDoubleVector fVec;
+	fVec = q * n0->m_rotation.m.fVec;
+	a = Dot (fVec, n1->m_rotation.m.fVec);
+	if (a < 0.999)
+		bendAngle += acos (a);
+	q.FromAxisAngle (n1->m_axis = CrossProduct (n1->m_rotation.m.fVec, /*(dot < 0.0) ? n0->m_rotation.m.fVec :*/ -n0->m_rotation.m.fVec), bendAngle);
 #if TWIST_FIRST
 	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec; // rotate right and up vectors accordingly
 	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
@@ -851,7 +864,9 @@ if (bendAngle > 1e-6) { // dot >= 0.999999 ~ parallel
 // the start side's up vector: If their angle is > 90° and the bendAngle angle is < 90°, add 180° to the bendAngle angle
 double twistAngle = acos (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
 if (fabs (twistAngle) > 1e-6) {
-	if (bendAngle > 1e-6) { // dot >= 0.999 ~ parallel
+	if (bendAngle <= 1e-6) // ~ parallel
+		m.m.rVec = m_base [0].m_rotation.m.rVec;
+	else { 
 		q.FromAxisAngle (rotAxis, bendAngle);
 		m.m.rVec = q * m_base [0].m_rotation.m.rVec;
 		m.m.rVec.Normalize ();
@@ -901,6 +916,7 @@ CTunnelPathNode * n0, * n1 = &m_nodes [0];
 #if !ITERATE
 n0 = n1;
 #endif
+m_nodes [0].m_axis = m_base [0].m_rotation.m.rVec;
 for (int i = 1; i <= m_nSteps; i++) {
 #if ITERATE
 	n0 = n1;
@@ -910,6 +926,8 @@ for (int i = 1; i <= m_nSteps; i++) {
 		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i/* - 1*/].m_vertex; //n0->m_vertex; //n1->m_vertex;
 		n1->m_rotation.m.fVec.Normalize ();
 		}
+	//n1->m_vertex = m_nodes [i - 1].m_vertex + n0->m_rotation.m.fVec * n1->m_rotation.m.fVec.Mag ();
+	//n1->m_rotation.m.fVec = n0->m_rotation.m.fVec;
 #if TWIST_FIRST
 	Twist (n0, n1, m_deltaAngle * Length (i) / l);
 #endif
@@ -918,6 +936,29 @@ for (int i = 1; i <= m_nSteps; i++) {
 	Twist (n0, n1, m_deltaAngle * Length (i) / l);
 #endif
 	}
+
+#if 0
+for (int i = 1; i <= m_nSteps; i++) {
+#if ITERATE
+	n0 = n1;
+#endif
+	n1 = &m_nodes [i];
+	if (i < m_nSteps) { // last matrix is the end side's matrix - use it's forward vector
+		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i/* - 1*/].m_vertex; //n0->m_vertex; //n1->m_vertex;
+		n1->m_rotation.m.fVec.Normalize ();
+		}
+	//n1->m_vertex = m_nodes [i - 1].m_vertex + n0->m_rotation.m.fVec * n1->m_rotation.m.fVec.Mag ();
+	//n1->m_rotation.m.fVec = n0->m_rotation.m.fVec;
+#if TWIST_FIRST
+	Twist (n0, n1, m_deltaAngle * Length (i) / l);
+#endif
+	//Bend (n0, n1);
+#if !TWIST_FIRST
+	Twist (n0, n1, m_deltaAngle * Length (i) / l + n0->m_angle);
+#endif
+	}
+#endif
+
 #ifdef _DEBUG
 double error = acos (Dot (m_base [1].m_rotation.m.rVec, m_nodes [m_nSteps].m_rotation.m.rVec));
 #endif
