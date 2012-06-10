@@ -923,6 +923,9 @@ for (int i = 1; i <= m_nSteps; i++) {
 	Twist (n0, n1, Length (i) / l);
 	}
 
+// Rotating the r and u vectors can cause an error because a x and y rotation may be applied. It would certainly
+// be possible to fix that, but I have tormented my brain enough. Computing the error and rotating the vectors 
+// accordingly works well enough.
 double error;
 while (fabs (error = acos (Dot (m_base [1].m_rotation.m.rVec, m_nodes [m_nSteps].m_rotation.m.rVec))) > 0.001) {
 	CQuaternion q;
