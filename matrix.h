@@ -158,6 +158,10 @@ public:
 
 	inline int Handedness (void) { return (Dot (m.fVec, CrossProduct (m.rVec, m.uVec)) > 0.0) ? 1 : 0; } // 0: left handed, 1: right handed
 	
+	inline CDoubleVector& R (void) { return m.rVec; }
+	inline CDoubleVector& U (void) { return m.uVec; }
+	inline CDoubleVector& F (void) { return m.fVec; }
+
 	const double Det (void);
 	const CDoubleMatrix Inverse (void);
 	const CDoubleMatrix Adjoint (void);

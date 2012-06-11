@@ -82,6 +82,8 @@ forward with the data structures I have devised).
 
 CTunnelMaker tunnelMaker;
 
+#define AXIS_HACK 0
+
 //------------------------------------------------------------------------------
 
 #define CURRENT_POINT(a) ((current->Point () + (a))&0x03)
@@ -173,12 +175,12 @@ segP->CreateOppVertexIndex (m_nSide, m_oppVertexIndex);
 m_point = segP->ComputeCenter (m_nSide);
 for (int i = 0; i < 4; i++)
 	m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
-m_rotation.m.fVec = m_normal;
-m_rotation.m.rVec = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
-m_rotation.m.rVec.Normalize ();
-//m_rotation.m.rVec *= -sign;
-m_rotation.m.uVec = CrossProduct (m_rotation.m.fVec, m_rotation.m.rVec);
-m_rotation.m.uVec.Normalize ();
+m_rotation.F () = m_normal;
+m_rotation.R () = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
+m_rotation.R ().Normalize ();
+//m_rotation.R () *= -sign;
+m_rotation.U () = CrossProduct (m_rotation.F (), m_rotation.R ());
+m_rotation.U ().Normalize ();
 m_bUpdate = 0;
 }
 
@@ -565,7 +567,7 @@ CDC* pDC = renderer.DC ();
 
 CDoubleMatrix m;
 m = m_rotation.Inverse ();
-CVertex v [4] = { m.m.rVec, m.m.uVec, m.m.fVec, m_axis };
+CVertex v [4] = { m.R (), m.U (), m.F (), m_axis };
 
 renderer.BeginRender ();
 m_vertex.Transform (viewMatrix);
@@ -751,34 +753,52 @@ m_nStartVertices.Destroy ();
 
 bool CTunnelPath::BendAxis (CTunnelPathNode * n0, CTunnelPathNode * n1)
 {
-double dot = Dot (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec);
+n1->m_sign = 1.0;
+double dot = Dot (n1->m_rotation.F (), n0->m_rotation.F ());
 if (dot > 0.999999) 
-	return false;
-n1->m_axis = CrossProduct (n1->m_rotation.m.fVec, -n0->m_rotation.m.fVec);
-n1->m_axis.Normalize ();
-return true;
+	n1->m_axis = n0->m_rotation.U ();
+else {
+	n1->m_axis = CrossProduct (n1->m_rotation.F (), -n0->m_rotation.F ());
+	n1->m_axis.Normalize ();
+	}
+if (Dot (n1->m_axis, n0->m_axis) < 0.0) {
+	n1->m_axis.Negate ();
+	n1->m_sign = -1.0;
+	}
+return (dot <= 0.999999);
 }
 
 //------------------------------------------------------------------------------
 
 void CTunnelPath::Bend (CTunnelPathNode * n0, CTunnelPathNode * n1)
 {
+#if 1
+
+if (!BendAxis (n0, n1))
+	n1->m_rotation.R () = n0->m_rotation.R ();
+else {
+	n1->m_rotation.U () = n1->m_axis;
+	n1->m_rotation.R () = CrossProduct (n1->m_rotation.U (), n1->m_rotation.F ());
+	}
+
+#else
+
 // rotate the previous matrix around the perpendicular of the previous and the current forward vector
 // to orient it properly for the current path node
-double dot = Dot (n1->m_rotation.m.fVec, n0->m_rotation.m.fVec); // angle of current and previous forward vectors
+double dot = Dot (n1->m_rotation.F (), n0->m_rotation.F ()); // angle of current and previous forward vectors
 if (dot >= 0.999999) { // dot >= 1e-6 ~ parallel
-	n1->m_rotation.m.rVec = n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
-	n1->m_rotation.m.uVec = n0->m_rotation.m.uVec;
+	n1->m_rotation.R () = n0->m_rotation.R (); // rotate right and up vectors accordingly
+	n1->m_rotation.U () = n0->m_rotation.U ();
 	}
 else if (dot <= -0.999999) { // dot >= 1e-6 ~ parallel
-	n1->m_rotation.m.rVec = -n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
-	n1->m_rotation.m.uVec = n0->m_rotation.m.uVec;
+	n1->m_rotation.R () = -n0->m_rotation.R (); // rotate right and up vectors accordingly
+	n1->m_rotation.U () = n0->m_rotation.U ();
 	}
 else {
 	CQuaternion q;
 #ifdef _DEBUG
-	CDoubleVector v0 (n1->m_rotation.m.fVec);
-	CDoubleVector v1 (/*(dot < 0.0) ? n0->m_rotation.m.fVec :*/ -n0->m_rotation.m.fVec);
+	CDoubleVector v0 (n1->m_rotation.F ());
+	CDoubleVector v1 (/*(dot < 0.0) ? n0->m_rotation.F () :*/ -n0->m_rotation.F ());
 	double a = acos (dot);
 	CDoubleVector axis = CrossProduct (v0, v1);
 	axis.Normalize ();
@@ -787,19 +807,21 @@ else {
 	axis.Normalize ();
 #endif
 	double bendAngle = acos (dot);
-	n1->m_axis = CrossProduct (n1->m_rotation.m.fVec, /*(dot < 0.0) ? n0->m_rotation.m.fVec :*/ -n0->m_rotation.m.fVec);
+	n1->m_axis = CrossProduct (n1->m_rotation.F (), /*(dot < 0.0) ? n0->m_rotation.F () :*/ -n0->m_rotation.F ());
 	q.FromAxisAngle (n1->m_axis.Normalize (), bendAngle);
 	CDoubleVector fVec;
-	fVec = q * n0->m_rotation.m.fVec;
-	dot = Dot (fVec, n1->m_rotation.m.fVec);
+	fVec = q * n0->m_rotation.F ();
+	dot = Dot (fVec, n1->m_rotation.F ());
 	if (dot < 0.999)
 		bendAngle += acos (dot);
 	q.FromAxisAngle (n1->m_axis, bendAngle);
-	n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
-	n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;
-	n1->m_rotation.m.rVec.Normalize ();
-	n1->m_rotation.m.uVec.Normalize ();
+	n1->m_rotation.R () = q * n0->m_rotation.R (); // rotate right and up vectors accordingly
+	n1->m_rotation.U () = q * n0->m_rotation.U ();
+	n1->m_rotation.R ().Normalize ();
+	n1->m_rotation.U ().Normalize ();
 	}
+
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -814,16 +836,60 @@ void CTunnelPath::Twist (CTunnelPathNode * n0, CTunnelPathNode * n1, double scal
 if (!bTwist)
 	return;
 #endif
-// twist the current matrix around the forward vector 
-n1->m_angle = m_deltaAngle * scale;
-if (fabs (n1->m_angle - n0->m_angle) > 1e-6) {
+
+#if AXIS_HACK
+
+if (m_nPivot >= 0) {
+	int nNode = n1 - &m_nodes [0];
+	double angle = 0.0;
+#if 0
+	double scale = double (nNode) / double (m_nSteps);
+	angle += m_corrAngles [0] * (1.0 - scale);
+	angle += m_corrAngles [1] * scale;
+#else
+	if (nNode < m_nPivot)
+		angle += m_corrAngles [0] * double (m_nPivot - nNode) / double (m_nPivot);
+	else if (nNode > m_nPivot)
+		angle += m_corrAngles [1] * double (nNode - m_nPivot) / double (m_nSteps - m_nPivot);
+#endif
 	CQuaternion q;
-	q.FromAxisAngle (n1->m_rotation.m.fVec, n1->m_angle - n0->m_angle);
+	q.FromAxisAngle (n1->m_rotation.m.fVec, angle);
 	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
 	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
 	n1->m_rotation.m.rVec.Normalize ();
 	n1->m_rotation.m.uVec.Normalize ();
 	}
+
+#else
+
+// twist the current matrix around the forward vector 
+n1->m_angle = m_deltaAngle * scale;
+if (fabs (n1->m_angle - n0->m_angle) > 1e-6) {
+	CQuaternion q;
+	q.FromAxisAngle (n1->m_rotation.F (), n1->m_angle - n0->m_angle);
+	n1->m_rotation.R () = q * n1->m_rotation.R ();
+	n1->m_rotation.U () = q * n1->m_rotation.U ();
+	n1->m_rotation.R ().Normalize ();
+	n1->m_rotation.U ().Normalize ();
+	}
+
+#endif
+
+}
+
+//------------------------------------------------------------------------------
+
+double CTunnelPath::CorrAngle (CDoubleMatrix& rotation, CTunnelPathNode* n0, CTunnelPathNode* n1)
+{
+if (!BendAxis (n0, n1))
+	return 0.0;
+double corrAngle = acos (Dot (n1->m_axis, rotation.m.rVec));
+double dot = Dot (rotation.m.uVec, n1->m_axis);
+#if 0
+if (nNode ? (dot > 0.0) : (dot > 0.0))
+	corrAngle = -corrAngle;
+#endif
+return corrAngle;
 }
 
 //------------------------------------------------------------------------------
@@ -835,19 +901,33 @@ CQuaternion q;
 // revert the end orientation's z rotation in regard to the start orientation by 
 // determining the angle of the two matrices' z axii (forward vectors) and rotating
 // the end matrix around the perpendicular of the two matrices' z axii.
+m_corrAngles [0] = CorrAngle (m_base [0].m_rotation, &m_nodes [0], &m_nodes [1]);
+m_corrAngles [1] = CorrAngle (m_base [1].m_rotation, &m_nodes [m_nSteps - 1], &m_nodes [m_nSteps]);
+double corrAngle = fabs (m_corrAngles [0]) + fabs (m_corrAngles [1]);
+m_nPivot = (corrAngle < 0.001) ? -1 : int (double (m_nSteps) * fabs (m_corrAngles [0]) / corrAngle + 0.5);
+	
+#if AXIS_HACK
+
+return (m_base [1].Point () - m_base [0].Point ()) * PI * 0.5;
+
+#else
+
+// revert the end orientation's z rotation in regard to the start orientation by 
+// determining the angle of the two matrices' z axii (forward vectors) and rotating
+// the end matrix around the perpendicular of the two matrices' z axii.
 
 CDoubleMatrix m = m_base [1].m_rotation;
 CDoubleVector rotAxis;
-double bendAngle = acos (Clamp (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec), -1.0, 1.0));
+double bendAngle = acos (Clamp (Dot (m.F (), m_base [0].m_rotation.F ()), -1.0, 1.0));
 
 if (bendAngle > 1e-6) { // dot >= 0.999999 ~ parallel
-	q.FromAxisAngle (rotAxis = CrossProduct (m.m.fVec, -m_base [0].m_rotation.m.fVec), -bendAngle);
-	m.m.fVec = q * m.m.fVec;
-	m.m.rVec = q * m.m.rVec;
-	m.m.fVec.Normalize ();
-	m.m.rVec.Normalize ();
-	if (Dot (m.m.fVec, m_base [0].m_rotation.m.fVec) < 0.9)
-		m.m.rVec.Negate ();
+	q.FromAxisAngle (rotAxis = CrossProduct (m.F (), -m_base [0].m_rotation.F ()), -bendAngle);
+	m.F () = q * m.F ();
+	m.R () = q * m.R ();
+	m.F ().Normalize ();
+	m.R ().Normalize ();
+	if (Dot (m.F (), m_base [0].m_rotation.F ()) < 0.9)
+		m.R ().Negate ();
 	}
 
 // determine correct rotation direction
@@ -857,28 +937,31 @@ if (bendAngle > 1e-6) { // dot >= 0.999999 ~ parallel
 // correct the bendAngle angle by the difference angle of the result right vector and the end side's right vector
 // A simpler way might be to also rotate the end orientation's up vector back and check its angle with 
 // the start side's up vector: If their angle is > 90° and the bendAngle angle is < 90°, add 180° to the bendAngle angle
-double twistAngle = acos (Dot (m.m.rVec, m_base [0].m_rotation.m.rVec));
+double twistAngle = acos (Dot (m.R (), m_base [0].m_rotation.R ()));
 
 if (fabs (twistAngle) > 1e-6) {
 	if (bendAngle <= 1e-6) // ~ parallel
-		m.m.rVec = m_base [0].m_rotation.m.rVec;
+		m.R () = m_base [0].m_rotation.R ();
 	else { 
 		q.FromAxisAngle (rotAxis, bendAngle);
-		m.m.rVec = q * m_base [0].m_rotation.m.rVec;
-		m.m.rVec.Normalize ();
+		m.R () = q * m_base [0].m_rotation.R ();
+		m.R ().Normalize ();
 		}
-	q.FromAxisAngle (m_base [1].m_rotation.m.fVec, twistAngle);
-	m.m.rVec = q * m.m.rVec;
-	m.m.rVec.Normalize ();
+	q.FromAxisAngle (m_base [1].m_rotation.F (), twistAngle);
+	m.R () = q * m.R ();
+	m.R ().Normalize ();
 #ifdef _DEBUG
-	double a = acos (Clamp (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec), -1.0, 1.0));
+	double a = acos (Clamp (Dot (m.R (), m_base [1].m_rotation.R ()), -1.0, 1.0));
 #endif
-	if (Dot (m.m.rVec, m_base [1].m_rotation.m.uVec) < 0.0) 
-		twistAngle -= acos (Clamp (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec), -1.0, 1.0));
+	if (Dot (m.R (), m_base [1].m_rotation.U ()) < 0.0) 
+		twistAngle -= acos (Clamp (Dot (m.R (), m_base [1].m_rotation.R ()), -1.0, 1.0));
 	else 
-		twistAngle += acos (Clamp (Dot (m.m.rVec, m_base [1].m_rotation.m.rVec), -1.0, 1.0));
+		twistAngle += acos (Clamp (Dot (m.R (), m_base [1].m_rotation.R ()), -1.0, 1.0));
 	}
 return twistAngle;
+
+#endif
+
 }
 
 //------------------------------------------------------------------------------
@@ -898,7 +981,7 @@ CDoubleVector t = m_nodes [0].m_vertex;
 
 m_nodes [0].m_rotation = m_base [0].m_rotation;
 m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation;
-m_nodes [0].m_axis = m_base [0].m_rotation.m.rVec;
+m_nodes [0].m_axis = m_base [0].m_rotation.R ();
 
 m_deltaAngle = TotalTwist ();
 
@@ -916,26 +999,41 @@ for (int i = 1; i <= m_nSteps; i++) {
 	n0 = n1;
 	n1 = &m_nodes [i];
 	if (i < m_nSteps) { // last matrix is the end side's matrix - use it's forward vector
-		n1->m_rotation.m.fVec = m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex; //n0->m_vertex; //n1->m_vertex;
-		n1->m_rotation.m.fVec.Normalize ();
+		n1->m_rotation.F () = m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex; //n0->m_vertex; //n1->m_vertex;
+		n1->m_rotation.F ().Normalize ();
 		}
 	Bend (n0, n1);
 	Twist (n0, n1, Length (i) / l);
 	}
 
+#if !AXIS_HACK
 // Rotating the r and u vectors can cause an error because a x and y rotation may be applied. It would certainly
 // be possible to fix that, but I have tormented my brain enough. Computing the error and rotating the vectors 
 // accordingly works well enough.
-double error;
-while (fabs (error = acos (Dot (m_base [1].m_rotation.m.rVec, m_nodes [m_nSteps].m_rotation.m.rVec))) > 0.001) {
+#ifdef _DEBUG
+static bool bFixError = true;
+#endif
+
+double error [2] = {0.0, 0.0}, direction = -Sign (Dot (m_base [1].m_rotation.U (), m_nodes [m_nSteps].m_rotation.R ()));
+
+while (
+#ifdef _DEBUG
+	bFixError &&
+#endif
+	fabs (error [1] = acos (Dot (m_base [1].m_rotation.R (), m_nodes [m_nSteps].m_rotation.R ()) * direction)) > 0.01) {
+	if ((error [0] != 0.0) && (fabs (error [1]) > error [0]))
+		direction = -direction;
+	error [0] = fabs (error [1]);
 	CQuaternion q;
 	for (int i = m_nSteps; i > 0; i--) {
 		n1 = &m_nodes [i];
-		q.FromAxisAngle (n1->m_rotation.m.fVec, error * Length (i) / l);
-		n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
-		n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
+		q.FromAxisAngle (n1->m_rotation.F (), error [1] * Length (i) / l);
+		n1->m_rotation.R () = q * n1->m_rotation.R ();
+		n1->m_rotation.U () = q * n1->m_rotation.U ();
 		}
 	}
+
+#endif
 
 for (int i = 0; i <= m_nSteps; i++) 
 	m_nodes [i].m_rotation = m_nodes [i].m_rotation.Inverse ();

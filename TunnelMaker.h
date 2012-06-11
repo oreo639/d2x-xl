@@ -90,6 +90,7 @@ class CTunnelPathNode {
 		CDoubleMatrix	m_rotation;
 		double			m_angle; // rotation angle around z axis
 		CDoubleVector	m_axis;
+		double			m_sign;
 		
 	CTunnelPathNode () : m_angle (0.0) {}
 
@@ -121,6 +122,8 @@ class CTunnelPath {
 		short										m_nSteps;
 		CDynamicArray<CTunnelPathNode>	m_nodes;
 		double									m_deltaAngle;
+		double									m_corrAngles [2];
+		int										m_nPivot;
 		CDynamicArray<CTunnelStartSide>	m_startSides;
 		CDynamicArray<ushort>				m_nStartVertices;
 
