@@ -82,7 +82,7 @@ forward with the data structures I have devised).
 
 CTunnelMaker tunnelMaker;
 
-#define AXIS_HACK 0
+#define AXIS_HACK 1
 
 //------------------------------------------------------------------------------
 
@@ -756,7 +756,7 @@ bool CTunnelPath::BendAxis (CTunnelPathNode * n0, CTunnelPathNode * n1)
 n1->m_sign = 1.0;
 double dot = Dot (n1->m_rotation.F (), n0->m_rotation.F ());
 if (dot > 0.999999) 
-	n1->m_axis = n0->m_rotation.U ();
+	n1->m_axis = n0->m_rotation.R ();
 else {
 	n1->m_axis = CrossProduct (n1->m_rotation.F (), -n0->m_rotation.F ());
 	n1->m_axis.Normalize ();
@@ -775,10 +775,12 @@ void CTunnelPath::Bend (CTunnelPathNode * n0, CTunnelPathNode * n1)
 #if AXIS_HACK
 
 if (!BendAxis (n0, n1))
-	n1->m_rotation.R () = n0->m_rotation.R ();
+	n1->m_rotation.U () = n0->m_rotation.U ();
 else {
-	n1->m_rotation.U () = n1->m_axis;
-	n1->m_rotation.R () = CrossProduct (n1->m_rotation.U (), n1->m_rotation.F ());
+	n1->m_rotation.R () = n1->m_axis;
+	n1->m_rotation.U () = CrossProduct (n1->m_rotation.R (), n1->m_rotation.F ());
+	if (n1->m_rotation.Handedness () != m_base [0].m_rotation.Handedness ())
+		n1->m_rotation.R ().Negate ();
 	}
 
 #else
@@ -848,16 +850,20 @@ if (m_nPivot >= 0) {
 	angle += m_corrAngles [1] * scale;
 #else
 	if (nNode < m_nPivot)
-		angle += m_corrAngles [0] * double (m_nPivot - nNode) / double (m_nPivot);
+		angle = m_corrAngles [0] * double (m_nPivot - nNode) / double (m_nPivot);
 	else if (nNode > m_nPivot)
-		angle += m_corrAngles [1] * double (nNode - m_nPivot) / double (m_nSteps - m_nPivot);
+		angle = m_corrAngles [1] * double (nNode - m_nPivot) / double (m_nSteps - m_nPivot);
+	else
+		angle = 0.0;
 #endif
-	CQuaternion q;
-	q.FromAxisAngle (n1->m_rotation.m.fVec, angle);
-	n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
-	n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
-	n1->m_rotation.m.rVec.Normalize ();
-	n1->m_rotation.m.uVec.Normalize ();
+	if (angle != 0.0) {
+		CQuaternion q;
+		q.FromAxisAngle (n1->m_rotation.m.fVec, angle);
+		n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
+		n1->m_rotation.m.uVec = q * n1->m_rotation.m.uVec;
+		n1->m_rotation.m.rVec.Normalize ();
+		n1->m_rotation.m.uVec.Normalize ();
+		}
 	}
 
 #else
@@ -883,9 +889,9 @@ double CTunnelPath::CorrAngle (CDoubleMatrix& rotation, CTunnelPathNode* n0, CTu
 {
 if (!BendAxis (n0, n1))
 	return 0.0;
-double corrAngle = acos (Dot (n1->m_axis, rotation.m.rVec));
-double dot = Dot (rotation.m.uVec, n1->m_axis);
+double corrAngle = acos (Dot (n1->m_axis, n0->m_axis/*rotation.m.rVec*/));
 #if 0
+double dot = Dot (rotation.m.uVec, n1->m_axis);
 if (nNode ? (dot > 0.0) : (dot > 0.0))
 	corrAngle = -corrAngle;
 #endif
@@ -903,8 +909,8 @@ CQuaternion q;
 // revert the end orientation's z rotation in regard to the start orientation by 
 // determining the angle of the two matrices' z axii (forward vectors) and rotating
 // the end matrix around the perpendicular of the two matrices' z axii.
-m_corrAngles [0] = CorrAngle (m_base [0].m_rotation, &m_nodes [0], &m_nodes [1]);
-m_corrAngles [1] = CorrAngle (m_base [1].m_rotation, &m_nodes [m_nSteps - 1], &m_nodes [m_nSteps]);
+m_corrAngles [0] = acos (Dot (m_nodes [1].m_rotation.R (), m_base [0].m_rotation.R ()));
+m_corrAngles [1] = acos (Dot (m_base [1].m_rotation.R (), m_nodes [m_nSteps].m_rotation.R ()));
 double corrAngle = fabs (m_corrAngles [0]) + fabs (m_corrAngles [1]);
 m_nPivot = (corrAngle < 0.001) ? -1 : int (double (m_nSteps) * fabs (m_corrAngles [0]) / corrAngle + 0.5);
 	
@@ -983,8 +989,6 @@ m_nodes [0].m_rotation = m_base [0].m_rotation;
 m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation;
 m_nodes [0].m_axis = m_base [0].m_rotation.R ();
 
-m_deltaAngle = TotalTwist ();
-
 // Compute each path node's rotation matrix from the previous node's rotation matrix
 // First rotate the r and u vectors by the difference angles of the preceding and the current nodes' rotation matrices' z axis
 // To do that, compute the angle using the dot product and the rotation vector from the two z axii perpendicular vector
@@ -993,8 +997,35 @@ m_deltaAngle = TotalTwist ();
 
 double l = Length ();
 
-CTunnelPathNode * n0, * n1 = &m_nodes [0];
+CTunnelPathNode * n0, * n1;
 
+#if AXIS_HACK
+
+n1 = &m_nodes [0];
+for (int i = 1; i <= m_nSteps; i++) {
+	n0 = n1;
+	n1 = &m_nodes [i];
+	if (i < m_nSteps) { // last matrix is the end side's matrix - use it's forward vector
+		n1->m_rotation.F () = m_nodes [i + 1].m_vertex - m_nodes [i - 1].m_vertex; //n0->m_vertex; //n1->m_vertex;
+		n1->m_rotation.F ().Normalize ();
+		}
+	Bend (n0, n1);
+	}
+
+m_deltaAngle = TotalTwist ();
+
+n1 = &m_nodes [0];
+for (int i = 1; i <= m_nSteps; i++) {
+	n0 = n1;
+	n1 = &m_nodes [i];
+	Twist (n0, n1, Length (i) / l);
+	}
+
+#else
+
+m_deltaAngle = TotalTwist ();
+
+n1 = &m_nodes [0];
 for (int i = 1; i <= m_nSteps; i++) {
 	n0 = n1;
 	n1 = &m_nodes [i];
@@ -1006,7 +1037,6 @@ for (int i = 1; i <= m_nSteps; i++) {
 	Twist (n0, n1, Length (i) / l);
 	}
 
-#if !AXIS_HACK
 // Rotating the r and u vectors can cause an error because a x and y rotation may be applied. It would certainly
 // be possible to fix that, but I have tormented my brain enough. Computing the error and rotating the vectors 
 // accordingly works well enough.
