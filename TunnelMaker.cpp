@@ -780,7 +780,7 @@ else {
 	n1->m_rotation.R () = n1->m_axis;
 	n1->m_rotation.U () = CrossProduct (n1->m_rotation.R (), n1->m_rotation.F ());
 	if (n1->m_rotation.Handedness () != m_base [0].m_rotation.Handedness ())
-		n1->m_rotation.R ().Negate ();
+		n1->m_rotation.U ().Negate ();
 	}
 
 #else
@@ -850,7 +850,7 @@ if (m_nPivot >= 0) {
 	angle += m_corrAngles [1] * scale;
 #else
 	if (nNode < m_nPivot)
-		angle = m_corrAngles [0] * double (m_nPivot - nNode) / double (m_nPivot);
+		angle = -m_corrAngles [0] * double (m_nPivot - nNode) / double (m_nPivot);
 	else if (nNode > m_nPivot)
 		angle = m_corrAngles [1] * double (nNode - m_nPivot) / double (m_nSteps - m_nPivot);
 	else
@@ -910,9 +910,26 @@ CQuaternion q;
 // determining the angle of the two matrices' z axii (forward vectors) and rotating
 // the end matrix around the perpendicular of the two matrices' z axii.
 m_corrAngles [0] = acos (Dot (m_nodes [1].m_rotation.R (), m_base [0].m_rotation.R ()));
+if (Dot (m_nodes [1].m_rotation.R (), m_base [0].m_rotation.U ()) < 0.0)
+	m_corrAngles [0] = -m_corrAngles [0];
 m_corrAngles [1] = acos (Dot (m_base [1].m_rotation.R (), m_nodes [m_nSteps].m_rotation.R ()));
+if (Dot (m_base [1].m_rotation.R (), m_nodes [m_nSteps].m_rotation.U ()) < 0.0)
+	m_corrAngles [1] = -m_corrAngles [1];
 double corrAngle = fabs (m_corrAngles [0]) + fabs (m_corrAngles [1]);
-m_nPivot = (corrAngle < 0.001) ? -1 : int (double (m_nSteps) * fabs (m_corrAngles [0]) / corrAngle + 0.5);
+if (corrAngle < 0.001) 
+	m_nPivot = -1;
+else {
+	double ratio = double (m_nSteps) * fabs (m_corrAngles [0]) / corrAngle;
+	double minDist = 1e30;
+	for (int i = 1; i < m_nSteps; i++) {
+		double l = Length (i);
+		double d = fabs (ratio - l);
+		if (d < minDist) {
+			minDist = d;
+			m_nPivot = i;
+			}
+		}
+	}
 	
 return (m_base [1].Point () - m_base [0].Point ()) * PI * 0.5;
 
