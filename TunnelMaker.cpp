@@ -82,7 +82,13 @@ forward with the data structures I have devised).
 
 CTunnelMaker tunnelMaker;
 
-#define AXIS_HACK 1
+#define ROTAXIS_METHOD	1
+#define UNTWIST			1
+
+#ifdef _DEBUG
+static bool bTwist = true;
+static bool bUnTwist = true;
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -212,33 +218,52 @@ return m_bUpdate = 0;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-#if 0
+#if UNTWIST
 
 void CTunnelElement::Untwist (short nSide) 
 {
-  double		minLen = 1e10;
-  short		nOppSide = oppSideTable [nSide];
-  ubyte		oppVertexIndex [4];
+#ifdef _DEBUG
+if (!bUnTwist)
+	return;
+#endif
+
+  double				minDist = 1e10;
+  short				nOppSide = oppSideTable [nSide];
+  ubyte				oppVertexIndex [4];
+  CDoubleVector	edges [4];
 
 CSegment* segP = segmentManager.Segment (m_nSegment);
 segP->CreateOppVertexIndex (nSide, oppVertexIndex);
 
 CVertex* v0 = segP->Vertex (nSide, 0);
-short index = 0;
+short nOffset = 0;
 for (short j = 0; j < 4; j++) {
-	double len = Distance (*v0, *segP->Vertex (nOppSide, oppVertexIndex [j]));
-	if (len < minLen) {
-		minLen = len;
-		index = j;
+	edges [j] = *segP->Vertex (segP->VertexId (oppVertexIndex [j])) - *v0;
+	double d = edges [j].Mag ();
+	if (d < minDist) {
+		minDist = d;
+		nOffset = j;
 		}
 	}
 
-if (index != 0) {
+if (nOffset == 0) {
+	segP->ComputeNormals (nSide);
+	CDoubleVector& n = segP->Side (nSide)->Normal ();
+	for (short j = 0; j < 4; j++) {
+		double d = Dot (edges [j], n);
+		if (d < minDist) {
+			minDist = d;
+			nOffset = j;
+			}
+		}
+	}
+
+if (nOffset != 0) {
 	short vertexIds [4];
 	for (short j = 0; j < 4; j++)
-		vertexIds [j] = segP->VertexId (nSide, index + j);
+		vertexIds [j] = segP->VertexId (nSide, j);
 	for (short j = 0; j < 4; j++)
-		segP->SetVertexId (nSide, j, vertexIds [j]);
+		segP->SetVertexId (nSide, nOffset + j, vertexIds [j]);
 	}
 }
 
@@ -368,11 +393,11 @@ for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElemen
 		for (short nVertex = 0; nVertex < 4; nVertex++) {
 			segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
 			segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
-#if 0 // A hack that is not required anymore ...
-			if (nSegment == m_nSteps)
-				e1->Untwist (m_base [0].m_nSide);
-#endif
 			}
+#if UNTWIST // A hack that is not required anymore ...
+		//if (nSegment == m_nSteps)
+			e1->Untwist (m_base [0].m_nSide);
+#endif
 		}
 	}
 }
@@ -761,6 +786,9 @@ else {
 	n1->m_axis = CrossProduct (n1->m_rotation.F (), -n0->m_rotation.F ());
 	n1->m_axis.Normalize ();
 	}
+#ifdef _DEBUG
+if (bTwist)
+#endif
 if (Dot (n1->m_axis, n0->m_axis) < 0.0) {
 	n1->m_axis.Negate ();
 	n1->m_sign = -1.0;
@@ -772,7 +800,7 @@ return (dot <= 0.999999);
 
 void CTunnelPath::Bend (CTunnelPathNode * n0, CTunnelPathNode * n1)
 {
-#if AXIS_HACK
+#if ROTAXIS_METHOD
 
 if (!BendAxis (n0, n1))
 	n1->m_rotation.U () = n0->m_rotation.U ();
@@ -828,10 +856,6 @@ else {
 
 //------------------------------------------------------------------------------
 
-#ifdef _DEBUG
-static bool bTwist = true;
-#endif
-
 void CTunnelPath::Twist (CTunnelPathNode * n0, CTunnelPathNode * n1, double scale)
 {
 #ifdef _DEBUG
@@ -839,7 +863,7 @@ if (!bTwist)
 	return;
 #endif
 
-#if AXIS_HACK
+#if ROTAXIS_METHOD
 
 if (m_nPivot >= 0) {
 	int nNode = n1 - &m_nodes [0];
@@ -857,6 +881,8 @@ if (m_nPivot >= 0) {
 		angle = 0.0;
 #endif
 	if (angle != 0.0) {
+		if (n1->m_sign < 0.0)
+			angle -= Sign (angle) * 2.0 * PI;
 		CQuaternion q;
 		q.FromAxisAngle (n1->m_rotation.m.fVec, angle);
 		n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
@@ -904,7 +930,7 @@ double CTunnelPath::TotalTwist (void)
 {
 CQuaternion q;
 
-#if AXIS_HACK
+#if ROTAXIS_METHOD
 
 // revert the end orientation's z rotation in regard to the start orientation by 
 // determining the angle of the two matrices' z axii (forward vectors) and rotating
@@ -1016,7 +1042,7 @@ double l = Length ();
 
 CTunnelPathNode * n0, * n1;
 
-#if AXIS_HACK
+#if ROTAXIS_METHOD
 
 n1 = &m_nodes [0];
 for (int i = 1; i <= m_nSteps; i++) {
@@ -1037,6 +1063,11 @@ for (int i = 1; i <= m_nSteps; i++) {
 	n1 = &m_nodes [i];
 	Twist (n0, n1, Length (i) / l);
 	}
+
+#ifdef _DEBUG
+if (bTwist)
+#endif
+	m_nodes [m_nSteps].m_rotation = m_base [1].m_rotation;
 
 #else
 
