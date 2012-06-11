@@ -302,7 +302,7 @@ for (int i = (int) m_nVertices.Length (); --i >= 0; ) {
 
 void CTunnelSegment::Draw (void)
 {
-#if 0
+#if 1
 CMineView* mineView = DLE.MineView ();
 mineView->Renderer ().BeginRender (false);
 #ifdef NDEBUG
@@ -791,9 +791,9 @@ else {
 	q.FromAxisAngle (n1->m_axis.Normalize (), bendAngle);
 	CDoubleVector fVec;
 	fVec = q * n0->m_rotation.m.fVec;
-	a = Dot (fVec, n1->m_rotation.m.fVec);
-	if (a < 0.999)
-		bendAngle += acos (a);
+	dot = Dot (fVec, n1->m_rotation.m.fVec);
+	if (dot < 0.999)
+		bendAngle += acos (dot);
 	q.FromAxisAngle (n1->m_axis, bendAngle);
 	n1->m_rotation.m.rVec = q * n0->m_rotation.m.rVec; // rotate right and up vectors accordingly
 	n1->m_rotation.m.uVec = q * n0->m_rotation.m.uVec;

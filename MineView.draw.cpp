@@ -219,7 +219,7 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 		if ((nSegment == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 			nDbgSeg = nDbgSeg;
 #endif
-#if 0
+#ifdef _DEBUG
 		if (segP->m_info.bTunnel)
 			continue;
 #endif
