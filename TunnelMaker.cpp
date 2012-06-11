@@ -238,26 +238,27 @@ segP->CreateOppVertexIndex (nSide, oppVertexIndex);
 CVertex* v0 = segP->Vertex (nSide, 0);
 short nOffset = 0;
 for (short j = 0; j < 4; j++) {
-	edges [j] = *segP->Vertex (segP->VertexId (oppVertexIndex [j])) - *v0;
+	edges [j] = *segP->Vertex (ushort (oppVertexIndex [j])) - *v0;
 	double d = edges [j].Mag ();
+	edges [j] /= d;
 	if (d < minDist) {
 		minDist = d;
 		nOffset = j;
 		}
 	}
-
+#if 0
 if (nOffset == 0) {
 	segP->ComputeNormals (nSide);
 	CDoubleVector& n = segP->Side (nSide)->Normal ();
 	for (short j = 0; j < 4; j++) {
-		double d = Dot (edges [j], n);
+		double d = fabs (Dot (edges [j], n));
 		if (d < minDist) {
 			minDist = d;
 			nOffset = j;
 			}
 		}
 	}
-
+#endif
 if (nOffset != 0) {
 	short vertexIds [4];
 	for (short j = 0; j < 4; j++)
