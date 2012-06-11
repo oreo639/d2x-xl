@@ -772,7 +772,7 @@ return (dot <= 0.999999);
 
 void CTunnelPath::Bend (CTunnelPathNode * n0, CTunnelPathNode * n1)
 {
-#if 1
+#if AXIS_HACK
 
 if (!BendAxis (n0, n1))
 	n1->m_rotation.R () = n0->m_rotation.R ();
@@ -898,6 +898,8 @@ double CTunnelPath::TotalTwist (void)
 {
 CQuaternion q;
 
+#if AXIS_HACK
+
 // revert the end orientation's z rotation in regard to the start orientation by 
 // determining the angle of the two matrices' z axii (forward vectors) and rotating
 // the end matrix around the perpendicular of the two matrices' z axii.
@@ -906,8 +908,6 @@ m_corrAngles [1] = CorrAngle (m_base [1].m_rotation, &m_nodes [m_nSteps - 1], &m
 double corrAngle = fabs (m_corrAngles [0]) + fabs (m_corrAngles [1]);
 m_nPivot = (corrAngle < 0.001) ? -1 : int (double (m_nSteps) * fabs (m_corrAngles [0]) / corrAngle + 0.5);
 	
-#if AXIS_HACK
-
 return (m_base [1].Point () - m_base [0].Point ()) * PI * 0.5;
 
 #else
