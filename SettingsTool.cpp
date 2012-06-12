@@ -619,6 +619,7 @@ if (BrowseFile ("Descent mission files", m_missionFolder, "*.hog", TRUE)) {
 	if ((p = strrchr (m_missionFolder, '\\')) || (p = strrchr (m_missionFolder, '/')) || (p = strrchr (m_missionFolder, ':')))
 		*(p + 1) = '\0';
 	::SetCurrentDirectory (m_missionFolder);
+	UpdateData (FALSE);
 	OnOK ();
 	}
 }
