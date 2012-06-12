@@ -710,7 +710,7 @@ if (nPen > 0) {
 	m_renderData.m_penWeight = nWeight;
 	COLORREF color = PenColor (ePenColor (nPen - 1));
 	glColor3f (float (GetRValue (color)) / 255.0f, float (GetGValue (color)) / 255.0f, float (GetBValue (color)) / 255.0f);
-	glLineWidth (float (nWeight) * 1.5f);
+	glLineWidth (float (nWeight) /** 1.5f*/);
 	}
 }
 

@@ -82,12 +82,19 @@ forward with the data structures I have devised).
 
 CTunnelMaker tunnelMaker;
 
+#ifdef _DEBUG
+
 #define ROTAXIS_METHOD	1
 #define UNTWIST			1
 
-#ifdef _DEBUG
 static bool bTwist = true;
 static bool bUnTwist = true;
+
+#else
+
+#define ROTAXIS_METHOD	0
+#define UNTWIST			0
+
 #endif
 
 //------------------------------------------------------------------------------
@@ -882,8 +889,10 @@ if (m_nPivot >= 0) {
 		angle = 0.0;
 #endif
 	if (angle != 0.0) {
+#if 0
 		if (n1->m_sign < 0.0)
 			angle -= Sign (angle) * 2.0 * PI;
+#endif
 		CQuaternion q;
 		q.FromAxisAngle (n1->m_rotation.m.fVec, angle);
 		n1->m_rotation.m.rVec = q * n1->m_rotation.m.rVec;
