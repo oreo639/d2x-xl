@@ -299,6 +299,7 @@ sprintf_s (s, sizeof (s), "%s (%s)|%s|all files (*.*)|*.*||", fileType, fileExt,
 CFileDialog d (bOpen, fileExt, pn, 0, s, this);
 d.m_ofn.hInstance = AfxGetInstanceHandle ();
 d.m_ofn.lpstrInitialDir = pn;
+//d.m_ofn.Flags |= OFN_EXPLORER | OFN_PATHMUSTEXIST;
 if ((nResult = int (d.DoModal ())) != IDOK)
 	return false;
 strcpy_s (fileName, 256, d.m_ofn.lpstrFile);
@@ -612,8 +613,12 @@ if (BrowseFile ("Descent 2 PIG", m_d2Folder, "*.pig", TRUE)) {
 
 void CSettingsTool::OnOpenMissions (void)
 {
-if (BrowseFile ("Descent mission file", m_missionFolder, "*.hog", TRUE)) {
+if (BrowseFile ("Descent mission files", m_missionFolder, "*.hog", TRUE)) {
 	UpdateData (FALSE);
+	char* p;
+	if ((p = strrchr (m_missionFolder, '\\')) || (p = strrchr (m_missionFolder, '/')) || (p = strrchr (m_missionFolder, ':')))
+		*(p + 1) = '\0';
+	::SetCurrentDirectory (m_missionFolder);
 	OnOK ();
 	}
 }
