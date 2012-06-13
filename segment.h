@@ -28,47 +28,47 @@ extern int sideChildTable[6][4];
 //  Note that -1 means no connection, -2 means a connection to the outside world. 
 #define  IS_CHILD(nSegment) (nSegment > -1)
 
-#define SEGMENT_TYPE_NONE				0
-#define SEGMENT_TYPE_PRODUCER			1
-#define SEGMENT_TYPE_REPAIRCEN		2
-#define SEGMENT_TYPE_CONTROLCEN		3
-#define SEGMENT_TYPE_ROBOTMAKER		4
-#define MAX_SEGMENT_TYPES1				5
+#define SEGMENT_TYPE_NONE					0
+#define SEGMENT_TYPE_PRODUCER				1
+#define SEGMENT_TYPE_REPAIRCEN			2
+#define SEGMENT_TYPE_CONTROLCEN			3
+#define SEGMENT_TYPE_ROBOTMAKER			4
+#define MAX_SEGMENT_TYPES1					5
 
-#define SEGMENT_TYPE_GOAL_BLUE		5 // Descent 2 only
-#define SEGMENT_TYPE_GOAL_RED			6 // Descent 2 only
-#define SEGMENT_TYPE_WATER				7
-#define SEGMENT_TYPE_LAVA				8
-#define SEGMENT_TYPE_TEAM_BLUE		9
-#define SEGMENT_TYPE_TEAM_RED			10
-#define SEGMENT_TYPE_SPEEDBOOST		11
-#define SEGMENT_TYPE_BLOCKED			12
-#define SEGMENT_TYPE_NODAMAGE			13
-#define SEGMENT_TYPE_SKYBOX			14
-#define SEGMENT_TYPE_EQUIPMAKER		15	// matcen for powerups
-#define SEGMENT_TYPE_OUTDOORS			16
-#define MAX_SEGMENT_TYPES2				17 // Descent 2 only
+#define SEGMENT_TYPE_GOAL_BLUE			5 // Descent 2 only
+#define SEGMENT_TYPE_GOAL_RED				6 // Descent 2 only
+#define SEGMENT_TYPE_WATER					7
+#define SEGMENT_TYPE_LAVA					8
+#define SEGMENT_TYPE_TEAM_BLUE			9
+#define SEGMENT_TYPE_TEAM_RED				10
+#define SEGMENT_TYPE_SPEEDBOOST			11
+#define SEGMENT_TYPE_BLOCKED				12
+#define SEGMENT_TYPE_NODAMAGE				13
+#define SEGMENT_TYPE_SKYBOX				14
+#define SEGMENT_TYPE_EQUIPMAKER			15	// matcen for powerups
+#define SEGMENT_TYPE_OUTDOORS				16
+#define MAX_SEGMENT_TYPES2					17 // Descent 2 only
 
-#define SEGMENT_FUNC_NONE				0
-#define SEGMENT_FUNC_PRODUCER			1
-#define SEGMENT_FUNC_REPAIRCEN		2
-#define SEGMENT_FUNC_REACTOR			3
-#define SEGMENT_FUNC_ROBOTMAKER		4
-#define SEGMENT_FUNC_GOAL_BLUE		5
-#define SEGMENT_FUNC_GOAL_RED			6
-#define SEGMENT_FUNC_TEAM_BLUE		7
-#define SEGMENT_FUNC_TEAM_RED			8
-#define SEGMENT_FUNC_SPEEDBOOST		9
-#define SEGMENT_FUNC_SKYBOX			10
-#define SEGMENT_FUNC_EQUIPMAKER		11
-#define MAX_SEGMENT_FUNCTIONS			12
+#define SEGMENT_FUNC_NONE					0
+#define SEGMENT_FUNC_PRODUCER				1
+#define SEGMENT_FUNC_REPAIRCEN			2
+#define SEGMENT_FUNC_REACTOR				3
+#define SEGMENT_FUNC_ROBOTMAKER			4
+#define SEGMENT_FUNC_GOAL_BLUE			5
+#define SEGMENT_FUNC_GOAL_RED				6
+#define SEGMENT_FUNC_TEAM_BLUE			7
+#define SEGMENT_FUNC_TEAM_RED				8
+#define SEGMENT_FUNC_SPEEDBOOST			9
+#define SEGMENT_FUNC_SKYBOX				10
+#define SEGMENT_FUNC_EQUIPMAKER			11
+#define MAX_SEGMENT_FUNCTIONS				12
 
-#define SEGMENT_PROP_NONE				0
-#define SEGMENT_PROP_WATER				1
-#define SEGMENT_PROP_LAVA				2
-#define SEGMENT_PROP_BLOCKED			4
-#define SEGMENT_PROP_NODAMAGE			8
-#define SEGMENT_PROP_OUTDOORS			16
+#define SEGMENT_PROP_NONE					0
+#define SEGMENT_PROP_WATER					1
+#define SEGMENT_PROP_LAVA					2
+#define SEGMENT_PROP_BLOCKED				4
+#define SEGMENT_PROP_NODAMAGE				8
+#define SEGMENT_PROP_SELF_ILLUMINATE	16
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

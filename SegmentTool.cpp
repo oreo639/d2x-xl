@@ -44,8 +44,8 @@ BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_SEGMENT_POINT2, OnPoint2)
 	ON_BN_CLICKED (IDC_SEGMENT_POINT3, OnPoint3)
 	ON_BN_CLICKED (IDC_SEGMENT_POINT4, OnPoint4)
-	ON_BN_CLICKED (IDC_SEGMENT_ADDBOT, OnAddObjectToProducerter)
-	ON_BN_CLICKED (IDC_SEGMENT_DELBOT, OnDeleteObjectFromProducerter)
+	ON_BN_CLICKED (IDC_SEGMENT_ADDBOT, OnAddObjectToProducer)
+	ON_BN_CLICKED (IDC_SEGMENT_DELBOT, OnDeleteObjectFromProducer)
 	ON_BN_CLICKED (IDC_SEGMENT_TRIGGERDETAILS, OnTriggerDetails)
 	ON_BN_CLICKED (IDC_SEGMENT_WALLDETAILS, OnWallDetails)
 	ON_CBN_SELCHANGE (IDC_SEGMENT_ID, OnSetSegment)
@@ -816,7 +816,7 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnAddObjectToProducerter ()
+void CSegmentTool::OnAddObjectToProducer ()
 {
 CHECKMINE;
 CSegment *segP = current->Segment ();
@@ -870,7 +870,7 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnDeleteObjectFromProducerter () 
+void CSegmentTool::OnDeleteObjectFromProducer () 
 {
 CHECKMINE;
 CSegment *segP = current->Segment ();

@@ -84,9 +84,9 @@ int nSegments = segmentManager.Count ();
 #pragma omp parallel for
 for (int i = 0; i < nSegments; i++) {
 	CSegment* segP = segmentManager.Segment (i);
-	if (bAll || (segP->IsTagged ())) {
-		CSide* sideP = segP->m_sides;
-		for (int j = 0; j < 6; j++, sideP++) {
+	CSide* sideP = segP->m_sides;
+	for (int j = 0; j < 6; j++, sideP++) {
+		if (bAll || sideP->IsTagged ()) {
 			CUVL* uvlP = sideP->m_info.uvls;
 			for (int i = 0; i < 4; i++) {
 				double l = ((double) ((ushort) uvlP [i].l)) * fLight;
@@ -238,10 +238,10 @@ if (bAll)
 int nSegments = segmentManager.Count ();
 for (int i = 0; i < nSegments; i++) {
 	CSegment *segP = segmentManager.Segment (i);
-	if (bAll || (segP->IsTagged ())) {
-		segP->Backup ();
-		CSide* sideP = segP->m_sides;
-		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+	segP->Backup ();
+	CSide* sideP = segP->m_sides;
+	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+		if (bAll || sideP->IsTagged ()) {
 			for (int i = 0; i < 4; i++) {
 				sideP->m_info.uvls [i].l = 0;
 				if (!bAll)
@@ -276,7 +276,7 @@ for (; nSegment < nSegments; nSegment++) {
 #endif
 		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
 			continue;
-		if (!(bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))))
+		if (!(bAll || sideP->IsTagged ()))
 			continue;
 		if (!segmentManager.IsWall (CSideKey (nSegment, nSide)))
 			continue;
@@ -383,9 +383,9 @@ if ((segP - segmentManager.Segment (0) == nDbgSeg) && ((nDbgSide < 0) || (nSide 
 
 void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brightness, bool bAll, bool bCopyTexLights) 
 {
-	CSegment* segP = segmentManager.Segment (nSourceSeg);
+	CSegment* srcSegP = segmentManager.Segment (nSourceSeg);
 	// find orthogonal angle of source segment
-	CVertex sourceNormal = Average (segP->Side (nSourceSide)->m_vNormal [0], segP->Side (nSourceSide)->m_vNormal [1]);
+	CVertex sourceNormal = Average (srcSegP->Side (nSourceSide)->m_vNormal [0], srcSegP->Side (nSourceSide)->m_vNormal [1]);
 	// remember to flip the sign since we want it to point inward
 	// calculate the center of the source segment
 	CVertex sourceCenter = segmentManager.CalcSideCenter (CSideKey (nSourceSeg, nSourceSide));
@@ -416,10 +416,10 @@ if ((nSourceSeg == nDbgSeg) && ((nDbgSide < 0) || (nSourceSide == nDbgSide)))
 #endif
 
 CVertex sourceCorners [5];
-short nVertices = segP->Side (nSourceSide)->VertexCount ();
+short nVertices = srcSegP->Side (nSourceSide)->VertexCount ();
 sourceCorners [nVertices].Clear ();
 for (short i = 0; i < nVertices; i++) {
-	sourceCorners [i] = *segP->Vertex (nSourceSide, i);
+	sourceCorners [i] = *srcSegP->Vertex (nSourceSide, i);
 	sourceCorners [nVertices] += sourceCorners [i];
 	}
 sourceCorners [nVertices] /= double (nVertices);
@@ -439,7 +439,7 @@ for (int nChildSeg = 0; nChildSeg < nSegments; nChildSeg++) {
 	// loop on child sides
 	for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 		// if side has a child..
-		if (!(bAll || segmentManager.IsTagged (CSideKey (nChildSeg, nChildSide))))
+		if (!(bAll || childSegP->Side (nChildSide)->IsTagged ()))
 			continue;
 		if (childSegP->ChildId (nChildSide) >= 0) {
 			CWall* wallP = childSegP->Side (nChildSide)->Wall ();
@@ -453,6 +453,8 @@ for (int nChildSeg = 0; nChildSeg < nSegments; nChildSeg++) {
 		if ((nChildSide == nSourceSide) && (nChildSeg == nSourceSeg))
 			cornerLights [0] = cornerLights [1] = cornerLights [2] = cornerLights [3] = 1.0;
 		// calculate vector between center of source segment and center of child
+		else if (DLE.IsD2XLevel () && (srcSegP->Props () & SEGMENT_PROP_SELF_ILLUMINATE))
+			continue;
 		else if (!CalcCornerLights (cornerLights, nChildSeg, nChildSide, nSourceSeg, nSourceSide, sourceCorners, sourceNormal, bWall)) 
 			continue;
 		GatherFaceLight (cornerLights, childSegP, nChildSide, brightness, lightColorP);
@@ -579,8 +581,6 @@ for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	CSegment* srcSegP = segmentManager.Segment (nSourceSeg);
 	// skip if not marked unless we are automatically saving
-	if  (!(srcSegP->IsTagged () || bForce)) 
-		continue;
 	// loop on all sides
 #if DBG
 	if (nSourceSeg == nDbgSeg)
@@ -588,6 +588,8 @@ for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 #endif
 	CSide* srcSideP = srcSegP->m_sides;
 	for (int nSourceSide = 0; !nErrors && (nSourceSide < 6); nSourceSide++, srcSideP++) {
+		if  (!(bForce || srcSideP->IsTagged ())) 
+			continue;
 		CSideKey key (nSourceSeg, nSourceSide);
 		CWall* wallP = segmentManager.Wall (key);
 		if (!FaceHasVariableLight (key, srcSideP, wallP))
@@ -678,6 +680,8 @@ for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 					cornerLights [1] =
 					cornerLights [2] =
 					cornerLights [3] = 1.0;
+				else if (DLE.IsD2XLevel () && (srcSegP->Props () & SEGMENT_PROP_SELF_ILLUMINATE))
+					continue;
 				else if (!CalcCornerLights (cornerLights, nChildSeg, nChildSide, nSourceSeg, nSourceSide, sourceCorners, sourceNormal, wallP != null))
 					continue;
 				CLightDeltaValue* deltaP;
@@ -879,14 +883,16 @@ undoManager.Begin (udSegments);
 int nSegments = segmentManager.Count ();
 for (int si = 0; si < nSegments; si++) {
 	CSegment* segP = segmentManager.Segment (si);
-	if (bAll || (segP->IsTagged ())) {
-		if (!bDynSegLights)
+	if (!bDynSegLights) {
+		if (bAll || (segP->IsTagged ())) 
 			segP->m_info.staticLight = nLight;
-		else {
-			int l = 0;
-			int c = 0;
-			CSide* sideP = segP->m_sides;
-			for (short nSide = 0; nSide < 6; nSide++) {
+		}
+	else {
+		int l = 0;
+		int c = 0;
+		CSide* sideP = segP->m_sides;
+		for (short nSide = 0; nSide < 6; nSide++) {
+			if (bAll || sideP->IsTagged ()) {
 				for (short nCorner = 0; nCorner < 4; nCorner++) {
 					ushort h = (ushort) sideP [nSide].m_info.uvls [nCorner].l;
 					if (h || !sideP->IsVisible ()) {

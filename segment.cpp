@@ -171,7 +171,7 @@ static ubyte segPropsFromType [] = {
 	SEGMENT_PROP_NODAMAGE,
 	SEGMENT_PROP_BLOCKED,
 	SEGMENT_PROP_NONE,
-	SEGMENT_PROP_OUTDOORS
+	SEGMENT_PROP_SELF_ILLUMINATE
 	};
 
 // -----------------------------------------------------------------------------

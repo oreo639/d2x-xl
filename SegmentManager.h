@@ -194,11 +194,11 @@ class CSegmentManager {
 		
 		inline robotMakerList& EquipMakers (void) { return m_producers [1]; }
 		
-		inline CObjectProducer* Producerter (int i, int nClass) { return &m_producers [nClass][i]; }
+		inline CObjectProducer* Producer (int i, int nClass) { return &m_producers [nClass][i]; }
 		
-		inline CObjectProducer* RobotMaker (int i) { return Producerter (i, 0); }
+		inline CObjectProducer* RobotMaker (int i) { return Producer (i, 0); }
 		
-		inline CObjectProducer* EquipMaker (int i) { return Producerter (i, 1); }
+		inline CObjectProducer* EquipMaker (int i) { return Producer (i, 1); }
 
 		inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 

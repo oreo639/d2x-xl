@@ -1014,8 +1014,8 @@ class CSegmentTool : public CToolDlg
 		afx_msg void OnCreatePyramid ();
 		afx_msg void OnDeleteSegment ();
 		afx_msg void OnOtherSegment ();
-		afx_msg void OnAddObjectToProducerter ();
-		afx_msg void OnDeleteObjectFromProducerter ();
+		afx_msg void OnAddObjectToProducer ();
+		afx_msg void OnDeleteObjectFromProducer ();
 		afx_msg void OnAddRobotMaker ();
 		afx_msg void OnAddEquipMaker ();
 		afx_msg void OnWallDetails ();
