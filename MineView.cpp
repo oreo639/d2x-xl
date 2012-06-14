@@ -403,7 +403,7 @@ CHECKMINE;
 
 	int i, j = lightManager.Count ();
 
-#pragma omp parallel for
+#pragma omp parallel for if (j > 15)
 for (i = 0; i < j; i++) {
 	CVariableLight *flP = lightManager.VariableLight (i);
 	int delay = X2I (flP->m_info.delay * 1000);

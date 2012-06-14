@@ -158,7 +158,7 @@ segmentManager.ComputeNormals (true, true);
 
 bool bSkyBox = ViewFlag (eViewMineSkyBox);
 
-#pragma omp parallel for
+#pragma omp parallel for if (nSegments > 15)
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = segmentManager.Segment (nSegment);
 	if (!bSkyBox && (segP->Function () == SEGMENT_FUNC_SKYBOX))

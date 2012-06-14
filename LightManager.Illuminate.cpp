@@ -81,7 +81,7 @@ void CLightManager::ScaleCornerLight (bool bAll)
 
 undoManager.Begin (udSegments);
 int nSegments = segmentManager.Count ();
-#pragma omp parallel for
+#pragma omp parallel for if (nSegments > 15)
 for (int i = 0; i < nSegments; i++) {
 	CSegment* segP = segmentManager.Segment (i);
 	CSide* sideP = segP->m_sides;
@@ -425,7 +425,7 @@ for (short i = 0; i < nVertices; i++) {
 sourceCorners [nVertices] /= double (nVertices);
 
 int nSegments = segmentManager.Count ();
-#pragma omp parallel for
+#pragma omp parallel for if (nSegments > 15)
 for (int nChildSeg = 0; nChildSeg < nSegments; nChildSeg++) {
 #if DBG
 	if (nChildSeg == nDbgSeg)
@@ -746,10 +746,6 @@ visited [nStartSeg] = 1;
 
 segmentList [0] = nStartSeg;
 while (nTail < nHead) {
-	if (++nExpanded >= nSegments) {
-		STATUSMSG ("Buffer overflow in PointSeesPoint!");
-		return false;
-		}
 	short nSegment = segmentList [nTail++];
 	CSegment* segP = segmentManager.Segment (nSegment);
 	CSide* sideP = segP->Side (0);
@@ -764,6 +760,10 @@ while (nTail < nHead) {
 				return false;
 			short nChildSeg = segP->ChildId (nSide);
 			if (/*(nDepth <= m_staticRenderDepth) &&*/ (nChildSeg >= 0) && !visited [nChildSeg]) {
+				if (nHead >= nSegments) {
+					STATUSMSG ("Buffer overflow in PointSeesPoint!");
+					return false;
+					}
 				visited [nChildSeg] = /*nDepth +*/ 1;
 				segmentList [nHead++] = nChildSeg;
 				}
@@ -916,7 +916,7 @@ void CLightManager::Normalize (void)
 	short	nSegments = segmentManager.Count ();
 	uint	maxLight = uint (65536 * m_fLightScale / 200.0) - 1;
 
-#pragma omp parallel for
+#pragma omp parallel for if (nSegments > 15)
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = segmentManager.Segment (nSegment);
 	CSide* sideP = segP->Side (0);

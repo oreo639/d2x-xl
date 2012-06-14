@@ -278,7 +278,7 @@ viewMatrix->SetViewInfo (ViewWidth (), ViewHeight ());
 nProjected = 0;
 j = vertexManager.Count ();
 #ifdef NDEBUG
-#pragma omp parallel for reduction(+: nProjected)
+#pragma omp parallel for reduction(+: nProjected) if (j > 15)
 #endif
 for (i = 0; i < j; i++) {
 #ifdef _DEBUG

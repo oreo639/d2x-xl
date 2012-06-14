@@ -127,7 +127,7 @@ if (bVariableLights /*&& (lightManager.LightIsOn (face) < 1)*/) {
 	// check each variable light whether it affects side face
 	// search delta light index to see if current side has light
 	int indexCount = lightManager.DeltaIndexCount ();
-#pragma omp parallel for
+#pragma omp parallel for if (indexCount > 15)
 	for (int i = 0; i < indexCount; i++) {
 		CLightDeltaIndex* indexP = lightManager.LightDeltaIndex (i);
 #ifdef _DEBUG

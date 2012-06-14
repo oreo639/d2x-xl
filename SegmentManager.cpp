@@ -302,7 +302,7 @@ void CSegmentManager::ComputeNormals (bool bAll, bool bView)
 	short nSegments = segmentManager.Count ();
 
 #ifdef NDEBUG
-#	pragma omp parallel for
+#	pragma omp parallel for if (nSegments > 15)
 #endif
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = Segment (nSegment);
@@ -326,7 +326,7 @@ CSegment* CSegmentManager::GatherSelectableSegments (CRect& viewport, long xMous
 
 m_selectedSegments = null;
 	
-#pragma omp parallel for
+#pragma omp parallel for if (nSegments > 15)
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = Segment (nSegment);
 	if ((segP->Function () == SEGMENT_FUNC_SKYBOX) && !bAllowSkyBox)
@@ -351,7 +351,7 @@ m_selectedSegments = null;
 m_selectedSides = null;
 	
 #ifdef NDEBUG
-#	pragma omp parallel for
+#	pragma omp parallel for if (nSegments > 15)
 #endif
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	CSegment* segP = Segment (nSegment);
