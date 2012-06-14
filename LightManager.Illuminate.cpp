@@ -136,6 +136,7 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 	if (segP - segmentManager.Segments ().Buffer () == nDbgSeg)
 		nDbgSeg = nDbgSeg;
 #endif
+	bool bSelfIlluminate = DLE.IsD2XLevel () && (segP->Props () & SEGMENT_PROP_SELF_ILLUMINATE);
 	for (ubyte nPoint = 0; nPoint < 8; nPoint++) {
 		int nVertex = segP->m_info.vertexIds [nPoint];
 		if (nVertex > MAX_VERTEX)
@@ -143,6 +144,8 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 		if (bAll || (vertexManager.Status (nVertex) & TAGGED_MASK)) {
 			CSide* sideP = segP->Side (0);
 			for (int nSide = 0; nSide < 6; nSide++, sideP++) {
+				if (bSelfIlluminate && (Brightness (segP, sideP) > 0))
+					continue;
 				int nCorner = sideP->HasVertex (nPoint);
 				if (nCorner < 0) 
 					continue;
@@ -378,8 +381,7 @@ if ((segP - segmentManager.Segment (0) == nDbgSeg) && ((nDbgSide < 0) || (nSide 
 
 //---------------------------------------------------------------------------------
 // Walk through all segments up to a given max. distance from the source segment
-// and add the light of any light sources in these segments to the the source side's
-// color.
+// and add the source side's light to all child sides.
 
 void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brightness, bool bAll, bool bCopyTexLights) 
 {
@@ -729,8 +731,8 @@ bool CLightManager::PointSeesPoint (CVertex* p1, CVertex* p2, short nStartSeg, s
 	int		nSegments = segmentManager.Count ();
 	int		nExpanded = 0;
 #if 1
-	CDynamicArray< short/*, SEGMENT_LIMIT*/ > segmentList;
-	CDynamicArray< ubyte/*, SEGMENT_LIMIT */> visited;
+	CDynamicArray< short> segmentList;
+	CDynamicArray< ubyte> visited;
 	segmentList.Create (nSegments);
 	visited.Create (nSegments);
 	visited.Clear ();
@@ -749,7 +751,6 @@ while (nTail < nHead) {
 	short nSegment = segmentList [nTail++];
 	CSegment* segP = segmentManager.Segment (nSegment);
 	CSide* sideP = segP->Side (0);
-	//ubyte nDepth = visited [nSegment];
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (0.0 > sideP->LineHitsFace (p1, p2, segP->m_info.vertexIds, maxDist))
 			continue;
@@ -759,12 +760,12 @@ while (nTail < nHead) {
 			if (nHead >= nSegments)
 				return false;
 			short nChildSeg = segP->ChildId (nSide);
-			if (/*(nDepth <= m_staticRenderDepth) &&*/ (nChildSeg >= 0) && !visited [nChildSeg]) {
+			if ((nChildSeg >= 0) && !visited [nChildSeg]) {
 				if (nHead >= nSegments) {
 					STATUSMSG ("Buffer overflow in PointSeesPoint!");
 					return false;
 					}
-				visited [nChildSeg] = /*nDepth +*/ 1;
+				visited [nChildSeg] = 1;
 				segmentList [nHead++] = nChildSeg;
 				}
 			}
