@@ -136,7 +136,6 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 	if (segP - segmentManager.Segments ().Buffer () == nDbgSeg)
 		nDbgSeg = nDbgSeg;
 #endif
-	bool bSelfIlluminate = DLE.IsD2XLevel () && (segP->Props () & SEGMENT_PROP_SELF_ILLUMINATE);
 	for (ubyte nPoint = 0; nPoint < 8; nPoint++) {
 		int nVertex = segP->m_info.vertexIds [nPoint];
 		if (nVertex > MAX_VERTEX)
@@ -144,8 +143,6 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 		if (bAll || (vertexManager.Status (nVertex) & TAGGED_MASK)) {
 			CSide* sideP = segP->Side (0);
 			for (int nSide = 0; nSide < 6; nSide++, sideP++) {
-				if (bSelfIlluminate && (Brightness (segP, sideP) > 0))
-					continue;
 				int nCorner = sideP->HasVertex (nPoint);
 				if (nCorner < 0) 
 					continue;
@@ -183,11 +180,14 @@ for (int i = 0, j = vertexManager.Count (); i < j; i++)
 for (int i = 0; i < nSegments; i++) {
 	CSegment *segP = segmentManager.Segment (i);
 	bool bUndo = false;
+	bool bSelfIlluminate = DLE.IsD2XLevel () && (segP->Props () & SEGMENT_PROP_SELF_ILLUMINATE);
 	for (int nPoint = 0; nPoint < 8; nPoint++) {
 		int nVertex = segP->m_info.vertexIds [nPoint];
 		if ((maxBrightness [nVertex].count > 0) && (bAll || (vertexManager.Status (nVertex) & TAGGED_MASK))) {
 			CSide* sideP = segP->Side (0);
 			for (int nSide = 0; nSide < 6; nSide++, sideP++) {
+				if (bSelfIlluminate && (Brightness (segP, sideP) > 0))
+					continue;
 				int nCorner = sideP->HasVertex (nPoint);
 				if (nCorner < 0) 
 					continue;
