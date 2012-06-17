@@ -257,7 +257,6 @@ else {
 	ViewMatrix ()->GetProjection ();
 	glEnable (GL_DEPTH_TEST);
 	glEnable (GL_POLYGON_OFFSET_FILL);
-	glEnable (GL_LINE_SMOOTH);
 	glPolygonOffset (1.0f, 1.0f);
 	}
 }

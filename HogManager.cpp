@@ -21,12 +21,14 @@ int CLevelHeader::Read (CFileManager* fp)
 if (fp->Read (m_name, 1, sizeof (m_name)) != sizeof (m_name))
 	return 0;
 m_name [sizeof (m_name) - 1] = '\0';
+_strlwr (m_name);
 if (fp->Read (&m_size, sizeof (m_size), 1) != 1)
 	return 1;
 if ((m_bExtended = m_size < 0)) {
 	if (fp->Read (m_longName, 1, sizeof (m_longName)) != sizeof (m_longName))
 		return 0;
 	m_longName [sizeof (m_longName) - 1] = '\0';
+	_strlwr (m_longName);
 	}
 else
 	m_longName [0] = '\0';
