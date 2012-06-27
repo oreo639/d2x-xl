@@ -287,7 +287,7 @@ if (DLE.IsD1File ()) {
 paletteManager.ResetCLUT ();
 textureCount = m_nTextures [1];
 
-sprintf_s (message, sizeof (message), "%s\\dle_temp.pog", theMine->m_startFolder);
+sprintf_s (message, sizeof (message), "%s\\dle_temp.pog", DLE.AppFolder ());
 
 // write file  header
 pigFileInfo.nId = 0x474f5044L; /* 'DPOG' */

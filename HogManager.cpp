@@ -478,7 +478,7 @@ return false;
 //------------------------------------------------------------------------------
 // CHogManager::Ok()
 //
-// Saves fp to a temporary fp called dle_temp.rdl so editor can load it
+// Saves file to a temporary file called dle_temp.rdl so editor can load it
 //------------------------------------------------------------------------------
 
 void CHogManager::OnOK () 
@@ -1256,9 +1256,11 @@ CFileManager::SplitPath (szHogFile, szFolder, null, null);
 int bOtherFilesFound = 0;
 int bIdenticalLevelFound = 0;
 if (!fp.Open (szHogFile, "r+b")) {
-	strcat_s (szFolder, sizeof (szFolder), "dle_temp.rdl");
-	theMine->Save (szFolder);
-	return CreateHogFile (szFolder, szHogFile, szSubFile, true);
+	char szTemp [256];
+	sprintf (szTemp, "%s\\dle_temp.rdl", DLE.AppFolder ());
+	theMine->Save (szTemp);
+	return CreateHogFile (szTemp, szHogFile, szSubFile, true);
+	CFileManager::Delete (szTemp);
 	}
 
 WriteHogHeader (fp); // make sure the hog header is "D2X" if the hog file contains extended level headers (-> long level filenames)
@@ -1305,10 +1307,11 @@ else {
 		bQuickSave = 1;
 	}
 if (bQuickSave) {
-	strcat_s (szFolder, sizeof (szFolder), "dle_temp.rdl");
-	theMine->Save (szFolder);
-	return CreateHogFile (szFolder, szHogFile, szSubFile, bSaveAs);
-//	MySetCaption (szHogFile);
+	char szTemp [256];
+	sprintf (szTemp, "%s\\dle_temp.rdl", DLE.AppFolder ());
+	theMine->Save (szTemp);
+	return CreateHogFile (szTemp, szHogFile, szSubFile, bSaveAs);
+	CFileManager::Delete (szTemp);
 	}
 
 // determine base name
