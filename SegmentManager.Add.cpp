@@ -103,16 +103,17 @@ if ((Count () == MAX_SEGMENTS - 1) && (QueryMsg ("Adding more segments will exce
 	return -1;
 	}
 
+current->Get (key);
 CSegment* segP = Segment (key.m_nSegment); 
 
 short	nCurSide = key.m_nSide; 
 if (segP->ChildId (nCurSide) >= 0) {
-	ErrorMsg ("Can not add a new segment to a side\nwhich already has a segment attached."); 
+	ErrorMsg ("Cannot add a new segment to a side\nwhich already has a segment attached."); 
 	return -1;
 	}
 
 if (Side (key)->VertexCount () < 3) {
-	ErrorMsg ("Can not add a new segment to this side."); 
+	ErrorMsg ("Cannot add a new segment to this side."); 
 	undoManager.Unroll ();
 	return -1;
 	}
