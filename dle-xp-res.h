@@ -513,9 +513,9 @@
 #define IDC_OBJ_CIRCLEDIST_SLIDER		 10576
 #define IDC_OBJ_CIRCLEDIST_SPINNER		 10577
 #define IDT_OBJ_CIRCLEDIST					 10578
-#define IDC_OBJ_AIM_SLIDER					 10580
-#define IDC_OBJ_AIM_SPINNER				 10581
-#define IDT_OBJ_AIM                     10582
+#define IDC_OBJ_AIM_SLIDER					 10579
+#define IDC_OBJ_AIM_SPINNER				 10580
+#define IDT_OBJ_AIM                     10581
 
 #define IDC_OBJ_SOUND_EXPLODE				 10585
 #define IDC_OBJ_SOUND_SEE					 10586

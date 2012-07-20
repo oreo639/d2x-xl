@@ -31,7 +31,7 @@ static CSliderData sliderData [] = {
 	{IDC_OBJ_MAXSPEED_SLIDER, 0, 140, F1_0, null},
 	{IDC_OBJ_FIRERATE_SLIDER, 1, 18, 1, null},
 	{IDC_OBJ_EVADESPEED_SLIDER, 0, 6, 1, null},
-	{IDC_OBJ_CIRCLEDIST_SLIDER, 0, 0, F1_0, null},
+	{IDC_OBJ_CIRCLEDIST_SLIDER, 0, 60, 1, null},
 	{IDC_OBJ_AIM_SLIDER, 2, 4, 0x40, null}
 	};
 
@@ -192,9 +192,9 @@ robotInfo.Info ().combat [nSkill].firingWait [0] = m_data [2].GetValue ();
 robotInfo.Info ().combat [nSkill].firingWait [1] = m_data [3].GetValue ();
 robotInfo.Info ().combat [nSkill].turnTime = m_data [4].GetValue ();
 robotInfo.Info ().combat [nSkill].maxSpeed = m_data [5].GetValue ();
-robotInfo.Info ().combat [nSkill].circleDistance = m_data [6].GetValue ();
-robotInfo.Info ().combat [nSkill].rapidFire = m_data [7].GetValue ();
-robotInfo.Info ().combat [nSkill].evadeSpeed = m_data [8].GetValue ();
+robotInfo.Info ().combat [nSkill].rapidFire = m_data [6].GetValue ();
+robotInfo.Info ().combat [nSkill].evadeSpeed = m_data [7].GetValue ();
+robotInfo.Info ().combat [nSkill].circleDistance = m_data [8].GetValue ();
 robotInfo.Info ().aim = m_data [9].GetValue () - 1;
 
 undoManager.Begin (udRobots);
