@@ -10,11 +10,7 @@ CSegmentManager segmentManager;
 
 CVertex& CSegmentManager::CalcCenter (CVertex& pos, short nSegment) 
 {
-pos.Clear ();
-CSegment _const_ * segP = Segment (nSegment);
-for (int i = 0; i < 8; i++)
-	pos += *segP->Vertex (i);
-pos /= 8.0;
+pos = Segment (nSegment)->ComputeCenter (false);
 return pos;
 }
 
