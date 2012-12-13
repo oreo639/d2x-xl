@@ -332,8 +332,8 @@ typedef struct tTexture {
 	uint			width, height, offset, bufSize;
 	uint			xOffset, yOffset;
 	int			nId; 
-	bool			bCustom, bExtData, bFrame, bUsed, bValid, bTransparent, bFlat;
-	ubyte			nFormat;	// 0: Bitmap, 1: TGA (RGB)
+	bool			bFromMod, bExtData, bFrame, bUsed, bValid, bTransparent, bFlat;
+	ubyte			bCustom, nFormat;	// 0: Bitmap, 1: TGA (RGB)
 	char			szName [9];
 	rgbaColorf	averageColor;
 	GLuint		glHandle;

@@ -119,7 +119,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 #if EXTRA_TEXTURES
 	if (!bExtraTexture)
 #endif
-		texP->m_info.bCustom = true;
+		texP->m_info.bCustom = 1;
 	}
 if (nUnknownTextures) {
 	sprintf_s (message, sizeof (message), " Pog manager: %d unknown textures found.", nUnknownTextures);
@@ -296,7 +296,7 @@ pigFileInfo.nTextures = 0;
 
 for (i = 0; i < h; i++) {
 	texP = Texture (-i - 1);
-	if (texP->m_info.bCustom)
+	if (texP->m_info.bCustom == 1)
 		pigFileInfo.nTextures++;
 	}
 #if EXTRA_TEXTURES
@@ -308,7 +308,7 @@ pigFileInfo.Write (fp);
 // write list of textures
 for (i = 0; i < h; i++) {
 	texP = Texture (-i - 1);
-	if (texP->m_info.bCustom)
+	if (texP->m_info.bCustom == 1)
 #if EXTRA_TEXTURES
 		fp.Write (m_index [1][i]);
 #else
@@ -323,7 +323,7 @@ for (extraTexP = m_extra; extraTexP; extraTexP = extraTexP->m_next)
 nId = 0;
 for (i = 0; i < h; i++) {
 	texP = Texture (-i - 1);
-	if (texP->m_info.bCustom)
+	if (texP->m_info.bCustom == 1)
 		nOffset = WriteCustomTextureHeader (fp, texP, nId++, nOffset);
 	}
 #if EXTRA_TEXTURES
@@ -335,7 +335,7 @@ DEBUGMSG (message);
 
 for (i = 0; i < h; i++) {
 	texP = Texture (-i - 1);
-	if (texP->m_info.bCustom)
+	if (texP->m_info.bCustom == 1)
 		if (0 > WriteCustomTexture (fp, texP))
 			WriteCustomTextureHeader (fp, texP); // need to rewrite to reflect changed texture type in header data
 	}
@@ -361,10 +361,10 @@ for (int i = 0; i < h; i++) {
 	if (i == nDbgTexture)
 		nDbgTexture = nDbgTexture;
 #endif
-	if (texP->m_info.bCustom)
+	if (texP->m_info.bCustom == 1)
 		continue;
 	sprintf (szFile, "%s\\%s.tga", pszFolder, texP->m_info.szName);
-	texP->m_info.bCustom = texP->LoadTGA (szFile);
+	texP->m_info.bCustom = texP->LoadTGA (szFile) ? 2 : 0;
 	}
 }
 

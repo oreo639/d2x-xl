@@ -1077,9 +1077,8 @@ void CTextureTool::SetBrightness (int nBrightness)
 if (!bSemaphore) {
 	bSemaphore = TRUE;
 
-	CComboBox	*pcb = (m_bUse2nd && !m_bUse1st) ? CBTexture2 () : CBTexture1 ();
-	int			index = pcb->GetCurSel ();
-	short			texture = (short) pcb->GetItemData (index);
+	CSide* sideP = current->Side ();
+	short	texture = (m_bUse2nd && !m_bUse1st) ? sideP->OvlTex (0) : sideP->BaseTex ();
 
 	if (texture >= 0) {
 		m_nBrightness = nBrightness;

@@ -81,7 +81,7 @@ else if (DLE.LevelVersion () > 9) {
 else {
 	ResetColors (VertexColor (0), vertexManager.Count ());
 	ResetColors (FaceColor (0), segmentManager.Count () * 6);
-	ResetColors (TexColor (0), MAX_TEXTURES_D2);
+	//ResetColors (TexColor (0), MAX_TEXTURES_D2);
 	}
 }
 

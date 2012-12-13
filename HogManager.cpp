@@ -450,6 +450,7 @@ if (!theMine->LoadMineSigAndType (&fSrc)) {
 	theMine->LoadPaletteName (&fSrc);
 	fSrc.Seek (lh.Size () + offset, SEEK_SET);
 	m_level.Load (&fSrc, size);
+	lightManager.LoadDefaults ();
 	if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".pal")))
 		paletteManager.LoadCustom (&fSrc, size);
 	if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".lgt")))

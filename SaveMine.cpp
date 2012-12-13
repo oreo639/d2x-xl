@@ -169,7 +169,7 @@ return 1;
 // SaveGameItems()
 //
 //  ACTION - Saves the player, object, wall, door, trigger, and
-//           materialogrifizationator data from an RDL file.
+//           material generator data from an RDL file.
 // ------------------------------------------------------------------------
 
 short CMine::SaveGameItems (CFileManager* fp)

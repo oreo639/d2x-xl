@@ -173,7 +173,7 @@ CTexture* texP = &m_textures [DLE.FileType ()][0];
 if (!texP)
 	return false;
 for (int i = m_header [DLE.FileType ()].nTextures; i; i--, texP++)
-	if (texP->m_info.bCustom)
+	if (texP->m_info.bCustom == 1)
 		return true;
 return false;
 }
@@ -188,7 +188,7 @@ int CTextureManager::CountCustomTextures (void)
 if (!texP)
 	return 0;
 for (int i = m_header [DLE.FileType ()].nTextures; i; i--, texP++)
-	if (texP->m_info.bCustom)
+	if (texP->m_info.bCustom == 1)
 		count++;
 return count;
 }
@@ -627,7 +627,7 @@ for (i = 0; i < h; i++) {
 	texP = Texture (i);
 	if (!texP->m_info.bFrame)
 		parentTexP = texP;
-	else if (texP->m_info.bCustom && !texP->m_info.bUsed)
+	else if ((texP->m_info.bCustom == 1) && !texP->m_info.bUsed)
 		texP->m_info.bUsed = (parentTexP != null) && parentTexP->m_info.bUsed;
 	}
 }
