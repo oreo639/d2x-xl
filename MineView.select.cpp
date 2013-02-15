@@ -295,7 +295,6 @@ bool CMineView::SelectCurrentElement (long xMouse, long yMouse, int bAdd)
 {
 switch (theMine->SelectMode ()) {
 	case POINT_MODE:
-	case BLOCK_MODE:
 		return SelectCurrentPoint (xMouse, yMouse, bAdd);
 
 	case LINE_MODE:
@@ -305,6 +304,7 @@ switch (theMine->SelectMode ()) {
 		return SelectCurrentSide (xMouse, yMouse, bAdd);
 
 	case SEGMENT_MODE:
+	case BLOCK_MODE:
 		return SelectCurrentSegment (xMouse, yMouse, bAdd);
 
 	case OBJECT_MODE:
