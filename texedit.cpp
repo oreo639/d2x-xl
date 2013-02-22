@@ -574,9 +574,9 @@ inline int ColorDelta (RGBQUAD *bmPal, PALETTEENTRY *sysPal, int j)
 {
 sysPal += j;
 return 
-	Sqr (bmPal->rgbBlue - sysPal->peBlue) + 
-	Sqr (bmPal->rgbGreen - sysPal->peGreen) + 
-	Sqr (bmPal->rgbRed - sysPal->peRed);
+	Sqr (int (bmPal->rgbBlue) - int (sysPal->peBlue)) + 
+	Sqr (int (bmPal->rgbGreen) - int (sysPal->peGreen)) + 
+	Sqr (int (bmPal->rgbRed) - int (sysPal->peRed));
 }
 
 //------------------------------------------------------------------------------
@@ -671,13 +671,17 @@ if (i != int (paletteSize)) {
 			 (palette [i].rgbGreen != sysPal [i].peGreen) ||
 			 (palette [i].rgbBlue != sysPal [i].peBlue)) {
 			uint closestDelta = 0x7fffffff;
-			for (int j = 0; (j < 255) && (closestDelta != 0); j++) {
+			for (int j = 0; j < 255; j++) {
 				uint delta = ColorDelta (palette + i, sysPal, j);
 				if (delta < closestDelta) {
 					closestIndex = j;
-					closestDelta = delta;
+					if (!(closestDelta = delta))
+						break;
 					}
 				}
+			palette [i].rgbRed = sysPal [closestIndex].peRed;
+			palette [i].rgbGreen = sysPal [closestIndex].peGreen;
+			palette [i].rgbBlue = sysPal [closestIndex].peBlue;
 			}
 		palIndexTable [i] = closestIndex;
 		}
@@ -745,12 +749,12 @@ for (y = 0; y < m_nHeight; y++) {
 	for (x = 0; x < m_nWidth; x++, z++) {
 		int u = (int) (mx * x + x0);
 		int v = (int) (my * y + y0);
-		u %= (int) bmih.biWidth;          //  -width to width
+		u %= (int) bmih.biWidth;         //  -width to width
 		if (u < 0) 
-			u += (int) bmih.biWidth;  //       0 to width
-		v %= (int) bmih.biHeight;         // -height to height
+			u += (int) bmih.biWidth;		//       0 to width
+		v %= (int) bmih.biHeight;        // -height to height
 		if (v < 0) 
-			v += (int) bmih.biHeight; //       0 to height
+			v += (int) bmih.biHeight;		//       0 to height
 	
 		ubyte palIndex, i;
 
@@ -767,8 +771,7 @@ for (y = 0; y < m_nHeight; y++) {
 		else {
 			fp.Seek ((int) bmfh.bfOffBits + (int) v *(int) width + (int) u, SEEK_SET);
 			fp.Read (&palIndex, 1, 1);
-			i = palIndexTable [palIndex];
-			m_texture [0][z] = palette [i];
+			m_texture [0][z] = palette [palIndex];
 			}
 		if (i >= 254)
 			m_texture [0][z].a = 0;
