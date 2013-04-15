@@ -111,7 +111,7 @@ void CTriggerTargets::Write (CFileManager* fp)
 	int i;
 
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fp->WriteInt16 ((short) ((m_targets [i].m_nSegment < 0) ? m_targets [i].m_nSegment : segmentManager.Segment (m_targets [i].m_nSegment)->Index ()));
+	fp->WriteInt16 ((short) (((m_targets [i].m_nSegment < 0) || (m_targets [i].m_nSide <= 0)) ? m_targets [i].m_nSegment : segmentManager.Segment (m_targets [i].m_nSegment)->Index ()));
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	fp->Write (m_targets [i].m_nSide);
 }
