@@ -194,7 +194,10 @@ static tTriggerData triggerData [] = {
 	{"sound", TT_SOUND},
 	{"master", TT_MASTER},
 	{"enable", TT_ENABLE_TRIGGER},
-	{"disable", TT_DISABLE_TRIGGER}
+	{"disable", TT_DISABLE_TRIGGER},
+	{"disarm robot", TT_DISARM_ROBOT},
+	{"reprogram robot", TT_REPROGRAM_ROBOT},
+	{"shake mine", TT_SHAKE_MINE}
 	};
 
 
@@ -267,7 +270,9 @@ else
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, 0, 64, "%1.0f");
 DDX_Text (pDX, IDC_TRIGGER_TARGET, m_szTarget, sizeof (m_szTarget));
 DDX_Check (pDX, IDC_TRIGGER_AUTOADDWALL, m_bAutoAddWall);
+
 char szLabel [40];
+
 if (m_nType == TT_SPEEDBOOST) {
 	DDX_Slider (pDX, IDC_TRIGGER_SLIDER, m_nSliderValue);
 	sprintf_s (szLabel, sizeof (szLabel), "boost: %d%c", m_nSliderValue * 10, '%');

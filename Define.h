@@ -131,7 +131,7 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 #define EXTENDED_HAM 1
 #define NORMAL_HAM	0
 
-#define LEVEL_VERSION			25	//current level version
+#define LEVEL_VERSION			26	//current level version
 
 #define MAX_PLAYERS_D2			8
 #define MAX_PLAYERS_D2X			16
@@ -507,7 +507,10 @@ inline double Degrees (double a) {
 #define TT_MASTER					31
 #define TT_ENABLE_TRIGGER		32
 #define TT_DISABLE_TRIGGER		33
-#define NUM_TRIGGER_TYPES		34
+#define TT_DISARM_ROBOT			34
+#define TT_REPROGRAM_ROBOT		35
+#define TT_SHAKE_MINE			36
+#define NUM_TRIGGER_TYPES		37
 
 #define TT_SHIELD_DAMAGE      100    // added to support d1 shield damage
 #define TT_ENERGY_DRAIN       101    // added to support d1 energy drain

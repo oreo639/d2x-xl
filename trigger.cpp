@@ -126,6 +126,8 @@ m_info.type = (char) type;
 m_info.flags = (char) flags;
 if (type == TT_SPEEDBOOST)
 	m_info.value = 10;
+else if (type == TT_SHAKE_MINE)
+	m_info.value = 10;
 else if ((type == TT_CHANGE_TEXTURE) || (type == TT_MASTER))
 	m_info.value = 0;
 else if ((type == TT_MESSAGE) || (type == TT_SOUND))
