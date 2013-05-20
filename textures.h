@@ -160,6 +160,7 @@ public:
 		m_nVersion = nVersion;
 		width = w;
 		height = h;
+		whExtra = (w >> 8) | ((h >> 4) & 0xF0);
 		flags = f;
 		offset = o;
 		dflags = 0;
@@ -389,7 +390,7 @@ class CTexture {
 
 		inline uint Height (int bScale = 1) { return (m_info.nFormat || !bScale) ? m_info.height : Pow2Dim (m_info.width, m_info.height); }
 
-		inline uint Size (void) { return Width () * Height (); }
+		inline uint Size (int bScale = 1) { return Width (bScale) * Height (bScale); }
 
 		inline uint BufSize (void) { return Width () * Height () * sizeof (CBGRA); }
 

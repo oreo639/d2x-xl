@@ -166,7 +166,7 @@ void CTexture::ComputeIndex (ubyte* palIndex)
 #endif
 for (int y = 0; y < (int) m_info.height; y++) {
 	int i = y * m_info.width;
-	int k = Size () - Width () - i;
+	int k = Size (0) - m_info.width - i;
 	for (int x = 0; x < (int) m_info.width; x++) {
 		palIndex [k + x] = paletteManager.ClosestColor (m_data [i + x]);
 		}
@@ -241,12 +241,12 @@ for (dataP += sizeof (tTgaHeader), nSize *= 4; nSize; nSize--, dataP++)
 
 void CTexture::Load (CFileManager& fp, CPigTexture& info) 
 {
-	ubyte	rowSize [4096];
-	ubyte	rowBuf [4096], *rowPtr;
-	ubyte	palIndex, runLength;
-	int	width, height;
-	bool	bCenter = m_info.bufSize == info.BufSize ();
-	CBGR*	palette = paletteManager.Current ();
+	ushort	rowSize [4096];
+	ubyte		rowBuf [4096], *rowPtr;
+	ubyte		palIndex, runLength;
+	int		width, height;
+	bool		bCenter = m_info.bufSize == info.BufSize ();
+	CBGR*		palette = paletteManager.Current ();
 
 memcpy (m_info.szName, info.name, sizeof (info.name));
 m_info.szName [sizeof (m_info.szName) - 1] = '\0';
@@ -292,9 +292,14 @@ if (m_info.nFormat) {
 #endif
 	//texP->m_info.bValid = TGA2Bitmap (texP->m_data, texP->m_data, (int) pigTexInfo.width, (int) pigTexInfo.height);
 	}
-else if (info.flags & 0x08) {
+else if (info.flags & BM_FLAG_RLE) { // RLE packed
 	int nSize = fp.ReadInt32 ();
-	fp.ReadBytes (rowSize, info.height);
+	if (info.flags & BM_FLAG_RLE_BIG) // long scan lines (>= 256 bytes)
+		fp.ReadBytes (rowSize, info.height * sizeof (ushort));
+	else {
+		for (int i = 0; i < info.height; i++)
+		rowSize [i] = (ushort) fp.ReadUByte ();
+		}
 	int nRow = 0;
 	for (int y = info.height - 1; y >= 0; y--) {
 		fp.ReadBytes (rowBuf, rowSize [nRow++]);
@@ -542,7 +547,7 @@ if (bShrink && !Shrink (Width () / 64, Height () / 64))
 
 CBGRA* colorP = Buffer ();
 CBGR* palette = paletteManager.Current ();
-int h = Size ();
+int h = Size (0);
 ubyte* palIndex = new ubyte [h];
 if (!palIndex)
 	return null;

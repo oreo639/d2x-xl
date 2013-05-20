@@ -25,7 +25,7 @@ int CTextureManager::ReadPog (CFileManager& fp, long nFileSize)
 	ushort*			xlatTbl = null;
 	uint				nSize;
 	uint				offset, hdrOffset, bmpOffset, hdrSize, xlatSize;
-	ushort			nUnknownTextures, nMissingTextures;
+	ushort			nCustomTextures, nUnknownTextures, nMissingTextures;
 	CTexture*		texP;
 	int				fileType = DLE.FileType ();
 #if EXTRA_TEXTURES
@@ -54,6 +54,7 @@ xlatSize = pigFileInfo.nTextures * sizeof (ushort);
 offset = fp.Tell ();
 fp.Read (xlatTbl, xlatSize, 1);
 // loop for each custom texture
+nCustomTextures = 0;
 nUnknownTextures = 0;
 nMissingTextures = 0;
 hdrOffset = offset + xlatSize;
@@ -82,7 +83,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	fp.Seek (hdrOffset + i * sizeof (PIG_TEXTURE_D2), SEEK_SET);
 	pigTexInfo.Read (&fp);
 	nSize = (uint) pigTexInfo.width * (uint) pigTexInfo.height;
-	if ((long) (hdrSize + pigTexInfo.offset + nSize) >= nFileSize) {
+	if ((long) (hdrSize + pigTexInfo.offset /*+ nSize*/) >= nFileSize) {
 		nMissingTextures++;
 		continue;
 		}
@@ -120,6 +121,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	if (!bExtraTexture)
 #endif
 		texP->m_info.bCustom = 1;
+		nCustomTextures++;
 	}
 if (nUnknownTextures) {
 	sprintf_s (message, sizeof (message), " Pog manager: %d unknown textures found.", nUnknownTextures);
@@ -155,9 +157,13 @@ else {
 	fp.Seek (nOffset = texP->m_info.offset);
 	}
 
-char name [9];
-sprintf_s (name, sizeof (name), "POG%04d", nId);
-memcpy (pigTexInfo.name, name, sizeof (pigTexInfo.name));
+if (*texP->m_info.szName)
+	strncpy_s (pigTexInfo.name, texP->m_info.szName, sizeof (pigTexInfo.name));
+else {
+	char name [9];
+	sprintf_s (name, sizeof (name), "POG%04d", nId);
+	memcpy (pigTexInfo.name, name, sizeof (pigTexInfo.name));
+	}
 #if 1
 pigTexInfo.Setup (1, texP->m_info.width, texP->m_info.height, texP->m_info.nFormat ? 0x80 : 0, nOffset);
 #else
@@ -178,18 +184,27 @@ pigTexInfo.offset = nOffset;
 
 // check for transparency and super transparency
 if (!texP->m_info.nFormat)
+	try {
 	if (srcP = (ubyte *) texP->Buffer ()) {
-		for (uint j = 0, h = texP->Size (); j < h; j++, srcP++) {
+		for (uint j = 0, h = texP->Size (0); j < h; j++, srcP++) {
 			if (*srcP == 255) 
 				pigTexInfo.flags |= BM_FLAG_TRANSPARENT;
 			if (*srcP == 254) 
 				pigTexInfo.flags |= BM_FLAG_SUPER_TRANSPARENT;
+			if ((pigTexInfo.flags & (BM_FLAG_TRANSPARENT | BM_FLAG_SUPER_TRANSPARENT)) == (BM_FLAG_TRANSPARENT | BM_FLAG_SUPER_TRANSPARENT))
+				break;
 			}
+		}
 	}
+	catch(...) {
+#if DBG_ARRAYS
+		ArrayError ("invalid buffer size\n");
+#endif
+		}
 pigTexInfo.Write (&fp);
 if (pos != 0xFFFFFFFF)
 	fp.Seek (pos);
-return nOffset + (texP->m_info.nFormat ? texP->Size () * sizeof (CBGRA) : texP->Size ());
+return nOffset + (texP->m_info.nFormat ? texP->Size () * sizeof (CBGRA) : texP->Size (0));
 }
 
 //-----------------------------------------------------------------------------------
@@ -217,7 +232,7 @@ if (texP->m_info.nFormat && DLE.IsD2XLevel ()) {
 		fp.Write (rgba, sizeof (tRGBA), h);
 	}
 else {
-	ubyte* palIndex = texP->ToBitmap (DLE.IsD2XLevel ());
+	ubyte* palIndex = texP->ToBitmap (texP->m_info.nFormat);
 	if (palIndex == null) { // write as TGA
 		if (DLE.IsD2XLevel ())
 			return -1;
@@ -225,7 +240,7 @@ else {
 		return (WriteCustomTexture (fp, texP) == 0) ? 0 : -1;
 		}
 	texP->m_info.nFormat = 0;
-	fp.Write (palIndex, 1, texP->Size ());
+	fp.Write (palIndex, 1, texP->Size (0));
 	delete palIndex;
 	}
 return 1;

@@ -325,6 +325,9 @@ return true;
 
 BOOL CDlcDoc::OpenFile (bool bBrowseForFile, LPSTR pszFile, LPSTR pszSubFile) 
 {
+if (theMine == null)
+	return true;
+
 	int err = 0;
 	char szFile [256], szSubFile [256];
 

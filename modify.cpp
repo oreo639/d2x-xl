@@ -234,7 +234,7 @@ switch (m_selectMode) {
 		oppCenter = Average (*segP->Vertex (oppSideVerts [pts [0] % n]),
 									*segP->Vertex (oppSideVerts [pts [1] % n]));
 		// calculate center opp side line 2
-		oppCenter = Average (*segP->Vertex (oppSideVerts [pts [2] % n]),
+		center = Average (*segP->Vertex (oppSideVerts [pts [2] % n]),
 									*segP->Vertex (oppSideVerts [pts [3] % n]));
 		// rotate points around a line
 		undoManager.Begin (udVertices | udSegments);
@@ -249,7 +249,7 @@ switch (m_selectMode) {
 		return false;
 	
 	case OBJECT_MODE:
-		ErrorMsg ("Cannot bend a object");
+		ErrorMsg ("Cannot bend an object");
 		return false;
 
 	case BLOCK_MODE:
