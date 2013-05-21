@@ -226,7 +226,7 @@ m_nLock = 0;
 int CUndoManager::SetMaxSize (int maxSize)
 {
 if (maxSize < 1)
-	maxSize = 0;
+	maxSize = 1;
 else if (maxSize > DLE_MAX_UNDOS)
 	maxSize = DLE_MAX_UNDOS;
 int nExcess = Count () - maxSize;
@@ -276,7 +276,7 @@ if (m_nMode == 0)
 	return false;
 
 m_nMode = 2;
-if (++m_nCurrent == *m_nTail + 1)
+if (++m_nCurrent == m_nTail + 1)
 	m_current.Restore ();
 else 
 	Current ()->Restore ();
