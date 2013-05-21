@@ -446,9 +446,9 @@ CRobotInfo robotInfo = *robotManager.RobotInfo (nId);
 robotInfo.Info ().bCustom |= 1;
 Current ()->UpdateRobot ();
 #if 0
-undoManager.Begin (udRobots);
+undoManager.Begin (__FUNCTION__, udRobots);
 *robotManager.RobotInfo (nId) = robotInfo;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 #endif
 }
 
@@ -699,7 +699,7 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 
 void CObjectTool::OnDeleteAll () 
 {
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 DLE.MineView ()->DelayRefresh (true);
 CGameObject *objP = current->Object ();
 int nType = objP->Type ();
@@ -717,7 +717,7 @@ for (int h = objectManager.Count (), i = 0; i < h; ) {
 		i++, objP++;
 	}
 DLE.MineView ()->DelayRefresh (false);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 if (nDeleted) {
 	DLE.MineView ()->Refresh ();
 	Refresh ();
@@ -732,7 +732,7 @@ void CObjectTool::OnReset ()
 {
 CDoubleMatrix* orient;
 
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 if (current->ObjectId () == objectManager.Count ()) {
 	orient = &objectManager.SecretOrient ();
 	orient->Set (1, 0, 0, 0, 1, 0, 0, 0, 1);
@@ -740,7 +740,7 @@ if (current->ObjectId () == objectManager.Count ()) {
 	orient = &current->Object ()->m_location.orient;
 	orient->Set (1, 0, 0, 0, 1, 0, 0, 0, 1);
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 Refresh ();
 DLE.MineView ()->Refresh (false);
 }
@@ -908,7 +908,7 @@ CGameObject *objP = current->Object ();
 CComboBox *pcb = CBObjId ();
 int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 switch (objP->Type ()) {
 	case OBJ_PLAYER:
 		SetNewObjId (objP, OBJ_PLAYER, nCurSel, MAX_PLAYERS);
@@ -991,7 +991,7 @@ switch (objP->Type ()) {
 	}
 objectManager.Sort ();
 SelectItemData (pcb, objP->Id ());
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 Refresh ();
 }
 
@@ -1003,9 +1003,9 @@ void CObjectTool::OnSetSpawnQty ()
 {
 if (m_objSpawnQty.OnEdit ()) {
 	UpdateData (TRUE);
-	undoManager.Begin (udObjects);
+	undoManager.Begin (__FUNCTION__, udObjects);
 	current->Object ()->m_info.contents.count = m_objSpawnQty.GetValue ();
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	Refresh ();
 	}
 }
@@ -1018,7 +1018,7 @@ void CObjectTool::OnSetSpawnType ()
 {
 CGameObject *objP = current->Object ();
 int selection;
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
 	objP->m_info.contents.count = 0;
@@ -1037,7 +1037,7 @@ else {
 	OnSetSpawnQty ();
 	OnSetSpawnId ();
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------
@@ -1048,7 +1048,7 @@ void CObjectTool::OnSetSpawnId ()
 {
 CGameObject *objP = current->Object ();
 
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 if (objP->m_info.contents.count < -1)
 	objP->m_info.contents.count = -1;
 int i = CBSpawnType ()->GetCurSel () - 1;
@@ -1061,7 +1061,7 @@ else {
 	objP->m_info.contents.id = -1;
 	}
 Refresh ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------
@@ -1070,7 +1070,7 @@ undoManager.End ();
 
 void CObjectTool::OnSetObjAI ()
 {
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 CGameObject *objP = current->Object ();
 if ((objP->Type () == OBJ_ROBOT) || (objP->Type () == OBJ_CAMBOT)) {
  	int index = CBObjAI ()->GetCurSel ();
@@ -1087,7 +1087,7 @@ if ((objP->Type () == OBJ_ROBOT) || (objP->Type () == OBJ_CAMBOT)) {
 else
 	CBObjAI ()->SetCurSel (1); // Normal
 Refresh ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------
@@ -1099,10 +1099,10 @@ void CObjectTool::OnSetTexture ()
 CGameObject *objP = current->Object ();
 
 if (objP->m_info.renderType == RT_POLYOBJ) {
-	undoManager.Begin (udObjects);
+	undoManager.Begin (__FUNCTION__, udObjects);
 	int index = CBObjTexture ()->GetCurSel ();
 	objP->rType.polyModelInfo.nOverrideTexture = (index > 0) ? (short)CBObjTexture ()->GetItemData (index): -1;
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	Refresh ();
 	}
 }
@@ -1116,9 +1116,9 @@ void CObjectTool::OnDefault ()
 if (CBObjType ()->GetItemData (CBObjType ()->GetCurSel ()) != OBJ_ROBOT)
 	return;
 int i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
-undoManager.Begin (udRobots);
+undoManager.Begin (__FUNCTION__, udRobots);
 memcpy (robotManager.RobotInfo (i), robotManager.DefRobotInfo (i), sizeof (tRobotInfo));
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 Refresh ();
 }
 

@@ -145,7 +145,7 @@ CHECKMINE;
 	short		point1,vert1;
 	short		point2,vert2;
 
-undoManager.Begin (udVertices | udSegments);
+undoManager.Begin (__FUNCTION__, udVertices | udSegments);
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
 point1 = current->Side ()->VertexIdIndex (current->Point ());
@@ -202,7 +202,7 @@ else {
 	p.z = vertexManager [vert1].m_screen.z;
 	ViewMatrix ()->Unproject (*vertexManager.Vertex (vert1), p, m_viewCenter);
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 Refresh ();
 }
 

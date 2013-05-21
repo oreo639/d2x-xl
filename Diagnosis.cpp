@@ -315,7 +315,7 @@ m_bCheckMsgs = true;
 m_playerId = 0;
 m_coopId = MAX_PLAYERS;
 if (m_bAutoFixBugs)
-	undoManager.Begin (udAll);
+	undoManager.Begin (__FUNCTION__, udAll);
   // set mode to BLOCK mode to make errors appear in red
 DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 
@@ -338,7 +338,7 @@ DLE.MainFrame ()->InitProgress (segmentManager.Count () * 3 +
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 LBBugs ()->SetCurSel (0);
 if (m_bAutoFixBugs)
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 }
 
 //--------------------------------------------------------------------------

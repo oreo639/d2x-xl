@@ -168,9 +168,9 @@ if (0 <= index) {
 		robotInfo.Info ().bossFlag = -robotInfo.Info ().bossFlag;
 	}
 
-undoManager.Begin (udRobots);
+undoManager.Begin (__FUNCTION__, udRobots);
 *robotManager.RobotInfo (nId) = robotInfo;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------

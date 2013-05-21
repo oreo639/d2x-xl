@@ -152,9 +152,9 @@ if (0 <= (index = CBSoundClaw ()->GetCurSel ()))
 if (0 <= (index = CBSoundDeath ()->GetCurSel ()))
 	robotInfo.Info ().deathRollSound = (ubyte) CBSoundDeath ()->GetItemData (index);
 
-undoManager.Begin (udRobots);
+undoManager.Begin (__FUNCTION__, udRobots);
 *robotManager.RobotInfo (nId) = robotInfo;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------

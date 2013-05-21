@@ -535,13 +535,13 @@ switch (x) {
 	break; 
 	}
 #else
-undoManager.Begin (udSegments); 
+undoManager.Begin (__FUNCTION__, udSegments); 
 m_sides [nSide].LoadTextures ();
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->v = (y + G [i].v.x) / 20.0; 
 	uvls->u = (x - G [i].v.y) / 20.0; 
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 #endif
 }
 
@@ -609,13 +609,13 @@ switch (sideP->Shape ()) {
 
 // Scale, translate, store UV values
 CUVL *uvls = m_sides [nSide].m_info.uvls;
-undoManager.Begin (udSegments); 
+undoManager.Begin (__FUNCTION__, udSegments); 
 m_sides [nSide].LoadTextures ();
 for (i = 0; i < sideP->VertexCount (); i++, uvls++) {
 	uvls->u = (x + R [i].v.x) / 20.0; 
 	uvls->v = (y + R [i].v.y) / 20.0; 
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // -----------------------------------------------------------------------------

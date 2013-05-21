@@ -48,7 +48,7 @@ bool CBlockManager::Error (int argsFound, int argsNeeded, char* msg, int nSegmen
 {
 if (argsNeeded == argsFound)
 	return false;
-undoManager.Unroll ();
+undoManager.Unroll (__FUNCTION__);
 if (nSegment < 0)
 	ErrorMsg (msg);
 else {
@@ -104,18 +104,18 @@ for (i = 0, j = segmentManager.Count (); i < j; i++) {
 	m_oldSegments = segmentManager.Segment (i);
 	}	
 
-undoManager.Begin (udAll);
+undoManager.Begin (__FUNCTION__, udAll);
 while (!fp.EoF ()) {
 	DLE.MainFrame ()->Progress ().SetPos (fp.Tell ());
 // abort if there are not at least 8 vertices free
 	if (MAX_VERTICES - vertexManager.Count () < 8) {
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		ErrorMsg ("No more free vertices");
 		return nNewSegs;
 		}
 	short nSegment = segmentManager.Add ();
 	if (nSegment < 0) {
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		ErrorMsg ("No more free segments");
 		return nNewSegs;
 		}
@@ -141,7 +141,7 @@ while (!fp.EoF ()) {
 		if (bVariableLight)
 			test = -test;
 		if (test != nSide) {
-			undoManager.End ();
+			undoManager.End (__FUNCTION__);
 			ErrorMsg ("Invalid side number read");
 			return 0;
 			}
@@ -260,7 +260,7 @@ while (!fp.EoF ()) {
 				}
 			}
 		else if (index != i) {
-			undoManager.End ();
+			undoManager.End (__FUNCTION__);
 			ErrorMsg ("Invalid vertex number read");
 			return 0;
 			}
@@ -419,7 +419,7 @@ while (newTriggers != null) {
 		}
 	}
 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 sprintf_s (message, sizeof (message),
 			  " Block tool: %d blocks, %d walls, %d triggers pasted.", 
 			  nNewSegs, nNewWalls, nNewTriggers);
@@ -674,7 +674,7 @@ strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick
 
 // untag all segmentManager.Segment ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
-undoManager.Begin (udAll);
+undoManager.Begin (__FUNCTION__, udAll);
 DLE.MineView ()->DelayRefresh (true);
 CSegment* segP = segmentManager.Segment (0);
 for (short nSegment = 0; nSegment < SEGMENT_LIMIT; nSegment++, segP++) {
@@ -723,7 +723,7 @@ for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	segP->Index () = nSegment;
 fp.Close ();
 DLE.MineView ()->Refresh ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return 0;
@@ -774,7 +774,7 @@ if (!count) {
 if (QueryMsg ("Are you sure you want to delete the marked cubes?") != IDYES)
 	return;
 
-undoManager.Begin (udAll);
+undoManager.Begin (__FUNCTION__, udAll);
 DLE.MineView ()->DelayRefresh (true);
 
 DLE.MainFrame ()->InitProgress (segmentManager.Count ());
@@ -799,7 +799,7 @@ Wrap (selections [0].m_nSegment, -1, 0, segmentManager.Count () - 1);
 Wrap (selections [0].m_nSegment, 1, 0, segmentManager.Count () - 1);
 Wrap (selections [1].m_nSegment, -1, 0, segmentManager.Count () - 1);
 Wrap (selections [1].m_nSegment, 1, 0, segmentManager.Count () - 1);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 segmentManager.SetLinesToDraw ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();

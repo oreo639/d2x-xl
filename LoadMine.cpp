@@ -5,6 +5,9 @@
 
 // -----------------------------------------------------------------------------
 
+#undef szUndoId
+#define szUndoId "CMine::LoadLevel"
+
 short CMine::LoadLevel (CFileManager* fp, bool bLoadFromHog)
 {
 	CMemoryFile mf;
@@ -29,9 +32,9 @@ if (fp == null) {
 		bCreate = true;
 		}
 	}
-undoManager.Lock ();
+undoManager.Lock (szUndoId);
 LoadMine (fp, bLoadFromHog, bCreate);
-undoManager.Unlock ();
+undoManager.Unlock (szUndoId);
 return bCreate ? 1 : 0;
 }
 
@@ -66,7 +69,7 @@ return fp.Open (filename, "rb") ? Load (&fp, false) : Load (null, false);
 }
 
 // -----------------------------------------------------------------------------
-
+  
 short CMine::Load (CFileManager* fp, bool bLoadFromHog)
 {
 	bool bCreate = false;
@@ -81,13 +84,13 @@ if (i != 0)
 	return i < 1;
 
 if (LevelIsOutdated ()) {
-	undoManager.Lock ();
+	undoManager.Lock (szUndoId);
 	if (LevelVersion () < 15) {
 		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT);
 		triggerManager.ObjTriggerCount () = 0;
 		}
 	UpdateLevelVersion ();
-	undoManager.Unlock ();
+	undoManager.Unlock (szUndoId);
 	}
 
 int errFlags = FixIndexValues ();

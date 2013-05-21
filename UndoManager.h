@@ -3,7 +3,7 @@
 
 #include "mine.h"
 
-#define DLE_MAX_UNDOS			500
+#define DLE_MAX_UNDOS	500
 #define DETAIL_BACKUP	0
 
 //------------------------------------------------------------------------------
@@ -175,10 +175,11 @@ public:
 
 	bool m_bSelections;
 	uint m_nId;
+	int m_dataFlags;
 
 	inline uint& Id (void) { return m_nId; }
 
-	void Backup (int dataFlags);
+	bool Backup (int dataFlags);
 
 	bool Cleanup (void);
 
@@ -187,6 +188,8 @@ public:
 	void Destroy (void);
 
 	void Reset (void);
+
+	inline bool Modified (void) { return m_dataFlags != 0; }
 
 	CUndoData () : m_nId (0), m_bSelections (false) { }
 
@@ -287,23 +290,36 @@ class CBufPtr {
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+class CUndoHistory : public CStack<char*>
+{
+	public:
+		void Push (char* szId);
+		void Pop (char* szId);
+};
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 class CUndoManager
 {
 	private:
-		CUndoData	m_buffer [DLE_MAX_UNDOS];
-		CBufPtr		m_nHead;
-		CBufPtr		m_nTail;
-		CBufPtr		m_nCurrent;
-		CUndoData	m_current;
+		CUndoData		m_buffer [DLE_MAX_UNDOS];
+		CBufPtr			m_nHead;
+		CBufPtr			m_nTail;
+		CBufPtr			m_nCurrent;
+		CUndoData		m_current;
 		//CUndoItem*	m_head;
 		//CUndoItem*	m_tail;
 		//CUndoItem*	m_current;
-		int			m_nMaxSize;
-		int			m_size;
-		int			m_nLock;
-		int			m_nMode;
-		int			m_nModified;
-		uint			m_nId;
+		int				m_nMaxSize;
+		int				m_size;
+		int				m_nLock;
+		int				m_nMode;
+		int				m_nNested;
+		uint				m_nId;
+		CUndoHistory	m_history;
+		CUndoHistory	m_lockHistory;
 
 	public:
 		inline CUndoData* Head (void) { return (m_nHead < 0) ? null : &m_buffer [*m_nHead]; }
@@ -330,11 +346,14 @@ class CUndoManager
 
 		int Count (void);
 
-		inline void Lock (void) { ++m_nLock; }
+		inline void Lock (char* szId) { 
+			++m_nLock; 
+			m_lockHistory.Push (szId);
+			}
 
 		inline bool Locked (void) { return (m_nLock > 0); }
 
-		inline void Unlock (void) { if (Locked ()) m_nLock--; }
+		void Unlock (char* caller);
 
 		int SetMaxSize (int maxSize);
 
@@ -342,11 +361,13 @@ class CUndoManager
 
 		void SetModified (bool bModified);
 
-		void Begin (int dataFlags);
+		void Begin (char* szId, int dataFlags);
 
-		void End (void);
+		void End (char* szId);
 
-		void Unroll (void);
+		void Unroll (char* szId);
+
+		char* CreateId (char* szDest, char* szSrc);
 
 		CUndoManager (int maxSize = 100);
 

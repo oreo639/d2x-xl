@@ -158,15 +158,15 @@ if (VariableLight (key) != -1) {
 	return -1;
 	}
 // we are adding a new variable light
-undoManager.Begin (udVariableLights);
+undoManager.Begin (__FUNCTION__, udVariableLights);
 CVariableLight* lightP = AddVariableLight ();
 if (lightP == null) {
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	return -1;
 	}
 lightP->Setup (key, time, mask);
 lightP->Backup (opAdd);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return Count ();
 }
 
@@ -179,7 +179,7 @@ if (index > -1) {
 		VariableLight (index)->Index () = index;
 		VariableLight (index)->Backup (opDelete);
 		}
-	undoManager.Begin (udVariableLights);
+	undoManager.Begin (__FUNCTION__, udVariableLights);
 	if (index < --Count ()) {
 		if (!bUndo) {
 			VariableLight (index)->Index () = Count ();
@@ -187,7 +187,7 @@ if (index > -1) {
 			}
 		memcpy (VariableLight (index), VariableLight (m_nCount), sizeof (CVariableLight));
 		}
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	}
 }
 

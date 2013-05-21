@@ -130,7 +130,7 @@ theMine->m_nNoLightDeltas = m_nNoLightDeltas;
 lightManager.SetRenderDepth (m_staticRenderDepth, m_deltaRenderDepth);
 if (bAll = !segmentManager.HasTaggedSides ())
 	STATUSMSG (" illuminating entire mine ...");
-undoManager.Begin (udLight | udSegments);
+undoManager.Begin (__FUNCTION__, udLight | udSegments);
 if (m_bIlluminate)
 	lightManager.ComputeStaticLight (bAll, m_bCopyTexLights != 0);
 if (m_bAvgCornerLight)
@@ -142,7 +142,7 @@ if (m_bSegmentLight)
 if (m_bDeltaLight)
 	lightManager.ComputeVariableLight ((int) bAll);
 lightManager.Normalize ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 }
 
@@ -197,7 +197,7 @@ nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 	CSegment*	segP = segmentManager.Segment (0);
 	bool			bChange = false;
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 for (CSegmentIterator si; si; si++) {
 	segP = &(*si);
 	CSide* sideP = segP->m_sides;
@@ -211,7 +211,7 @@ for (CSegmentIterator si; si; si++) {
 			}
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 }
 

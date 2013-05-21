@@ -20,19 +20,19 @@ bool CSegmentManager::SetTextures (CSideKey key, int nBaseTex, int nOvlTex)
 {
 	bool bChange = false;
 
-undoManager.Begin (udSegments); 
+undoManager.Begin (__FUNCTION__, udSegments); 
 current->Get (key); 
 CSide *sideP = Side (key); 
 bChange = sideP->SetTextures (nBaseTex, nOvlTex);
 if (!bChange) {
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	return false;
 	}
 if ((lightManager.IsLight (sideP->BaseTex ()) == -1) && (lightManager.IsLight (sideP->OvlTex (0)) == -1))
 	lightManager.DeleteVariableLight (key); 
 if (!wallManager.ClipFromTexture (key))
 	wallManager.CheckForDoor (key); 
-undoManager.End (); 
+undoManager.End (__FUNCTION__); 
 sprintf_s (message, sizeof (message), "side has textures %d, %d", sideP->BaseTex () & 0x1fff, sideP->OvlTex (0)); 
 INFOMSG (message); 
 return true;
@@ -136,7 +136,7 @@ if ((nEdge == nEdgeCount) || (nChildEdge == nChildEdgeCount))
 // child:  nChildSeg, nChildSide, nChildEdge, nChildPoint0, nChildPoint1
 // parent: nStartSeg, nStartSide, nEdge, point0, point1
 // we can start undoManager now - since we know we are making changes now and won't abort inside this block
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 
 double angle;
 
@@ -189,7 +189,7 @@ if (bAlign2nd && sideP->OvlTex (0) && childSideP->OvlTex (0)) {
 		childSideP->m_info.nOvlTex |= 0x4000;
 	}
 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return nChildSide; 
 }
 

@@ -42,10 +42,10 @@ if (nChildSide < 6) {
 			}
 		}
 	if (nMatch != nVertices) { // they don't share all four points correctly, so unlink the child from the parent and unlink the parent from the child
-		undoManager.Begin (udSegments);
+		undoManager.Begin (__FUNCTION__, udSegments);
 		ResetSide (nChildSeg, nChildSide); 
 		ResetSide (nParentSeg, nSide); 
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		}
 	}
 else {
@@ -122,7 +122,7 @@ if (!found) {
 if (bVerbose && (QueryMsg ("Are you sure you want to unjoin this point?") != IDYES))
 	return nVertexId; 
 
-undoManager.Begin (udSegments | udVertices);
+undoManager.Begin (__FUNCTION__, udSegments | udVertices);
 memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (nVertexId), sizeof (*vertexManager.Vertex (0)));
 // replace existing point with new point
 segP = Segment (key.m_nSegment); 
@@ -141,7 +141,7 @@ for (short nSide = 0; nSide < 6; nSide++) {
 vertexManager.Status (vertexManager.Count ()++) = 0; 
 
 SetLinesToDraw (); 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 if (bVerbose)
 	INFOMSG ("A new point was made for the current point."); 
@@ -188,7 +188,7 @@ if (!(bShared [0] && bShared [1])) {
 if (QueryMsg ("Are you sure you want to unjoin this line?") != IDYES)
 	return; 
 
-undoManager.Begin (udSegments | udVertices);
+undoManager.Begin (__FUNCTION__, udSegments | udVertices);
 // create new points (copy of other vertices)
 for (i = 0; i < 2; i++)
 	if (bShared [i]) {
@@ -207,8 +207,8 @@ for (short nSide = 0; nSide < 6; nSide++) {
 		}
 	}
 
-SetLinesToDraw(); 
-undoManager.End ();
+SetLinesToDraw (); 
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 INFOMSG ("Two new points were made for the current line."); 
 }
@@ -266,7 +266,7 @@ if (!bSolidify && (vertexManager.Count () > (MAX_VERTICES - nShared))) {
 if (bVerbose && (QueryMsg ("Are you sure you want to unjoin this side?") != IDYES))
 	return false; 
 
-undoManager.Begin (udSegments | udVertices);
+undoManager.Begin (__FUNCTION__, udSegments | udVertices);
 segP = Segment (current->SegmentId ()); 
 if (nShared < nVertices)
 	bSolidify = 0;
@@ -302,7 +302,7 @@ else {
 	ResetSide (current->SegmentId (), current->SideId ()); 
 	SetLinesToDraw (); 
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -329,7 +329,7 @@ if (Count () >= SEGMENT_LIMIT - 6) {
 	ErrorMsg ("Cannot split this segment because\nthe maximum number of segments would be exceeded."); 
 	return false;
 	}
-undoManager.Begin (udSegments | udVertices);
+undoManager.Begin (__FUNCTION__, udSegments | udVertices);
 //h = vertexManager.Count ();
 // compute segment center
 vertexManager.Add (nNewVerts, 8);
@@ -401,7 +401,7 @@ for (short nSegment = 0; nSegment < 5; nSegment++) {
 			}
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -480,11 +480,11 @@ if (nOldSegments >= SEGMENT_LIMIT - 7) {
 	ErrorMsg ("Cannot split this segment because\nthe maximum number of segments would be exceeded."); 
 	return false;
 	}
-undoManager.Begin (udSegments | udVertices | udWalls);
+undoManager.Begin (__FUNCTION__, udSegments | udVertices | udWalls);
 //h = vertexManager.Count ();
 // compute segment center
 if (!vertexManager.Add (nNewVerts, 19)) {
-	undoManager.Unroll ();
+	undoManager.Unroll (__FUNCTION__);
 	ErrorMsg ("Cannot split this segment because\nthe maximum number of vertices would be exceeded."); 
 	return false;
 	}
@@ -607,7 +607,7 @@ for (int i = 0; i < 8; i++) {
 	}
 
 memset (&rootSeg, 0, sizeof (rootSeg)); // beware of the d'tor
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -647,11 +647,11 @@ if ((segP->Side (nSides [0])->VertexCount () < 4) && (segP->Side (nSides [1])->V
 	return false;
 	}
 
-undoManager.Begin (udSegments | udVertices | udWalls);
+undoManager.Begin (__FUNCTION__, udSegments | udVertices | udWalls);
 
 if ((0 > (nEdgeVerts [0] = SeparatePoints (CSideKey (nSegment, nSide), nEdgeVerts [0], false))) ||
 	 (0 > (nEdgeVerts [1] = SeparatePoints (CSideKey (nSegment, nSide), nEdgeVerts [1], false)))) {
-	undoManager.Unroll ();
+	undoManager.Unroll (__FUNCTION__);
 	return false;
 	}
 
@@ -725,7 +725,7 @@ segP->m_info.vertexIds [7] = 0xffff;
 
 if (bUpdateCoord)
 	vertexManager.Delete (nEdgeVerts [1]);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return true;
 }
 
@@ -748,16 +748,22 @@ if (segP->Shape () != SEGMENT_SHAPE_CUBE) {
 	CSide* sideP = current->Side ();
 	short nSide = current->SideId (), nOppSide = oppSideTable [current->SideId ()];
 
-undoManager.Begin (udSegments | udVertices | udWalls);
+undoManager.Begin (__FUNCTION__, udSegments | udVertices | udWalls);
 
 short nLine = current->Edge () + 1;
-CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ());
+if (!CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ())) {
+	undoManager.Unroll (__FUNCTION__);
+	return false;
+	}
 if (nLine < current->Side ()->VertexCount ())
 	++nLine;
-CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ());
+if (!CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ())) {
+	undoManager.Unroll (__FUNCTION__);
+	return false;
+	}
 segP->SetShape (SEGMENT_SHAPE_WEDGE);
 DLE.MineView ()->NextSide (1);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return true;
 }
 
@@ -780,7 +786,7 @@ if (segP->Shape () != SEGMENT_SHAPE_CUBE) {
 	CSide* sideP = current->Side ();
 	short nSide = current->SideId (), nOppSide = oppSideTable [current->SideId ()];
 
-undoManager.Begin (udSegments | udVertices | udWalls);
+undoManager.Begin (__FUNCTION__, udSegments | udVertices | udWalls);
 
 #if 0
 for (int i = 0; i < 6; i++) {
@@ -797,14 +803,19 @@ for (int i = 0; i < 6; i++) {
 #endif
 
 short nLine = current->Edge () + 1;
-CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ());
+if (!CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ())) {
+	undoManager.Unroll (__FUNCTION__);
+	return false;
+	}
 if (nLine < current->Side ()->VertexCount ())
 	++nLine;
-CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ());
-CollapseEdge (-1, -1, 0);
+if (!(CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ()) && CollapseEdge (-1, -1, 0))) {
+	undoManager.Unroll (__FUNCTION__);
+	return false;
+	}
 segP->SetShape (SEGMENT_SHAPE_PYRAMID);
 DLE.MineView ()->NextSide (1);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return true;
 }
 

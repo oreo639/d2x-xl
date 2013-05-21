@@ -197,9 +197,9 @@ robotInfo.Info ().combat [nSkill].evadeSpeed = m_data [7].GetValue ();
 robotInfo.Info ().combat [nSkill].circleDistance = m_data [8].GetValue ();
 robotInfo.Info ().aim = m_data [9].GetValue () - 1;
 
-undoManager.Begin (udRobots);
+undoManager.Begin (__FUNCTION__, udRobots);
 *robotManager.RobotInfo (nId) = robotInfo;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------

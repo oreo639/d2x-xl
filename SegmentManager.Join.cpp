@@ -89,7 +89,7 @@ void CSegmentManager::LinkSides (short nSegment1, short nSide1, short nSegment2,
 	ushort		nVertex, oldVertex, newVertex; 
 	int			i, n = side1->VertexCount (); 
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 seg1->SetChild (nSide1, nSegment2); 
 if (!side1->Wall ()) {
 	side1->ResetTextures ();
@@ -120,7 +120,7 @@ for (i = 0; i < n; i++) {
 		vertexManager.Delete (oldVertex); 
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // ----------------------------------------------------------------------------- 
@@ -164,13 +164,13 @@ if (distance > MAX_JOIN_DISTANCE) {
 if (QueryMsg("Are you sure you want to join the current point\n"
 				 "with the 'other' segment's current point?") != IDYES)
 	return; 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 // define vert numbers
 seg1->m_info.vertexIds [current->Side ()->VertexIdIndex (current->Point ())] = vert2; 
 // delete any unused vertices
 //  vertexManager.DeleteUnused (); 
 FixChildren (); 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 SetLinesToDraw (); 
 DLE.MineView ()->Refresh ();
 }
@@ -244,12 +244,12 @@ if (match [0] == match [1]) {
 	match [0] = 1; 
 	match [1] = 0; 
 	}
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 // define vert numbers
 for (i = 0; i < 2; i++) 
 	seg1->SetVertexId (current->SideId (), current->Edge () + i, i2 [match [i]]); 
 FixChildren (); 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 SetLinesToDraw (); 
 DLE.MineView ()->Refresh ();
 }
@@ -438,9 +438,9 @@ else {
 
 // if segments are too close to put a new segment between them, then link them together without asking
 if (bJoin) {
-	undoManager.Begin (udSegments);
+	undoManager.Begin (__FUNCTION__, udSegments);
 	LinkSides (thisKey.m_nSegment, thisKey.m_nSide, otherKey.m_nSegment, otherKey.m_nSide, match); 
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	SetLinesToDraw (); 
 	DLE.MineView ()->Refresh ();
 	return; 
@@ -453,13 +453,13 @@ if (QueryMsg ("Do you want to create a new segment which\n"
 				  "(the 'P' key selects the current point)") != IDYES)
 	return; 
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 
 thisKey.m_nSegment = Create (EXTEND);
 if (thisKey.m_nSegment < 0) {
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("The maximum number of segments has been reached.\nCannot add any more segments."); 
-	undoManager.Unroll ();
+	undoManager.Unroll (__FUNCTION__);
 	return;
 	}
 
@@ -471,12 +471,12 @@ if (!sideMatcher.GetBestMatch (otherKey, otherPoint, match)) {
 		ErrorMsg ("Sides are too far apart to join.\n\n"
 					 "Hint: Segment edge lengths should not exceed 400 unit in any dimension\n"
 					 "or they will distort when viewed from close up."); 
-	undoManager.Unroll ();
+	undoManager.Unroll (__FUNCTION__);
 	return; 
 	}
 
 LinkSides (thisKey.m_nSegment, thisKey.m_nSide, otherKey.m_nSegment, otherKey.m_nSide, match); 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 SetLinesToDraw(); 
 DLE.MineView ()->Refresh ();
 }
@@ -495,7 +495,7 @@ short nNewSide = current->SideId ();
 CSegment*	newSegP = Segment (nNewSeg);
 CVertex*		vNewSeg = vertexManager.Vertex (newSegP->m_info.vertexIds [0]);
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 int nSegments = segmentManager.Count ();
 for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 	if (nSegment != nNewSeg) {
@@ -518,7 +518,7 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 			}
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // ------------------------------------------------------------------------

@@ -98,7 +98,7 @@ else {
 ushort nWall = WallCount ();
 
 // link wall to segment/side
-undoManager.Begin (udSegments | udWalls);
+undoManager.Begin (__FUNCTION__, udSegments | udWalls);
 sideP->SetWall (nWall);
 CWall* wallP = Wall (nWall);
 wallP->Setup (key, nWall, (ubyte) type, nClip, nTexture, false);
@@ -107,7 +107,7 @@ wallP->Info ().flags = flags;
 wallP->Info ().keys = keys;
 // update number of Walls () in mine
 WallCount ()++;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 //DLE.MineView ()->Refresh ();
 return wallP;
 }
@@ -163,7 +163,7 @@ if (delWallP == null) {
 	}
 nDelWall = Index (delWallP);
 
-undoManager.Begin (udSegments | udWalls | udTriggers);
+undoManager.Begin (__FUNCTION__, udSegments | udWalls | udTriggers);
 delWallP->Backup (opDelete);
 // if trigger exists, remove it as well
 triggerManager.DeleteFromWall (delWallP->Info ().nTrigger);
@@ -177,7 +177,7 @@ segmentManager.Side (*delWallP)->SetWall (NO_WALL);
 delWallP->Backup ();
 Remove (nDelWall);
 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 triggerManager.UpdateReactor ();
 }
 
@@ -208,9 +208,9 @@ void CWallManager::UpdateTrigger (short nOldTrigger, short nNewTrigger)
 	CWall* wallP = FindByTrigger (nOldTrigger);
 
 if (wallP != null) {
-	undoManager.Begin (udWalls);
+	undoManager.Begin (__FUNCTION__, udWalls);
 	wallP->SetTrigger (nNewTrigger);
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	}
 }
 
@@ -231,9 +231,9 @@ void CWallManager::UpdateSegment (short nOldSegment, short nNewSegment)
 	CWall* wallP = FindBySegment (nOldSegment);
 
 if (wallP != null) {
-	undoManager.Begin (udWalls);
+	undoManager.Begin (__FUNCTION__, udWalls);
 	wallP->m_nSegment = nNewSegment;
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	}
 }
 
@@ -257,18 +257,18 @@ return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
 
 bool CWallManager::CreateDoor (ubyte type, ubyte flags, ubyte keys, char nClip, short nTexture) 
 {
-undoManager.Begin (udSegments | udWalls);
+undoManager.Begin (__FUNCTION__, udSegments | udWalls);
 // add a door to the current segment/side
 if (Create (*current, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
 	CSideKey opp;
 	if (segmentManager.BackSide (opp) && Create (opp, type, flags, keys, nClip, nTexture)) {
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return false;
 }
 
@@ -372,7 +372,7 @@ bool CWallManager::CreateExit (short type)
 if (!triggerManager.HaveResources ())
 	return false;
 // make a new wall and a new trigger
-undoManager.Begin (udSegments | udWalls);
+undoManager.Begin (__FUNCTION__, udSegments | udWalls);
 if (Create (*current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	Wall (WallCount ()- 1)->Info ().nClip = 10;
@@ -385,12 +385,12 @@ if (Create (*current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		Wall (WallCount () - 1)->Info ().nClip = 10;
 		segmentManager.SetTextures (opp, 0, DLE.IsD1File () ? 444 : 508);
 		triggerManager.UpdateReactor ();
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return false;
 }
 
@@ -406,9 +406,9 @@ if (!triggerManager.HaveResources ())
 	return false;
 
 int nLastSeg = current->SegmentId ();
-undoManager.Begin (udSegments | udWalls);
+undoManager.Begin (__FUNCTION__, udSegments | udWalls);
 if (!segmentManager.Create (*current, -1)) {
-	undoManager.Unroll ();
+	undoManager.Unroll (__FUNCTION__);
 	return false;
 	}
 int nNewSeg = current->SegmentId ();
@@ -420,10 +420,10 @@ if (Create (*current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	current->SetSegmentId (nNewSeg);
 	segmentManager.SetDefaultTexture (426);
 	DLE.MineView ()->Refresh ();
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	return true;
 	}
-undoManager.Unroll ();
+undoManager.Unroll (__FUNCTION__);
 return false;
 }
 

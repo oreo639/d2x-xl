@@ -68,7 +68,7 @@ if (nDelSeg < Count ()) {
 
 void CSegmentManager::AddSegments (void)
 {
-undoManager.Begin (udSegments); 
+undoManager.Begin (__FUNCTION__, udSegments); 
 short nSegment = Create (*current);
 if (nSegment < 0)
 	return;
@@ -79,7 +79,7 @@ for (short nSegment = 0, nSegments = Count (); nSegment < nSegments; nSegment++,
 		if (segP->IsTagged (nSide) && !segP->HasChild (nSide)) 
 			if (0 > Create (CSideKey (nSegment, nSide)))
 				break;
-undoManager.End (); 
+undoManager.End (__FUNCTION__); 
 }
 
 // ----------------------------------------------------------------------------- 
@@ -114,12 +114,12 @@ if (segP->ChildId (nCurSide) >= 0) {
 
 if (Side (key)->VertexCount () < 3) {
 	ErrorMsg ("Cannot add a new segment to this side."); 
-	undoManager.Unroll ();
+	undoManager.Unroll (__FUNCTION__);
 	return -1;
 	}
 
 m_bCreating = true;
-undoManager.Begin (udSegments); 
+undoManager.Begin (__FUNCTION__, udSegments); 
 // get new segment
 
 if (addMode < 0)
@@ -286,7 +286,7 @@ Segment (key)->Backup (opAdd);
 //		SetLinesToDraw(); 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 m_bCreating = false;
 return nNewSeg; 
 }
@@ -301,16 +301,16 @@ if ((szError != null) && DLE.IsD1File ()) {
 	return 0;
 	}
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 if (bCreate) {
 	if (current->ChildId () >= 0) {
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		return -1;
 		}
 	nSegment = Create (*current, -1);
 	if (nSegment < 0) {
 		Remove (nSegment);
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		return -1; 
 		}
 	}	
@@ -319,14 +319,14 @@ m_bCreating = true;
 if (!Define (nSegment, nFunction, -1)) {
 	if (bCreate)
 		Remove (nSegment);
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	DLE.MineView ()->DelayRefresh (false);
 	m_bCreating = false;
 	return -1; 
 	}	
 Segment (nSegment)->Backup ();
 m_bCreating = false;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return nSegment;
@@ -341,16 +341,16 @@ if (info.count >= MAX_MATCENS) {
     ErrorMsg (szError);
 	 return false;
 	}
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 if (0 > (nSegment = Create (nSegment, bCreate, nType))) {
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	return false;
 	}
 producers [info.count].Setup (nSegment, info.count, 0);
 Segment (nSegment)->m_info.value = 
 Segment (nSegment)->m_info.nProducer = info.count++;
 Segment (nSegment)->Backup (); // overwrite backup
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return true;
 }
 
@@ -433,14 +433,14 @@ if (nProducer >= MAX_NUM_RECHARGERS) {
 
 CSegment *segP = Segment (0);
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 if (nType == SEGMENT_FUNC_REPAIRCEN)
 	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? 433 : -1, "Repair centers are not available in Descent 1.");
 else {
 	short nLastSeg = current->SegmentId ();
 	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? DLE.IsD1File () ? 322 : 333 : -1);
 	if (nSegment < 0) {
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		return -1;
 		}
 	if (bSetDefTextures) { // add energy spark walls to fuel center sides
@@ -454,7 +454,7 @@ else {
 		current->SetSegmentId (nSegment);
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return nSegment;
 }
 
@@ -660,7 +660,7 @@ if (!m_bCreating)
 	segP->Backup ();
 double scale = textureManager.Scale (DLE.FileType (), nTexture);
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
 CSide *sideP = segP->m_sides;
@@ -675,7 +675,7 @@ for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		Segment (nSegment)->SetUV (nSide, 0, 0);
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return true;
 }
 
@@ -683,7 +683,7 @@ return true;
 
 bool CSegmentManager::Define (short nSegment, ubyte nFunction, short nTexture)
 {
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 CSegment *segP = (nSegment < 0) ? current->Segment () : Segment (nSegment);
 if (!m_bCreating)
 	segP->Backup ();
@@ -691,7 +691,7 @@ Undefine (Index (segP));
 segP->m_info.function = nFunction;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -705,7 +705,7 @@ if (info.count > 0) {
 	int nDelProducer = segP->m_info.nProducer;
 	if (nDelProducer >= 0) {
 		// copy last producer in list to deleted producer's position
-		undoManager.Begin (udSegments | udProducers);
+		undoManager.Begin (__FUNCTION__, udSegments | udProducers);
 		segP->m_info.nProducer = -1;
 		segP->m_info.value = -1;
 		if (nDelProducer < --info.count) {
@@ -730,7 +730,7 @@ if (info.count > 0) {
 					ti->Delete (key);
 				}
 			}
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		}
 	}
 segP->m_info.nProducer = -1;
@@ -749,7 +749,7 @@ if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
 else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 
 	RemoveProducer (segP, EquipMaker (0), m_producerInfo [1], SEGMENT_FUNC_EQUIPMAKER);
 else if (segP->m_info.function == SEGMENT_FUNC_PRODUCER) { //remove all fuel cell walls
-	undoManager.Begin (udSegments);
+	undoManager.Begin (__FUNCTION__, udSegments);
 	CSide *sideP = segP->m_sides;
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (segP->ChildId (nSide) < 0)	// assume no wall if no child segment at the current side
@@ -773,7 +773,7 @@ else if (segP->m_info.function == SEGMENT_FUNC_PRODUCER) { //remove all fuel cel
 				}
 			}
 		}
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	}
 segP->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 segP->m_info.function = SEGMENT_FUNC_NONE;
@@ -792,7 +792,7 @@ if (nDelSeg < 0 || nDelSeg >= Count ())
 if (tunnelMaker.Active ())
 	return;
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 CSegment* delSegP = Segment (nDelSeg); 
 current->Fix (nDelSeg);
 other->Fix (nDelSeg);
@@ -860,7 +860,7 @@ vertexManager.DeleteUnused ();
 // make sure current segment numbers are valid
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // ----------------------------------------------------------------------------- 

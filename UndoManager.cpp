@@ -77,51 +77,52 @@ m_vertexColors.Destroy ();
 m_secretExit.Destroy ();
 m_reactorData.Destroy ();
 m_bSelections = false;
+m_dataFlags = 0;
 }
 
 //------------------------------------------------------------------------------
 
-void CUndoData::Backup (int dataFlags) 
+bool CUndoData::Backup (int dataFlags) 
 {
-if (dataFlags & udVertices) 
+if ((dataFlags & udVertices) && !(m_dataFlags & udVertices))
 	m_vertices.Backup (vertexManager.Vertex (0), &vertexManager.Count ());
 
-if (dataFlags & udSegments)
+if ((dataFlags & udSegments) && !(m_dataFlags & udSegments))
 	m_segments.Backup (segmentManager.Segment (0), &segmentManager.Count ());
 
-if (dataFlags & udProducers) {
+if ((dataFlags & udProducers) && !(m_dataFlags & udProducers)) {
 	m_robotMakers.Backup (segmentManager.RobotMaker (0), &segmentManager.RobotMakerCount ());
 	m_equipMakers.Backup (segmentManager.EquipMaker (0), &segmentManager.EquipMakerCount ());
 	}
 
-if (dataFlags & udWalls) 
+if ((dataFlags & udWalls) && !(m_dataFlags & udWalls)) 
 	m_walls.Backup (wallManager.Wall (0), &wallManager.WallCount ());
 
-if (dataFlags & udTriggers) {
+if ((dataFlags & udTriggers) && !(m_dataFlags & udTriggers)) {
 	m_triggers [0].Backup (triggerManager.Trigger (0, 0), &triggerManager.Count (0));
 	m_triggers [1].Backup (triggerManager.Trigger (0, 1), &triggerManager.Count (1));
 	m_reactorTriggers.Backup (triggerManager.ReactorTrigger (0), &triggerManager.ReactorTriggerCount ());
 	m_reactorData.Backup (&triggerManager.ReactorData ());
 	}	
 
-if (dataFlags & udObjects) {
+if ((dataFlags & udObjects) && !(m_dataFlags & udObjects)) {
 	m_objects.Backup (objectManager.Object (0), &objectManager.Count ());
 	m_secretExit.Backup (&objectManager.SecretExit ());
 	}
 
-if (dataFlags & udRobots) 
+if ((dataFlags & udRobots) && !(m_dataFlags & udRobots))
 	m_robotInfo.Backup (robotManager.RobotInfo (0), &robotManager.Count ());
 
-if (dataFlags & udVariableLights) 
+if ((dataFlags & udVariableLights) && !(m_dataFlags & udVariableLights))
 	m_variableLights.Backup (lightManager.VariableLight (0), &lightManager.Count ());
 
-if (dataFlags & udStaticLight) {
+if ((dataFlags & udStaticLight) && !(m_dataFlags & udStaticLight)) {
 	 m_faceColors.Backup (lightManager.FaceColor (0), segmentManager.Count () * 6);
 	 m_textureColors.Backup (lightManager.TexColor (0), MAX_TEXTURES_D2);
 	 m_vertexColors.Backup (lightManager.VertexColor (0), vertexManager.Count ());
 	}
 
-if (dataFlags & udDynamicLight) {
+if ((dataFlags & udDynamicLight) && !(m_dataFlags & udDynamicLight)) {
 	m_deltaIndices.Backup (lightManager.LightDeltaIndex (0), &lightManager.DeltaIndexCount ());
 	m_deltaValues.Backup (lightManager.LightDeltaValue (0), &lightManager.DeltaValueCount ());
 	}
@@ -130,6 +131,10 @@ if (!m_bSelections) {
 	memcpy (m_selections, selections, sizeof (selections));
 	m_bSelections = true;
 	}
+if (m_dataFlags == (m_dataFlags | dataFlags))
+	return false;
+m_dataFlags |= dataFlags;
+return true;
 }
 
 //------------------------------------------------------------------------------
@@ -187,9 +192,13 @@ m_bSelections = false;
 //------------------------------------------------------------------------------
 
 CUndoManager::CUndoManager (int maxSize)
-	: m_nHead (maxSize, -1), m_nTail (maxSize, -1), m_nCurrent (maxSize, 0), m_nMaxSize (maxSize), m_nModified (0), m_nMode (0), m_nLock (0)
+	: m_nHead (maxSize, -1), m_nTail (maxSize, -1), m_nCurrent (maxSize, 0), m_nMaxSize (maxSize), m_nNested (0), m_nMode (0), m_nLock (0)
 {
 m_size = 0;
+m_history.Create (100);
+m_history.SetGrowth (100);
+m_lockHistory.Create (100);
+m_lockHistory.SetGrowth (100);
 }
 
 //------------------------------------------------------------------------------
@@ -383,29 +392,44 @@ DLE.GetDocument ()->SetModifiedFlag (bModified);
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Begin (int dataFlags) 
+char* CUndoManager::CreateId (char* szDest, char* szSrc)
+{
+strcpy (szDest, szSrc);
+return szDest;
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoManager::Begin (char* szId, int dataFlags) 
 {
 if (!Locked ()) {
-	if (0 == m_nModified++) {
+	if (m_history.ToS () && (*m_history.Top () == szId))
+		STATUSMSG ("Undomanager redundancy");
+	m_history.Push (szId);
+	if (0 == m_nNested++) {
 #ifdef _DEBUG
-		if (m_nModified > 3)
-			m_nModified = m_nModified;
+		if (m_nNested > 10)
+			m_nNested = m_nNested;
 #endif
 		if (m_nMode != 0) {
 			m_nMode = 0;
 			m_current.Destroy ();
 			}
 		}
-	m_current.Backup (dataFlags);
+	if (m_current.Backup (dataFlags))
+		++m_nNested;
 	}
 }
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::End (void) 
+void CUndoManager::End (char* szId) 
 {
-if (!Locked () && (m_nModified > 0) && (--m_nModified == 0))
-	Backup ();
+if (!Locked () && (m_nNested > 0)) {
+	m_history.Pop (szId);
+	if (--m_nNested == 0)
+		Backup ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -421,12 +445,49 @@ return true;
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Unroll (void) 
+void CUndoManager::Unroll (char* szId) 
 {
-if ((m_nModified > 0) && (--m_nModified == 0)) {
-	SetModified (false);
-	Revert ();
+if (m_nNested > 0) {
+	m_history.Pop (szId);
+	if (--m_nNested == 0) {
+		SetModified (false);
+		Revert ();
+		}
 	}
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoManager::Unlock (char* szId) 
+{ 
+if (Locked ()) {
+	m_nLock--; 
+	m_lockHistory.Pop (szId);
+	}
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+void CUndoHistory::Push (char* szId)
+{
+if (ToS () && (*Top () == szId))
+	STATUSMSG ("Undomanager redundancy");
+CStack<char*>::Push (szId);
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoHistory::Pop (char* szId)
+{
+if (ToS () && (*Top () != szId)) {
+	INFOMSG ("Undo manager corrupted!");
+	do {
+		CStack<char*>::Pop ();
+		} while (ToS () && (*Top () != szId));
+	}
+CStack<char*>::Pop ();
 }
 
 //------------------------------------------------------------------------------

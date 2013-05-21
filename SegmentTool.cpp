@@ -268,9 +268,9 @@ void CSegmentTool::OnSetCoord (void)
 {
 CHECKMINE;
 UpdateData (TRUE);
-undoManager.Begin (udVertices);
+undoManager.Begin (__FUNCTION__, udVertices);
 current->Segment ()->Vertex (current->Side ()->VertexIdIndex (current->Point ()))->Set (m_nCoord [0], m_nCoord [1], m_nCoord [2]);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh (false);
 }
 
@@ -299,7 +299,7 @@ else
 
 BOOL bTagged = segmentManager.HasTaggedSegments ();
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bTagged) {
@@ -311,7 +311,7 @@ if (bTagged) {
 else 					
 	current->Segment ()->m_info.props = m_nProps;
 DLE.MineView ()->DelayRefresh (false);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 void CSegmentTool::OnProp1 () { OnProp (0); }
@@ -513,10 +513,10 @@ void CSegmentTool::OnEndOfExit ()
 {
 CHECKMINE;
 CSegment *segP = current->Segment ();
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 m_bEndOfExit = EndOfExit ()->GetCheck ();
 segP->SetChild (m_nSide, m_bEndOfExit ? -2 : -1);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------
@@ -550,7 +550,7 @@ CHECKMINE;
 	BOOL	bChangeOk = TRUE;
 	BOOL	bTagged = segmentManager.HasTaggedSegments ();
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bTagged) {
@@ -561,7 +561,7 @@ if (bTagged) {
 	}
 else 					
 	current->Segment ()->m_info.owner = m_nOwner;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->DelayRefresh (false);
 }
 
@@ -574,7 +574,7 @@ CHECKMINE;
 	BOOL	bChangeOk = TRUE;
 	BOOL	bTagged = segmentManager.HasTaggedSegments ();
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bTagged) {
@@ -585,7 +585,7 @@ if (bTagged) {
 	}
 else 					
 	current->Segment ()->m_info.group = m_nGroup;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->DelayRefresh (false);
 }
 
@@ -621,7 +621,7 @@ else {
 	nMinSeg = int (current->Segment () - segmentManager.Segment (0));
 	nMaxSeg = nMinSeg + 1;
 	}
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 CSegment* segP = segmentManager.Segment (nMinSeg);
 for (nSegment = nMinSeg; nSegment < nMaxSeg; nSegment++, segP++) {
 	if (bTagged && !segP->IsTagged ())
@@ -633,7 +633,7 @@ for (nSegment = nMinSeg; nSegment < nMaxSeg; nSegment++, segP++) {
 		// check to see if we are adding a robot maker
 		case SEGMENT_FUNC_ROBOTMAKER:
 			if (!segmentManager.CreateRobotMaker (nSegment, false, m_bSetDefTexture == 1)) {
-				undoManager.Unroll ();
+				undoManager.Unroll (__FUNCTION__);
 				goto funcExit;
 				}
 			Refresh ();
@@ -643,14 +643,14 @@ for (nSegment = nMinSeg; nSegment < nMaxSeg; nSegment++, segP++) {
 		case SEGMENT_FUNC_REPAIRCEN:
 		case SEGMENT_FUNC_PRODUCER:
 			if (!segmentManager.CreateProducer (nSegment, nNewFunction, false, (nNewFunction == SEGMENT_FUNC_PRODUCER) && (m_bSetDefTexture == 1))) {
-				undoManager.Unroll ();
+				undoManager.Unroll (__FUNCTION__);
 				goto funcExit;
 				}
 			break;
 
 		case SEGMENT_FUNC_REACTOR:
 			if (!segmentManager.CreateReactor (nSegment, false, m_bSetDefTexture == 1)) {
-				undoManager.Unroll ();
+				undoManager.Unroll (__FUNCTION__);
 				goto funcExit;
 				}
 			break;
@@ -695,7 +695,7 @@ for (nSegment = nMinSeg; nSegment < nMaxSeg; nSegment++, segP++) {
 
 errorExit:
 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 triggerManager.UpdateReactor ();
 
 funcExit:
@@ -723,9 +723,9 @@ void CSegmentTool::OnLight ()
 {
 CHECKMINE;
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 current->Segment ()->m_info.staticLight = (int) (m_nLight * 24 * 327.68);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------
@@ -734,9 +734,9 @@ void CSegmentTool::OnDamage (int i)
 {
 CHECKMINE;
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 current->Segment ()->m_info.damage [i] = m_nDamage [i];
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 void CSegmentTool::OnDamage0 () { OnDamage (0); }
@@ -782,9 +782,9 @@ char szObj [80];
 int i = FindObjectInRobotMaker (LBAvailBots (), szObj);
 if ((i < 0) || (i >= (DLE.IsD1File () ? N_ROBOT_TYPES_D1 : 64)))
 	return;
-undoManager.Begin (udProducers);
+undoManager.Begin (__FUNCTION__, udProducers);
 segmentManager.RobotMaker (segP->m_info.nProducer)->m_info.objFlags [i / 32] |= (1L << (i % 32));
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
@@ -803,9 +803,9 @@ char szObj [80];
 int i = FindObjectInEquipMaker (LBAvailBots (), szObj);
 if ((i < 0) || (i >= (DLE.IsD1File () ? MAX_POWERUP_IDS_D1 : MAX_POWERUP_IDS_D2)))
 	return;
-undoManager.Begin (udProducers);
+undoManager.Begin (__FUNCTION__, udProducers);
 segmentManager.EquipMaker (segP->m_info.nProducer)->m_info.objFlags [i / 32] |= (1L << (i % 32));
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
@@ -836,9 +836,9 @@ char szObj [80];
 int i = FindObjectInRobotMaker (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-undoManager.Begin (udProducers);
+undoManager.Begin (__FUNCTION__, udProducers);
 segmentManager.RobotMaker (segP->m_info.nProducer)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
@@ -857,9 +857,9 @@ char szObj [80];
 int i = FindObjectInEquipMaker (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-undoManager.Begin (udProducers);
+undoManager.Begin (__FUNCTION__, udProducers);
 segmentManager.EquipMaker (segP->m_info.nProducer)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
@@ -998,7 +998,7 @@ void CSegmentTool::OnSplitSegmentIn8 ()
 CHECKMINE;
 BOOL bTagged = segmentManager.HasTaggedSegments ();
 
-undoManager.Begin (udSegments | udVertices | udWalls);
+undoManager.Begin (__FUNCTION__, udSegments | udVertices | udWalls);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (!bTagged) 
@@ -1011,7 +1011,7 @@ else {
 	}
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------

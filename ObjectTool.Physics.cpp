@@ -155,9 +155,9 @@ robotInfo.Info ().glow = m_data [5].GetValue ();
 robotInfo.Info ().lighting = BtnCtrl (IDC_OBJ_BRIGHT)->GetCheck ();
 robotInfo.Info ().cloakType = BtnCtrl (IDC_OBJ_CLOAKED)->GetCheck ();
 
-undoManager.Begin (udRobots);
+undoManager.Begin (__FUNCTION__, udRobots);
 *robotManager.RobotInfo (nId) = robotInfo;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------

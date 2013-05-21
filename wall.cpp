@@ -38,7 +38,7 @@ ubyte doorClipTable [NUM_OF_CLIPS_D2] = {
 
 void CWall::Setup (CSideKey key, ushort nWall, ubyte type, char nClip, short nTexture, bool bRedefine) 
 {
-undoManager.Begin (udWalls);
+undoManager.Begin (__FUNCTION__, udWalls);
 // define new wallP
 *((CSideKey*) this) = key;
 //m_nSegment = nSegment;
@@ -104,7 +104,7 @@ m_info.controllingTrigger = 0;
 
 // set uvls of new texture
 segmentManager.Segment (key.m_nSegment)->SetUV (key.m_nSide, 0.0, 0.0);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //--------------------------------------------------------------------------
@@ -131,7 +131,7 @@ void CWall::SetTextures (short nTexture)
 CSide *sideP = Side ();
 char nClip = m_info.nClip;
 
-undoManager.Begin (udWalls);
+undoManager.Begin (__FUNCTION__, udWalls);
 if (IsDoor ()) {
 	if (DLE.IsD1File ())
 		sideP->SetTextures (wallTexturesD1 [nClip][0], wallTexturesD1 [nClip][1]);
@@ -142,10 +142,10 @@ else if (nTexture >= 0) {
 	sideP->SetTextures (nTexture, 0);
 	}
 else {
-	undoManager.Unroll ();
+	undoManager.Unroll (__FUNCTION__);
 	return;
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 }
 

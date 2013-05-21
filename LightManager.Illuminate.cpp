@@ -79,7 +79,7 @@ void CLightManager::ScaleCornerLight (bool bAll)
 {
 	double fLight = m_fBrightness / 100.0;
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 int nSegments = segmentManager.Count ();
 #pragma omp parallel for if (nSegments > 15)
 for (int i = 0; i < nSegments; i++) {
@@ -97,7 +97,7 @@ for (int i = 0; i < nSegments; i++) {
 			}
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //---------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ void CLightManager::CalcAverageCornerLight (bool bAll)
 
 memset (maxBrightness, 0, vertexManager.Count () * sizeof (tAvgCornerLight));
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 // smooth corner light by averaging all corners which share a vertex
 //#pragma omp parallel for
 for (int nSegment = 0; nSegment < nSegments; nSegment++) {
@@ -203,7 +203,7 @@ for (int i = 0; i < nSegments; i++) {
 		}
 	}
 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 delete[] maxBrightness;
 }
 
@@ -235,7 +235,7 @@ void CLightManager::ComputeStaticLight (bool bAll, bool bCopyTexLights)
 {
 // clear all lighting on marked segments
 segmentManager.ComputeNormals (true);
-undoManager.Begin (udSegments | udStaticLight);
+undoManager.Begin (__FUNCTION__, udSegments | udStaticLight);
 if (bAll)
 	VertexColors ().Clear ();
 int nSegments = segmentManager.Count ();
@@ -291,7 +291,7 @@ for (; nSegment < nSegments; nSegment++) {
 		}
 	}
 DLE.MainFrame ()->Progress ().DestroyWindow ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 
 }
 
@@ -505,11 +505,11 @@ for (int nChildSeg = 0; nChildSeg < nSegments; nChildSeg++) {
 void CLightManager::ComputeVariableLight (int force) 
 {
 segmentManager.ComputeNormals (true);
-undoManager.Begin (udDynamicLight);
+undoManager.Begin (__FUNCTION__, udDynamicLight);
 for (int nDepth = m_deltaRenderDepth; nDepth; nDepth--)
 	if (ComputeLightDeltas (force, nDepth))
 		break;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //---------------------------------------------------------------------------------
@@ -880,7 +880,7 @@ void CLightManager::SetObjectLight (bool bAll, bool bDynSegLights)
 	long nLight = D2X (m_fObjectLight); //24.0 * 327.68);
 	double fLight = m_fObjectLight / 100.0;
 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 int nSegments = segmentManager.Count ();
 for (int si = 0; si < nSegments; si++) {
 	CSegment* segP = segmentManager.Segment (si);
@@ -907,7 +907,7 @@ for (int si = 0; si < nSegments; si++) {
 			}
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // -----------------------------------------------------------------------------

@@ -61,11 +61,11 @@ void CTriggerManager::SortObjTriggers (void)
 	int	h = ObjTriggerCount ();
 
 if (h > 1) {
-	undoManager.Begin (udTriggers);
+	undoManager.Begin (__FUNCTION__, udTriggers);
 	for (ushort i = 0; i < h; i++)
 		ObjTrigger (i)->Index () = i;
 	SortObjTriggers (0, h - 1);
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	}
 }
 
@@ -76,7 +76,7 @@ void CTriggerManager::RenumberObjTriggers (void)
 	CTrigger*	trigP = ObjTrigger (0);
 	int			i;
 
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 for (i = ObjTriggerCount (); i; i--, trigP++)
 	trigP->Info ().nObject = objectManager.Index (objectManager.FindBySig (trigP->Info ().nObject));
 i = ObjTriggerCount ();
@@ -85,7 +85,7 @@ while (i) {
 		DeleteFromObject (i);
 	}
 SortObjTriggers ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void CTriggerManager::RenumberTargetObjs (void)
 {
 	CTrigger* trigP = ObjTrigger (0);
 
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 for (int i = ObjTriggerCount (); i; i--, trigP++) {
 	CSideKey* targetP = trigP->Target ();
 	for (int j = 0; j < trigP->Count (); j++) {
@@ -109,7 +109,7 @@ for (int i = ObjTriggerCount (); i; i--, trigP++) {
 			}
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ if (Full ()) {
 	return null;
 	}
 // if no wall at current side, try to add a wall of proper type
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 
 CWall* wallP = current->Wall ();
 
@@ -168,19 +168,19 @@ if (wallP == null) {
 	if (bAddWall) {
 		if (wallManager.Count () >= MAX_WALLS) {
 			ErrorMsg ("Cannot add a wall for this trigger\nsince the maximum number of walls is already reached.");
-			undoManager.Unroll ();
+			undoManager.Unroll (__FUNCTION__);
 			return null;
 			}
 		wallP = wallManager.Create (CSideKey (), (current->ChildId () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
 		if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
-			undoManager.Unroll ();
+			undoManager.Unroll (__FUNCTION__);
 			return null;
 			}
 		}
 	else {
 		ErrorMsg ("You need to add a wall to this side before you can add a trigger.");
-		undoManager.Unroll ();
+		undoManager.Unroll (__FUNCTION__);
 		return null;
 		}
 	}
@@ -231,7 +231,7 @@ trigP->Setup (type, flags);
 trigP->Index () = nTrigger;
 wallP->SetTrigger (nTrigger);
 UpdateReactor ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 return Trigger (nTrigger);
 }
@@ -255,7 +255,7 @@ CTrigger* delTrigP = Trigger (nDelTrigger, 0);
 if (delTrigP == null)
 	return;
 
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
 
 #if USE_FREELIST
@@ -266,14 +266,14 @@ if (nDelTrigger < --WallTriggerCount ()) {
 	*delTrigP = *WallTrigger (WallTriggerCount ());
 	CWall* wallP = wallManager.FindByTrigger (WallTriggerCount ());
 	if (wallP != null) {
-		undoManager.Begin (udWalls);
+		undoManager.Begin (__FUNCTION__, udWalls);
 		wallP->Info ().nTrigger = (ubyte) nDelTrigger;
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		}
 	}
 #endif
 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
 UpdateReactor ();
 }
@@ -285,10 +285,10 @@ UpdateReactor ();
 void CTriggerManager::DeleteTarget (CSideKey key, short nClass) 
 {
 CTrigger* trigP = &m_triggers [nClass][0];
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 for (int i = 0; i < Count (nClass); i++, trigP++)
 	trigP->Delete (key);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------
@@ -332,7 +332,7 @@ void CTriggerManager::UpdateReactor (void)
 {
   CReactorTrigger *reactorTrigger = ReactorTrigger (0);	// only one reactor trigger per level
 
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 // remove items from list that do not point to a wall
 for (short nTarget = 0; nTarget < reactorTrigger->Count (); nTarget++) {
 	if (!wallManager.FindBySide ((*reactorTrigger) [nTarget]))
@@ -353,7 +353,7 @@ for (CWallIterator wi; wi; wi++) {
 	else 
 		reactorTrigger->Delete (*wallP);
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------------
@@ -382,14 +382,14 @@ if (ObjTriggerCount () >= MAX_OBJ_TRIGGERS) {
 	}
 
 nObject = objectManager.Index (objP);
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 short nTrigger = ObjTriggerCount ()++;
 CTrigger* trigP = ObjTrigger (nTrigger);
 trigP->Setup (type, 0);
 trigP->Info ().nObject = nObject;
 trigP->Index () = nTrigger;
 SortObjTriggers ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 for (ushort i = ObjTriggerCount (); i; )
 	if (ObjTrigger (--i)->Index () == nTrigger) 
 		return ObjTrigger (i);
@@ -402,36 +402,36 @@ void CTriggerManager::DeleteFromObject (short nDelTrigger)
 {
 if ((nDelTrigger < 0) || (nDelTrigger >= ObjTriggerCount ()))
 	return;
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 if (nDelTrigger < --ObjTriggerCount ())
 	*ObjTrigger (nDelTrigger) = *ObjTrigger (ObjTriggerCount ());
 ObjTrigger (ObjTriggerCount ())->Index () = -1; // mark as unused (needed by the trigger iterator)
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------
 
 void CTriggerManager::DeleteObjTriggers (short nObject) 
 {
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 for (short i = ObjTriggerCount (); i; )
 	if (ObjTrigger (--i)->Info ().nObject == nObject)
 		DeleteFromObject (i);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // -----------------------------------------------------------------------------
 
 void CTriggerManager::DeleteTargets (CSideKey key) 
 {
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 for (CWallTriggerIterator wi; wi; wi++)
 	wi->Delete (key);
 
 for (short i = ObjTriggerCount (); i > 0; )
 	if (ObjTrigger (--i)->Delete (key) == 0) // no targets left
 		DeleteFromObject (i);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // -----------------------------------------------------------------------------
@@ -598,17 +598,17 @@ bool CTriggerManager::AutoAddTrigger (short wallType, ushort wallFlags, ushort t
 if (!HaveResources ())
 	return false;
 // make a new wall and a new trigger
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 CWall* wallP = wallManager.Create (*current, (ubyte) wallType, wallFlags, KEY_NONE, -1, -1);
 if (wallP != null) {
 	CTrigger* trigP = AddToWall (wallManager.Index (wallP), triggerType, false);
 	if (trigP != null) 
 		trigP->Add (other->m_nSegment, other->m_nSide);
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	DLE.MineView ()->Refresh ();
 	return true;
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return false;
 }
 

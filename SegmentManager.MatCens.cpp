@@ -75,7 +75,7 @@ RenumberProducers (SEGMENT_FUNC_EQUIPMAKER, 1);
 
 void CSegmentManager::RenumberProducers (void)
 {
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 CSegment* segP = Segment (0);
 for (int h = 0, i = Count (); i; i--, segP++)
 	segP->m_info.nProducer = -1;
@@ -98,7 +98,7 @@ for (int h = 0, i = Count (); i; i--, segP++)
 		}
 	else
 		segP->m_info.value = -1; 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // ----------------------------------------------------------------------------- 

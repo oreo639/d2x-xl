@@ -187,9 +187,9 @@ if (0 <= (index = CBContType ()->GetCurSel ()))
 if (0 <= (index = CBContId ()->GetCurSel ()) - 1)
 	robotInfo.Info ().contents.id = (ubyte) CBContId ()->GetItemData (index);
 
-undoManager.Begin (udRobots);
+undoManager.Begin (__FUNCTION__, udRobots);
 *robotManager.RobotInfo (nId) = robotInfo;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------

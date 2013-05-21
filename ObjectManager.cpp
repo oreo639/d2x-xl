@@ -201,7 +201,7 @@ if ((type == OBJ_PLAYER) || (type == OBJ_COOP)) {
 
 // Now we can add the object
 // Make a new object
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 nObject = Add ();
 if (nObject == 0) {
 	Object (0)->Create (OBJ_PLAYER, (nSegment < 0) ? current->SegmentId () : nSegment);
@@ -236,7 +236,7 @@ Sort ();
 objP->Backup ();
 DLE.MineView ()->Refresh (false);
 DLE.ToolView ()->ObjectTool ()->Refresh ();
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return true;
 }
 
@@ -261,7 +261,7 @@ if (nDelObj == Count ()) {
 		ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 if (nDelObj < 0)
 	nDelObj = current->ObjectId ();
 triggerManager.DeleteObjTriggers (nDelObj);
@@ -278,7 +278,7 @@ if (selections [0].ObjectId () >= Count ())
 	selections [0].SetObjectId (Count () - 1);
 if (selections [1].ObjectId () >= Count ())
 	selections [1].SetObjectId (Count () - 1);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // -----------------------------------------------------------------------------
@@ -299,7 +299,7 @@ if (QueryMsg ("Are you sure you want to move the\n"
 				 "current object to the current segment?\n") != IDYES)
 	return;
 #endif
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 if (objP == null)
 	objP = current->Object ();
 if (Index (objP) == Count ())
@@ -337,18 +337,18 @@ else {
 		}
 	DLE.MineView ()->Refresh (false);
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // -----------------------------------------------------------------------------
 
 void CObjectManager::UpdateSegments (short nOldSeg, short nNewSeg)
 {
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 for (int i = 0; i < Count (); i++)
 	if (Object (i)->m_info.nSegment == nOldSeg)
 		Object (i)->m_info.nSegment = nNewSeg;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // -----------------------------------------------------------------------------

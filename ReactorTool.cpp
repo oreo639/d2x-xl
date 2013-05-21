@@ -141,9 +141,9 @@ char szVal [5];
 if (!*szVal)
 	return;
 UpdateData (TRUE);
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 triggerManager.ReactorTime () = m_nCountDown;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------
@@ -157,9 +157,9 @@ char szVal [5];
 if (!*szVal)
 	return;
 UpdateData (TRUE);
-undoManager.Begin (udObjects);
+undoManager.Begin (__FUNCTION__, udObjects);
 objectManager.SecretSegment () = m_nSecretReturn;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------
@@ -177,9 +177,9 @@ if (FindTarget (nSegment, nSide) >= 0) {
 	DEBUGMSG (" Reactor tool: Trigger already has this target.");
 	return;
 	}
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 m_triggerP->Add (nSegment, nSide - 1);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_targets++);
@@ -221,9 +221,9 @@ void CReactorTool::OnDeleteTarget ()
 m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 m_targets = m_triggerP->Delete (m_iTarget);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
 	m_iTarget--;

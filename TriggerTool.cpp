@@ -631,7 +631,7 @@ DLE.MineView ()->Refresh ();
 
 void CTriggerTool::OnDeleteTriggerAll () 
 {
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = segmentManager.Segment (0);
 CSide *sideP;
@@ -657,7 +657,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 		}
 	}
 DLE.MineView ()->DelayRefresh (false);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 if (nDeleted) {
 	DLE.MineView ()->Refresh ();
 	Refresh ();
@@ -727,9 +727,9 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 m_triggerP->Type () = m_nType;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 Refresh ();
 }
 
@@ -744,9 +744,9 @@ if ((m_nTrigger == -1) || (m_nType == TT_SPEEDBOOST) || (m_nType == TT_CHANGE_TE
 	return;
 SetTriggerPtr ();
 UpdateData (FALSE);
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 m_triggerP->Info ().value = (int) (m_nStrength * F1_0);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------
@@ -759,9 +759,9 @@ UpdateData (TRUE);
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 m_triggerP->Info ().time = m_nTime;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------
@@ -774,7 +774,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return false;
 SetTriggerPtr ();
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 if ((m_bD1Flags [i] = !m_bD1Flags [i]))
 //if ((m_bD1Flags [i] = ((CButton *) GetDlgItem (IDC_TRIGGER_CONTROLDOORS + j))->GetCheck ()))
 	m_triggerP->Info ().flags |= triggerFlagsD1 [i];
@@ -787,7 +787,7 @@ if (m_bD1Flags [i] && (j >= 0)) {
 	((CButton *) GetDlgItem (IDC_TRIGGER_CONTROLDOORS + j))->SetCheck (0);
 	}
 UpdateData (FALSE);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 return m_bD1Flags [i] != 0;
 }
 
@@ -799,14 +799,14 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 j = d2FlagXlat [i];
 int h = 1 << j;
 m_triggerP->Info ().flags ^= h;
 m_bD2Flags [j] = ((m_triggerP->Info ().flags & h) != 0);
 ((CButton *) GetDlgItem (IDC_TRIGGER_NOMESSAGE + i))->SetCheck (m_bD2Flags [j]);
 UpdateData (FALSE);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------
@@ -854,9 +854,9 @@ if (FindTarget (nSegment, nSide) > -1) {
 	DEBUGMSG (" Trigger tool: Trigger already has this target.");
 	return;
 	}
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 m_triggerP->Add (nSegment, nSide - 1);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_targets++);
@@ -929,9 +929,9 @@ m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
 SetTriggerPtr ();
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 m_targets = m_triggerP->Delete (m_iTarget);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
 	m_iTarget--;
@@ -993,9 +993,9 @@ void CTriggerTool::OnPasteTrigger ()
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
-undoManager.Begin (udTriggers);
+undoManager.Begin (__FUNCTION__, udTriggers);
 *triggerManager.Trigger (m_nTrigger) = m_defTrigger;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 Refresh ();
 DLE.MineView ()->Refresh ();
 }

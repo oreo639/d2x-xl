@@ -855,11 +855,11 @@ if (!(m_bUse1st || m_bUse2nd))
 	CSide *sideP = current->Side ();
 
 //CheckForDoor ();
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 segmentManager.SetTextures (*current, m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
 for (int i = 0; i < 4; i++)
 	sideP->m_info.uvls [i].l = m_saveUVLs [i].l;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -878,12 +878,12 @@ if (m_saveTexture [0] == -1 || m_saveTexture [1] == -1)
 	return;
 //CheckForDoor ();
 // set all segment sides as not "pasted" yet
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 CSegment *segP = segmentManager.Segment (0);
 for (short nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 	segP->Index () = 0;
 PasteTexture (current->SegmentId (), current->SideId (), 1000);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -938,7 +938,7 @@ if (!(m_bUse1st || m_bUse2nd))
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
@@ -952,7 +952,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 				 continue;
 			segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
 			}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 Refresh ();
 DLE.MineView ()->Refresh ();
 }

@@ -324,7 +324,7 @@ UpdateData (TRUE);
 
 if (delta) {
 	UpdateData (TRUE);
-	undoManager.Begin (udSegments);
+	undoManager.Begin (__FUNCTION__, udSegments);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
 			sideP->m_info.uvls [current->Point ()].u -= delta;
@@ -337,7 +337,7 @@ if (delta) {
 			for (int i = 0; i < sideP->VertexCount (); i++)
 				sideP->m_info.uvls [i].u -= delta;
 		}  
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	UpdateAlignWnd ();
 	}
 }
@@ -353,7 +353,7 @@ UpdateData (TRUE);
 
 if (delta) {
 	UpdateData (TRUE);
-	undoManager.Begin (udSegments);
+	undoManager.Begin (__FUNCTION__, udSegments);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
 			sideP->m_info.uvls [current->Point ()].v -= delta;
@@ -366,7 +366,7 @@ if (delta) {
 			for (int i = 0; i < sideP->VertexCount (); i++)
 				sideP->m_info.uvls [i].v -= delta;
 		}  
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	UpdateAlignWnd ();
 	}
 }
@@ -416,13 +416,13 @@ void CTextureTool::RotateUV (double angle, bool bUpdate)
 	CSide*	sideP = current->Side ();
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 for (int i = 0; i < sideP->VertexCount (); i++) 
 	sideP->Uvls (i)->Rotate (angle);
 if (bUpdate)
 	m_alignAngle -= angle * 180.0 / PI;
 UpdateData (FALSE);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -433,7 +433,7 @@ void CTextureTool::HFlip (void)
 	CSide*	sideP = current->Side ();
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
@@ -445,7 +445,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 			Swap (sideP->m_info.uvls [i].u, sideP->m_info.uvls [i + 2].u);
 	}
 UpdateData (FALSE);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -456,7 +456,7 @@ void CTextureTool::VFlip (void)
 	CSide*	sideP = current->Side ();
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
@@ -468,7 +468,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 			Swap (sideP->m_info.uvls [i].v, sideP->m_info.uvls [i + 2].v);
 	}
 UpdateData (FALSE);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -480,7 +480,7 @@ void CTextureTool::HAlign (int dir)
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom * dir;
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		sideP->m_info.uvls [current->Point ()].u += delta;
@@ -495,7 +495,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	}
 m_alignX = (double) sideP->m_info.uvls [current->Point ()].u * 20.0;
 UpdateData (FALSE);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -507,7 +507,7 @@ void CTextureTool::VAlign (int dir)
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom * dir;
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		sideP->m_info.uvls [current->Point ()].v += delta;
@@ -522,7 +522,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	}
 m_alignY = (double)sideP->m_info.uvls [current->Point ()].v * 20.0;
 UpdateData (FALSE);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -591,7 +591,7 @@ void CTextureTool::OnHShrink ()
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom;
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 sideP->m_info.uvls [0].u -= delta;
 if (h > 1) {
 	sideP->m_info.uvls [1].u -= delta;
@@ -601,7 +601,7 @@ if (h > 1) {
 			sideP->m_info.uvls [3].u += delta;
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -614,7 +614,7 @@ void CTextureTool::OnVShrink ()
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom;
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 sideP->m_info.uvls [0].v += delta;
 if (h > 1) {
 	sideP->m_info.uvls [3].v += delta;
@@ -624,7 +624,7 @@ if (h > 1) {
 			sideP->m_info.uvls [2].v -= delta;
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -633,14 +633,14 @@ UpdateAlignWnd ();
 void CTextureTool::OnAlignReset ()
 {
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 current->Segment ()->SetUV (current->SideId (), 0.0, 0.0);
 m_alignX = 0.0;
 m_alignY = 0.0;
 m_alignAngle = 0.0;
 Rot2nd (0);
 UpdateData (FALSE);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -652,7 +652,7 @@ void CTextureTool::OnAlignResetTagged ()
 	BOOL bModified = FALSE;
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 CSegment* segP = segmentManager.Segment (0);
 int nSegments = segmentManager.Count ();
 for (int nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
@@ -669,7 +669,7 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 			}
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh (false);
 UpdateAlignWnd ();
 }
@@ -684,7 +684,7 @@ void CTextureTool::OnAlignStretch2Fit ()
 	int			i;
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 if (!segmentManager.HasTaggedSides ()) {
 	for (i = 0; i < sideP->VertexCount (); i++) {
 		sideP->m_info.uvls [i].u = defaultUVLs [i].u;
@@ -703,7 +703,7 @@ else {
 			}
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh (false);
 UpdateAlignWnd ();
 }
@@ -723,7 +723,7 @@ void CTextureTool::OnAlignAll (void)
 	double	sAngle, cAngle, angle; 
 
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 bool bAll = !segmentManager.HasTaggedSegments (true);
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++)
 	 segP->Index () = 0;
@@ -752,7 +752,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.
 		}
 	segmentManager.AlignTextures (nSegment, nSide, m_bUse1st, m_bUse2nd, m_bIgnorePlane, false, false);
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -762,10 +762,10 @@ void CTextureTool::OnAlignChildren ()
 {
 // set all segment sides as not aligned yet
 UpdateData (TRUE);
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 // the alignment function will take care of only aligning tagged sides (provided they are all connected)
 segmentManager.AlignTextures (current->SegmentId (), current->SideId (), m_bUse1st, m_bUse2nd, m_bIgnorePlane, true, false);
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
@@ -796,12 +796,12 @@ void CTextureTool::Rot2nd (int iAngle)
 	CSide *sideP = current->Side ();
  
 if ((sideP->OvlTex (0)) && ((sideP->OvlAlignment ()) != rotMasks [iAngle])) {
-	undoManager.Begin (udSegments);
+	undoManager.Begin (__FUNCTION__, udSegments);
 	sideP->m_info.nOvlTex &= TEXTURE_MASK;
    sideP->m_info.nOvlTex |= (rotMasks [iAngle] << 14);
 	m_alignRot2nd = iAngle;
 	UpdateData (FALSE);
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	UpdateAlignWnd ();
 	}
 }

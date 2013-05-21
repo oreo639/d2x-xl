@@ -156,9 +156,9 @@ void CSegmentManager::ResetSide (short nSegment, short nSide)
 {
 if (nSegment < 0 || nSegment >= Count ()) 
 	return; 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 const_cast<CSegment*>(Segment (nSegment))->Reset (nSide); 
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // ----------------------------------------------------------------------------- 
@@ -200,11 +200,11 @@ if (selections [0].m_nSegment == selections [1].m_nSegment)
 short nSegment = current->SegmentId (); 
 CSegment* segP = current->Segment ();
 CSegment* otherSegP = other->Segment (); 
-undoManager.Begin (udSegments);
+undoManager.Begin (__FUNCTION__, udSegments);
 for (int nSide = 0; nSide < 6; nSide++)
 	if (SetTextures (CSideKey (nSegment, nSide), otherSegP->m_sides [nSide].BaseTex (), otherSegP->m_sides [nSide].OvlTex ()))
 		bChange = true;
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 if (bChange)
 	DLE.MineView ()->Refresh (); 
 }
@@ -438,7 +438,7 @@ return nSides;
 
 void CSegmentManager::MakePointsParallel (void)
 {
-undoManager.Begin (udVertices);
+undoManager.Begin (__FUNCTION__, udVertices);
 if (!vertexManager.HasTaggedVertices ())
 	current->Segment ()->MakeCoplanar (current->SideId ());
 else {
@@ -472,7 +472,7 @@ else {
 			}
 		}
 	}
-undoManager.End ();
+undoManager.End (__FUNCTION__);
 }
 
 // -----------------------------------------------------------------------------

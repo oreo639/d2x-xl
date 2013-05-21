@@ -92,10 +92,10 @@ short nDelay = (short) (I2X (m_nLightDelay) / 1000);
 
 CVariableLight* vlP = lightManager.VariableLight (m_iLight);
 if ((vlP->m_info.mask != nLightMask) || (vlP->m_info.delay != nDelay)) {
-	undoManager.Begin (udVariableLights);
+	undoManager.Begin (__FUNCTION__, udVariableLights);
 	vlP->m_info.mask = nLightMask;
 	vlP->m_info.delay = nDelay;
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	}
 //m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
 }

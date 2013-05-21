@@ -1235,7 +1235,7 @@ if (!m_bActive) {
 		return;
 		}
 
-	undoManager.Lock ();
+	undoManager.Lock ("CTunnelMaker::Run");
 
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("Place the current segment on one of the segment end points.\n\n"
@@ -1248,15 +1248,15 @@ if (!m_bActive) {
 	}
 else {
 	// ask if user wants to keep the new nSegment
-	undoManager.Unlock ();
+	undoManager.Unlock ("CTunnelMaker::Run");
 	m_tunnel.Release ();
 	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) == IDYES) {
-		undoManager.Begin (udSegments | udVertices);
+		undoManager.Begin (__FUNCTION__, udSegments | udVertices);
 		if (Setup (false) && Create ())
 			m_tunnel.Realize (m_path, true);
 		else
 			m_tunnel.Release ();
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		}
 	Destroy ();
 	}

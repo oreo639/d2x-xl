@@ -461,7 +461,7 @@ if (bRefresh) {
 
 void CWallTool::OnDeleteWallAll () 
 {
-undoManager.Begin (udWalls | udTriggers);
+undoManager.Begin (__FUNCTION__, udWalls | udTriggers);
 DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = segmentManager.Segment (0);
 bool bAll = !segmentManager.HasTaggedSegments ();
@@ -479,12 +479,12 @@ for (h = segmentManager.Count (), i = 0; i < h; i++, segP++) {
 	}
 DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	undoManager.End ();
+	undoManager.End (__FUNCTION__);
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
 else
-	undoManager.Unroll ();
+	undoManager.Unroll (__FUNCTION__);
 }
 
 //------------------------------------------------------------------------------
@@ -594,13 +594,13 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wallP = m_wallP [bSide])
 		if ((wallP->Type () == WALL_BLASTABLE) || (wallP->Type () == WALL_DOOR)) {
 			if (m_nWall [bSide] < wallManager.WallCount ()) {
-				undoManager.Begin (udWalls);
+				undoManager.Begin (__FUNCTION__, udWalls);
 				nClip = animClipTable [m_nClip];
 				wallP->Info ().nClip = nClip;
 				// define door textures based on clip number
 				if (wallP->Info ().nClip >= 0)
 					wallManager.Wall (m_nWall [bSide])->SetTextures (m_defTexture);
-				undoManager.End ();
+				undoManager.End (__FUNCTION__);
 				DLE.MineView ()->Refresh ();
 				Refresh ();
 				}
@@ -618,9 +618,9 @@ memset (m_bKeys, 0, sizeof (m_bKeys));
 m_bKeys [i] = TRUE;
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_wallP [bSide]) {
-		undoManager.Begin (udWalls);
+		undoManager.Begin (__FUNCTION__, udWalls);
 		m_wallP [bSide]->Info ().keys = (1 << i);
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		Refresh ();
 		}
 }
@@ -631,12 +631,12 @@ GetWalls ();
 m_bFlags [i] = BtnCtrl (IDC_WALL_BLASTED + i)->GetCheck ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_wallP [bSide]) {
-		undoManager.Begin (udWalls);
+		undoManager.Begin (__FUNCTION__, udWalls);
 		if (m_bFlags [i])
 			m_wallP [bSide]->Info ().flags |= wallFlagTable [i];
 		else
 			m_wallP [bSide]->Info ().flags &= ~wallFlagTable [i];
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		Refresh ();
 		}
 }
@@ -663,11 +663,11 @@ void CWallTool::OnStrength ()
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_wallP [bSide]) {
 		UpdateData (TRUE);
-		undoManager.Begin (udWalls);
+		undoManager.Begin (__FUNCTION__, udWalls);
 		m_wallP [bSide]->Info ().hps = (int) m_nStrength * F1_0;
 		if ((m_wallP [bSide]->Type () == WALL_COLORED) && m_bFlyThrough)
 			m_wallP [bSide]->Info ().hps = -m_wallP [bSide]->Info ().hps;
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		}
 }
 
@@ -678,10 +678,10 @@ void CWallTool::OnCloak ()
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_wallP [bSide]) {
 		UpdateData (TRUE);
-		undoManager.Begin (udWalls);
+		undoManager.Begin (__FUNCTION__, udWalls);
 		m_defWall.Info ().cloakValue =
 		m_wallP [bSide]->Info ().cloakValue = (char) (m_nCloak * 31.0 / 100.0) % 32;
-		undoManager.End ();
+		undoManager.End (__FUNCTION__);
 		}
 	else
 		INFOMSG ("wall not found");
