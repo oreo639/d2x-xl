@@ -473,7 +473,7 @@ if (Locked ()) {
 void CUndoHistory::Push (char* szId)
 {
 if (ToS () && (*Top () == szId))
-	STATUSMSG ("Undomanager redundancy");
+	INFOMSG ("Undomanager redundancy");
 CStack<char*>::Push (szId);
 }
 
