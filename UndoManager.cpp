@@ -472,8 +472,11 @@ if (Locked ()) {
 
 void CUndoHistory::Push (char* szId)
 {
-if (ToS () && (*Top () == szId))
-	INFOMSG ("Undomanager redundancy");
+if (ToS () && (*Top () == szId)) {
+	char szMsg [256];
+	sprintf_s (szMsg, sizeof (szMsg), "%s: Undo manager redundancy", szId);
+	INFOMSG (szMsg);
+	}
 CStack<char*>::Push (szId);
 }
 
@@ -482,7 +485,9 @@ CStack<char*>::Push (szId);
 void CUndoHistory::Pop (char* szId)
 {
 if (ToS () && (*Top () != szId)) {
-	INFOMSG ("Undo manager corrupted!");
+	char szMsg [256];
+	sprintf_s (szMsg, sizeof (szMsg), "%s: Undo manager corruption", szId);
+	INFOMSG (szMsg);
 	do {
 		CStack<char*>::Pop ();
 		} while (ToS () && (*Top () != szId));
