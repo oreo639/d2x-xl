@@ -412,7 +412,7 @@ return szDest;
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Begin (char* szFunction, int dataFlags, bool bCollect) 
+void CUndoManager::Begin (char* szFunction, int dataFlags, bool bAccumulate) 
 {
 if (!Locked ()) {
 	m_history.Push (szFunction);
@@ -425,7 +425,7 @@ if (!Locked ()) {
 			m_nMode = 0;
 			m_current.Destroy ();
 			}
-		m_bCollect = bCollect;
+		m_bCollect = bAccumulate;
 		}
 	m_current.Backup (dataFlags, (m_nNested == 1) ? szFunction : null);
 	}

@@ -367,7 +367,7 @@ class CUndoManager
 
 		void SetModified (bool bModified);
 
-		void Begin (char* szFunction, int dataFlags, bool bCollect = false);
+		void Begin (char* szFunction, int dataFlags, bool bAccumulate = false);
 
 		void End (char* szFunction);
 
