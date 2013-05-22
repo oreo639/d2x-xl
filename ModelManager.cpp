@@ -167,9 +167,12 @@ if (bCustom) {
 		fp.Seek (n * sizeof (int) * 2, SEEK_CUR); // skip dying and dead model numbers
 		n = fp.ReadInt32 ();                          
 		fp.Read (&m_textureIndex [0][m_nTextures], sizeof (ushort), n);
-		fp.Read (&m_modelTextureIndex [0][m_nIndices], sizeof (ushort), n);
 		memcpy (&m_textureIndex [1][m_nTextures], &m_textureIndex [0][m_nTextures], sizeof (ushort) * n);
+		m_nTextures += n;
+		n = fp.ReadInt32 ();                          
+		fp.Read (&m_modelTextureIndex [0][m_nIndices], sizeof (ushort), n);
 		memcpy (&m_modelTextureIndex [1][m_nIndices], &m_modelTextureIndex [0][m_nIndices], sizeof (ushort) * n);
+		m_nIndices += n;
 		}
 	}
 else {
