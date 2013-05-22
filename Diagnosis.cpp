@@ -525,12 +525,12 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 // check nChild range 
 		if ((nChild != -1) && (nChild != -2)) {
 			if (nChild < -2) {
-				sprintf_s (message, sizeof (message),"ERROR: Illegal child number %d (segment=%d, side=%d)",nChild,nSegment,nSide);
+				sprintf_s (message, sizeof (message),"ERROR: Illegal child number %d (segment=%d, side=%d)", nChild, nSegment, nSide);
 				if (UpdateStats (message, 1, nSegment, nSide))
 					return true;
 				}
 			else if (nChild >= segmentManager.Count ()) {
-				sprintf_s (message, sizeof (message),"ERROR: Child out of range %d (segment=%d, side=%d)",nChild,nSegment,nSide);
+				sprintf_s (message, sizeof (message),"ERROR: Child out of range %d (segment=%d, side=%d)", nChild, nSegment, nSide);
 				if (UpdateStats (message, 1, nSegment, nSide)) 
 					return true;
 				}
@@ -667,16 +667,14 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     // find center of segment then find maximum distance
 	// of corner to center.  Calculate Objects () distance
     // from center and make sure it is less than max corner.
-    center.Clear ();
-    for (corner = 0; corner < 8; corner++) {
-      center += *vertexManager.Vertex (segP->m_info.vertexIds[corner]);
-    }
-    center /= 8.0;
-    maxRadius = 0;
-    for (corner = 0; corner < 8; corner++) {
-		 radius = Distance (*vertexManager.Vertex (segP->m_info.vertexIds[corner]), center);
-		 maxRadius = max (maxRadius, radius);
-		 }
+   center = segP->ComputeCenter ();
+   maxRadius = 0;
+	for (corner = 0; corner < 8; corner++) {
+		if (segP->m_info.vertexIds [corner] <= MAX_VERTEX) {
+			radius = Distance (*vertexManager.Vertex (segP->m_info.vertexIds [corner]), center);
+			maxRadius = max (maxRadius, radius);
+			}
+		}
 	object_radius = Distance (objP->Position (), center);
    if ((object_radius > maxRadius) && (objP->Type () != OBJ_EFFECT)) {
       sprintf_s (message, sizeof (message),"ERROR: Object is outside of segment (object=%d, segment=%d)",nObject,nSegment);
@@ -1836,7 +1834,8 @@ for (nVertex = vertexManager.Count (); nVertex > 0; )
 CSegment *segP = segmentManager.Segment (0);
 for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
-		vertexManager.Status (segP->m_info.vertexIds [point]) |= NEW_MASK;
+		if (segP->m_info.vertexIds [point] <= MAX_VERTEX)
+			vertexManager.Status (segP->m_info.vertexIds [point]) |= NEW_MASK;
 
 for (nVertex = vertexManager.Count (); nVertex > 0; ) {
 	DLE.MainFrame ()->Progress ().StepIt ();

@@ -324,7 +324,7 @@ UpdateData (TRUE);
 
 if (delta) {
 	UpdateData (TRUE);
-	undoManager.Begin (__FUNCTION__, udSegments);
+	undoManager.Begin (__FUNCTION__, udSegments, true);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
 			sideP->m_info.uvls [current->Point ()].u -= delta;
@@ -353,7 +353,7 @@ UpdateData (TRUE);
 
 if (delta) {
 	UpdateData (TRUE);
-	undoManager.Begin (__FUNCTION__, udSegments);
+	undoManager.Begin (__FUNCTION__, udSegments, true);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
 			sideP->m_info.uvls [current->Point ()].v -= delta;
@@ -416,7 +416,7 @@ void CTextureTool::RotateUV (double angle, bool bUpdate)
 	CSide*	sideP = current->Side ();
 
 UpdateData (TRUE);
-undoManager.Begin (__FUNCTION__, udSegments);
+undoManager.Begin (__FUNCTION__, udSegments, true);
 for (int i = 0; i < sideP->VertexCount (); i++) 
 	sideP->Uvls (i)->Rotate (angle);
 if (bUpdate)

@@ -32,7 +32,7 @@ if ((seg1->ChildId (nSide1) != -1) || (seg2->ChildId (nSide2) != -1))
 	return false; 
 
 CSide* side1 = seg1->Side (nSide1);
-CSide* side2 = seg1->Side (nSide2);
+CSide* side2 = seg2->Side (nSide2);
 
 if (side1->Shape () != side2->Shape ())
 	return false;

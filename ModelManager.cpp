@@ -73,20 +73,21 @@ m_nModel = Model ();
 if (m_nModel < 0)
 	return 0;
 
-if (m_polyModels [0][m_nModel].m_info.renderData || m_polyModels [1][m_nModel].m_info.renderData || (m_renderModels [m_nModel].m_nModel >= 0))
+int bVertigo = objP->Id () > N_ROBOT_TYPES_D2;
+
+if (m_polyModels [0][m_nModel].m_info.renderData || (!bVertigo && (m_polyModels [1][m_nModel].m_info.renderData || (m_renderModels [m_nModel].m_nModel >= 0))))
 	return 1;
 
-char filename[256];
+char filename [256], d2xFilename [256];
 
 strcpy_s (filename, sizeof (filename), descentFolder [1]);
 char *slash = strrchr (filename, '\\');
 if (slash)
 	*(slash+1) = '\0';
 else
-	filename[0] = '\0';
+	filename [0] = '\0';
 
 int bCustom = robotManager.RobotInfo (objP->Id ())->Info ().bCustom;
-int bVertigo = objP->Id () > N_ROBOT_TYPES_D2;
 
 if (bCustom) {
 	char *psz = strstr (filename, "data");
@@ -102,6 +103,9 @@ else {
 	strcat_s (filename, sizeof (filename), "descent2.ham");
 	if (!ReadModelData (filename, "d2x.ham", bCustom != 0))
 		return 0;
+	//strcpy_s (d2xFilename, sizeof (d2xFilename), "..\\missions\\d2x.hog");
+	//if (!ReadModelData (d2xFilename, "d2x.ham", true))
+	//	return 0;
 	*strstr (filename, "descent2.ham") = '\0';
 	strcat_s (filename, sizeof (filename), "d2x-xl.hog");
 	robotManager.ReadHXM (filename, "d2x-xl.hxm", false);
@@ -164,6 +168,8 @@ if (bCustom) {
 		n = fp.ReadInt32 ();                          
 		fp.Read (&m_textureIndex [0][m_nTextures], sizeof (ushort), n);
 		fp.Read (&m_modelTextureIndex [0][m_nIndices], sizeof (ushort), n);
+		memcpy (&m_textureIndex [1][m_nTextures], &m_textureIndex [0][m_nTextures], sizeof (ushort) * n);
+		memcpy (&m_modelTextureIndex [1][m_nIndices], &m_modelTextureIndex [0][m_nIndices], sizeof (ushort) * n);
 		}
 	}
 else {

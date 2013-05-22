@@ -146,6 +146,7 @@ short nOppVertices = oppSideP->VertexCount ();
 newSegP->Setup ();
 
 if (nVertices == 3) { //create a wedge shaped segment when adding to a triangular segment side
+	newSegP->SetShape (SEGMENT_SHAPE_WEDGE);
 	short nSide = 0;
 	for (; nSide < 6; nSide++)
 		if ((nSide != nSides [0]) && (nSide != nSides [1]) && segP->Side (nSide)->Shape ())

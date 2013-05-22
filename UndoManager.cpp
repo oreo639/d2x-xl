@@ -82,8 +82,13 @@ m_dataFlags = 0;
 
 //------------------------------------------------------------------------------
 
-bool CUndoData::Backup (int dataFlags) 
+bool CUndoData::Backup (int dataFlags, char* szFunction) 
 {
+if (szFunction && *szFunction)
+	m_dataFlags = 0;
+else if (dataFlags == (m_dataFlags & dataFlags))
+	return false;
+
 if ((dataFlags & udVertices) && !(m_dataFlags & udVertices))
 	m_vertices.Backup (vertexManager.Vertex (0), &vertexManager.Count ());
 
@@ -131,9 +136,9 @@ if (!m_bSelections) {
 	memcpy (m_selections, selections, sizeof (selections));
 	m_bSelections = true;
 	}
-if (m_dataFlags == (m_dataFlags | dataFlags))
-	return false;
 m_dataFlags |= dataFlags;
+if (szFunction)
+	m_szFunction = szFunction;
 return true;
 }
 
@@ -365,9 +370,16 @@ return Id ();
 
 //------------------------------------------------------------------------------
 
+bool CUndoManager::Collecting (void)
+{
+return m_bCollect && (m_nHead != -1) && (m_nTail != m_nHead) && (m_nCurrent == m_nTail + 1) && (m_current.Function () == Tail ()->Function ()) && (m_current.DataFlags () == Tail ()->DataFlags ());
+}
+
+//------------------------------------------------------------------------------
+
 void CUndoManager::Backup (void)
 {
-if (!Locked () && !m_current.Cleanup ()) {
+if (!Locked () && !Collecting () && !m_current.Cleanup ()) {
 	SetModified (true);
 	Append ();
 	*Tail () = m_current;
@@ -400,33 +412,31 @@ return szDest;
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Begin (char* szId, int dataFlags) 
+void CUndoManager::Begin (char* szFunction, int dataFlags, bool bCollect) 
 {
 if (!Locked ()) {
-	if (m_history.ToS () && (*m_history.Top () == szId))
-		STATUSMSG ("Undomanager redundancy");
-	m_history.Push (szId);
+	m_history.Push (szFunction);
 	if (0 == m_nNested++) {
 #ifdef _DEBUG
-		if (m_nNested > 10)
-			m_nNested = m_nNested;
+		if (m_nNested > 3)
+			INFOMSG ("Undo manager corruption");
 #endif
 		if (m_nMode != 0) {
 			m_nMode = 0;
 			m_current.Destroy ();
 			}
+		m_bCollect = bCollect;
 		}
-	if (m_current.Backup (dataFlags))
-		++m_nNested;
+	m_current.Backup (dataFlags, (m_nNested == 1) ? szFunction : null);
 	}
 }
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::End (char* szId) 
+void CUndoManager::End (char* szFunction) 
 {
 if (!Locked () && (m_nNested > 0)) {
-	m_history.Pop (szId);
+	m_history.Pop (szFunction);
 	if (--m_nNested == 0)
 		Backup ();
 	}
@@ -445,10 +455,10 @@ return true;
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Unroll (char* szId) 
+void CUndoManager::Unroll (char* szFunction) 
 {
 if (m_nNested > 0) {
-	m_history.Pop (szId);
+	m_history.Pop (szFunction);
 	if (--m_nNested == 0) {
 		SetModified (false);
 		Revert ();
@@ -458,11 +468,11 @@ if (m_nNested > 0) {
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Unlock (char* szId) 
+void CUndoManager::Unlock (char* szFunction) 
 { 
 if (Locked ()) {
 	m_nLock--; 
-	m_lockHistory.Pop (szId);
+	m_lockHistory.Pop (szFunction);
 	}
 }
 
@@ -470,27 +480,27 @@ if (Locked ()) {
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CUndoHistory::Push (char* szId)
+void CUndoHistory::Push (char* szFunction)
 {
-if (ToS () && (*Top () == szId)) {
+if (ToS () && (*Top () == szFunction)) {
 	char szMsg [256];
-	sprintf_s (szMsg, sizeof (szMsg), "%s: Undo manager redundancy", szId);
+	sprintf_s (szMsg, sizeof (szMsg), "%s: Undo manager redundancy", szFunction);
 	INFOMSG (szMsg);
 	}
-CStack<char*>::Push (szId);
+CStack<char*>::Push (szFunction);
 }
 
 //------------------------------------------------------------------------------
 
-void CUndoHistory::Pop (char* szId)
+void CUndoHistory::Pop (char* szFunction)
 {
-if (ToS () && (*Top () != szId)) {
+if (ToS () && (*Top () != szFunction)) {
 	char szMsg [256];
-	sprintf_s (szMsg, sizeof (szMsg), "%s: Undo manager corruption", szId);
+	sprintf_s (szMsg, sizeof (szMsg), "%s: Undo manager corruption", szFunction);
 	INFOMSG (szMsg);
 	do {
 		CStack<char*>::Pop ();
-		} while (ToS () && (*Top () != szId));
+		} while (ToS () && (*Top () != szFunction));
 	}
 CStack<char*>::Pop ();
 }

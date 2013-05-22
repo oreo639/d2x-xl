@@ -187,7 +187,7 @@ public:
 
 	CVertex _const_ * Vertex (ushort nVertex) _const_;
 
-	CVertex _const_ * CSegment::Vertex (ushort nSide, short nIndex) _const_;
+	CVertex _const_ * Vertex (ushort nSide, short nIndex) _const_;
 
 	inline ushort* VertexIds (void) { return m_info.vertexIds; }
 

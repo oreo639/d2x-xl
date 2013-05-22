@@ -173,13 +173,16 @@ public:
 	CUndoItem<CReactorData>			m_reactorData;
 	CSelection							m_selections [2];
 
-	bool m_bSelections;
-	uint m_nId;
-	int m_dataFlags;
+	bool	m_bSelections;
+	uint	m_nId;
+	char* m_szFunction;
+	int	m_dataFlags;
 
 	inline uint& Id (void) { return m_nId; }
 
-	bool Backup (int dataFlags);
+	inline char* Function (void) { return m_szFunction; }
+	 
+	bool Backup (int dataFlags, char* szFunction = null);
 
 	bool Cleanup (void);
 
@@ -190,6 +193,8 @@ public:
 	void Reset (void);
 
 	inline bool Modified (void) { return m_dataFlags != 0; }
+
+	inline int DataFlags (void) { return m_dataFlags; }
 
 	CUndoData () : m_nId (0), m_bSelections (false) { }
 
@@ -293,8 +298,8 @@ class CBufPtr {
 class CUndoHistory : public CStack<char*>
 {
 	public:
-		void Push (char* szId);
-		void Pop (char* szId);
+		void Push (char* szFunction);
+		void Pop (char* szFunction);
 };
 
 //------------------------------------------------------------------------------
@@ -318,6 +323,7 @@ class CUndoManager
 		int				m_nMode;
 		int				m_nNested;
 		uint				m_nId;
+		bool				m_bCollect;
 		CUndoHistory	m_history;
 		CUndoHistory	m_lockHistory;
 
@@ -346,9 +352,9 @@ class CUndoManager
 
 		int Count (void);
 
-		inline void Lock (char* szId) { 
+		inline void Lock (char* szFunction) { 
 			++m_nLock; 
-			m_lockHistory.Push (szId);
+			m_lockHistory.Push (szFunction);
 			}
 
 		inline bool Locked (void) { return (m_nLock > 0); }
@@ -361,13 +367,15 @@ class CUndoManager
 
 		void SetModified (bool bModified);
 
-		void Begin (char* szId, int dataFlags);
+		void Begin (char* szFunction, int dataFlags, bool bCollect = false);
 
-		void End (char* szId);
+		void End (char* szFunction);
 
-		void Unroll (char* szId);
+		void Unroll (char* szFunction);
 
 		char* CreateId (char* szDest, char* szSrc);
+
+		bool Collecting (void);
 
 		CUndoManager (int maxSize = 100);
 
