@@ -161,6 +161,7 @@ if (nLayout) {
 	m_objectTools.Add (new CObjectAITool (IDD_OBJECT_AI_VERT, this), IDD_OBJECT_AI_VERT, "AI");
 	m_objectTools.Add (new CObjectDeathTool (IDD_OBJECT_DEATH_VERT, this), IDD_OBJECT_DEATH_VERT, "Death");
 	m_objectTools.Add (new CAdvancedObjTool (IDD_ADVOBJDATA_VERT, this), IDD_ADVOBJDATA_VERT, "Advanced");
+	m_objectTools.Add (new CObjectPositionTool (IDD_OBJECT_POSITION_VERT, this), IDD_OBJECT_POSITION_VERT, "Position");
 	}
 else {
 	m_objectTools.Add (new CObjectPhysicsTool (IDD_OBJECT_PHYSICS_HORZ, this), IDD_OBJECT_PHYSICS_HORZ, "Physics");
@@ -169,6 +170,7 @@ else {
 	m_objectTools.Add (new CObjectAITool (IDD_OBJECT_AI_HORZ, this), IDD_OBJECT_AI_HORZ, "AI");
 	m_objectTools.Add (new CObjectDeathTool (IDD_OBJECT_DEATH_HORZ, this), IDD_OBJECT_DEATH_HORZ, "Death");
 	m_objectTools.Add (new CAdvancedObjTool (IDD_ADVOBJDATA_HORZ, this), IDD_ADVOBJDATA_HORZ, "Advanced");
+	m_objectTools.Add (new CObjectPositionTool (IDD_OBJECT_POSITION_HORZ, this), IDD_OBJECT_POSITION_HORZ, "Position");
 	}
 m_objectTools.Setup ();
 
@@ -337,6 +339,7 @@ CBObjNo ()->SetCurSel (current->ObjectId ());
 // and the object list, then return
 if (current->ObjectId () == objectManager.Count ()) {
 	CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDC_OBJ_SPAWN_QTY, FALSE);
+	CToolDlg::EnableControls (IDC_OBJ_MULTIPLAYER, IDC_OBJ_MULTIPLAYER, FALSE);
 	CBObjNo ()->EnableWindow (TRUE);
 	BtnCtrl (IDC_OBJ_MOVE)->EnableWindow (TRUE);
 

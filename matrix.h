@@ -134,6 +134,7 @@ public:
 
 	CDoubleMatrix& Set (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
 	CDoubleMatrix& Set (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh);
+	void CopyTo (double& p, double& b, double& h);
 
 	CDoubleMatrix& Invert (CDoubleMatrix& m);
 	CDoubleMatrix Mul (const CDoubleMatrix& m);

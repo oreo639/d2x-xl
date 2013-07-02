@@ -432,6 +432,8 @@
 #define IDD_OBJECT_SOUND_HORZ			    10512
 #define IDD_OBJECT_AI_VERT					 10513
 #define IDD_OBJECT_AI_HORZ					 10514
+#define IDD_OBJECT_POSITION_VERT		 10515
+#define IDD_OBJECT_POSITION_HORZ		 10516
 
 #define IDC_OBJECT_TAB						 10500
 
@@ -552,6 +554,15 @@
 #define IDT_OBJ_CONT_PROB					 10615
 #define IDC_OBJ_CONT_TYPE					 10616
 #define IDC_OBJ_CONT_ID						 10617
+
+#define IDC_OBJ_SETLOC						 10630
+#define IDC_OBJ_RESETLOC					 10631
+#define IDC_OBJ_LOCX						 10632
+#define IDC_OBJ_LOCY						 10633
+#define IDC_OBJ_LOCZ						 10634
+#define IDC_OBJ_ROTP						 10635
+#define IDC_OBJ_ROTB						 10636
+#define IDC_OBJ_ROTH						 10637
 
 #define IDD_HOGMANAGER                  10600
 #define IDC_HOG_FILES                   10600

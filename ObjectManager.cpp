@@ -311,7 +311,7 @@ else {
 	// bump position over if this is not the first object in the segment
 	int i, count = 0;
 	for (i = 0; i < Count (); i++)
-		if (Object (i)->Info ().nSegment == nSegment) 
+		if (Object (i)->Info ().nSegment == nSegment && Index (objP) != i) 
 			count++;
 	objP->Info ().nSegment = current->SegmentId ();
 	objP->Position () = segmentManager.CalcCenter (center, nSegment);

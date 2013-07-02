@@ -715,6 +715,7 @@
     <ClCompile Include="..\ObjectTool.cpp" />
     <ClCompile Include="..\ObjectTool.Death.cpp" />
     <ClCompile Include="..\ObjectTool.Physics.cpp" />
+    <ClCompile Include="..\ObjectTool.Position.cpp" />
     <ClCompile Include="..\ObjectTool.Sound.cpp" />
     <ClCompile Include="..\OOFModel.cpp" />
     <ClCompile Include="..\OOFRenderModel.cpp" />

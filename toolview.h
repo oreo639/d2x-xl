@@ -678,6 +678,30 @@ class CAdvancedObjTool : public CObjectTabDlg
 
 //------------------------------------------------------------------------------
 
+class CObjectPositionTool : public CObjectTabDlg
+{
+	public:
+		double	m_nPos [3];
+		double	m_nOrient [3];
+
+		virtual BOOL OnInitDialog ();
+		virtual void EnableControls (BOOL bEnable);
+		virtual void DoDataExchange (CDataExchange *pDX);
+		virtual bool Refresh (void);
+		virtual void RefreshRobot (void);
+		virtual void UpdateRobot (void);
+
+		void RefreshObjOrient (CDoubleMatrix& orient);
+		afx_msg void OnSetLoc ();
+		afx_msg void OnResetLoc ();
+
+		CObjectPositionTool (UINT nId, CWnd* pParent = null) : CObjectTabDlg (nId, pParent) {}
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
 class CObjectTool : public CToolDlg
 {
 	public:
