@@ -298,6 +298,11 @@ class CSideMatcher {
 						if (m_match [i].d > maxRadius)
 							break;
 						}
+					// Check if each line segment intersects an opposing side. If it does, skip, this would create a degenerate segment
+					for (i = 0; i < m_nVertices; i++) {
+						if (DoesLineFromPointIntersectSides (i))
+							break;
+						}
 					if (i < m_nVertices)
 						continue;
 					double r = 0.0;
@@ -340,6 +345,50 @@ class CSideMatcher {
 				if (d < m_bestMatch [i].d)
 					d = m_bestMatch [i].d;
 			return d;
+			}
+
+		bool DoesLineFromPointIntersectSides (short point) {
+			if (m_nVertices <= 2)
+				return false;
+			if (m_match [point].v < 0 || m_match [point].v >= m_nVertices)
+				return false;
+			short adjacent1 = (point + 1) % m_nVertices;
+			if (m_match [adjacent1].v < 0 || m_match [adjacent1].v >= m_nVertices)
+				return false;
+			short opposite = (point + 2) % m_nVertices;
+			if (m_match [opposite].v < 0 || m_match [opposite].v >= m_nVertices)
+				return false;
+
+			// Not a perfectly accurate calculation of the triangles we will be generating, but close enough to avoid twisted cubes
+			CDoubleVector intersection;
+			// Side 1 triangle 1
+			CDoubleVector vPlane = *m_vertices [1][m_match [adjacent1].v] - *m_vertices [0][adjacent1];
+			CDoubleVector vNormal = CrossProduct (*m_vertices [0][opposite] - *m_vertices [0][adjacent1], vPlane);
+			if (PlaneLineIntersection (intersection, &vPlane, &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
+				return true;
+			// Side 1 triangle 2
+			vPlane = *m_vertices [1][m_match [opposite].v] - *m_vertices [0][opposite];
+			vNormal = CrossProduct (*m_vertices [0][opposite] - *m_vertices [0][adjacent1], vPlane);
+			if (PlaneLineIntersection (intersection, &vPlane, &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
+				return true;
+
+			// Triangular cross-sections don't have the extra side
+			if (m_nVertices > 3) {
+				short adjacent2 = (point + 3) % m_nVertices;
+				if (m_match [adjacent2].v < 0 || m_match [adjacent2].v >= m_nVertices)
+					return false;
+				// Side 2 triangle 1
+				vNormal = CrossProduct (*m_vertices [0][adjacent2] - *m_vertices [0][opposite], vPlane);
+				if (PlaneLineIntersection (intersection, &vPlane, &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
+					return true;
+				// Side 2 triangle 2
+				vPlane = *m_vertices [1][m_match [adjacent2].v] - *m_vertices [0][adjacent2];
+				vNormal = CrossProduct (*m_vertices [0][adjacent2] - *m_vertices [0][opposite], vPlane);
+				if (PlaneLineIntersection (intersection, &vPlane, &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
+					return true;
+				}
+
+			return false;
 			}
 	};
 
@@ -411,17 +460,17 @@ if (bFind) {
 	bJoin = true;
 	}
 else {
+	otherKey = *other; 
+	otherPoint = other->Point ();
+	thisPoint = current->Point ();
 	if (thisKey.m_nSegment == otherKey.m_nSegment) {
 		if (!DLE.ExpertMode ())
-			ErrorMsg ("You cannot joint two sides on the same segment.\n\n"
+			ErrorMsg ("You cannot join two sides on the same segment.\n\n"
 						 "Hint: The two red squares represent the current side, \n"
 						 "and the 'other' segment's current side.  Press 'S' to change\n"
 						 "the current side or press the space bar to switch to the other segment."); 
 		return; 
 		}
-	otherKey = *other; 
-	otherPoint = other->Point ();
-	thisPoint = current->Point ();
 
 	sideMatcher.SetSide (0, thisKey);
 	sideMatcher.SetSide (1, otherKey);
@@ -455,7 +504,7 @@ if (QueryMsg ("Do you want to create a new segment which\n"
 
 undoManager.Begin (__FUNCTION__, udSegments);
 
-thisKey.m_nSegment = Create (EXTEND);
+thisKey.m_nSegment = Create (thisKey, EXTEND);
 if (thisKey.m_nSegment < 0) {
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("The maximum number of segments has been reached.\nCannot add any more segments."); 
@@ -463,17 +512,7 @@ if (thisKey.m_nSegment < 0) {
 	return;
 	}
 
-
-sideMatcher.SetSide (0, thisKey);
-sideMatcher.Match (double (MAX_JOIN_DISTANCE));
-if (!sideMatcher.GetBestMatch (otherKey, otherPoint, match)) {
-	if (!DLE.ExpertMode ())
-		ErrorMsg ("Sides are too far apart to join.\n\n"
-					 "Hint: Segment edge lengths should not exceed 400 unit in any dimension\n"
-					 "or they will distort when viewed from close up."); 
-	undoManager.Unroll (__FUNCTION__);
-	return; 
-	}
+// We can now re-use the old Match call results, they are more accurate when calculated from the start segment
 
 LinkSides (thisKey.m_nSegment, thisKey.m_nSide, otherKey.m_nSegment, otherKey.m_nSide, match); 
 undoManager.End (__FUNCTION__);
