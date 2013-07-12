@@ -38,6 +38,7 @@ switch (m_object->m_info.type) {
 		break;
 	case OBJ_REACTOR:
 		switch (m_object->m_info.id) {
+			case 0:  nModel = 93;  break;
 			case 1:  nModel = 95;  break;
 			case 2:  nModel = 97;  break;
 			case 3:  nModel = 99;  break;

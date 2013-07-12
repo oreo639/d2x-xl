@@ -369,10 +369,12 @@ CHECKMINE;
 	CRect	rc;
 
 MainFrame ()->GetWindowRect (rc);
+#if 0 // looks like some monitor layouts actually do have negative offsets; we'll clip this on reloading
 if (rc.left < 0)
 	rc.left = 0;
 if (rc.top < 0)
 	rc.top = 0;
+#endif
 WritePrivateProfileInt ("xWin", rc.left);
 WritePrivateProfileInt ("yWin", rc.top);
 WritePrivateProfileInt ("cxWin", rc.Width ());
@@ -402,7 +404,9 @@ void CDLE::LoadLayout ()
 {
 CHECKMINE;
 
-	CRect	rc, tbrc;
+	CRect	rc, rcIntersect, tbrc;
+	HMONITOR hMonitor = NULL;
+	UINT bMaximize = 0;
 	UINT h = AFX_IDW_DOCKBAR_TOP;
 
 MainFrame ()->m_toolMode = GetPrivateProfileInt ("DLE", "ToolMode", 1, DLE.IniFile ());
@@ -414,19 +418,29 @@ rc.left = GetPrivateProfileInt ("DLE", "xWin", 0, DLE.IniFile ());
 rc.top = GetPrivateProfileInt ("DLE", "yWin", 0, DLE.IniFile ());
 rc.right = rc.left + GetPrivateProfileInt ("DLE", "cxWin", 0, DLE.IniFile ());
 rc.bottom = rc.top + GetPrivateProfileInt ("DLE", "cyWin", 0, DLE.IniFile ());
-if ((rc.left >= rc.right) || (rc.top >= rc.bottom) || 
-	 (rc.bottom < 0) || (rc.right < 0) ||
-	 (rc.left >= GetSystemMetrics (SM_CXSCREEN)) || (rc.top >= GetSystemMetrics (SM_CYSCREEN))) {
-	rc.left = rc.top = 0;
-	rc.right = GetSystemMetrics (SM_CXSCREEN);
-	rc.bottom = GetSystemMetrics (SM_CYSCREEN);
+
+hMonitor = MonitorFromRect (&rc, MONITOR_DEFAULTTONULL);
+if (!hMonitor) {
+	// Window rectangle lies entirely offscreen; move to primary monitor work area
+	SystemParametersInfo (SPI_GETWORKAREA, 0, &rc, 0);
+	bMaximize = 1;
 	}
-if (!rc.left && !rc.top && 
-	 (rc.right >= GetSystemMetrics (SM_CXSCREEN)) && 
-	 (rc.bottom >= GetSystemMetrics (SM_CYSCREEN)))
- 	MainFrame ()->ShowWindow (SW_SHOWMAXIMIZED);
-else
-	MainFrame ()->MoveWindow (&rc, TRUE);
+else {
+	MONITORINFO mi;
+	ZeroMemory (&mi, sizeof (MONITORINFO));
+	mi.cbSize = sizeof (MONITORINFO);
+	if (GetMonitorInfo (hMonitor, &mi)) {
+		// If the rect is larger than the monitor we'll maximize the window
+		IntersectRect (&rcIntersect, &rc, &mi.rcWork);
+		bMaximize = EqualRect (&mi.rcWork, &rcIntersect);
+		// Clip the window to this monitor
+		CopyRect (&rc, &rcIntersect);
+		}
+	}
+// Move it first anyway so we maximize it on the right monitor
+MainFrame ()->MoveWindow (&rc, TRUE);
+if (bMaximize)
+	MainFrame ()->ShowWindow (SW_SHOWMAXIMIZED);
 
 #if 0
 tbrc.left = GetPrivateProfileInt ("DLE", "xMainTB", 0, DLE.IniFile ());

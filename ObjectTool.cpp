@@ -619,7 +619,7 @@ switch(type) {
 				}
 			}
 		else {
-			for (i = 1; i <= 6; i++) {
+			for (i = 0; i <= 6; i++) {
 				sprintf_s (res.Value (), res.Size (), "%d", i);
 				h = pcb->AddString (res.Value ());
 				pcb->SetItemData (h, i);
@@ -956,6 +956,7 @@ switch (objP->Type ()) {
 		else {
 			int model;
 			switch(objP->Id ()) {
+				case 0: model = 93; break;
 				case 1: model = 95; break;
 				case 2: model = 97; break;
 				case 3: model = 99; break;

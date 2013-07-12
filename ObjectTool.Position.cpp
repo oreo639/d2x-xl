@@ -123,11 +123,17 @@ orient.CopyTo (m_nOrient [0], m_nOrient [1], m_nOrient [2]);
 m_nOrient [0] = Degrees (m_nOrient [0]);
 m_nOrient [1] = Degrees (m_nOrient [1]);
 m_nOrient [2] = Degrees (m_nOrient [2]);
-// prevent display from rounding to -180
+// Keep display roughly in the -179 to 180 range
 if (m_nOrient [0] + 180 < 0.01)
 	m_nOrient [0] += 360;
+else if (m_nOrient [0] > 180.01)
+	m_nOrient [0] -= 360;
 if (m_nOrient [1] + 180 < 0.01)
 	m_nOrient [1] += 360;
+else if (m_nOrient [1] > 180.01)
+	m_nOrient [1] -= 360;
 if (m_nOrient [2] + 180 < 0.01)
 	m_nOrient [2] += 360;
+else if (m_nOrient [2] > 180.01)
+	m_nOrient [2] -= 360;
 }

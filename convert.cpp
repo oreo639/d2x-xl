@@ -728,6 +728,7 @@ for (i = 0; i < objectManager.Count (); i++, objP++) {
 			break;
 		case OBJ_REACTOR: // the control center
 			objP->rType.polyModelInfo.nModel = D2_REACTOR_CLIP_NUMBER;
+			objP->Id () = 0; // only one reactor ID in D2 for this reactor type
 			break;
 		case OBJ_COOP: // a cooperative player object
 			objP->rType.polyModelInfo.nModel = D2_COOP_CLIP_NUMBER;
@@ -875,7 +876,7 @@ lightManager.LoadDefaults ();
 
 *szMsg = '\0';
 
-for (i = wallManager.WallCount () - 1; i; i--) {
+for (i = wallManager.WallCount () - 1; i >= 0; i--) {
 	if (wallManager.Wall (i)->Type () == WALL_OVERLAY) {
 		nDeleted [1]++;
 		if (wallManager.Wall (i)->Trigger ())
@@ -1039,7 +1040,8 @@ for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 
 // change trigger type and flags
 //-------------------------------------------
-trigP = triggerManager.Trigger (triggerManager.WallTriggerCount () - 1);
+if (triggerManager.WallTriggerCount () > 0)
+	trigP = triggerManager.Trigger (triggerManager.WallTriggerCount () - 1);
 for (i = triggerManager.WallTriggerCount () - 1; i >= 0; i--, trigP--) {
 	if (!trigP->Count ()) {
 		nDeleted [2]++;
@@ -1169,7 +1171,7 @@ sprintf_s (szMsg, sizeof (szMsg),
 			  "%d segments have been deleted\n%d walls have been deleted\n%d triggers have been deleted\n%d objects have been deleted\n%d contained objects have been deleted",
 			  nDeleted [0], nDeleted [1], nDeleted [2], nDeleted [3], nDeleted [4]);
 #endif
-if (szMsg)
+if (szMsg && strlen (szMsg))
 	ErrorMsg (szMsg);
 }
 

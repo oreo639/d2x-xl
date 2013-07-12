@@ -308,9 +308,9 @@ else {
 	CVertex center;
 	if (nSegment < 0)
 		nSegment = current->SegmentId ();
-	// bump position over if this is not the first object in the segment
+	// bump position over if this is not the first object in the segment (unless disabled in settings)
 	int i, count = 0;
-	for (i = 0; i < Count (); i++)
+	for (i = 0; (i < Count ()) && m_bBumpObjects; i++)
 		if (Object (i)->Info ().nSegment == nSegment && Index (objP) != i) 
 			count++;
 	objP->Info ().nSegment = current->SegmentId ();
@@ -318,20 +318,20 @@ else {
 	if (0 < count) {
 		int dir = ((count - 1) % 6) / 2;
 		//count -= 2 * dir;
-		i = ((count % 6) & 1) ? 1 : -1;
-		i *= count / 6 + 1;
-		i *= 3;
+		double bumpAmount = ((count % 6) & 1) ? 1 : -1;
+		bumpAmount *= count / 6 + 1;
+		bumpAmount *= m_bumpIncrement;
 		if (dir == 2) {
-			objP->Position ().v.x += i;
-			objP->m_location.lastPos.v.x += i;
+			objP->Position ().v.x += bumpAmount;
+			objP->m_location.lastPos.v.x += bumpAmount;
 			}
 		else if (dir == 1) {
-			objP->Position ().v.z += i;
-			objP->m_location.lastPos.v.z += i;
+			objP->Position ().v.z += bumpAmount;
+			objP->m_location.lastPos.v.z += bumpAmount;
 			}
 		else { //if (!dir || ((count - 1) / 6)) {
-			objP->Position ().v.y += i;
-			objP->m_location.lastPos.v.y += i;
+			objP->Position ().v.y += bumpAmount;
+			objP->m_location.lastPos.v.y += bumpAmount;
 			}
 		objP->Info ().nSegment = nSegment;
 		}

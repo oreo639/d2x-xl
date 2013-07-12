@@ -49,6 +49,8 @@ class CObjectManager {
 		CMineItemInfo	m_info;
 		CSecretExit		m_secretExit;
 		int				m_bSortObjects;
+		int				m_bBumpObjects;
+		double			m_bumpIncrement;
 
 	public:
 		CObjectManager ();
@@ -88,6 +90,10 @@ class CObjectManager {
 		bool HaveResources (void);
 
 		int& SortObjects (void) { return m_bSortObjects; }
+
+		int& BumpObjects (void) { return m_bBumpObjects; }
+
+		double& BumpIncrement (void) { return m_bumpIncrement; }
 
 		inline short Add (bool bUndo = true);
 

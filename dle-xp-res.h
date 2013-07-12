@@ -386,6 +386,7 @@
 #define IDC_PREFS_MINECENTER				 10452
 #define IDC_PREFS_PLAYER					 10453
 #define IDC_PREFS_UNDO						 10454
+#define IDC_PREFS_BUMPOBJECTS           10455
 
 #define IDD_LIGHTDATA_HORZ              10450
 #define IDD_LIGHTDATA_VERT              10451

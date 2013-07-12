@@ -68,6 +68,7 @@ BEGIN_MESSAGE_MAP(CSettingsTool, CToolDlg)
 	//ON_BN_CLICKED (IDC_PREFS_RENDERER_PERSPECTIVE, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_EXPERTMODE, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_SPLASHSCREEN, OnOK)
+	ON_BN_CLICKED (IDC_PREFS_BUMPOBJECTS, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_USETEXCOLORS, OnOK)
 	ON_EN_KILLFOCUS (IDC_PREFS_UNDO, OnOK)
 	ON_EN_KILLFOCUS (IDC_PREFS_MOVERATE, OnOK)
@@ -246,6 +247,7 @@ for (i = 0; i <= IDC_PREFS_VIEW_EFFECTS - IDC_PREFS_VIEW_ROBOTS; i++) {
 DDX_Check (pDX, IDC_PREFS_VIEW_DEPTHTEST, m_bDepthTest);
 DDX_Check (pDX, IDC_PREFS_EXPERTMODE, m_bExpertMode);
 DDX_Check (pDX, IDC_PREFS_SPLASHSCREEN, m_bSplashScreen);
+DDX_Check (pDX, IDC_PREFS_BUMPOBJECTS, m_bBumpObjects);
 DDX_Text (pDX, IDC_PREFS_UNDO, m_nMaxUndo);
 h = bSingleToolPane ? 3 : nLayout;
 DDX_Radio (pDX, IDC_PREFS_LAYOUT0, h);
@@ -358,6 +360,7 @@ m_bApplyFaceLightSettingsGlobally = lightManager.ApplyFaceLightSettingsGlobally 
 m_bSortObjects = objectManager.SortObjects ();
 m_bExpertMode = DLE.ExpertMode ();
 m_bSplashScreen = DLE.SplashScreen ();
+m_bBumpObjects = objectManager.BumpObjects ();
 }
 
 //------------------------------------------------------------------------------
@@ -403,6 +406,10 @@ if (bInitialize) {
 
 m_bExpertMode = GetPrivateProfileInt ("DLE", "ExpertMode", 1, DLE.IniFile ());
 m_bSplashScreen = GetPrivateProfileInt ("DLE", "SplashScreen", 1, DLE.IniFile ());
+m_bBumpObjects = GetPrivateProfileInt ("DLE", "BumpObjects", 1, DLE.IniFile ());
+char szBumpIncrement [100];
+GetPrivateProfileString ("DLE", "BumpIncrement", "3", szBumpIncrement, sizeof (szBumpIncrement), DLE.IniFile ());
+m_bumpIncrement = Clamp ((double) atof (szBumpIncrement), 0.001, 1000.0);
 m_mineViewFlags = GetPrivateProfileInt ("DLE", "MineViewFlags", m_mineViewFlags, DLE.IniFile ());
 m_objViewFlags = GetPrivateProfileInt ("DLE", "ObjViewFlags", m_objViewFlags, DLE.IniFile ());
 m_texViewFlags = GetPrivateProfileInt ("DLE", "TexViewFlags", m_texViewFlags, DLE.IniFile ());
@@ -439,6 +446,8 @@ sprintf_s (szMoveRate, sizeof (szMoveRate), "%1.3f", m_moveRate [1]);
 WritePrivateProfileDouble ("ViewMoveRate", m_moveRate [1]);
 WritePrivateProfileInt ("ExpertMode", m_bExpertMode);
 WritePrivateProfileInt ("SplashScreen", m_bSplashScreen);
+WritePrivateProfileInt ("BumpObjects", m_bBumpObjects);
+WritePrivateProfileDouble ("BumpIncrement", m_bumpIncrement);
 WritePrivateProfileInt ("DepthTest", m_bDepthTest);
 WritePrivateProfileInt ("MineViewFlags", m_mineViewFlags);
 WritePrivateProfileInt ("ObjViewFlags", m_objViewFlags);
@@ -553,6 +562,8 @@ DLE.ExpertMode () = m_bExpertMode;
 lightManager.ApplyFaceLightSettingsGlobally () = m_bApplyFaceLightSettingsGlobally;
 DLE.SplashScreen () = m_bSplashScreen;
 objectManager.SortObjects () = m_bSortObjects;
+objectManager.BumpObjects () = m_bBumpObjects;
+objectManager.BumpIncrement () = m_bumpIncrement;
 undoManager.SetMaxSize (m_nMaxUndo);
 if (bUpdate < 1)
 	SaveAppSettings (false);

@@ -221,7 +221,7 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 #define COOP_CLIP_NUMBER			(DLE.IsD1File () ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER)
 
 #define D1_REACTOR_CLIP_NUMBER	39
-#define D2_REACTOR_CLIP_NUMBER	97
+#define D2_REACTOR_CLIP_NUMBER	93 // D2 version of D1 reactor, only referenced during conversion
 #define REACTOR_CLIP_NUMBER		(DLE.IsD1File () ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER)
 
 // -----------------------------------------------------------------------------

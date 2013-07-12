@@ -243,6 +243,7 @@ switch (type) {
 		else {
 			int model;
 			switch (id) {
+				case 0:  model = 93;  break;
 				case 1:  model = 95;  break;
 				case 2:  model = 97;  break;
 				case 3:  model = 99;  break;
@@ -331,6 +332,7 @@ switch (m_info.type) {
 		nBitmap = 67;
 	else
 		switch (m_info.id) {
+			case 0: nBitmap = 67; break;
 			case 1: nBitmap = 68; break;
 			case 2: nBitmap = 69; break;
 			case 3: nBitmap = 70; break;

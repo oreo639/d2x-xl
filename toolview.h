@@ -1656,6 +1656,8 @@ class CSettingsTool : public CToolDlg
 		int				m_bExpertMode;
 		int				m_bApplyFaceLightSettingsGlobally;
 		int				m_bSortObjects;
+		int				m_bBumpObjects;
+		double			m_bumpIncrement;
 		int				m_nViewDist;
 		int				m_nMineCenter;
 		int				m_nRenderer;
