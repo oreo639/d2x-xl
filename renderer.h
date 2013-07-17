@@ -231,7 +231,7 @@ class CRenderer {
 		virtual void Ellipse (CPoint& p, int xRad, int yRad) { Ellipse (p.x, p.y, xRad, yRad); }
 		virtual void Ellipse (int x, int y, int xRad, int yRad) {
 			CVertex v;
-			v.m_screen.x = x, v.m_screen. y = 0;
+			v.m_screen.x = x, v.m_screen.y = y;
 			Ellipse (v, xRad, yRad);
 			}
 		virtual void MoveTo (CVertex& v) { MoveTo (v.m_screen.x, v.m_screen.y); }

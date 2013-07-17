@@ -357,10 +357,12 @@ for (i = 0; i < nTextures; i++) {
 		if (texture2 == i)
 			cbTexture2->SetCurSel (index);
 		cbTexture2->SetItemData (index, i);
-	if (textureManager.m_header [1].m_nVersion == 0)
-		textureManager.m_header [1].m_nVersion = 1;
+		if (textureManager.m_header [1].m_nVersion == 0)
+			textureManager.m_header [1].m_nVersion = 1;
 		}
 	}
+CToolDlg::CBUpdateListWidth (cbTexture1);
+CToolDlg::CBUpdateListWidth (cbTexture2);
 }
 
 //------------------------------------------------------------------------------

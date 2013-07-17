@@ -519,7 +519,7 @@ if (strcmp (descentFolder [1], m_d2Folder)) {
 		 (QueryMsg ("Changing the pig file will affect the custom textures\n"
 						"in this level because of the change in palette.\n"
 						"(Reload the level to int custom texture appeareance.)\n\n"
-						"Are you sure you want to do this?") != IDOK))
+						"Are you sure you want to do this?") != IDYES))
 		bChangePig = false;
 	if (bChangePig) {
 		strcpy_s (descentFolder [1], sizeof (descentFolder [1]), m_d2Folder);

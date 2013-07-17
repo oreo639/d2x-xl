@@ -513,7 +513,7 @@ void CViewMatrixGL::Unproject (CVertex& vWorld, CLongVector& vScreen, CPoint& vi
 {
 	CDoubleVector vView;
 
-gluUnProject (GLdouble (vScreen.x), GLdouble (vScreen.y), GLdouble (vScreen.z), 
+gluUnProject (GLdouble (vScreen.x), GLdouble (vScreen.y), GLdouble (vScreen.z) / 10000.0, 
 				  m_modelView, m_projection, m_viewport, 
 				  &vView.v.x, &vView.v.y, &vView.v.z);
 if (m_nPerspective) {

@@ -590,6 +590,7 @@ bool CTextureEdit::LoadBitmap (CFileManager& fp)
 	ubyte palIndexTable [256];
 	bool bFuncRes = false;
 	uint x, y, width, paletteSize;
+	bool bTopDown = false;
 
 palette = new RGBQUAD [256];
 if (palette == null) {
@@ -610,8 +611,10 @@ fp.Read (&bmih, sizeof (bmih), 1);
 // handle exceptions
 if (bmih.biClrUsed == 0)  
 	bmih.biClrUsed = 256;
-if (bmih.biHeight < 0) 
+if (bmih.biHeight < 0) {
 	bmih.biHeight = -bmih.biHeight;
+	bTopDown = true;
+	}
 
 // make sure it is a bitmap file
 if (bmfh.bfType != 'B' + (((ushort) 'M') << 8) ) {
@@ -734,6 +737,10 @@ else {
 	x1 = m_nWidth;
 	y1 = m_nHeight;
 	}
+if (bTopDown) {
+	y0 = ~y0;
+	y1 = ~y1;
+	}
 
 // save bitmap for undo command
 m_nSize = m_nWidth * m_nHeight;
@@ -771,6 +778,7 @@ for (y = 0; y < m_nHeight; y++) {
 		else {
 			fp.Seek ((int) bmfh.bfOffBits + (int) v *(int) width + (int) u, SEEK_SET);
 			fp.Read (&palIndex, 1, 1);
+			i = palIndexTable [palIndex];
 			m_texture [0][z] = palette [palIndex];
 			}
 		if (i >= 254)
@@ -814,7 +822,7 @@ void CTextureEdit::OnLoad ()
 
 if (GetOpenFileName (&ofn)) {
 	if (strchr (ofn.lpstrFile, '.'))
-		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strchr (ofn.lpstrFile, '.') + 1, 3);
+		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strrchr (ofn.lpstrFile, '.') + 1, 3);
 	if (!fp.Open (ofn.lpstrFile, "rb")) {
 		ErrorMsg ("Could not open texture file.");
 		goto errorExit;
@@ -853,10 +861,10 @@ bmfh.bfReserved1 = 0;
 bmfh.bfReserved2 = 0;
 bmfh.bfOffBits   = sizeof (BITMAPFILEHEADER) + sizeof (BITMAPINFOHEADER) + 256 * 4;
 
-// define the bitmap header
+// define the bitmap header (top-down)
 BITMAPINFO* bmi = paletteManager.BMI ();
 bmi->bmiHeader.biWidth = m_nWidth;
-bmi->bmiHeader.biHeight = m_nHeight;
+bmi->bmiHeader.biHeight = -((LONG)m_nHeight);
 
 // write the headers
 fp.Write (&bmfh, sizeof (BITMAPFILEHEADER), 1);

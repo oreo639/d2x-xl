@@ -209,6 +209,27 @@ pcb->SetCurSel (0);
 }
 
 //------------------------------------------------------------------------------
+
+void CDlgHelpers::CBUpdateListWidth (CComboBox *pcb)
+{
+	int width = 0;
+	CDC *dc = pcb->GetDC ();
+	CFont *fontOld = dc->SelectObject (pcb->GetFont ());
+	CString itemString;
+
+for (int i = 0; i < pcb->GetCount (); i++) {
+	pcb->GetLBText (i, itemString);
+	width = max (width, dc->GetTextExtent (itemString).cx);
+	}
+
+dc->SelectObject (fontOld);
+pcb->ReleaseDC (dc);
+width += ::GetSystemMetrics (SM_CXVSCROLL) + 2 * ::GetSystemMetrics (SM_CXEDGE);
+pcb->SetDroppedWidth (width);
+pcb->SetEditSel (-1, 0);
+}
+
+//------------------------------------------------------------------------------
 		
 BOOL CDlgHelpers::SelectColor (BYTE& red, BYTE& green, BYTE& blue)
 {

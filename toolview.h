@@ -77,6 +77,7 @@ class CDlgHelpers {
 		void CBInit (CComboBox *pcb, char* pszNames [], ubyte *pIndex, ubyte *pItemData, int nMax, int nType = 0, bool bAddNone = false);
 		int CBAddString (CComboBox *pcb, char *str);
 		void SelectItemData (CComboBox *pcb, int nItemData);
+		void CBUpdateListWidth (CComboBox *pcb);
 		void EnableControls (int nIdFirst, int nIdLast, BOOL bEnable);
 
 		BOOL SelectColor (BYTE& red, BYTE& green, BYTE& blue);
