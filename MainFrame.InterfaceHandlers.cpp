@@ -392,7 +392,7 @@ MineView ()->FitToView ();
 
 void CMainFrame::OnViewTogglePerspective () 
 {
-DLE.ToolView ()->SettingsTool ()->TogglePerspective ();
+appSettings.TogglePerspective ();
 }
 
 void CMainFrame::OnMakePointsParallel () 

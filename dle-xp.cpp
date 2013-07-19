@@ -275,7 +275,7 @@ BOOL CDLE::InitInstance()
 	if (*cmdInfo.m_strFileName)
 		GetDocument ()->OpenFile (false, cmdInfo.m_strFileName.GetBuffer (256), null /*"*"*/);
 	if (ToolView ()->SettingsTool ())
-		ToolView ()->SettingsTool ()->SetAppSettings (-1);
+		appSettings.Set (-1);
 	if (*missionFolder)
 		::SetCurrentDirectory (missionFolder);
 	MineView ()->DelayRefresh (false);

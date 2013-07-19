@@ -174,7 +174,6 @@ else {
 	}
 m_objectTools.Setup ();
 
-
 short nTextures = (DLE.IsD1File ()) ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2;
 
 CComboBox *pcb = CBObjTexture ();
@@ -202,7 +201,7 @@ return TRUE;
 
 void CObjectTool::DoDataExchange (CDataExchange *pDX)
 {
-DDX_Control (pDX, IDC_OBJECT_TAB, m_objectTools);
+DDX_Control (pDX, IDC_TOOL_TAB, m_objectTools);
 if (!HaveData (pDX)) 
 	return;
 //DDX_Text (pDX, IDC_OBJ_SPAWN_QTY, m_nSpawnQty);

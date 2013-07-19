@@ -1637,12 +1637,12 @@ class CLightTool : public CToolDlg
 
 //------------------------------------------------------------------------------
 
-class CSettingsTool : public CToolDlg
-{
+class CAppSettings {
+	private:
+		bool				m_bInited;
+		bool				m_bInvalid;
+
 	public:
-		CBitmapButton	m_btnBrowseD1PIG;
-		CBitmapButton	m_btnBrowseD2PIG;
-		CBitmapButton	m_btnBrowseMissions;
 		char				m_d1Folder [256];
 		char				m_d2Folder [256];
 		char				m_missionFolder [256];
@@ -1666,53 +1666,180 @@ class CSettingsTool : public CToolDlg
 		int				m_nMaxUndo;
 		BOOL				m_bSplashScreen;
 		BOOL				m_bDepthTest;
-		bool				m_bNoRefresh;
-		bool				m_bInvalid;
+
+		void WritePrivateProfileInt (LPSTR szKey, int nValue);
+		void WritePrivateProfileDouble (LPSTR szKey, double nValue);
+		void Get (bool bGetFolders = true);
+		void Set (int bUpdate = 0);
+		void Setup (void);
+		void Load (bool bInitialize = false);
+		void Save (bool bSaveFolders = true);
+		void SetPerspective (int nPerspective);
+		void TogglePerspective (void);
+		void ReloadTextures (int nVersion);
+		void SetLayout (int nLayout);
+		void SetRenderer (int nRenderer);
+		void CompletePath (LPSTR pszPath, LPSTR pszFile, LPSTR pszExt);
+	};
+
+extern CAppSettings appSettings;
+
+//------------------------------------------------------------------------------
+
+class CSettingsTabDlg : public CTabDlg
+{
+	public:
+		virtual void RefreshSettings (void) {}
+		virtual void UpdateSettings (void);
+
+		afx_msg void OnChange () { UpdateSettings (); }
+
+		void InitSliders (CDialog* parent, CExtSliderCtrl* sliders, CSliderData* data, int nSliders);
+
+		CSettingsTabDlg (UINT nId, CWnd* pParent = null) : CTabDlg (nId, pParent) {} 
+};
+
+//------------------------------------------------------------------------------
+
+class CFileSettingsTool : public CSettingsTabDlg
+{
+	public:
+		CBitmapButton	m_btnBrowseD1PIG;
+		CBitmapButton	m_btnBrowseD2PIG;
+		CBitmapButton	m_btnBrowseMissions;
+
+      virtual BOOL OnInitDialog ();
+      virtual void DoDataExchange (CDataExchange *pDX);
+		bool BrowseFile (LPSTR fileType, LPSTR fileName, LPSTR fileExt, BOOL bOpen);
+
+		afx_msg void OnOpenD1PIG (void);
+		afx_msg void OnOpenD2PIG (void);
+		afx_msg void OnOpenMissions (void);
+
+		CFileSettingsTool (UINT nId, CWnd* pParent = null) : CSettingsTabDlg (nId, pParent) {}
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
+class CLayoutSettingsTool : public CSettingsTabDlg
+{
+	public:
+      virtual BOOL OnInitDialog ();
+      virtual void DoDataExchange (CDataExchange *pDX);
+
+		afx_msg void OnLayout0 (void);
+		afx_msg void OnLayout1 (void);
+		afx_msg void OnLayout2 (void);
+		afx_msg void OnLayout3 (void);
+
+		CLayoutSettingsTool (UINT nId, CWnd* pParent = null) : CSettingsTabDlg (nId, pParent) {}
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
+class CRendererSettingsTool : public CSettingsTabDlg
+{
+	public:
+      virtual BOOL OnInitDialog ();
+      virtual void DoDataExchange (CDataExchange *pDX);
+
+		void OnScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+
+		afx_msg void OnRendererSW (void);
+		afx_msg void OnRendererGL (void);
+		afx_msg void OnSetMineCenter (void);
+
+		CRendererSettingsTool (UINT nId, CWnd* pParent = null) : CSettingsTabDlg (nId, pParent) {}
+
+		inline CSliderCtrl* ViewDistSlider () { return SlCtrl (IDC_PREFS_VIEWDIST); }
+		inline CComboBox *CBMineCenter () { return CBCtrl (IDC_PREFS_MINECENTER); }
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
+class CVisibilitySettingsTool : public CSettingsTabDlg
+{
+	public:
+      virtual BOOL OnInitDialog ();
+      virtual void DoDataExchange (CDataExchange *pDX);
+
+		bool OnScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+
+		afx_msg void OnViewObjectsNone (void);
+		afx_msg void OnViewObjectsAll (void);
+		afx_msg void OnViewMineNone (void);
+		afx_msg void OnViewMineAll (void);
+
+		CVisibilitySettingsTool (UINT nId, CWnd* pParent = null) : CSettingsTabDlg (nId, pParent) {}
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
+class CEditorSettingsTool : public CSettingsTabDlg
+{
+	public:
 		CExtSliderCtrl	m_rotateRate;
+
+      virtual BOOL OnInitDialog ();
+      virtual void DoDataExchange (CDataExchange *pDX);
+
+		bool OnScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+
+		CEditorSettingsTool (UINT nId, CWnd* pParent = null) : CSettingsTabDlg (nId, pParent) {}
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
+class CMiscSettingsTool : public CSettingsTabDlg
+{
+	public:
+      virtual BOOL OnInitDialog ();
+      virtual void DoDataExchange (CDataExchange *pDX);
+
+		bool OnScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+
+		CMiscSettingsTool (UINT nId, CWnd* pParent = null) : CSettingsTabDlg (nId, pParent) {}
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
+class CSettingsTool : public CToolDlg
+{
+	public:
+		CToolTabCtrl	m_settingsTools;
+		bool				m_bNoRefresh;
+		bool				m_bInited;
+		bool				m_bInvalid;
 
 		CSettingsTool (CPropertySheet *pParent = null);
 		~CSettingsTool ();
-		bool BrowseFile (LPSTR fileType, LPSTR fileName, LPSTR fileExt, BOOL bOpen);
 	   virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
 		virtual BOOL OnSetActive ();
 		virtual void OnOK (void);
 		virtual void OnCancel (void);
-		void OnScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
-		void ReloadTextures (int nVersion);
-		afx_msg void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
-		afx_msg void OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
-		afx_msg void OnOpenD1PIG (void);
-		afx_msg void OnOpenD2PIG (void);
-		afx_msg void OnOpenMissions (void);
-		afx_msg void OnViewMineNone (void);
-		afx_msg void OnViewMineAll (void);
-		afx_msg void OnViewObjectsNone (void);
-		afx_msg void OnViewObjectsAll (void);
-		afx_msg void OnLayout0 (void);
-		afx_msg void OnLayout1 (void);
-		afx_msg void OnLayout2 (void);
-		afx_msg void OnLayout3 (void);
-		afx_msg void OnRenderer (int nRenderer);
-		afx_msg void OnRendererSW (void);
-		afx_msg void OnRendererGL (void);
-		afx_msg void OnSetMineCenter (void);
-		void SetLayout (int nLayout);
-		void FreeTextureHandles (bool bDeleteAll = true);
 		void Refresh (void);
-		void WritePrivateProfileInt (LPSTR szKey, int nValue);
-		void WritePrivateProfileDouble (LPSTR szKey, double nValue);
-		void GetAppSettings (bool bGetFolders = true);
-		void SetAppSettings (int bUpdate = 0);
-		void LoadAppSettings (bool bInitialize = false);
-		void SaveAppSettings (bool bSaveFolders = true);
-		void CompletePath (LPSTR pszPath, LPSTR pszFile, LPSTR pszExt);
-		void SetPerspective (int nPerspective);
-		void TogglePerspective (void);
-		inline CSliderCtrl* ViewDistSlider ()
-			{ return SlCtrl (IDC_PREFS_VIEWDIST)/*->GetScrollBarCtrl (SB_CTL)*/; }
-		inline CComboBox *CBMineCenter ()
-			{ return CBCtrl(IDC_PREFS_MINECENTER); }
+		void Update (bool bRefresh = true);
 
 		DECLARE_MESSAGE_MAP()
 };

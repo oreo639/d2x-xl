@@ -32,7 +32,7 @@ IMPLEMENT_DYNCREATE(CToolTabCtrl, CTabCtrl)
 
 BEGIN_MESSAGE_MAP(CToolTabCtrl, CTabCtrl)
 	ON_WM_LBUTTONDOWN()
-	ON_NOTIFY(TCN_SELCHANGE, IDC_EFFECT_TAB, OnSelchangeTab)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TOOL_TAB, OnSelchangeTab)
 END_MESSAGE_MAP()
 
 //------------------------------------------------------------------------------

@@ -237,7 +237,7 @@ void CMineView::SetPerspective (int nPerspective)
 if (Renderer ().SetPerspective (nPerspective)) {
 	FitToView ();
 	Refresh ();
-	DLE.ToolView ()->SettingsTool ()->m_nPerspective = nPerspective;
+	appSettings.m_nPerspective = nPerspective;
 	}
 }
 

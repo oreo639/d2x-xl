@@ -724,6 +724,12 @@
     <ClCompile Include="..\RenderBuffers.cpp" />
     <ClCompile Include="..\SegmentTool.cpp" />
     <ClCompile Include="..\SettingsTool.cpp" />
+    <ClCompile Include="..\SettingsTool.Editor.cpp" />
+    <ClCompile Include="..\SettingsTool.Files.cpp" />
+    <ClCompile Include="..\SettingsTool.Layout.cpp" />
+    <ClCompile Include="..\SettingsTool.Misc.cpp" />
+    <ClCompile Include="..\SettingsTool.Renderer.cpp" />
+    <ClCompile Include="..\SettingsTool.Visibility.cpp" />
     <ClCompile Include="..\StdAfx.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>

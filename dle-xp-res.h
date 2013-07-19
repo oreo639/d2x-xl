@@ -332,9 +332,25 @@
 #define IDC_TEXLIGHT_COLORINDEX         10417
 #define IDC_TEXLIGHT_COLOR					 10418
 
-#define IDD_PREFSDATA_HORZ              10400
-#define IDD_PREFSDATA_VERT              10401
-#define IDD_PREFSDATA_FLOAT             10402
+#define IDC_SETTINGS_TAB                10400
+
+#define IDD_SETTINGS_HORZ					 10400
+#define IDD_SETTINGS_VERT					 10401
+#define IDD_SETTINGS_FLOAT					 10402
+
+#define IDD_PREFS_FILES_VERT            10403
+#define IDD_PREFS_FILES_HORZ            10404
+#define IDD_PREFS_LAYOUT_VERT           10405
+#define IDD_PREFS_LAYOUT_HORZ           10406
+#define IDD_PREFS_RENDERER_VERT         10407
+#define IDD_PREFS_RENDERER_HORZ         10408
+#define IDD_PREFS_EDITOR_VERT           10409
+#define IDD_PREFS_EDITOR_HORZ           10410
+#define IDD_PREFS_VISIBILITY_VERT       10411
+#define IDD_PREFS_VISIBILITY_HORZ       10412
+#define IDD_PREFS_MISC_VERT             10413
+#define IDD_PREFS_MISC_HORZ             10414
+
 #define IDC_PREFS_PATH_D1PIG            10401
 #define IDC_PREFS_PATH_D2PIG            10402
 #define IDC_PREFS_PATH_MISSIONS         10403
@@ -359,7 +375,7 @@
 #define IDC_PREFS_VIEW_LIGHTS           10425
 #define IDC_PREFS_VIEW_SHADING          10426
 #define IDC_PREFS_VIEW_DELTALIGHTS      10427
-#define IDC_PREFS_VIEW_HIDE_TAGGED       10428
+#define IDC_PREFS_VIEW_HIDE_TAGGED      10428
 #define IDC_PREFS_VIEW_SKYBOX				 10429
 #define IDC_PREFS_VIEW_ALLTEXTURES		 10430
 #define IDC_PREFS_VIEW_ROBOTS			 	 10431
@@ -433,8 +449,8 @@
 #define IDD_OBJECT_SOUND_HORZ			    10512
 #define IDD_OBJECT_AI_VERT					 10513
 #define IDD_OBJECT_AI_HORZ					 10514
-#define IDD_OBJECT_POSITION_VERT		 10515
-#define IDD_OBJECT_POSITION_HORZ		 10516
+#define IDD_OBJECT_POSITION_VERT			 10515
+#define IDD_OBJECT_POSITION_HORZ			 10516
 
 #define IDC_OBJECT_TAB						 10500
 
@@ -558,12 +574,12 @@
 
 #define IDC_OBJ_SETLOC						 10630
 #define IDC_OBJ_RESETLOC					 10631
-#define IDC_OBJ_LOCX						 10632
-#define IDC_OBJ_LOCY						 10633
-#define IDC_OBJ_LOCZ						 10634
-#define IDC_OBJ_ROTP						 10635
-#define IDC_OBJ_ROTB						 10636
-#define IDC_OBJ_ROTH						 10637
+#define IDC_OBJ_LOCX							 10632
+#define IDC_OBJ_LOCY							 10633
+#define IDC_OBJ_LOCZ							 10634
+#define IDC_OBJ_ROTP							 10635
+#define IDC_OBJ_ROTB							 10636
+#define IDC_OBJ_ROTH							 10637
 
 #define IDD_HOGMANAGER                  10600
 #define IDC_HOG_FILES                   10600
@@ -771,7 +787,7 @@
 #define IDD_EFFECTDATA_VERT_OLD         11711
 #define IDD_EFFECTDATA_HORZ_OLD         11712
 
-#define IDC_EFFECT_TAB						 11700
+#define IDC_TOOL_TAB							 11700
 
 #define IDC_LIGHTNING_ID                11701
 #define IDC_LIGHTNING_TARGET            11702

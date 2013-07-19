@@ -157,7 +157,7 @@ if (nLayout == 2) {
 	CWnd* pParent = DLE.MainFrame ();
 	if (!m_settingsTool) { // must happen first because program settings that are subsequently required will be loaded here
 		m_settingsTool = new CSettingsTool (null);
-		m_settingsTool->Create (IDD_PREFSDATA_FLOAT);
+		m_settingsTool->Create (IDD_SETTINGS_FLOAT);
 		}
 	if (!m_textureTool) {
 		m_textureTool = new CTextureTool (null);

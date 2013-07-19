@@ -98,7 +98,7 @@ if (m_bEditorTB)
 #endif
 DLE.SaveLayout ();
 if (ToolView ()->SettingsTool ())
-	ToolView ()->SettingsTool ()->SaveAppSettings ();
+	appSettings.Save ();
 ToolView ()->Destroy ();
 CFrameWnd::OnClose ();
 }
