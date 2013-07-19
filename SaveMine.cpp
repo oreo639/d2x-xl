@@ -36,7 +36,7 @@ fp.WriteInt32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L'); // signature
 // otherwise, blinking lights will not work.
 if (LevelVersion () < 7 && IsD2File ()) {
 	SetLevelVersion (7);
-}
+	}
 if (IsD2XLevel () && LevelIsOutdated ()) {
 	UpdateLevelVersion ();
 	segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT);

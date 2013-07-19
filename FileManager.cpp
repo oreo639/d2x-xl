@@ -543,8 +543,10 @@ int CFileManager::Copy (const char *pszSrc, const char *pszDest)
 
 if (!cf.Open (pszDest, "wb"))
 	return -1;
-if (Open (pszSrc, "rb"))
+if (!Open (pszSrc, "rb")) {
+	cf.Close ();
 	return -2;
+	}
 while (!EoF ()) {
 	int nRead = (int) Read (buffer, 1, COPY_BUF_SIZE);
 	if (Error ()) {
@@ -555,7 +557,7 @@ while (!EoF ()) {
 	if (cf.Error ()) {
 		cf.Close ();
 		return -2;
-	}
+		}
 	}
 if (!Close ()) {
 	cf.Close ();
