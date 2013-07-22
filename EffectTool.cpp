@@ -107,7 +107,7 @@ return TRUE;
 
 void CEffectTool::DoDataExchange (CDataExchange *pDX)
 {
-DDX_Control (pDX, IDC_EFFECT_TAB, m_effectTools);
+DDX_Control (pDX, IDC_TOOL_TAB, m_effectTools);
 if (!HaveData (pDX)) 
 	return;
 CGameObject *objP = current->Object ();
