@@ -198,7 +198,7 @@ if (strcmp (descentFolder [0], appSettings.m_d1Folder)) {
 	}
 
 _strlwr_s (appSettings.m_d2Folder, sizeof (appSettings.m_d2Folder));
-if (strcmp (descentFolder [1], appSettings.m_d2Folder)) {
+if (strcmp (descentFolder [1], appSettings.m_d2Folder) && (bUpdate < 0)) {
 	bool	bChangePig = true;
 	if (textureManager.HasCustomTextures () &&
 		 (QueryMsg ("Changing the pig file will affect the custom textures\n"
@@ -331,7 +331,7 @@ if (bInitialize) {
 	strcpy_s (appSettings.m_missionFolder, sizeof (appSettings.m_missionFolder), missionFolder);
 	//CompletePath (appSettings.m_missionFolder, "descent2.hog", ".hog");
 	GetPrivateProfileString ("DLE", "PlayerProfile", szPlayerProfile, szPlayerProfile, sizeof (szPlayerProfile), DLE.IniFile ());
-	strcpy (modFolder, descentFolder [1]);
+	CFileManager::SplitPath (descentFolder [1], modFolder, null, null);
 	ps = strstr (modFolder, "data");
 	if (ps)
 		strcpy (ps, "mods");

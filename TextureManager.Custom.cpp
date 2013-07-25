@@ -185,7 +185,7 @@ pigTexInfo.offset = nOffset;
 // check for transparency and super transparency
 if (!texP->m_info.nFormat)
 	try {
-	if (srcP = (ubyte *) texP->Buffer ()) {
+	if (srcP = (ubyte *) texP->ToBitmap (false)) {
 		for (uint j = 0, h = texP->Size (0); j < h; j++, srcP++) {
 			if (*srcP == 255) 
 				pigTexInfo.flags |= BM_FLAG_TRANSPARENT;
