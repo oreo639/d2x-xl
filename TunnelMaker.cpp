@@ -1354,7 +1354,8 @@ if (Update () && Create ()) {
 
 void CTunnelMaker::Finer (void) 
 {
-++m_nGranularity;
+if (m_bActive && m_nSteps < MaxSegments () - 1)
+	++m_nGranularity;
 DLE.MineView ()->Refresh ();
 }
 
@@ -1362,7 +1363,8 @@ DLE.MineView ()->Refresh ();
 
 void CTunnelMaker::Coarser (void) 
 {
---m_nGranularity;
+if (m_bActive && m_nSteps > 3)
+	--m_nGranularity;
 DLE.MineView ()->Refresh ();
 }
 

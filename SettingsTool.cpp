@@ -120,6 +120,7 @@ if (::IsWindow (m_hWnd) && !m_bNoRefresh) {
 void CSettingsTool::Update (bool bRefresh)
 {
 UpdateData (TRUE);
+Current ()->UpdateData (TRUE);
 m_bNoRefresh = true;
 appSettings.Set (-1);
 m_bNoRefresh = false;

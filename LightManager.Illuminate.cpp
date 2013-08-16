@@ -877,8 +877,8 @@ return (cornerLights [0] != 0.0) || (cornerLights [1] != 0.0) || (cornerLights [
 
 void CLightManager::SetObjectLight (bool bAll, bool bDynSegLights)
 {
-	long nLight = D2X (m_fObjectLight); //24.0 * 327.68);
 	double fLight = m_fObjectLight / 100.0;
+	long nLight = D2X (fLight) * 12; //24.0 * 327.68);
 
 undoManager.Begin (__FUNCTION__, udSegments);
 int nSegments = segmentManager.Count ();
@@ -895,16 +895,17 @@ for (int si = 0; si < nSegments; si++) {
 		for (short nSide = 0; nSide < 6; nSide++) {
 			if (bAll || sideP->IsTagged ()) {
 				for (short nCorner = 0; nCorner < 4; nCorner++) {
-					ushort h = (ushort) sideP [nSide].m_info.uvls [nCorner].l;
+					uint h = (uint) sideP [nSide].m_info.uvls [nCorner].l;
 					if (h || !sideP->IsVisible ()) {
 						l += h;
 						c++;
 						}
 					}
 				}
-			segP->Backup ();
-			segP->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
 			}
+		segP->Backup ();
+		// Segment light values seem to be higher than corner light values - factor of about 12
+		segP->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 * 12 : nLight);
 		}
 	}
 undoManager.End (__FUNCTION__);

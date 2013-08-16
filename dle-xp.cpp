@@ -280,7 +280,7 @@ BOOL CDLE::InitInstance()
 		::SetCurrentDirectory (missionFolder);
 	MineView ()->DelayRefresh (false);
 	//DLE.GetDocument ()->SetModifiedFlag (1); // allow saving right away
-	//MineView ()->Refresh ();
+	MineView ()->Refresh ();
 	return TRUE;
 }
 
@@ -438,7 +438,8 @@ else {
 		}
 	}
 // Move it first anyway so we maximize it on the right monitor
-MainFrame ()->MoveWindow (&rc, TRUE);
+if (!IsRectEmpty (&rc))
+	MainFrame ()->MoveWindow (&rc, TRUE);
 if (bMaximize)
 	MainFrame ()->ShowWindow (SW_SHOWMAXIMIZED);
 

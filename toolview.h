@@ -1841,6 +1841,8 @@ class CSettingsTool : public CToolDlg
 		void Refresh (void);
 		void Update (bool bRefresh = true);
 
+		inline CSettingsTabDlg* Current (void) { return (CSettingsTabDlg*) m_settingsTools.Current (); }
+
 		DECLARE_MESSAGE_MAP()
 };
 
