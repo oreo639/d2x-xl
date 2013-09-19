@@ -658,6 +658,10 @@ int PlaneLineIntersection (CDoubleVector& intersection, CDoubleVector* vPlane, C
 
 double PointLineDistance (const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2);
 
+CDoubleVector ProjectPointOnLine (CDoubleVector* pLine, CDoubleVector* vLine, CDoubleVector* point);
+
+CDoubleVector ProjectPointOnPlane (CDoubleVector* vPlane, CDoubleVector* vNormal, CDoubleVector* point);
+
 bool PointIsInTriangle2D (CLongVector &p, CLongVector &a, CLongVector &b, CLongVector &c);
 
 bool PointIsInTriangle2D (CDoubleVector &p, CDoubleVector &a, CDoubleVector &b, CDoubleVector &c);

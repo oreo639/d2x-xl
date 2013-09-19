@@ -1514,6 +1514,9 @@ if (m_mouseState == eMouseStateSelect) {
 	}
 
 tunnelMaker.Draw (Renderer (), Pen (penRed), Pen (penBlue), ViewMatrix ());
+CTextureTool *texTool = DLE.ToolView ()->TextureTool ();
+if (texTool)
+	texTool->DrawProjectGuides (Renderer (), ViewMatrix ());
 
 *message = '\0';
 #if 0

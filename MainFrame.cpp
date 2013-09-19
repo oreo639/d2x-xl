@@ -312,7 +312,7 @@ if (nLayout == 1) {
 		context.m_pNewViewClass = RUNTIME_CLASS (CTextureView);
 		m_splitter2.CreateView (1, 0, RUNTIME_CLASS (CTextureView), CSize (CX_TOOLS_VERT, rc.Height () - CY_TOOLS_VERT), &context);
 		m_splitter2.SetRowInfo (0, CY_TOOLS_VERT, CY_TOOLS_VERT);
-		m_splitter2.SetRowInfo (1, rc.Height () - CY_TOOLS_VERT, 16);
+		m_splitter2.SetRowInfo (1, max (rc.Height () - CY_TOOLS_VERT, CY_TEXTURES), 16);
 		m_splitter2.SetColumnInfo (0, CX_TOOLS_VERT + GetSystemMetrics (SM_CXBORDER), 0);
 		m_mineView = (CMineView *) m_splitter1.GetPane (0,1);
 		m_toolView = (CToolView *) m_splitter2.GetPane (0,0);

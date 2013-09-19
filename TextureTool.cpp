@@ -71,6 +71,31 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TEXALIGN_ROT180, OnRot2nd180)
 	ON_BN_CLICKED (IDC_TEXALIGN_ROT270, OnRot2nd270)
 	ON_BN_CLICKED (IDC_TEXALIGN_IGNOREPLANE, OnAlignIgnorePlane)
+	ON_BN_CLICKED (IDC_TEXPROJECT_PLANAR, OnProjectPlanar)
+	ON_BN_CLICKED (IDC_TEXPROJECT_CYLINDER, OnProjectCylinder)
+	ON_BN_CLICKED (IDC_TEXPROJECT_APPLY, OnProjectApply)
+	ON_BN_CLICKED (IDC_TEXPROJECT_CANCEL, OnProjectCancel)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINXUP, OnProjectOffsetXUp)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINXDOWN, OnProjectOffsetXDown)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINYUP, OnProjectOffsetYUp)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINYDOWN, OnProjectOffsetYDown)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINZUP, OnProjectOffsetZUp)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINZDOWN, OnProjectOffsetZDown)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ROTPUP, OnProjectRotPUp)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ROTPDOWN, OnProjectRotPDown)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ROTBUP, OnProjectRotBUp)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ROTBDOWN, OnProjectRotBDown)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ROTHUP, OnProjectRotHUp)
+	ON_BN_CLICKED (IDC_TEXPROJECT_ROTHDOWN, OnProjectRotHDown)
+	ON_BN_CLICKED (IDC_TEXPROJECT_USCALEUP, OnProjectScaleUUp)
+	ON_BN_CLICKED (IDC_TEXPROJECT_USCALEDOWN, OnProjectScaleUDown)
+	ON_BN_CLICKED (IDC_TEXPROJECT_VSCALEUP, OnProjectScaleVUp)
+	ON_BN_CLICKED (IDC_TEXPROJECT_VSCALEDOWN, OnProjectScaleVDown)
+	ON_BN_CLICKED (IDC_TEXPROJECT_RESETO, OnProjectResetOffset)
+	ON_BN_CLICKED (IDC_TEXPROJECT_RESETD, OnProjectResetDirection)
+	ON_BN_CLICKED (IDC_TEXPROJECT_RESETS, OnProjectResetScaling)
+	ON_BN_CLICKED (IDC_TEXPROJECT_PREVIEW, OnProjectPreview)
+	ON_BN_CLICKED (IDC_TEXPROJECT_COPIEDONLY, OnProjectCopiedOnly)
 	ON_BN_CLICKED (IDC_TEXLIGHT_1, OnLight1)
 	ON_BN_CLICKED (IDC_TEXLIGHT_2, OnLight2)
 	ON_BN_CLICKED (IDC_TEXLIGHT_3, OnLight3)
@@ -123,6 +148,14 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_EN_KILLFOCUS (IDC_TEXTURE_BRIGHTNESS, OnBrightnessEdit)
 	ON_EN_KILLFOCUS (IDC_TEXLIGHT_TIMER, OnLightTimerEdit)
 	ON_EN_KILLFOCUS (IDC_TEXLIGHT_EDIT, OnLightEdit)
+	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ORIGINX, OnProjectOffsetX)
+	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ORIGINY, OnProjectOffsetY)
+	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ORIGINZ, OnProjectOffsetZ)
+	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ROTP, OnProjectRotP)
+	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ROTB, OnProjectRotB)
+	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ROTH, OnProjectRotH)
+	ON_EN_KILLFOCUS (IDC_TEXPROJECT_USCALE, OnProjectScaleU)
+	ON_EN_KILLFOCUS (IDC_TEXPROJECT_VSCALE, OnProjectScaleV)
 END_MESSAGE_MAP()
 
 //------------------------------------------------------------------------------
@@ -161,6 +194,14 @@ m_bIgnoreWalls = TRUE;
 m_nColorIndex = -1;
 m_nEditFunc = -1;
 m_bInitTextureListBoxes = true;
+m_bProjectToolActive = FALSE;
+m_projectRotP = 0;
+m_projectRotB = 0;
+m_projectRotH = 0;
+m_projectScaleU = 0;
+m_projectScaleV = 0;
+m_bProjectPreview = TRUE;
+m_bProjectCopiedOnly = FALSE;
 }
 
 //------------------------------------------------------------------------------
@@ -224,6 +265,25 @@ m_btnAddLight.AutoLoad (IDC_TEXLIGHT_ADD, this);
 m_btnDelLight.AutoLoad (IDC_TEXLIGHT_DELETE, this);
 m_btnHFlip.AutoLoad (IDC_TEXALIGN_HFLIP, this);
 m_btnVFlip.AutoLoad (IDC_TEXALIGN_VFLIP, this);
+
+m_btnProjPlanar.AutoLoad (IDC_TEXPROJECT_PLANAR, this);
+m_btnProjCylinder.AutoLoad (IDC_TEXPROJECT_CYLINDER, this);
+m_btnOffXDown.AutoLoad (IDC_TEXPROJECT_ORIGINXUP, this);
+m_btnOffXUp.AutoLoad (IDC_TEXPROJECT_ORIGINXDOWN, this);
+m_btnOffYDown.AutoLoad (IDC_TEXPROJECT_ORIGINYUP, this);
+m_btnOffYUp.AutoLoad (IDC_TEXPROJECT_ORIGINYDOWN, this);
+m_btnOffZDown.AutoLoad (IDC_TEXPROJECT_ORIGINZUP, this);
+m_btnOffZUp.AutoLoad (IDC_TEXPROJECT_ORIGINZDOWN, this);
+m_btnRotPDown.AutoLoad (IDC_TEXPROJECT_ROTPDOWN, this);
+m_btnRotPUp.AutoLoad (IDC_TEXPROJECT_ROTPUP, this);
+m_btnRotBDown.AutoLoad (IDC_TEXPROJECT_ROTBDOWN, this);
+m_btnRotBUp.AutoLoad (IDC_TEXPROJECT_ROTBUP, this);
+m_btnRotHDown.AutoLoad (IDC_TEXPROJECT_ROTHDOWN, this);
+m_btnRotHUp.AutoLoad (IDC_TEXPROJECT_ROTHUP, this);
+m_btnScaleUDown.AutoLoad (IDC_TEXPROJECT_USCALEDOWN, this);
+m_btnScaleUUp.AutoLoad (IDC_TEXPROJECT_USCALEUP, this);
+m_btnScaleVDown.AutoLoad (IDC_TEXPROJECT_VSCALEDOWN, this);
+m_btnScaleVUp.AutoLoad (IDC_TEXPROJECT_VSCALEUP, this);
 #if 0
 m_btnZoomIn.EnableToolTips (TRUE);
 m_btnZoomOut.EnableToolTips (TRUE);
@@ -294,6 +354,16 @@ DDX_Double (pDX, IDC_TEXALIGN_HALIGN, m_alignX);
 DDX_Double (pDX, IDC_TEXALIGN_VALIGN, m_alignY);
 DDX_Double (pDX, IDC_TEXALIGN_RALIGN, m_alignAngle);
 DDX_Radio (pDX, IDC_TEXALIGN_ROT0, m_alignRot2nd);
+DDX_Double (pDX, IDC_TEXPROJECT_ORIGINX, m_vCenter.v.x);
+DDX_Double (pDX, IDC_TEXPROJECT_ORIGINY, m_vCenter.v.y);
+DDX_Double (pDX, IDC_TEXPROJECT_ORIGINZ, m_vCenter.v.z);
+DDX_Double (pDX, IDC_TEXPROJECT_ROTP, m_projectRotP);
+DDX_Double (pDX, IDC_TEXPROJECT_ROTB, m_projectRotB);
+DDX_Double (pDX, IDC_TEXPROJECT_ROTH, m_projectRotH);
+DDX_Double (pDX, IDC_TEXPROJECT_USCALE, m_projectScaleU);
+DDX_Double (pDX, IDC_TEXPROJECT_VSCALE, m_projectScaleV);
+DDX_Check (pDX, IDC_TEXPROJECT_PREVIEW, m_bProjectPreview);
+DDX_Check (pDX, IDC_TEXPROJECT_COPIEDONLY, m_bProjectCopiedOnly);
 //DDX_Double (pDX, IDC_TEXLIGHT_TIMER, m_nLightTime);
 //if (!nLayout) 
 	{
@@ -519,6 +589,7 @@ UpdateTextureWnd ();
 UpdateAlignWnd ();
 UpdateLightWnd ();
 UpdatePaletteWnd ();
+UpdateProjectWnd ();
 }
 
 //------------------------------------------------------------------------------

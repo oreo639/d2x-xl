@@ -773,6 +773,7 @@
     </ClCompile>
     <ClCompile Include="..\TexFilterTool.cpp" />
     <ClCompile Include="..\TexLightTool.cpp" />
+    <ClCompile Include="..\TexProjectTool.cpp" />
     <ClCompile Include="..\TexToolDlg.cpp" />
     <ClCompile Include="..\TextureTool.cpp" />
     <ClCompile Include="..\textureView.cpp">
@@ -1134,7 +1135,19 @@
     <None Include="..\Resource\12031.BMP" />
     <None Include="..\Resource\bitmaps\addlight.bmp" />
     <None Include="..\Resource\addlight.bmp" />
+    <None Include="..\resource\bitmaps\backd.bmp" />
+    <None Include="..\resource\bitmaps\backu.bmp" />
+    <None Include="..\resource\bitmaps\cylindrd.bmp" />
+    <None Include="..\resource\bitmaps\cylindru.bmp" />
+    <None Include="..\resource\bitmaps\fwdd.bmp" />
+    <None Include="..\resource\bitmaps\fwdu.bmp" />
+    <None Include="..\resource\bitmaps\hstrtchd.bmp" />
+    <None Include="..\resource\bitmaps\hstrtchu.bmp" />
     <None Include="..\resource\bitmaps\icon-circle.tga" />
+    <None Include="..\resource\bitmaps\planard.bmp" />
+    <None Include="..\resource\bitmaps\planaru.bmp" />
+    <None Include="..\resource\bitmaps\vstrtchd.bmp" />
+    <None Include="..\resource\bitmaps\vstrtchu.bmp" />
     <None Include="..\Resource\cursors\arrow.cur" />
     <None Include="..\res\arrow.cur" />
     <None Include="..\Resource\bitmaps\bmp00001.bmp" />

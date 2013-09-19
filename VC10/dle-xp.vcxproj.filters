@@ -675,6 +675,9 @@
     <ClCompile Include="..\SettingsTool.Visibility.cpp">
       <Filter>UI\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\TexProjectTool.cpp">
+      <Filter>UI\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\dle-xp.rc">
@@ -2571,6 +2574,42 @@
     </None>
     <None Include="..\Resource\cursors\pan.cur">
       <Filter>UI\Resource Files\Cursors</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\planaru.bmp">
+      <Filter>UI\Resource Files\Bitmaps</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\planard.bmp">
+      <Filter>UI\Resource Files\Bitmaps</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\cylindru.bmp">
+      <Filter>UI\Resource Files\Bitmaps</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\cylindrd.bmp">
+      <Filter>UI\Resource Files\Bitmaps</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\vstrtchu.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\vstrtchd.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\hstrtchu.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\hstrtchd.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\fwdu.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\fwdd.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\backu.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+    <None Include="..\resource\bitmaps\backd.bmp">
+      <Filter>UI\Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

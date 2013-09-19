@@ -201,6 +201,23 @@ return 1;
 
 //--------------------------------------------------------------------------
 
+CDoubleVector ProjectPointOnLine (CDoubleVector* pLine, CDoubleVector* vLine, CDoubleVector* point)
+{
+if (vLine->Mag () == 0.0)
+	return CDoubleVector (*pLine);
+return *pLine + *vLine * Dot (*point - *pLine, *vLine / vLine->Mag ());
+}
+
+//--------------------------------------------------------------------------
+
+CDoubleVector ProjectPointOnPlane (CDoubleVector* vPlane, CDoubleVector* vNormal, CDoubleVector* point)
+{
+double n = Dot (*vNormal, *point - *vPlane);
+return *point - (*vNormal * n);
+}
+
+//--------------------------------------------------------------------------
+
 bool PointIsInTriangle3D (CDoubleVector& p, CDoubleVector v0, CDoubleVector v1, CDoubleVector v2)
 {
 #if 1

@@ -120,7 +120,7 @@ public:
 #endif
 	CDoubleMatrix::CDoubleMatrix () { Clear (); }
 	CDoubleMatrix::CDoubleMatrix (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
-	CDoubleMatrix (CDoubleMatrix& other) { m.rVec = other.m.rVec, m.uVec = other.m.uVec, m.fVec = other.m.fVec; }
+	CDoubleMatrix (const CDoubleMatrix& other) { m.rVec = other.m.rVec, m.uVec = other.m.uVec, m.fVec = other.m.fVec; }
 	CDoubleMatrix (CDoubleVector r, CDoubleVector u, CDoubleVector f) { m.rVec = r, m.uVec = u, m.fVec = f; }
 	CDoubleMatrix (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh);
 	//computes a matrix from a Set of three angles.  returns ptr to matrix

@@ -338,6 +338,7 @@ if (m_bUpdate) {
 	BeginRender ();
 	Project ();
 	EndRender ();
+	ApplyPreview ();
 	ShiftViewPoints ();
 	switch (m_viewOption) {
 		case eViewTextured:
@@ -365,6 +366,7 @@ if (m_bUpdate) {
 			DrawWireFrame (true);
 			break;
 		}
+	RevertPreview ();
 	}
 
 DrawRubberBox ();
@@ -1364,6 +1366,64 @@ Refresh ();
 }
 
 //------------------------------------------------------------------------------
+
+void CMineView::ApplyPreview ()
+{
+// Clear anything in the existing list
+m_previewUVLs.Destroy ();
+
+// Build preview changes.
+// This is backward from how it would ideally work, but we need to respond to geometry changes
+CTextureTool *texTool = DLE.ToolView ()->TextureTool ();
+if (texTool && texTool->m_bProjectToolActive && texTool->m_bProjectPreview) {
+	texTool->Project (&m_previewUVLs);
+}
+
+// Apply preview changes
+for (uint i = 0; i < m_previewUVLs.Length (); i++) {
+	m_previewUVLs[i].Apply();
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void CMineView::RevertPreview ()
+{
+// Revert already-existing preview changes
+for (uint i = 0; i < m_previewUVLs.Length (); i++) {
+	m_previewUVLs[i].Revert();
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void CPreviewUVL::Apply ()
+{
+CSegment* segP = segmentManager.Segment (m_nSegment);
+if (segP) {
+	CSide* sideP = segP->Side (m_nSide);
+	if (sideP) {
+		for (short nVertex = 0; nVertex < sideP->VertexCount (); nVertex++) {
+			*sideP->Uvls (nVertex) = m_uvlPreview [nVertex];
+			}
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void CPreviewUVL::Revert ()
+{
+CSegment* segP = segmentManager.Segment (m_nSegment);
+if (segP) {
+	CSide* sideP = segP->Side (m_nSide);
+	if (sideP) {
+		for (short nVertex = 0; nVertex < sideP->VertexCount (); nVertex++) {
+			*sideP->Uvls (nVertex) = m_uvlOld [nVertex];
+			}
+		}
+	}
+}
 
 
 //eof
