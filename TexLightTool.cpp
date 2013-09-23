@@ -26,10 +26,170 @@ static char THIS_FILE [] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CToolView
 
+BEGIN_MESSAGE_MAP(CTextureLightTool, CTextureTabDlg)
+	ON_WM_PAINT ()
+	ON_WM_HSCROLL ()
+	ON_WM_VSCROLL ()
+	ON_WM_LBUTTONDOWN ()
+	ON_BN_CLICKED (IDC_TEXLIGHT_1, OnLight1)
+	ON_BN_CLICKED (IDC_TEXLIGHT_2, OnLight2)
+	ON_BN_CLICKED (IDC_TEXLIGHT_3, OnLight3)
+	ON_BN_CLICKED (IDC_TEXLIGHT_4, OnLight4)
+	ON_BN_CLICKED (IDC_TEXLIGHT_5, OnLight5)
+	ON_BN_CLICKED (IDC_TEXLIGHT_6, OnLight6)
+	ON_BN_CLICKED (IDC_TEXLIGHT_7, OnLight7)
+	ON_BN_CLICKED (IDC_TEXLIGHT_8, OnLight8)
+	ON_BN_CLICKED (IDC_TEXLIGHT_9, OnLight9)
+	ON_BN_CLICKED (IDC_TEXLIGHT_10, OnLight10)
+	ON_BN_CLICKED (IDC_TEXLIGHT_11, OnLight11)
+	ON_BN_CLICKED (IDC_TEXLIGHT_12, OnLight12)
+	ON_BN_CLICKED (IDC_TEXLIGHT_13, OnLight13)
+	ON_BN_CLICKED (IDC_TEXLIGHT_14, OnLight14)
+	ON_BN_CLICKED (IDC_TEXLIGHT_15, OnLight15)
+	ON_BN_CLICKED (IDC_TEXLIGHT_16, OnLight16)
+	ON_BN_CLICKED (IDC_TEXLIGHT_17, OnLight17)
+	ON_BN_CLICKED (IDC_TEXLIGHT_18, OnLight18)
+	ON_BN_CLICKED (IDC_TEXLIGHT_19, OnLight19)
+	ON_BN_CLICKED (IDC_TEXLIGHT_20, OnLight20)
+	ON_BN_CLICKED (IDC_TEXLIGHT_21, OnLight21)
+	ON_BN_CLICKED (IDC_TEXLIGHT_22, OnLight22)
+	ON_BN_CLICKED (IDC_TEXLIGHT_23, OnLight23)
+	ON_BN_CLICKED (IDC_TEXLIGHT_24, OnLight24)
+	ON_BN_CLICKED (IDC_TEXLIGHT_25, OnLight25)
+	ON_BN_CLICKED (IDC_TEXLIGHT_26, OnLight26)
+	ON_BN_CLICKED (IDC_TEXLIGHT_27, OnLight27)
+	ON_BN_CLICKED (IDC_TEXLIGHT_28, OnLight28)
+	ON_BN_CLICKED (IDC_TEXLIGHT_29, OnLight29)
+	ON_BN_CLICKED (IDC_TEXLIGHT_30, OnLight30)
+	ON_BN_CLICKED (IDC_TEXLIGHT_31, OnLight31)
+	ON_BN_CLICKED (IDC_TEXLIGHT_32, OnLight32)
+	ON_BN_CLICKED (IDC_TEXLIGHT_OFF, OnLightOff)
+	ON_BN_CLICKED (IDC_TEXLIGHT_ON, OnLightOn)
+	ON_BN_CLICKED (IDC_TEXLIGHT_STROBE4, OnLightStrobe4)
+	ON_BN_CLICKED (IDC_TEXLIGHT_STROBE8, OnLightStrobe8)
+	ON_BN_CLICKED (IDC_TEXLIGHT_FLICKER, OnLightFlicker)
+	ON_BN_CLICKED (IDC_TEXLIGHT_ADD, OnAddLight)
+	ON_BN_CLICKED (IDC_TEXLIGHT_DELETE, OnDeleteLight)
+	ON_BN_CLICKED (IDC_TEXLIGHT_RGBCOLOR, OnSelectColor)
+	ON_EN_KILLFOCUS (IDC_TEXLIGHT_TIMER, OnLightTimerEdit)
+	ON_EN_KILLFOCUS (IDC_TEXLIGHT_EDIT, OnLightEdit)
+END_MESSAGE_MAP()
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::AnimateLight (void)
+CTextureLightTool::~CTextureLightTool ()
+{
+	if (IsWindow (m_lightWnd))
+		m_lightWnd.DestroyWindow ();
+	if (IsWindow (m_colorWnd))
+		m_colorWnd.DestroyWindow ();
+	if (IsWindow (m_paletteWnd))
+		m_paletteWnd.DestroyWindow ();
+}
+
+//------------------------------------------------------------------------------
+
+BOOL CTextureLightTool::OnInitDialog ()
+{
+if (!CTabDlg::OnInitDialog ())
+	return FALSE;
+
+m_nLightDelay = 1000;
+m_nLightTime = 1.0;
+m_iLight = -1;
+m_nHighlight = -1;
+memset (m_szLight, 0, sizeof (m_szLight));
+m_bLightEnabled = TRUE;
+m_nLightTimer = -1;
+
+CWall* wallP = current->Wall ();
+CColor* colorP = current->LightColor ();
+m_nColorIndex = ((wallP != null) && (wallP->Type () == WALL_COLORED)) ? wallP->Info ().cloakValue : colorP->m_info.index;
+m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
+m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
+m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);
+
+m_btnAddLight.AutoLoad (IDC_TEXLIGHT_ADD, this);
+m_btnDelLight.AutoLoad (IDC_TEXLIGHT_DELETE, this);
+
+m_lightTimerCtrl.Init (this, (nLayout == 1) ? -IDC_TEXLIGHT_TIMERSLIDER : IDC_TEXLIGHT_TIMERSLIDER, IDC_TEXLIGHT_TIMERSPINNER, IDC_TEXLIGHT_TIMER, 0, 1000, 50.0, 1.0, 2);
+CreateColorCtrl (&m_lightWnd, IDC_TEXLIGHT_SHOW);
+UpdateLightWnd ();
+CreateColorCtrl (&m_colorWnd, IDC_TEXLIGHT_COLOR);
+m_paletteWnd.Create (GetDlgItem (IDC_TEXLIGHT_PALETTE), -1, -1);
+
+m_bInited = TRUE;
+UpdateData (FALSE);
+return TRUE;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureLightTool::DoDataExchange (CDataExchange * pDX)
+{
+if (!HaveData (pDX))
+	return;
+
+//DDX_Double (pDX, IDC_TEXLIGHT_TIMER, m_nLightTime);
+DDX_Text (pDX, IDC_TEXLIGHT_EDIT, m_szLight, sizeof (m_szLight));
+DDX_Text (pDX, IDC_TEXLIGHT_COLORINDEX, m_nColorIndex);
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureLightTool::OnPaint ()
+{
+if (theMine == null) 
+	return;
+CTextureTabDlg::OnPaint ();
+UpdatePaletteWnd ();
+}
+
+//------------------------------------------------------------------------------
+
+bool CTextureLightTool::Refresh (void)
+{
+UpdateLightWnd ();
+UpdatePaletteWnd ();
+UpdateData (FALSE);
+return true;
+}
+
+//------------------------------------------------------------------------------
+
+BOOL CTextureLightTool::OnSetActive ()
+{
+if (m_iLight >= 0)
+	m_nLightTimer = m_pParentWnd->SetTimer (2, m_nLightDelay, null);
+Refresh ();
+return CTextureTabDlg::OnSetActive ();
+}
+
+//------------------------------------------------------------------------------
+
+BOOL CTextureLightTool::OnKillActive ()
+{
+if (m_nLightTimer >= 0) {
+	m_pParentWnd->KillTimer (m_nLightTimer);
+	m_nLightTimer = -1;
+	}
+return CTextureTabDlg::OnKillActive ();
+}
+
+//------------------------------------------------------------------------------
+
+BOOL CTextureLightTool::HandleTimer (UINT_PTR nIdEvent)
+{
+if (nIdEvent == 2) {
+	AnimateLight ();
+	return TRUE;
+	}
+return FALSE;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureLightTool::AnimateLight (void)
 {
 LightButton (m_nHighlight)->SetState (0);
 m_nHighlight++;
@@ -66,7 +226,7 @@ UpdateColorCtrl (
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::ToggleLight (int i)
+void CTextureLightTool::ToggleLight (int i)
 {
 CButton *pb = LightButton (i - 1);
 pb->SetCheck (!pb->GetCheck ());
@@ -75,7 +235,7 @@ SetLightString ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::UpdateLight (void)
+void CTextureLightTool::UpdateLight (void)
 {
 	bool bChange = false;
 
@@ -102,15 +262,15 @@ if ((vlP->m_info.mask != nLightMask) || (vlP->m_info.delay != nDelay)) {
 
 //------------------------------------------------------------------------------
 
-bool CTextureTool::SetLightDelay (int nSpeed)
+bool CTextureLightTool::SetLightDelay (int nSpeed)
 {
 if (nSpeed < 0)
 	return false;
 if (m_nLightTimer)
-	KillTimer (m_nLightTimer);
+	m_pParentWnd->KillTimer (m_nLightTimer);
 if ((m_iLight >= 0) && nSpeed) {
 	m_nLightDelay = nSpeed;
-	m_nLightTimer = SetTimer (2, m_nLightDelay, null);
+	m_nLightTimer = m_pParentWnd->SetTimer (2, m_nLightDelay, null);
 #if 1
 	m_lightTimerCtrl.SetValue (m_nLightDelay);
 #else
@@ -129,7 +289,7 @@ return true;
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::SetLightString (void)
+void CTextureLightTool::SetLightString (void)
 {
 	static char cLight [2] = {'0', '1'};
 	char szLight [33];
@@ -147,7 +307,7 @@ if (strcmp (szLight, m_szLight)) {
 		
 //------------------------------------------------------------------------------
 
-void CTextureTool::SetLightButtons (LPSTR szLight, int nSpeed)
+void CTextureLightTool::SetLightButtons (LPSTR szLight, int nSpeed)
 {
 	bool	bDefault = false;
 
@@ -174,7 +334,7 @@ if (!SetLightDelay (nSpeed)) {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::EnableLightControls (BOOL bEnable)
+void CTextureLightTool::EnableLightControls (BOOL bEnable)
 {
 int i;
 for (i = IDC_TEXLIGHT_OFF; i <= IDC_TEXLIGHT_TIMER; i++)
@@ -183,7 +343,7 @@ for (i = IDC_TEXLIGHT_OFF; i <= IDC_TEXLIGHT_TIMER; i++)
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::UpdateLightWnd (void)
+void CTextureLightTool::UpdateLightWnd (void)
 {
 CHECKMINE;
 
@@ -223,7 +383,7 @@ SetLightButtons (m_szLight, (int) (((1000 * lightManager.VariableLight (m_iLight
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnLightEdit ()
+void CTextureLightTool::OnLightEdit ()
 {
 if (m_iLight < 0)
 	UpdateData (FALSE);
@@ -235,7 +395,7 @@ else {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnLightTimerEdit ()
+void CTextureLightTool::OnLightTimerEdit ()
 {
 #if 1
 if (m_lightTimerCtrl.OnEdit ())
@@ -252,7 +412,7 @@ else {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAddLight ()
+void CTextureLightTool::OnAddLight ()
 {
 if (m_iLight >= 0)
 	INFOMSG (" There is already a variable light.")
@@ -264,7 +424,7 @@ else if (0 <= (m_iLight = lightManager.AddVariableLight (*current, 0xAAAAAAAAL, 
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnDeleteLight ()
+void CTextureLightTool::OnDeleteLight ()
 {
 if (m_iLight < 0)
 	INFOMSG (" There is no variable light.")
@@ -277,51 +437,51 @@ else if (lightManager.DeleteVariableLight ()) {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnLightOff () { SetLightButtons ("", 1000); }
-void CTextureTool::OnLightOn () { SetLightButtons ("11111111111111111111111111111111", 1000); }
-void CTextureTool::OnLightStrobe4 () { SetLightButtons ("10000000100000001000000010000000", 250); }
-void CTextureTool::OnLightStrobe8 () { SetLightButtons ("10001000100010001000100010001000", 250); }
-void CTextureTool::OnLightFlicker () { SetLightButtons ("11111111000000111100010011011110", 100); }
-void CTextureTool::OnLightDefault () { SetLightButtons ("10101010101010101010101010101010", 250); }
+void CTextureLightTool::OnLightOff () { SetLightButtons ("", 1000); }
+void CTextureLightTool::OnLightOn () { SetLightButtons ("11111111111111111111111111111111", 1000); }
+void CTextureLightTool::OnLightStrobe4 () { SetLightButtons ("10000000100000001000000010000000", 250); }
+void CTextureLightTool::OnLightStrobe8 () { SetLightButtons ("10001000100010001000100010001000", 250); }
+void CTextureLightTool::OnLightFlicker () { SetLightButtons ("11111111000000111100010011011110", 100); }
+void CTextureLightTool::OnLightDefault () { SetLightButtons ("10101010101010101010101010101010", 250); }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnLight1 () { ToggleLight (1); }
-void CTextureTool::OnLight2 () { ToggleLight (2); }
-void CTextureTool::OnLight3 () { ToggleLight (3); }
-void CTextureTool::OnLight4 () { ToggleLight (4); }
-void CTextureTool::OnLight5 () { ToggleLight (5); }
-void CTextureTool::OnLight6 () { ToggleLight (6); }
-void CTextureTool::OnLight7 () { ToggleLight (7); }
-void CTextureTool::OnLight8 () { ToggleLight (8); }
-void CTextureTool::OnLight9 () { ToggleLight (9); }
-void CTextureTool::OnLight10 () { ToggleLight (10); }
-void CTextureTool::OnLight11 () { ToggleLight (11); }
-void CTextureTool::OnLight12 () { ToggleLight (12); }
-void CTextureTool::OnLight13 () { ToggleLight (13); }
-void CTextureTool::OnLight14 () { ToggleLight (14); }
-void CTextureTool::OnLight15 () { ToggleLight (15); }
-void CTextureTool::OnLight16 () { ToggleLight (16); }
-void CTextureTool::OnLight17 () { ToggleLight (17); }
-void CTextureTool::OnLight18 () { ToggleLight (18); }
-void CTextureTool::OnLight19 () { ToggleLight (19); }
-void CTextureTool::OnLight20 () { ToggleLight (20); }
-void CTextureTool::OnLight21 () { ToggleLight (21); }
-void CTextureTool::OnLight22 () { ToggleLight (22); }
-void CTextureTool::OnLight23 () { ToggleLight (23); }
-void CTextureTool::OnLight24 () { ToggleLight (24); }
-void CTextureTool::OnLight25 () { ToggleLight (25); }
-void CTextureTool::OnLight26 () { ToggleLight (26); }
-void CTextureTool::OnLight27 () { ToggleLight (27); }
-void CTextureTool::OnLight28 () { ToggleLight (28); }
-void CTextureTool::OnLight29 () { ToggleLight (29); }
-void CTextureTool::OnLight30 () { ToggleLight (30); }
-void CTextureTool::OnLight31 () { ToggleLight (31); }
-void CTextureTool::OnLight32 () { ToggleLight (32); }
+void CTextureLightTool::OnLight1 () { ToggleLight (1); }
+void CTextureLightTool::OnLight2 () { ToggleLight (2); }
+void CTextureLightTool::OnLight3 () { ToggleLight (3); }
+void CTextureLightTool::OnLight4 () { ToggleLight (4); }
+void CTextureLightTool::OnLight5 () { ToggleLight (5); }
+void CTextureLightTool::OnLight6 () { ToggleLight (6); }
+void CTextureLightTool::OnLight7 () { ToggleLight (7); }
+void CTextureLightTool::OnLight8 () { ToggleLight (8); }
+void CTextureLightTool::OnLight9 () { ToggleLight (9); }
+void CTextureLightTool::OnLight10 () { ToggleLight (10); }
+void CTextureLightTool::OnLight11 () { ToggleLight (11); }
+void CTextureLightTool::OnLight12 () { ToggleLight (12); }
+void CTextureLightTool::OnLight13 () { ToggleLight (13); }
+void CTextureLightTool::OnLight14 () { ToggleLight (14); }
+void CTextureLightTool::OnLight15 () { ToggleLight (15); }
+void CTextureLightTool::OnLight16 () { ToggleLight (16); }
+void CTextureLightTool::OnLight17 () { ToggleLight (17); }
+void CTextureLightTool::OnLight18 () { ToggleLight (18); }
+void CTextureLightTool::OnLight19 () { ToggleLight (19); }
+void CTextureLightTool::OnLight20 () { ToggleLight (20); }
+void CTextureLightTool::OnLight21 () { ToggleLight (21); }
+void CTextureLightTool::OnLight22 () { ToggleLight (22); }
+void CTextureLightTool::OnLight23 () { ToggleLight (23); }
+void CTextureLightTool::OnLight24 () { ToggleLight (24); }
+void CTextureLightTool::OnLight25 () { ToggleLight (25); }
+void CTextureLightTool::OnLight26 () { ToggleLight (26); }
+void CTextureLightTool::OnLight27 () { ToggleLight (27); }
+void CTextureLightTool::OnLight28 () { ToggleLight (28); }
+void CTextureLightTool::OnLight29 () { ToggleLight (29); }
+void CTextureLightTool::OnLight30 () { ToggleLight (30); }
+void CTextureLightTool::OnLight31 () { ToggleLight (31); }
+void CTextureLightTool::OnLight32 () { ToggleLight (32); }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::SetWallColor (void)
+void CTextureLightTool::SetWallColor (void)
 {
 if (lightManager.ApplyFaceLightSettingsGlobally ()) {
 	short			nSegment, nSide;
@@ -350,7 +510,7 @@ if (lightManager.ApplyFaceLightSettingsGlobally ()) {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnLButtonDown (UINT nFlags, CPoint point)
+void CTextureLightTool::OnLButtonDown (UINT nFlags, CPoint point)
 {
 	CRect		rcPal;
 
@@ -390,7 +550,7 @@ if (/*(DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
 
 //------------------------------------------------------------------------------
 		
-void CTextureTool::OnSelectColor ()
+void CTextureLightTool::OnSelectColor ()
 {
 if (CDlgHelpers::SelectColor (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.peBlue)) {
 	CColor *psc = current->LightColor ();
@@ -402,6 +562,81 @@ if (CDlgHelpers::SelectColor (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.p
 	lightManager.SetTexColor (current->Side ()->OvlTex (0), psc);
 	UpdatePaletteWnd ();
 	}
+}
+
+//------------------------------------------------------------------------------
+
+bool CTextureLightTool::SideHasLight (void)
+{
+if (theMine == null) return false;
+
+if	((lightManager.IsLight (current->Side ()->BaseTex ()) != -1) ||
+	 ((current->Side ()->OvlTex (0) != 0) &&
+	  (lightManager.IsLight (current->Side ()->OvlTex (0)) != -1)))
+	return true;
+CWall *wallP = current->Wall ();
+return (wallP != null) && (wallP->Type () == WALL_COLORED);
+
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureLightTool::UpdatePaletteWnd (void)
+{
+if (m_paletteWnd.m_hWnd) {
+	if (/*!nLayout && (DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
+		CDlgHelpers::EnableControls (IDC_TEXLIGHT_PALETTE + 1, IDC_TEXLIGHT_COLOR, TRUE);
+		m_paletteWnd.ShowWindow (SW_SHOW);
+		m_paletteWnd.DrawPalette ();
+		UpdateColorCtrl (
+			&m_colorWnd, 
+			(m_nColorIndex > 0) ? 
+			RGB (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.peBlue) :
+			RGB (0,0,0));
+		}
+	else {
+		CDlgHelpers::EnableControls (IDC_TEXLIGHT_PALETTE + 1, IDC_TEXLIGHT_COLOR, FALSE);
+		m_paletteWnd.ShowWindow (SW_HIDE);
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureLightTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
+{
+if (m_lightTimerCtrl.OnScroll (scrollCode, thumbPos, pScrollBar)) {
+	SetLightDelay (m_lightTimerCtrl.GetValue ());
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureLightTool::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
+{
+if (m_lightTimerCtrl.OnScroll (scrollCode, thumbPos, pScrollBar)) {
+	SetLightDelay (m_lightTimerCtrl.GetValue ());
+	}
+}
+
+//------------------------------------------------------------------------------
+
+BOOL CTextureLightTool::OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult)
+{
+	LPNMHDR	nmHdr = (LPNMHDR) lParam;
+	int		nMsg = nmHdr->code;
+
+switch (wParam) {
+	case IDC_TEXLIGHT_COLOR:
+		return 0;
+	default:
+/*		if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN)
+			OnLButtonDown ();
+		else 
+*/		return CTextureTabDlg::OnNotify (wParam, lParam, pResult);
+	}
+*pResult = 0;
+return TRUE;
 }
 
 //------------------------------------------------------------------------------

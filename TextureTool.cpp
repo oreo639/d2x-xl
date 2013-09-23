@@ -37,7 +37,6 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_WM_TIMER ()
 	ON_WM_HSCROLL ()
 	ON_WM_VSCROLL ()
-	ON_WM_LBUTTONDOWN ()
 	ON_BN_CLICKED (IDC_TEXTURE_SHOWFRAMES, LoadTextureListBoxes)
 	ON_BN_CLICKED (IDC_TEXTURE_EDIT, OnEditTexture)
 	ON_BN_CLICKED (IDC_TEXTURE_COPY, OnSaveTexture)
@@ -49,113 +48,13 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE1ST, OnPaste1st)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE2ND, OnPaste2nd)
 	ON_BN_CLICKED (IDC_TEXTURE_CLEANUP, OnCleanup)
-	ON_BN_CLICKED (IDC_TEXALIGN_HALEFT, OnAlignLeft)
-	ON_BN_CLICKED (IDC_TEXALIGN_HARIGHT, OnAlignRight)
-	ON_BN_CLICKED (IDC_TEXALIGN_VAUP, OnAlignUp)
-	ON_BN_CLICKED (IDC_TEXALIGN_VADOWN, OnAlignDown)
-	ON_BN_CLICKED (IDC_TEXALIGN_RALEFT, OnAlignRotLeft)
-	ON_BN_CLICKED (IDC_TEXALIGN_RARIGHT, OnAlignRotRight)
-	ON_BN_CLICKED (IDC_TEXALIGN_HFLIP, OnHFlip)
-	ON_BN_CLICKED (IDC_TEXALIGN_VFLIP, OnVFlip)
-	ON_BN_CLICKED (IDC_TEXALIGN_HSHRINK, OnHShrink)
-	ON_BN_CLICKED (IDC_TEXALIGN_VSHRINK, OnVShrink)
-	ON_BN_CLICKED (IDC_TEXALIGN_RESET, OnAlignReset)
-	ON_BN_CLICKED (IDC_TEXALIGN_RESET_TAGGED, OnAlignResetTagged)
-	ON_BN_CLICKED (IDC_TEXALIGN_STRETCH2FIT, OnAlignStretch2Fit)
-	ON_BN_CLICKED (IDC_TEXALIGN_CHILDALIGN, OnAlignChildren)
-	ON_BN_CLICKED (IDC_TEXALIGN_ALIGNALL, OnAlignAll)
-	ON_BN_CLICKED (IDC_TEXALIGN_ZOOMIN, OnZoomIn)
-	ON_BN_CLICKED (IDC_TEXALIGN_ZOOMOUT, OnZoomOut)
-	ON_BN_CLICKED (IDC_TEXALIGN_ROT0, OnRot2nd0)
-	ON_BN_CLICKED (IDC_TEXALIGN_ROT90, OnRot2nd90)
-	ON_BN_CLICKED (IDC_TEXALIGN_ROT180, OnRot2nd180)
-	ON_BN_CLICKED (IDC_TEXALIGN_ROT270, OnRot2nd270)
-	ON_BN_CLICKED (IDC_TEXALIGN_IGNOREPLANE, OnAlignIgnorePlane)
-	ON_BN_CLICKED (IDC_TEXPROJECT_PLANAR, OnProjectPlanar)
-	ON_BN_CLICKED (IDC_TEXPROJECT_CYLINDER, OnProjectCylinder)
-	ON_BN_CLICKED (IDC_TEXPROJECT_APPLY, OnProjectApply)
-	ON_BN_CLICKED (IDC_TEXPROJECT_CANCEL, OnProjectCancel)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINXUP, OnProjectOffsetXUp)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINXDOWN, OnProjectOffsetXDown)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINYUP, OnProjectOffsetYUp)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINYDOWN, OnProjectOffsetYDown)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINZUP, OnProjectOffsetZUp)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ORIGINZDOWN, OnProjectOffsetZDown)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ROTPUP, OnProjectRotPUp)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ROTPDOWN, OnProjectRotPDown)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ROTBUP, OnProjectRotBUp)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ROTBDOWN, OnProjectRotBDown)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ROTHUP, OnProjectRotHUp)
-	ON_BN_CLICKED (IDC_TEXPROJECT_ROTHDOWN, OnProjectRotHDown)
-	ON_BN_CLICKED (IDC_TEXPROJECT_USCALEUP, OnProjectScaleUUp)
-	ON_BN_CLICKED (IDC_TEXPROJECT_USCALEDOWN, OnProjectScaleUDown)
-	ON_BN_CLICKED (IDC_TEXPROJECT_VSCALEUP, OnProjectScaleVUp)
-	ON_BN_CLICKED (IDC_TEXPROJECT_VSCALEDOWN, OnProjectScaleVDown)
-	ON_BN_CLICKED (IDC_TEXPROJECT_RESETO, OnProjectResetOffset)
-	ON_BN_CLICKED (IDC_TEXPROJECT_RESETD, OnProjectResetDirection)
-	ON_BN_CLICKED (IDC_TEXPROJECT_RESETS, OnProjectResetScaling)
-	ON_BN_CLICKED (IDC_TEXPROJECT_PREVIEW, OnProjectPreview)
-	ON_BN_CLICKED (IDC_TEXPROJECT_COPIEDONLY, OnProjectCopiedOnly)
-	ON_BN_CLICKED (IDC_TEXLIGHT_1, OnLight1)
-	ON_BN_CLICKED (IDC_TEXLIGHT_2, OnLight2)
-	ON_BN_CLICKED (IDC_TEXLIGHT_3, OnLight3)
-	ON_BN_CLICKED (IDC_TEXLIGHT_4, OnLight4)
-	ON_BN_CLICKED (IDC_TEXLIGHT_5, OnLight5)
-	ON_BN_CLICKED (IDC_TEXLIGHT_6, OnLight6)
-	ON_BN_CLICKED (IDC_TEXLIGHT_7, OnLight7)
-	ON_BN_CLICKED (IDC_TEXLIGHT_8, OnLight8)
-	ON_BN_CLICKED (IDC_TEXLIGHT_9, OnLight9)
-	ON_BN_CLICKED (IDC_TEXLIGHT_10, OnLight10)
-	ON_BN_CLICKED (IDC_TEXLIGHT_11, OnLight11)
-	ON_BN_CLICKED (IDC_TEXLIGHT_12, OnLight12)
-	ON_BN_CLICKED (IDC_TEXLIGHT_13, OnLight13)
-	ON_BN_CLICKED (IDC_TEXLIGHT_14, OnLight14)
-	ON_BN_CLICKED (IDC_TEXLIGHT_15, OnLight15)
-	ON_BN_CLICKED (IDC_TEXLIGHT_16, OnLight16)
-	ON_BN_CLICKED (IDC_TEXLIGHT_17, OnLight17)
-	ON_BN_CLICKED (IDC_TEXLIGHT_18, OnLight18)
-	ON_BN_CLICKED (IDC_TEXLIGHT_19, OnLight19)
-	ON_BN_CLICKED (IDC_TEXLIGHT_20, OnLight20)
-	ON_BN_CLICKED (IDC_TEXLIGHT_21, OnLight21)
-	ON_BN_CLICKED (IDC_TEXLIGHT_22, OnLight22)
-	ON_BN_CLICKED (IDC_TEXLIGHT_23, OnLight23)
-	ON_BN_CLICKED (IDC_TEXLIGHT_24, OnLight24)
-	ON_BN_CLICKED (IDC_TEXLIGHT_25, OnLight25)
-	ON_BN_CLICKED (IDC_TEXLIGHT_26, OnLight26)
-	ON_BN_CLICKED (IDC_TEXLIGHT_27, OnLight27)
-	ON_BN_CLICKED (IDC_TEXLIGHT_28, OnLight28)
-	ON_BN_CLICKED (IDC_TEXLIGHT_29, OnLight29)
-	ON_BN_CLICKED (IDC_TEXLIGHT_30, OnLight30)
-	ON_BN_CLICKED (IDC_TEXLIGHT_31, OnLight31)
-	ON_BN_CLICKED (IDC_TEXLIGHT_32, OnLight32)
-	ON_BN_CLICKED (IDC_TEXLIGHT_OFF, OnLightOff)
-	ON_BN_CLICKED (IDC_TEXLIGHT_ON, OnLightOn)
-	ON_BN_CLICKED (IDC_TEXLIGHT_STROBE4, OnLightStrobe4)
-	ON_BN_CLICKED (IDC_TEXLIGHT_STROBE8, OnLightStrobe8)
-	ON_BN_CLICKED (IDC_TEXLIGHT_FLICKER, OnLightFlicker)
-	ON_BN_CLICKED (IDC_TEXLIGHT_ADD, OnAddLight)
-	ON_BN_CLICKED (IDC_TEXLIGHT_DELETE, OnDeleteLight)
-	ON_BN_CLICKED (IDC_TEXLIGHT_RGBCOLOR, OnSelectColor)
 	ON_CBN_SELCHANGE (IDC_TEXTURE_1ST, OnSelect1st)
 	ON_CBN_SELCHANGE (IDC_TEXTURE_2ND, OnSelect2nd)
 	ON_EN_KILLFOCUS (IDC_TEXTURE_LIGHT1, OnSetLight)
 	ON_EN_KILLFOCUS (IDC_TEXTURE_LIGHT2, OnSetLight)
 	ON_EN_KILLFOCUS (IDC_TEXTURE_LIGHT3, OnSetLight)
 	ON_EN_KILLFOCUS (IDC_TEXTURE_LIGHT4, OnSetLight)
-	ON_EN_KILLFOCUS (IDC_TEXALIGN_HALIGN, OnAlignX)
-	ON_EN_KILLFOCUS (IDC_TEXALIGN_VALIGN, OnAlignY)
-	ON_EN_KILLFOCUS (IDC_TEXALIGN_RALIGN, OnAlignRot)
 	ON_EN_KILLFOCUS (IDC_TEXTURE_BRIGHTNESS, OnBrightnessEdit)
-	ON_EN_KILLFOCUS (IDC_TEXLIGHT_TIMER, OnLightTimerEdit)
-	ON_EN_KILLFOCUS (IDC_TEXLIGHT_EDIT, OnLightEdit)
-	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ORIGINX, OnProjectOffsetX)
-	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ORIGINY, OnProjectOffsetY)
-	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ORIGINZ, OnProjectOffsetZ)
-	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ROTP, OnProjectRotP)
-	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ROTB, OnProjectRotB)
-	ON_EN_KILLFOCUS (IDC_TEXPROJECT_ROTH, OnProjectRotH)
-	ON_EN_KILLFOCUS (IDC_TEXPROJECT_USCALE, OnProjectScaleU)
-	ON_EN_KILLFOCUS (IDC_TEXPROJECT_VSCALE, OnProjectScaleV)
 END_MESSAGE_MAP()
 
 //------------------------------------------------------------------------------
@@ -176,32 +75,7 @@ m_frame [1] = 0;
 #endif
 m_bUse1st = TRUE;
 m_bUse2nd = FALSE;
-m_bShowChildren = TRUE;
-m_bShowTexture = TRUE;
-m_zoom = 1.0;
-m_alignX = 0;
-m_alignY = 0;
-m_alignAngle = 0;
-m_alignRot2nd = 0;
-m_nLightDelay = 1000;
-m_nLightTime = 1.0;
-m_iLight = -1;
-m_nHighlight = -1;
-memset (m_szLight, 0, sizeof (m_szLight));
-m_bLightEnabled = TRUE;
-m_bIgnorePlane = true;
-m_bIgnoreWalls = TRUE;
-m_nColorIndex = -1;
-m_nEditFunc = -1;
 m_bInitTextureListBoxes = true;
-m_bProjectToolActive = FALSE;
-m_projectRotP = 0;
-m_projectRotB = 0;
-m_projectRotH = 0;
-m_projectScaleU = 0;
-m_projectScaleV = 0;
-m_bProjectPreview = TRUE;
-m_bProjectCopiedOnly = FALSE;
 }
 
 //------------------------------------------------------------------------------
@@ -211,17 +85,6 @@ CTextureTool::~CTextureTool ()
 if (m_bInited) {
 	if (IsWindow (m_textureWnd))
 		m_textureWnd.DestroyWindow ();
-	if (IsWindow (m_alignWnd))
-		m_alignWnd.DestroyWindow ();
-	if (IsWindow (m_lightWnd))
-		m_lightWnd.DestroyWindow ();
-	//if (!nLayout) 
-		{
-		if (IsWindow (m_colorWnd))
-			m_colorWnd.DestroyWindow ();
-		if (IsWindow (m_paletteWnd))
-			m_paletteWnd.DestroyWindow ();
-		}
 	}
 }
 
@@ -233,57 +96,7 @@ BOOL CTextureTool::OnInitDialog ()
 
 if (!CToolDlg::OnInitDialog ())
    return FALSE;
-/*
-m_btnZoomIn.SubclassDlgItem (IDC_TEXALIGN_ZOOMIN, this);
-m_btnZoomOut.SubclassDlgItem (IDC_TEXALIGN_ZOOMOUT, this);
-m_btnHShrink.SubclassDlgItem (IDC_TEXALIGN_HSHRINK, this);
-m_btnVShrink.SubclassDlgItem (IDC_TEXALIGN_VSHRINK, this);
-m_btnHALeft.SubclassDlgItem (IDC_TEXALIGN_HALEFT, this);
-m_btnHARight.SubclassDlgItem (IDC_TEXALIGN_HARIGHT, this);
-m_btnVAUp.SubclassDlgItem (IDC_TEXALIGN_VAUP, this);
-m_btnVADown.SubclassDlgItem (IDC_TEXALIGN_VADOWN, this);
-m_btnRALeft.SubclassDlgItem (IDC_TEXALIGN_RALEFT, this);
-m_btnRARight.SubclassDlgItem (IDC_TEXALIGN_RARIGHT, this);
-*/
-m_btnZoomIn.AutoLoad (IDC_TEXALIGN_ZOOMIN, this);
-m_btnZoomOut.AutoLoad (IDC_TEXALIGN_ZOOMOUT, this);
-m_btnHShrink.AutoLoad (IDC_TEXALIGN_HSHRINK, this);
-m_btnVShrink.AutoLoad (IDC_TEXALIGN_VSHRINK, this);
-m_btnHALeft.AutoLoad (IDC_TEXALIGN_HALEFT, this);
-m_btnHARight.AutoLoad (IDC_TEXALIGN_HARIGHT, this);
-m_btnVAUp.AutoLoad (IDC_TEXALIGN_VAUP, this);
-m_btnVADown.AutoLoad (IDC_TEXALIGN_VADOWN, this);
-m_btnRALeft.AutoLoad (IDC_TEXALIGN_RALEFT, this);
-m_btnRARight.AutoLoad (IDC_TEXALIGN_RARIGHT, this);
 
-m_btnStretch2Fit.AutoLoad (IDC_TEXALIGN_STRETCH2FIT, this);
-m_btnReset.AutoLoad (IDC_TEXALIGN_RESET, this);
-m_btnResetTagged.AutoLoad (IDC_TEXALIGN_RESET_TAGGED, this);
-m_btnChildAlign.AutoLoad (IDC_TEXALIGN_CHILDALIGN, this);
-m_btnAlignAll.AutoLoad (IDC_TEXALIGN_ALIGNALL, this);
-m_btnAddLight.AutoLoad (IDC_TEXLIGHT_ADD, this);
-m_btnDelLight.AutoLoad (IDC_TEXLIGHT_DELETE, this);
-m_btnHFlip.AutoLoad (IDC_TEXALIGN_HFLIP, this);
-m_btnVFlip.AutoLoad (IDC_TEXALIGN_VFLIP, this);
-
-m_btnProjPlanar.AutoLoad (IDC_TEXPROJECT_PLANAR, this);
-m_btnProjCylinder.AutoLoad (IDC_TEXPROJECT_CYLINDER, this);
-m_btnOffXDown.AutoLoad (IDC_TEXPROJECT_ORIGINXUP, this);
-m_btnOffXUp.AutoLoad (IDC_TEXPROJECT_ORIGINXDOWN, this);
-m_btnOffYDown.AutoLoad (IDC_TEXPROJECT_ORIGINYUP, this);
-m_btnOffYUp.AutoLoad (IDC_TEXPROJECT_ORIGINYDOWN, this);
-m_btnOffZDown.AutoLoad (IDC_TEXPROJECT_ORIGINZUP, this);
-m_btnOffZUp.AutoLoad (IDC_TEXPROJECT_ORIGINZDOWN, this);
-m_btnRotPDown.AutoLoad (IDC_TEXPROJECT_ROTPDOWN, this);
-m_btnRotPUp.AutoLoad (IDC_TEXPROJECT_ROTPUP, this);
-m_btnRotBDown.AutoLoad (IDC_TEXPROJECT_ROTBDOWN, this);
-m_btnRotBUp.AutoLoad (IDC_TEXPROJECT_ROTBUP, this);
-m_btnRotHDown.AutoLoad (IDC_TEXPROJECT_ROTHDOWN, this);
-m_btnRotHUp.AutoLoad (IDC_TEXPROJECT_ROTHUP, this);
-m_btnScaleUDown.AutoLoad (IDC_TEXPROJECT_USCALEDOWN, this);
-m_btnScaleUUp.AutoLoad (IDC_TEXPROJECT_USCALEUP, this);
-m_btnScaleVDown.AutoLoad (IDC_TEXPROJECT_VSCALEDOWN, this);
-m_btnScaleVUp.AutoLoad (IDC_TEXPROJECT_VSCALEUP, this);
 #if 0
 m_btnZoomIn.EnableToolTips (TRUE);
 m_btnZoomOut.EnableToolTips (TRUE);
@@ -305,7 +118,6 @@ m_btnDelLight.EnableToolTips (TRUE);
 #endif
 #if 1
 m_brightnessCtrl.Init (this, (nLayout == 1) ? -IDC_TEXTURE_BRIGHTSLIDER : IDC_TEXTURE_BRIGHTSLIDER, IDC_TEXTURE_BRIGHTSPINNER, IDC_TEXTURE_BRIGHTNESS, 0, 100, 1.0, 1.0, 10);
-m_lightTimerCtrl.Init (this, (nLayout == 1) ? -IDC_TEXLIGHT_TIMERSLIDER : IDC_TEXLIGHT_TIMERSLIDER, IDC_TEXLIGHT_TIMERSPINNER, IDC_TEXLIGHT_TIMER, 0, 1000, 50.0, 1.0, 2);
 #else
 InitSlider (IDC_TEXTURE_BRIGHTSLIDER, 0, 100);
 BrightnessSlider ()->SetTicFreq (10);
@@ -313,22 +125,21 @@ InitSlider (IDC_TEXLIGHT_TIMERSLIDER, 0, 20);
 BrightnessSpinner ()->SetRange (0, 100);
 #endif
 LoadTextureListBoxes ();
-CreateImgWnd (&m_textureWnd, IDC_TEXTURE_SHOW);
-CreateImgWnd (&m_alignWnd, IDC_TEXALIGN_SHOW);
-HScrollAlign ()->SetScrollRange (-100, 100, FALSE);
-HScrollAlign ()->SetScrollPos (0, TRUE);
-VScrollAlign ()->SetScrollRange (-100, 100, FALSE);
-VScrollAlign ()->SetScrollPos (0, TRUE);
-CreateColorCtrl (&m_lightWnd, IDC_TEXLIGHT_SHOW);
-//if (!nLayout) 
-	{
-	CreateColorCtrl (&m_colorWnd, IDC_TEXLIGHT_COLOR);
-	m_paletteWnd.Create (GetDlgItem (IDC_TEXLIGHT_PALETTE), -1, -1);
+
+m_textureTools.Init (this);
+if (nLayout) {
+	m_textureTools.Add (new CTextureAlignTool (IDD_TEXALIGN_VERT, this), IDD_TEXALIGN_VERT, "Alignment");
+	m_textureTools.Add (new CTextureProjectTool (IDD_TEXPROJ_VERT, this), IDD_TEXPROJ_VERT, "Projection");
+	m_textureTools.Add (new CTextureLightTool (IDD_TEXLIGHT_VERT, this), IDD_TEXLIGHT_VERT, "Lighting");
 	}
-m_nTimer = -1; 
-m_nLightTimer = -1;
-m_nEditTimer = -1;
-UpdateLightWnd ();
+else {
+	m_textureTools.Add (new CTextureAlignTool (IDD_TEXALIGN_HORZ, this), IDD_TEXALIGN_HORZ, "Alignment");
+	m_textureTools.Add (new CTextureProjectTool (IDD_TEXPROJ_HORZ, this), IDD_TEXPROJ_HORZ, "Projection");
+	m_textureTools.Add (new CTextureLightTool (IDD_TEXLIGHT_HORZ, this), IDD_TEXLIGHT_HORZ, "Lighting");
+	}
+m_textureTools.Setup ();
+
+CreateImgWnd (&m_textureWnd, IDC_TEXTURE_SHOW);
 UpdateData (FALSE);
 m_bInited = true;
 return TRUE;
@@ -338,38 +149,14 @@ return TRUE;
 
 void CTextureTool::DoDataExchange (CDataExchange *pDX)
 {
+DDX_Control (pDX, IDC_TOOL_TAB, m_textureTools);
 if (!HaveData (pDX)) 
 	return;
-
 
 for (int i = 0; i < 4; i++)
 	DDX_Double (pDX, IDC_TEXTURE_LIGHT1 + i, m_lights [i], 0, 200, "%1.1f");
 DDX_Check (pDX, IDC_TEXTURE_PASTE1ST, m_bUse1st);
 DDX_Check (pDX, IDC_TEXTURE_PASTE2ND, m_bUse2nd);
-DDX_Check (pDX, IDC_TEXALIGN_SHOWTEXTURE, m_bShowTexture);
-DDX_Check (pDX, IDC_TEXALIGN_SHOWCHILDREN, m_bShowChildren);
-DDX_Check (pDX, IDC_TEXALIGN_IGNOREPLANE, m_bIgnorePlane);
-//DDX_Check (pDX, IDC_TEXALIGN_IGNOREWALLS, m_bIgnoreWalls);
-DDX_Double (pDX, IDC_TEXALIGN_HALIGN, m_alignX);
-DDX_Double (pDX, IDC_TEXALIGN_VALIGN, m_alignY);
-DDX_Double (pDX, IDC_TEXALIGN_RALIGN, m_alignAngle);
-DDX_Radio (pDX, IDC_TEXALIGN_ROT0, m_alignRot2nd);
-DDX_Double (pDX, IDC_TEXPROJECT_ORIGINX, m_vCenter.v.x);
-DDX_Double (pDX, IDC_TEXPROJECT_ORIGINY, m_vCenter.v.y);
-DDX_Double (pDX, IDC_TEXPROJECT_ORIGINZ, m_vCenter.v.z);
-DDX_Double (pDX, IDC_TEXPROJECT_ROTP, m_projectRotP);
-DDX_Double (pDX, IDC_TEXPROJECT_ROTB, m_projectRotB);
-DDX_Double (pDX, IDC_TEXPROJECT_ROTH, m_projectRotH);
-DDX_Double (pDX, IDC_TEXPROJECT_USCALE, m_projectScaleU);
-DDX_Double (pDX, IDC_TEXPROJECT_VSCALE, m_projectScaleV);
-DDX_Check (pDX, IDC_TEXPROJECT_PREVIEW, m_bProjectPreview);
-DDX_Check (pDX, IDC_TEXPROJECT_COPIEDONLY, m_bProjectCopiedOnly);
-//DDX_Double (pDX, IDC_TEXLIGHT_TIMER, m_nLightTime);
-//if (!nLayout) 
-	{
-	DDX_Text (pDX, IDC_TEXLIGHT_EDIT, m_szLight, sizeof (m_szLight));
-	DDX_Text (pDX, IDC_TEXLIGHT_COLORINDEX, m_nColorIndex);
-	}
 
 #if 1
 if (pDX->m_bSaveAndValidate)
@@ -437,44 +224,6 @@ CToolDlg::CBUpdateListWidth (cbTexture2);
 
 //------------------------------------------------------------------------------
 
-bool CTextureTool::SideHasLight (void)
-{
-if (theMine == null) return false;
-
-if	((lightManager.IsLight (current->Side ()->BaseTex ()) != -1) ||
-	 ((current->Side ()->OvlTex (0) != 0) &&
-	  (lightManager.IsLight (current->Side ()->OvlTex (0)) != -1)))
-	return true;
-CWall *wallP = current->Wall ();
-return (wallP != null) && (wallP->Type () == WALL_COLORED);
-
-}
-
-
-//------------------------------------------------------------------------------
-
-void CTextureTool::UpdatePaletteWnd (void)
-{
-if (m_paletteWnd.m_hWnd) {
-	if (/*!nLayout && (DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
-		EnableControls (IDC_TEXLIGHT_PALETTE + 1, IDC_TEXLIGHT_COLOR, TRUE);
-		m_paletteWnd.ShowWindow (SW_SHOW);
-		m_paletteWnd.DrawPalette ();
-		UpdateColorCtrl (
-			&m_colorWnd, 
-			(m_nColorIndex > 0) ? 
-			RGB (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.peBlue) :
-			RGB (0,0,0));
-		}
-	else {
-		EnableControls (IDC_TEXLIGHT_PALETTE + 1, IDC_TEXLIGHT_COLOR, FALSE);
-		m_paletteWnd.ShowWindow (SW_HIDE);
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-
 void CTextureTool::OnPaint ()
 {
 if (theMine == null) 
@@ -483,8 +232,6 @@ CTexToolDlg::OnPaint ();
 #if TEXTOOLDLG == 0
 UpdateTextureWnd ();
 #endif
-UpdateAlignWnd ();
-UpdatePaletteWnd ();
 }
 
 //------------------------------------------------------------------------------
@@ -530,15 +277,9 @@ m_frame [1] = 0;
 
 CSegment* segP = current->Segment ();
 CSide* sideP = current->Side ();
-CWall* wallP = current->Wall ();
-CColor* colorP = current->LightColor ();
 int nSide = current->SideId ();
 short texture1 = sideP->BaseTex ();
 short texture2 = sideP->OvlTex (0);
-m_nColorIndex = ((wallP != null) && (wallP->Type () == WALL_COLORED)) ? wallP->Info ().cloakValue : colorP->m_info.index;
-m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
-m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
-m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);
 if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
 	texture1 = 0;
 if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
@@ -579,17 +320,13 @@ else {
 	cbTexture1->SelectString (-1, "(none)");
 	cbTexture2->SelectString (-1, "(none)");
 	}
-RefreshAlignment ();
 UpdateData (FALSE);
 #if TEXTOOLDLG
 CTexToolDlg::Refresh ();
 #else
 UpdateTextureWnd ();
 #endif
-UpdateAlignWnd ();
-UpdateLightWnd ();
-UpdatePaletteWnd ();
-UpdateProjectWnd ();
+Current ()->Refresh ();
 }
 
 //------------------------------------------------------------------------------
@@ -644,8 +381,7 @@ CTexToolDlg::OnSetActive ();
 #else
 m_nTimer = SetTimer (1, 100U, null);
 #endif
-if (m_iLight >= 0)
-	m_nLightTimer = SetTimer (2, m_nLightDelay, null);
+Current ()->OnSetActive ();
 Refresh ();
 return TRUE; //CTexToolDlg::OnSetActive ();
 }
@@ -662,14 +398,7 @@ if (m_nTimer >= 0) {
 	m_nTimer = -1;
 	}
 #endif
-if (m_nLightTimer >= 0) {
-	KillTimer (m_nLightTimer);
-	m_nLightTimer = -1;
-	}
-if (m_nEditTimer >= 0) {
-	KillTimer (m_nEditTimer);
-	m_nEditTimer = -1;
-	}
+Current ()->OnKillActive ();
 return CToolDlg::OnKillActive ();
 }
 
@@ -789,11 +518,7 @@ if (anim [index [0]] || anim [index [1]]) {
 void CTextureTool::OnTimer (UINT_PTR nIdEvent)
 {
 #if TEXTOOLDLG
-if (nIdEvent == 2)
-	AnimateLight ();
-else if (nIdEvent == 3)
-	OnEditTimer ();
-else 
+if (!Current ()->HandleTimer (nIdEvent))
 	CTexToolDlg::OnTimer (nIdEvent);
 #else
 if (nIdEvent == 1)
@@ -1179,9 +904,6 @@ void CTextureTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrol
 if (m_brightnessCtrl.OnScroll (scrollCode, thumbPos, pScrollBar)) {
 	SetBrightness (m_brightnessCtrl.GetValue ());
 	}
-else if (m_lightTimerCtrl.OnScroll (scrollCode, thumbPos, pScrollBar)) {	
-	SetLightDelay (m_lightTimerCtrl.GetValue ());
-	}
 #else
 	int	nPos;
 
@@ -1217,33 +939,6 @@ if (pScrollBar == (CScrollBar *) BrightnessSlider ()) {
 	pScrollBar->SetScrollPos (100 - nPos, TRUE);
 	}
 #endif
-else {
-	int nPos = pScrollBar->GetScrollPos ();
-	CRect rc;
-	m_alignWnd.GetClientRect (rc);
-	switch (scrollCode) {
-		case SB_LINEUP:
-			nPos--;
-			break;
-		case SB_LINEDOWN:
-			nPos++;
-			break;
-		case SB_PAGEUP:
-			nPos -= rc.Width () / 4;
-			break;
-		case SB_PAGEDOWN:
-			nPos += rc.Width () / 4;
-			break;
-		case SB_THUMBPOSITION:
-		case SB_THUMBTRACK:
-			nPos = thumbPos;
-			break;
-		case SB_ENDSCROLL:
-			return;
-		}
-	pScrollBar->SetScrollPos (nPos, TRUE);
-	UpdateAlignWnd ();
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -1253,9 +948,6 @@ void CTextureTool::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrol
 #if 1
 if (m_brightnessCtrl.OnScroll (scrollCode, thumbPos, pScrollBar)) {
 	SetBrightness (m_brightnessCtrl.GetValue ());
-	}
-else if (m_lightTimerCtrl.OnScroll (scrollCode, thumbPos, pScrollBar)) {	
-	SetLightDelay (m_lightTimerCtrl.GetValue ());
 	}
 #else
 	int	nPos;
@@ -1332,129 +1024,6 @@ else if (pScrollBar == (CScrollBar *) BrightnessSpinner ()) {
 	UpdateData (FALSE);
 	}
 #endif
-else {
-	int nPos = pScrollBar->GetScrollPos ();
-	CRect rc;
-	m_alignWnd.GetClientRect (rc);
-	switch (scrollCode) {
-		case SB_LINEUP:
-			nPos--;
-			break;
-		case SB_LINEDOWN:
-			nPos++;
-			break;
-		case SB_PAGEUP:
-			nPos -= rc.Height () / 4;
-			break;
-		case SB_PAGEDOWN:
-			nPos += rc.Height () / 4;
-			break;
-		case SB_THUMBPOSITION:
-		case SB_THUMBTRACK:
-			nPos = thumbPos;
-			break;
-		case SB_ENDSCROLL:
-			return;
-		}
-	pScrollBar->SetScrollPos (nPos, TRUE);
-	UpdateAlignWnd ();
-	}
-}
-
-//------------------------------------------------------------------------------
-
-BOOL CTextureTool::OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult)
-{
-	LPNMHDR	nmHdr = (LPNMHDR) lParam;
-	int		nMsg = nmHdr->code;
-
-switch (wParam) {
-	case IDC_TEXALIGN_HALIGN:
-	case IDC_TEXALIGN_VALIGN:
-	case IDC_TEXALIGN_RALIGN:
-	case IDC_TEXALIGN_ZOOMIN:
-	case IDC_TEXALIGN_ZOOMOUT:
-	case IDC_TEXALIGN_HALEFT:
-	case IDC_TEXALIGN_HARIGHT:
-	case IDC_TEXALIGN_VAUP:
-	case IDC_TEXALIGN_VADOWN:
-	case IDC_TEXALIGN_RALEFT:
-	case IDC_TEXALIGN_RARIGHT:
-	case IDC_TEXALIGN_HSHRINK:
-	case IDC_TEXALIGN_VSHRINK:
-		if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN) {
-			m_nEditFunc = int (wParam);
-			m_nEditTimer = SetTimer (3, m_nTimerDelay = 250U, null);
-			}
-		else {
-			m_nEditFunc = -1;
-			if (m_nEditTimer >= 0) {
-				KillTimer (m_nEditTimer);
-				m_nEditTimer = -1;
-				}
-			}
-		break;
-	case IDC_TEXLIGHT_COLOR:
-		return 0;
-	default:
-/*		if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN)
-			OnLButtonDown ();
-		else 
-*/		return CTexToolDlg::OnNotify (wParam, lParam, pResult);
-	}
-*pResult = 0;
-return TRUE;
-}
-		
-//------------------------------------------------------------------------------
-
-void CTextureTool::OnEditTimer (void)
-{		
-switch (m_nEditFunc) {
-	case IDC_TEXALIGN_HALIGN:
-		OnAlignX ();
-		break;
-	case IDC_TEXALIGN_VALIGN:
-		OnAlignY ();
-		break;
-	case IDC_TEXALIGN_ZOOMIN:
-		OnZoomIn ();
-		break;
-	case IDC_TEXALIGN_ZOOMOUT:
-		OnZoomOut ();
-		break;
-	case IDC_TEXALIGN_HALEFT:
-		OnAlignLeft ();
-		break;
-	case IDC_TEXALIGN_HARIGHT:
-		OnAlignRight ();
-		break;
-	case IDC_TEXALIGN_VAUP:
-		OnAlignUp ();
-		break;
-	case IDC_TEXALIGN_VADOWN:
-		OnAlignDown ();
-		break;
-	case IDC_TEXALIGN_RALEFT:
-		OnAlignRotLeft ();
-		break;
-	case IDC_TEXALIGN_RARIGHT:
-		OnAlignRotRight ();
-		break;
-	case IDC_TEXALIGN_HSHRINK:
-		OnHShrink ();
-		break;
-	case IDC_TEXALIGN_VSHRINK:
-		OnVShrink ();
-		break;
-	default:
-		break;
-	}
-UINT i = (m_nTimerDelay * 9) / 10;
-if (i >= 25) {
-	KillTimer (m_nTimer);
-	m_nTimer = SetTimer (3, m_nTimerDelay = i, null);
-	}
 }
 
 //------------------------------------------------------------------------------

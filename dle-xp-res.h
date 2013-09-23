@@ -248,7 +248,13 @@
 #define IDC_TEXTURE_BRIGHTSLIDER        10319
 #define IDC_TEXTURE_BRIGHTSPINNER       10320
 #define IDC_TEXTURE_BRIGHTNESS          10321
-#define IDC_TEXTURE_CLEANUP				 10322
+#define IDC_TEXTURE_CLEANUP             10322
+#define IDD_TEXALIGN_HORZ               10323
+#define IDD_TEXALIGN_VERT               10324
+#define IDD_TEXPROJ_VERT                10325
+#define IDD_TEXPROJ_HORZ                10326
+#define IDD_TEXLIGHT_VERT               10327
+#define IDD_TEXLIGHT_HORZ               10328
 
 #define IDC_TEXALIGN_SHOW               10330
 #define IDC_TEXALIGN_HSCROLL            10331

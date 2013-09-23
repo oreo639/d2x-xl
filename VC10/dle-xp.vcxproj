@@ -620,6 +620,7 @@
     <ClInclude Include="..\UndoManager.h" />
     <ClInclude Include="..\VertexManager.h" />
     <ClInclude Include="..\WallManager.h" />
+    <ClInclude Include="..\TextureProjector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp" />
@@ -992,6 +993,7 @@
     <ClCompile Include="..\UndoManager.cpp" />
     <ClCompile Include="..\VertexManager.cpp" />
     <ClCompile Include="..\WallManager.cpp" />
+    <ClCompile Include="..\TextureProjector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\dle-xp.rc">

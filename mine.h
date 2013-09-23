@@ -25,6 +25,7 @@
 #include "UndoManager.h"
 #include "ResourceManager.h"
 #include "PaletteManager.h"
+#include "TextureProjector.h"
 
 #ifdef _DEBUG
 

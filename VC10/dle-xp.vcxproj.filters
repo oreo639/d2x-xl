@@ -268,6 +268,9 @@
     <ClInclude Include="..\TextureManager.h">
       <Filter>Managers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\TextureProjector.h">
+      <Filter>Managers\Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\TriggerManager.h">
       <Filter>Managers\Header Files</Filter>
     </ClInclude>
@@ -619,6 +622,9 @@
       <Filter>Managers\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\TextureManager.Shaders.cpp">
+      <Filter>Managers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TextureProjector.cpp">
       <Filter>Managers\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\TriggerManager.cpp">

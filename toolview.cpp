@@ -599,4 +599,29 @@ return m_nId;
 #endif
 //------------------------------------------------------------------------------
 
+void CTextureTabDlg::CreateImgWnd (CWnd * pImgWnd, int nIdC)
+{
+CWnd *pParentWnd = GetDlgItem (nIdC);
+CRect rc;
+pParentWnd->GetClientRect (rc);
+pImgWnd->Create (null, null, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureTabDlg::GetCtrlClientRect (CWnd *pWnd, CRect& rc)
+{
+	CRect	rcc;
+	int	dx, dy;
+
+pWnd->GetClientRect (&rcc);
+pWnd->GetWindowRect (rc);
+dx = rc.Width () - rcc.Width ();
+dy = rc.Height () - rcc.Height ();
+ScreenToClient (rc);
+rc.DeflateRect (dx / 2, dy / 2);
+}
+
+//------------------------------------------------------------------------------
+
 //eof toolview.cpp

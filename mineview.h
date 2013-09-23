@@ -79,27 +79,6 @@ class CViewPoint {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-class CPreviewUVL {
-	public:
-		short	m_nSegment;
-		short	m_nSide;
-		CUVL	m_uvlPreview [4];
-		CUVL	m_uvlOld [4];
-
-	public:
-		CPreviewUVL (short nSegment = -1, short nSide = -1) :
-			m_nSegment(nSegment), m_nSide(nSide) {
-			ZeroMemory (m_uvlPreview, sizeof (m_uvlPreview));
-			ZeroMemory (m_uvlOld, sizeof (m_uvlOld));
-			}
-		void Apply (void);
-		void Revert (void);
-};
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
 class CMineView : public CView
 {
 protected: // create from serialization only

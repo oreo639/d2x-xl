@@ -1375,7 +1375,21 @@ class CTxtFilterTool : public CToolDlg
 
 //------------------------------------------------------------------------------
 
-class CTextureTool : public CTexToolDlg
+class CTextureTabDlg : public CTabDlg
+{
+	public:
+		afx_msg void OnChange () { Refresh (); }
+		virtual BOOL HandleTimer (UINT_PTR nIdEvent) { return FALSE; }
+
+		CTextureTabDlg (UINT nId, CWnd* pParent = null) : CTabDlg (nId, pParent) {}
+
+		void CreateImgWnd (CWnd * pImgWnd, int nIdC);
+		void GetCtrlClientRect (CWnd *pWnd, CRect& rc);
+};
+
+//------------------------------------------------------------------------------
+
+class CTextureAlignTool : public CTextureTabDlg
 {
 	public:
 		CExtBitmapButton	m_btnZoomIn;
@@ -1393,108 +1407,40 @@ class CTextureTool : public CTexToolDlg
 		CBitmapButton		m_btnResetTagged;
 		CBitmapButton		m_btnAlignAll;
 		CBitmapButton		m_btnChildAlign;
-		CBitmapButton		m_btnAddLight;
-		CBitmapButton		m_btnDelLight;
 		CBitmapButton		m_btnHFlip;
 		CBitmapButton		m_btnVFlip;
-		CExtBitmapButton	m_btnProjPlanar;
-		CExtBitmapButton	m_btnProjCylinder;
-		CBitmapButton		m_btnOffXDown;
-		CBitmapButton		m_btnOffXUp;
-		CBitmapButton		m_btnOffYDown;
-		CBitmapButton		m_btnOffYUp;
-		CBitmapButton		m_btnOffZDown;
-		CBitmapButton		m_btnOffZUp;
-		CBitmapButton		m_btnRotPDown;
-		CBitmapButton		m_btnRotPUp;
-		CBitmapButton		m_btnRotBDown;
-		CBitmapButton		m_btnRotBUp;
-		CBitmapButton		m_btnRotHDown;
-		CBitmapButton		m_btnRotHUp;
-		CBitmapButton		m_btnScaleUDown;
-		CBitmapButton		m_btnScaleUUp;
-		CBitmapButton		m_btnScaleVDown;
-		CBitmapButton		m_btnScaleVUp;
-		CPaletteWnd			m_paletteWnd;
-		CExtSliderCtrl		m_brightnessCtrl;
-		CExtSliderCtrl		m_lightTimerCtrl;
+		CWnd				m_alignWnd;
 
-		bool					m_bInitTextureListBoxes;
-
-		int					m_lastTexture [2];
-		int					m_lastMode;
-		int					m_saveTexture [2];
-		CUVL					m_saveUVLs [4];
-//		int					frame [2];
-		double				m_lights [4];
-//		CWnd					m_textureWnd;
-		CWnd					m_alignWnd;
-		CWnd					m_lightWnd;
-		CWnd					m_colorWnd;
-		int					m_bUse1st;
-		int					m_bUse2nd;
 		int					m_bShowTexture;
 		int					m_bShowChildren;
+		double				m_zoom;
+		CPoint				m_apts [4];
+		CPoint				m_minPt,
+							m_maxPt,
+							m_centerPt;
 		double				m_alignX;
 		double				m_alignY;
 		double				m_alignAngle;
 		double				m_alignUvPoint [4];
-		double				m_zoom;
 		int					m_alignRot2nd;
-		CPoint				m_apts [4];
-		CPoint				m_minPt,
-								m_maxPt,
-								m_centerPt;
-		UINT					m_nTimerDelay;
-		UINT_PTR				m_nTimer;
-		UINT_PTR				m_nEditTimer;
-		UINT_PTR				m_nLightTimer;
-		int					m_nLightDelay;
-		double				m_nLightTime;
-		int					m_nHighlight;
-		char					m_szLight [33];
-		int					m_iLight;
-		BOOL					m_bLightEnabled;
-		BOOL					m_bIgnorePlane;
-		BOOL					m_bIgnoreWalls;
-		int					m_nBrightness;
-		int					m_nColorIndex;
-		PALETTEENTRY		m_rgbColor;
+		BOOL				m_bIgnorePlane;
+		BOOL				m_bIgnoreWalls;
+		UINT				m_nTimerDelay;
+		UINT_PTR			m_nTimer;
+		UINT_PTR			m_nEditTimer;
 		int					m_nEditFunc;
-		BOOL				m_bProjectToolActive;
-		int					m_nProjectionMode;
-		CDoubleMatrix		m_projectOrient;
-		CDoubleVector		m_vCenter;
-		double				m_projectRotP;
-		double				m_projectRotB;
-		double				m_projectRotH;
-		double				m_projectScaleU;
-		double				m_projectScaleV;
-		BOOL				m_bProjectPreview;
-		BOOL				m_bProjectCopiedOnly;
 
-		CTextureTool (CPropertySheet *pParent = null);
-		~CTextureTool ();
-      virtual BOOL OnInitDialog ();
-      virtual void DoDataExchange (CDataExchange *pDX);
-		virtual BOOL OnSetActive ();
+		CTextureAlignTool (UINT nId, CWnd* pParent = null) : CTextureTabDlg (nId, pParent) {}
+		~CTextureAlignTool ();
+		virtual BOOL OnInitDialog ();
+		virtual void DoDataExchange (CDataExchange *pDX);
+		virtual BOOL OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+		void OnEditTimer (void);
+		virtual bool Refresh (void);
 		virtual BOOL OnKillActive ();
-		afx_msg void LoadTextureListBoxes ();
+		virtual BOOL HandleTimer (UINT_PTR nIdEvent);
+
 		afx_msg void OnPaint ();
-		afx_msg void OnTimer (UINT_PTR nIdEvent);
-		afx_msg void OnSaveTexture ();
-		afx_msg void OnEditTexture ();
-		afx_msg void OnPasteSide ();
-		afx_msg void OnPasteTouching ();
-		afx_msg void OnTagPlane ();
-		afx_msg void OnTagTextures ();
-		afx_msg void OnReplace ();
-		afx_msg void OnSetLight ();
-		afx_msg void OnSelect1st ();
-		afx_msg void OnSelect2nd ();
-		afx_msg void OnPaste1st ();
-		afx_msg void OnPaste2nd ();
-		afx_msg void OnCleanup ();
 		afx_msg void OnAlignX ();
 		afx_msg void OnAlignY ();
 		afx_msg void OnAlignRot ();
@@ -1521,6 +1467,63 @@ class CTextureTool : public CTexToolDlg
 		afx_msg void OnVFlip ();
 		afx_msg void OnAlignIgnorePlane ();
 		afx_msg void OnAlignIgnoreWalls ();
+
+		void RefreshAlignment ();
+		void UpdateAlignWnd (void);
+		void RefreshAlignWnd ();
+		void DrawAlignment (CDC *pDC);
+		void RotateUV (double angle, bool bUpdate = true);
+		void Rot2nd (int iAngle);
+		void HAlign (int dir);
+		void VAlign (int dir);
+		void RAlign (int dir);
+		void HFlip (void);
+		void VFlip (void);
+		void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+
+		inline CScrollBar *HScrollAlign (void)
+			{ return (CScrollBar *) GetDlgItem (IDC_TEXALIGN_HSCROLL); }
+		inline CScrollBar *VScrollAlign (void)
+			{ return (CScrollBar *) GetDlgItem (IDC_TEXALIGN_VSCROLL); }
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
+class CTextureProjectTool : public CTextureTabDlg
+{
+	public:
+		CExtBitmapButton	m_btnProjPlanar;
+		CExtBitmapButton	m_btnProjCylinder;
+		CBitmapButton		m_btnOffXDown;
+		CBitmapButton		m_btnOffXUp;
+		CBitmapButton		m_btnOffYDown;
+		CBitmapButton		m_btnOffYUp;
+		CBitmapButton		m_btnOffZDown;
+		CBitmapButton		m_btnOffZUp;
+		CBitmapButton		m_btnRotPDown;
+		CBitmapButton		m_btnRotPUp;
+		CBitmapButton		m_btnRotBDown;
+		CBitmapButton		m_btnRotBUp;
+		CBitmapButton		m_btnRotHDown;
+		CBitmapButton		m_btnRotHUp;
+		CBitmapButton		m_btnScaleUDown;
+		CBitmapButton		m_btnScaleUUp;
+		CBitmapButton		m_btnScaleVDown;
+		CBitmapButton		m_btnScaleVUp;
+
+		double				m_projectRotP;
+		double				m_projectRotB;
+		double				m_projectRotH;
+
+		CTextureProjectTool (UINT nId, CWnd* pParent = null) : CTextureTabDlg (nId, pParent) {}
+		virtual BOOL OnInitDialog ();
+		//virtual void EnableControls (BOOL bEnable);
+		virtual void DoDataExchange (CDataExchange *pDX);
+		virtual bool Refresh (void);
+
 		afx_msg void OnProjectPlanar ();
 		afx_msg void OnProjectCylinder ();
 		afx_msg void OnProjectApply ();
@@ -1554,6 +1557,49 @@ class CTextureTool : public CTexToolDlg
 		afx_msg void OnProjectResetScaling ();
 		afx_msg void OnProjectPreview ();
 		afx_msg void OnProjectCopiedOnly ();
+
+		void UpdateProjectWnd (void);
+		void ClampProjectDirection ();
+		void UpdateOrientation ();
+		void StartProjectionTool (int nProjectionMode);
+		void EndProjectionTool (BOOL bApply);
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
+class CTextureLightTool : public CTextureTabDlg
+{
+	public:
+		CBitmapButton		m_btnAddLight;
+		CBitmapButton		m_btnDelLight;
+		CExtSliderCtrl		m_lightTimerCtrl;
+		CWnd				m_lightWnd;
+		CWnd				m_colorWnd;
+		CPaletteWnd			m_paletteWnd;
+
+		UINT_PTR			m_nLightTimer;
+		int					m_nLightDelay;
+		double				m_nLightTime;
+		int					m_nHighlight;
+		char				m_szLight [33];
+		int					m_iLight;
+		BOOL				m_bLightEnabled;
+		int					m_nColorIndex;
+		PALETTEENTRY		m_rgbColor;
+
+		CTextureLightTool (UINT nId, CWnd* pParent = null) : CTextureTabDlg (nId, pParent) {}
+		~CTextureLightTool ();
+		virtual BOOL OnInitDialog ();
+		//virtual void EnableControls (BOOL bEnable);
+		virtual void DoDataExchange (CDataExchange *pDX);
+		virtual bool Refresh (void);
+		virtual BOOL OnSetActive ();
+		virtual BOOL OnKillActive ();
+		virtual BOOL HandleTimer (UINT_PTR nIdEvent);
+
+		afx_msg void OnPaint ();
 		afx_msg void OnLight1 ();
 		afx_msg void OnLight2 ();
 		afx_msg void OnLight3 ();
@@ -1593,83 +1639,108 @@ class CTextureTool : public CTexToolDlg
 		afx_msg void OnLightStrobe8 ();
 		afx_msg void OnLightFlicker ();
 		afx_msg void OnLightDefault ();
-		afx_msg void OnBrightnessEdit ();
 		afx_msg void OnLightTimerEdit ();
 		afx_msg void OnAddLight ();
 		afx_msg void OnDeleteLight ();
 		afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
 		afx_msg void OnSelectColor (void);
 
-		virtual BOOL OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult);
-		void OnEditTimer (void);
-
 		void SetLightString ();
 		void SetLightButtons (LPSTR szLight = null, int nSpeed = -1);
 		bool SetLightDelay (int nSpeed = -1);
-		void GetBrightness (int nTexture);
-		void SetBrightness (int nBrightness = 0);
 		void UpdateLightWnd (void);
 		void UpdateLight (void);
 		void EnableLightControls (BOOL bEnable);
-
 		void ToggleLight (int i);
-		void AnimateTexture (void);
 		void AnimateLight (void);
-		void OnHScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
-		void OnVScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
-		void Rot2nd (int iAngle);
-		void HAlign (int dir);
-		void VAlign (int dir);
-		void RAlign (int dir);
-		void HFlip (void);
-		void VFlip (void);
-		void SelectTexture (int nIdC, bool bFirst);
-		void PasteTexture (short nSegment, short nSide, short nDepth);
-		bool GetAdjacentSide (short start_segment, short start_side, short linenum,
-									 short *neighbor_segnum, short *neighbor_sidenum);
+		void SetWallColor (void);
 		bool SideHasLight (void);
 		//void CreateColorCtrl (CWnd *pWnd, int nIdC);
 		//void UpdateColorCtrl (CWnd *pWnd, COLORREF color);
-		void RotateUV (double angle, bool bUpdate = true);
-		void Refresh ();
-		void RefreshTextureWnd ();
-		void RefreshAlignWnd ();
-		void UpdateTextureWnd (void);
-		void RefreshAlignment ();
-		void UpdateAlignWnd (void);
 		void UpdatePaletteWnd (void);
-		void UpdateProjectWnd (void);
-		void DrawTexture (short texture1, short texture2, int x0, int y0);
-		void DrawAlignment (CDC *pDC);
-		int ScrollSpeed (ushort texture,int *x,int *y);
-		void SetWallColor (void);
+		void OnHScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnVScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		virtual BOOL OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
-		void StartProjectionTool (int nProjectionMode);
-		void EndProjectionTool (BOOL bApply);
-		void ResetProjectOffset();
-		void ResetProjectDirection ();
-		void ClampProjectDirection ();
-		double CalcAverageRadius ();
-		void Project (CDynamicArray< CPreviewUVL > *m_previewUVLs = null);
-		bool ShouldProjectFace (short nSegment, short nSide);
-		void DrawProjectGuides (CRenderer& renderer, CViewMatrix* viewMatrix);
-
-		inline CScrollBar *HScrollAlign (void)
-			{ return (CScrollBar *) GetDlgItem (IDC_TEXALIGN_HSCROLL); }
-		inline CScrollBar *VScrollAlign (void)
-			{ return (CScrollBar *) GetDlgItem (IDC_TEXALIGN_VSCROLL); }
-		inline CComboBox *CBTexture1 (void)
-			{ return CBCtrl(IDC_TEXTURE_1ST); }
-		inline CComboBox *CBTexture2 (void)
-			{ return CBCtrl(IDC_TEXTURE_2ND); }
 		inline CButton *LightButton (int i)
 			{ return BtnCtrl (IDC_TEXLIGHT_1 + i); }
 		inline CSliderCtrl *TimerSlider (void)
 			{ return (CSliderCtrl *) GetDlgItem (IDC_TEXLIGHT_TIMERSLIDER); }
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
+class CTextureTool : public CTexToolDlg
+{
+	public:
+		CExtSliderCtrl		m_brightnessCtrl;
+		CToolTabCtrl		m_textureTools;
+
+		bool				m_bInitTextureListBoxes;
+
+		int					m_lastTexture [2];
+		int					m_lastMode;
+		int					m_saveTexture [2];
+		CUVL					m_saveUVLs [4];
+//		int					frame [2];
+		double				m_lights [4];
+//		CWnd					m_textureWnd;
+		int					m_bUse1st;
+		int					m_bUse2nd;
+		int					m_nBrightness;
+
+		CTextureTool (CPropertySheet *pParent = null);
+		~CTextureTool ();
+      virtual BOOL OnInitDialog ();
+      virtual void DoDataExchange (CDataExchange *pDX);
+		virtual BOOL OnSetActive ();
+		virtual BOOL OnKillActive ();
+		afx_msg void LoadTextureListBoxes ();
+		afx_msg void OnPaint ();
+		afx_msg void OnTimer (UINT_PTR nIdEvent);
+		afx_msg void OnSaveTexture ();
+		afx_msg void OnEditTexture ();
+		afx_msg void OnPasteSide ();
+		afx_msg void OnPasteTouching ();
+		afx_msg void OnTagPlane ();
+		afx_msg void OnTagTextures ();
+		afx_msg void OnReplace ();
+		afx_msg void OnSetLight ();
+		afx_msg void OnSelect1st ();
+		afx_msg void OnSelect2nd ();
+		afx_msg void OnPaste1st ();
+		afx_msg void OnPaste2nd ();
+		afx_msg void OnCleanup ();
+		afx_msg void OnBrightnessEdit ();
+
+		void GetBrightness (int nTexture);
+		void SetBrightness (int nBrightness = 0);
+		void AnimateTexture (void);
+
+		void SelectTexture (int nIdC, bool bFirst);
+		void PasteTexture (short nSegment, short nSide, short nDepth);
+		bool GetAdjacentSide (short start_segment, short start_side, short linenum,
+									 short *neighbor_segnum, short *neighbor_sidenum);
+		void Refresh ();
+		void RefreshTextureWnd ();
+		void UpdateTextureWnd (void);
+		void OnHScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void OnVScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		void DrawTexture (short texture1, short texture2, int x0, int y0);
+		int ScrollSpeed (ushort texture,int *x,int *y);
+
+		inline CComboBox *CBTexture1 (void)
+			{ return CBCtrl(IDC_TEXTURE_1ST); }
+		inline CComboBox *CBTexture2 (void)
+			{ return CBCtrl(IDC_TEXTURE_2ND); }
 		inline CSliderCtrl *BrightnessSlider (void)
 			{ return (CSliderCtrl *) GetDlgItem (IDC_TEXTURE_BRIGHTSLIDER); }
 		inline CSpinButtonCtrl *BrightnessSpinner (void)
 			{ return (CSpinButtonCtrl *) GetDlgItem (IDC_TEXTURE_BRIGHTSPINNER); }
+
+		inline CTextureTabDlg* Current (void) { return (CTextureTabDlg*) m_textureTools.Current (); }
 
 		DECLARE_MESSAGE_MAP()
 };

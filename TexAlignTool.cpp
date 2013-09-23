@@ -26,11 +26,128 @@ static char THIS_FILE [] = __FILE__;
 
 extern short nDbgSeg, nDbgSide;
 extern int nDbgVertex;
+static int rotMasks [4] = {0, 3, 2, 1};
 
 /////////////////////////////////////////////////////////////////////////////
 // CToolView
 
-static int rotMasks [4] = {0, 3, 2, 1};
+BEGIN_MESSAGE_MAP(CTextureAlignTool, CTextureTabDlg)
+	ON_WM_PAINT ()
+	ON_WM_HSCROLL ()
+	ON_WM_VSCROLL ()
+	ON_BN_CLICKED (IDC_TEXALIGN_HALEFT, OnAlignLeft)
+	ON_BN_CLICKED (IDC_TEXALIGN_HARIGHT, OnAlignRight)
+	ON_BN_CLICKED (IDC_TEXALIGN_VAUP, OnAlignUp)
+	ON_BN_CLICKED (IDC_TEXALIGN_VADOWN, OnAlignDown)
+	ON_BN_CLICKED (IDC_TEXALIGN_RALEFT, OnAlignRotLeft)
+	ON_BN_CLICKED (IDC_TEXALIGN_RARIGHT, OnAlignRotRight)
+	ON_BN_CLICKED (IDC_TEXALIGN_HFLIP, OnHFlip)
+	ON_BN_CLICKED (IDC_TEXALIGN_VFLIP, OnVFlip)
+	ON_BN_CLICKED (IDC_TEXALIGN_HSHRINK, OnHShrink)
+	ON_BN_CLICKED (IDC_TEXALIGN_VSHRINK, OnVShrink)
+	ON_BN_CLICKED (IDC_TEXALIGN_RESET, OnAlignReset)
+	ON_BN_CLICKED (IDC_TEXALIGN_RESET_TAGGED, OnAlignResetTagged)
+	ON_BN_CLICKED (IDC_TEXALIGN_STRETCH2FIT, OnAlignStretch2Fit)
+	ON_BN_CLICKED (IDC_TEXALIGN_CHILDALIGN, OnAlignChildren)
+	ON_BN_CLICKED (IDC_TEXALIGN_ALIGNALL, OnAlignAll)
+	ON_BN_CLICKED (IDC_TEXALIGN_ZOOMIN, OnZoomIn)
+	ON_BN_CLICKED (IDC_TEXALIGN_ZOOMOUT, OnZoomOut)
+	ON_BN_CLICKED (IDC_TEXALIGN_ROT0, OnRot2nd0)
+	ON_BN_CLICKED (IDC_TEXALIGN_ROT90, OnRot2nd90)
+	ON_BN_CLICKED (IDC_TEXALIGN_ROT180, OnRot2nd180)
+	ON_BN_CLICKED (IDC_TEXALIGN_ROT270, OnRot2nd270)
+	ON_BN_CLICKED (IDC_TEXALIGN_IGNOREPLANE, OnAlignIgnorePlane)
+	ON_EN_KILLFOCUS (IDC_TEXALIGN_HALIGN, OnAlignX)
+	ON_EN_KILLFOCUS (IDC_TEXALIGN_VALIGN, OnAlignY)
+	ON_EN_KILLFOCUS (IDC_TEXALIGN_RALIGN, OnAlignRot)
+END_MESSAGE_MAP()
+
+//------------------------------------------------------------------------------
+
+CTextureAlignTool::~CTextureAlignTool ()
+{
+	if (IsWindow (m_alignWnd))
+		m_alignWnd.DestroyWindow ();
+}
+
+//------------------------------------------------------------------------------
+
+BOOL CTextureAlignTool::OnInitDialog ()
+{
+if (!CTabDlg::OnInitDialog ())
+	return FALSE;
+
+/*
+m_btnZoomIn.SubclassDlgItem (IDC_TEXALIGN_ZOOMIN, this);
+m_btnZoomOut.SubclassDlgItem (IDC_TEXALIGN_ZOOMOUT, this);
+m_btnHShrink.SubclassDlgItem (IDC_TEXALIGN_HSHRINK, this);
+m_btnVShrink.SubclassDlgItem (IDC_TEXALIGN_VSHRINK, this);
+m_btnHALeft.SubclassDlgItem (IDC_TEXALIGN_HALEFT, this);
+m_btnHARight.SubclassDlgItem (IDC_TEXALIGN_HARIGHT, this);
+m_btnVAUp.SubclassDlgItem (IDC_TEXALIGN_VAUP, this);
+m_btnVADown.SubclassDlgItem (IDC_TEXALIGN_VADOWN, this);
+m_btnRALeft.SubclassDlgItem (IDC_TEXALIGN_RALEFT, this);
+m_btnRARight.SubclassDlgItem (IDC_TEXALIGN_RARIGHT, this);
+*/
+m_btnZoomIn.AutoLoad (IDC_TEXALIGN_ZOOMIN, this);
+m_btnZoomOut.AutoLoad (IDC_TEXALIGN_ZOOMOUT, this);
+m_btnHShrink.AutoLoad (IDC_TEXALIGN_HSHRINK, this);
+m_btnVShrink.AutoLoad (IDC_TEXALIGN_VSHRINK, this);
+m_btnHALeft.AutoLoad (IDC_TEXALIGN_HALEFT, this);
+m_btnHARight.AutoLoad (IDC_TEXALIGN_HARIGHT, this);
+m_btnVAUp.AutoLoad (IDC_TEXALIGN_VAUP, this);
+m_btnVADown.AutoLoad (IDC_TEXALIGN_VADOWN, this);
+m_btnRALeft.AutoLoad (IDC_TEXALIGN_RALEFT, this);
+m_btnRARight.AutoLoad (IDC_TEXALIGN_RARIGHT, this);
+
+m_btnStretch2Fit.AutoLoad (IDC_TEXALIGN_STRETCH2FIT, this);
+m_btnReset.AutoLoad (IDC_TEXALIGN_RESET, this);
+m_btnResetTagged.AutoLoad (IDC_TEXALIGN_RESET_TAGGED, this);
+m_btnChildAlign.AutoLoad (IDC_TEXALIGN_CHILDALIGN, this);
+m_btnAlignAll.AutoLoad (IDC_TEXALIGN_ALIGNALL, this);
+m_btnHFlip.AutoLoad (IDC_TEXALIGN_HFLIP, this);
+m_btnVFlip.AutoLoad (IDC_TEXALIGN_VFLIP, this);
+
+m_bShowChildren = TRUE;
+m_bShowTexture = TRUE;
+m_zoom = 1.0;
+m_alignX = 0;
+m_alignY = 0;
+m_alignAngle = 0;
+m_alignRot2nd = 0;
+m_bIgnorePlane = true;
+m_bIgnoreWalls = TRUE;
+m_nTimer = -1;
+m_nEditTimer = -1;
+m_nEditFunc = -1;
+
+CreateImgWnd (&m_alignWnd, IDC_TEXALIGN_SHOW);
+HScrollAlign ()->SetScrollRange (-100, 100, FALSE);
+HScrollAlign ()->SetScrollPos (0, TRUE);
+VScrollAlign ()->SetScrollRange (-100, 100, FALSE);
+VScrollAlign ()->SetScrollPos (0, TRUE);
+
+m_bInited = TRUE;
+UpdateData (FALSE);
+return TRUE;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureAlignTool::DoDataExchange (CDataExchange * pDX)
+{
+if (!HaveData (pDX)) 
+	return;
+
+DDX_Check (pDX, IDC_TEXALIGN_SHOWTEXTURE, m_bShowTexture);
+DDX_Check (pDX, IDC_TEXALIGN_SHOWCHILDREN, m_bShowChildren);
+DDX_Check (pDX, IDC_TEXALIGN_IGNOREPLANE, m_bIgnorePlane);
+//DDX_Check (pDX, IDC_TEXALIGN_IGNOREWALLS, m_bIgnoreWalls);
+DDX_Double (pDX, IDC_TEXALIGN_HALIGN, m_alignX);
+DDX_Double (pDX, IDC_TEXALIGN_VALIGN, m_alignY);
+DDX_Double (pDX, IDC_TEXALIGN_RALIGN, m_alignAngle);
+DDX_Radio (pDX, IDC_TEXALIGN_ROT0, m_alignRot2nd);
+}
 
 //------------------------------------------------------------------------------
 
@@ -45,7 +162,27 @@ return (value / round) * round;
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::UpdateAlignWnd (void)
+void CTextureAlignTool::OnPaint ()
+{
+if (theMine == null) 
+	return;
+CTextureTabDlg::OnPaint ();
+UpdateAlignWnd ();
+}
+
+//------------------------------------------------------------------------------
+
+bool CTextureAlignTool::Refresh (void)
+{
+RefreshAlignment ();
+UpdateAlignWnd ();
+UpdateData (FALSE);
+return true;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureAlignTool::UpdateAlignWnd (void)
 {
 CHECKMINE;
 if (m_alignWnd.m_hWnd) {
@@ -58,7 +195,7 @@ if (m_alignWnd.m_hWnd) {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::RefreshAlignWnd (void) 
+void CTextureAlignTool::RefreshAlignWnd (void) 
 {
 CHECKMINE;
 
@@ -273,7 +410,7 @@ DeleteObject(hPenGrid);
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::DrawAlignment (CDC *pDC)
+void CTextureAlignTool::DrawAlignment (CDC *pDC)
 {
 CHECKMINE;
 if (!m_bShowTexture)
@@ -312,10 +449,31 @@ DeleteObject(hRgn);
 pDC->SelectPalette (oldPalette, FALSE);
 }
 
+//------------------------------------------------------------------------------
+
+BOOL CTextureAlignTool::OnKillActive ()
+{
+if (m_nEditTimer >= 0) {
+	m_pParentWnd->KillTimer (m_nEditTimer);
+	m_nEditTimer = -1;
+	}
+return CTextureTabDlg::OnKillActive ();
+}
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignX ()
+BOOL CTextureAlignTool::HandleTimer (UINT_PTR nIdEvent)
+{
+if (nIdEvent == 3) {
+	OnEditTimer ();
+	return TRUE;
+	}
+return FALSE;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureAlignTool::OnAlignX ()
 {
 UpdateData (TRUE);
 
@@ -344,7 +502,7 @@ if (delta) {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignY ()
+void CTextureAlignTool::OnAlignY ()
 {
 UpdateData (TRUE);
 
@@ -373,7 +531,7 @@ if (delta) {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignRot ()
+void CTextureAlignTool::OnAlignRot ()
 {
 UpdateData (TRUE);
   
@@ -389,7 +547,7 @@ RotateUV (delta, FALSE);
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::RefreshAlignment ()
+void CTextureAlignTool::RefreshAlignment ()
 {
 	CSide* sideP = current->Side ();
 
@@ -411,7 +569,7 @@ for (m_alignRot2nd = 0; m_alignRot2nd < 4; m_alignRot2nd++)
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::RotateUV (double angle, bool bUpdate)
+void CTextureAlignTool::RotateUV (double angle, bool bUpdate)
 {
 	CSide*	sideP = current->Side ();
 
@@ -428,7 +586,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::HFlip (void)
+void CTextureAlignTool::HFlip (void)
 {
 	CSide*	sideP = current->Side ();
 
@@ -451,7 +609,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::VFlip (void)
+void CTextureAlignTool::VFlip (void)
 {
 	CSide*	sideP = current->Side ();
 
@@ -474,7 +632,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::HAlign (int dir)
+void CTextureAlignTool::HAlign (int dir)
 {
 	CSide*	sideP = current->Side ();
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom * dir;
@@ -501,7 +659,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::VAlign (int dir)
+void CTextureAlignTool::VAlign (int dir)
 {
 	CSide*	sideP = current->Side ();
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom * dir;
@@ -528,63 +686,63 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnHFlip (void)
+void CTextureAlignTool::OnHFlip (void)
 {
 HFlip ();
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnVFlip (void)
+void CTextureAlignTool::OnVFlip (void)
 {
 VFlip ();
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignLeft (void)
+void CTextureAlignTool::OnAlignLeft (void)
 {
 HAlign (-1);
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignRight (void)
+void CTextureAlignTool::OnAlignRight (void)
 {
 HAlign (1);
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignUp (void)
+void CTextureAlignTool::OnAlignUp (void)
 {
 VAlign (-1);
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignDown (void)
+void CTextureAlignTool::OnAlignDown (void)
 {
 VAlign (1);
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignRotLeft (void)
+void CTextureAlignTool::OnAlignRotLeft (void)
 {
 RotateUV (theMine->RotateRate ());
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignRotRight (void)
+void CTextureAlignTool::OnAlignRotRight (void)
 {
 RotateUV (-theMine->RotateRate ());
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnHShrink ()
+void CTextureAlignTool::OnHShrink ()
 {
 	CSide		*sideP = current->Side ();
 	int		h = sideP->VertexCount ();
@@ -607,7 +765,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnVShrink ()
+void CTextureAlignTool::OnVShrink ()
 {
 	CSide*	sideP = current->Side ();
 	int		h = sideP->VertexCount ();
@@ -630,7 +788,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignReset ()
+void CTextureAlignTool::OnAlignReset ()
 {
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
@@ -646,7 +804,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignResetTagged ()
+void CTextureAlignTool::OnAlignResetTagged ()
 {	
 	short nWalls = wallManager.WallCount ();
 	BOOL bModified = FALSE;
@@ -676,7 +834,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignStretch2Fit ()
+void CTextureAlignTool::OnAlignStretch2Fit ()
 {
 	CSide*		sideP = current->Side ();
 	CSegment*	segP;
@@ -710,7 +868,7 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignAll (void)
+void CTextureAlignTool::OnAlignAll (void)
 {
 // set all segment sides as not aligned yet
 	CSegment	* currSeg = current->Segment (),
@@ -721,6 +879,7 @@ void CTextureTool::OnAlignAll (void)
 				nSide = current->SideId (),
 				nChildLine = 3;
 	double	sAngle, cAngle, angle; 
+	CTextureTool *texTool = DLE.ToolView ()->TextureTool ();
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
@@ -733,9 +892,9 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.
 	childSideP = segP->m_sides + nSide;
 	if (childSideP->Shape () > SIDE_SHAPE_TRIANGLE)
 		continue;
-	if (m_bUse1st && (sideP->BaseTex () != childSideP->BaseTex ()))
+	if (texTool->m_bUse1st && (sideP->BaseTex () != childSideP->BaseTex ()))
 		continue;
-	if (m_bUse2nd && (sideP->OvlTex (0) != childSideP->OvlTex (0)))
+	if (texTool->m_bUse2nd && (sideP->OvlTex (0) != childSideP->OvlTex (0)))
 		continue;
 	if (!(bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))))
 		continue;
@@ -750,7 +909,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.
 		for (int i = 0; i < childSideP->VertexCount (); i++) 
 			childSideP->m_info.uvls [i].Rotate (angle); 
 		}
-	segmentManager.AlignTextures (nSegment, nSide, m_bUse1st, m_bUse2nd, m_bIgnorePlane, false, false);
+	segmentManager.AlignTextures (nSegment, nSide, texTool->m_bUse1st, texTool->m_bUse2nd, m_bIgnorePlane, false, false);
 	}
 undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
@@ -758,20 +917,22 @@ UpdateAlignWnd ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignChildren ()
+void CTextureAlignTool::OnAlignChildren ()
 {
+	CTextureTool *texTool = DLE.ToolView ()->TextureTool ();
+
 // set all segment sides as not aligned yet
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
 // the alignment function will take care of only aligning tagged sides (provided they are all connected)
-segmentManager.AlignTextures (current->SegmentId (), current->SideId (), m_bUse1st, m_bUse2nd, m_bIgnorePlane, true, false);
+segmentManager.AlignTextures (current->SegmentId (), current->SideId (), texTool->m_bUse1st, texTool->m_bUse2nd, m_bIgnorePlane, true, false);
 undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnZoomIn ()
+void CTextureAlignTool::OnZoomIn ()
 {
 if (m_zoom < 16.0) {
 	m_zoom *= 2.0;
@@ -781,7 +942,7 @@ if (m_zoom < 16.0) {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnZoomOut ()
+void CTextureAlignTool::OnZoomOut ()
 {
 if (m_zoom > 1.0/16.0) {
 	m_zoom /= 2.0;
@@ -791,7 +952,7 @@ if (m_zoom > 1.0/16.0) {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::Rot2nd (int iAngle)
+void CTextureAlignTool::Rot2nd (int iAngle)
 {
 	CSide *sideP = current->Side ();
  
@@ -808,35 +969,35 @@ if ((sideP->OvlTex (0)) && ((sideP->OvlAlignment ()) != rotMasks [iAngle])) {
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnRot2nd0 ()
+void CTextureAlignTool::OnRot2nd0 ()
 {
 Rot2nd (0);
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnRot2nd90 ()
+void CTextureAlignTool::OnRot2nd90 ()
 {
 Rot2nd (1);
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnRot2nd180 ()
+void CTextureAlignTool::OnRot2nd180 ()
 {
 Rot2nd (2);
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnRot2nd270 ()
+void CTextureAlignTool::OnRot2nd270 ()
 {
 Rot2nd (3);
 }
 
 //------------------------------------------------------------------------------
 		
-void CTextureTool::OnAlignIgnorePlane ()
+void CTextureAlignTool::OnAlignIgnorePlane ()
 {
 m_bIgnorePlane = !m_bIgnorePlane;
 Refresh ();
@@ -844,10 +1005,164 @@ Refresh ();
 
 //------------------------------------------------------------------------------
 
-void CTextureTool::OnAlignIgnoreWalls ()
+void CTextureAlignTool::OnAlignIgnoreWalls ()
 {
 m_bIgnoreWalls = !m_bIgnoreWalls;
 Refresh ();
+}
+
+//------------------------------------------------------------------------------
+
+BOOL CTextureAlignTool::OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult)
+{
+LPNMHDR	nmHdr = (LPNMHDR) lParam;
+int		nMsg = nmHdr->code;
+
+switch (wParam) {
+	case IDC_TEXALIGN_HALIGN:
+	case IDC_TEXALIGN_VALIGN:
+	case IDC_TEXALIGN_RALIGN:
+	case IDC_TEXALIGN_ZOOMIN:
+	case IDC_TEXALIGN_ZOOMOUT:
+	case IDC_TEXALIGN_HALEFT:
+	case IDC_TEXALIGN_HARIGHT:
+	case IDC_TEXALIGN_VAUP:
+	case IDC_TEXALIGN_VADOWN:
+	case IDC_TEXALIGN_RALEFT:
+	case IDC_TEXALIGN_RARIGHT:
+	case IDC_TEXALIGN_HSHRINK:
+	case IDC_TEXALIGN_VSHRINK:
+		if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN) {
+			m_nEditFunc = int (wParam);
+			m_nEditTimer = m_pParentWnd->SetTimer (3, m_nTimerDelay = 250U, null);
+			}
+		else {
+			m_nEditFunc = -1;
+			if (m_nEditTimer >= 0) {
+				m_pParentWnd->KillTimer (m_nEditTimer);
+				m_nEditTimer = -1;
+				}
+			}
+		break;
+
+	default:
+		return CTextureTabDlg::OnNotify (wParam, lParam, pResult);
+	}
+*pResult = 0;
+return TRUE;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureAlignTool::OnEditTimer (void)
+{
+switch (m_nEditFunc) {
+	case IDC_TEXALIGN_HALIGN:
+		OnAlignX ();
+		break;
+	case IDC_TEXALIGN_VALIGN:
+		OnAlignY ();
+		break;
+	case IDC_TEXALIGN_ZOOMIN:
+		OnZoomIn ();
+		break;
+	case IDC_TEXALIGN_ZOOMOUT:
+		OnZoomOut ();
+		break;
+	case IDC_TEXALIGN_HALEFT:
+		OnAlignLeft ();
+		break;
+	case IDC_TEXALIGN_HARIGHT:
+		OnAlignRight ();
+		break;
+	case IDC_TEXALIGN_VAUP:
+		OnAlignUp ();
+		break;
+	case IDC_TEXALIGN_VADOWN:
+		OnAlignDown ();
+		break;
+	case IDC_TEXALIGN_RALEFT:
+		OnAlignRotLeft ();
+		break;
+	case IDC_TEXALIGN_RARIGHT:
+		OnAlignRotRight ();
+		break;
+	case IDC_TEXALIGN_HSHRINK:
+		OnHShrink ();
+		break;
+	case IDC_TEXALIGN_VSHRINK:
+		OnVShrink ();
+		break;
+	default:
+		break;
+	}
+UINT i = (m_nTimerDelay * 9) / 10;
+if (i >= 25) {
+	m_pParentWnd->KillTimer (m_nTimer);
+	m_nTimer = m_pParentWnd->SetTimer (3, m_nTimerDelay = i, null);
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureAlignTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
+{
+int nPos = pScrollBar->GetScrollPos ();
+CRect rc;
+m_alignWnd.GetClientRect (rc);
+switch (scrollCode) {
+	case SB_LINEUP:
+		nPos--;
+		break;
+	case SB_LINEDOWN:
+		nPos++;
+		break;
+	case SB_PAGEUP:
+		nPos -= rc.Width () / 4;
+		break;
+	case SB_PAGEDOWN:
+		nPos += rc.Width () / 4;
+		break;
+	case SB_THUMBPOSITION:
+	case SB_THUMBTRACK:
+		nPos = thumbPos;
+		break;
+	case SB_ENDSCROLL:
+		return;
+	}
+pScrollBar->SetScrollPos (nPos, TRUE);
+UpdateAlignWnd ();
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureAlignTool::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
+{
+int nPos = pScrollBar->GetScrollPos ();
+CRect rc;
+m_alignWnd.GetClientRect (rc);
+switch (scrollCode) {
+	case SB_LINEUP:
+		nPos--;
+		break;
+	case SB_LINEDOWN:
+		nPos++;
+		break;
+	case SB_PAGEUP:
+		nPos -= rc.Height () / 4;
+		break;
+	case SB_PAGEDOWN:
+		nPos += rc.Height () / 4;
+		break;
+	case SB_THUMBPOSITION:
+	case SB_THUMBTRACK:
+		nPos = thumbPos;
+		break;
+	case SB_ENDSCROLL:
+		return;
+	}
+pScrollBar->SetScrollPos (nPos, TRUE);
+UpdateAlignWnd ();
 }
 
 //------------------------------------------------------------------------------

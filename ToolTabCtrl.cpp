@@ -61,8 +61,13 @@ ClientToScreen (&screenRect);
 m_pParent->GetClientRect (&parentRect);
 m_pParent->ClientToScreen (&parentRect);
 
-dlgRect.left = tabRect.left + screenRect.left - parentRect.left;
-dlgRect.top = tabRect.bottom + 1 + screenRect.top - parentRect.top;
+if (!(this->GetStyle () & TCS_VERTICAL)) {
+	dlgRect.left = tabRect.left + screenRect.left - parentRect.left;
+	dlgRect.top = tabRect.bottom + 1 + screenRect.top - parentRect.top;
+} else {
+	dlgRect.left = tabRect.right + 1 + screenRect.left - parentRect.left;
+	dlgRect.top = tabRect.top + screenRect.top - parentRect.top;
+	}
 dlgRect.right += screenRect.left - parentRect.left - 8;
 dlgRect.bottom += screenRect.top - parentRect.top - 8;
 
