@@ -6895,8 +6895,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,11,78,0
- PRODUCTVERSION 1,11,78,0
+ FILEVERSION 1,11,79,0
+ PRODUCTVERSION 1,11,79,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6912,13 +6912,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor [17 aug 2013]"
-            VALUE "FileVersion", "1.11.78.0"
+            VALUE "FileDescription", "Descent Level Editor [23 nov 2013]"
+            VALUE "FileVersion", "1.11.79.0"
             VALUE "InternalName", "DLE"
             VALUE "LegalCopyright", "Copyright (C) Bryan Aamot, Dietfrid Mali"
             VALUE "OriginalFilename", "DLE.EXE"
             VALUE "ProductName", "Descent Level Editor"
-            VALUE "ProductVersion", "1.11.78.0"
+            VALUE "ProductVersion", "1.11.79.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6945,7 +6945,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor 1.11.78\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor 1.11.79\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 
@@ -7183,6 +7183,10 @@ BEGIN
     IDC_TEXPROJECT_ORIGINXUP "move right\nmove right"
     IDC_TEXPROJECT_ORIGINYDOWN "move down\nmove down"
     IDC_TEXPROJECT_ORIGINYUP "move up\nmove up"
+END
+
+STRINGTABLE
+BEGIN
     IDC_TEXPROJECT_ORIGINZUP "move forward\nmove forward"
     IDC_TEXPROJECT_ORIGINZDOWN "move back\nmove back"
     IDC_TEXPROJECT_ROTPDOWN "rotate down\nrotate down"
@@ -7194,6 +7198,10 @@ BEGIN
     IDC_TEXPROJECT_USCALEDOWN "stretch horizontally\nstretch horizontally"
     IDC_TEXPROJECT_USCALEUP "shrink horizontally\nshrink horizontally"
     IDC_TEXPROJECT_VSCALEDOWN "stretch vertically\nstretch vertically"
+END
+
+STRINGTABLE
+BEGIN
     IDC_TEXPROJECT_VSCALEUP "shrink vertically\nshrink vertically"
 END
 
