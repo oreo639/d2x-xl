@@ -29,6 +29,7 @@ static char THIS_FILE[] = __FILE__;
 // CToolView
 
 BEGIN_MESSAGE_MAP(CEditorSettingsTool, CSettingsTabDlg)
+	ON_WM_HSCROLL ()
 	ON_BN_CLICKED (IDC_PREFS_BUMPOBJECTS, OnChange)
 	ON_EN_KILLFOCUS (IDC_PREFS_UNDO, OnChange)
 	ON_EN_KILLFOCUS (IDC_PREFS_MOVERATE, OnChange)
@@ -69,6 +70,15 @@ DDX_Text (pDX, IDC_PREFS_MOVERATE, appSettings.m_moveRate [0]);
 DDX_Text (pDX, IDC_PREFS_VIEW_MOVERATE, appSettings.m_moveRate [1]);
 DDX_Text (pDX, IDC_PREFS_UNDO, appSettings.m_nMaxUndo);
 DDX_Check (pDX, IDC_PREFS_BUMPOBJECTS, appSettings.m_bBumpObjects);
+}
+
+//------------------------------------------------------------------------------
+
+void CEditorSettingsTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
+{
+if (m_rotateRate.OnScroll (scrollCode, thumbPos, pScrollBar)) {
+	UpdateData (TRUE);
+	}
 }
 
 //------------------------------------------------------------------------------

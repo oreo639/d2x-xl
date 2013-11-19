@@ -90,13 +90,13 @@ else
 
 int bCustom = robotManager.RobotInfo (objP->Id ())->Info ().bCustom;
 
-if (bCustom) {
+if (bCustom || bVertigo) {
 	char *psz = strstr (filename, "data");
 	if (psz)
 		*psz = '\0';
 	}
 if (bVertigo) {
-	strcpy_s (filename, sizeof (filename), "..\\missions\\d2x.hog");
+	strcat_s (filename, sizeof (filename), "missions\\d2x.hog");
 	if (!ReadModelData (filename, "d2x.ham", true))
 		return 0;
 	}

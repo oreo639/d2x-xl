@@ -219,7 +219,7 @@ if (!m_alignWnd.m_hWnd)
 // read scroll bar
 offset.x = int (m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_centerPt.x;
 offset.y = int (m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_centerPt.y;
-UpdateData (TRUE);
+
 /*
 RefreshX();
 RefreshY();

@@ -89,7 +89,7 @@ class CTunnelPathNode {
 		CVertex			m_vertex; // absolute and unrotated vertices
 		CDoubleMatrix	m_rotation;
 		double			m_angle; // rotation angle around z axis
-		CDoubleVector	m_axis;
+		CDoubleVector	m_axis; // axis of rotation from last node to this node
 		double			m_sign;
 		
 	CTunnelPathNode () : m_angle (0.0) {}

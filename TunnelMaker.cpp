@@ -84,18 +84,13 @@ CTunnelMaker tunnelMaker;
 
 #ifdef _DEBUG
 
-#define ROTAXIS_METHOD	1
-#define UNTWIST			1
-
 static bool bTwist = true;
 static bool bUnTwist = true;
 
-#else
-
-#define ROTAXIS_METHOD	0
-#define UNTWIST			0
-
 #endif
+
+#define ROTAXIS_METHOD	1
+#define UNTWIST			0
 
 //------------------------------------------------------------------------------
 
@@ -810,8 +805,10 @@ void CTunnelPath::Bend (CTunnelPathNode * n0, CTunnelPathNode * n1)
 {
 #if ROTAXIS_METHOD
 
-if (!BendAxis (n0, n1))
+if (!BendAxis (n0, n1)) {
+	n1->m_rotation.R () = n1->m_axis;
 	n1->m_rotation.U () = n0->m_rotation.U ();
+	}
 else {
 	n1->m_rotation.R () = n1->m_axis;
 	n1->m_rotation.U () = CrossProduct (n1->m_rotation.R (), n1->m_rotation.F ());
@@ -955,13 +952,15 @@ double corrAngle = fabs (m_corrAngles [0]) + fabs (m_corrAngles [1]);
 if (corrAngle < 0.001) 
 	m_nPivot = -1;
 else {
-	double ratio = double (m_nSteps) * fabs (m_corrAngles [0]) / corrAngle;
-	double minDist = 1e30;
-	for (int i = 1; i < m_nSteps; i++) {
+	// find the "zero" point between the z rotations of the two ends of the corridor by taking
+	// the ratio of one end to the total rotation, and multiplying by the corridor length.
+	double pivotDist = Length (m_nSteps) * fabs (m_corrAngles [0]) / corrAngle;
+	double minDistFromPivot = 1e30;
+	for (int i = 0; i <= m_nSteps; i++) {
 		double l = Length (i);
-		double d = fabs (ratio - l);
-		if (d < minDist) {
-			minDist = d;
+		double distFromPivot = fabs (pivotDist - l);
+		if (distFromPivot < minDistFromPivot) {
+			minDistFromPivot = distFromPivot;
 			m_nPivot = i;
 			}
 		}
@@ -1283,7 +1282,8 @@ else {
 		bPath = true;
 		}
 	}
-m_nGranularity = 0;
+if (bStartSides || bPath)
+	m_nGranularity = 0;
 
 if (m_path.Setup (m_base, bStartSides, bPath)) {
 	m_tunnel.Setup (m_base);

@@ -112,7 +112,7 @@ m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);
 m_btnAddLight.AutoLoad (IDC_TEXLIGHT_ADD, this);
 m_btnDelLight.AutoLoad (IDC_TEXLIGHT_DELETE, this);
 
-m_lightTimerCtrl.Init (this, (nLayout == 1) ? -IDC_TEXLIGHT_TIMERSLIDER : IDC_TEXLIGHT_TIMERSLIDER, IDC_TEXLIGHT_TIMERSPINNER, IDC_TEXLIGHT_TIMER, 0, 1000, 50.0, 1.0, 2);
+m_lightTimerCtrl.Init (this, -IDC_TEXLIGHT_TIMERSLIDER, IDC_TEXLIGHT_TIMERSPINNER, IDC_TEXLIGHT_TIMER, 0, 1000, 50.0, 1.0, 2);
 CreateColorCtrl (&m_lightWnd, IDC_TEXLIGHT_SHOW);
 UpdateLightWnd ();
 CreateColorCtrl (&m_colorWnd, IDC_TEXLIGHT_COLOR);

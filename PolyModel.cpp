@@ -194,7 +194,7 @@ else {
 	m_info.nModels = fp->ReadInt32 ();
 	m_info.dataSize = fp->ReadInt32 ();
 	fp->ReadInt32 ();
-	m_info.renderData = null;
+	Release ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].ptr = fp->ReadInt32 ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
