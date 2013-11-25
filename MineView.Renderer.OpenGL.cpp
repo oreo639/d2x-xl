@@ -366,7 +366,7 @@ void CRendererGL::ComputeZoom (void)
 {
 if (!Perspective ()) {
 	double m = Translation ().Mag ();
-	m_vZoom [0] = (m < 0.0) ? double (int ((m - 10.0) / 20.0)) : double (int (sqrt ((m + 10.0) / 20.0)));
+	m_vZoom [0] = log10 (m + 1);
 	}
 }
 
@@ -385,12 +385,11 @@ else {
 			Translation ().v.z -= double (-nSteps);
 		}
 	else {
-		if (zoom > 1.0)
-			m_vZoom [0] -= 1.0 * double (nSteps);
-		else 
-			m_vZoom [0] += 1.0 * double (nSteps);
+		ComputeZoom ();
+		m_vZoom [0] -= (zoom - 1.0) * double (nSteps);
+		m_vZoom [0] = max (m_vZoom [0], 0);
 #if 1
-		Translation ().v.z = (m_vZoom [0] > 0.0) ? m_vZoom [0] * m_vZoom [0] * 20.0 : m_vZoom [0] * 20.0;
+		Translation ().v.z = pow (10.0, m_vZoom [0]) - 1.0;
 #else
 		if ((m_vZoom [0] < 0) != (zoom < 1.0))
 			zoom = 1.0 / zoom;
