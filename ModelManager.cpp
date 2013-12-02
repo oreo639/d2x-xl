@@ -79,7 +79,7 @@ int bVertigo = objP->Id () > N_ROBOT_TYPES_D2;
 if (m_polyModels [0][m_nModel].m_info.renderData || (!bVertigo && (m_polyModels [1][m_nModel].m_info.renderData || (m_renderModels [m_nModel].m_nModel >= 0))))
 	return 1;
 
-char filename [256], d2xFilename [256];
+char filename [256];
 
 strcpy_s (filename, sizeof (filename), descentFolder [1]);
 char *slash = strrchr (filename, '\\');
