@@ -443,11 +443,13 @@ for (int nChildSeg = 0; nChildSeg < nSegments; nChildSeg++) {
 		// if side has a child..
 		if (!(bAll || childSegP->Side (nChildSide)->IsTagged ()))
 			continue;
+#if 0 // unfortunately this breaks object lighting because it needs values even where there is no wall
 		if (childSegP->ChildId (nChildSide) >= 0) {
 			CWall* wallP = childSegP->Side (nChildSide)->Wall ();
 			if ((wallP == null) || !wallP->IsVisible ())
 				continue;
 			}
+#endif
 
 		double cornerLights [4];
 

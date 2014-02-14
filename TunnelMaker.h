@@ -49,6 +49,12 @@ class CCubicBezier {
 
 class CTunnelBase : public CSelection {
 	public:
+		enum eUpdateStatus {
+			NoUpdate = 0,
+			UpdateOrientation = 1,
+			UpdateSide = 2
+		};
+
 		int				m_nSelection;
 		CVertex			m_point;
 		CVertex			m_normal;
@@ -57,7 +63,7 @@ class CTunnelBase : public CSelection {
 		CDoubleMatrix	m_rotation; // orientation of tunnel end side
 		double			m_sign;
 		bool				m_bStart;
-		int				m_bUpdate;
+		eUpdateStatus	m_updateStatus;
 
 		CTunnelBase (CSideKey key = CSideKey (-1, -1)) : CSelection (key), m_nSelection (-1) {}
 
@@ -65,7 +71,7 @@ class CTunnelBase : public CSelection {
 
 		void Setup (CSelection* selection, double sign, bool bStart);
 
-		int Update (CSelection* selection);
+		eUpdateStatus IsUpdateNeeded (CSelection* selection, bool bStartSidesTagged = false);
 
 		inline CDoubleVector GetPoint (void) { return m_point; }
 
@@ -239,7 +245,7 @@ class CTunnelMaker {
 
 		void Destroy (void);
 
-		bool Setup (bool bStartSides);
+		bool CalculateTunnel (bool bNewTunnelMakerInstance);
 		
 		bool Active (bool bMsg = true) { 
 			if (!m_bActive)

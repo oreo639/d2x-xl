@@ -595,7 +595,9 @@ void CHogManager::OnImport (void)
 {
 	long offset;
 	CLevelHeader lh (DLE.IsD2XFile ());
-	char szFile [256] = "\0"; // buffer for fp name
+	char szOfnFileBuf [512] = "\0"; // buffer for ofn dialog, can be multiple files
+	char szFilePath [256] = "\0"; // buffer for fp name
+	char *pszFile = NULL;
 	OPENFILENAME ofn;
 
 memset(&ofn, 0, sizeof (OPENFILENAME));
@@ -617,13 +619,15 @@ else {
 	ofn.nFilterIndex = 2;
 	ofn.lpstrDefExt = "rl2";
 	}
-ofn.lpstrFile = szFile;
-ofn.nMaxFile = sizeof (szFile);
-ofn.lpstrFileTitle = lh.Name ();
-ofn.nMaxFileTitle = lh.NameSize ();
-ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+ofn.lpstrFile = szOfnFileBuf;
+ofn.nMaxFile = sizeof (szOfnFileBuf);
+ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT | OFN_EXPLORER;
 if (!GetOpenFileName (&ofn))
 	return;
+
+if (!(GetFileAttributes (szOfnFileBuf) & FILE_ATTRIBUTE_DIRECTORY))
+	// only one file selected, direct copy
+	strncpy_s (szFilePath, sizeof (szFilePath), szOfnFileBuf, _TRUNCATE);
 
 CFileManager fDest;
 if (!fDest.Open (m_pszFile, "ab")) {
@@ -632,28 +636,52 @@ if (!fDest.Open (m_pszFile, "ab")) {
 	}
 
 CFileManager fSrc;
-if (!fSrc.Open (szFile, "rb")) {
-	ErrorMsg ("Could not open source file for import.");
-	return;
-	}
-fDest.Seek (0, SEEK_END);
-offset = fDest.Tell ();
-// write header
-lh.SetFileSize (fSrc.Length ());
-_strlwr_s (lh.Name (), lh.NameSize ());
-lh.Write (&fDest);
+do {
+	if (!pszFile && !*szFilePath)
+		// get first filename
+		pszFile = szOfnFileBuf + strlen (szOfnFileBuf) + 1;
+	if (pszFile >= szOfnFileBuf + sizeof (szOfnFileBuf)) {
+		ErrorMsg ("Source file directory path too long.");
+		return;
+		}
+	if (!*szFilePath)
+		// multiple files, have to construct the next path
+		sprintf_s (szFilePath, sizeof (szFilePath), "%s\\%s", szOfnFileBuf, pszFile);
+
+	if (!fSrc.Open (szFilePath, "rb")) {
+		ErrorMsg ("Could not open source file for import.");
+		return;
+		}
+	fDest.Seek (0, SEEK_END);
+	offset = fDest.Tell ();
+	// write header
+	lh.SetFileSize (fSrc.Length ());
+	strcpy_s (lh.Name (), lh.NameSize (), PathFindFileName (szFilePath));
+	_strlwr_s (lh.Name (), lh.NameSize ());
+	lh.Write (&fDest);
 
 	// write data (from source to HOG)
-while (!fSrc.EoF ()) {
-	size_t nBytes = fSrc.Read (dataBuf, 1, sizeof (dataBuf));
-	if (nBytes <= 0)
-		break;
-	fDest.Write (dataBuf, 1, (int) nBytes);
-	}
-fSrc.Close ();
+	while (!fSrc.EoF ()) {
+		size_t nBytes = fSrc.Read (dataBuf, 1, sizeof (dataBuf));
+		if (nBytes <= 0)
+			break;
+		fDest.Write (dataBuf, 1, (int) nBytes);
+		}
+	fSrc.Close ();
+
+	// update list boxes
+	AddFile (lh.Name (), lh.NameSize (), lh.FileSize (), offset, LBFiles ()->GetCount ());
+
+	// get next file path if any
+	if (pszFile) {
+		pszFile += strlen (pszFile) + 1;
+		if (pszFile >= szOfnFileBuf + sizeof (szOfnFileBuf))
+			pszFile = NULL;
+		memset (szFilePath, 0, sizeof (szFilePath));
+		}
+	} while (pszFile && *pszFile);
+
 fDest.Close ();
-// update list boxes
-AddFile (lh.Name (), lh.NameSize (), lh.FileSize (), offset, LBFiles ()->GetCount ());
 }
 
 //------------------------------------------------------------------------------

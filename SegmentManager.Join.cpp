@@ -291,6 +291,7 @@ class CSideMatcher {
 			for (short direction = 0; direction < 2; direction++) {
 				for (short offset = 0; offset < m_nVertices; offset++) { // try all orientations of current side towards candidate side
 					short i;
+					// Check that no pair of points in the candidate join is too far apart
 					for (i = 0; i < m_nVertices; i++) {
 						short j = (offset + (direction ? m_nVertices - i : i)) % m_nVertices;
 						m_match [i].v = j; 
@@ -298,6 +299,8 @@ class CSideMatcher {
 						if (m_match [i].d > maxRadius)
 							break;
 						}
+					if (i < m_nVertices)
+						continue;
 					// Check if each line segment intersects an opposing side. If it does, skip, this would create a degenerate segment
 					for (i = 0; i < m_nVertices; i++) {
 						if (DoesLineFromPointIntersectSides (i))
@@ -364,12 +367,14 @@ class CSideMatcher {
 			// Side 1 triangle 1
 			CDoubleVector vPlane = *m_vertices [1][m_match [adjacent1].v] - *m_vertices [0][adjacent1];
 			CDoubleVector vNormal = CrossProduct (*m_vertices [0][opposite] - *m_vertices [0][adjacent1], vPlane);
-			if (PlaneLineIntersection (intersection, &vPlane, &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
+			vNormal.Normalize ();
+			if (PlaneLineIntersection (intersection, m_vertices [0][adjacent1], &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
 				return true;
 			// Side 1 triangle 2
 			vPlane = *m_vertices [1][m_match [opposite].v] - *m_vertices [0][opposite];
 			vNormal = CrossProduct (*m_vertices [0][opposite] - *m_vertices [0][adjacent1], vPlane);
-			if (PlaneLineIntersection (intersection, &vPlane, &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
+			vNormal.Normalize ();
+			if (PlaneLineIntersection (intersection, m_vertices [0][opposite], &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
 				return true;
 
 			// Triangular cross-sections don't have the extra side
@@ -379,12 +384,14 @@ class CSideMatcher {
 					return false;
 				// Side 2 triangle 1
 				vNormal = CrossProduct (*m_vertices [0][adjacent2] - *m_vertices [0][opposite], vPlane);
-				if (PlaneLineIntersection (intersection, &vPlane, &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
+				vNormal.Normalize ();
+				if (PlaneLineIntersection (intersection, m_vertices [0][opposite], &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
 					return true;
 				// Side 2 triangle 2
 				vPlane = *m_vertices [1][m_match [adjacent2].v] - *m_vertices [0][adjacent2];
 				vNormal = CrossProduct (*m_vertices [0][adjacent2] - *m_vertices [0][opposite], vPlane);
-				if (PlaneLineIntersection (intersection, &vPlane, &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
+				vNormal.Normalize ();
+				if (PlaneLineIntersection (intersection, m_vertices [0][adjacent2], &vNormal, m_vertices [0][point], m_vertices [1][m_match [point].v]) > 0)
 					return true;
 				}
 
@@ -417,6 +424,9 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 		if ((nSegment == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 			nDbgSeg = nDbgSeg;
 #endif
+		// Skip sides that are already joined to another segment
+		if (Segment (nSegment)->ChildId (nSide) != -1)
+			continue;
 		if (!sideMatcher.SetSide (1, CSideKey (nSegment, nSide)))
 			continue;
 		short nMatches = sideMatcher.Match (10.0);
@@ -471,6 +481,12 @@ else {
 						 "the current side or press the space bar to switch to the other segment."); 
 		return; 
 		}
+	else if (Segment (otherKey)->ChildId (otherKey.m_nSide) != -1) {
+		if (!DLE.ExpertMode ())
+			ErrorMsg ("The selected side of the 'other' segment\n"
+						"is already joined to another segment.");
+		return;
+		}
 
 	sideMatcher.SetSide (0, thisKey);
 	sideMatcher.SetSide (1, otherKey);
@@ -487,7 +503,7 @@ else {
 
 // if segments are too close to put a new segment between them, then link them together without asking
 if (bJoin) {
-	undoManager.Begin (__FUNCTION__, udSegments);
+	undoManager.Begin (__FUNCTION__, udSegments | udVertices);
 	LinkSides (thisKey.m_nSegment, thisKey.m_nSide, otherKey.m_nSegment, otherKey.m_nSide, match); 
 	undoManager.End (__FUNCTION__);
 	SetLinesToDraw (); 

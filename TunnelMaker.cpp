@@ -189,31 +189,33 @@ m_rotation.R ().Normalize ();
 //m_rotation.R () *= -sign;
 m_rotation.U () = CrossProduct (m_rotation.F (), m_rotation.R ());
 m_rotation.U ().Normalize ();
-m_bUpdate = 0;
+m_updateStatus = NoUpdate;
 }
 
 //------------------------------------------------------------------------------
 // Determine whether the tunnel needs to be updated
-// For the start side, only update when the current edge or a vertex of the start side have changed
+// For the start side:
+//   If the start sides are tagged, only update when the current edge or a vertex of the start side have changed
+//   Otherwise, update when the vertex, edge, segment and/or side have changed (to preserve legacy behavior)
 // For the end side, also update when the segment and/or side have changed
 
-int CTunnelBase::Update (CSelection* selection)
+CTunnelBase::eUpdateStatus CTunnelBase::IsUpdateNeeded (CSelection* selection, bool bStartSidesTagged)
 {
 	bool bNewSide = CSideKey (*this) != CSideKey (*selection);
 
-if (!m_bStart && bNewSide) {
+if (!(m_bStart && bStartSidesTagged) && bNewSide) {
 	*((CSelection*) this) = *((CSelection*) selection);
-	return m_bUpdate = -1;
+	return m_updateStatus = UpdateSide;
 	}
-if (!(m_bStart && bNewSide) && (Edge () != selection->Edge ())) {
+if (!bNewSide && (Edge () != selection->Edge ())) {
 	m_nEdge = selection->Edge ();
-	return m_bUpdate = 1;
+	return m_updateStatus = UpdateOrientation;
 	}
 CSegment* segP = segmentManager.Segment (m_nSegment);
 for (int i = 0; i < 4; i++)
 	if (m_vertices [i] != *segP->Vertex (m_nSide, i))
-		return m_bUpdate = 1;
-return m_bUpdate = 0;
+		return m_updateStatus = UpdateOrientation;
+return m_updateStatus = NoUpdate;
 }
 
 //------------------------------------------------------------------------------
@@ -500,7 +502,8 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 			sideP->m_nShape = startSegP->m_sides [nSide].m_nShape;
 			}
 
-		segP->Tag ();
+		if (bFinalize)
+			segP->Tag ();
 		for (int j = 0; j < 6; j++)
 			segP->SetChild (j, -1);
 		if (bFinalize)
@@ -1229,7 +1232,7 @@ if (!m_bActive) {
 		return;
 		}
 
-	if (!Setup (true)) {
+	if (!CalculateTunnel (true)) {
 		m_bActive = false;
 		return;
 		}
@@ -1251,7 +1254,7 @@ else {
 	m_tunnel.Release ();
 	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) == IDYES) {
 		undoManager.Begin (__FUNCTION__, udSegments | udVertices);
-		if (Setup (false) && Create ())
+		if (CalculateTunnel (false) && Create ())
 			m_tunnel.Realize (m_path, true);
 		else
 			m_tunnel.Release ();
@@ -1265,27 +1268,34 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------------
 
-bool CTunnelMaker::Setup (bool bStartSides)
+bool CTunnelMaker::CalculateTunnel (bool bNewTunnelMakerInstance)
 {
-	bool bPath = false;
+	bool bRegeneratePath = bNewTunnelMakerInstance;
+	bool bRegenerateStartSides = bNewTunnelMakerInstance;
 
-if (bStartSides) {
+if (bNewTunnelMakerInstance) {
 	m_base [0].Setup (current, -1.0, true);
 	m_base [1].Setup (other, 1.0, false);
 	}
 else {
-	m_base [0].Setup (null, -1.0, true);
-	if (m_base [1].m_bUpdate > 0) 
+	if (m_base [0].m_updateStatus == CTunnelBase::UpdateOrientation) 
+		m_base [0].Setup (null, -1.0, true);
+	else if (m_base [0].m_updateStatus == CTunnelBase::UpdateSide) {
+		m_base [0].Setup (current, -1.0, true);
+		bRegeneratePath = true;
+		bRegenerateStartSides = true;
+		}
+	if (m_base [1].m_updateStatus == CTunnelBase::UpdateOrientation) 
 		m_base [1].Setup (null, 1.0, false);
-	else if (m_base [1].m_bUpdate < 0) {
+	else if (m_base [1].m_updateStatus == CTunnelBase::UpdateSide) {
 		m_base [1].Setup (current, 1.0, false);
-		bPath = true;
+		bRegeneratePath = true;
 		}
 	}
-if (bStartSides || bPath)
+if (bRegeneratePath)
 	m_nGranularity = 0;
 
-if (m_path.Setup (m_base, bStartSides, bPath)) {
+if (m_path.Setup (m_base, bRegenerateStartSides, bRegeneratePath)) {
 	m_tunnel.Setup (m_base);
 	return true;
 	}
@@ -1305,13 +1315,16 @@ if (!m_bActive)
 	return false;
 if (current->Segment ()->HasChild (current->SideId ()) || other->Segment ()->HasChild (other->SideId ()))
 	return true;
+// If there is more than one start side, we know they have to be tagged
+bool bStartSidesTagged = m_path.m_startSides.Length () > 1 ||
+	segmentManager.Side (CSideKey (m_path.m_startSides [0].m_nSegment, m_path.m_startSides [0].m_nSide))->IsTagged ();
 if (current - selections == m_base [0].m_nSelection) {
-	if (m_base [0].Update (current) > 0)
-		return Setup (false);
+	if (m_base [0].IsUpdateNeeded (current, bStartSidesTagged))
+		return CalculateTunnel (false);
 	}
 else {
-	if (m_base [1].Update (current))
-		return Setup (false);
+	if (m_base [1].IsUpdateNeeded (current, bStartSidesTagged))
+		return CalculateTunnel (false);
 	}
 return true;
 }
