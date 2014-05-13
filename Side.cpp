@@ -418,15 +418,20 @@ else {
 	}
 
 CDoubleVector intersection;
-if ((0 >= PlaneLineIntersection (intersection, vertices [0], &m_vNormal [0], p1, p2)) &&
-	 ((nVertices < 4) || (0 >= PlaneLineIntersection (intersection, vertices [2], &m_vNormal [1], p1, p2)))) {
+// Does the ray hit the first triangle?
+if ((0 < PlaneLineIntersection (intersection, vertices [0], &m_vNormal [0], p1, p2)) &&
+	PointIsInTriangle3D (intersection, *vertices [0], *vertices [1], *vertices [2]))
+	;
+// Does it hit the second (if there is one)?
+else if ((nVertices > 3) && (0 < PlaneLineIntersection (intersection, vertices [2], &m_vNormal [1], p1, p2)) &&
+		 PointIsInTriangle3D (intersection, *vertices [0], *vertices [2], *vertices [3]))
+	;
+// If not, the line doesn't hit the face
+else
 	return -1.0;
-	}
+
 double d = Distance (intersection, *p1);
 if (d > maxDist)
-	return -1.0;
-if (!(PointIsInTriangle3D (intersection, *vertices [0], *vertices [1], *vertices [2]) ||
-	  ((nVertices > 3) && PointIsInTriangle3D (intersection, *vertices [0], *vertices [2], *vertices [3]))))
 	return -1.0;
 return d;
 }

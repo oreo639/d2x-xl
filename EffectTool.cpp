@@ -14,12 +14,12 @@
 //------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CEffectTool, CToolDlg)
-	/*ON_BN_CLICKED (IDC_EFFECT_ADD, OnAdd)
+	ON_BN_CLICKED (IDC_EFFECT_ADD, OnAdd)
 	ON_BN_CLICKED (IDC_EFFECT_DELETE, OnDelete)
 	ON_BN_CLICKED (IDC_EFFECT_COPY, OnCopy)
 	ON_BN_CLICKED (IDC_EFFECT_PASTE, OnPaste)
 	ON_BN_CLICKED (IDC_EFFECT_PASTE_ALL, OnPasteAll)
-	ON_CBN_SELCHANGE (IDC_EFFECT_OBJECTS, OnSetObject)*/
+	ON_CBN_SELCHANGE (IDC_EFFECT_OBJECTS, OnSetObject)
 END_MESSAGE_MAP ()
 
 //------------------------------------------------------------------------
@@ -48,7 +48,7 @@ void CEffectTool::Reset ()
 
 void CEffectTool::LoadEffectList (void) 
 {
-/*CHECKMINE;
+CHECKMINE;
 
 	CComboBox	*cbEffects = CBEffects ();
 	char			szEffect [100];
@@ -76,7 +76,7 @@ for (int i = 0; i < objectManager.Count (); i++, objP++) {
 	index = cbEffects->AddString (szEffect);
 	cbEffects->SetItemData (index, i);
 	}
-SelectItemData (cbEffects, curSel);*/
+SelectItemData (cbEffects, curSel);
 }
 
 //------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ void CEffectTool::Refresh ()
 if (!(m_bInited && theMine))
 	return;
 
-//LoadEffectList ();
+LoadEffectList ();
 if (current->Object ()->Type () == OBJ_EFFECT)
 	m_effectTools.Update (current->Object ()->Id ());
 Current ()->Refresh ();
@@ -203,14 +203,14 @@ Refresh ();
 
 void CEffectTool::OnSetObject ()
 {
-/*short nOld = current->ObjectId ();
+short nOld = current->ObjectId ();
 short nNew = short (CBEffects ()->GetItemData (CBEffects ()->GetCurSel ()));
 if (nOld != nNew) {
 	UpdateData (TRUE);
 	DLE.MineView ()->RefreshObject (nOld, nNew);
 	if (current->Object ()->Type () == OBJ_EFFECT)
 		m_effectTools.Update (current->Object ()->Id ());
-	}*/
+	}
 //Refresh ();
 }
 

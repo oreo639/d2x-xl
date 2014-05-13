@@ -1597,6 +1597,13 @@ CAPTION "Effects"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     CONTROL         "",IDC_TOOL_TAB,"SysTabControl32",0x0,3,2,519,127,WS_EX_STATICEDGE
+    GROUPBOX        "",IDC_STATIC,526,0,91,128,BS_RIGHT
+    COMBOBOX        IDC_EFFECT_OBJECTS,530,9,84,160,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&add",IDC_EFFECT_ADD,530,24,51,12
+    PUSHBUTTON      "&delete",IDC_EFFECT_DELETE,530,36,51,12
+    PUSHBUTTON      "&copy",IDC_EFFECT_COPY,530,52,51,12
+    PUSHBUTTON      "&paste",IDC_EFFECT_PASTE,530,64,51,12
+    PUSHBUTTON      "paste &all",IDC_EFFECT_PASTE_ALL,530,78,51,12
 END
 
 IDD_EFFECT_LIGHTNING_HORZ DIALOGEX 0, 0, 480, 100
@@ -6916,13 +6923,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor [14 feb 2014]"
-            VALUE "FileVersion", "1.11.81.0"
+            VALUE "FileDescription", "Descent Level Editor [13 may 2014]"
+            VALUE "FileVersion", "1.11.82.0"
             VALUE "InternalName", "DLE"
             VALUE "LegalCopyright", "Copyright (C) Bryan Aamot, Dietfrid Mali"
             VALUE "OriginalFilename", "DLE.EXE"
             VALUE "ProductName", "Descent Level Editor"
-            VALUE "ProductVersion", "1.11.81.0"
+            VALUE "ProductVersion", "1.11.82.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6949,7 +6956,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor 1.11.81\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor 1.11.82\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

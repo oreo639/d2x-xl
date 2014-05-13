@@ -159,7 +159,9 @@ robotInfo.Info ().drainEnergy = BtnCtrl (IDC_OBJ_AI_EDRAIN)->GetCheck ();
 m_bEndsLevel = BtnCtrl (IDC_OBJ_AI_ENDSLEVEL)->GetCheck ();
 
 // get list box changes
-int index = CBBossType ()->GetCurSel ();
+int index = CBObjClassAI ()->GetCurSel ();
+robotInfo.Info ().behavior = (ubyte) CBObjClassAI ()->GetItemData (index);
+index = CBBossType ()->GetCurSel ();
 if (0 <= index) {
 	robotInfo.Info ().bossFlag = (ubyte) CBBossType ()->GetItemData (index);
 	if ((robotInfo.Info ().bossFlag = (ubyte) CBBossType ()->GetItemData (index)) > 2)

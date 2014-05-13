@@ -242,7 +242,7 @@ CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDT_OBJ_CONT_PROB, bEnable);
 bool CObjectTool::OnScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
 if (m_objSpawnQty.OnScroll (scrollCode, thumbPos, pScrollBar)) {
-	UpdateRobot ();
+	OnSetSpawnQty ();
 	return true;
 	}
 return false;
@@ -394,7 +394,7 @@ if (DLE.IsD1File ())
 	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDT_OBJ_CONT_PROB, FALSE);
 
 // set contains data
-type = (objP->m_info.contents.type == -1) ? MAX_CONTAINS_NUMBER : contentsSelection [objP->m_info.contents.type];
+type = (objP->m_info.contents.type == (ubyte)-1) ? MAX_CONTAINS_NUMBER : contentsSelection [objP->m_info.contents.type];
 
 CBSpawnType ()->SetCurSel (type + 1);
 BtnCtrl (IDC_OBJ_MULTIPLAYER)->SetCheck (current->Object ()->m_info.multiplayer);
@@ -1027,6 +1027,8 @@ if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
 	objP->m_info.contents.count = 0;
 	objP->m_info.contents.type = -1;
 	objP->m_info.contents.id = -1;
+	UpdateData (TRUE);
+	Refresh ();
 	}
 else {
 	objP->m_info.contents.type = 

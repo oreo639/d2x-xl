@@ -377,13 +377,17 @@ if (left < r)
 
 void CMineView::DrawSparseSegmentWireFrame (CSegment *segP)
 {
+bool bOrtho = Renderer ().Ortho ();
+CEdgeList edgeList;
+int nEdges = segP->BuildEdgeList (edgeList, true);
+
 for (short nSide = 0; nSide < 6; nSide++) {
 	if (segP->ChildId (nSide) >= 0)
 		continue;
 	CSide* sideP = segP->Side (nSide);
-	
-	CPoint side [4], line [2], vert;
-	int i, j, nCommonVerts;
+	CPoint side [4], line [2];
+	ubyte v [2];
+	int i, j;
 
 	for (i = 0; i < 4; i++) {
 		side [i].x = vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (i)]].m_screen.x; 
@@ -401,35 +405,28 @@ for (short nSide = 0; nSide < 6; nSide++) {
 	// draw each line of the current side separately
 	// only draw if there is no childP segment of the current segment with a common side
 	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 2; j++)
+		for (j = 0; j < 2; j++) {
 			line [j] = side [(i+j)%4];
-
-		// check childP segments
-		nCommonVerts = 0;
-		for (short nChildSeg = 0; (nChildSeg < 6) && (nCommonVerts < 2); nChildSeg++) {
-			if (segP->ChildId (nChildSeg) < 0)
-				continue;
-			CSegment* childSegP = segmentManager.Segment (segP->ChildId (nChildSeg));
-			// walk through childP segment's sides
-			nCommonVerts = 0;
-			for (short nChildSide = 0; (nChildSide < 6) && (nCommonVerts < 2); nChildSide++) {
-				// check current childP segment side for common line
-				// i.e. check each line for common vertices with the parent line
-				nCommonVerts = 0;
-				for (short nChildVertex = 0; (nChildVertex < 4) && (nCommonVerts < 2); nChildVertex++) {
-					CVertex& v = *childSegP->Vertex (nChildSide, nChildVertex);
-					int h;
-					for (h = 0; h < 2; h++) {
-						if ((line [h].x == v.m_screen.x) && (line [h].y == v.m_screen.y)) {
-							++nCommonVerts;
-							break;
-							}
-						}
-					}
-				}
+			v [j] = sideP->VertexIdIndex ((i+j)%4);
 			}
-		if (nCommonVerts < 2)
-			Renderer ().PolyLine (line, 2);
+
+		// Using the sparse edge list: if a neighboring side is 0xff, it's joined to another cube,
+		// so don't render this line
+		ubyte side1, side2;
+		edgeList.Find (0, side1, side2, v [0], v [1]);
+		if (side1 == 0xff || side2 == 0xff)
+			continue;
+
+		CVertex& v1 = vertexManager [segP->m_info.vertexIds [v [0]]];
+		CVertex& v2 = vertexManager [segP->m_info.vertexIds [v [1]]];
+		if (!bOrtho) {
+			Renderer ().MoveTo (v1);
+			Renderer ().LineTo (v2);
+			}
+		else {
+			Renderer ().MoveTo (v1.m_screen.x, v1.m_screen.y);
+			Renderer ().LineTo (v2.m_screen.x, v2.m_screen.y);
+			}
 		}
 	}
 }
@@ -468,7 +465,7 @@ if (segmentManager.Index (segP) == nDbgSeg)
 	nDbgSeg = nDbgSeg;
 #endif
 Renderer ().GetPen (pen, penWeight);
-for (int i = 0, j = segP->BuildEdgeList (edgeList, bSparse); i < j; i++) {
+for (int i = 0, j = segP->BuildEdgeList (edgeList); i < j; i++) {
 	ubyte i1, i2, side1, side2;
 	edgeList.Get (i, side1, side2, i1, i2);
 	if (!bSegmentIsTagged) {
@@ -1049,7 +1046,7 @@ else {
 double d = (ViewOption (eViewTexturedWireFrame) || ViewOption (eViewTextured)) ? ViewMatrix ()->Distance (objP->Position ()) : 1e30;
 if (textureManager.Available (1) && objP->HasPolyModel () && modelManager.Setup (objP, m_renderer, DC ()) && ((nObject == current->ObjectId ()) || (d <= MODEL_DISPLAY_LIMIT))) {
 	SelectObjectPen (objP);
-	if (objP->DrawArrow (Renderer (), -1)) { // only render if fully visible (check using the arrow representation)
+	if (objP->IsInView (Renderer (), true)) { // only render if fully visible
 		Renderer ().SelectObject ((HBRUSH) GetStockObject (BLACK_BRUSH));
 		modelManager.Draw ();
 		}
@@ -1061,7 +1058,7 @@ else {
 		}
 	}
 
-if ((nObject == current->ObjectId ()) || (nObject == other->ObjectId ()))
+if (((nObject == current->ObjectId ()) || (nObject == other->ObjectId ())) && objP->IsInView (Renderer (), false))
 	objP->DrawHighlight (Renderer (), (nObject == current->ObjectId ()));
 }
 

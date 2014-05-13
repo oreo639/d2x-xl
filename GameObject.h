@@ -399,6 +399,8 @@ class CGameObject : public CGameItem {
 
 		void DrawHighlight (CRenderer& renderer, int bCurrent);
 
+		bool IsInView (CRenderer& renderer, bool wholeObject);
+
 		CVertex& Transform (CVertex& vDest, CVertex& vSource);
 
 		int CheckNormal (CViewMatrix& viewMatrix, CVertex& a, CVertex& b);

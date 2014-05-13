@@ -595,8 +595,9 @@ void CHogManager::OnImport (void)
 {
 	long offset;
 	CLevelHeader lh (DLE.IsD2XFile ());
-	char szOfnFileBuf [512] = "\0"; // buffer for ofn dialog, can be multiple files
-	char szFilePath [256] = "\0"; // buffer for fp name
+	char szOfnFileBuf [512] = { 0 }; // buffer for ofn dialog, can be multiple files
+	char szFilePath [256] = { 0 }; // buffer for fp name
+	char szShortFileName [13] = { 0 }; // buffer for 8.3 filename
 	char *pszFile = NULL;
 	OPENFILENAME ofn;
 
@@ -637,6 +638,10 @@ if (!fDest.Open (m_pszFile, "ab")) {
 
 CFileManager fSrc;
 do {
+	// If we didn't already get a filename, we had multiple files selected.
+	// OpenFileDialog crams these into the same buffer (szOfnFileBuf) separated
+	// by nulls - directory first, then each filename. We have to parse this
+	// to extract all the filenames.
 	if (!pszFile && !*szFilePath)
 		// get first filename
 		pszFile = szOfnFileBuf + strlen (szOfnFileBuf) + 1;
@@ -654,9 +659,20 @@ do {
 		}
 	fDest.Seek (0, SEEK_END);
 	offset = fDest.Tell ();
+	// shorten filename to 8.3 if necessary - this will be the name used in the hog
+	DWORD dwResult = GetShortPathName (PathFindFileName (szFilePath),
+		szShortFileName, ARRAYSIZE (szShortFileName));
+	if (!dwResult || dwResult > ARRAYSIZE (szShortFileName)) {
+		// couldn't create the short filename using API - just truncate it
+		strncpy_s (szShortFileName, ARRAYSIZE (szShortFileName), PathFindFileName (szFilePath), _TRUNCATE);
+		}
+	// notify user if the filename was shortened
+	if (strcmp (szShortFileName, PathFindFileName (szFilePath)) != 0)
+		ErrorMsg("Files imported into HOG files must have filenames\n"
+		         "in 8.3 format. The filename will be shortened.");
 	// write header
 	lh.SetFileSize (fSrc.Length ());
-	strcpy_s (lh.Name (), lh.NameSize (), PathFindFileName (szFilePath));
+	strcpy_s (lh.Name (), lh.NameSize (), szShortFileName);
 	_strlwr_s (lh.Name (), lh.NameSize ());
 	lh.Write (&fDest);
 

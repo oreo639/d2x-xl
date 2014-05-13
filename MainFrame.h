@@ -229,7 +229,7 @@ public:
 public:
 	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnClose ();
+	afx_msg void OnDestroy ();
 	afx_msg void OnSize (UINT nType, int cx, int cy);
 	afx_msg BOOL OnCreateClient (LPCREATESTRUCT lpcs, CCreateContext * pContext);
 	afx_msg void OnExtBlkFmt ();

@@ -703,6 +703,8 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 			}
 		 else
 			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id=%d)",nObject, objP->Id ());
+		 if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
+			return true;
 		}
 	type = objP->Type ();
     switch (type) {
@@ -716,6 +718,8 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id=%d)",nObject, objP->Id ());
+			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
+				return true;
 			}
 	  case OBJ_COOP:
 		  if (objP->Id () >= MAX_PLAYERS + MAX_COOP_PLAYERS) {
@@ -725,26 +729,32 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id=%d)",nObject, objP->Id ());
+			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
+				return true;
 			}
 			break;
 	  case OBJ_EFFECT:
-		  if (objP->Id () > SOUND_ID) {
+		  if (objP->Id () > MAX_EFFECT_ID) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id=%d)",nObject, objP->Id ());
-				objP->Id () = SOUND_ID;
+				objP->Id () = MAX_EFFECT_ID;
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id=%d)",nObject, objP->Id ());
+			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
+				return true;
 			}
 			break;
 	  case OBJ_ROBOT:
 		  if (objP->Id () > nMaxRobotId) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id=%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message),"FIXED: robot id (object=%d,id=%d)",nObject, objP->Id ());
 				objP->Id () = nMaxRobotId;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id=%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message),"WARNING: Illegal robot id (object=%d,id=%d)",nObject, objP->Id ());
+			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
+				return true;
 			}
 			break;
 	  case OBJ_HOSTAGE:

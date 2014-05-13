@@ -89,7 +89,7 @@ static bool bUnTwist = true;
 
 #endif
 
-#define ROTAXIS_METHOD	1
+#define ROTAXIS_METHOD	0
 #define UNTWIST			0
 
 //------------------------------------------------------------------------------
@@ -184,9 +184,13 @@ m_point = segP->ComputeCenter (m_nSide);
 for (int i = 0; i < 4; i++)
 	m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
 m_rotation.F () = m_normal;
-m_rotation.R () = m_vertices [(sideP->m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [sideP->m_nPoint];
+m_rotation.R () = m_vertices [(m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [m_nPoint];
 m_rotation.R ().Normalize ();
-//m_rotation.R () *= -sign;
+#if !ROTAXIS_METHOD
+// As far as I can tell we do have to do this to allow users to pick matching lines at each end
+// (in some cases there can be no good "opposite" line)
+m_rotation.R () *= -sign;
+#endif
 m_rotation.U () = CrossProduct (m_rotation.F (), m_rotation.R ());
 m_rotation.U ().Normalize ();
 m_updateStatus = NoUpdate;
@@ -209,6 +213,7 @@ if (!(m_bStart && bStartSidesTagged) && bNewSide) {
 	}
 if (!bNewSide && (Edge () != selection->Edge ())) {
 	m_nEdge = selection->Edge ();
+	m_nPoint = selection->Point ();
 	return m_updateStatus = UpdateOrientation;
 	}
 CSegment* segP = segmentManager.Segment (m_nSegment);
@@ -614,7 +619,7 @@ renderer.EndRender ();
 
 renderer.BeginRender (true);
 renderer.SelectObject ((HBRUSH)GetStockObject (NULL_BRUSH));
-static ePenColor pens [4] = { penOrange, penMedGreen, penMedBlue, penRed };
+static ePenColor pens [4] = { penRed, penMedGreen, penMedBlue, penOrange };
 
 renderer.Ellipse (m_vertex, 4, 4);
 for (int i = 0; i < 4; i++) {
@@ -980,45 +985,37 @@ return (m_base [1].Point () - m_base [0].Point ()) * PI * 0.5;
 CDoubleMatrix m = m_base [1].m_rotation;
 CDoubleVector rotAxis;
 double bendAngle = acos (Clamp (Dot (m.F (), m_base [0].m_rotation.F ()), -1.0, 1.0));
+if (bendAngle > M_PI - 1e-6) {
+	// Angle is close to 180 degrees, which means the rotation axis could be anything
+	// perpendicular to the forward vector. We'll pick an axis also perpendicular to the
+	// displacement between the two ends of the corridor.
+	CDoubleVector displacement = m_base [1].GetPoint () - m_base [0].GetPoint ();
+	if (displacement.Mag () > 1e-3) {
+		rotAxis = CrossProduct (displacement, -m_base [0].m_rotation.F ());
+	} else {
+		// No or small displacement - the tunnel maker probably shouldn't be started
+		// but just in case - we could pick anything so we'll just pick the start
+		// end's up vector
+		rotAxis = m_base [0].m_rotation.U ();
+		}
+} else if (bendAngle > 1e-6) {
+	rotAxis = CrossProduct (m.F (), -m_base [0].m_rotation.F ());
+	}
 
 if (bendAngle > 1e-6) { // dot >= 0.999999 ~ parallel
-	q.FromAxisAngle (rotAxis = CrossProduct (m.F (), -m_base [0].m_rotation.F ()), -bendAngle);
-	m.F () = q * m.F ();
-	m.R () = q * m.R ();
-	m.F ().Normalize ();
-	m.R ().Normalize ();
-	if (Dot (m.F (), m_base [0].m_rotation.F ()) < 0.9)
-		m.R ().Negate ();
-	}
-
-// determine correct rotation direction
-// First transform start side's right vector to the end side's right vector
-// by rotating it around the forward (z) vector rotation axis by the forward vector difference angle
-// then rotate it around the forward vector by the bendAngle angle
-// correct the bendAngle angle by the difference angle of the result right vector and the end side's right vector
-// A simpler way might be to also rotate the end orientation's up vector back and check its angle with 
-// the start side's up vector: If their angle is > 90° and the bendAngle angle is < 90°, add 180° to the bendAngle angle
-double twistAngle = acos (Dot (m.R (), m_base [0].m_rotation.R ()));
-
-if (fabs (twistAngle) > 1e-6) {
-	if (bendAngle <= 1e-6) // ~ parallel
-		m.R () = m_base [0].m_rotation.R ();
-	else { 
-		q.FromAxisAngle (rotAxis, bendAngle);
-		m.R () = q * m_base [0].m_rotation.R ();
-		m.R ().Normalize ();
-		}
-	q.FromAxisAngle (m_base [1].m_rotation.F (), twistAngle);
+	// Construct quaternion from the axis and angle, and "undo" the end orientation's
+	// bend so it is parallel with the start face. We only need the R vector to
+	// determine rotation.
+	q.FromAxisAngle (rotAxis, -bendAngle);
 	m.R () = q * m.R ();
 	m.R ().Normalize ();
-#ifdef _DEBUG
-	double a = acos (Clamp (Dot (m.R (), m_base [1].m_rotation.R ()), -1.0, 1.0));
-#endif
-	if (Dot (m.R (), m_base [1].m_rotation.U ()) < 0.0) 
-		twistAngle -= acos (Clamp (Dot (m.R (), m_base [1].m_rotation.R ()), -1.0, 1.0));
-	else 
-		twistAngle += acos (Clamp (Dot (m.R (), m_base [1].m_rotation.R ()), -1.0, 1.0));
 	}
+
+// Calculate rotation using atan2 (so we can get the direction at the same time).
+// y = projection of transformed R vector on start U vector
+// x = projection of transformed R vector on start R vector
+double twistAngle = atan2 (Dot (m.R (), m_base [0].m_rotation.U ()),
+	Dot (m.R (), m_base [0].m_rotation.R ()));
 return twistAngle;
 
 #endif
@@ -1110,7 +1107,7 @@ while (
 #ifdef _DEBUG
 	bFixError &&
 #endif
-	fabs (error [1] = acos (Dot (m_base [1].m_rotation.R (), m_nodes [m_nSteps].m_rotation.R ()) * direction)) > 0.01) {
+	fabs (error [1] = acos (Dot (m_base [1].m_rotation.R (), m_nodes [m_nSteps].m_rotation.R ())) * direction) > 0.01) {
 	if ((error [0] != 0.0) && (fabs (error [1]) > error [0]))
 		direction = -direction;
 	error [0] = fabs (error [1]);

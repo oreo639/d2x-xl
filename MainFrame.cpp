@@ -90,8 +90,9 @@ CMainFrame::~CMainFrame ()
 
 //------------------------------------------------------------------------------
 
-void CMainFrame::OnClose ()
+void CMainFrame::OnDestroy ()
 {
+// First clean up our own stuff
 #if EDITBAR == 0
 if (m_bEditorTB)
 	OnEditorToolbar ();
@@ -100,7 +101,8 @@ DLE.SaveLayout ();
 if (ToolView ()->SettingsTool ())
 	appSettings.Save ();
 ToolView ()->Destroy ();
-CFrameWnd::OnClose ();
+// Then invoke the superclass method for the rest
+CFrameWnd::OnDestroy ();
 }
 
 //------------------------------------------------------------------------------

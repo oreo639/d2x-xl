@@ -124,11 +124,11 @@ RefreshObject(i, nClosestObj);
 
 short CMineView::FindSelectedTexturedSide (long xMouse, long yMouse, short& nSide)
 {
-if (((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
-	return -1;
+/*if (((m_viewOption != eViewTextured) && (m_viewOption != eViewTexturedWireFrame)))
+	return -1;*/
 
 short nSegment;
-if (m_bEnableQuickSelection) {
+if (m_bEnableQuickSelection && (m_viewOption == eViewTextured || m_viewOption == eViewTexturedWireFrame)) {
 	int nResult = Renderer ().GetSideKey (xMouse, yMouse, nSegment, nSide);
 	if (nResult == 1)
 		return nSegment;

@@ -814,8 +814,8 @@ class CEffectTool : public CToolDlg
 		void Refresh ();
 		void LoadEffectList ();
 
-		/*inline CComboBox *CBEffects ()
-			{ return CBCtrl(IDC_EFFECT_OBJECTS); }*/
+		inline CComboBox *CBEffects ()
+			{ return CBCtrl(IDC_EFFECT_OBJECTS); }
 
 		afx_msg void OnEdit ();
 		afx_msg void OnAdd ();

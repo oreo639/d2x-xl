@@ -586,13 +586,13 @@ else {
 		return;
 	}	
 _strlwr_s (szFile, sizeof (szFile));
-char* pszExt = strstr (szFile, ".blx");
+// Check if the user has specified .blk. We default to .blx otherwise
+char* pszExt = strstr (szFile, ".blk");
+m_bExtended = DLE.IsD2XLevel () || !pszExt;
+// Has the user specified any (recognized) extension at all? If not append one
 if (!pszExt)
-	pszExt = strstr (szFile, ".blk");
-m_bExtended = DLE.IsD2XLevel () || (pszExt != null);
-if (pszExt)
-	strcpy (pszExt, m_bExtended ? ".blx" : ".blk");
-else
+	pszExt = strstr (szFile, ".blx");
+if (!pszExt)
 	strcat (szFile, m_bExtended ? ".blx" : ".blk");
 
 CFileManager fp;

@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "dle-xp.h"
+#include "afxadv.h"
 
 #include "MainFrame.h"
 #include "dlcDoc.h"
@@ -137,6 +138,10 @@ BEGIN_MESSAGE_MAP(CDLE, CWinApp)
 	ON_COMMAND(ID_OPENFILE, CWinApp::OnFileOpen)
 	// Standard print setup command
 	ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
+	// Overriding the CWinApp-provided default since we have different
+	// requirements (don't want to wipe files off the recent files list
+	// just because a user cancelled out of the HOG manager)
+	ON_COMMAND_EX_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnOpenRecentFile)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -338,6 +343,22 @@ CDocument* CDLE::OpenDocumentFile (LPCTSTR lpszFileName)
 ASSERT(m_pDocManager != null);
 //	GetDocument ()->SetPathName ("(new document)");
 return CWinApp::OpenDocumentFile (lpszFileName);
+}
+
+//------------------------------------------------------------------------------
+
+BOOL CDLE::OnOpenRecentFile (UINT nID)
+{
+if (!m_pRecentFileList)
+	return FALSE;
+if (nID < ID_FILE_MRU_FIRST || nID > ID_FILE_MRU_LAST)
+	return FALSE;
+
+int nRecentFileIndex = nID - ID_FILE_MRU_FIRST;
+if (nRecentFileIndex >= m_pRecentFileList->GetSize ())
+	return FALSE;
+OpenDocumentFile ((*m_pRecentFileList) [nRecentFileIndex]);
+return TRUE;
 }
 
 //------------------------------------------------------------------------------

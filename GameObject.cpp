@@ -585,6 +585,52 @@ renderer.EndRender ();
 
 // -----------------------------------------------------------------------------
 
+bool CGameObject::IsInView (CRenderer& renderer, bool wholeObject)
+{
+	bool result = true;
+	short xMaxVisible = renderer.ViewWidth () * 2;
+	short yMaxVisible = renderer.ViewHeight () * 2;
+
+	renderer.BeginRender ();
+	if (wholeObject) {
+		// Check visibility of each point of a simulated bounding box. We don't
+		// always have a model so will have to construct the vertices
+		double cubeOffset = sqrt (pow (X2D (m_info.size), 2) / 3);
+		bool allVerticesInView = true;
+		CVertex boundsVertexRaw, boundsVertexProjected;
+
+		for (int x = 1; true; x *= -1) {
+			for (int y = 1; true; y *= -1) {
+				for (int z = 1; true; z *= -1) {
+					boundsVertexRaw = CVertex (x * cubeOffset, y * cubeOffset, z * cubeOffset);
+					Transform (boundsVertexProjected, boundsVertexRaw);
+					boundsVertexProjected.Transform (renderer.ViewMatrix ());
+					boundsVertexProjected.Project (renderer.ViewMatrix ());
+					allVerticesInView &= boundsVertexProjected.InRange (xMaxVisible, yMaxVisible, renderer.Type ());
+					if (z < 0) break;
+					}
+				if (y < 0) break;
+				}
+			if (x < 0) break;
+			}
+
+		result = allVerticesInView;
+		}
+	else {
+		// Check visibility of the center of the object only
+		CVertex centerProjected;
+		Transform (centerProjected, CVertex (0, 0, 0));
+		centerProjected.Transform (renderer.ViewMatrix ());
+		centerProjected.Project (renderer.ViewMatrix ());
+		result = centerProjected.InRange (xMaxVisible, yMaxVisible, renderer.Type ());
+		}
+	renderer.EndRender ();
+
+	return result;
+}
+
+// -----------------------------------------------------------------------------
+
 void CObjPhysicsInfo::Read (CFileManager* fp)
 {
 fp->ReadVector (velocity);
@@ -945,6 +991,9 @@ switch (m_info.controlType) {
 		break;
 	case CT_WAYPOINT:
 		cType.wayPointInfo.Read (fp);
+		// Fix IDs from old D2X-XL levels
+		if (m_info.id != WAYPOINT_ID)
+			m_info.id = WAYPOINT_ID;
 		break;
 	case CT_MORPH:
 	case CT_FLYTHROUGH:
@@ -976,6 +1025,9 @@ switch (m_info.renderType) {
 		break;
 	case RT_SOUND:
 		rType.soundInfo.Read (fp);
+		// Fix IDs from old D2X-XL levels
+		if (m_info.id != SOUND_ID)
+			m_info.id = SOUND_ID;
 		break;
 	default:
 	break;
