@@ -624,7 +624,7 @@ inline double Degrees (double a) {
 #define LIGHTNING_ID			1
 #define SOUND_ID				2
 #define WAYPOINT_ID			3
-#define MAX_EFFECT_ID			WAYPOINT_ID
+#define MAX_EFFECT_ID		WAYPOINT_ID
 
 #define PARTICLE_TYPE_SMOKE		0
 #define PARTICLE_TYPE_SPRAY		1
