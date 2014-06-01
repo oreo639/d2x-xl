@@ -87,6 +87,19 @@ CTextureLightTool::~CTextureLightTool ()
 		m_paletteWnd.DestroyWindow ();
 }
 
+
+//------------------------------------------------------------------------------
+
+void CTextureLightTool::UpdateColorData (void)
+{
+CWall* wallP = current->Wall ();
+CColor* colorP = current->LightColor ();
+m_nColorIndex = ((wallP != null) && (wallP->Type () == WALL_COLORED)) ? wallP->Info ().cloakValue : colorP->m_info.index;
+m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
+m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
+m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);
+}
+
 //------------------------------------------------------------------------------
 
 BOOL CTextureLightTool::OnInitDialog ()
@@ -102,12 +115,7 @@ memset (m_szLight, 0, sizeof (m_szLight));
 m_bLightEnabled = TRUE;
 m_nLightTimer = -1;
 
-CWall* wallP = current->Wall ();
-CColor* colorP = current->LightColor ();
-m_nColorIndex = ((wallP != null) && (wallP->Type () == WALL_COLORED)) ? wallP->Info ().cloakValue : colorP->m_info.index;
-m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
-m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
-m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);
+UpdateColorData ();
 
 m_btnAddLight.AutoLoad (IDC_TEXLIGHT_ADD, this);
 m_btnDelLight.AutoLoad (IDC_TEXLIGHT_DELETE, this);
@@ -585,6 +593,7 @@ void CTextureLightTool::UpdatePaletteWnd (void)
 {
 if (m_paletteWnd.m_hWnd) {
 	if (/*!nLayout && (DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
+		UpdateColorData ();
 		CDlgHelpers::EnableControls (IDC_TEXLIGHT_PALETTE + 1, IDC_TEXLIGHT_COLOR, TRUE);
 		m_paletteWnd.ShowWindow (SW_SHOW);
 		m_paletteWnd.DrawPalette ();

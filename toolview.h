@@ -1648,6 +1648,7 @@ class CTextureLightTool : public CTextureTabDlg
 		void SetLightString ();
 		void SetLightButtons (LPSTR szLight = null, int nSpeed = -1);
 		bool SetLightDelay (int nSpeed = -1);
+		void UpdateColorData (void);
 		void UpdateLightWnd (void);
 		void UpdateLight (void);
 		void EnableLightControls (BOOL bEnable);
