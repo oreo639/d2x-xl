@@ -332,7 +332,7 @@ for (int i = vertexManager.Count (); i; i--, vertexP++) {
 		if (!current->Segment ()->HasVertex (vertexManager.Index (vertexP)))
 			continue;
 		short nSegmentVertexIndex = current->Segment ()->VertexIndex (vertexManager.Index(vertexP));
-		if (!current->Side ()->HasVertex (nSegmentVertexIndex))
+		if (!current->Side ()->HasVertex ((ubyte) nSegmentVertexIndex))
 			continue;
 		}
 	v.m_proj.v.z = 0.0;
@@ -360,7 +360,7 @@ if (nVertex >= 0) {
 
 	// Does the current side contain this vertex? If so, use it
 	short nSegmentVertexIndex = current->Segment ()->VertexIndex (nVertex);
-	short nSideVertexIndex = current->Side ()->FindVertexIdIndex (nSegmentVertexIndex);
+	short nSideVertexIndex = current->Side ()->FindVertexIdIndex ((ubyte) nSegmentVertexIndex);
 	if (nSideVertexIndex >= 0) {
 		current->SetEdge (nSideVertexIndex);
 		current->SetPoint (nSideVertexIndex);
@@ -371,7 +371,7 @@ if (nVertex >= 0) {
 		for (int i = 0; i < segmentManager.Count (); i++, segP++) {
 			nSegmentVertexIndex = segP->VertexIndex (nVertex);
 			for (int j = 0; nSegmentVertexIndex >= 0 && j < MAX_SIDES_PER_SEGMENT; j++) {
-				nSideVertexIndex = segP->SideVertexIndex (j, nSegmentVertexIndex);
+				nSideVertexIndex = segP->SideVertexIndex (j, (ubyte) nSegmentVertexIndex);
 				if (nSideVertexIndex >= 0) {
 					current->SetSegmentId (i);
 					current->SetSideId (j);
