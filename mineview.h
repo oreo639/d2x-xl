@@ -203,7 +203,7 @@ public:
 	void DrawTexturedSegments (void);
 	void DrawTaggedSegments (void);
 	void DrawSegment (CSegment *segP, bool bSparse);
-	void DrawSegment (short nSegment,short nSide, short nEdge, short nPoint);
+	void DrawSegmentHighlighted (short nSegment,short nSide, short nEdge, short nPoint);
 	void DrawSegmentPartial (CSegment *segP);
 	void DrawSegmentWireFrame (CSegment *segP, bool bSparse = false, bool bTagged = false, char bTunnel = 0);
 	void DrawSparseSegmentWireFrame (CSegment *segP);
@@ -308,13 +308,14 @@ public:
 		return v;
 		}
 
-	int FindNearestVertex (long xMouse, long yMouse);
-	bool SelectCurrentSegment (long xMouse, long yMouse, int bAdd = 0);
-	bool SelectCurrentSide (long xMouse, long yMouse, int bAdd = 0);
-	bool SelectCurrentLine (long xMouse, long yMouse, int bAdd = 0);
-	bool SelectCurrentPoint (long xMouse, long yMouse, int bAdd = 0);
+	int FindNearestVertex (long xMouse, long yMouse, bool bCurrentSideOnly);
+	short FindNearestLine (CSegment** nearestSegment, CSide** nearestSide, bool bCurrentSideOnly);
+	bool SelectCurrentSegment (long xMouse, long yMouse, bool bAddToTagged = false);
+	bool SelectCurrentSide (long xMouse, long yMouse, bool bAddToTagged = false);
+	bool SelectCurrentLine (long xMouse, long yMouse, bool bAddToTagged = false);
+	bool SelectCurrentPoint (long xMouse, long yMouse, bool bAddToTagged = false);
 	void SelectCurrentObject (long xMouse, long yMouse);
-	bool SelectCurrentElement (long xMouse, long yMouse, int bAdd);
+	bool SelectCurrentElement (long xMouse, long yMouse, bool bAddToTagged);
 	void RefreshObject(short old_object, short new_object);
 	void TagRubberBandedVertices (void);
 	BOOL DrawRubberBox ();

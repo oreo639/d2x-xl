@@ -68,6 +68,12 @@ if (nDelSeg < Count ()) {
 
 void CSegmentManager::AddSegments (void)
 {
+if (segmentManager.TaggedSideCount () > 50) {
+	if (Query2Msg ("You are about to insert a large number of cubes.\n"
+		"Are you sure you want to do this?", MB_YESNO) != IDYES)
+		return;
+	}
+
 undoManager.Begin (__FUNCTION__, udSegments); 
 short nSegment = Create (*current);
 if (nSegment < 0)

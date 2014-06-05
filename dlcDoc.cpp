@@ -323,56 +323,52 @@ return true;
 
 //------------------------------------------------------------------------------
 
-BOOL CDlcDoc::OpenFile (bool bBrowseForFile, LPSTR pszFile, LPSTR pszSubFile) 
+BOOL CDlcDoc::OpenFile (bool bBrowseForFile, LPCSTR pszFile, LPCSTR pszSubFile) 
 {
 if (theMine == null)
 	return true;
 
 	int err = 0;
-	char szFile [256], szSubFile [256];
+	char szFile [256] = {0};
+	char szSubFile [256] = {0};
 
 if (DLE.MineView ()->RenderVariableLights ())
 	DLE.ToolView ()->LightTool ()->OnShowVariableLights ();
 if (!SaveIfModified ())
 	return FALSE;
-if (bBrowseForFile && !BrowseForFile (m_szFile, TRUE))
+if (bBrowseForFile && !BrowseForFile (szFile, TRUE))
 	return FALSE;
 if (DLE.ToolView () && DLE.ToolView ()->DiagTool ())
 	DLE.ToolView ()->DiagTool ()->Reset ();
-if (!pszFile)
-	pszFile = m_szFile;
-if (!pszSubFile)
-	pszSubFile = m_szSubFile;
-_strlwr_s (pszFile, 256);
-strcpy_s (szFile, sizeof (szFile), pszFile);
-strcpy_s (szSubFile, sizeof (szSubFile), pszSubFile);
+if (!*szFile)
+	strcpy_s (szFile, sizeof (szFile), pszFile ? pszFile : m_szFile);
+_strlwr_s (szFile, 256);
+if (pszSubFile)
+	strcpy_s (szSubFile, sizeof (szSubFile), pszSubFile);
 lightManager.CreateLightMap ();
-if (strstr (pszFile, ".hog")) {
+if (strstr (szFile, ".hog")) {
 	hogManager->Setup (szFile, szSubFile);
-	if (pszSubFile != m_szSubFile) {
+	if (*szSubFile) {
 		if (!hogManager->LoadLevel (szFile, szSubFile))
 			return FALSE;
 		}
 	else {
 		if (hogManager->DoModal () != IDOK)
 			return FALSE;
+		strcpy_s (szSubFile, sizeof (szSubFile), hogManager->LevelName ());
 		}
-	theMine->Backup (pszFile);
-	if (pszFile != m_szFile)
-		strcpy_s (m_szFile, sizeof (m_szFile), szFile);
-	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);
+	theMine->Backup (szFile);
 	err = !theMine->Load (&hogManager->m_level, true);
 	memset (&missionData, 0, sizeof (missionData));
-	ReadMissionFile (m_szFile);
+	ReadMissionFile (szFile);
 	textureManager.LoadMod ();
 	modelManager.LoadMod ();
 	}
 else {
-		char szExt [256];
-
-	err = !theMine->Load (pszFile);
-	CFileManager::SplitPath (pszFile, null, pszSubFile, szExt);
-	strcat_s (pszSubFile, 256, szExt);
+	char szExt [256];
+	err = !theMine->Load (szFile);
+	CFileManager::SplitPath (szFile, null, szSubFile, szExt);
+	strcat_s (szSubFile, 256, szExt);
 	}
 theMine->Reset ();
 DLE.TextureView ()->Setup ();
@@ -386,6 +382,9 @@ DLE.MineView ()->ResetView (true);
 DLE.MainFrame ()->UpdateSelectButtons ((enum eSelectModes) DLE.MineView ()->GetSelectMode ());
 //UpdateAllViews (null);
 if (!err) {
+	if (m_szFile != szFile)
+		strcpy_s (m_szFile, sizeof (m_szFile), szFile);
+	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);
 	UpdateCaption ();
 	AfxGetApp ()->AddToRecentFileList (m_szFile);
 	}
@@ -429,8 +428,7 @@ return result != 0;
 
 BOOL CDlcDoc::OnOpenDocument (LPCTSTR lpszPathName) 
 {
-strcpy_s (m_szFile, sizeof (m_szFile), lpszPathName);
-return OpenFile (false);
+return OpenFile (false, lpszPathName);
 }
 
 //------------------------------------------------------------------------------

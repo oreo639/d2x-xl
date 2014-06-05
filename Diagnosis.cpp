@@ -226,11 +226,8 @@ return fabs (angle);  // angle should be positive since acos returns 0 to PI but
 //  RETURN - Returns TRUE if ID is out of range.  Otherwise, FALSE.
 //--------------------------------------------------------------------------
 
-int CDiagTool::CheckId (CGameObject *objP) 
+int CDiagTool::CheckId (ubyte &type, ubyte &id) 
 {
-	int type = objP->Type ();
-	int id= objP->Id ();
-
 switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
 		if (id < 0 || id > (DLE.IsD1File () ? MAX_ROBOT_ID_D1 : MAX_ROBOT_ID_D2)) {
@@ -250,7 +247,7 @@ switch (type) {
 		int bError  = (id < 0) || (id >= MAX_PLAYERS);
 		if (!m_bAutoFixBugs)
 			return bError;
-		objP->Id () = m_playerId++;
+		id = m_playerId++;
 		return 2 * bError;
 		}
 		break;
@@ -273,7 +270,7 @@ switch (type) {
 		}
 		if (!m_bAutoFixBugs)
 			return 1;
-		objP->Id () = DLE.IsD1File () ? 1 : 2;
+		id = DLE.IsD1File () ? 1 : 2;
 		return 2;
 		break;
 
@@ -281,7 +278,7 @@ switch (type) {
 		int bError = (id < MAX_PLAYERS) || (id >= MAX_PLAYERS + MAX_COOP_PLAYERS);
 		if (!m_bAutoFixBugs)
 			return bError;
-		objP->Id () = m_coopId++;
+		id = m_coopId++;
 		return 2 * bError;
 		}
 		break;
@@ -290,7 +287,7 @@ switch (type) {
 		if (id != SMALLMINE_ID) {
 			if (!m_bAutoFixBugs)
 				return 1;
-			objP->Id () = SMALLMINE_ID;
+			id = SMALLMINE_ID;
 			return 2;
 		}
 	}
@@ -782,7 +779,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     id = objP->Id ();
 
     // check id range
-    if (h = CheckId (objP)) {
+    if (h = CheckId (objP->Type (), objP->Id ())) {
 		 if (h == 2)
 	      sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id=%d)",nObject,id);
 		else
@@ -804,25 +801,28 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 			return true;
     }
 
-    // check container type range
+	// check container type range
 	if (count > 0) {
-      type = objP->m_info.contents.type;
-	  if (type != OBJ_ROBOT && type != OBJ_POWERUP) {
-		if (m_bAutoFixBugs) {
-			objP->m_info.contents.type = OBJ_POWERUP;
-			sprintf_s (message, sizeof (message),"FIXED: Illegal contained type (object=%d,contains=%d)",nObject,type);
+		type = objP->m_info.contents.type;
+		if (type != OBJ_ROBOT && type != OBJ_POWERUP) {
+			if (m_bAutoFixBugs) {
+				objP->m_info.contents.type = OBJ_POWERUP;
+				sprintf_s (message, sizeof (message),"FIXED: Illegal contained type (object=%d,contains=%d)",nObject,type);
+				}
+			else
+				sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",nObject,type);
+			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) return true;
 			}
-		else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",nObject,type);
-	if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) return true;
-	  }
-	  id= objP->m_info.contents.id;
-	  // check contains id range
-	  if (CheckId (objP)) {
-	sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",nObject,id);
-	if (UpdateStats (message, 0,1)) return true;
-	  }
-	}
+		id = objP->m_info.contents.id;
+		// check contains id range
+		if (h = CheckId (objP->m_info.contents.id, objP->m_info.contents.type)) {
+			if (h == 2)
+				sprintf_s (message, sizeof (message),"FIXED: Illegal contains id (object=%d,contains id=%d)",nObject,id);
+			else
+				sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",nObject,id);
+			if (UpdateStats (message, 0,1)) return true;
+			}
+		}
   }
 
   // make sure object 0 is player 0; if not int it

@@ -335,8 +335,8 @@ else {
 			}
 		objP->Info ().nSegment = nSegment;
 		}
-	DLE.MineView ()->Refresh (false);
 	}
+DLE.MineView ()->Refresh (false);
 undoManager.End (__FUNCTION__);
 }
 

@@ -172,7 +172,6 @@ SetViewMoveRate (1.0);
 Reset ();
 m_bEnableQuickSelection = GetPrivateProfileInt ("DLE", "EnableQuickSelection", 1, DLE.IniFile ());
 m_nShowSelectionCandidates = GetPrivateProfileInt ("DLE", "ShowSelectionCandidates", 2, DLE.IniFile ());
-Renderer ().SetRTT (m_bEnableQuickSelection != 0);
 }
 
 //------------------------------------------------------------------------------
@@ -963,23 +962,26 @@ if (m_selectTimer != -1) {
 	m_selectTimer = -1;
 	}
 m_releaseState = nFlags;
-if (m_mouseState == eMouseStateButtonDown) {
-	if (m_clickState & MK_CONTROL)
-		ZoomIn ();
-	else {
-		SetMouseState (eMouseStateIdle);
-		SelectCurrentElement (m_clickPos.x, m_clickPos.y, Perspective () ? (m_clickState & MK_SHIFT) ? 1 : -1 : 0);
+switch (m_mouseState) {
+	case eMouseStateButtonDown:
+		if (m_clickState & MK_CONTROL)
+			ZoomIn ();
+		else {
+			SetMouseState (eMouseStateIdle);
+			SelectCurrentElement (m_clickPos.x, m_clickPos.y, Perspective () && (m_clickState & MK_SHIFT));
 		}
+		break;
+	case eMouseStateSelect:
+		SelectCurrentElement (m_clickPos.x, m_clickPos.y, false);
+		break;
+	case eMouseStateRubberBand:
+		ResetRubberRect ();
+		TagRubberBandedVertices ();
+		break;
+	case eMouseStateDrag:
+		FinishDrag ();
+		break;
 	}
-else if (m_mouseState == eMouseStateSelect) {
-	SelectCurrentElement (m_clickPos.x, m_clickPos.y, -1);
-	}
-else if (m_mouseState == eMouseStateRubberBand) {
-   ResetRubberRect ();
-	TagRubberBandedVertices ();
-	}
-else if (m_mouseState == eMouseStateDrag)
-	FinishDrag ();
 SetMouseState (eMouseStateIdle);
 CView::OnLButtonUp (nFlags, point);
 }
@@ -1027,7 +1029,7 @@ if (m_mouseState == eMouseStateButtonDown) {
 			if ((nChoice >= ID_SEL_POINTMODE) && (nChoice <= ID_SEL_BLOCKMODE))
 				SetSelectMode (nChoice - ID_SEL_POINTMODE);
 			else if (nChoice == ID_EDIT_ENABLE_QUICK_SELECTION)
-				Renderer ().SetRTT (m_bEnableQuickSelection = !m_bEnableQuickSelection);
+				m_bEnableQuickSelection = !m_bEnableQuickSelection;
 			else if (nChoice == ID_EDIT_SHOW_SELECTION_CANDIDATES)
 				m_nShowSelectionCandidates = (m_nShowSelectionCandidates + 1) % 3;
 			else if (nChoice == ID_EDIT_MOVE_ALONG_VIEWER_AXES)

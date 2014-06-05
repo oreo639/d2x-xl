@@ -263,7 +263,7 @@ if (faceCount > 1)
 	SortFaces (0, faceCount - 1);
 CalcSegDist ();
 
-Renderer ().RenderFaces (faceRenderList, faceCount, m_bEnableQuickSelection);
+Renderer ().RenderFaces (faceRenderList, faceCount, Renderer ().IsRTTSupported ());
 }
 
 //--------------------------------------------------------------------------
@@ -281,7 +281,7 @@ return true;
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegment (short nSegment, short nSide, short nLine, short nPoint) 
+void CMineView::DrawSegmentHighlighted (short nSegment, short nSide, short nLine, short nPoint) 
 {
 CHECKMINE;
 
@@ -298,10 +298,7 @@ if (segP->IsTagged ())
 	Renderer ().SelectPen (penGold + 1, 2.0f);
 else 
 	Renderer ().SelectPen (((nSegment == current->SegmentId ()) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penRed + 1 : penWhite + 1 : penGray + 1, 2);   
-if (m_viewOption == eViewWireFrameSparse)
-	DrawSegmentPartial (segP);
-else
-	DrawSegmentWireFrame (segP);
+DrawSegmentWireFrame (segP);
 
 // draw the current side's outline
 	int i;
@@ -1029,6 +1026,7 @@ else {
 	// secret return
 	objP = &tempObj;
 	objP->Type () = -1;
+	objP->m_info.renderType = RT_NONE;
 	// theMine->secret_orient = Objects () [0]->orient;
 	objP->m_location.orient.m.rVec = -objectManager.SecretOrient ().m.rVec;
 	objP->m_location.orient.m.uVec =  objectManager.SecretOrient ().m.fVec;
@@ -1138,46 +1136,9 @@ bool CMineView::DrawSelectableEdge (void)
 if (!SelectMode (eSelectLine))
 	return false;
 
-CRect viewport;
-GetClientRect (viewport);
-
-double minDist = 1e30;
-
 CSegment* nearestSegment = null;
 CSide* nearestSide = null;
-short nNearestEdge = -1;
-
-#if 1
-short nSegments = segmentManager.Count ();
-for (short nSegment = 0; nSegment < nSegments; nSegment++) {
-	CSegment* segP = segmentManager.Segment (nSegment);
-	bool bSegmentSelected = false;
-	CSide* sideP = segP->Side (0);
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
-			continue;
-		short nEdge = sideP->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, segP->m_info.vertexIds, minDist);
-		if (nEdge >= 0) {
-			nearestSegment = segP;
-			nearestSide = sideP;
-			nNearestEdge = nEdge;
-			}
-		}
-	}
-#else
-if (!segmentManager.GatherSelectableSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
-	return false;
-
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
-	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
-	short nEdge = sideP->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, segP->m_info.vertexIds, minDist);
-	if (nEdge >= 0) {
-		nearestSegment = segP;
-		nearestSide = sideP;
-		nNearestEdge = nEdge;
-		}
-	}
-#endif
+short nNearestEdge = FindNearestLine (&nearestSegment, &nearestSide, false);
 if (nNearestEdge < 0)
 	return false;
 
@@ -1472,13 +1433,13 @@ Renderer ().BeginRender (Renderer ().Type () == 0);
 // draw highlighted Segments () (other first, then current)
 if (*current == selections [0]) {
 	if (selections [0].SegmentId () != selections [1].SegmentId ())
-		DrawSegment (selections [1].SegmentId (), selections [1].SideId (), selections [1].Edge (), selections [1].Point ());
-	DrawSegment (selections [0].SegmentId (), selections [0].SideId (), selections [0].Edge (), selections [0].Point ());
+		DrawSegmentHighlighted (selections [1].SegmentId (), selections [1].SideId (), selections [1].Edge (), selections [1].Point ());
+	DrawSegmentHighlighted (selections [0].SegmentId (), selections [0].SideId (), selections [0].Edge (), selections [0].Point ());
 	}
 else {
 	if (selections [0].SegmentId () != selections [1].SegmentId ())
-		DrawSegment (selections [0].SegmentId (), selections [0].SideId (), selections [0].Edge (), selections [0].Point ());
-	DrawSegment (selections [1].SegmentId (), selections [1].SideId (), selections [1].Edge (), selections [1].Point ());
+		DrawSegmentHighlighted (selections [0].SegmentId (), selections [0].SideId (), selections [0].Edge (), selections [0].Point ());
+	DrawSegmentHighlighted (selections [1].SegmentId (), selections [1].SideId (), selections [1].Edge (), selections [1].Point ());
 	}
 Renderer ().EndRender ();
 
@@ -1503,7 +1464,7 @@ if (m_mouseState == eMouseStateSelect) {
 			glEnable (GL_LINE_STIPPLE);
 			glDepthFunc (GL_ALWAYS);
 			}
-		DrawSegment (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_EDGE, DEFAULT_POINT);
+		DrawSegmentHighlighted (selections [2].m_nSegment, selections [2].m_nSide, DEFAULT_EDGE, DEFAULT_POINT);
 		if (m_nRenderer)
 			glDisable (GL_LINE_STIPPLE);
 		Renderer ().EndRender ();

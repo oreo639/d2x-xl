@@ -257,7 +257,7 @@ public:
 
 	bool HasVertex (ushort nVertex);
 
-	int HasVertex (short nSide, ubyte nIndex);
+	bool HasVertex (short nSide, ubyte nIndex);
 
 	bool HasEdge (short nSide, ushort nVertex1, ushort nVertex2);
 

@@ -760,7 +760,7 @@ short CSegment::VertexIndex (short nVertexId)
 {
 for (int i = 0; i < 8; i++)
 	if (m_info.vertexIds [i] == nVertexId)
-		return 1;
+		return i;
 return -1;
 }
 
@@ -857,7 +857,7 @@ return false;
 
 // -----------------------------------------------------------------------------
 
-int CSegment::HasVertex (short nSide, ubyte nIndex)
+bool CSegment::HasVertex (short nSide, ubyte nIndex)
 {
 return m_sides [nSide].HasVertex (nIndex);
 }

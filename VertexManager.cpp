@@ -50,8 +50,10 @@ return count;
 
 if (Count () + count > MAX_VERTICES)
 	return 0;
-for (ushort i = 0; i < count; i++)
+for (ushort i = 0; i < count; i++) {
 	nVertices [i] = Count () + i;
+	Vertex (nVertices [i])->Clear();
+	}
 undoManager.Begin (__FUNCTION__, udVertices);
 Count () += count;
 undoManager.End (__FUNCTION__);

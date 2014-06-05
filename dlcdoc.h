@@ -29,7 +29,7 @@ public:
 // Operations
 	void CreateNewLevel ();
 	bool BrowseForFile (LPSTR pszFile, BOOL bOpen);
-	BOOL OpenFile (bool bBrowseForFile = true, LPSTR pszFile = null, LPSTR pszSubFile = null);
+	BOOL OpenFile (bool bBrowseForFile = true, LPCSTR pszFile = null, LPCSTR pszSubFile = null);
 	bool SaveFile (bool bSaveAs);
 	bool SaveIfModified (void);
 	void UpdateCaption ();

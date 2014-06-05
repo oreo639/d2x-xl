@@ -395,7 +395,7 @@ class CDiagTool : public CToolDlg
 		double CalcDistance (CVertex* v1, CVertex* v2, CVertex* v3);
 		double CalcAngle (short vert0,short vert1,short vert2,short vert3);
 		void ClearBugList ();
-		int CheckId (CGameObject *objP);
+		int CheckId (ubyte &type, ubyte &id);
 		bool CheckSegments (void);
 		bool CheckSegTypes (void);
 		bool CheckWalls (void);

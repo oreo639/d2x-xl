@@ -66,6 +66,7 @@ if (!CRenderer::Setup (pParent, m_pDC))
 	return 0;
 if (!CreateContext ())
 	return 0;
+SetRTT (m_bHaveRTT);
 
 InitProjection ();
 
@@ -591,7 +592,7 @@ if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide))
 
 if (bArrow) {
 	int nDir = textureManager.ScrollDirection (texP [0]->m_nTexture);
-	if (nDir > 0)
+	if (nDir >= 0)
 		scrollAngle = scrollAngles [nDir];
 	}
 

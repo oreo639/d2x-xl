@@ -33,8 +33,8 @@ class CHogManager : public CDialog {
 	public:
 		bool				m_bInited;
 		char				m_name [256];
-		LPSTR				m_pszFile;
-		LPSTR				m_pszSubFile;
+		char				m_szFile [256];
+		char				m_szSubFile [256];
 		int				m_bExtended;
 		//int				m_type;
 		//int				*m_pType;
@@ -43,17 +43,19 @@ class CHogManager : public CDialog {
 		//CLevelHeaderFactory	m_headerFactory;
 //		tHogFileData	m_fileData;
 
-		CHogManager (CWnd *pParentWnd = null, LPSTR pszFile = null, LPSTR pszSubFile = null);
-		void Setup (LPSTR pszFile, LPSTR pszSubFile);
+		CHogManager (CWnd *pParentWnd = null, LPCSTR pszFile = null, LPCSTR pszSubFile = null);
+		void Setup (LPCSTR pszFile, LPCSTR pszSubFile);
 		virtual BOOL OnInitDialog (void);
 		virtual void DoDataExchange (CDataExchange * pDX);
 		void EndDialog (int nResult);
 		int FindFilename (LPSTR pszName);
 		void ClearFileList (void);
 		int AddFile (LPSTR pszName, long length, long size, long offset, int fileno);
-		int DeleteFile (int index = -1);
+		int DeleteFile (int index);
 		int GetFileData (int index = -1, long *size = null, long *offset = null);
 		int AddFileData (int index, long size, long offset, int fileno);
+		int GetSingleSelectedIndex (void);
+		void GetSelectedIndices (CArray <int> &selectedIndices);
 		bool LoadLevel (LPSTR pszFile = null, LPSTR pszSubFile = null);
 		void OnOK (void);
 		void OnCancel (void);
@@ -64,8 +66,8 @@ class CHogManager : public CDialog {
 		int ReadSignature (CFileManager* fp, bool bVerbose = true);
 		int ReadData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels, bool bGetFileData = true);
 
-		inline char* MissionName (void) { return m_pszFile; }
-		inline char* LevelName (void) { return m_pszSubFile; }
+		inline char* MissionName (void) { return m_szFile; }
+		inline char* LevelName (void) { return m_szSubFile; }
 
 		//inline CBaseLevelHeader* CreateHeader (int nType = -1) { return m_headerFactory.Create ((nType < 0) ? m_nType : nType); }
 
@@ -74,11 +76,12 @@ class CHogManager : public CDialog {
 		afx_msg void OnImport ();
 		afx_msg void OnExport ();
 		afx_msg void OnFilter ();
-		afx_msg void OnSetFile ();
+		afx_msg void OnSelectedFilesChanged ();
 		inline CListBox *LBFiles () { return (CListBox *) GetDlgItem (IDC_HOG_FILES); }
 
 	private:
 		void Rename (CFileManager& fp, int index, char* szNewName);
+		void EnableControls (void);
 
 	DECLARE_MESSAGE_MAP ()
 	};

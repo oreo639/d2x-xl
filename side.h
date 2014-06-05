@@ -111,7 +111,7 @@ public:
 
 	short FindVertexIdIndex (ubyte nIndex);
 
-	int HasVertex (ubyte nIndex);
+	bool HasVertex (ubyte nIndex);
 
 	ubyte DetectShape (void);
 

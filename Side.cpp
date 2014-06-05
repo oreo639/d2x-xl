@@ -222,12 +222,12 @@ return true;
 
 // -----------------------------------------------------------------------------
 
-int CSide::HasVertex (ubyte nIndex)
+bool CSide::HasVertex (ubyte nIndex)
 {
 for (int i = 0, j = VertexCount (); i < j; i++)
 	if (m_vertexIdIndex [i] == nIndex)
-		return i;
-return -1;
+		return true;
+return false;
 }
 
 // -----------------------------------------------------------------------------

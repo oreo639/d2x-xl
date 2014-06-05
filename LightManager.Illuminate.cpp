@@ -143,7 +143,7 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 		if (bAll || (vertexManager.Status (nVertex) & TAGGED_MASK)) {
 			CSide* sideP = segP->Side (0);
 			for (int nSide = 0; nSide < 6; nSide++, sideP++) {
-				int nCorner = sideP->HasVertex (nPoint);
+				int nCorner = sideP->FindVertexIdIndex (nPoint);
 				if (nCorner < 0) 
 					continue;
 				if (!sideP->IsVisible ())
@@ -188,7 +188,7 @@ for (int i = 0; i < nSegments; i++) {
 			for (int nSide = 0; nSide < 6; nSide++, sideP++) {
 				if (bSelfIlluminate && (Brightness (segP, sideP) > 0))
 					continue;
-				int nCorner = sideP->HasVertex (nPoint);
+				int nCorner = sideP->FindVertexIdIndex (nPoint);
 				if (nCorner < 0) 
 					continue;
 				if (!sideP->IsVisible ())

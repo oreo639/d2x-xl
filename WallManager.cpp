@@ -407,16 +407,18 @@ if (!triggerManager.HaveResources ())
 
 int nLastSeg = current->SegmentId ();
 undoManager.Begin (__FUNCTION__, udSegments | udWalls);
-if (!segmentManager.Create (*current, -1)) {
+int nNewSeg = segmentManager.Create (*current, -1);
+if (!nNewSeg) {
 	undoManager.Unroll (__FUNCTION__);
 	return false;
 	}
-int nNewSeg = current->SegmentId ();
 current->SetSegmentId (nLastSeg);
-if (Create (*current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
+CSideKey backSide;
+if (segmentManager.BackSide (backSide) &&
+ Create (*current, WALL_ILLUSION, 0, KEY_NONE, -1, 426) &&
+ Create (backSide, WALL_ILLUSION, 0, KEY_NONE, -1, 426)) {
 	triggerManager.Create (WallCount () - 1, TT_SECRET_EXIT);
 	objectManager.SecretSegment () = current->SegmentId ();
-	segmentManager.SetDefaultTexture (426);
 	current->SetSegmentId (nNewSeg);
 	segmentManager.SetDefaultTexture (426);
 	DLE.MineView ()->Refresh ();

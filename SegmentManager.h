@@ -521,9 +521,11 @@ class CTagByTextures : public CTaggingStrategy {
 		CTagByTextures (short nBaseTex, short nOvlTex, bool bIgnorePlane = true) : m_nBaseTex (nBaseTex), m_nOvlTex (nOvlTex), m_bIgnorePlane (bIgnorePlane) { m_bAll = !segmentManager.HasTaggedSegments (true); }
 
 		virtual bool Accept (void) { 
+			short nOtherSide;
 			return (m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&
 					 m_childSideP->IsVisible () &&
-					 (m_bIgnorePlane || (m_parent.m_nSide == m_child.m_nSide)) &&
+					 (m_bIgnorePlane || (m_parent.m_nSegment != m_child.m_nSegment &&
+					  m_segP->CommonSides (m_child.m_nSegment, nOtherSide) != -1)) &&
 					 ((m_nBaseTex < 0) || (m_childSideP->BaseTex () == m_nBaseTex)) && 
 					 ((m_nOvlTex < 0) || (m_childSideP->OvlTex () == m_nOvlTex)); 
 			}

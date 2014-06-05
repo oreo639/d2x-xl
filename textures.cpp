@@ -109,7 +109,7 @@ if (bShowTexture) {
 			double scale = tex.Scale ();
 			int w = tex.Width (0);
 			if (scale == 1.0) {
-				for (int i = 0, y = w; y > 0; y--)
+				for (int i = 0, y = w - 1; y >= 0; y--)
 					for (int x = 0; x < w; x++)
 						pDC->SetPixel ((int) x, (int) y, textureManager.m_bmBuf [i++].ColorRef ());
 				}

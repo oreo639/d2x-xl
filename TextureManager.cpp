@@ -418,15 +418,15 @@ if (srcDataP != null) {
 #ifdef NDEBUG
 //#pragma omp parallel for 
 #endif
-		int dx = (x0 + w) % w;
+		int dx = (w - x0) % w;
 		for (int y = 0; y < h; y++) {
-			CBGRA* destDataP = bmBufP + y * w;
 			int dy = ((y - y0 + h) % h) * w;
 #if 1
 			memcpy (bmBufP + y * w, srcDataP + dy + dx, (w - dx) * sizeof (CBGRA));
 			if (dx)
-				memcpy (bmBufP + y * w + (w - dx), srcDataP + dy + dx, dx * sizeof (CBGRA));
+				memcpy (bmBufP + y * w + (w - dx), srcDataP + dy, dx * sizeof (CBGRA));
 #else
+			CBGRA* destDataP = bmBufP + y * w;
 			for (int x = 0; x < w; x++) {
 				int i = dy + ((x - x0 + w) % w);
 				*destDataP++ = srcDataP [i];
@@ -715,25 +715,29 @@ if (!textureManager.ScrollSpeed (nTexture, &sx, &sy))
 if (nTexture == nDbgTexture)
 	nDbgTexture = nDbgTexture;
 #endif
+// Scrolling is the direction the "view" moves over the texture, not
+// the direction the texture appears to be moving, so we need to invert.
+// Textures are bottom-up so y needs to be flipped an additional time.
+// +y = down, -y = up, +x = left, -x = right
 if (sy > 0) {
-	if (sx > 0)
-		return 3;
 	if (sx < 0)
+		return 3;
+	if (sx > 0)
 		return 5;
 	return 4;
 	}
 else if (sy < 0) {
 	if (sx < 0)
-		return 7;
-	if (sx > 0)
 		return 1;
+	if (sx > 0)
+		return 7;
 	return 0;
 	}
 else {
-	if (sx > 0)
-		return 6;
 	if (sx < 0)
 		return 2;
+	if (sx > 0)
+		return 6;
 	}
 return -1;
 }

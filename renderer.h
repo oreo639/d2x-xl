@@ -252,6 +252,7 @@ class CRenderer {
 		virtual bool Ortho (void) { return m_bOrtho; }
 		virtual bool RTT (void) { return m_bRTT; }
 		virtual void SetRTT (bool bRTT) { m_bRTT = bRTT; }
+		virtual bool IsRTTSupported () { return m_bHaveRTT; }
 
 		bool InitViewDimensions (void);
 		void ComputeViewLimits (CRect* pRC);

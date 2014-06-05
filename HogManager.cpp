@@ -81,8 +81,6 @@ static ubyte dataBuf [65536];
 int AddFileData (CListBox *plb, int index, int size, int offset, int fileno)
 {
 if (index == -1)
-	index = plb->GetCurSel ();
-if (index == -1)
 	return -1;
 tHogFileData *pfd = new tHogFileData;
 if (!pfd)
@@ -151,7 +149,7 @@ BEGIN_MESSAGE_MAP (CHogManager, CDialog)
 	ON_BN_CLICKED (IDC_HOG_IMPORT, OnImport)
 	ON_BN_CLICKED (IDC_HOG_EXPORT, OnExport)
 	ON_BN_CLICKED (IDC_HOG_FILTER, OnFilter)
-	ON_LBN_SELCHANGE (IDC_HOG_FILES, OnSetFile)
+	ON_LBN_SELCHANGE (IDC_HOG_FILES, OnSelectedFilesChanged)
 	ON_LBN_DBLCLK (IDC_HOG_FILES, OnOK)
 END_MESSAGE_MAP ()
 
@@ -195,7 +193,7 @@ return true;
 
 //------------------------------------------------------------------------------
 
-CHogManager::CHogManager (CWnd *pParentWnd, LPSTR pszFile, LPSTR pszSubFile)
+CHogManager::CHogManager (CWnd *pParentWnd, LPCSTR pszFile, LPCSTR pszSubFile)
 	: CDialog (IDD_HOGMANAGER, pParentWnd) 
 {
 Setup (pszFile, pszSubFile);
@@ -203,11 +201,17 @@ Setup (pszFile, pszSubFile);
 
 //------------------------------------------------------------------------------
 
-void CHogManager::Setup (LPSTR pszFile, LPSTR pszSubFile)
+void CHogManager::Setup (LPCSTR pszFile, LPCSTR pszSubFile)
 {
 m_bInited = false;
-m_pszFile = pszFile;
-m_pszSubFile = pszSubFile;
+if (pszFile)
+	strcpy_s (m_szFile, sizeof (m_szFile), pszFile);
+else
+	memset (m_szFile, 0, sizeof (m_szFile));
+if (pszSubFile)
+	strcpy_s (m_szSubFile, sizeof (m_szSubFile), pszSubFile);
+else
+	memset (m_szSubFile, 0, sizeof (m_szSubFile));
 m_bShowAll = false;
 }
 
@@ -239,6 +243,7 @@ m_fileData.m_nFreeList = 0;
 BOOL CHogManager::OnInitDialog (void)
 {
 CDialog::OnInitDialog ();
+EnableControls ();
 if (ReadHogData ()) {
 	m_bInited = true;
 	return TRUE;
@@ -252,10 +257,30 @@ return FALSE;
 void CHogManager::DoDataExchange (CDataExchange * pDX)
 {
 	long size, offset;
+	CString blankText ("");
+	CString multipleOffset ("(multiple)");
 
-GetFileData (-1, &size, &offset);
-DDX_Text (pDX, IDC_HOG_SIZE, size);
-DDX_Text (pDX, IDC_HOG_OFFSET, offset);
+if (LBFiles ()->GetSelCount () == 0) {
+	DDX_Text (pDX, IDC_HOG_SIZE, blankText);
+	DDX_Text (pDX, IDC_HOG_OFFSET, blankText);
+	}
+else if (LBFiles ()->GetSelCount () > 1) {
+	CArray <int> selItems;
+	long thisSize;
+	size = 0;
+	GetSelectedIndices (selItems);
+	for (int i = 0; i < selItems.GetCount (); i++) {
+		GetFileData (selItems [i], &thisSize, &offset);
+		size += thisSize;
+		}
+	DDX_Text (pDX, IDC_HOG_SIZE, size);
+	DDX_Text (pDX, IDC_HOG_OFFSET, multipleOffset);
+	}
+else {
+	GetFileData (-1, &size, &offset);
+	DDX_Text (pDX, IDC_HOG_SIZE, size);
+	DDX_Text (pDX, IDC_HOG_OFFSET, offset);
+	}
 DDX_Check (pDX, IDC_HOG_FILTER, m_bShowAll);
 }
 
@@ -277,9 +302,18 @@ if (!ReadHogData ())
 
 //------------------------------------------------------------------------------
 
-void CHogManager::OnSetFile (void)
+void CHogManager::OnSelectedFilesChanged (void)
 {
+EnableControls ();
 UpdateData (FALSE);
+}
+
+void CHogManager::EnableControls (void)
+{
+GetDlgItem (IDOK)->EnableWindow (LBFiles ()->GetSelCount () == 1);
+GetDlgItem (IDC_HOG_RENAME)->EnableWindow (LBFiles ()->GetSelCount () == 1);
+GetDlgItem (IDC_HOG_EXPORT)->EnableWindow (LBFiles ()->GetSelCount () > 0);
+GetDlgItem (IDC_HOG_DELETE)->EnableWindow (LBFiles ()->GetSelCount () > 0);
 }
 
 //------------------------------------------------------------------------------
@@ -293,8 +327,6 @@ void CHogManager::ClearFileList (void)
 
 int CHogManager::DeleteFile (int index)
 {
-if (index == -1)
-	index = LBFiles ()->GetCurSel ();
 if (index == -1)
 	return -1;
 tHogFileData *pfd = (tHogFileData *) LBFiles ()->GetItemDataPtr (index);
@@ -323,7 +355,7 @@ return 0;
 int CHogManager::GetFileData (int index, long *size, long *offset)
 {
 if (index == -1)
-	index = LBFiles ()->GetCurSel ();
+	index = GetSingleSelectedIndex ();
 if (index == -1)
 	return -1;
 tHogFileData *pfd = (tHogFileData *) LBFiles ()->GetItemDataPtr (index);
@@ -341,6 +373,26 @@ return pfd->m_fileno;
 int CHogManager::AddFileData (int index, long size, long offset, int fileno)
 {
 return ::AddFileData (LBFiles (), index, size, offset, fileno);
+}
+
+//------------------------------------------------------------------------------
+
+int CHogManager::GetSingleSelectedIndex (void)
+{
+if (LBFiles ()->GetSelCount () != 1)
+	return -1;
+CArray <int> items;
+GetSelectedIndices (items);
+return items [0];
+}
+
+//------------------------------------------------------------------------------
+
+void CHogManager::GetSelectedIndices (CArray <int> &selectedIndices)
+{
+int nItems = LBFiles ()->GetSelCount ();
+selectedIndices.SetSize (nItems);
+LBFiles ()->GetSelItems (nItems, selectedIndices.GetData ());
 }
 
 //------------------------------------------------------------------------------
@@ -367,7 +419,7 @@ bool CHogManager::ReadHogData (void)
 {
 ClearFileList ();
 Reset ();
-if (0 > ReadData (m_pszFile, LBFiles (), m_bShowAll == 1, false))
+if (0 > ReadData (m_szFile, LBFiles (), m_bShowAll == 1, false))
 	return false;
 UpdateData (FALSE);
 return true;
@@ -377,7 +429,7 @@ return true;
 
 long CHogManager::FindSubFile (CFileManager& fp, const char* pszFile, const char* pszSubFile, const char* pszExt)
 {
-strcpy_s (message, sizeof (message), (pszSubFile == null) ? m_pszSubFile : pszSubFile);
+strcpy_s (message, sizeof (message), (pszSubFile == null) ? m_szSubFile : pszSubFile);
 if (pszExt) {
 	char* p = strrchr (message, '.');
 	if (p == null) 
@@ -422,12 +474,12 @@ bool CHogManager::LoadLevel (LPSTR pszFile, LPSTR pszSubFile)
 	int				index = -1;
 
 if (!pszFile)
-	pszFile = m_pszFile;
+	pszFile = m_szFile;
 
 if (pszSubFile) {
 	if (!FindFileData (pszFile, pszSubFile, lh, size, offset))
 		return false;
-	strcpy_s (m_pszSubFile, 256, pszSubFile);
+	strcpy_s (m_szSubFile, 256, pszSubFile);
 	}
 else {
 	if (0 > (index = GetFileData (-1, &size, &offset)))
@@ -484,8 +536,10 @@ return false;
 
 void CHogManager::OnOK () 
 {
-LBFiles ()->GetText (LBFiles ()->GetCurSel (), m_pszSubFile);
-char *pszExt = strrchr ((char *) m_pszSubFile, '.');
+if (LBFiles ()->GetSelCount () != 1)
+	return;
+LBFiles ()->GetText (GetSingleSelectedIndex (), m_szSubFile);
+char *pszExt = strrchr ((char *) m_szSubFile, '.');
 if (pszExt && _strcmpi (pszExt,".rdl") && _strcmpi (pszExt,".rl2")) {
 	ErrorMsg ("DLE cannot process this file. To change the file,\n\n"
 				 "export it and process it with the appropriate application.\n"
@@ -506,6 +560,9 @@ void CHogManager::Rename (CFileManager& fp, int index, char* szNewName)
 {
 	long size, offset;
 	int fileno = GetFileData (index, &size, &offset);
+
+if (fileno < 0)
+	return;
 
 fp.Seek (offset, SEEK_SET);
 CLevelHeader lh;
@@ -534,7 +591,7 @@ else {
 void CHogManager::OnRename (void)
 {
 	char szOldName [256], szNewName [256];
-	int index = LBFiles ()->GetCurSel ();
+	int index = GetSingleSelectedIndex ();
 
 if (index < 0)
 	return;
@@ -548,7 +605,7 @@ if (FindFilename (szNewName) >= 0) {
 	return;
 	}
 CFileManager fp;
-if (!fp.Open (m_pszFile, "r+b")) {
+if (!fp.Open (m_szFile, "r+b")) {
 	ErrorMsg ("Could not open HOG file.");
 	return;
 	}
@@ -562,7 +619,7 @@ if (p != null) {
 	int nameSize = lh.NameSize () - 5;
 
 	for (int i = 0; i < sizeofa (subFileExts); i++) {
-		if (0 < FindSubFile (fp, m_pszFile, szOldName, subFileExts [i])) {
+		if (0 < FindSubFile (fp, m_szFile, szOldName, subFileExts [i])) {
 			p = strchr (szOldName, '.');
 			memcpy (p, subFileExts [i], sizeof (subFileExts [i]));
 			index = LBFiles ()->FindStringExact (-1, szOldName);
@@ -631,7 +688,7 @@ if (!(GetFileAttributes (szOfnFileBuf) & FILE_ATTRIBUTE_DIRECTORY))
 	strncpy_s (szFilePath, sizeof (szFilePath), szOfnFileBuf, _TRUNCATE);
 
 CFileManager fDest;
-if (!fDest.Open (m_pszFile, "ab")) {
+if (!fDest.Open (m_szFile, "ab")) {
 	ErrorMsg ("Could not open destination HOG file for import.");
 	return;
 	}
@@ -709,25 +766,51 @@ fDest.Close ();
 void CHogManager::OnExport (void) 
 {
 	char szFile [256] = "\0"; // buffer for fp name
-	DWORD index;
+	CArray <int> indices;
+	CLevelHeader lh;
 	long size, offset;
 
 // make sure there is an item selected
-index = LBFiles ()->GetCurSel ();
-if (index < 0) {
+if (LBFiles ()->GetSelCount () < 1) {
 	ErrorMsg ("Please select a file to export.");
 	return;
 	}
-// get item name, size, and offset
-CLevelHeader lh;
-LBFiles ()->GetText (index, lh.Name ());
-GetFileData (index, &size, &offset);
-strcpy_s (szFile, sizeof (szFile), lh.Name ());
-if (!BrowseForFile (FALSE, "", szFile, "All Files|*.*||",
-						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
-						  DLE.MainFrame ()))
-	return;
-ExportSubFile (m_pszFile, szFile, offset, size);
+
+GetSelectedIndices (indices);
+if (indices.GetCount () > 1) {
+	// Save all selected files to a directory, keeping their current names
+	char szPath [MAX_PATH] = {0};
+	BROWSEINFO bi = {0};
+	bi.hwndOwner = m_hWnd;
+	bi.pszDisplayName = szPath;
+	bi.lpszTitle = "Choose a location to export the files to:";
+	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
+	PIDLIST_ABSOLUTE pidlFolder = SHBrowseForFolder (&bi);
+	if (!pidlFolder)
+		return;
+	BOOL bSuccess = SHGetPathFromIDList (pidlFolder, szPath);
+	CoTaskMemFree (pidlFolder);
+	if (!bSuccess)
+		return;
+
+	for (int i = 0; i < indices.GetCount (); i++) {
+		LBFiles ()->GetText (indices [i], lh.Name ());
+		GetFileData (indices [i], &size, &offset);
+		sprintf_s (szFile, sizeof (szFile), "%s\\%s", szPath, lh.Name ());
+		ExportSubFile (m_szFile, szFile, offset, size);
+		}
+	}
+else {
+	// get item name, size, and offset
+	LBFiles ()->GetText (indices [0], lh.Name ());
+	GetFileData (indices [0], &size, &offset);
+	strcpy_s (szFile, sizeof (szFile), lh.Name ());
+	if (!BrowseForFile (FALSE, "", szFile, "All Files|*.*||",
+							  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
+							  DLE.MainFrame ()))
+		return;
+	ExportSubFile (m_szFile, szFile, offset, size);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -743,42 +826,55 @@ ExportSubFile (m_pszFile, szFile, offset, size);
 
 void CHogManager::OnDelete (void) 
 {
-	int deleteIndex;
+	CListBox * plb = LBFiles ();
+	CArray <int> deleteIndices;
 	long size;
 	long offset;
 	int fileno;
 	CFileManager fp;
-	CListBox * plb = LBFiles ();
+	CLevelHeader lh;
 
 // make sure there is an item selected
-deleteIndex = plb->GetCurSel ();
-if (deleteIndex < 0) {
-	ErrorMsg ("Please choose a fp to delete.");
+GetSelectedIndices (deleteIndices);
+if (deleteIndices.GetCount () < 1) {
+	ErrorMsg ("Please choose a file to delete.");
 	return;
 	}
-#if 1//ndef _DEBUG
+
 if (!DLE.ExpertMode ()) {
-	strcpy_s (message, sizeof (message), "Are you sure you want to delete '");
-	plb->GetText (deleteIndex, message + strlen (message));
-	strcat_s (message, sizeof (message), "'?\n(This operation will change the HOG file immediately)");
+	if (deleteIndices.GetCount () == 1) {
+		plb->GetText (deleteIndices [0], lh.Name ());
+		sprintf_s (message, sizeof (message), "Are you sure you want to delete '%s'", lh.Name ());
+		}
+	else
+		strcpy_s (message, sizeof (message), "Are you sure you want to delete these files");
+	strcat_s (message, sizeof (message), "?\n(This operation will change the HOG file immediately)");
 	if (QueryMsg (message) != IDYES)
 		return;
 	}
-#endif
-fileno = GetFileData (deleteIndex, &size, &offset);
-int nFiles = plb->GetCount ();
-// open hog fp for modification
-if (!fp.Open (m_pszFile, "r+b")) {
-	ErrorMsg ("Could not open hog fp.");
-	return;
+
+int nDeletedFiles = 0;
+for (int i = 0; i < deleteIndices.GetCount (); i++) {
+	// We have to adjust indices as files are deleted. Relies on deleteIndices being sorted
+	fileno = GetFileData (deleteIndices [i] - nDeletedFiles, &size, &offset);
+	int nFiles = plb->GetCount ();
+
+	// Reopen HOG file for each delete - this is really ugly but we need to refresh the
+	// file offsets afterwards which requires calling ReadHogData which also opens the
+	// file. Will fix this in a future version, it's a large change
+	if (!fp.Open (m_szFile, "r+b")) {
+		ErrorMsg ("Could not open hog file.");
+		return;
 	}
-fp.Seek (offset);
-CLevelHeader lh;
-lh.Read (&fp);
-DeleteSubFile (fp, size + lh.Size (), offset, nFiles, fileno);
-fp.Close ();
-ReadHogData ();
-LBFiles ()->SetCurSel ((deleteIndex < nFiles - 1) ? deleteIndex : nFiles - 1);
+	fp.Seek (offset);
+	lh.Read (&fp);
+	DeleteSubFile (fp, size + lh.Size (), offset, nFiles, fileno);
+	nDeletedFiles++;
+	fp.Close ();
+
+	ReadHogData ();
+	}
+LBFiles ()->SetCurSel (-1);
 }
 
 //------------------------------------------------------------------------------
