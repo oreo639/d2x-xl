@@ -281,10 +281,12 @@ if (m_nMode == 0)
 	return false;
 
 m_nMode = 2;
+PrintLog (0, "CUndoManager::Redo (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 if (++m_nCurrent == m_nTail + 1)
 	m_current.Restore ();
 else 
 	Current ()->Restore ();
+PrintLog (0, "                   (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 return true;
 }
 
@@ -297,6 +299,7 @@ if (Locked ())
 if (m_nCurrent == m_nTail + 1)
 	return; // at end of undo list already
 
+PrintLog (0, "CUndoManager::Truncate (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 //--m_nCurrent;
 do {
 	m_buffer [*m_nTail].Destroy ();
@@ -312,6 +315,7 @@ if (m_nCurrent == m_nHead) {
 else {
 	m_nId = Tail ()->Id () + 1;
 	}
+PrintLog (0, "                       (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 }
 
 //------------------------------------------------------------------------------
@@ -320,6 +324,7 @@ void CUndoManager::Append (void)
 {
 if (Locked ())
 	return;
+PrintLog (0, "CUndoManager::Append (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 if (m_nHead == -1) {
 	m_nHead = 0;
 	m_nTail = 0;
@@ -340,6 +345,7 @@ else {
 		}
 	}
 m_nCurrent = m_nTail + 1;
+PrintLog (0, "                     (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 }
 
 //------------------------------------------------------------------------------
@@ -412,7 +418,7 @@ return szDest;
 
 //------------------------------------------------------------------------------
 
-static char* szFlagNames [] = {" vertices", " segments", " producers", " walls", " doors", " triggers", " objects", " robots", " variable lights", " static light", " dynamic light" };
+static char* szFlagNames [] = {" vertices", " segments", " producers", " walls", " doors", " triggers", " objects", " robots", " variable_lights", " static_light", " dynamic_light" };
 
 void CUndoManager::Begin (char* szFunction, int dataFlags, bool bAccumulate) 
 {
