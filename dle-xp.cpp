@@ -590,13 +590,14 @@ return nOldIndent;
 
 void OpenLogFile (char* pszFolder)
 {
-	static int nLogId = 0;
-   char fnErr [FILENAME_LEN];
-	sprintf (fnErr, "%s\\dle.log", pszFolder);
-	while (!(fLog = _fsopen (fnErr, "wt", _SH_DENYWR))) 
-		sprintf (fnErr, "%s\\dle.log.%d", pszFolder, ++nLogId);
-	}
+static int nLogId = 0;
+char fnErr [FILENAME_LEN];
+sprintf (fnErr, "%s\\dle.log", pszFolder);
+while (!(fLog = _fsopen (fnErr, "wt", _SH_DENYWR))) 
+	sprintf (fnErr, "%s\\dle.log.%d", pszFolder, ++nLogId);
 }
+
+//------------------------------------------------------------------------------
 
 void CloseLogFile (void)
 {
