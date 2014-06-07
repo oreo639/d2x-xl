@@ -286,7 +286,7 @@ void CLightningEffectTool::UpdateColorCtrl (bool bSave)
 {
 CGameObject *objP = GetEffect (null, false);
 CDlgHelpers::UpdateColorCtrl (&m_colorWnd, objP ? RGB (BYTE (objP->rType.lightningInfo.color [0]), BYTE (objP->rType.lightningInfo.color [1]), BYTE (objP->rType.lightningInfo.color [2])) : RGB (0,0,0));
-if (bSave && (objP != NULL)) {
+if (bSave && (objP != null)) {
 	for (int i = 0; i < 3; i++)
 		m_data [11 + i].SetValue (objP->rType.lightningInfo.color [i]);
 	}

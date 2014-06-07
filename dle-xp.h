@@ -41,15 +41,17 @@ public:
 	char					m_appFolder [256];
 	char					m_iniFile [256];
 	
-	CDLE();
+	CDLE ();
 
-	inline CMainFrame *MainFrame () { return (CMainFrame *) m_pMainWnd; }
+	~CDLE ();
 
-	inline CMineView *MineView (){ CMainFrame *h; return (h = MainFrame ()) ? h->MineView () : null; }
+	inline CMainFrame *MainFrame (void) { return (CMainFrame *) m_pMainWnd; }
 
-	inline CTextureView *TextureView (){ CMainFrame* h; return (h = MainFrame ()) ? h->TextureView () : null; }
+	inline CMineView *MineView (void) { CMainFrame *h; return (h = MainFrame ()) ? h->MineView () : null; }
 
-	inline CToolView *ToolView () { CMainFrame* h; return (h = MainFrame ()) ? MainFrame ()->ToolView () : null; }
+	inline CTextureView *TextureView (void) { CMainFrame* h; return (h = MainFrame ()) ? h->TextureView () : null; }
+
+	inline CToolView *ToolView (void) { CMainFrame* h; return (h = MainFrame ()) ? MainFrame ()->ToolView () : null; }
 
 	inline CDlcDoc *GetDocument () { CMineView *h; return (h = MineView ()) ? h->GetDocument () : null; }
 
@@ -91,9 +93,9 @@ public:
 
 	void WritePrivateProfileInt (LPSTR szKey, int nValue);
 
-	void SaveLayout ();
+	void SaveLayout (void);
 
-	void LoadLayout ();
+	void LoadLayout (void);
 
 	bool MakeModFolders (char* szSubFolder);
 
@@ -135,5 +137,11 @@ private:
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
 extern CDLE	DLE;
+
+void IndentLog (int nIndent);
+int SetLogIndent (int nIndent);
+void OpenLogFile (char* pszFolder);
+void CloseLogFile (void);
+void _cdecl PrintLog (const int nIndent, const char *fmt, ...);
 
 #endif //_dle_xp_h

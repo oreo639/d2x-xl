@@ -156,6 +156,11 @@ m_bMaximized = false;
 	// Place all significant initialization in InitInstance
 }
 
+CDLE::~CDLE()
+{
+CloseLogFile ();
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CDLE object
 
@@ -234,6 +239,7 @@ BOOL CDLE::InitInstance()
 	if (ps)
 		ps [1] = '\0';
 	sprintf (m_iniFile, "%sdle.ini", m_appFolder);
+	OpenLogFile (m_appFolder);
 
 	LoadStdProfileSettings(10);  // Load standard INI file options (including MRU)
 	// Register the application's document templates.  Document templates
@@ -426,7 +432,7 @@ void CDLE::LoadLayout ()
 CHECKMINE;
 
 	CRect	rc, rcIntersect, tbrc;
-	HMONITOR hMonitor = NULL;
+	HMONITOR hMonitor = null;
 	UINT bMaximize = 0;
 	UINT h = AFX_IDW_DOCKBAR_TOP;
 
@@ -540,6 +546,95 @@ if (!nLevel)
 sprintf (m_modFolders [0], "%s%s\\level%02d", m_modFolders [2], szSubFolder, nLevel);
 strcat (m_modFolders [2], pszMission);
 return true;
+}
+
+//------------------------------------------------------------------------------
+
+FILE *fLog = null;
+
+static int nLogIndent = 0;
+static int nLastIndent = 0;
+
+//------------------------------------------------------------------------------
+
+void IndentLog (int nIndent)
+{
+if (nIndent) {
+	if (abs (nIndent) == 1)
+		nIndent *= 3; // default indentation
+	nLastIndent = abs (nIndent);
+	}
+nLogIndent += nIndent;
+if (nLogIndent < 0) {
+	PrintLog (0, "Log indentation error!\n");
+	nLogIndent = 0;
+	}
+else if (nLogIndent > 100) {
+	PrintLog (0, "Log indentation error!\n");
+	nLogIndent = 100;
+	}
+}
+
+//------------------------------------------------------------------------------
+
+int SetLogIndent (int nIndent)
+{
+int nOldIndent = nLogIndent;
+nLogIndent = nIndent;
+return nOldIndent;
+}
+
+//------------------------------------------------------------------------------
+
+#include "share.h"
+
+void OpenLogFile (char* pszFolder)
+{
+	static int nLogId = 0;
+   char fnErr [FILENAME_LEN];
+	sprintf (fnErr, "%s\\dle.log", pszFolder);
+	while (!(fLog = _fsopen (fnErr, "wt", _SH_DENYWR))) 
+		sprintf (fnErr, "%s\\dle.log.%d", pszFolder, ++nLogId);
+	}
+}
+
+void CloseLogFile (void)
+{
+if (fLog) {
+	fclose (fLog);
+	fLog = null;
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void _cdecl PrintLog (const int nIndent, const char *fmt, ...)
+{
+if (fLog) {
+	if (nIndent < 0)
+		IndentLog (nIndent);
+	if (fmt && *fmt) {
+		va_list arglist;
+			static char	szLogLine [2][100000] = {{'\0'}, {'\0'}};
+			static int nLogLine = 0;
+
+		va_start (arglist, fmt);
+		if (nLogIndent > 0)
+			memset (szLogLine [nLogLine], ' ', nLogIndent);
+		else if (nLogIndent < 0)
+			nLogIndent = 0;
+		nLogLine &= 3;
+		vsprintf (szLogLine [nLogLine] + nLogIndent, fmt, arglist);
+		va_end (arglist);
+		if (strcmp (szLogLine [nLogLine], szLogLine [!nLogLine])) {
+			fprintf (fLog, szLogLine [nLogLine]);
+			fflush (fLog);
+			nLogLine = !nLogLine;
+			}
+		}
+	if (nIndent > 0)
+		IndentLog (nIndent);
+	}
 }
 
 //------------------------------------------------------------------------------

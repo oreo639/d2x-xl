@@ -112,13 +112,13 @@ static char *OOF_ReadString (CFileManager& fp, const char *pszIdent)
 
 l = OOF_ReadInt (fp, "string length");
 if (!(psz = new char [l + 1]))
-	return NULL;
+	return null;
 if (!l || fp.Read (psz, l, 1)) {
 	psz [l] = '\0';
 	return psz;
 	}
 delete[] psz;
-return NULL;
+return null;
 }
 
 //------------------------------------------------------------------------------
@@ -435,9 +435,9 @@ memset (this, 0, sizeof (*this));
 void CSpecialPoint::Destroy (void)
 {
 delete[] m_pszName;
-m_pszName = NULL;
+m_pszName = null;
 delete[] m_pszProps;
-m_pszProps = NULL;
+m_pszProps = null;
 }
 
 //------------------------------------------------------------------------------
@@ -790,8 +790,8 @@ m_fFOV = 0;
 m_fRPS = 0;
 m_fUpdate = 0;
 memset (m_children, 0, sizeof (m_children));
-m_pszName = NULL;
-m_pszProps = NULL;
+m_pszName = null;
+m_pszProps = null;
 m_faces.Init ();
 m_edges.Init ();
 m_glowInfo.Init ();
@@ -815,9 +815,9 @@ void CSubModel::Destroy (void)
 #endif
 
 delete[] m_pszName;
-m_pszName = NULL;
+m_pszName = null;
 delete[] m_pszProps;
-m_pszProps = NULL;
+m_pszProps = null;
 m_vertices.Destroy ();
 m_rotVerts.Destroy ();
 m_vertColors.Destroy ();
@@ -1121,7 +1121,7 @@ if (!(m_pszProps = OOF_ReadString (fp, "pszProps"))) {
 SetProps (m_pszProps);
 m_nMovementType = OOF_ReadInt (fp, "nMovementType");
 m_nMovementAxis = OOF_ReadInt (fp, "nMovementAxis");
-m_fsLists = NULL;
+m_fsLists = null;
 if ((m_nFSLists = OOF_ReadInt (fp, "nFSLists")))
 	fp.Seek (m_nFSLists * sizeof (int), SEEK_CUR);
 m_nVerts = OOF_ReadInt (fp, "nVerts");
@@ -1143,7 +1143,7 @@ if (m_nVerts) {
 		return 0;
 		}
 	m_vertColors.Clear (0);
-	if (!(OOF_ReadVertList (fp, m_normals, m_nVerts, NULL, NULL))) {
+	if (!(OOF_ReadVertList (fp, m_normals, m_nVerts, null, null))) {
 		nIndent -= 2;
 		Destroy ();
 		return 0;
@@ -1188,7 +1188,7 @@ for (bReadData = 0; bReadData < 2; bReadData++) {
 		m_edges.m_nEdges = 0;
 		}
 	for (i = 0, nFaceVerts = 0; i < m_faces.m_nFaces; i++) {
-		if (!(h = m_faces.m_list [i].Read (fp, this, bReadData ? m_faces.m_vertices + nFaceVerts : NULL, bFlipV))) {
+		if (!(h = m_faces.m_list [i].Read (fp, this, bReadData ? m_faces.m_vertices + nFaceVerts : null, bFlipV))) {
 			Destroy ();
 			nIndent -= 2;
 			return 0;
@@ -1198,7 +1198,7 @@ for (bReadData = 0; bReadData < 2; bReadData++) {
 	}
 #else
 for (i = 0; i < m_faces.m_nFaces; i++)
-	if (!OOF_ReadFace (fp, &so, m_faces.faces + i, NULL, bFlipV)) {
+	if (!OOF_ReadFace (fp, &so, m_faces.faces + i, null, bFlipV)) {
 		nIndent -= 2;
 		Destroy ();
 		return 0;

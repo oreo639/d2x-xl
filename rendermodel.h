@@ -15,7 +15,7 @@ class CModel;
 
 //	-----------------------------------------------------------------------------
 
-#define VBO_OFFSET(_i)	(GLvoid *) ((char *) NULL + (_i))
+#define VBO_OFFSET(_i)	(GLvoid *) ((char *) null + (_i))
 
 class CRenderVertex {
 	public:

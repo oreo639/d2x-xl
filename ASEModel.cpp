@@ -11,8 +11,8 @@
 static char	szLine [1024];
 static char	szLineBackup [1024];
 static int nLine = 0;
-static CFileManager *aseFile = NULL;
-static char *pszToken = NULL;
+static CFileManager *aseFile = null;
+static char *pszToken = null;
 static int bErrMsg = 0;
 
 #define ASE_ROTATE_MODEL	1
@@ -50,7 +50,7 @@ return 0;
 
 static float FloatTok (const char *delims)
 {
-pszToken = strtok (NULL, delims);
+pszToken = strtok (null, delims);
 if (!(pszToken && *pszToken))
 	CModel::Error ("missing data");
 return pszToken ? (float) atof (pszToken) : 0;
@@ -60,7 +60,7 @@ return pszToken ? (float) atof (pszToken) : 0;
 
 static int IntTok (const char *delims)
 {
-pszToken = strtok (NULL, delims);
+pszToken = strtok (null, delims);
 if (!(pszToken && *pszToken))
 	CModel::Error ("missing data");
 return pszToken ? atoi (pszToken) : 0;
@@ -70,7 +70,7 @@ return pszToken ? atoi (pszToken) : 0;
 
 static char CharTok (const char *delims)
 {
-pszToken = strtok (NULL, delims);
+pszToken = strtok (null, delims);
 if (!(pszToken && *pszToken))
 	CModel::Error ("missing data");
 return pszToken ? *pszToken : '\0';
@@ -82,7 +82,7 @@ static char szEmpty [1] = "";
 
 static char *StrTok (const char *delims)
 {
-pszToken = strtok (NULL, delims);
+pszToken = strtok (null, delims);
 if (!(pszToken && *pszToken))
 	CModel::Error ("missing data");
 return pszToken ? pszToken : szEmpty;
@@ -118,7 +118,7 @@ while (!fp.EoF ()) {
 	if ((pszToken = strtok (szLine, " \t")))
 		return pszToken;
 	}
-return NULL;
+return null;
 }
 
 //------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ return NULL;
 
 void CSubModel::Init (void)
 {
-m_next = NULL;
+m_next = null;
 memset (m_szName, 0, sizeof (m_szName));
 memset (m_szParent, 0, sizeof (m_szParent));
 m_nSubModel = 0;
@@ -236,7 +236,7 @@ while ((pszToken = ReadLine (fp))) {
 			return CModel::Error ("invalid face number");
 		pf = m_faces + i;
 		for (i = 0; i < 3; i++) {
-			strtok (NULL, " :\t");
+			strtok (null, " :\t");
 			pf->m_nVerts [i] = IntTok (" :\t");
 			}
 		do {
@@ -378,23 +378,23 @@ while ((pszToken = ReadLine (fp))) {
 		}
 	else if (!strcmp (pszToken, "*MESH_VERTEX_LIST")) {
 		if (!ReadMeshVertexList (fp))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		}
 	else if (!strcmp (pszToken, "*MESH_FACE_LIST")) {
 		if (!ReadMeshFaceList (fp))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		}
 	else if (!strcmp (pszToken, "*MESH_NORMALS")) {
 		if (!ReadMeshNormals (fp))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		}
 	else if (!strcmp (pszToken, "*MESH_TVERTLIST")) {
 		if (!ReadVertexTexCoord (fp))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		}
 	else if (!strcmp (pszToken, "*MESH_TFACELIST")) {
 		if (!ReadFaceTexCoord (fp))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		}
 	}
 return CModel::Error ("unexpected end of file");
@@ -409,9 +409,9 @@ while ((pszToken = ReadLine (fp))) {
 		return 1;
 	if (!strcmp (pszToken, "*NODE_NAME")) {
 		strcpy (m_szName, StrTok (" \t\""));
-		if (strstr (m_szName, "GLOW") != NULL)
+		if (strstr (m_szName, "GLOW") != null)
 			m_bGlow = 1;
-		if (strstr (m_szName, "FLARE") != NULL) {
+		if (strstr (m_szName, "FLARE") != null) {
 			m_bGlow =
 			m_bFlare = 
 			m_bBillboard = 1;
@@ -422,9 +422,9 @@ while ((pszToken = ReadLine (fp))) {
 			m_bBombMount = 1;
 		else if (strstr (m_szName, "$BULLETS"))
 			m_nBullets = 1;
-		else if (strstr (m_szName, "$DUMMY") != NULL)
+		else if (strstr (m_szName, "$DUMMY") != null)
 			m_bRender = 0;
-		else if (strstr (m_szName, "$THRUSTER-") != NULL) {
+		else if (strstr (m_szName, "$THRUSTER-") != null) {
 			if (m_szName [10] == 'R') // rear
 				m_bThruster |= REAR_THRUSTER;
 			else if (m_szName [10] == 'F') // front
@@ -444,23 +444,23 @@ while ((pszToken = ReadLine (fp))) {
 			else
 				m_bThruster |= LATERAL_THRUSTER;
 			}
-		else if (strstr (m_szName, "$THRUSTER") != NULL) 
+		else if (strstr (m_szName, "$THRUSTER") != null) 
 			m_bThruster = REAR_THRUSTER;
-		else if (strstr (m_szName, "$WINGTIP") != NULL) {
+		else if (strstr (m_szName, "$WINGTIP") != null) {
 			m_bWeapon = 1;
 			m_nGun = 0;
 			m_nBomb =
 			m_nMissile = -1;
 			m_nType = atoi (m_szName + 8) + 1;
 			}
-		else if (strstr (m_szName, "$GUN") != NULL) {
+		else if (strstr (m_szName, "$GUN") != null) {
 			m_bWeapon = 1;
 			m_nGun = atoi (m_szName + 4) + 1;
 			m_nWeaponPos = atoi (m_szName + 6) + 1;
 			m_nBomb =
 			m_nMissile = -1;
 			}
-		else if (strstr (m_szName, "$BARREL") != NULL) {
+		else if (strstr (m_szName, "$BARREL") != null) {
 			m_bWeapon = 1;
 			m_nGun = atoi (m_szName + 7) + 1;
 			m_nWeaponPos = atoi (m_szName + 9) + 1;
@@ -468,20 +468,20 @@ while ((pszToken = ReadLine (fp))) {
 			m_nMissile = -1;
 			m_bBarrel = 1;
 			}
-		else if (strstr (m_szName, "$MISSILE") != NULL) {
+		else if (strstr (m_szName, "$MISSILE") != null) {
 			m_bWeapon = 1;
 			m_nMissile = atoi (m_szName + 8) + 1;
 			m_nWeaponPos = atoi (m_szName + 10) + 1;
 			m_nGun =
 			m_nBomb = -1;
 			}
-		else if (strstr (m_szName, "$BOMB") != NULL) {
+		else if (strstr (m_szName, "$BOMB") != null) {
 			m_bWeapon = 1;
 			m_nBomb = atoi (m_szName + 6) + 1;
 			m_nGun =
 			m_nMissile = -1;
 			}
-		else if (strstr (m_szName, "$LIGHTBEAM") != NULL) {
+		else if (strstr (m_szName, "$LIGHTBEAM") != null) {
 			m_bHeadlight = 1;
 			m_bGlow = 1;
 			m_bFlare = 0;
@@ -492,11 +492,11 @@ while ((pszToken = ReadLine (fp))) {
 		}
 	if (!strcmp (pszToken, "*NODE_TM")) {
 		if (!ReadNode (fp))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		}
 	else if (!strcmp (pszToken, "*MESH")) {
 		if (!ReadMesh (fp, nFaces, nVerts))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		}
 	else if (!strcmp (pszToken, "*MATERIAL_REF")) {
 		m_nTexture = IntTok (" \t");
@@ -512,7 +512,7 @@ return CModel::Error ("unexpected end of file");
 
 void CModel::Init (void)
 {
-m_subModels = NULL;
+m_subModels = null;
 m_nModel = -1;
 m_nSubModels = 0;
 m_nVerts = 0;
@@ -573,7 +573,7 @@ while ((pszToken = ReadLine (fp))) {
 	if (!strcmp (pszToken, "*BITMAP")) {
 		if (tex.Buffer ())	//duplicate
 			return CModel::Error ("duplicate bitmap");
-		CFileManager::SplitPath (StrTok ("\""), NULL, fn, NULL);
+		CFileManager::SplitPath (StrTok ("\""), null, fn, null);
 		char szFile [256];
 		sprintf (szFile, "%s\\%s", m_folder, fn);
 		if (!strrchr (szFile, '.'))
@@ -637,11 +637,11 @@ while ((pszToken = ReadLine (fp))) {
 		}
 	else if (!strcmp (pszToken, "*MAP_DIFFUSE")) {
 		if (!ReadTexture (fp, i))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		}
 	else if (!strcmp (pszToken, "*MAP_OPACITY")) {
 		if (!ReadOpacity (fp, i))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		}
 	}
 return CModel::Error ("unexpected end of file");
@@ -670,7 +670,7 @@ while ((pszToken = ReadLine (fp))) {
 		}
 	if (!strcmp (pszToken, "*MATERIAL")) {
 		if (!ReadMaterial (fp))
-			return CModel::Error (NULL);
+			return CModel::Error (null);
 		nTextures--;
 		}
 	}
@@ -783,7 +783,7 @@ return 1;
 
 int CSubModel::ReadBinary (CFileManager& fp)
 {
-m_next = NULL;
+m_next = null;
 fp.Read (m_szName, 1, sizeof (m_szName));
 fp.Read (m_szParent, 1, sizeof (m_szParent));
 m_nSubModel = fp.ReadInt16 ();
@@ -851,16 +851,16 @@ m_nVerts = fp.ReadInt32 ();
 m_nFaces = fp.ReadInt32 ();
 m_bCustom = fp.ReadInt32 ();
 
-m_subModels = NULL;
+m_subModels = null;
 if (m_textures.ReadBinary (fp)) {
 	fp.Close ();
 	Destroy ();
 	return 0;
 	}
 
-CSubModel*	smP, * tailP = NULL;
+CSubModel*	smP, * tailP = null;
 
-m_subModels = NULL;
+m_subModels = null;
 for (i = 0; i < m_nSubModels; i++) {
 	if (!(smP = new CSubModel)) {
 		fp.Close ();
@@ -956,7 +956,7 @@ else {
 	SaveBinary (pszFolder, nModel);
 #endif
 	}
-aseFile = NULL;
+aseFile = null;
 return nResult;
 }
 

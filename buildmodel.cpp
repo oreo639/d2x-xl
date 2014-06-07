@@ -136,7 +136,7 @@ return false;
 
 void CFace::SetTexture (CTexture* textureP)
 {
-m_textureP = (textureP && (m_nTexture >= 0)) ? textureP + m_nTexture : NULL;
+m_textureP = (textureP && (m_nTexture >= 0)) ? textureP + m_nTexture : null;
 }
 
 //------------------------------------------------------------------------------
@@ -219,7 +219,7 @@ void CModel::Setup (int bHires, int bSort)
 	CFloatVector*	pv, * pn;
 	tTexCoord2d*	pt;
 	rgbaColorf*		pc;
-	CTexture*		textureP = bHires ? m_textures->Buffer () : NULL;
+	CTexture*		textureP = bHires ? m_textures->Buffer () : null;
 	int				i, j;
 	ushort			nId;
 

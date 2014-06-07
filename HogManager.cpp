@@ -655,7 +655,7 @@ void CHogManager::OnImport (void)
 	char szOfnFileBuf [512] = { 0 }; // buffer for ofn dialog, can be multiple files
 	char szFilePath [256] = { 0 }; // buffer for fp name
 	char szShortFileName [13] = { 0 }; // buffer for 8.3 filename
-	char *pszFile = NULL;
+	char *pszFile = null;
 	OPENFILENAME ofn;
 
 memset(&ofn, 0, sizeof (OPENFILENAME));
@@ -749,7 +749,7 @@ do {
 	if (pszFile) {
 		pszFile += strlen (pszFile) + 1;
 		if (pszFile >= szOfnFileBuf + sizeof (szOfnFileBuf))
-			pszFile = NULL;
+			pszFile = null;
 		memset (szFilePath, 0, sizeof (szFilePath));
 		}
 	} while (pszFile && *pszFile);

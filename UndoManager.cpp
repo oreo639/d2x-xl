@@ -415,6 +415,7 @@ return szDest;
 void CUndoManager::Begin (char* szFunction, int dataFlags, bool bAccumulate) 
 {
 if (!Locked ()) {
+	PrintLog (1, "Begin Undo (%s)\n", szFunction);
 	m_history.Push (szFunction);
 	if (0 == m_nNested++) {
 #ifdef _DEBUG
@@ -436,6 +437,7 @@ if (!Locked ()) {
 void CUndoManager::End (char* szFunction) 
 {
 if (!Locked () && (m_nNested > 0)) {
+	PrintLog (-1, "End Undo (%s)\n", szFunction);
 	m_history.Pop (szFunction);
 	if (--m_nNested == 0)
 		Backup ();

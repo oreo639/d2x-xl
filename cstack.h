@@ -49,7 +49,7 @@ class CStack : public CDynamicArray< _T > {
 			return true;
 			}
 	
-		inline _T* Top (void) { return (this->m_data.buffer && m_tos) ? this->m_data.buffer + m_tos - 1 : NULL; }
+		inline _T* Top (void) { return (this->m_data.buffer && m_tos) ? this->m_data.buffer + m_tos - 1 : null; }
 
 		inline uint ToS (void) { return m_tos; }
 

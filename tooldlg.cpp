@@ -141,7 +141,7 @@ void CToolDlg::PreSubclassWindow ()
 {
 #if 1
 if (nLayout == 2) {
-	if(m_hWnd != NULL) {
+	if(m_hWnd != null) {
 		char szId [20];
 		sprintf (szId, "Dialog%d", m_nId);
 		m_bVisible = GetPrivateProfileInt ("DLE", szId, 0, DLE.IniFile ()) != 0;
