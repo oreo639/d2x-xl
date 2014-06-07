@@ -420,23 +420,11 @@ if (!Locked ()) {
 	char szFlags [200];
 	szFlags [0] = '\0';
 
-	if ((dataFlags & udAll) == udAll)
-		strcpy (szFlags, " all data");
-	else {
-		int i;
-		for (i = 0; i < 8; i++)
-			if (dataFlags & eUndoFlags (1 << i))
-				strcat (szFlags, szFlagNames [i]);
-		if ((dataFlags & udLight) == udLight)
-			strcat (szFlags, " light data");
-		else {
-			for (; i < 8; i++)
-				if (dataFlags & eUndoFlags (1 << i))
-					strcat (szFlags, szFlagNames [i]);
-			}
-		}
+	for (int i = 0; i < 11; i++)
+		if (dataFlags & eUndoFlags (1 << i))
+			strcat (szFlags, szFlagNames [i]);
 
-	PrintLog (1, "Begin Undo (%s, %s)\n", szFunction, szFlags);
+	PrintLog (1, "Begin Undo (%s,%s)\n", szFunction, szFlags);
 	m_history.Push (szFunction);
 	if (0 == m_nNested++) {
 #ifdef _DEBUG
