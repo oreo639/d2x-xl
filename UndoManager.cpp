@@ -412,10 +412,31 @@ return szDest;
 
 //------------------------------------------------------------------------------
 
+static char* szFlagNames [] = {" vertices", " segments", " producers", " walls", " doors", " triggers", " objects", " robots", " variable lights", " static light", " dynamic light" };
+
 void CUndoManager::Begin (char* szFunction, int dataFlags, bool bAccumulate) 
 {
 if (!Locked ()) {
-	PrintLog (1, "Begin Undo (%s)\n", szFunction);
+	char szFlags [200];
+	szFlags [0] = '\0';
+
+	if ((dataFlags & udAll) == udAll)
+		strcpy (szFlags, " all data");
+	else {
+		int i;
+		for (i = 0; i < 8; i++)
+			if (dataFlags & eUndoFlags (1 << i))
+				strcat (szFlags, szFlagNames [i]);
+		if ((dataFlags & udLight) == udLight)
+			strcat (szFlags, " light data");
+		else {
+			for (; i < 8; i++)
+				if (dataFlags & eUndoFlags (1 << i))
+					strcat (szFlags, szFlagNames [i]);
+			}
+		}
+
+	PrintLog (1, "Begin Undo (%s, %s)\n", szFunction, szFlags);
 	m_history.Push (szFunction);
 	if (0 == m_nNested++) {
 #ifdef _DEBUG
