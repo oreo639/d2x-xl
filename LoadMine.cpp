@@ -225,7 +225,7 @@ if (!(bLoadFromHog || bCreate)) {
 	// try to load the Descent 2 textures for Descent 1 levels as well to allow rendering of textured ship and robot models and of powerup sprites
 	if (!textureManager.Version ())
 		textureManager.Reload (1, true); 
-	paletteManager.Reload ();
+	paletteManager.Reload (paletteManager.Name ());
 	textureManager.Reload (textureManager.Version (), true);
 	if (IsD2File ()) {
 		char filename [256];

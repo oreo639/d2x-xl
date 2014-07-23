@@ -509,7 +509,7 @@ if (!theMine->LoadMineSigAndType (&fSrc)) {
 		lightManager.ReadLightMap (fSrc, size);
 	if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".clr")))
 		lightManager.ReadColorMap (fSrc);
-	paletteManager.Reload ();
+	paletteManager.Reload (paletteManager.Name ());
 	textureManager.LoadTextures ();
 	if (0 < (size = FindSubFile (fSrc, pszFile, pszSubFile, ".pog")))
 		textureManager.ReadPog (fSrc, size);

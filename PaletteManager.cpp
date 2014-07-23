@@ -223,17 +223,21 @@ const char* CPaletteManager::SelectResource (char* pszName)
 	tPalExt	*ppe;
 	char		szName [256];
 
-if (!pszName) {
+if (!pszName || !*pszName) {
 	if (theMine && DLE.IsD1File ())
 		return MAKEINTRESOURCE (IDR_PALETTE_256);
 	CFileManager::SplitPath (descentFolder [1], null, szName, null);
 	pszName = szName;
 	}
-else if (!_stricmp ("descent", pszName))
-	return MAKEINTRESOURCE (IDR_PALETTE_256);
-for (ppe = palExt; *(ppe->szFile); ppe++)
-	if (!_stricmp (ppe->szFile, pszName))
-		return MAKEINTRESOURCE (ppe->nIdPal);
+else {
+	CFileManager::SplitPath (pszName, NULL, szName, NULL);
+	_strlwr (szName);
+	if (!_stricmp ("descent", szName))
+		return MAKEINTRESOURCE (IDR_PALETTE_256);
+	for (ppe = palExt; *(ppe->szFile); ppe++)
+		if (!_stricmp (ppe->szFile, szName))
+			return MAKEINTRESOURCE (ppe->nIdPal);
+	}
 return MAKEINTRESOURCE (IDR_GROUPA_256);
 }
 
@@ -249,6 +253,7 @@ for (i = 0; i < 15; i++) {
 		break;
 		}
 	}
+m_name [sizeof (m_name) - 1] = '\0';
 // replace extension with .pig
 if (i < 4) 
 	strcpy_s (m_name, sizeof (m_name), "groupa.pig");
