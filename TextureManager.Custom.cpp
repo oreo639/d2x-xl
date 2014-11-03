@@ -232,7 +232,7 @@ if (texP->m_info.nFormat && DLE.IsD2XLevel ()) {
 		fp.Write (rgba, sizeof (tRGBA), h);
 	}
 else {
-	ubyte* palIndex = texP->ToBitmap (texP->m_info.nFormat);
+	ubyte* palIndex = texP->ToBitmap (texP->m_info.nFormat != 0);
 	if (palIndex == null) { // write as TGA
 		if (DLE.IsD2XLevel ())
 			return -1;

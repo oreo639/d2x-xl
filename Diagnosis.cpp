@@ -625,7 +625,7 @@ if (theMine == null)
 	CVertex			center;
 	double			radius, maxRadius, object_radius;
 	CGameObject*	objP = objectManager.Object (0);
-	CGameObject*	pPlayer = null;
+	CGameObject*	playerP = null;
 	int				objCount = objectManager.Count ();
 	CSegment*		segP;
   ubyte				nMaxRobotId = (DLE.IsD2XFile () || theMine->m_bVertigo) ? MAX_ROBOT_TYPES : DLE.IsD2File () ? N_ROBOT_TYPES_D2 : N_ROBOT_TYPES_D1;
@@ -633,7 +633,7 @@ if (theMine == null)
 short sub_errors = m_nErrors [0];
 short sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Objects]");
-for (nObject = 0;nObject < objCount ; nObject++, objP++) {
+for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	// check segment range
 	nSegment = objP->m_info.nSegment;
@@ -706,8 +706,8 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 	type = objP->Type ();
     switch (type) {
 	  case OBJ_PLAYER:
-		  if (!pPlayer)
-			  pPlayer = objP;
+		  if (!playerP)
+			  playerP = objP;
 			if (objP->Id () >= MAX_PLAYERS) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id=%d)",nObject, objP->Id ());
@@ -827,11 +827,11 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 
   // make sure object 0 is player 0; if not int it
 if (objectManager.Object (0)->m_info.type != OBJ_PLAYER || objectManager.Object (0)->m_info.id != 0) {
-	if (m_bAutoFixBugs) {
+	if (m_bAutoFixBugs && playerP) {
 		CGameObject h;
-		memcpy (&h, pPlayer, sizeof (CGameObject));
-		memcpy (pPlayer, objectManager.Object (0), sizeof (CGameObject));
-		memcpy (objectManager.Object (0), pPlayer, sizeof (CGameObject));
+		memcpy (&h, playerP, sizeof (CGameObject));
+		memcpy (playerP, objectManager.Object (0), sizeof (CGameObject));
+		memcpy (objectManager.Object (0), playerP, sizeof (CGameObject));
 		strcpy_s (message, sizeof (message), "FIXED: Object 0 was not Player 0.");
 		if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;

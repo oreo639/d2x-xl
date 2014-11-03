@@ -217,11 +217,11 @@ Reset ();
 
 void CUndoManager::Reset ()
 {
-if (m_nHead != -1) {
+if (m_size > 0) {
 	m_nCurrent = m_nHead;
 	Truncate ();
-	m_nHead = -1;
-	m_nTail = -1;
+	m_nHead = 0;
+	m_nTail = 0;
 	}
 m_nLock = 0;
 }
@@ -252,20 +252,18 @@ bool CUndoManager::Undo (void)
 if (Locked ())
 	return false;
 // need a backup of the current state when starting to undo
-if (m_nMode == 0) {
-	if (m_nCurrent == m_nTail + 1) {
-		m_current.Destroy ();
-		m_current.Backup (udAll);
-		}
+PrintLog (0, "-> CUndoManager::Undo (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
+if ((m_nMode == 0) && (m_nCurrent == m_nTail) && !m_nTail.m_bTemporary) {
+	Append ();
+	m_nTail.m_bTemporary = true;
+	m_current.Backup (udAll);
 	}
-else {
-	if (m_nCurrent == m_nHead)
-		return false;
-	}
+if (m_nCurrent != m_nHead)
+	--m_nCurrent;
 
 m_nMode = 1;
---m_nCurrent;
 Current ()->Restore ();
+PrintLog (0, "<- CUndoManager::Undo (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 return true;
 }
 
@@ -275,18 +273,16 @@ bool CUndoManager::Redo (void)
 {
 if (Locked ())
 	return false;
-if (m_nCurrent == m_nTail + 1)
+if (m_nCurrent == m_nTail)
 	return false;
 if (m_nMode == 0)
 	return false;
 
 m_nMode = 2;
-PrintLog (0, "CUndoManager::Redo (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
-if (++m_nCurrent == m_nTail + 1)
-	m_current.Restore ();
-else 
-	Current ()->Restore ();
-PrintLog (0, "                   (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
+PrintLog (0, "-> CUndoManager::Redo (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
+++m_nCurrent;
+Current ()->Restore ();
+PrintLog (0, "<- CUndoManager::Redo (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 return true;
 }
 
@@ -296,26 +292,26 @@ void CUndoManager::Truncate (void)
 {
 if (Locked ())
 	return;
-if (m_nCurrent == m_nTail + 1)
+if (m_nCurrent == m_nTail)
 	return; // at end of undo list already
 
-PrintLog (0, "CUndoManager::Truncate (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
+PrintLog (0, "-> CUndoManager::Truncate (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 //--m_nCurrent;
 do {
 	m_buffer [*m_nTail].Destroy ();
 	--m_nTail;
-	} while (m_nTail != m_nCurrent - 1);
+	} while (m_nTail != m_nCurrent);
 
 if (m_nCurrent == m_nHead) {
 	m_nHead = 0;
 	m_nTail = 0;
-	m_nCurrent = 1;
+	m_nCurrent = 0;
 	m_nId = 0;
 	}
 else {
 	m_nId = Tail ()->Id () + 1;
 	}
-PrintLog (0, "                       (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
+PrintLog (0, "<- CUndoManager::Truncate (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 }
 
 //------------------------------------------------------------------------------
@@ -324,14 +320,16 @@ void CUndoManager::Append (void)
 {
 if (Locked ())
 	return;
-PrintLog (0, "CUndoManager::Append (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
+PrintLog (0, "-> CUndoManager::Append (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 if (m_nHead == -1) {
 	m_nHead = 0;
 	m_nTail = 0;
 	}
 else {
 	Truncate ();
-	if (++m_nTail == *m_nHead) {	// buffer full
+	if (m_nTail.m_bTemporary)
+		m_nTail.m_bTemporary = false;
+	else if (++m_nTail == *m_nHead) {	// buffer full
 #if DETAIL_BACKUP
 		int nId = Head ()->Id ();
 		do { // remove all items with same backup id from buffer start
@@ -344,8 +342,8 @@ else {
 #endif
 		}
 	}
-m_nCurrent = m_nTail + 1;
-PrintLog (0, "                     (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
+m_nCurrent = m_nTail;
+PrintLog (0, "<- CUndoManager::Append (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 }
 
 //------------------------------------------------------------------------------
@@ -387,9 +385,11 @@ void CUndoManager::Backup (void)
 {
 if (!Locked () && !Collecting () && !m_current.Cleanup ()) {
 	SetModified (true);
+	PrintLog (1, "-> CUndoManager::Backup (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 	Append ();
 	*Tail () = m_current;
 	m_current.Reset ();
+	PrintLog (-1, "<- CUndoManager::Backup (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 	Id ()++;
 	}
 }
@@ -433,10 +433,6 @@ if (!Locked ()) {
 	PrintLog (1, "Begin Undo (%s,%s)\n", szFunction, szFlags);
 	m_history.Push (szFunction);
 	if (0 == m_nNested++) {
-#ifdef _DEBUG
-		if (m_nNested > 3)
-			INFOMSG ("Undo manager corruption");
-#endif
 		if (m_nMode != 0) {
 			m_nMode = 0;
 			m_current.Destroy ();

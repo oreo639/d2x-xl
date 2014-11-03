@@ -209,6 +209,7 @@ class CBufPtr {
 	public:
 		int	m_size;
 		int	m_index;
+		bool	m_bTemporary;
 
 		void Setup (int size) { 
 			if (m_index >= (m_size = size))
@@ -274,9 +275,7 @@ class CBufPtr {
 
 		const int operator- (const int i) { 
 			int h = m_index - i; 
-			if (h < 0)
-				h += m_size;
-			return h;
+			return (h < 0) ? h + m_size : h;
 			}
 
 		const int operator+ (const int i) { 
@@ -286,9 +285,11 @@ class CBufPtr {
 			return h;
 			}
 
+		inline void SetTemporary (bool bTemporary) { m_bTemporary = bTemporary; }
+		inline bool GetTemporary (void) { return m_bTemporary; }
 		const int operator* (void) { return m_index; }
 
-		CBufPtr (int size = DLE_MAX_UNDOS, int index = -1) : m_size (size), m_index (index) {}
+		CBufPtr (int size = DLE_MAX_UNDOS, int index = -1) : m_size (size), m_index (index), m_bTemporary (false) {}
 	};
 
 //------------------------------------------------------------------------------

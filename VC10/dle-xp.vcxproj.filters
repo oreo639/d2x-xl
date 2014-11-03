@@ -2617,56 +2617,62 @@
     <None Include="..\resource\bitmaps\backd.bmp">
       <Filter>UI\Resource Files</Filter>
     </None>
+    <None Include="..\..\..\Websites\Descent\dle-cubes.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-diagnosis.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-effects.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-frames.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-gui.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-history.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-intro.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-light.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-lighting-howto.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-misc.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-mission.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-missions.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-music-howto.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-objects.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-segments.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-textures.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-triggers.html">
+      <Filter>Documents</Filter>
+    </None>
+    <None Include="..\..\..\Websites\Descent\dle-walls.html">
+      <Filter>Documents</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-history.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-cubes.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-diagnosis.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-effects.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-gui.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-intro.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-light.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-lighting-howto.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-misc.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-mission.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-missions.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-music-howto.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-objects.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-textures.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-triggers.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\..\Websites\Descent\dle-xp-walls.html">
-      <Filter>Documents</Filter>
-    </CustomBuildStep>
     <CustomBuildStep Include="..\..\..\Websites\Descent\downloads.html">
       <Filter>Documents</Filter>
     </CustomBuildStep>
