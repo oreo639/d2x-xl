@@ -63,7 +63,7 @@ void CSegmentManager::AlignChildTextures (short nSegment, short nSide, int bUse1
 {
 	CSegment*		segP = segmentManager.Segment (nSegment);
 	CSide*			sideP = segP->Side (nSide);
-	CTagByTextures tagger (bUse1st ? sideP->BaseTex () : -1, bUse2nd ? sideP->OvlTex () : -1, bIgnorePlane);
+	CTagByTextures tagger (bUse1st ? sideP->BaseTex () : -1, bUse2nd ? sideP->OvlTex () : -1, bIgnorePlane != 0);
 	int				nSides;
 
 if (!tagger.Setup (segmentManager.VisibleSideCount (), ALIGNED_MASK))
