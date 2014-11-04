@@ -269,7 +269,7 @@ int CRendererGL::Project (CRect* pRC, bool bCheckBehind)
 CHECKMINEV(0);
 
 	CViewMatrix* viewMatrix = ViewMatrix ();
-	long	i, j, nProjected;
+	int	i, j, nProjected;
 	bool	bBehind = false;
 
 viewMatrix->Translate (Translation ());
@@ -279,7 +279,7 @@ viewMatrix->SetViewInfo (ViewWidth (), ViewHeight ());
 nProjected = 0;
 j = vertexManager.Count ();
 #ifdef NDEBUG
-#pragma omp parallel for reduction(+: nProjected) if (j > 15)
+#pragma omp parallel for reduction(+: nProjected)
 #endif
 for (i = 0; i < j; i++) {
 #ifdef _DEBUG
@@ -292,7 +292,7 @@ for (i = 0; i < j; i++) {
 	v.Transform (viewMatrix);
 	if (v.m_view.v.z < 0.0)
 		bBehind = true;
-	nProjected++;
+	++nProjected;
 	}
 
 if (!nProjected)
