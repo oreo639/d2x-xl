@@ -264,16 +264,6 @@ else {
 
 //------------------------------------------------------------------------------
 
-static bool TransformVertex (int i, CViewMatrix* m)
-{
-CVertex& v = vertexManager [i];
-if (v.Status () == 255) // skybox inclusion/exclusion
-	return false;
-v.Transform (m);
-return (v.m_view.v.z < 0.0);
-}
-
-
 int CRendererGL::Project (CRect* pRC, bool bCheckBehind)
 {
 CHECKMINEV(0);
@@ -296,17 +286,12 @@ for (i = 0; i < j; i++) {
 	if (i == nDbgVertex)
 		nDbgVertex = nDbgVertex;
 #endif
-#if 1
-	if (TransformVertex (i, viewMatrix))
-		bBehind = true;
-#else
 	CVertex& v = vertexManager [i];
 	if (v.Status () == 255) // skybox inclusion/exclusion
 		continue;
 	v.Transform (viewMatrix);
 	if (v.m_view.v.z < 0.0)
 		bBehind = true;
-#endif
 	++nProjected;
 	}
 
