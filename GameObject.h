@@ -456,6 +456,8 @@ class CGameObject : public CGameItem {
 			}
 
 		short Sprite (void);
+
+		bool CheckEffectType (bool bFix = true);
 	};
 
 //------------------------------------------------------------------------

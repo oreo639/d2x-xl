@@ -703,6 +703,7 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 		 if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
+
 	type = objP->Type ();
     switch (type) {
 	  case OBJ_PLAYER:
@@ -718,6 +719,7 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
+
 	  case OBJ_COOP:
 		  if (objP->Id () >= MAX_PLAYERS + MAX_COOP_PLAYERS) {
 			if (m_bAutoFixBugs) {
@@ -730,18 +732,25 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 				return true;
 			}
 			break;
+
 	  case OBJ_EFFECT:
-		  if (objP->Id () > MAX_EFFECT_ID) {
-			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id=%d)",nObject, objP->Id ());
-				objP->Id () = MAX_EFFECT_ID;
+			if (objP->Id () > MAX_EFFECT_ID) {
+				if (m_bAutoFixBugs) {
+					sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id=%d)",nObject, objP->Id ());
+					objP->Id () = MAX_EFFECT_ID;
+					}
+				else
+					sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id=%d)",nObject, objP->Id ());
+				if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
+					return true;
 				}
-			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id=%d)",nObject, objP->Id ());
-			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
-				return true;
-			}
+			else if (!objP->CheckEffectType (m_bAutoFixBugs)) {
+				sprintf_s (message, sizeof (message),"%s: Illegal effect id (object=%d,id=%d)", m_bAutoFixBugs ? "FIXED" : "WARNING", nObject, objP->Id ());
+				if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
+					return true;
+				}
 			break;
+
 	  case OBJ_ROBOT:
 		  if (objP->Id () > nMaxRobotId) {
 			if (m_bAutoFixBugs) {
@@ -754,17 +763,20 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 				return true;
 			}
 			break;
+
 	  case OBJ_HOSTAGE:
 	  case OBJ_POWERUP:
      case OBJ_REACTOR:
      case OBJ_WEAPON:
 		  break;
+
 	  case OBJ_CAMBOT:
 	  case OBJ_SMOKE:
 	  case OBJ_MONSTERBALL:
 	  case OBJ_EXPLOSION:
 			if (DLE.IsD2File ()) 
 				break;
+
 	  default:
 		 if (m_bAutoFixBugs) {
 			 objectManager.Delete (nObject);
@@ -774,7 +786,7 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 			sprintf_s (message, sizeof (message),"WARNING: Illegal object type (object=%d,type=%d)",nObject,type);
 		if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
-	}
+		}
 
     id = objP->Id ();
 

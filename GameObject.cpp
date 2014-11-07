@@ -933,6 +933,44 @@ fp->Write (nSpeed);
 
 // ------------------------------------------------------------------------
 
+bool CGameObject::CheckEffectType (bool bFix)
+{
+if (m_info.type != OBJ_EFFECT)
+	return true;
+
+	bool bResult = false;
+
+if (m_info.type == OBJ_EFFECT) {
+	switch (m_info.id) {
+		default:
+
+		case PARTICLE_ID:
+			if (m_info.renderType == RT_PARTICLE)
+				bResult = true;
+			else if (bFix)
+				m_info.renderType = RT_PARTICLE;
+			break;
+
+		case LIGHTNING_ID:
+			if (m_info.renderType == RT_LIGHTNING)
+				bResult = true;
+			else if (bFix)
+				m_info.renderType = RT_LIGHTNING;
+			break;
+
+		case SOUND_ID:
+			if (m_info.renderType == RT_SOUND)
+				bResult = true;
+			else if (bFix)
+				m_info.renderType = RT_SOUND;
+			break;
+		}
+	}
+return bResult;
+}
+
+// ------------------------------------------------------------------------
+
 void CGameObject::Read (CFileManager* fp, bool bFlag) 
 {
 m_info.type = fp->ReadSByte ();
