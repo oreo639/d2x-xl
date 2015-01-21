@@ -8,6 +8,7 @@
 #include "MainFrame.h"
 #include "global.h"
 #include "toolview.h"
+#include "PogDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -72,6 +73,8 @@ BEGIN_MESSAGE_MAP (CMainFrame, CFrameWnd)
 	ON_COMMAND (ID_VIEW_TOGGLETEXPANE, OnToggleTexturePane)
 	ON_COMMAND (ID_FILE_PREFERENCES, OnEditPreferences)
 	ON_COMMAND (ID_FILE_EDITMISSIONFILE, OnEditMission)
+	ON_COMMAND (ID_FILE_EDITHOG, OnEditHog)
+	ON_COMMAND (ID_FILE_EDITPOG, OnEditPog)
 	ON_COMMAND (ID_VIEW_ALIGNSIDEROTATION, OnViewAlignSideRotation)
 	ON_COMMAND (ID_VIEW_ALLLINES, OnViewWireFrameFull)
 	ON_COMMAND (ID_VIEW_CENTERENTIREMINE, OnViewCenterEntireMine)
@@ -169,6 +172,8 @@ BEGIN_MESSAGE_MAP (CMainFrame, CFrameWnd)
 	ON_COMMAND (ID_SPLINE_DECREASE, OnDecSpline)
 	ON_COMMAND (ID_FINER_TUNNEL, OnFinerTunnel)
 	ON_COMMAND (ID_COARSER_TUNNEL, OnCoarserTunnel)
+	ON_UPDATE_COMMAND_UI (ID_FILE_EDITHOG, OnUpdateEditHog)
+	ON_UPDATE_COMMAND_UI (ID_FILE_EDITPOG, OnUpdateEditPog)
 	ON_UPDATE_COMMAND_UI (ID_VIEW_TOGGLEVIEWS, OnUpdateToggleViews)
 	ON_UPDATE_COMMAND_UI (ID_VIEW_TOGGLETEXPANE, OnUpdateToggleTexPane)
 	ON_UPDATE_COMMAND_UI (ID_FILE_EXTBLKFMT, OnUpdateExtBlkFmt)
@@ -291,6 +296,20 @@ void CMainFrame::OnEditMission ()
 {
 ShowTools ();
 ToolView ()->EditMission ();
+}
+
+void CMainFrame::OnEditHog ()
+{
+hogManager->Setup (DLE.GetDocument ()->File (), null);
+if (hogManager->DoModal () == IDOK)
+	DLE.GetDocument ()->OpenFile (false, hogManager->MissionName (), hogManager->LevelName ());
+}
+
+void CMainFrame::OnEditPog ()
+{
+CPogDialog e (DLE.MainFrame (), true);
+e.DoModal ();
+MineView ()->Refresh ();
 }
 
 void CMainFrame::OnEditDiagnostics () 
@@ -915,6 +934,18 @@ pCmdUI->SetCheck (MineView ()->m_viewOption == eViewWireFrameSparse ? 1 : 0);
 void CMainFrame::OnUpdateViewTexturemapped (CCmdUI* pCmdUI) 
 {
 pCmdUI->SetCheck (MineView ()->m_viewOption == eViewTextured ? 1 : 0);
+}
+
+//------------------------------------------------------------------------------
+
+void CMainFrame::OnUpdateEditHog (CCmdUI* pCmdUI)
+{
+pCmdUI->Enable ((BOOL) DLE.GetDocument ()->IsInHog ());
+}
+
+void CMainFrame::OnUpdateEditPog (CCmdUI* pCmdUI)
+{
+pCmdUI->Enable ((BOOL) DLE.IsD2File ());
 }
 
 //------------------------------------------------------------------------------

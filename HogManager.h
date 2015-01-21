@@ -90,6 +90,13 @@ extern CHogManager* hogManager;
 
 //------------------------------------------------------------------------
 
+#define CUSTOM_FILETYPE_LIGHTMAP 0
+#define CUSTOM_FILETYPE_COLORMAP 1
+#define CUSTOM_FILETYPE_PALETTE  2
+#define CUSTOM_FILETYPE_POG      3
+#define CUSTOM_FILETYPE_HXM      4
+#define NUM_CUSTOM_FILETYPES (1+CUSTOM_FILETYPE_HXM)
+
 bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags = 0, CWnd *pParentWnd = null);
 int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs);
 bool FindFileData (const char* pszFile, char* pszSubFile, CLevelHeader& lh, long& nSize, long& nPos, BOOL bVerbose = TRUE, CFileManager* fp = null);
@@ -97,6 +104,9 @@ bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long s
 int ReadMissionFile (char *pszFile);
 int WriteMissionFile (char *pszFile, int levelVersion, bool bSaveAs = true);
 int MakeMissionFile (char *pszFile, char *pszSubFile, int bCustomTextures, int bCustomRobots, bool bSaveAs = true);
+bool DoesSubFileExist (const char* pszFile, char* pszSubFile);
+const char *GetCustomFileExtension (const int nType);
+int WriteCustomFile (const char* pszFile, char* pszSubFile, const int nType);
 
 //------------------------------------------------------------------------
 

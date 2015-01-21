@@ -113,7 +113,7 @@ class CMine {
 
 		short Load (CFileManager* fp, bool bLoadFromHog);
 
-		short Save (const char *filename, bool bSaveToHog = false);
+		short Save (const char *filename);
 
 		void UpdateCenter (void);
 

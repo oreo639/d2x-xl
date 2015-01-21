@@ -351,6 +351,26 @@ class CTexToolDlg : public CToolDlg
 
 //------------------------------------------------------------------------------
 
+class CAnimTexWnd : public CWnd
+{
+	public:
+		CAnimTexWnd ();
+		bool StopAnimation ();
+		bool StartAnimation (const CTexture *pTexture);
+
+	private:
+		UINT_PTR m_nAnimTimer;
+		uint m_nTexAll;
+		uint m_nFrame;
+
+		afx_msg void OnTimer (UINT_PTR nIdEvent);
+		afx_msg void OnDestroy (void);
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
 class CDiagTool : public CToolDlg
 {
 	public:

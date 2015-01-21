@@ -3321,6 +3321,35 @@ BEGIN
     EDITTEXT        IDC_TEXLIGHT_COLOR,183,161,24,12,ES_CENTER | ES_READONLY | WS_DISABLED
 END
 
+IDD_POGMANAGER DIALOGEX 0, 0, 380, 182
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Custom Texture Manager"
+FONT 8, "MS Sans Serif", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_POGMANAGER_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,256,120
+    CONTROL         "",IDC_POGMANAGER_PREVIEW,"Static",SS_BLACKFRAME | SS_SUNKEN,278,17,87,80
+    LTEXT           "Preview",IDC_STATIC,278,7,26,8
+    LTEXT           "Size:",IDC_STATIC,280,98,16,8
+    LTEXT           "#x#",IDC_POGMANAGER_PREVIEW_SIZE,296,98,40,8
+    CONTROL         "Transparent",IDC_POGMANAGER_TRANSP_CHECK,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,276,109,54,10
+    CONTROL         "See-thru",IDC_POGMANAGER_SEETHRU_CHECK,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,330,109,43,10
+    PUSHBUTTON      "&Edit...",IDC_POGMANAGER_EDIT,270,122,50,14
+    PUSHBUTTON      "&Revert",IDC_POGMANAGER_REVERT,323,122,50,14
+    PUSHBUTTON      "&Import...",IDC_POGMANAGER_IMPORT,270,138,50,14
+    PUSHBUTTON      "E&xport...",IDC_POGMANAGER_EXPORT,323,138,50,14
+    LTEXT           "Filters:",IDC_STATIC,7,128,21,8
+    CONTROL         "Show custom textures only",IDC_POGMANAGER_FILTER_CUSTOM,
+                    "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,160,128,100,10
+    CONTROL         "Level textures",IDC_POGMANAGER_FILTER_LEVEL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,138,60,10
+    CONTROL         "Robots",IDC_POGMANAGER_FILTER_ROBOT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,148,39,10
+    CONTROL         "Powerups",IDC_POGMANAGER_FILTER_POWERUP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,75,138,47,10
+    CONTROL         "Miscellaneous",IDC_POGMANAGER_FILTER_MISC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,75,148,61,10
+    LTEXT           "Palette:",IDC_STATIC,7,165,25,8
+    COMBOBOX        IDC_POGMANAGER_PALETTE,37,163,78,100,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "Done",IDOK,270,161,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,323,161,50,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3417,6 +3446,14 @@ BEGIN
     END
 
     "IDD_PREFSDATA_HORZ", DIALOG
+    BEGIN
+    END
+
+    IDD_EDITTEXTURE, DIALOG
+    BEGIN
+    END
+
+    IDD_HOGMANAGER, DIALOG
     BEGIN
     END
 
@@ -3641,6 +3678,10 @@ BEGIN
     END
 
     IDD_TEXLIGHT_VERT, DIALOG
+    BEGIN
+    END
+
+    IDD_POGMANAGER, DIALOG
     BEGIN
     END
 END
@@ -6531,6 +6572,8 @@ BEGIN
         MENUITEM "&Save\tF3",                   ID_SAVEFILE
         MENUITEM "Save &As...",                 ID_SAVEFILE_AS
         MENUITEM "Edit Mission File",           ID_FILE_EDITMISSIONFILE
+        MENUITEM "Edit Mission &HOG...",        ID_FILE_EDITHOG
+        MENUITEM "Edit Textures (&POG)...",     ID_FILE_EDITPOG
         MENUITEM SEPARATOR
         POPUP "Convert Mine to ..."
         BEGIN
@@ -6906,8 +6949,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,11,90,0
- PRODUCTVERSION 1,11,90,0
+ FILEVERSION 1,12,0,0
+ PRODUCTVERSION 1,12,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6923,13 +6966,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor [7 nov 2014]"
-            VALUE "FileVersion", "1.11.90.0"
+            VALUE "FileDescription", "Descent Level Editor [21 jan 2015]"
+            VALUE "FileVersion", "1.12.0.0"
             VALUE "InternalName", "DLE"
             VALUE "LegalCopyright", "Copyright (C) Bryan Aamot, Dietfrid Mali"
             VALUE "OriginalFilename", "DLE.EXE"
             VALUE "ProductName", "Descent Level Editor"
-            VALUE "ProductVersion", "1.11.90.0"
+            VALUE "ProductVersion", "1.12.0.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6956,7 +6999,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor 1.11.90\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor 1.12.0\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

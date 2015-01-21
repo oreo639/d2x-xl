@@ -475,7 +475,7 @@ else {
 		nOvlTex = 0;
 		}
 	}
-PaintTexture (&m_showTextureWnd, IMG_BKCOLOR, -1, -1, nBaseTex, nOvlTex);
+PaintTexture (&m_showTextureWnd, IMG_BKCOLOR, nBaseTex, nOvlTex);
 }
 
 //------------------------------------------------------------------------

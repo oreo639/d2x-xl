@@ -13,9 +13,9 @@ int CModelTextures::Read (char* pszFolder)
 	char szFile [256];
 
 for (int i = 0; i < m_nTextures; i++) {
-	m_textures [i].Release ();
+	m_textures [i].Clear ();
 	sprintf (szFile, "%s\\%s", pszFolder, m_names [i].Buffer ());
-	if (!m_textures [i].LoadTGA (szFile))
+	if (!m_textures [i].LoadFromFile (szFile))
 		return 0;
 	}
 return 1;
@@ -47,7 +47,7 @@ for (int i = 0; i < m_nTextures; i++) {
 			return 0;
 			}
 		m_names [i].Read (fp);
-		if (!m_textures [i].LoadTGA (m_names [i].Buffer ())) {
+		if (!m_textures [i].LoadFromFile (m_names [i].Buffer ())) {
 			fp.Close ();
 			Destroy ();
 			return 0;
@@ -77,7 +77,7 @@ void CModelTextures::Release (void)
 {
 if ((m_textures.Buffer ()))
 	for (int i = 0; i < m_nTextures; i++)
-		m_textures [i].Release ();
+		m_textures [i].Clear ();
 }
 
 //------------------------------------------------------------------------------

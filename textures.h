@@ -329,74 +329,111 @@ class CUV {
 		int u, v;
 };
 
+// 0: Bitmap, 1: TGA (RGB)
+enum TextureFormat : ubyte {
+	BMP = 0,
+	TGA = 1
+};
+
 typedef struct tTexture {
-	uint			width, height, offset, bufSize;
-	uint			xOffset, yOffset;
-	int			nId; 
-	bool			bFromMod, bExtData, bFrame, bUsed, bValid, bTransparent, bFlat;
-	ubyte			bCustom, nFormat;	// 0: Bitmap, 1: TGA (RGB)
-	char			szName [9];
-	rgbaColorf	averageColor;
-	GLuint		glHandle;
+	uint           width, height, bufSize;
+	uint           nTexAll;
+	int            nTexLevel;
+	bool           bFromMod, bAnimated, bTransparent, bSuperTransparent, bFlat;
+	ubyte          bCustom;
+	TextureFormat  format;
+	ubyte          nFrameCount, nFrame;
+	char           szName [9];
+	rgbaColorf     averageColor;
 } tTexture;
 
 class CTexture {
+	private:
+		tTexture    m_info;         // texture descriptor info that will persist across copies
+		CBGRA*      m_data;         // bitmap data for this texture
+		CBGRA*      m_renderBuffer; // separate (possibly) copy of the bitmap aligned for use in 3d view
+		GLuint      m_glHandle;     // handle for the OpenGL texture associated with this texture
+		bool        m_bExtBuffer;   // is the bitmap data stored in an externally-owned buffer?
+		bool        m_bValid;       // is the texture properly loaded and containing image data?
+
 	public:
-		tTexture	m_info;
-		CBGRA*	m_data;
-		CBGRA*	m_override;
-		short		m_nTexture;
-
-		CTexture (CBGRA* dataP = null) : m_override (null), m_data (dataP) {
-			Clear ();
-			m_info.bExtData = (dataP != null);
+		CTexture (CBGRA* dataP = null) : m_data (dataP) {
+			memset (&m_info, 0, sizeof (m_info));
+			m_info.nTexLevel = -1;
+			m_renderBuffer = null;
+			m_glHandle = 0;
+			m_bExtBuffer = (dataP != null);
 			}
-
-		void Release (void);
 
 		~CTexture() { Release (); }
 
-		bool Allocate (int nSize);
+		virtual void Clear (void) {
+			memset (&m_info, 0, sizeof (m_info));
+			m_info.nTexLevel = -1;
+			Release ();
+		}
 
-		int Load (CFileManager& fp, short nTexture, int nVersion = -1);
+		int LoadFromPig (CFileManager& fp, uint nTexAll, int nVersion = -1);
 
-		void Load (CFileManager& fp, CPigTexture& info);
+		bool LoadFromPog (CFileManager& fp, CPigTexture& info);
 
-		void Load (int nId);
+		void LoadFromResource (int nId);
 
-		bool LoadTGA (CFileManager& fp);
+		bool LoadFromFile (char* pszFile, bool bErrorOnOpenFail = true);
 
-		bool LoadTGA (char* pszFile);
+		bool Save (char* pszFile) const;
 
-		int Reload (void);
-
-		double Scale (short index = -1);
+		double Scale (short index = -1) const;
 
 		int Shrink (int xFactor, int yFactor);
 
+		ubyte* ToBitmap (void) const;
+
 		ubyte* ToBitmap (bool bShrink);
 
-		void Read (CFileManager& fp, int version = 0, bool bFlag = false) { };
+		void ComputeIndex (ubyte* bmIndex) const;
 
-		void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
+		inline uint IdAll (void) const { return m_info.nTexAll; }
 
-		virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+		inline int IdLevel (void) const { return m_info.nTexLevel; }
 
-		void ComputeIndex (ubyte* bmIndex);
+		inline bool Transparent (void) const { return m_info.bTransparent; }
 
-		inline bool Transparent (void) { return m_info.bTransparent; }
+		inline uint Width () const { return m_info.width; }
 
-		inline uint Width (int bScale = 1) { return (m_info.nFormat || !bScale) ? m_info.width : Pow2Dim (m_info.width, m_info.height); }
+		inline uint Height () const { return m_info.height; }
 
-		inline uint Height (int bScale = 1) { return (m_info.nFormat || !bScale) ? m_info.height : Pow2Dim (m_info.width, m_info.height); }
+		inline uint Size () const { return Width () * Height (); }
 
-		inline uint Size (int bScale = 1) { return Width (bScale) * Height (bScale); }
+		inline CBGRA* Buffer (uint i = 0) { return &m_data [i]; }
 
-		inline uint BufSize (void) { return Width () * Height () * sizeof (CBGRA); }
+		inline const CBGRA* Buffer (uint i = 0) const { return &m_data [i]; }
 
-		inline CBGRA* Buffer (uint i = 0) { return (m_override == null) ? &m_data [i] : &m_override [i]; }
+		void CommitBufferChanges (void);
 
-		GLuint GLBind (GLuint nTMU, GLuint nMode);
+		inline uint RenderWidth () const {
+			return (m_info.format == TGA) ? m_info.width : Pow2Dim (m_info.width, m_info.height);
+		}
+
+		inline uint RenderHeight () const {
+			return (m_info.format == TGA) ? m_info.height : Pow2Dim (m_info.width, m_info.height);
+		}
+
+		inline uint RenderSize (void) const { return RenderWidth () * RenderHeight (); }
+
+		inline uint RenderOffsetX (void) const { return (RenderWidth () - Width ()) / 2; }
+
+		inline uint RenderOffsetY (void) const { return (RenderHeight () - Height ()) / 2; }
+
+		inline CBGRA* RenderBuffer (uint i = 0) { return &m_renderBuffer [i]; }
+
+		inline const CBGRA* RenderBuffer (uint i = 0) const { return &m_renderBuffer [i]; }
+
+		inline bool IsLoaded (void) const { return m_bValid; }
+
+		bool GLCreate (bool bForce = true);
+
+		GLuint GLBind (GLuint nTMU, GLuint nMode) const;
 
 		void GLRelease (void);
 
@@ -404,52 +441,109 @@ class CTexture {
 
 		void DrawAnimDirArrows (short nTexture);
 
-		inline bool Copy (CTexture& src) {
+		inline bool Copy (const CTexture& src) {
 			if (!Allocate (src.Size ()))
 				return false;
-			memcpy (Buffer (), src.Buffer (), src.BufSize ());
 			memcpy (&m_info, &src.m_info, sizeof (m_info));
-			m_info.glHandle = 0;
-			m_info.bValid = true;
+			memcpy (m_data, src.m_data, m_info.bufSize * sizeof (m_data [0]));
+			m_glHandle = 0;
+			m_bValid = true;
+			m_bExtBuffer = false;
+			GenerateRenderBuffer ();
 			return true;
 			}
 
-		rgbaColorf& AverageColor (rgbaColorf& color);
+		int BlendTextures (short nBaseTex, short nOvlTex, int x0, int y0);
+
+		int BlendTextures (const CTexture* pBaseTex, const CTexture* pOvlTex, short nOvlAlignment, int x0, int y0);
 
 		inline void SetFlat (bool bFlat) { m_info.bFlat = bFlat; }
 
-		inline bool Flat (void) { return m_info.bFlat; } // texture or just color?
+		inline bool Flat (void) const { return m_info.bFlat; } // texture or just color?
+
+		rgbaColorf& GetAverageColor (rgbaColorf& color);
 
 		inline void SetAverageColor (float r, float g, float b, float a = 1.0f) { 
 			m_info.averageColor.r = r, m_info.averageColor.g = g, m_info.averageColor.b = b, m_info.averageColor.r = a; }
 
 		inline void SetAverageColor (rgbaColorf& color) { m_info.averageColor = color; }
 
-		inline rgbaColorf& GetAverageColor (rgbaColorf& color) { return color = m_info.averageColor; }
-
 		CBGRA& operator[] (uint i) { return *Buffer (i); }
 
 		CBGRA& operator[] (CUV uv) { return *Buffer ((Height () - uv.v - 1) * Width () + uv.u); }
+
+		inline bool IsCustom (void) const { return m_info.bCustom > 0; }
+
+		inline void SetCustom (void) { m_info.bCustom = 1; }
+
+		inline bool IsTransparent (void) const { return m_info.bTransparent; }
+
+		inline bool IsSuperTransparent (void) const { return m_info.bSuperTransparent; }
+
+		inline bool IsAnimated (void) const { return m_info.bAnimated; }
+
+		// true = this is a frame of a type that can be assigned to a surface in a level (usually doors)
+		bool IsAssignableFrame (void) const;
+
+		void CalculateFrameCount (void);
+
+		inline uint FrameNum (void) const { return m_info.nFrame; }
+
+		inline uint NumFrames (void) const { return m_info.nFrameCount; }
+
+		inline uint FrameTime (void) const { return 100; } // data comes from HAM, just using previous value (100) for now
+
+		const CTexture *GetParent (void) const;
+
+		const CTexture *GetFrame (uint nFrame) const;
+
+		inline const char *Name (void) const { return m_info.szName; }
+
+		inline TextureFormat Format (void) const { return m_info.format; }
+
+		bool CreateBitmap (CBitmap **ppImage, bool bScale = false, int width = -1, int height = -1) const;
+
+	private:
+		void Release (void);
+
+		bool Allocate (int nSize);
+
+		void GenerateRenderBuffer ();
+
+		void Load (CFileManager& fp, CPigTexture& info);
+
+		bool LoadTGA (CFileManager& fp);
+
+		bool LoadTGA (char* pszFile);
+
+		bool LoadBMP (CFileManager& fp);
+
+		bool SaveTGA (CFileManager& fp) const;
+
+		bool SaveBMP (CFileManager& fp) const;
 };
 
 //------------------------------------------------------------------------
 
+#if EXTRA_TEXTURES
 class CExtraTexture : public CTexture {
 public:
 	CExtraTexture*	m_next;
 	ushort			m_index;
 };
+#endif
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-//int textureManager.BlendTextures (short nBaseTex,short nOvlTex, CTexture *pDestTx, int x0, int y0);
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb);
 
+bool PaintTexture (CWnd *wndP, int bkColor = -1, int texture1 = -1, int texture2 = 0, int xOffset = 0, int yOffset = 0);
+
 bool PaintTexture (CWnd *wndP, int bkColor = -1, 
-						 int nSegment = -1, int nSide = -1, int texture1 = -1, int texture2 = 0,
-						 int xOffset = 0, int yOffset = 0);
+                   const CTexture *pBaseTex = null, const CTexture *pOvlTex = null, short nOvlAlignment = 0,
+                   int xOffset = 0, int yOffset = 0);
 
 bool TGA2Bitmap (tRGBA *pTGA, ubyte *pBM, int nWidth, int nHeight);
 

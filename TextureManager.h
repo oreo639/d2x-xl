@@ -35,8 +35,10 @@ typedef CTexture* textureList;
 class CTextureManager {
 	private:
 		textureList		m_textures [2];
+		CDynamicArray <CTexture*> m_overrides [2]; // Items can be blank if there is no custom texture
+		CDynamicArray <bool>      m_bModified [2]; // Tracks whether textures have changed since last save
+		CDynamicArray <CTexture*> m_previous [2];  // Previous texture as of save, to allow reverts
 
-	public:
 		uint				m_nTextures [2];
 		char**			m_names [2];
 		char				m_paletteName [2][256];
@@ -47,29 +49,60 @@ class CTextureManager {
 		CBGRA				m_bmBuf [512 * 512 * 32];	// max texture size: 512x512, RGBA, 32 frames
 		char				m_pigFiles [2][256];
 		bool				m_bAvailable [2];
+		bool*				m_bUsed [2];
+#if EXTRA_TEXTURES
 		CExtraTexture*	m_extra;
+#endif
 		CTexture			m_arrow;
 		CTexture			m_icons [ICON_COUNT];
 
-		inline CTexture* Textures (int nVersion, int nTexture = 0) { 
-			if (!m_textures [nVersion].Buffer ())
+	public:
+		// Looks up textures by level texture ID. Pointers returned by this function should not be
+		// stored persistently as they may change.
+		inline const CTexture* Textures (int nTexture, int nVersion = -1) { 
+			int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
+			if (!m_textures [nVersionResolved].Buffer ())
 				return null;
 			if (nTexture < 0)
-				return &m_textures [1][-nTexture - 1]; 
-			return &m_textures [nVersion][m_index [nVersion][nTexture] - 1];
-		}
+				return AllTextures (-nTexture - 1, nVersionResolved);
+			return AllTextures (LevelTexToAllTex (nTexture), nVersionResolved);
+			}
 
-		inline CPigTexture* Info (int nVersion, int nTexture = 0) { 
+		// Looks up textures by global texture ID. Pointers returned by this function should not be
+		// stored persistently as they may change.
+		inline const CTexture* AllTextures (uint nTexAll, int nVersion = -1) {
+			int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
+			if (!m_textures [nVersionResolved].Buffer ())
+				return null;
+			if (nTexAll >= (uint) AllTextureCount (nVersionResolved))
+				return null;
+			if (m_overrides [nVersionResolved][nTexAll] != null)
+				return m_overrides [nVersionResolved][nTexAll];
+			return &m_textures [nVersionResolved][nTexAll];
+			}
+
+		inline uint LevelTexToAllTex (int nTexLevel, int nVersion = -1) {
+			return m_index [(nVersion < 0) ? Version () : nVersion][nTexLevel] - 1;
+			}
+
+		bool FindLevelTex (uint nTexAll, int *pnTexLevel, int nVersion = -1);
+
+		inline CPigTexture* Info (int nVersion, uint nTexAll) {
 			if (!m_info [nVersion])
 				return null;
-			return (nTexture < 0)
-					 ? &m_info [nVersion][-nTexture - 1]
-					 : &m_info [nVersion][m_index [nVersion][nTexture] - 1]; 
+			return &m_info [nVersion][nTexAll];
+			}
+
+		// Location at which texture bitmap data is stored in the PIG
+		inline uint TexDataOffset (int nVersion = -1) {
+			return m_nOffsets [(nVersion < 0) ? Version () : nVersion];
 			}
 
 		int MaxTextures (int nVersion = -1);
+
+		int AllTextureCount (int nVersion = -1);
 		
-		bool LoadTextures (int nVersion = -1, bool bCleanup = false);
+		bool LoadTextures (int nVersion = -1, bool bClearExisting = true);
 		
 		bool Check (int nTexture);
 		
@@ -78,26 +111,44 @@ class CTextureManager {
 		void ReadMod (char* pszFolder);
 	
 		void LoadMod (void);
+
+		CTexture* OverrideTexture (uint nTexAll, const CTexture* newTexture = null, int nVersion = -1);
+
+		void RevertTexture (uint nTexAll, int nVersion = -1);
 		
-		int BlendTextures (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
+		void ReleaseTextures (void);
 		
-		void Release (bool bDeleteAll = false, bool bDeleteUnused = false);
-		
+#if EXTRA_TEXTURES
 		void ReleaseExtras (void);
+#endif
 
 		bool HasCustomTextures (void);
 		
 		int CountCustomTextures (void);
+
+		int CountModifiedTextures (void);
 		
 		void UnTagUsedTextures (void);
 
 		void TagUsedTextures (void);
+
+		inline bool IsTextureUsed (int nTexLevel, int nVersion = -1) {
+			if (nTexLevel < 0)
+				return false;
+			return m_bUsed [(nVersion < 0) ? Version () : nVersion][nTexLevel];
+			}
 		
-		void RemoveTextures (bool bUnused = true);
+		void RemoveCustomTextures (bool bUnusedOnly = true);
+
+		void CommitTextureChanges (void);
+
+		void UndoTextureChanges (void);
 		
 		CFileManager* OpenPigFile (int nVersion);
 		
+#if EXTRA_TEXTURES
 		CTexture* AddExtra (ushort nIndex);
+#endif
 
 		inline bool HaveInfo (int nVersion) { return m_info [nVersion] != null; }
 		
@@ -113,17 +164,6 @@ class CTextureManager {
 			}
 		
 		inline int Index (CTexture* texP, int nVersion = -1) { return int (texP - &m_textures [(nVersion < 0) ? Version () : nVersion][0]); }
-
-		inline CTexture* Texture (short nTexture) { 
-			int nVersion = Version ();
-			if (!m_textures [nVersion].Buffer ())
-				return null;
-			if (nTexture < 0)
-				return &m_textures [1][-nTexture - 1]; 
-			else if (nTexture >= MaxTextures (nVersion))
-				nTexture = 0;
-			return &m_textures [nVersion][m_index [nVersion][nTexture] - 1];
-			}
 
 		inline CTexture& Arrow (void) { return m_arrow; }
 
@@ -141,15 +181,23 @@ class CTextureManager {
 
 		inline double Scale (int nVersion, short nTexture) {
 			return m_textures [nVersion].Buffer ()
-					 ? Textures (nVersion, nTexture)->Scale (nTexture)
+					 ? Textures (nTexture, nVersion)->Scale (nTexture)
 					 : 1.0;
+			}
+
+		int UsedCount (uint nTexAll);
+
+		inline int UsedCount (const CTexture *pTexture) { return pTexture ? UsedCount (pTexture->IdAll ()) : 0; }
+
+		inline const CTexture* BaseTextures (uint nTexAll, int nVersion = -1) {
+			return &m_textures [(nVersion < 0) ? Version () : nVersion][nTexAll];
 			}
 
 		int ReadPog (CFileManager& fp, long nFileSize);
 
 		int CreatePog (CFileManager& fp);
 
-		int WriteCustomTexture (CFileManager& fp, CTexture *texP);
+		int WriteCustomTexture (CFileManager& fp, const CTexture *texP);
 
 		void Setup (void);
 
@@ -157,13 +205,24 @@ class CTextureManager {
 
 		bool Reload (int nVersion, bool bForce = true);
 
+		bool ChangePigFile (const char *pszPigPath, int nVersion = -1);
+
 		bool Available (int nVersion = -1);
 
 		int InitShaders (void);
 
 		int DeployShader (int nType, CFaceListEntry* fle);
 
-		CTextureManager() : m_extra (null) { 
+		void CreateGLTextures (int nVersion = -1);
+
+		CBGRA* SharedBuffer (void) { return m_bmBuf; }
+
+		size_t SharedBufferSize (void) { return sizeof (m_bmBuf); }
+
+		CTextureManager() { 
+#if EXTRA_TEXTURES
+			m_extra = null;
+#endif
 			m_paletteName [0][0] = 0; 
 			m_bAvailable [0] = m_bAvailable [1] = false;
 			}
@@ -177,15 +236,13 @@ class CTextureManager {
 
 		bool LoadInfo (int nVersion);
 
-		void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused);
+		void ReleaseTextures (int nVersion);
 
 		void Create (int nVersion);
 
 		void Destroy (int nVersion);
 
-		inline CBGRA& Blend (CBGRA& dest, CBGRA& src);
-
-		uint WriteCustomTextureHeader (CFileManager& fp, CTexture *texP, int nId = -1, uint nOffset = 0);
+		uint WriteCustomTextureHeader (CFileManager& fp, const CTexture *texP, uint nId, uint nOffset);
 	};
 
 extern CTextureManager textureManager;

@@ -76,6 +76,7 @@ if (!(Viewport ().Width () && Viewport ().Height ()))
 glViewport (Viewport ().left, Viewport ().top, Viewport ().Width (), Viewport ().Height ());
 m_glAspectRatio = (GLfloat) Viewport ().Width () / (GLfloat) Viewport ().Height ();
 SetupProjection ();
+textureManager.CreateGLTextures ();
 return -1;
 }
 
@@ -487,7 +488,8 @@ m_viewMatrix.MoveViewer (i, ViewMoveRate () * ((i == 1) ? offset : -offset));
 
 void CRendererGL::DrawFaceTextured (CFaceListEntry& fle) 
 {
-	CTexture		tex (textureManager.m_bmBuf), * texP [3] = {null, null, null};
+	CTexture		tex (textureManager.SharedBuffer ());
+	const CTexture* texP [3] = {null, null, null};
 	CSegment*	segP = segmentManager.Segment (fle);
 	CSide*		sideP = segmentManager.Side (fle);
 	CWall*		wallP = segmentManager.Wall (fle);
@@ -504,15 +506,17 @@ short nBaseTex = sideP->BaseTex ();
 short nOvlTex = sideP->OvlTex (0);
 
 if (textureManager.IsAnimated (sideP->BaseTex ()) && !(bArrow = textureManager.HaveArrow ())) {
-	textureManager.BlendTextures (nBaseTex, nOvlTex, texP [0] = &tex, 0, 0);
+	texP [0] = &tex;
+	tex.BlendTextures (nBaseTex, nOvlTex, 0, 0);
 	tex.DrawAnimDirArrows (nBaseTex);
+	tex.GLCreate ();
 	}
 else {
-	texP [0] = textureManager.Texture (nBaseTex);
-	texP [0]->m_nTexture = nBaseTex;
+	texP [0] = textureManager.Textures (nBaseTex);
+	//texP [0]->m_nTexture = nBaseTex;
 	if (nOvlTex) {
-		texP [1] = textureManager.Texture (nOvlTex);
-		texP [1]->m_nTexture = nOvlTex;
+		texP [1] = textureManager.Textures (nOvlTex);
+		//texP [1]->m_nTexture = nOvlTex;
 		}
 	if (bArrow)
 		texP [2] = &textureManager.Arrow ();
@@ -533,7 +537,7 @@ if (wallP != null) {
 
 RenderFace (fle, texP, colorP);
 if	(texP [0] == &tex)
-	texP [0]->GLRelease ();
+	tex.GLRelease ();
 }
 
 //------------------------------------------------------------------------------
@@ -562,7 +566,7 @@ else {
 
 #define GL_TRANSFORM 0
 
-void CRendererGL::RenderFace (CFaceListEntry& fle, CTexture* texP [], CBGRA* colorP)
+void CRendererGL::RenderFace (CFaceListEntry& fle, const CTexture* texP [], CBGRA* colorP)
 {
 	static float zoom = 10.0f;
 	static double scrollAngles [8] = {0.0, Radians (45.0), Radians (90.0), Radians (135.0), Radians (180.0), Radians (-135.0), Radians (-90.0), Radians (-45.0)};
@@ -591,7 +595,7 @@ if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide))
 #endif
 
 if (bArrow) {
-	int nDir = textureManager.ScrollDirection (texP [0]->m_nTexture);
+	int nDir = textureManager.ScrollDirection (texP [0]->IdLevel ());
 	if (nDir >= 0)
 		scrollAngle = scrollAngles [nDir];
 	}
@@ -881,7 +885,7 @@ glEnd ();
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::TexturedPolygon (CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index)
+void CRendererGL::TexturedPolygon (const CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index)
 {
 	static tTexCoord2d defaultTexCoords [4] = {{0.0, 0.0}, {0.0, 1.0}, {1.0, 1.0}, {1.0, 0.0}};
 
@@ -909,19 +913,19 @@ glDisable (GL_TEXTURE_2D);
 
 void CRendererGL::TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index)
 {
-TexturedPolygon (nTexture ? textureManager.Texture (nTexture) : null, texCoords, color, vertices, nVertices, index);
+TexturedPolygon (nTexture ? textureManager.Textures (nTexture) : null, texCoords, color, vertices, nVertices, index);
 }
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::Sprite (CTexture* texP, CVertex center, double width, double height, bool bAlways)
+void CRendererGL::Sprite (const CTexture* texP, CVertex center, double width, double height, bool bAlways)
 {
 	static rgbColord color = {1.0, 1.0, 1.0};
 	static ushort index [4] = {0, 1, 2, 3};
 
 	CVertex vertices [4];
-	float				du = float (texP->m_info.xOffset) / float (texP->Width ());
-	float				dv = float (texP->m_info.yOffset) / float (texP->Height ());
+	float				du = float (texP->RenderOffsetX ()) / float (texP->RenderWidth ());
+	float				dv = float (texP->RenderOffsetY ()) / float (texP->RenderHeight ());
 	tTexCoord2d		texCoords [4] = {
 		{du, dv}, 
 		{du, 1.0f - dv}, 

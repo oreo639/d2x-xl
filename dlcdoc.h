@@ -32,11 +32,15 @@ public:
 	BOOL OpenFile (bool bBrowseForFile = true, LPCSTR pszFile = null, LPCSTR pszSubFile = null);
 	bool SaveFile (bool bSaveAs);
 	bool SaveIfModified (void);
+	bool SaveCustomFiles (bool bSaveToHog);
+	bool PromptShouldWriteCustomFile (const int nType);
 	void UpdateCaption ();
 	inline char *File ()
 		{ return m_szFile; }
 	inline char *SubFile ()
 		{ return m_szSubFile; }
+	inline bool IsInHog (void)
+		{ return m_szFile && strstr (m_szFile, ".hog") != null; }
 public:
 // Overrides
 	// ClassWizard generated virtual function overrides

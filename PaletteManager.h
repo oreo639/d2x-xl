@@ -76,19 +76,23 @@ class CPaletteManager {
 
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
-		ubyte ClosestColor (CBGR& color);
+		ubyte ClosestColor (CBGR& color, bool bAllowTransp = true);
 
 		inline CBGR SuperTranspKey (void) { return m_superTransp; }
 
 		inline rgbColorf* SuperTranspKeyf (void) { return &m_superTranspf; }
 
-		inline bool SuperTransp (CBGR& color) { return color == m_superTransp; }
+		inline bool SuperTransp (const CBGR& color) { return color == m_superTransp; }
 
 		CPaletteManager () : m_bHaveDefault (false), m_bHaveCustom (false) { *m_name = '\0'; }
 
 		~CPaletteManager () { Release (); }
 
 		inline void ResetCLUT (void) { memset (m_clutValid, 0, sizeof (m_clutValid)); }
+
+		int NumAvailablePalettes (void);
+
+		const char* AvailablePaletteName (int nPalette);
 
 	private:
 		const char* SelectResource (char* pszName);

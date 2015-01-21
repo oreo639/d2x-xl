@@ -310,6 +310,9 @@
     <ClInclude Include="..\DLL.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\PogDialog.h">
+      <Filter>UI\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AdvancedObjTool.cpp">
@@ -682,6 +685,9 @@
       <Filter>UI\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\TexProjectTool.cpp">
+      <Filter>UI\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PogDialog.cpp">
       <Filter>UI\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

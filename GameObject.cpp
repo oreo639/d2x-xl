@@ -507,20 +507,20 @@ if (objectManager.Index (this) == nDbgObject)
 if (nTexture < 0)
 	return false;
 
-CTexture* texP = bEffect ? &textureManager.Icon (nTexture) : textureManager.Texture (-nTexture - 1);
+const CTexture* texP = bEffect ? &textureManager.Icon (nTexture) : textureManager.AllTextures (nTexture);
 if (!texP)
 	return false;
 
 	double dx, dy;
 	double size = bEffect ? 5.0 : X2D (m_info.size);
 
-if (texP->m_info.width > texP->m_info.height) {
+if (texP->Width () > texP->Height ()) {
 	dx = size;
-	dy = dx * float (texP->m_info.height) / float (texP->m_info.width);
+	dy = dx * float (texP->Height ()) / float (texP->Width ());
 	}
 else {
 	dy = size;
-	dx = dy * float (texP->m_info.width) / float (texP->m_info.height);
+	dx = dy * float (texP->Width ()) / float (texP->Height ());
 	}
 
 #if 0

@@ -419,8 +419,15 @@ WritePrivateProfileInt ("ElementMovementReference", DLE.MineView ()->GetElementM
 
 void CAppSettings::ReloadTextures (int nVersion)
 {
-paletteManager.Reload ();
-if (textureManager.Reload (nVersion)) {
+	bool bSucceeded = false;
+
+if (textureManager.Available (nVersion))
+	bSucceeded = textureManager.ChangePigFile (descentFolder [nVersion], nVersion);
+else {
+	paletteManager.Reload ();
+	bSucceeded = textureManager.Reload (nVersion);
+	}
+if (bSucceeded) {
 	if (appSettings.m_bInited) {
 		DLE.TextureView ()->Setup ();
 		DLE.TextureView ()->Refresh ();

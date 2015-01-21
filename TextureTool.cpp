@@ -18,6 +18,7 @@
 #include "TextureManager.h"
 #include "AVLTree.h"
 #include "SLL.h"
+#include "PogDialog.h"
 
 #include <math.h>
 
@@ -202,8 +203,6 @@ cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
 nTextures = textureManager.MaxTextures ();
 for (i = 0; i < nTextures; i++) {
-	if (textureManager.m_header [1].m_nVersion == 0)
-		textureManager.m_header [1].m_nVersion = 1;
 	char* p = textureManager.Name (-1, i);
 	if (bShowFrames || !strstr (p, "frame")) {
 		index = cbTexture1->AddString (p);
@@ -214,8 +213,6 @@ for (i = 0; i < nTextures; i++) {
 		if (texture2 == i)
 			cbTexture2->SetCurSel (index);
 		cbTexture2->SetItemData (index, i);
-		if (textureManager.m_header [1].m_nVersion == 0)
-			textureManager.m_header [1].m_nVersion = 1;
 		}
 	}
 CToolDlg::CBUpdateListWidth (cbTexture1);
@@ -591,9 +588,10 @@ SelectTexture (IDC_TEXTURE_2ND, false);
 void CTextureTool::OnEditTexture () 
 {
 int i = (int) CBTexture1 ()->GetItemData (CBTexture1 ()->GetCurSel ());
-int j = m_bUse1st ? 0 : (int) CBTexture2 ()->GetItemData (CBTexture1 ()->GetCurSel ());
+int j = m_bUse1st ? 0 : (int) CBTexture2 ()->GetItemData (CBTexture2 ()->GetCurSel ());
 
-CTextureEdit e (j != 0, textureManager.Name (-1, (short) (j ? j : i)));
+//CTextureEdit e (j != 0, textureManager.Name (-1, (short) (j ? j : i)));
+CPogDialog e (DLE.MainFrame (), true, true, j ? j : i);
 
 i = int (e.DoModal ());
 DLE.MineView ()->Refresh (false);
@@ -636,7 +634,7 @@ Refresh ();
 
 void CTextureTool::OnCleanup () 
 {
-textureManager.RemoveTextures ();
+textureManager.RemoveCustomTextures ();
 Refresh ();
 }
 

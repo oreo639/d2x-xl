@@ -1257,7 +1257,7 @@ for (i = 0; i < m_textures.Count (); i++) {
 	sprintf (szFile, "%s\\%s", m_folder, pszName);
 	if (!strrchr (szFile, '.'))
 		strcat (szFile, ".tga");
-	if (!m_textures.Texture (i).LoadTGA (szFile)) {
+	if (!m_textures.Texture (i).LoadFromFile (szFile)) {
 		nIndent -= 2;
 		FreeTextures ();
 		return 0;

@@ -13,14 +13,16 @@ extern short nDbgTexture;
 
 void CTextureManager::Setup (void)
 {
+#if EXTRA_TEXTURES
 m_extra = null;
+#endif
 m_paletteName [0][0] = 
 m_paletteName [1][0] = '\0';
 Create (0);
 Create (1);
-m_arrow.Load (IDR_ARROW_TEXTURE);
+m_arrow.LoadFromResource (IDR_ARROW_TEXTURE);
 for (int i = 0; i < ICON_COUNT; i++)
-	m_icons [i].Load (IDR_SMOKE_ICON + i);
+	m_icons [i].LoadFromResource (IDR_SMOKE_ICON + i);
 }
 
 //------------------------------------------------------------------------
@@ -32,6 +34,9 @@ m_names [nVersion] = null;
 LoadNames (nVersion);
 m_header [nVersion] = CPigHeader (nVersion);
 LoadIndex (nVersion);
+m_bUsed [nVersion] = new bool [MaxTextures (nVersion)];
+for (int i = 0; i < MaxTextures (nVersion); i++)
+	m_bUsed [nVersion][i] = false;
 }
 
 //------------------------------------------------------------------------
@@ -50,16 +55,20 @@ if (m_textures [nVersion]) {
 if (m_names [nVersion]) {
 	for (int j = 0, h = MaxTextures (nVersion); j < h; j++)
 		if (m_names [nVersion][j])
-			delete m_names [nVersion][j];
-	delete m_names [nVersion];
+			delete [] m_names [nVersion][j];
+	delete [] m_names [nVersion];
 	m_names [nVersion] = null;
 	}
 if (m_index [nVersion]) {
-	delete m_index [nVersion];
+	delete [] m_index [nVersion];
 	m_index [nVersion] = null;
 	}
+if (m_bUsed [nVersion]) {
+	delete [] m_bUsed [nVersion];
+	m_bUsed [nVersion] = null;
+	}
 if (m_info [nVersion]) {
-	delete m_info [nVersion];
+	delete [] m_info [nVersion];
 	m_info [nVersion] = null;
 	}
 }
@@ -81,7 +90,7 @@ return DLE.IsD1File () ? 0 : 1;
 
 //------------------------------------------------------------------------
 
-void CTextureManager::Release (int nVersion, bool bDeleteAll, bool bDeleteUnused) 
+void CTextureManager::ReleaseTextures (int nVersion) 
 {
 // free any m_textures that have been buffered
 CTexture* texP = &m_textures [nVersion][0];
@@ -91,22 +100,26 @@ if (texP != null) {
 		if (i == nDbgTexture)
 			nDbgTexture = nDbgTexture;
 #endif
-		if (bDeleteUnused) {
-			if (texP->m_info.bCustom && !texP->m_info.bUsed)
-				texP->Release ();
+		if (m_overrides [nVersion][i]) {
+			delete m_overrides [nVersion][i];
+			m_overrides [nVersion][i] = null;
 			}
-		else {
-			if (bDeleteAll || texP->m_info.bCustom) {
-				texP->Release ();
-				}
+		if (m_previous [nVersion][i]) {
+			if (m_previous [nVersion][i] != texP)
+				delete m_previous [nVersion][i];
+			m_previous [nVersion][i] = null;
 			}
-		}		
+		texP->Clear ();
+		}
 	}
+#if EXTRA_TEXTURES
 ReleaseExtras ();
+#endif
 }
 
 //------------------------------------------------------------------------
 
+#if EXTRA_TEXTURES
 void CTextureManager::ReleaseExtras (void) 
 {
 for (CExtraTexture* p = m_extra; p != null; ) {
@@ -115,15 +128,18 @@ for (CExtraTexture* p = m_extra; p != null; ) {
 	p = m_extra;
 	}
 }
+#endif
 
 //------------------------------------------------------------------------
 
-void CTextureManager::Release (bool bDeleteAll, bool bDeleteUnused) 
+void CTextureManager::ReleaseTextures (void) 
 {
 // free any m_textures that have been buffered
 for (int i = 0; i < 2; i++) 
-	Release (i, bDeleteAll, bDeleteUnused);
+	ReleaseTextures (i);
+#if EXTRA_TEXTURES
 ReleaseExtras ();
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -166,14 +182,34 @@ return ((nVersion < 0) ? DLE.IsD2File () : nVersion) ? MAX_TEXTURES_D2 : MAX_TEX
 
 //------------------------------------------------------------------------
 
+int CTextureManager::AllTextureCount (int nVersion)
+{
+return m_header [(nVersion < 0) ? Version () : nVersion].nTextures;
+}
+
+//------------------------------------------------------------------------
+
+bool CTextureManager::FindLevelTex (uint nTexAll, int *pnTexLevel, int nVersion)
+{
+	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
+
+// Search the index for this texture ID
+for (int i = 0; i < MaxTextures (nVersionResolved); i++) {
+	if (m_index [nVersionResolved][i] - 1 == nTexAll) {
+		*pnTexLevel = i;
+		return true;
+		}
+	}
+
+return false;
+}
+
+//------------------------------------------------------------------------
+
 bool CTextureManager::HasCustomTextures (void) 
 {
-CTexture* texP = &m_textures [DLE.FileType ()][0];
-
-if (!texP)
-	return false;
-for (int i = m_header [DLE.FileType ()].nTextures; i; i--, texP++)
-	if (texP->m_info.bCustom == 1)
+for (int i = 0; i < AllTextureCount (); i++)
+	if (AllTextures ((uint)i)->IsCustom ())
 		return true;
 return false;
 }
@@ -183,12 +219,21 @@ return false;
 int CTextureManager::CountCustomTextures (void) 
 {
 	int			count = 0;
-	CTexture*	texP = &m_textures [DLE.FileType ()][0];
 
-if (!texP)
-	return 0;
-for (int i = m_header [DLE.FileType ()].nTextures; i; i--, texP++)
-	if (texP->m_info.bCustom == 1)
+for (int i = 0; i < AllTextureCount (); i++)
+	if (AllTextures ((uint)i)->IsCustom ())
+		count++;
+return count;
+}
+
+//------------------------------------------------------------------------
+
+int CTextureManager::CountModifiedTextures (void)
+{
+	int count = 0;
+
+for (int i = 0; i < AllTextureCount (); i++)
+	if (m_bModified [Version ()][i])
 		count++;
 return count;
 }
@@ -266,19 +311,28 @@ return 0;
 bool CTextureManager::LoadInfo (int nVersion)
 {
 if (m_info [nVersion] != null) {
-	delete m_info [nVersion];
+	delete [] m_info [nVersion];
 	m_info [nVersion] = null;
 	}
 CFileManager* fp = OpenPigFile (nVersion);
 if (fp == null)
 	return false;
 m_header [nVersion].Read (*fp);
-m_info [nVersion] = new CPigTexture [m_header [nVersion].nTextures];
-for (int i = 0; i < m_header [nVersion].nTextures; i++)
-	m_info [nVersion][i].Read (fp, nVersion);
-m_nOffsets [nVersion] = fp->Tell ();
-if (nVersion == 0)
-	m_nOffsets [0] += m_header [0].nSounds * sizeof (PIG_SOUND);
+// Some sanity checks in case the user opened a corrupt/wrong .PIG - reduces chance of crash
+if ((nVersion == 1 && m_header [nVersion].nId != 0x47495050) || (m_header [nVersion].nTextures > 0x00100000)) {
+	m_header [nVersion] = CPigHeader (nVersion);
+	fp->Close ();
+	delete fp;
+	return false;
+	}
+else {
+	m_info [nVersion] = new CPigTexture [m_header [nVersion].nTextures];
+	for (int i = 0; i < m_header [nVersion].nTextures; i++)
+		m_info [nVersion][i].Read (fp, nVersion);
+	m_nOffsets [nVersion] = fp->Tell ();
+	if (nVersion == 0)
+		m_nOffsets [0] += m_header [0].nSounds * sizeof (PIG_SOUND);
+	}
 fp->Close ();
 delete fp;
 return true;
@@ -286,7 +340,7 @@ return true;
 
 //------------------------------------------------------------------------------
 
-bool CTextureManager::LoadTextures (int nVersion, bool bCleanup)
+bool CTextureManager::LoadTextures (int nVersion, bool bClearExisting)
 {
 if (nVersion < 0) {
 	nVersion = Version ();
@@ -294,9 +348,22 @@ if (nVersion < 0) {
 	strcpy_s (m_paletteName [0], sizeof (m_paletteName [0]), paletteManager.Name ());
 	LoadInfo (nVersion);
 	}
-m_textures [nVersion].Resize (m_header [nVersion].nTextures);
-if (!bCleanup)
-	Release (nVersion, true, false);
+if (!m_textures [nVersion].Buffer ()) {
+	m_textures [nVersion].Create (m_header [nVersion].nTextures);
+	m_overrides [nVersion].Create (m_header [nVersion].nTextures);
+	m_overrides [nVersion].Clear (0);
+	m_bModified [nVersion].Create (m_header [nVersion].nTextures);
+	m_bModified [nVersion].Clear (0);
+	m_previous [nVersion].Create (m_header [nVersion].nTextures);
+	m_previous [nVersion].Clear (0);
+	}
+else if (bClearExisting) {
+	ReleaseTextures (nVersion);
+	m_textures [nVersion].Resize (m_header [nVersion].nTextures);
+	m_overrides [nVersion].Resize (m_header [nVersion].nTextures);
+	m_bModified [nVersion].Resize (m_header [nVersion].nTextures);
+	m_previous [nVersion].Resize (m_header [nVersion].nTextures);
+	}
 CFileManager* fp = OpenPigFile (nVersion);
 if (fp == null)
 	return false;
@@ -305,9 +372,11 @@ paletteManager.Reload (m_paletteName [1]);
 CTexture* textures = m_textures [nVersion].Buffer ();
 ushort* index = m_index [nVersion];
 for (int i = 0, j = m_header [nVersion].nTextures; i < j; i++)
-	textures [i].Load (*fp, i, nVersion);
-for (int i = 0, j = MaxTextures (nVersion); i < j; i++) {
-	textures [index [i] - 1].m_info.bFrame = (strstr (textureManager.Name (nVersion, i), "frame") != null);
+	textures [i].LoadFromPig (*fp, i, nVersion);
+for (int i = 0; i < m_header [nVersion].nTextures; i++) {
+	if (textures [i].IsAnimated () && textures [i].FrameNum () == 0) {
+		textures [i].CalculateFrameCount ();
+		}
 	}
 fp->Close ();
 delete fp;
@@ -317,6 +386,58 @@ return true;
 
 //------------------------------------------------------------------------------
 
+CTexture* CTextureManager::OverrideTexture (uint nTexAll, const CTexture* newTexture, int nVersion)
+{
+	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
+	CTexture* texture = new CTexture ();
+
+if (newTexture != null)
+	texture->Copy (*newTexture);
+else
+	texture->Copy (*AllTextures (nTexAll, nVersionResolved));
+texture->SetCustom ();
+
+// We want to retain a copy of the texture as it was at load-time - custom or stock -
+// so we know what to revert to if requested
+if (m_overrides [nVersionResolved][nTexAll] != null && m_previous [nVersionResolved][nTexAll] != null)
+	delete m_overrides [nVersionResolved][nTexAll];
+else if (m_overrides [nVersionResolved][nTexAll] != null)
+	m_previous [nVersionResolved][nTexAll] = m_overrides [nVersionResolved][nTexAll];
+else
+	m_previous [nVersionResolved][nTexAll] = &m_textures [nVersionResolved][nTexAll];
+
+m_overrides [nVersionResolved][nTexAll] = texture;
+m_bModified [nVersionResolved][nTexAll] = true;
+return m_overrides [nVersionResolved][nTexAll];
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureManager::RevertTexture (uint nTexAll, int nVersion)
+{
+	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
+
+if (m_overrides [nVersionResolved][nTexAll] == null)
+	return;
+else if (m_previous [nVersionResolved][nTexAll] != null) {
+	delete m_overrides [nVersionResolved][nTexAll];
+	m_overrides [nVersionResolved][nTexAll] = null;
+	if (m_previous [nVersionResolved][nTexAll] == &m_textures [nVersionResolved][nTexAll]) {
+		// Revert operation counts as an undo, so unset modified
+		m_previous [nVersionResolved][nTexAll] = null;
+		m_bModified [nVersionResolved][nTexAll] = false;
+		}
+	}
+else {
+	m_previous [nVersionResolved][nTexAll] = m_overrides [nVersionResolved][nTexAll];
+	m_overrides [nVersionResolved][nTexAll] = null;
+	m_bModified [nVersionResolved][nTexAll] = true;
+	}
+}
+
+//------------------------------------------------------------------------------
+
+#if EXTRA_TEXTURES
 CTexture* CTextureManager::AddExtra (ushort nIndex)
 {
 	CExtraTexture* extraTexP = new CExtraTexture;
@@ -327,261 +448,7 @@ m_extra = extraTexP;
 extraTexP->m_index = nIndex;
 return extraTexP;
 }
-
-//------------------------------------------------------------------------------
-
-inline CBGRA& CTextureManager::Blend (CBGRA& dest, CBGRA& src)
-{
-if (paletteManager.SuperTransp (src))
-	dest.r =
-	dest.g =
-	dest.b =
-	dest.a = 0;
-else if (src.a > 0) {
-	if (src.a == 255)
-		dest = src;
-	else {
-		ubyte b = 255 - src.a;
-		dest.r = (ubyte) (((int) dest.r * b + (int) src.r * src.a) / 255);
-		dest.g = (ubyte) (((int) dest.g * b + (int) src.g * src.a) / 255);
-		dest.b = (ubyte) (((int) dest.b * b + (int) src.b * src.a) / 255);
-		}
-	}
-return dest;
-}
-
-//------------------------------------------------------------------------------
-// textureManager.BlendTextures ()
-//
-// Builds a texture for rendering by blending base and optional overlay texture
-// and writes the result into a temporary buffer
-//------------------------------------------------------------------------------
-
-int CTextureManager::BlendTextures (short nBaseTex, short nOvlTex, CTexture* destTexP, int x0, int y0) 
-{
-if (!textureManager.Available ())
-	return 1;
-
-	typedef struct tFrac {
-		int	c, d;
-	} tFrac;
-
-	short			nTextures [2], mode, w, h;
-	int			i, offs;
-	tFrac			scale;
-	float			fScale;
-	//int			rc; // return code
-	CTexture*	texP [2];
-	CBGRA*		bmBufP = destTexP->Buffer ();
-	int			fileType = DLE.FileType ();
-
-mode = (nOvlTex >> ALIGNMENT_SHIFT) & 3;
-nTextures [0] = nBaseTex;
-nTextures [1] = nOvlTex & TEXTURE_MASK;
-for (i = 0; i < 2; i++) {
-	if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
-		nTextures [i] = 0;
-	texP [i] = Texture (nTextures [i]);
-	}
-	
-// Define bmBufP based on texture numbers and rotation
-destTexP->m_info.width = texP [0]->m_info.width;
-destTexP->m_info.height = texP [0]->m_info.height;
-destTexP->m_info.bValid = 1;
-destTexP->m_override = null;
-
-CBGRA* srcDataP = texP [0]->Buffer ();
-
-if (srcDataP != null) {
-	// if not rotated, then copy directly
-	if (x0 == 0 && y0 == 0) {
-#if 1
-		if (texP [1]->Buffer () == null)
-			destTexP->m_override = srcDataP;
-		else 
 #endif
-			{
-			w = texP [0]->Width (0);
-			memcpy (bmBufP, srcDataP, w * w * sizeof (CBGRA));
-			}
-		}
-	else {
-		// otherwise, copy bit by bit
-		w = texP [0]->Width (0);
-#if 0
-		int l1 = y0 * w + x0;
-		int l2 = texP [0]->Size () - l1;
-		memcpy (bmBufP, srcDataP + l1, l2 * sizeof (CBGRA));
-		memcpy (bmBufP + l2, srcDataP, l1 * sizeof (CBGRA));
-#else
-		h = w;//texP [0]->m_info.height;
-#ifdef NDEBUG
-//#pragma omp parallel for 
-#endif
-		int dx = (w - x0) % w;
-		for (int y = 0; y < h; y++) {
-			int dy = ((y - y0 + h) % h) * w;
-#if 1
-			memcpy (bmBufP + y * w, srcDataP + dy + dx, (w - dx) * sizeof (CBGRA));
-			if (dx)
-				memcpy (bmBufP + y * w + (w - dx), srcDataP + dy, dx * sizeof (CBGRA));
-#else
-			CBGRA* destDataP = bmBufP + y * w;
-			for (int x = 0; x < w; x++) {
-				int i = dy + ((x - x0 + w) % w);
-				*destDataP++ = srcDataP [i];
-				}
-#endif
-			}
-#endif
-		}
-	}
-
-// Overlay texture 2 if present
-
-if (nTextures [1] == 0)
-	return 0;
-srcDataP = texP [1]->Buffer ();
-if (srcDataP == null)
-	return 0;
-
-if (texP [0]->m_info.width == texP [1]->m_info.width) {
-	scale.c = scale.d = 1;
-	fScale = 1.0;
-	}
-else if (texP [0]->m_info.width < texP [1]->m_info.width) {
-	scale.c = texP [1]->m_info.width / texP [0]->m_info.width;
-	scale.d = 1;
-	fScale = float (texP [1]->m_info.width) / float (texP [0]->m_info.width);
-	}
-else {
-	scale.d = texP [0]->m_info.width / texP [1]->m_info.width;
-	scale.c = 1;
-	fScale = float (texP [1]->m_info.width) / float (texP [0]->m_info.width);
-	}
-offs = 0;
-w = texP [1]->m_info.width / scale.c * scale.d;
-h = w;//texP [1]->m_info.height / scale.c * scale.d;
-
-if (!(x0 || y0)) {
-	if (mode == 0) {
-//#pragma omp parallel for
-		for (int y = 0; y < h; y++) {
-			CBGRA* destDataP = bmBufP + y * w;
-			float offset = float (int (y * fScale) * int (w * fScale));
-			for (int x = 0; x < w; x++, destDataP++, offset += fScale) 
-				Blend (*destDataP, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				//Blend (*destDataP, srcDataP [int (offset)]);
-			}
-		}
-	else if (mode == 1) {
-#if 0
-		CBGRA* destDataP = bmBufP + h - 1;
-		for (int y = 0; y < h; y++, destDataP--) {
-			CBGRA* destData2 = destDataP;
-			for (int x = 0; x < w; x++, destData2 += w) {
-				Blend (*destData2, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				}
-			}
-#else
-		bmBufP += h - 1;
-#pragma omp parallel for
-		for (int y = 0; y < h; y++) {
-			CBGRA* destDataP = bmBufP - y;
-			float offset = float (int (y * fScale) * int (w * fScale));
-			for (int x = 0; x < w; x++, destDataP += w, offset += fScale)
-				//Blend (*destDataP, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				Blend (*destDataP, srcDataP [int (offset)]);
-			}
-#endif
-		}
-	else if (mode == 2) {
-#if 0
-		CBGRA* destDataP = bmBufP + h * w;
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				Blend (*(--destDataP), srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				}
-			}
-#else
-		bmBufP += h * w;
-#pragma omp parallel for
-		for (int y = 0; y < h; y++) {
-			CBGRA* destDataP = bmBufP - y * w;
-			float offset = float (int (y * fScale) * int (w * fScale));
-			for (int x = 0; x < w; x++, offset += fScale)
-				//Blend (*(--destDataP), srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				Blend (*(--destDataP), srcDataP [int (offset)]);
-			}
-#endif
-		}
-	else if (mode == 3) {
-#if 0
-		CBGRA* destDataP = bmBufP + (h - 1) * w;
-		for (int y = 0; y < h; y++, destDataP++) {
-			CBGRA* destData2 = destDataP;
-			for (int x = 0; x < w; x++, destData2 -= w) {
-				Blend (*destData2, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				}
-			}
-		}
-#else
-		bmBufP += (h - 1) * w;
-#pragma omp parallel for
-		for (int y = 0; y < h; y++) {
-			CBGRA* destDataP = bmBufP + y;
-			float offset = float (int (y * fScale) * int (w * fScale));
-			for (int x = 0; x < w; x++, destDataP -= w, offset += fScale)
-				//Blend (*destDataP, srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				Blend (*destDataP, srcDataP [int (offset)]);
-			}
-		}
-#endif
-	} 
-else {
-	if (mode == 0) {
-#pragma omp parallel for
-		for (int y = 0; y < h; y++) {
-			int y1 = ((y + y0) % h) * w;
-			float offset = float (int (y * fScale) * int (w * fScale));
-			for (int x = 0; x < w; x++, offset += fScale)
-				//Blend (bmBufP [y1 + (x + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				Blend (bmBufP [y1 + (x + x0) % w], srcDataP [int (offset)]);
-			}
-		}
-	else if (mode == 1) {
-#pragma omp parallel for
-		for (int y = h - 1; y >= 0; y--) {
-			int y1 = (y + x0) % w;
-			float offset = float (int (y * fScale) * int (w * fScale));
-			for (int x = 0; x < w; x++, offset += fScale)
-				//Blend (bmBufP [y1 + ((x + y0) % h) * w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				Blend (bmBufP [((x + y0) % h) * w + (y + x0) % w], srcDataP [int (offset)]);
-			}
-		}
-	else if (mode == 2) {
-#pragma omp parallel for
-		for (int y = h - 1; y >= 0; y--) {
-			int y1 = ((y + y0) % h) * w;
-			float offset = float (int (y * fScale) * int (w * fScale));
-			for (int x = w - 1; x >= 0; x--, offset += fScale)
-				//Blend (bmBufP [y1 + (x + x0) % w], srcDataP [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d]);
-				Blend (bmBufP [y1 + (x + x0) % w], srcDataP [int (offset)]);
-			}
-		}
-	else if (mode == 3) {
-#pragma omp parallel for
-		for (int y = 0; y < h; y++) {
-			int y1 = (y + x0) % w;
-			for (int x = w - 1; x >= 0; x--) {
-				Blend (bmBufP [y1 + ((x + y0) % h) * w], srcDataP [i]);
-				}
-			}
-		}
-	}
-
-return 0;
-}
 
 //------------------------------------------------------------------------
 
@@ -594,7 +461,7 @@ if (!textureManager.Available ())
 	int i, h = MaxTextures (nVersion);
 
 for (i = 0; i < h; i++)
-	m_textures [nVersion][m_index [nVersion][i] - 1].m_info.bUsed = false;
+	m_bUsed [nVersion][i] = false;
 }
 
 //------------------------------------------------------------------------
@@ -614,42 +481,133 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 	CSide* sideP = segP->m_sides;
 	for (j = 6; j; j--, sideP++) {
 		if (((short) sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
-			Texture (sideP->BaseTex ())->m_info.bUsed = true;
+			m_bUsed [nVersion][sideP->BaseTex ()] = true;
 			if ((sideP->OvlTex (0)) != 0)
-				Texture (sideP->OvlTex (0))->m_info.bUsed = true;
+				m_bUsed [nVersion][sideP->OvlTex (0)] = true;
 			}
 		}
 	}
 
-CTexture * texP, * parentTexP = null;
-
 for (i = 0; i < h; i++) {
-	texP = Texture (i);
-	if (!texP->m_info.bFrame)
-		parentTexP = texP;
-	else if ((texP->m_info.bCustom == 1) && !texP->m_info.bUsed)
-		texP->m_info.bUsed = (parentTexP != null) && parentTexP->m_info.bUsed;
+	const CTexture* texP = Textures (i);
+	if (texP->IsAnimated () && m_bUsed [nVersion][texP->GetParent ()->IdLevel()])
+		m_bUsed [nVersion][i] = true;
 	}
+}
+
+//------------------------------------------------------------------------
+
+int CTextureManager::UsedCount (uint nTexAll)
+{
+if (!textureManager.Available ())
+	return 0;
+
+int nTexLevel;
+if (!FindLevelTex (nTexAll, &nTexLevel))
+	return 0;
+
+const CTexture *texP = Textures (nTexLevel);
+
+if (texP->IsAssignableFrame ()) {
+	// This is a frame of an animated texture - we need to find the base before
+	// we can get the used count
+	bool bFoundParent = false;
+	for (int i = nTexLevel - 1; i > 0; i--) {
+		texP = Textures (i);
+		if (!texP->IsAssignableFrame ()) {
+			bFoundParent = true;
+			break;
+			}
+		}
+	if (!bFoundParent) {
+		// No parent. Weird and not supposed to happen.
+		return 0;
+		}
+	}
+
+int usedCount = 0;
+CSegment* segP = segmentManager.Segment (0);
+for (int i = 0; i < segmentManager.Count (); i++, segP++) {
+	CSide* sideP = segP->m_sides;
+	for (int j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
+		if (((short) sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
+			// We aren't double-counting if the texture was used for both base AND overlay.
+			// Index 0 on an overlay texture doesn't count as an instance either.
+			if (sideP->BaseTex () == texP->IdLevel () || (texP->IdLevel () > 0 && sideP->OvlTex (0) == texP->IdLevel ()))
+				usedCount++;
+			}
+		}
+	}
+
+return usedCount;
 }
 
 //------------------------------------------------------------------------
 // remove unused custom m_textures
 
-void CTextureManager::RemoveTextures (bool bUnused)
+void CTextureManager::RemoveCustomTextures (bool bUnusedOnly)
 {
 	int nCustom = CountCustomTextures ();
 
 if (nCustom) {
-	if (bUnused)
+	if (bUnusedOnly)
 		TagUsedTextures ();
 	else
 		UnTagUsedTextures ();
-	Release (Version (), false, true);
-	LoadTextures (-1, true);
-	int nRemoved = nCustom - CountCustomTextures ();
+
+	int nRemoved = 0;
+	for (int i = 0; i < m_header [Version ()].nTextures; i++) {
+		if (AllTextures (i)->IsCustom ()) {
+			if (!bUnusedOnly || !IsTextureUsed (AllTextures (i)->IdLevel ())) {
+				RevertTexture (i);
+				nRemoved++;
+				}
+			}
+		}
+
 	sprintf_s (message, sizeof (message), "%d custom textures %s removed", nRemoved, (nRemoved == 1) ? "was" : "were");
 	if (nRemoved)
 		undoManager.SetModified (true);
+	INFOMSG (message);
+	}
+}
+
+//------------------------------------------------------------------------
+
+void CTextureManager::CommitTextureChanges (void)
+{
+for (int i = 0; i < AllTextureCount (); i++)
+	if (m_bModified [Version ()][i]) {
+		m_previous [Version ()][i] = null;
+		m_bModified [Version ()][i] = false;
+		}
+}
+
+//------------------------------------------------------------------------
+
+void CTextureManager::UndoTextureChanges (void)
+{
+	int nReverted = 0;
+
+for (int i = 0; i < AllTextureCount (); i++)
+	if (m_bModified [Version ()][i]) {
+		if (m_previous [Version ()][i] == &m_textures [Version ()][i]) {
+			// Revert to default texture
+			delete m_overrides [Version ()][i];
+			m_overrides [Version ()][i] = null;
+			}
+		else if (m_overrides [Version ()][i] != m_previous [Version ()][i]) {
+			delete m_overrides [Version ()][i];
+			m_overrides [Version ()][i] = m_previous [Version ()][i];
+			}
+		m_previous [Version ()][i] = null;
+		m_bModified [Version ()][i] = false;
+		nReverted++;
+		}
+
+if (nReverted > 0) {
+	sprintf_s (message, sizeof (message), "%d modified texture%s reverted", nReverted, (nReverted == 1) ? " was" : "s were");
+	undoManager.SetModified (true);
 	INFOMSG (message);
 	}
 }
@@ -753,6 +711,76 @@ if (LoadInfo (nVersion) && LoadTextures (nVersion))
 sprintf_s (message, sizeof (message), "Couldn't find texture data file (%s).\n\nPlease select the proper folder in the settings dialog.\n", descentFolder [nVersion]);
 //ErrorMsg (message);
 return false;
+}
+
+//------------------------------------------------------------------------
+
+void CTextureManager::CreateGLTextures (int nVersion)
+{
+	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
+
+if (!Available (nVersionResolved))
+	return;
+
+for (int i = 0; i < AllTextureCount (); i++)
+	m_textures [nVersionResolved][i].GLCreate (false);
+m_arrow.GLCreate (false);
+for (int i = 0; i < ICON_COUNT; i++)
+	m_icons [i].GLCreate (false);
+}
+
+//------------------------------------------------------------------------
+
+bool CTextureManager::ChangePigFile (const char *pszPigPath, int nVersion)
+{
+	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
+	char szPigName [256] = {0};
+	// Save these, they will change
+	CBGR transparentColor = *paletteManager.Current (255);
+	CBGR superTransparentColor = *paletteManager.Current (254);
+
+// Set PIG path
+strcpy_s (descentFolder [nVersionResolved], sizeof (descentFolder [nVersionResolved]), pszPigPath);
+CFileManager::SplitPath (pszPigPath, null, szPigName, null);
+strcat_s (szPigName, sizeof (szPigName), ".pig");
+paletteManager.SetName (szPigName);
+
+// Reload palette and textures - but keep overrides
+for (int i = 0; i < m_header [nVersionResolved].nTextures; i++)
+	m_textures [nVersionResolved][i].Clear (); // Force reload
+if (!LoadInfo (nVersionResolved) || !LoadTextures (nVersionResolved, false)) {
+	sprintf_s (message, sizeof (message), "Couldn't find texture data file (%s).\n\n"
+		"Please select the proper folder in the settings dialog.\n", descentFolder [nVersion]);
+	return false;
+	}
+
+// Change palettes for loaded custom textures - mark all as changed via OverrideTexture to allow saving to work correctly
+// TGA format textures don't need any changes
+for (uint nTexAll = 0, j = m_header [nVersionResolved].nTextures; nTexAll < j; nTexAll++) {
+	if (m_overrides [nVersionResolved][nTexAll] != null && m_overrides [nVersionResolved][nTexAll]->Format () != TGA) {
+		CTexture *pNewTexture = OverrideTexture (nTexAll, null, nVersionResolved);
+		for (uint i = 0; i < pNewTexture->Size (); i++) {
+			// Even BMP format textures are stored in RGBA format in memory, which makes
+			// this pretty simple - just need to watch out for transparent color keys
+			ubyte newIndex;
+			if (*pNewTexture->Buffer (i) == transparentColor)
+				newIndex = 255;
+			else if (*pNewTexture->Buffer (i) == superTransparentColor)
+				newIndex = 254;
+			else
+				newIndex = paletteManager.ClosestColor (*pNewTexture->Buffer (i), false);
+			ubyte alpha = (newIndex < 254) ? 255 : 0;
+			*pNewTexture->Buffer (i) = *paletteManager.Current (newIndex);
+			pNewTexture->Buffer (i)->a = alpha;
+			}
+		pNewTexture->CommitBufferChanges ();
+		}
+	}
+
+DLE.TextureView ()->Setup ();
+DLE.TextureView ()->Refresh ();
+DLE.MineView ()->ResetView (true);
+return true;
 }
 
 //------------------------------------------------------------------------

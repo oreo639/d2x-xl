@@ -46,20 +46,19 @@ class CTextureEdit : public CDialog
 		CPaletteWnd	m_paletteWnd;
 		CWnd			m_layerWnd;
 		CTexture		m_texture [2];
-		int			m_bOverlay;
 		char			m_szName [256];
 		int			m_fgColor,
 						m_bgColor;
 		bool			m_lBtnDown,
 						m_rBtnDown;
-		bool			m_bModified;
-		int			m_iTexture;
+		bool			m_bModified,
+						m_bPendingRevert;
 		char			m_szColors [80];
 		CDC			*m_pDC;
 		CWnd			*m_pPaintWnd;
 		CPalette		*m_pOldPal;
-		CTexture		*m_texP;
-		uint			m_nWidth,
+		uint			m_nTexAll,
+						m_nWidth,
 						m_nHeight,
 						m_nSize,
 						m_nFormat,
@@ -67,9 +66,8 @@ class CTextureEdit : public CDialog
 						m_nOldHeight,
 						m_nOldSize,
 						m_nOldFormat;
-		static char	m_szDefExt [4];
 
-		CTextureEdit (int bOverlay, char* pszName, CWnd * pParent = null);
+		CTextureEdit (const CTexture *pTexture, CWnd * pParent = null);
 		~CTextureEdit ();
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -88,9 +86,6 @@ class CTextureEdit : public CDialog
 		void Update (CWnd *pWnd);
 		void GetClientRect (CWnd *pWnd, CRect& rc);
 		bool PtInRect (CRect& rc, CPoint& pt);
-		bool LoadBitmap (CFileManager& file);
-		void SaveBitmap (CFileManager& file);
-		void SaveTGA (CFileManager& file);
 
 		afx_msg void OnMouseMove (UINT nFlags, CPoint point);
 		afx_msg void OnLButtonDown (UINT nFlags, CPoint point);

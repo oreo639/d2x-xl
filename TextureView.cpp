@@ -294,7 +294,7 @@ SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
 // figure out position of current texture
 int nBaseTex = current->Side ()->BaseTex ();
 int nOvlTex = current->Side ()->OvlTex (0); // strip rotation info
-CTexture tex (textureManager.m_bmBuf);
+CTexture tex (textureManager.SharedBuffer ());
 
 CDC *pDC = GetDC();
 if (!pDC) {
@@ -315,13 +315,13 @@ for (int i = 0; i < m_filter.Count (1); i++) {
 			}
 	if (nOffset &&	--nOffset)
 		continue;
-	if (!textureManager.BlendTextures (m_filter.MapViewToTex (i), 0, &tex, 0, 0)) {
+	if (!tex.BlendTextures (m_filter.MapViewToTex (i), 0, 0, 0)) {
 #if 1
-		bmi->bmiHeader.biWidth = tex.Width (0);
-		bmi->bmiHeader.biHeight = tex.Width (0);
+		bmi->bmiHeader.biWidth = tex.Width ();
+		bmi->bmiHeader.biHeight = tex.Width ();
 		bmi->bmiHeader.biBitCount = 32;
 		StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
-							m_iconSize.cx, m_iconSize.cy, 0, 0, tex.Width (0), tex.Width (0), 
+							m_iconSize.cx, m_iconSize.cy, 0, 0, tex.Width (), tex.Width (), 
 							(void*) tex.Buffer (), bmi, DIB_RGB_COLORS, SRCCOPY);
 #else
 		double scale = 1.0 / tex.Scale ();

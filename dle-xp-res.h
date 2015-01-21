@@ -933,6 +933,23 @@
 #define IDC_EFFECT_DELETE               11805
 #define IDC_EFFECT_ENABLED              11806
 
+#define IDD_POGMANAGER                  11900
+#define IDC_POGMANAGER_LIST             11901
+#define IDC_POGMANAGER_TRANSP_CHECK     11902
+#define IDC_POGMANAGER_SEETHRU_CHECK    11903
+#define IDC_POGMANAGER_PREVIEW          11904
+#define IDC_POGMANAGER_PREVIEW_SIZE     11905
+#define IDC_POGMANAGER_PALETTE          11906
+#define IDC_POGMANAGER_EDIT             11920
+#define IDC_POGMANAGER_IMPORT           11921
+#define IDC_POGMANAGER_REVERT           11922
+#define IDC_POGMANAGER_EXPORT           11923
+#define IDC_POGMANAGER_FILTER_CUSTOM    11939
+#define IDC_POGMANAGER_FILTER_LEVEL     11940
+#define IDC_POGMANAGER_FILTER_ROBOT     11941
+#define IDC_POGMANAGER_FILTER_POWERUP   11942
+#define IDC_POGMANAGER_FILTER_MISC      11943
+
 #define ID_TB_CHECK                     30774
 #define ID_EDIT_TEXTURE                 30775
 #define ID_EDIT_SEGMENT                 30776
@@ -1139,6 +1156,8 @@
 #define ID_CONVERTMINE_STANDARD         32934
 #define ID_CONVERTMINE_VERTIGO          32935
 #define ID_CONVERTMINE_D2X              32936
+#define ID_FILE_EDITHOG                 32937
+#define ID_FILE_EDITPOG                 32938
 
 #define ID_SEL_POINT                    61447
 #define ID_SEL_LINE                     61448

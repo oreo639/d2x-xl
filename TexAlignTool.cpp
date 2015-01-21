@@ -421,14 +421,14 @@ if (!m_bShowTexture)
 	int			h, i, j, x, y;
 	POINT			offset;
 	CSide*		sideP = current->Side ();
-	CTexture		tex (textureManager.m_bmBuf);
+	CTexture		tex (textureManager.SharedBuffer ());
 	ushort		scale;
 
 offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_centerPt.x - 128;
 offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_centerPt.y - 128;
 
-memset (tex.Buffer (), 0, sizeof (textureManager.m_bmBuf));
-if (textureManager.BlendTextures (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
+memset (tex.Buffer (), 0, textureManager.SharedBufferSize ());
+if (tex.BlendTextures (sideP->BaseTex (), sideP->OvlTex (), 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (textureManager.BlendTextures failed)");
 	return;
 	}
@@ -436,7 +436,7 @@ oldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 pDC->RealizePalette();
 hRgn.CreatePolygonRgn (m_apts, sideP->VertexCount (), ALTERNATE);
 pDC->SelectObject (&hRgn);
-uint w = tex.Width (0);
+uint w = tex.Width ();
 scale = w / 64;
 for (x = m_minPt.x; x < m_maxPt.x; x++) {
 	for (y = m_minPt.y; y < m_maxPt.y; y++) {

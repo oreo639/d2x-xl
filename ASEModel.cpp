@@ -571,14 +571,14 @@ while ((pszToken = ReadLine (fp))) {
 	if (*pszToken == '}')
 		return 1;
 	if (!strcmp (pszToken, "*BITMAP")) {
-		if (tex.Buffer ())	//duplicate
+		if (tex.IsLoaded ())	//duplicate
 			return CModel::Error ("duplicate bitmap");
 		CFileManager::SplitPath (StrTok ("\""), null, fn, null);
 		char szFile [256];
 		sprintf (szFile, "%s\\%s", m_folder, fn);
 		if (!strrchr (szFile, '.'))
 			strcat (szFile, ".tga");
-		if (!tex.LoadTGA (::_strlwr (szFile)))
+		if (!tex.LoadFromFile (::_strlwr (szFile)))
 			return CModel::Error ("texture not found");
 		l = (int) strlen (::_strlwr (fn)) + 1;
 		if (!m_textures.Name (nTexture).Create (l))
@@ -606,7 +606,7 @@ while ((pszToken = ReadLine (fp))) {
 	if (*pszToken == '}')
 		return 1;
 	if (!strcmp (pszToken, "*BITMAP")) {
-		if (!tex.Buffer ())	//duplicate
+		if (!tex.IsLoaded ())	//duplicate
 			return CModel::Error ("missing glow bitmap");
 		}
 	}

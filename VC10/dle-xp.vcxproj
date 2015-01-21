@@ -558,6 +558,7 @@
     <ClInclude Include="..\mineview.h" />
     <ClInclude Include="..\OOFModel.h" />
     <ClInclude Include="..\Parser.h" />
+    <ClInclude Include="..\PogDialog.h" />
     <ClInclude Include="..\Quaternion.h" />
     <ClInclude Include="..\RenderBuffers.h" />
     <ClInclude Include="..\renderer.h" />
@@ -720,6 +721,7 @@
     <ClCompile Include="..\ObjectTool.Sound.cpp" />
     <ClCompile Include="..\OOFModel.cpp" />
     <ClCompile Include="..\OOFRenderModel.cpp" />
+    <ClCompile Include="..\PogDialog.cpp" />
     <ClCompile Include="..\Quaternion.cpp" />
     <ClCompile Include="..\ReactorTool.cpp" />
     <ClCompile Include="..\RenderBuffers.cpp" />

@@ -1101,7 +1101,7 @@ if (ext)
 
 #define MAX_REGIONS 8
 
-void DeleteLevelSubFiles (CFileManager& fp, char *base) 
+void DeleteLevelSubFiles (CFileManager& fp, const char *base, const char *ext = null) 
 {
 struct region {
 	int index;
@@ -1119,24 +1119,27 @@ long offset = 3;
 long size;
 deleteIndex = -1;
 CLevelHeader lh;
+fp.Seek (0, SEEK_SET); // fp might have been previously set to end
 while(!fp.EoF ()) {
 	fp.Seek (offset, SEEK_SET); // skip "HOG"
 	if (!lh.Read (&fp)) 
 		break;
 	size = lh.FileSize () + lh.Size ();
 	if (nRegion < MAX_REGIONS) {
-		LPSTR ext = strrchr (lh.Name (), '.');
-		if (!ext)
+		LPSTR thisExt = strrchr (lh.Name (), '.');
+		if (!thisExt)
 			goto nextSubFile;
-		if (_strcmpi (ext, ".rdl") &&
-		    _strcmpi (ext, ".rl2") &&
-		    _strcmpi (ext, ".hxm") &&
-		    _strcmpi (ext, ".pog") &&
-		    _strcmpi (ext, ".pal") &&
-		    _strcmpi (ext, ".lgt") &&
-		    _strcmpi (ext, ".clr"))
+		if (_strcmpi (thisExt, ".rdl") &&
+		    _strcmpi (thisExt, ".rl2") &&
+		    _strcmpi (thisExt, ".hxm") &&
+		    _strcmpi (thisExt, ".pog") &&
+		    _strcmpi (thisExt, ".pal") &&
+		    _strcmpi (thisExt, ".lgt") &&
+		    _strcmpi (thisExt, ".clr"))
 			goto nextSubFile;
-		*ext = '\0';
+		if (ext && _strcmpi (ext, thisExt))
+			goto nextSubFile;
+		*thisExt = '\0';
 		if (_strcmpi (base, lh.Name ()))
 			goto nextSubFile;
 		// try to merge this with the last region
@@ -1164,7 +1167,6 @@ while (nRegion > 0) {
 	DeleteSubFile (fp, regions [nRegion].size, regions [nRegion].offset, numEntries, regions [nRegion].index);
 	numEntries -= regions [nRegion].files;
 	}
-fp.Close ();
 }
 
 #undef MAX_REGNUM
@@ -1204,6 +1206,37 @@ return lh.FileSize () + lh.Size ();
 }
 
 //------------------------------------------------------------------------------
+
+bool DoesSubFileExist (const char *pszFile, char *pszSubFile)
+{
+    CLevelHeader lh;
+    long nSize, nPos;
+
+return FindFileData (pszFile, pszSubFile, lh, nSize, nPos, FALSE);
+}
+
+//------------------------------------------------------------------------------
+
+bool DoesSubFileExist (CFileManager &fp, char *pszSubFile)
+{
+    CLevelHeader lh;
+    long nSize, nPos;
+
+return FindFileData (NULL, pszSubFile, lh, nSize, nPos, FALSE, &fp);
+}
+
+//------------------------------------------------------------------------------
+
+const char *GetCustomFileExtension (const int nType)
+{
+	static const char* extensions [] = {".lgt", ".clr", ".pal", ".pog", ".hxm"};
+
+if (nType < 0 || nType >= ARRAYSIZE (extensions))
+	return null;
+return extensions [nType];
+}
+
+//------------------------------------------------------------------------------
 // make_hog()
 //
 // Action - makes a HOG file which includes three files
@@ -1219,66 +1252,82 @@ typedef int (* subFileWriter) (CFileManager&);
 
 //--------------------------------------------------------------------------------
 
-int WriteCustomFile (CFileManager&fp, const int nType, const char* szFolder, const char* szFile)
+int WriteCustomFile (const char* pszFile, char* pszSubFile, const int nType)
 {
-	static char* extensions [] = {".lgt", ".clr", ".pal", ".pog", ".hxm"};
+	int nResult = 1;
+	CFileManager fp, fTmp;
+	char szFolder [256], szTmp [256], szDest [256], szBase [256];
 
-	CFileManager fTmp;
-	char szTmp [256], szDest [256];
+// determine base name
+CFileManager::SplitPath (pszFile, szFolder, null, null);
+CFileManager::SplitPath (pszSubFile, null, szBase, null);
+sprintf_s (szDest, sizeof (szDest), "%s%s", szBase, GetCustomFileExtension (nType));
+sprintf_s (szTmp, sizeof (szTmp), "%sdle_temp%s", szFolder, GetCustomFileExtension (nType));
 
-CFileManager::SplitPath (szFolder, szTmp, null, null);
-sprintf_s (szTmp, sizeof (szTmp), "%sdle_temp%s", szFolder, extensions [nType]);
-if (!fTmp.Open (szTmp, "wb"))
+if (!fp.Open (pszFile, "r+b")) {
+	ErrorMsg ("Destination HOG file not found or inaccessible.");
 	return 0;
-int nResult = 1;
+	}
+
+// If target HOG already contains a file with this name, delete it so we can overwrite it
+if (DoesSubFileExist (fp, szDest))
+	DeleteLevelSubFiles (fp, szBase, GetCustomFileExtension (nType));
+
+bool bHasContent = false;
 switch (nType) {
-	case 0:
-		lightManager.WriteLightMap (fTmp);
+	case CUSTOM_FILETYPE_LIGHTMAP:
+		bHasContent = lightManager.HasCustomLightMap ();
 		break;
-	case 1:
-		lightManager.WriteColorMap (fTmp);
+	case CUSTOM_FILETYPE_COLORMAP:
+		bHasContent = lightManager.HasCustomLightColors ();
 		break;
-	case 2:
-		nResult = paletteManager.SaveCustom (&fTmp);
+	case CUSTOM_FILETYPE_PALETTE:
+		bHasContent = paletteManager.Custom () != null;
 		break;
-	case 3:
-		nResult = textureManager.CreatePog (fTmp);
+	case CUSTOM_FILETYPE_POG:
+		bHasContent = textureManager.HasCustomTextures ();
 		break;
-	case 4:
-		nResult = robotManager.WriteHXM (fTmp);
+	case CUSTOM_FILETYPE_HXM:
+		bHasContent = robotManager.HasCustomRobots ();
 		break;
 	default:
-		nResult = 0;
 		break;
 	}
-fTmp.Close ();
-if (nResult) {
-	sprintf_s (szDest, sizeof (szDest), "%s%s", szFile, extensions [nType]);
-	nResult = WriteSubFile (fp, szTmp, szDest) > 0;
+
+// Write the new file, but only if there's anything to write to it
+if (bHasContent) {
+	fp.Seek (0, SEEK_END);
+	if (!fTmp.Open (szTmp, "wb"))
+		return 0;
+	switch (nType) {
+		case CUSTOM_FILETYPE_LIGHTMAP:
+			lightManager.WriteLightMap (fTmp);
+			break;
+		case CUSTOM_FILETYPE_COLORMAP:
+			lightManager.WriteColorMap (fTmp);
+			break;
+		case CUSTOM_FILETYPE_PALETTE:
+			nResult = paletteManager.SaveCustom (&fTmp);
+			break;
+		case CUSTOM_FILETYPE_POG:
+			nResult = textureManager.CreatePog (fTmp);
+			break;
+		case CUSTOM_FILETYPE_HXM:
+			nResult = robotManager.WriteHXM (fTmp);
+			break;
+		default:
+			nResult = 0;
+			break;
+		}
+	fTmp.Close ();
+	if (nResult) {
+		nResult = WriteSubFile (fp, szTmp, szDest) > 0;
+		}
+	CFileManager::Delete (szTmp);
 	}
-CFileManager::Delete (szTmp);
+
+fp.Close ();
 return nResult;
-}
-
-//--------------------------------------------------------------------------------
-
-void WriteCustomFiles (CFileManager& fp, char* szFolder, char* szFile, bool bCreate = false)
-{
-	static char* szPogQuery = "This level contains custom textures.\nWould you like save these textures into the HOG file?\n\nNote: You must use version 1.2 or higher of Descent2 to see\nthe textures when you play the game.";
-	static char* szHxmQuery = "This level contains custom robot settings.\nWould you like save these changes into the HOG file?\n\nNote: You must use version 1.2 or higher of Descent2 for\nthe changes to take effect.";
-
-if (lightManager.HasCustomLightMap ())
-	WriteCustomFile (fp, 0, szFolder, szFile);
-if (lightManager.HasCustomLightColors ())
-	WriteCustomFile (fp, 1, szFolder, szFile);
-if (! DLE.IsD1File ()) {
-	if (paletteManager.Custom () != null)
-		WriteCustomFile (fp, 2, szFolder, szFile);
-	if (textureManager.HasCustomTextures () && (!bCreate || DLE.ExpertMode () || QueryMsg (szPogQuery) == IDYES)) 
-		WriteCustomFile (fp, 3, szFolder, szFile);
-	if (robotManager.HasCustomRobots () && (!bCreate || DLE.ExpertMode () || QueryMsg (szHxmQuery) == IDYES)) 
-		WriteCustomFile (fp, 4, szFolder, szFile);
-	}
 }
 
 //--------------------------------------------------------------------------------
@@ -1341,8 +1390,6 @@ sprintf_s (szTmp, sizeof (szTmp), DLE.IsD1File () ? "%s.rdl" : "%s.rl2", szFile)
 WriteSubFile (fp, rdlFilename, szTmp);
 CFileManager::Delete (szTmp);
 
-WriteCustomFiles (fp, szFolder, szFile, true);
-
 fp.Close ();
 MakeMissionFile (hogFilename, szSubFile, custom_textures, custom_robots, bSaveAs);
 return 1;
@@ -1355,7 +1402,7 @@ return 1;
 int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs) 
 {
 	CFileManager	fTmp;
-	char				szFolder [256], szFile [256], szTmp [256];
+	char				szTmp [256], szBase [MAX_PATH];
 	char*				psz;
 
 _strlwr_s (szHogFile, 256);
@@ -1378,107 +1425,63 @@ if (!*szSubFile || psz) {
 		l += (int) strlen (szSubFile);
 		strcat_s (psz, 256 - l, ".hog");
 		}
+	strcpy_s (szBase, sizeof (szBase), szSubFile);
 	strcat_s (szSubFile, 256, (DLE.IsD1File ()) ? ".rdl" : ".rl2");
 	}
 else {
 	LPSTR ext = strrchr (szSubFile, '.');
 	if (ext)
 		*ext = '\0';
+	strcpy_s (szBase, sizeof (szBase), szSubFile);
 	strcat_s (szSubFile, 256, (DLE.IsD1File ()) ? ".rdl" : ".rl2");
 	}
-// if this HOG file only contains one rdl/rl2 fp total and
-// it has the same name as the current level, and it has
-// no other files (besides hxm or pog files), then
-// allow quick save
+sprintf_s (szTmp, sizeof (szTmp), "%s\\dle_temp.rdl", DLE.AppFolder ());
+
 CFileManager fp;
-// See if another level with the same name exists
-// and see if there are any other files here (ignore hxm and pog files)
-CFileManager::SplitPath (szHogFile, szFolder, null, null);
-int bOtherFilesFound = 0;
-int bIdenticalLevelFound = 0;
 if (!fp.Open (szHogFile, "r+b")) {
-	char szTemp [256];
-	sprintf (szTemp, "%s\\dle_temp.rdl", DLE.AppFolder ());
-	theMine->Save (szTemp);
-	return CreateHogFile (szTemp, szHogFile, szSubFile, true);
-	CFileManager::Delete (szTemp);
+	// HOG file doesn't exist, so just create it and return
+	theMine->Save (szTmp);
+	int nRes = CreateHogFile (szTmp, szHogFile, szSubFile, true);
+	CFileManager::Delete (szTmp);
+	return nRes;
 	}
 
 WriteHogHeader (fp); // make sure the hog header is "D2X" if the hog file contains extended level headers (-> long level filenames)
 fp.Seek (3, SEEK_SET);
+
+// See if another level with the same name exists
+// and see if there are any other files here (ignore hxm and pog files)
+bool bIdenticalLevelFound = false;
 CLevelHeader lh;
 while (!fp.EoF ()) {
 	if (!lh.Read (&fp))
 		break;
 	_strlwr_s (lh.Name (), lh.NameSize ());
 	lh.Name () [lh.NameSize () - 1] = null; // null terminate
-	if (!strstr ((char *) lh.Name (), ".hxm") &&     // not a custom robot fp
-		 !strstr ((char *) lh.Name (), ".pog") &&     // not a custom texture fp
-		 !strstr ((char *) lh.Name (), ".lgt") &&     // not an texture brightness table fp
-		 !strstr ((char *) lh.Name (), ".clr") &&     // not an texture color table fp
-		 !strstr ((char *) lh.Name (), ".pal") &&     // not a palette fp
-		 _strcmpi((char *) lh.Name (), szSubFile)) // not the same level
-		bOtherFilesFound = 1;
 	if (!_strcmpi ((char *) lh.Name (), szSubFile)) // same level
-		bIdenticalLevelFound = 1;
+		bIdenticalLevelFound = true;
 	fp.Seek (lh.FileSize (), SEEK_CUR);
 	}
-fp.Close ();
-
-// if no other files found
-// then simply do a quick save
-int bQuickSave = 0;
-if (!bOtherFilesFound)
-	bQuickSave = 1;
-else if (bIdenticalLevelFound) {
-	if (QueryMsg ("Overwrite old level with same name?") != IDYES)
+if (bIdenticalLevelFound) {
+	if (QueryMsg ("Overwrite old level with same name?") != IDYES) {
+		fp.Close ();
 		return 0;
-	}
-else {
-	// otherwise, if save fp was not found,
-	// then ask user if they want to append to the HOG file
-	if (QueryMsg ("Would you like to add the level to the end\n"
-					  "of this HOG file?\n\n"
-					  "(Press OK to append this level to the HOG file\n"
-					  "or Cancel to overwrite the entire HOG file") == IDYES) {
-		if (!DLE.ExpertMode ())
-			ErrorMsg ("Don't forget to add this level's name to the mission file.\n");
 		}
-	else
-		bQuickSave = 1;
+	DeleteLevelSubFiles (fp, szBase, (DLE.IsD1File ()) ? ".rdl" : ".rl2");
 	}
-if (bQuickSave) {
-	char szTemp [256];
-	sprintf (szTemp, "%s\\dle_temp.rdl", DLE.AppFolder ());
-	theMine->Save (szTemp);
-	return CreateHogFile (szTemp, szHogFile, szSubFile, bSaveAs);
-	CFileManager::Delete (szTemp);
-	}
-
-// determine base name
-CFileManager::SplitPath (szSubFile, null, szFile, null);
-szFile [8] = null;
-_strlwr_s (szFile, sizeof (szFile));
-
-if (!fp.Open (szHogFile, "r+b")) {
-	ErrorMsg ("Destination HOG file not found or inaccessible.");
-	return 0;
-	}
-DeleteLevelSubFiles (fp, szFile);
+else if (!DLE.ExpertMode ())
+	ErrorMsg ("Don't forget to add this level's name to the mission file.");
 fp.Close ();
-// now append sub-files to the end of the HOG file
 
+// now append sub-file to the end of the HOG file
 if (!fp.Open (szHogFile, "ab")) {
 	ErrorMsg ("Could not open destination HOG file for save.");
 	return 0;
 	}
 fp.Seek (0, SEEK_END);
-sprintf_s (szTmp, sizeof (szTmp), "%sdle_temp.rdl", szFolder);
-theMine->Save (szTmp, true);
+theMine->Save (szTmp);
 WriteSubFile (fp, szTmp, szSubFile);
 CFileManager::Delete (szTmp);
-
-WriteCustomFiles (fp, szFolder, szFile);
 
 fp.Close ();
 return 1;

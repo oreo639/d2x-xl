@@ -467,9 +467,9 @@ if (!textureManager.Available ())
   // calculate total number of textures
 m_nTextures [1] = 0;
 for (int i = 0; i < nTextures; i++) {
-	CTexture* texP = textureManager.Texture (i);
-	if (texP->m_info.bFrame)
-	//if (textureManager.Texture (i)->m_info.bFrame)
+	const CTexture* texP = textureManager.Textures (i);
+	if (texP->IsAssignableFrame ())
+	//if (textureManager.Texture (i)->IsAssignableFrame ())
 		++nFrames;
 	else
 		m_mapViewToTex [m_nTextures [1]++] = i;

@@ -239,9 +239,9 @@ class CRenderer {
 		virtual void PolyLine (CVertex* vertices, int nVertices) = 0;
 		virtual void Polygon (CVertex* vertices, int nVertices) = 0;
 		virtual void Polygon (CVertex* vertices, int nVertices, ushort* index) = 0;
-		virtual void TexturedPolygon (CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) = 0;
+		virtual void TexturedPolygon (const CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) = 0;
 		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) = 0;
-		virtual void Sprite (CTexture* texP, CVertex center, double width, double height, bool bAlways = false) = 0;
+		virtual void Sprite (const CTexture* texP, CVertex center, double width, double height, bool bAlways = false) = 0;
 
 		virtual int Type (void) = 0;
 		virtual bool SetPerspective (int nPerspective) = 0;
@@ -305,16 +305,16 @@ class CRendererSW : public CRenderer {
 		virtual void PolyLine (CVertex* vertices, int nVertices) {}
 		virtual void Polygon (CVertex* vertices, int nVertices) {}
 		virtual void Polygon (CVertex* vertices, int nVertices, ushort* index) {}
-		virtual void TexturedPolygon (CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) {}
+		virtual void TexturedPolygon (const CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) {}
 		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) {}
-		virtual void Sprite (CTexture* texP, CVertex center, double width, double height, bool bAlways = false) {}
+		virtual void Sprite (const CTexture* texP, CVertex center, double width, double height, bool bAlways = false) {}
 
 		virtual CPen* SelectObject (CPen* pen) { return m_pDC->SelectObject (pen); }
 		virtual CBrush* SelectObject (CBrush* brush) { return m_pDC->SelectObject (brush); }
 		virtual HGDIOBJ SelectObject (HGDIOBJ object) { return m_pDC->SelectObject (object); }
 
 		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys);
-		void RenderFace (CFaceListEntry& fle, CTexture* texP, ushort rowOffset, CBGRA* colorP = null);
+		void RenderFace (CFaceListEntry& fle, const CTexture* texP, ushort rowOffset, CBGRA* colorP = null);
 
 		virtual int Type (void) { return 0; }
 		virtual bool SetPerspective (int nPerspective) { return false; }
@@ -330,7 +330,7 @@ class CRendererSW : public CRenderer {
 
 		int ZoomFactor (int nSteps, double min, double max);
 
-		inline bool Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness = 32767);
+		inline bool Blend (CBGR& dest, const CBGRA& src, depthType& depth, depthType z, short brightness = 32767);
 		inline depthType Z (CTexture& tex, CLongVector* a, int x, int y);
 		inline double ZRange (int x0, int x1, int y, double& z);
 };
@@ -394,16 +394,16 @@ class CRendererGL : public CRenderer {
 		virtual void PolyLine (CVertex* vertices, int nVertices);
 		virtual void Polygon (CVertex* vertices, int nVertices);
 		virtual void Polygon (CVertex* vertices, int nVertices, ushort* index);
-		virtual void TexturedPolygon (CTexture* textP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index);
+		virtual void TexturedPolygon (const CTexture* textP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index);
 		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index);
-		virtual void Sprite (CTexture* texP, CVertex center, double width, double height, bool bAlways = false);
+		virtual void Sprite (const CTexture* texP, CVertex center, double width, double height, bool bAlways = false);
 
 		virtual CPen* SelectObject (CPen* pen) { return pen; }
 		virtual CBrush* SelectObject (CBrush* brush) { return brush; }
 		virtual HGDIOBJ SelectObject (HGDIOBJ object) { return object; }
 
 		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys);
-		void RenderFace (CFaceListEntry& fle, CTexture* texP [], CBGRA* colorP = null);
+		void RenderFace (CFaceListEntry& fle, const CTexture* texP [], CBGRA* colorP = null);
 		void ComputeZoom (void);
 
 		BOOL InitProjection (void);

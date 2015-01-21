@@ -395,7 +395,6 @@ return (err == 0);
 
 //------------------------------------------------------------------------------
 
-//BOOL CDlcDoc::OnSaveDocument (LPCTSTR lpszPathName) 
 bool CDlcDoc::SaveFile (bool bSaveAs) 
 {
 	int result = 0;
@@ -408,20 +407,121 @@ if (!*m_szFile) {
 	char	szMissions [256];
 	CFileManager::SplitPath ((DLE.IsD1File ()) ? descentFolder [0] : missionFolder, szMissions, null, null);
 //	strcpy_s (m_szFile, sizeof (m_szFile), (DLE.IsD1File ()) ? "new.rdl" : "new.rl2");
-	sprintf_s (m_szFile, sizeof (m_szFile), "%s%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
+	sprintf_s (m_szFile, sizeof (m_szFile), "%s\\%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
 	}
 if (bSaveAs && !BrowseForFile (m_szFile, FALSE))
 	return false;
-if (strstr (m_szFile, ".hog"))
+bool bSaveToHog = strstr (m_szFile, ".hog") != null;
+if (bSaveToHog)
 	result = SaveToHog (m_szFile, m_szSubFile, bSaveAs);
 else
 	result = theMine->Save (m_szFile);
+if (result)
+	result = SaveCustomFiles (bSaveToHog);
 SetModifiedFlag (result == 0);
 if (result) {
 	UpdateCaption ();
 	AfxGetApp ()->AddToRecentFileList (m_szFile);
 	}
 return result != 0;
+}
+
+bool CDlcDoc::SaveCustomFiles (bool bSaveToHog)
+{
+	bool bSucceeded = true;
+
+if (bSaveToHog) {
+	for (int nType = 0; nType < NUM_CUSTOM_FILETYPES; nType++)
+		if (PromptShouldWriteCustomFile (nType)) {
+			bSucceeded &= WriteCustomFile (m_szFile, m_szSubFile, nType) > 0;
+			}
+	}
+else {
+	CFileManager fp;
+	char filename [MAX_PATH] = { 0 };
+	strcpy_s (filename, sizeof (filename), m_szFile);
+	if (textureManager.HasCustomTextures ()) {
+		char* ps = strstr (filename, ".");
+		if (ps)
+			strcpy_s (ps, sizeof (filename) - (ps - filename), ".pog");
+		else
+			strcat_s (filename, sizeof (filename), ".pog");
+		if (fp.Open (filename, "wb")) {
+			bSucceeded &= textureManager.CreatePog (fp) > 0;
+			fp.Close ();
+			}
+		}
+	
+	if (robotManager.HasCustomRobots ()) {
+		char* ps = strstr (filename, ".");
+		if (ps)
+			strcpy_s (ps, sizeof (filename) - (ps - filename), ".hxm");
+		else
+			strcat_s (filename, sizeof (filename), ".hxm");
+		if (fp.Open (filename, "wb"))
+			bSucceeded &= robotManager.WriteHXM (fp) > 0;
+		}
+	}
+
+return bSucceeded;
+}
+
+//--------------------------------------------------------------------------------
+
+bool CDlcDoc::PromptShouldWriteCustomFile (const int nType)
+{
+	bool bShouldModify = false;
+	static const char* szPogQuery = "This level contains custom textures.\nWould you like to save these textures into the HOG file?\n\n"
+		"Note: You must use version 1.2 or higher of Descent 2 to see\nthe textures when you play the game.";
+	char szOverwritePogQuery [200] = { 0 };
+	static const char* szHxmQuery = "This level contains custom robot settings.\nWould you like to save these changes into the HOG file?\n\n"
+		"Note: You must use version 1.2 or higher of Descent 2 for\nthe changes to take effect.";
+	static const char* szOverwriteHxmQuery = "Would you like to save changes to custom robot behavior for this level?";
+	char szSubFileName [24] = { 0 };
+
+strcpy_s (szSubFileName, sizeof (szSubFileName), m_szSubFile);
+LPSTR ext = strrchr (szSubFileName, '.');
+if (ext)
+	*ext = '\0';
+strcat_s (szSubFileName, sizeof (szSubFileName), GetCustomFileExtension (nType));
+
+switch (nType) {
+	case CUSTOM_FILETYPE_LIGHTMAP:
+		bShouldModify = true;
+		break;
+	case CUSTOM_FILETYPE_COLORMAP:
+		bShouldModify = true;
+		break;
+	case CUSTOM_FILETYPE_PALETTE:
+		bShouldModify = !DLE.IsD1File ();
+		break;
+	case CUSTOM_FILETYPE_POG:
+		if (DLE.IsD1File ())
+			break;
+		sprintf_s (szOverwritePogQuery, ARRAYSIZE (szOverwritePogQuery),
+			"This level contains %d new or changed custom textures.\nWould you like to save these changes?",
+			textureManager.CountModifiedTextures ());
+		// For new levels, we can have custom textures that aren't tagged "modified" so need to check differently
+		if (DoesSubFileExist (m_szFile, szSubFileName))
+			bShouldModify = textureManager.CountModifiedTextures () > 0 && QueryMsg (szOverwritePogQuery) == IDYES;
+		else
+			bShouldModify = textureManager.CountCustomTextures () > 0 && QueryMsg (szPogQuery) == IDYES;
+		break;
+	case CUSTOM_FILETYPE_HXM:
+		if (DLE.IsD1File ())
+			break;
+		// We don't currently track modified robots, so we'll just always prompt for overwrite (unless the
+		// custom robots have been removed in which case we won't ask as the question would be confusing)
+		if (DoesSubFileExist (m_szFile, szSubFileName))
+			bShouldModify = !robotManager.HasCustomRobots () || QueryMsg (szOverwriteHxmQuery) == IDYES;
+		else
+			bShouldModify = robotManager.HasCustomRobots () && QueryMsg (szHxmQuery) == IDYES;
+		break;
+	default:
+		break;
+	}
+
+return bShouldModify;
 }
 
 //------------------------------------------------------------------------------

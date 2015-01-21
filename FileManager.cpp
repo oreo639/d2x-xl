@@ -11,6 +11,8 @@ AND AGREES TO THE TERMS HEREIN AND ACCEPTS THE SAME BY USE OF THIS FILE.
 COPYRIGHT 1993-1999 PARALLAX SOFTWARE CORPORATION.  ALL RIGHTS RESERVED.
 */
 
+#include "stdafx.h"
+
 #ifdef HAVE_CONFIG_H
 #include <conf.h>
 #endif
@@ -644,3 +646,189 @@ return statbuf.st_mtime;
 }
 
 // ----------------------------------------------------------------------------
+
+bool CFileManager::RunOpenFileDialog (char *szFilename, const size_t cchFilename, const char *szFilterText, const char *szExt, HWND hWnd)
+{
+	tFileFilter filter = { szFilterText, szExt };
+
+return RunOpenFileDialog (szFilename, cchFilename, &filter, 1, hWnd);
+}
+
+// ----------------------------------------------------------------------------
+
+bool CFileManager::RunMultiOpenDialog (CArray <CString> &filenames, const char *szFilterText, const char *szExt, HWND hWnd)
+{
+	tFileFilter filter = { szFilterText, szExt };
+
+return RunMultiOpenDialog (filenames, &filter, 1, hWnd);
+}
+
+// ----------------------------------------------------------------------------
+
+bool CFileManager::RunSaveFileDialog (char *szFilename, const size_t cchFilename, const char *szFilterText, const char *szExt, HWND hWnd)
+{
+	tFileFilter filter = { szFilterText, szExt };
+
+return RunSaveFileDialog (szFilename, cchFilename, &filter, 1, hWnd);
+}
+
+// ----------------------------------------------------------------------------
+
+void ConstructFilters (char *szFilters, const size_t cchFilters, const CFileManager::tFileFilter *filters, const DWORD nFilters)
+{
+	char *pszNextString = szFilters;
+
+for (DWORD i = 0; i < nFilters; i++) {
+	if (pszNextString < szFilters + cchFilters)
+		pszNextString += sprintf_s (pszNextString, szFilters + cchFilters - pszNextString, "%s", filters [i].szFilterText) + 1;
+	if (pszNextString < szFilters + cchFilters)
+		pszNextString += sprintf_s (pszNextString, szFilters + cchFilters - pszNextString, "*.%s", filters [i].szExt) + 1;
+	}
+if (pszNextString < szFilters + cchFilters)
+	pszNextString += sprintf_s (pszNextString, szFilters + cchFilters - pszNextString, "All files") + 1;
+if (pszNextString < szFilters + cchFilters)
+	pszNextString += sprintf_s (pszNextString, szFilters + cchFilters - pszNextString, "*.*") + 1;
+// Zero the rest of the buffer - mainly for debug builds where sprintf_s will write 0xFF to the remainder, which OFN doesn't like
+memset (pszNextString, 0, szFilters + cchFilters - pszNextString);
+}
+
+// ----------------------------------------------------------------------------
+
+bool CFileManager::RunOpenFileDialog (char *szFilename, const size_t cchFilename, const tFileFilter *filters, const DWORD nFilters, HWND hWnd)
+{
+	OPENFILENAME ofn = { 0 };
+	char szFilters [MAX_PATH] = { 0 };
+
+if (!filters || nFilters < 1)
+	return false;
+
+ConstructFilters (szFilters, ARRAYSIZE (szFilters), filters, nFilters);
+
+ofn.lStructSize = sizeof (OPENFILENAME);
+ofn.hwndOwner = hWnd;
+ofn.lpstrFilter = szFilters;
+ofn.nFilterIndex = nFilters;
+ofn.lpstrFile = szFilename;
+ofn.lpstrDefExt = filters [0].szExt;
+ofn.nMaxFile = cchFilename;
+ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+return TRUE == GetOpenFileName (&ofn);
+}
+
+// ----------------------------------------------------------------------------
+
+bool CFileManager::RunMultiOpenDialog (CArray <CString> &filenames, const tFileFilter *filters, const DWORD nFilters, HWND hWnd)
+{
+	char szOfnFileBuf [512] = { 0 }; // buffer for ofn dialog, can be multiple files
+	char szFilePath [256] = { 0 }; // buffer for fp name
+	char *pszFile = null;
+	OPENFILENAME ofn = { 0 };
+	char szFilters [MAX_PATH] = { 0 };
+
+if (!filters || nFilters < 1)
+	return false;
+
+ConstructFilters (szFilters, ARRAYSIZE (szFilters), filters, nFilters);
+
+ofn.lStructSize = sizeof (OPENFILENAME);
+ofn.hwndOwner = hWnd;
+ofn.lpstrFilter = szFilters;
+ofn.nFilterIndex = nFilters;
+ofn.lpstrFile = szOfnFileBuf;
+ofn.lpstrDefExt = filters [0].szExt;
+ofn.nMaxFile = ARRAYSIZE (szOfnFileBuf);
+ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT | OFN_EXPLORER;
+if (!GetOpenFileName (&ofn))
+	return false;
+
+if (!(GetFileAttributes (szOfnFileBuf) & FILE_ATTRIBUTE_DIRECTORY))
+	// only one file selected, direct copy
+	strncpy_s (szFilePath, ARRAYSIZE (szFilePath), szOfnFileBuf, _TRUNCATE);
+
+do {
+	// If we didn't already get a filename, we had multiple files selected.
+	// OpenFileDialog crams these into the same buffer (szOfnFileBuf) separated
+	// by nulls - directory first, then each filename. We have to parse this
+	// to extract all the filenames.
+	if (!pszFile && !*szFilePath)
+		// get first filename
+		pszFile = szOfnFileBuf + strlen (szOfnFileBuf) + 1;
+	if (pszFile >= szOfnFileBuf + ARRAYSIZE (szOfnFileBuf)) {
+		ErrorMsg ("Source file directory path too long.");
+		return false;
+		}
+	if (!*szFilePath)
+		// multiple files, have to construct the next path
+		sprintf_s (szFilePath, ARRAYSIZE (szFilePath), "%s\\%s", szOfnFileBuf, pszFile);
+
+	filenames.Add (CString (szFilePath));
+
+	// get next file path if any
+	if (pszFile) {
+		pszFile += strlen (pszFile) + 1;
+		if (pszFile >= szOfnFileBuf + ARRAYSIZE (szOfnFileBuf))
+			pszFile = null;
+		memset (szFilePath, 0, sizeof (szFilePath));
+		}
+	} while (pszFile && *pszFile);
+
+return true;
+}
+
+// ----------------------------------------------------------------------------
+
+bool CFileManager::RunSaveFileDialog (char *szFilename, const size_t cchFilename, const tFileFilter *filters, const DWORD nFilters, HWND hWnd)
+{
+	OPENFILENAME ofn = { 0 };
+	char szFilters [MAX_PATH] = { 0 };
+
+if (!filters || nFilters < 1)
+	return false;
+
+ConstructFilters (szFilters, ARRAYSIZE (szFilters), filters, nFilters);
+
+ofn.lStructSize = sizeof (OPENFILENAME);
+ofn.hwndOwner = hWnd;
+ofn.lpstrFilter = szFilters;
+ofn.nFilterIndex = 1;
+ofn.lpstrFile = szFilename;
+ofn.lpstrDefExt = filters [0].szExt;
+ofn.nMaxFile = cchFilename;
+ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
+
+// If there is a filename set, use its extension as the default
+if (strchr (szFilename, '.'))
+	for (DWORD i = 0; i < nFilters; i++)
+		if (strcmp (strrchr (szFilename, '.'), filters [i].szExt) == 0) {
+			ofn.nFilterIndex = i;
+			ofn.lpstrDefExt = filters [i].szExt;
+			break;
+			}
+
+return TRUE == GetSaveFileName (&ofn);
+}
+
+// ----------------------------------------------------------------------------
+
+bool CFileManager::RunMultiSaveDialog (char *szPath, const size_t cchPath, const char *szPromptText, HWND hWnd)
+{
+	// SHBrowseForFolder and SHGetPathFromIDList assume a MAX_PATH buffer, so we can't use the input
+	char szPathBuffer [MAX_PATH] = {0};
+	BROWSEINFO bi = {0};
+
+bi.hwndOwner = hWnd;
+bi.pszDisplayName = szPathBuffer;
+bi.lpszTitle = "Choose a location to export the files to:";
+bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
+PIDLIST_ABSOLUTE pidlFolder = SHBrowseForFolder (&bi);
+if (!pidlFolder)
+	return false;
+BOOL bSuccess = SHGetPathFromIDList (pidlFolder, szPathBuffer);
+CoTaskMemFree (pidlFolder);
+if (!bSuccess)
+	return false;
+strcpy_s (szPath, cchPath, szPathBuffer);
+
+return true;
+}

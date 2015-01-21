@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-short CMine::Save (const char * szFile, bool bSaveToHog)
+short CMine::Save (const char * szFile)
 {
 if (segmentManager.Overflow ()) {
 	if (vertexManager.Overflow ()) 
@@ -111,28 +111,6 @@ if (m_fileType == RDL_FILE)
 	fp.Write (hostageTextOffset); // hostageTextOffset
 fp.Seek (0, SEEK_END);
 fp.Close ();
-
-if (textureManager.HasCustomTextures () && !bSaveToHog) {
-	char* ps = strstr (filename, ".");
-	if (ps)
-		strcpy_s (ps, sizeof (filename) - (ps - filename), ".pog");
-	else
-		strcat_s (filename, sizeof (filename), ".pog");
-	if (fp.Open (filename, "wb")) {
-		textureManager.CreatePog (fp);
-		fp.Close ();
-		}
-	}
-
-if (robotManager.HasCustomRobots () && !bSaveToHog) {
-	char* ps = strstr (filename, ".");
-	if (ps)
-		strcpy_s (ps, sizeof (filename) - (ps - filename), ".hxm");
-	else
-		strcat_s (filename, sizeof (filename), ".hxm");
-	if (fp.Open (filename, "wb"))
-		robotManager.WriteHXM (fp);
-	}
 return 1;
 }
 

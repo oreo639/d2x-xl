@@ -303,7 +303,7 @@ else {
 
 //------------------------------------------------------------------------------
 
-inline bool CRendererSW::Blend (CBGR& dest, CBGRA& src, depthType& depth, depthType z, short brightness)
+inline bool CRendererSW::Blend (CBGR& dest, const CBGRA& src, depthType& depth, depthType z, short brightness)
 {
 if (brightness == 0)
 	return false;
@@ -352,7 +352,7 @@ return true;
 
 //------------------------------------------------------------------------------
 
-void CRendererSW::RenderFace (CFaceListEntry& fle, CTexture* texP, ushort rowOffset, CBGRA* colorP)
+void CRendererSW::RenderFace (CFaceListEntry& fle, const CTexture* texP, ushort rowOffset, CBGRA* colorP)
 {
 	int				i;
 	CLongVector		minPt, maxPt;
@@ -365,12 +365,11 @@ void CRendererSW::RenderFace (CFaceListEntry& fle, CTexture* texP, ushort rowOff
 	ushort			bmWidth2;
 	ubyte*				fadeTables = paletteManager.FadeTable ();
 	bool				bTexColor = (colorP == null);
-	double			scale = (double) max (texP->Width (), texP->m_info.height);
-	CBGRA*			colorBuf = texP->Buffer ();
+	double			scale = (double) max (texP->RenderWidth (), texP->RenderHeight ());
+	const CBGRA*	colorBuf = texP->Buffer ();
 	int				bIlluminate = RenderIllumination ();
 
-texP->m_info.height = texP->Width ();
-bmWidth2 = texP->Width () / 2;
+bmWidth2 = texP->RenderWidth () / 2;
 m_alpha = float (Alpha ()) / 255.0f;
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
@@ -426,7 +425,7 @@ B = IA * UV;
 #endif
 for (int y = minPt.y; y < maxPt.y; y++) {
 	int i;
-	CBGRA* texColorP = colorP;
+	const CBGRA* texColorP = colorP;
 	short deltaLight, scanLight;
 	// Determine min and max x for this y.
 	// Check each of the four lines of the quadrilateral
@@ -492,7 +491,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				// the 22 allows for large texture bitmap sizes
 				// the 10 gives more than enough accuracy for the delta values
 
-				m = min (texP->Width (), texP->m_info.height);
+				m = min (texP->RenderWidth (), texP->RenderHeight ());
 				if (!m)
 					m = 64;
 				m *= 1024;
@@ -504,8 +503,8 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				dv = ((uint) (((v0 - v1) * 1024.0) / dx) % m);
 				u = ((uint) (u0 * 1024.0)) % m;
 				v = ((uint) (-v0 * 1024.0)) % m;
-				vd = 1024 / texP->m_info.height;
-				vm = texP->Width () * (texP->m_info.height - 1);
+				vd = 1024 / texP->RenderHeight ();
+				vm = texP->RenderWidth () * (texP->RenderHeight () - 1);
 				
 				i = (uint) y/*(ViewHeight () - y - 1)*/ * (uint) rowOffset + x0;
 				double z, dz;
@@ -592,7 +591,8 @@ return (a.v.x * b.v.y > a.v.y * b.v.x);
 
 void CRendererSW::DrawFaceTextured (CFaceListEntry& fle) 
 {
-	CTexture		tex (textureManager.m_bmBuf), * texP [2] = {null, null};
+	CTexture		tex (textureManager.SharedBuffer ());
+	const CTexture* texP [2] = {null, null};
 	CSegment*	segP = segmentManager.Segment (fle);
 	CSide*		sideP = segmentManager.Side (fle);
 	CWall*		wallP = segmentManager.Wall (fle);
@@ -607,20 +607,22 @@ SetAlpha (255);
 
 short nBaseTex = sideP->BaseTex ();
 short nOvlTex = sideP->OvlTex (1);
-if (((nOvlTex & TEXTURE_MASK) != 0) && !sideP->OvlAlignment () && !textureManager.Texture (nOvlTex)->Transparent ()) {
+if (((nOvlTex & TEXTURE_MASK) != 0) && !sideP->OvlAlignment () && !textureManager.Textures (nOvlTex)->Transparent ()) {
 	nBaseTex = nOvlTex;
 	nOvlTex = 0;
 	}
 
 if (textureManager.IsAnimated (sideP->BaseTex ())) {
-	textureManager.BlendTextures (sideP->BaseTex (), sideP->OvlTex (), texP [0] = &tex, 0, 0);
+	texP [0] = &tex;
+	tex.BlendTextures (sideP->BaseTex (), sideP->OvlTex (), 0, 0);
 	tex.DrawAnimDirArrows (sideP->BaseTex ());
 	}
 else if (nOvlTex) {
-	textureManager.BlendTextures (nBaseTex, nOvlTex, texP [0] = &tex, 0, 0);
+	texP [0] = &tex;
+	tex.BlendTextures (nBaseTex, nOvlTex, 0, 0);
 	}
 else {
-	texP [0] = textureManager.Texture (nBaseTex);
+	texP [0] = textureManager.Textures (nBaseTex);
 	if (wallP != null) {
 		m_alpha = wallP->Alpha ();
 		if (wallP->IsTransparent () || wallP->IsCloaked ()) {

@@ -96,8 +96,8 @@ if (nVisible > 0) {
 		}
 	}
 if (nVisible > 0)
-	return PaintTexture (&m_textureWnd, m_bkColor, -1, -1, nBaseTex, nOvlTex);
-return PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES);
+	return PaintTexture (&m_textureWnd, m_bkColor, nBaseTex, nOvlTex);
+return PaintTexture (&m_textureWnd, m_bkColor, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -108,10 +108,10 @@ CToolDlg::OnPaint ();
 if (m_textureWnd.m_hWnd) {
 	if (TextureIsVisible ()) {
 		CSide *sideP = m_bOtherSegment ? other->Side () : current->Side ();
-		PaintTexture (&m_textureWnd, m_bkColor, -1, -1, sideP->BaseTex (), sideP->OvlTex (0));
+		PaintTexture (&m_textureWnd, m_bkColor, sideP->BaseTex (), sideP->OvlTex (0));
 		}
 	else
-		PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES);
+		PaintTexture (&m_textureWnd, m_bkColor, -1);
 	m_textureWnd.InvalidateRect (null);
 	m_textureWnd.UpdateWindow ();
 	}
@@ -163,7 +163,7 @@ texture [1] = sideP->OvlTex (0);
 // redraw them, then return
 bScroll = textureManager.ScrollSpeed (texture [0], &x, &y);
 if (bScroll) {
-	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, texture [0], texture [1], scroll_offset_x, scroll_offset_y);
+	PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1], scroll_offset_x, scroll_offset_y);
 //	DrawTexture (texture [0], texture [1], scroll_offset_x, scroll_offset_y);
 	if (old_x != x || old_y != y) {
 		scroll_offset_x = 0;
@@ -247,7 +247,7 @@ if (anim [index [0]] || anim [index [1]]) {
 			texture [i] = anim [index [i]] + m_frame [i];
 			}
 		}
-	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, texture [0], texture [1]);
+	PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1]);
 	}
 }
 
@@ -259,6 +259,74 @@ if (nIdEvent == (UINT) m_nTimerId)
 	AnimateTexture ();
 else 
 	CToolDlg::OnTimer (nIdEvent);
+}
+
+//------------------------------------------------------------------------------
+
+BEGIN_MESSAGE_MAP(CAnimTexWnd, CWnd)
+	ON_WM_TIMER ()
+END_MESSAGE_MAP()
+
+//------------------------------------------------------------------------------
+
+CAnimTexWnd::CAnimTexWnd ()
+	: CWnd ()
+{
+m_nAnimTimer = -1;
+}
+
+//------------------------------------------------------------------------------
+
+void CAnimTexWnd::OnDestroy (void)
+{
+StopAnimation ();
+}
+
+//------------------------------------------------------------------------------
+
+bool CAnimTexWnd::StopAnimation ()
+{
+	BOOL result = TRUE;
+
+if (m_nAnimTimer >= 0) {
+	result = KillTimer (m_nAnimTimer);
+	m_nAnimTimer = -1;
+	}
+
+return TRUE == result;
+}
+
+//------------------------------------------------------------------------------
+
+bool CAnimTexWnd::StartAnimation (const CTexture *pTexture)
+{
+if (m_nAnimTimer >= 0)
+	StopAnimation ();
+
+m_nAnimTimer = SetTimer (1, pTexture->FrameTime (), null);
+m_nTexAll = pTexture->IdAll ();
+m_nFrame = 0;
+
+if (0 == m_nAnimTimer) {
+	// failed
+	m_nAnimTimer = -1;
+	return false;
+	}
+return true;
+}
+
+//------------------------------------------------------------------------------
+
+void CAnimTexWnd::OnTimer (UINT_PTR nIdEvent)
+{
+if (nIdEvent == (UINT) m_nAnimTimer) {
+	const CTexture *pTexture = textureManager.AllTextures (m_nTexAll);
+	PaintTexture (this, IMG_BKCOLOR, pTexture->GetFrame (m_nFrame));
+	m_nFrame++;
+	m_nFrame %= pTexture->NumFrames ();
+	}
+else 
+	CWnd::OnTimer (nIdEvent);
 }
 
 //------------------------------------------------------------------------------

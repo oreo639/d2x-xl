@@ -744,7 +744,7 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 				if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 					return true;
 				}
-			else if (!objP->CheckEffectType (m_bAutoFixBugs)) {
+			else if (!objP->CheckEffectType (m_bAutoFixBugs == TRUE)) {
 				sprintf_s (message, sizeof (message),"%s: Illegal effect id (object=%d,id=%d)", m_bAutoFixBugs ? "FIXED" : "WARNING", nObject, objP->Id ());
 				if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 					return true;

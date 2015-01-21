@@ -267,7 +267,7 @@ else {
 
 #define USE_CLUT 1
 
-ubyte CPaletteManager::ClosestColor (CBGR& color)
+ubyte CPaletteManager::ClosestColor (CBGR& color, bool bAllowTransp)
 {
 
 	CBGR* palette = Current ();
@@ -276,8 +276,10 @@ ubyte CPaletteManager::ClosestColor (CBGR& color)
 
 #if USE_CLUT
 static CBGR* clutPalette = null;
-if (clutPalette != palette) {
+static bool bClutTransp = true;
+if (clutPalette != palette || bClutTransp != bAllowTransp) {
 	clutPalette = palette;
+	bClutTransp = bAllowTransp;
 	ResetCLUT ();
 	}
 int l = (int) color.r + ((int) color.g << 8) + ((int) color.b << 16);
@@ -285,7 +287,7 @@ uint f = 1 << (l & 31);
 if ((m_clutValid [l / 32] & f) != 0)
 	return m_clut [l];
 #endif
-for (int i = 0; i < 256; i++) {
+for (int i = 0; i < (bClutTransp ? 256 : 254); i++) {
 	delta = color.Delta (palette [i]);
 	if (delta < closestDelta) {
 		closestIndex = i;
@@ -299,6 +301,27 @@ m_clut [l] = closestIndex;
 m_clutValid [l / 32] |= f;
 #endif
 return closestIndex;
+}
+
+//------------------------------------------------------------------------------
+
+int CPaletteManager::NumAvailablePalettes (void)
+{
+	// Hard coding for now but in future we might allow custom palettes
+	return 6;
+}
+
+//------------------------------------------------------------------------------
+
+const char* CPaletteManager::AvailablePaletteName (int nPalette)
+{
+	static char* paletteNames [] = {
+		"GroupA", "Water", "Fire", "Ice", "Alien1", "Alien2"
+		};
+
+if (nPalette < 0 || nPalette >= (sizeof (paletteNames) / sizeof (paletteNames [0])))
+	return null;
+return paletteNames [nPalette];
 }
 
 //------------------------------------------------------------------------------

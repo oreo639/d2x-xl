@@ -542,6 +542,8 @@ inline double Degrees (double a) {
 #define BM_FLAG_RLE                8
 #define BM_FLAG_PAGED_OUT          16
 #define BM_FLAG_RLE_BIG            32
+#define BM_DFLAG_ANIMATED          0x40
+#define BM_DFLAG_ANIMFRAME_MASK    0x3F
 
 // -----------------------------------------------------------------------------
 // New unimplemented trigger ideas  

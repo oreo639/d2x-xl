@@ -272,6 +272,8 @@ public:
 	afx_msg void OnEditPreferences();
 	afx_msg void OnEditTrigger();
 	afx_msg void OnEditMission();
+	afx_msg void OnEditHog();
+	afx_msg void OnEditPog();
 	afx_msg void OnEditReactor();
 	afx_msg void OnTunnelGenerator();
 	afx_msg void OnTxtFilters();
@@ -391,6 +393,8 @@ public:
 	afx_msg void OnUpdateViewAlllines(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewTexturemapped(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewCollapse (CCmdUI* pCmdUI);
+	afx_msg void OnUpdateEditHog (CCmdUI* pCmdUI);
+	afx_msg void OnUpdateEditPog (CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

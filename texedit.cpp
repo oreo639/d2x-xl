@@ -298,7 +298,7 @@ m_pParentWnd->SendMessage (WM_RBUTTONUP, (WPARAM) nFlags, (LPARAM) point.x + (((
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-CTextureEdit::CTextureEdit (int bOverlay, char* pszName, CWnd *pParent)
+CTextureEdit::CTextureEdit (const CTexture *pTexture, CWnd *pParent)
 	: CDialog (IDD_EDITTEXTURE, pParent) 
 {
 *m_szColors = '\0';
@@ -307,19 +307,17 @@ m_pPaintWnd = null;
 m_pOldPal = null;
 m_lBtnDown =
 m_rBtnDown = false;
-strcpy_s (m_szName, sizeof (m_szName), pszName);
+m_nTexAll = pTexture->IdAll ();
+strcpy_s (m_szName, sizeof (m_szName), pTexture->Name ());
 _strlwr_s (m_szName, sizeof (m_szName));
-m_bOverlay = bOverlay;
-if (!*m_szDefExt)
-	strcpy_s (m_szDefExt, sizeof (m_szDefExt), "bmp");
 }
 
 //------------------------------------------------------------------------------
 
 CTextureEdit::~CTextureEdit ()
 {
-m_texture [0].Release ();
-m_texture [1].Release ();
+m_texture [0].Clear ();
+m_texture [1].Clear ();
 }
 
 //------------------------------------------------------------------------------
@@ -333,6 +331,7 @@ CDialog::OnInitDialog ();
 
 	CWnd*	pWnd;
 	CRect	rc;
+	const CTexture *texP = textureManager.AllTextures (m_nTexAll);
 
 pWnd = GetDlgItem (IDC_TEXEDIT_TEXTURE);
 pWnd->GetClientRect (rc);
@@ -348,28 +347,25 @@ SetCursor (LoadCursor (AfxGetInstanceHandle (), "PENCIL_CURSOR"));
 //  PaletteButton->SetCursor(null, IDC_CROSS);
 m_fgColor = 0; // black
 m_bgColor = 1; // white
-m_lBtnDown  = FALSE;
-m_rBtnDown = FALSE;
-m_bModified = FALSE;
-m_iTexture = m_bOverlay ? current->Side ()->OvlTex (0) : current->Side ()->BaseTex ();
-if (m_iTexture >= MAX_TEXTURES_D2)
-	m_iTexture = 0;
-m_texP = textureManager.Textures (DLE.FileType (), m_iTexture);
-if ((m_texP->Buffer () == null) || !m_texP->m_info.bValid) {
+m_lBtnDown  = false;
+m_rBtnDown = false;
+m_bModified = false;
+m_bPendingRevert = false;
+if ((texP->Buffer () == null) || !texP->IsLoaded ()) {
 	DEBUGMSG (" Texture tool: Invalid texture");
 	EndDialog (IDCANCEL);
 	}
-else if (!m_texture [0].Copy (*m_texP)) {
+else if (!m_texture [0].Copy (*texP)) {
 	DEBUGMSG (" Texture tool: Not enough memory for texture editing");
 	EndDialog (IDCANCEL);
 	}
 m_texture [1].Clear ();
-if (!m_texture [1].Allocate (m_texP->Size ()))
+if (!m_texture [1].Copy (m_texture [0]))
 	DEBUGMSG (" Texture tool: Not enough memory for undo function");
 Backup ();
 Refresh ();
-m_nWidth = m_texP->Width ();
-m_nHeight = m_texP->Height ();
+m_nWidth = texP->Width ();
+m_nHeight = texP->Height ();
 return TRUE;
 }
 
@@ -419,10 +415,10 @@ else if (PtInRect (rcPal, point)) {
 
 void CTextureEdit::OnOK ()
 {
-if (m_bModified) {
-	m_texP->Copy (m_texture [0]);
-	m_texP->m_info.bCustom = true;
-	}
+if (m_bModified)
+	textureManager.OverrideTexture (m_nTexAll, &m_texture [0]);
+else if (m_bPendingRevert)
+	textureManager.RevertTexture (m_nTexAll);
 CDialog::OnOK ();
 }
 
@@ -530,7 +526,7 @@ void CTextureEdit::ColorPoint (UINT nFlags, CPoint& point, int& color)
 
 GetClientRect (&m_textureWnd, rcEdit);
 
-if (m_texture [0].m_info.nFormat) {
+if (m_texture [0].Format () == TGA) {
 	m_lBtnDown = m_rBtnDown = false;
 	ErrorMsg ("Cannot edit TGA images.");
 	}
@@ -563,336 +559,29 @@ Refresh ();
 
 //------------------------------------------------------------------------------
 
-inline int Sqr (int i)
-{
-return i * i;
-}
-
-//------------------------------------------------------------------------------
-
-inline int ColorDelta (RGBQUAD *bmPal, PALETTEENTRY *sysPal, int j)
-{
-sysPal += j;
-return 
-	Sqr (int (bmPal->rgbBlue) - int (sysPal->peBlue)) + 
-	Sqr (int (bmPal->rgbGreen) - int (sysPal->peGreen)) + 
-	Sqr (int (bmPal->rgbRed) - int (sysPal->peRed));
-}
-
-//------------------------------------------------------------------------------
-
-bool CTextureEdit::LoadBitmap (CFileManager& fp)
-{
-	RGBQUAD* palette = null;
-	PALETTEENTRY* sysPal = null;
-	BITMAPFILEHEADER bmfh;
-	BITMAPINFOHEADER bmih;
-	ubyte palIndexTable [256];
-	bool bFuncRes = false;
-	uint x, y, width, paletteSize;
-	bool bTopDown = false;
-
-palette = new RGBQUAD [256];
-if (palette == null) {
-	ErrorMsg ("Not enough memory for palette.");
-	goto errorExit;
-	}
-
-sysPal = new PALETTEENTRY [256];
-if (sysPal == null) {
-	ErrorMsg ("Not enough memory for palette.");
-	goto errorExit;
-	}
-
-// read the header information
-fp.Read (&bmfh, sizeof (bmfh), 1);
-fp.Read (&bmih, sizeof (bmih), 1);
-
-// handle exceptions
-if (bmih.biClrUsed == 0)  
-	bmih.biClrUsed = 256;
-if (bmih.biHeight < 0) {
-	bmih.biHeight = -bmih.biHeight;
-	bTopDown = true;
-	}
-
-// make sure it is a bitmap file
-if (bmfh.bfType != 'B' + (((ushort) 'M') << 8) ) {
-	ErrorMsg ("This is not a bitmap file.");
-	goto errorExit;
-	}
-
-// make sure it is a 256 or 16 color bitmap
-if (bmih.biBitCount != 8 && bmih.biBitCount != 4) {
-	ErrorMsg ("DLE only reads 16 or 256 color bitmap files.\n\n"
-	"Hint: Load this image into a paint program\n"
-	"then save it as a 16 or 256 color *.bmp file.");
-	goto errorExit;
-	}
-
-// make sure the data is not compressed
-if (bmih.biCompression != BI_RGB) {
-	ErrorMsg ("Cannot read compressed bitmap files.\n\n"
-	"Hint: Try to load this image into a paint program\n"
-	"then save it as a 256 color *.bmp file with the\n"
-	"compression option off.");
-	goto errorExit;
-	}
-
-// read palette
-paletteSize = min ((int) bmih.biClrUsed, 256);
-if (paletteSize == 0)
-	paletteSize = 1 << bmih.biBitCount;
-fp.Read (palette, sizeof (RGBQUAD), paletteSize);
-
-// read the logical palette entries
-paletteManager.Render ()->GetPaletteEntries (0, 256, sysPal);
-
-// check color palette
-int i;
-for (i = 0; i < int (paletteSize); i++) {
-	palIndexTable [i] = i;
-	if ((palette [i].rgbRed != sysPal [i].peRed) ||
-		 (palette [i].rgbGreen != sysPal [i].peGreen) ||
-		 (palette [i].rgbBlue != sysPal [i].peBlue)) {
-		break;
-		}		
-	}
-
-if (i != int (paletteSize)) {
-	if (!DLE.ExpertMode ())
-		ErrorMsg ("The palette of this bitmap file is not exactly the\n"
-					 "the same as the Descent palette. Therefore, some color\n"
-					 "changes may occur.\n\n"
-					 "Hint: If you want the palettes to match, then save one of\n"
-					 "the Descent textures to a file and use it as a starting point.\n"
-					 "If you plan to use transparencies, then you may want to start\n"
-					 "with the texture called 'empty'.");
-		for (i = 0; i < int (paletteSize); i++) {
-		uint closestIndex = i;
-		if ((palette [i].rgbRed != sysPal [i].peRed) ||
-			 (palette [i].rgbGreen != sysPal [i].peGreen) ||
-			 (palette [i].rgbBlue != sysPal [i].peBlue)) {
-			uint closestDelta = 0x7fffffff;
-			for (int j = 0; j < 255; j++) {
-				uint delta = ColorDelta (palette + i, sysPal, j);
-				if (delta < closestDelta) {
-					closestIndex = j;
-					if (!(closestDelta = delta))
-						break;
-					}
-				}
-			palette [i].rgbRed = sysPal [closestIndex].peRed;
-			palette [i].rgbGreen = sysPal [closestIndex].peGreen;
-			palette [i].rgbBlue = sysPal [closestIndex].peBlue;
-			}
-		palIndexTable [i] = closestIndex;
-		}
-	}
-
-int x0, x1, y0, y1;
-// if size is not 64 x 64, ask if they want to "size to fit"
-if ((bmih.biWidth != m_nWidth) || (bmih.biHeight != m_nHeight)) {
-	sprintf_s (message, sizeof (message), 
-				  "The bitmap being loaded is a %d x %d image.\n"
-				  "Do you want the image to be sized to fit\n"
-				  "the current %d x %d texture size?\n\n"
-				  "(press no to see another option)", 
-				 (int) bmih.biWidth, (int) bmih.biHeight, 
-				 (int) m_nWidth, (int) m_nHeight);
-	switch (Query2Msg (message, MB_YESNOCANCEL)) {
-		case IDYES:
-			Backup();
-			x0 = 0;
-			y0 = 0;
-			x1 = (int) bmih.biWidth + 1;
-			y1 = (int) bmih.biHeight + 1;
-			break;
-
-		case IDNO:
-			Backup();
-			if (Query2Msg ("Would you like to center/tile the image?", MB_YESNO) == IDYES) {
-				x0 = (int)(bmih.biWidth - m_nWidth) / 2;
-				y0 = (int)(bmih.biHeight - m_nHeight) / 2;
-				x1 = x0 + m_nWidth;
-				y1 = y0 + m_nHeight;
-				}
-			else if ((bmih.biWidth > 1024) || (bmih.biHeight > 1024)) 
-				goto errorExit;
-			else {
-				x0 = 0;
-				y0 = 0;
-				x1 = m_nWidth = (ushort) bmih.biWidth;
-				y1 = m_nHeight = (ushort) bmih.biHeight;
-				}
-			break;
-
-			default:
-				goto errorExit;
-		}
-	}
-else {
-	x0 = 0;
-	y0 = 0;
-	x1 = m_nWidth;
-	y1 = m_nHeight;
-	}
-if (bTopDown) {
-	y0 = ~y0;
-	y1 = ~y1;
-	}
-
-// save bitmap for undo command
-m_nSize = m_nWidth * m_nHeight;
-
-// read data into bitmap
-m_bModified = TRUE;  // mark this as m_bModified
-width = (((int)(bmih.biWidth * bmih.biBitCount + 31) >> 3)) & ~3;
-double mx, my;
-mx = (x1 - x0) / (double) m_nWidth;
-my = (y1 - y0) / (double) m_nHeight;
-uint z = 0;
-for (y = 0; y < m_nHeight; y++) {
-	for (x = 0; x < m_nWidth; x++, z++) {
-		int u = (int) (mx * x + x0);
-		int v = (int) (my * y + y0);
-		u %= (int) bmih.biWidth;         //  -width to width
-		if (u < 0) 
-			u += (int) bmih.biWidth;		//       0 to width
-		v %= (int) bmih.biHeight;        // -height to height
-		if (v < 0) 
-			v += (int) bmih.biHeight;		//       0 to height
-	
-		ubyte palIndex, i;
-
-		if (bmih.biBitCount == 4) {
-			long offset = (int) v * (int) width + (int) u / 2;
-			fp.Seek ((int) bmfh.bfOffBits + offset, SEEK_SET);
-			fp.Read (&palIndex, 1, 1);
-			if (!(u & 1))
-			palIndex >>= 4;
-			palIndex &= 0x0f;
-			i = palIndexTable [palIndex];
-			m_texture [0][z] = i;
-			}
-		else {
-			fp.Seek ((int) bmfh.bfOffBits + (int) v *(int) width + (int) u, SEEK_SET);
-			fp.Read (&palIndex, 1, 1);
-			i = palIndexTable [palIndex];
-			m_texture [0][z] = palette [palIndex];
-			}
-		if (i >= 254)
-			m_texture [0][z].a = 0;
-		}
-	}
-
-m_texture [0].m_info.nFormat = 0;
-bFuncRes = true;
-
-errorExit:
-
-if (palette) 
-	delete palette;
-if (sysPal) 
-	delete sysPal;
-return bFuncRes;
-}
-
-//------------------------------------------------------------------------------
-
-char	CTextureEdit::m_szDefExt [4] = "bmp";
-
 void CTextureEdit::OnLoad () 
 {
-  OPENFILENAME ofn;
-  char szFile[80] = "\0";
-  CFileManager fp;
-  bool bFuncRes;
+	char szFile [MAX_PATH] = {0};
+	const char *szDefExt = m_texture [0].Format () == BMP ? "bmp" : "tga";
+	CFileManager::tFileFilter filters [] = {
+		{ "Truevision Targa", "tga" },
+		{ "256 color Bitmap Files", "bmp" }
+	};
+	bool bFuncRes;
 
-  sprintf_s (szFile, sizeof (szFile), "*.%s", m_szDefExt);
-  memset (&ofn, 0, sizeof (OPENFILENAME));
-  ofn.lStructSize = sizeof (OPENFILENAME);
-  ofn.hwndOwner = m_hWnd;
-  ofn.lpstrFilter = "all files\0*.bmp;*.tga\0bitmap files\0*.bmp\0TGA files\0*.tga\0";
-  ofn.nFilterIndex = 1;
-  ofn.lpstrFile = szFile;
-  ofn.lpstrDefExt = m_szDefExt;
-  ofn.nMaxFile = sizeof (szFile);
-  ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-if (GetOpenFileName (&ofn)) {
-	if (strchr (ofn.lpstrFile, '.'))
-		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strrchr (ofn.lpstrFile, '.') + 1, 3);
-	if (!fp.Open (ofn.lpstrFile, "rb")) {
-		ErrorMsg ("Could not open texture file.");
-		goto errorExit;
-		}
+sprintf_s (szFile, ARRAYSIZE (szFile), "*.%s", szDefExt);
+if (CFileManager::RunOpenFileDialog (szFile, ARRAYSIZE (szFile), filters, ARRAYSIZE (filters), m_hWnd)) {
 	Backup ();
-	_strlwr_s (m_szDefExt, sizeof (m_szDefExt));
-	if (!strcmp (m_szDefExt, "bmp"))
-		bFuncRes = LoadBitmap (fp);
-	else 
-		bFuncRes = m_texture [0].LoadTGA (fp);
+	bFuncRes = m_texture [0].LoadFromFile (szFile);
 	if (bFuncRes) {
 		Refresh ();
-		m_nWidth = m_texture [0].m_info.width;
-		m_nHeight = m_texture [0].m_info.height;
-		m_nSize = m_texture [0].m_info.width * m_texture [0].m_info.height;		
+		m_nWidth = m_texture [0].Width ();
+		m_nHeight = m_texture [0].Height ();
+		m_nSize = m_texture [0].Size ();
 		m_bModified = TRUE;
 		}
 	else
 		OnUndo ();
-	}
-
-errorExit:
-
-fp.Close ();
-}
-
-//------------------------------------------------------------------------------
-
-void CTextureEdit::SaveBitmap (CFileManager& fp)
-{
-BITMAPFILEHEADER bmfh;
-
-bmfh.bfType = 'B' + ('M' << 8);
-bmfh.bfSize = sizeof (BITMAPFILEHEADER) + sizeof (BITMAPINFOHEADER) + 256 * 4 + m_nSize;
-bmfh.bfReserved1 = 0;
-bmfh.bfReserved2 = 0;
-bmfh.bfOffBits   = sizeof (BITMAPFILEHEADER) + sizeof (BITMAPINFOHEADER) + 256 * 4;
-
-// define the bitmap header (top-down)
-BITMAPINFO* bmi = paletteManager.BMI ();
-bmi->bmiHeader.biWidth = m_nWidth;
-bmi->bmiHeader.biHeight = -((LONG)m_nHeight);
-
-// write the headers
-fp.Write (&bmfh, sizeof (BITMAPFILEHEADER), 1);
-fp.Write (&bmi->bmiHeader, sizeof (BITMAPINFOHEADER), 1);
-
-// write palette
-fp.Write (bmi->bmiColors, sizeof (RGBQUAD), 256);
-
-// save bitmap data
-textureManager.WriteCustomTexture (fp, &m_texture [0]);
-}
-
-//------------------------------------------------------------------------------
-
-void CTextureEdit::SaveTGA (CFileManager& fp)
-{
-	tTgaHeader	h;
-
-memset (&h, 0, sizeof (h));
-h.imageType = 2;
-h.width = m_texture [0].Width ();
-h.height = m_texture [0].Height ();
-h.bits = 32;
-fp.Write (&h, sizeof (h), 1);
-int j = h.width * h.height;
-for (int i = h.height; i; i--) {
-	j -= h.width;
-	fp.Write (&m_texture [0][j], sizeof (CBGRA), h.width);
 	}
 }
 
@@ -900,32 +589,18 @@ for (int i = h.height; i; i--) {
 
 void CTextureEdit::OnSave ()
 {
-OPENFILENAME ofn;
-char szFile [256] = "\0";
-CFileManager fp;
+	char szFile [MAX_PATH] = { 0 };
+	const char *szExt = m_texture [0].Format () == BMP ? "bmp" : "tga";
+	CFileManager::tFileFilter filters [] = {
+		{ "256 color Bitmap Files", "bmp" },
+		{ "Truevision Targa", "tga" }
+	};
+	CFileManager::tFileFilter *filter = m_texture [0].Format () == BMP ? &filters [0] : &filters [1];
 
-memset(&ofn, 0, sizeof (OPENFILENAME));
-
-ofn.lStructSize = sizeof (OPENFILENAME);
-ofn.hwndOwner = m_hWnd;
-ofn.lpstrFilter = m_texture [0].m_info.nFormat ? "Truevision Targa\0*.tga\0" : "256 color Bitmap Files\0*.bmp\0";
-ofn.nFilterIndex = 1;
-ofn.lpstrFile= szFile;
-ofn.lpstrDefExt = m_texture [0].m_info.nFormat ? "tga" : "bmp";
-sprintf (szFile, "%s.%s", m_szName, ofn.lpstrDefExt);
-ofn.nMaxFile = sizeof (szFile);
-ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
-if (GetSaveFileName (&ofn)) {
-	_strlwr_s (ofn.lpstrFile, sizeof (szFile));
-	if (!fp.Open (ofn.lpstrFile, "wb")) {
-		ErrorMsg ("Could not create texture file.");
-		return;
-		}
-	if (m_texture [0].m_info.nFormat)
-		SaveTGA (fp);
-	else
-		SaveBitmap (fp);
-	fp.Close ();
+sprintf_s (szFile, ARRAYSIZE (szFile), "%s.%s", m_szName, szExt);
+if (CFileManager::RunSaveFileDialog (szFile, ARRAYSIZE (szFile), filter, 1, m_hWnd)) {
+	_strlwr_s (szFile, sizeof (szFile));
+	m_texture [0].Save (szFile);
 	}
 }
 
@@ -935,6 +610,12 @@ void CTextureEdit::OnUndo ()
 {
 if (m_texture [1].Buffer ()) {
 	m_texture [0].Copy (m_texture [1]);
+	// This combination should only happen immediately after OnDefault.
+	// In this case we reverse it so the user is still prompted on save.
+	if (m_bPendingRevert && !m_bModified) {
+		m_bModified = true;
+		m_bPendingRevert = false;
+		}
 	Refresh ();
 	}
 }
@@ -952,10 +633,9 @@ void CTextureEdit::OnDefault (void)
 if (QueryMsg("Are you sure you want to restore this texture\n"
 				 "back to its original texture\n") == IDYES) {
 	Backup ();
-	m_texP->m_info.bCustom = m_bModified = false;
-	//m_texP->Load (m_iTexture);
-	if (!m_texP->Reload ())
-		m_texture [0].Copy (*m_texP);
+	m_texture [0].Copy (*textureManager.BaseTextures (m_nTexAll));
+	m_bModified = false;
+	m_bPendingRevert = true;
 	Refresh ();
 	}
 }
@@ -969,14 +649,14 @@ if (!BeginPaint (&m_textureWnd))
 m_pDC->SetStretchBltMode (STRETCH_DELETESCANS);
 BITMAPINFO* bmi = paletteManager.BMI ();
 bmi->bmiHeader.biWidth =
-bmi->bmiHeader.biHeight = m_texture [0].Width ();
+bmi->bmiHeader.biHeight = m_texture [0].RenderWidth ();
 bmi->bmiHeader.biBitCount = 32;
 //bmi->bmiHeader.biSizeImage = m_texture [0].BufSize ();
 bmi->bmiHeader.biClrUsed = 0;
 CRect	rc;
 m_textureWnd.GetClientRect (&rc);
-StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_texture [0].Width (), m_texture [0].Width (),
-					(void *) m_texture [0].Buffer (), bmi, DIB_RGB_COLORS, SRCCOPY);
+StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_texture [0].RenderWidth (), m_texture [0].RenderWidth (),
+					(void *) m_texture [0].RenderBuffer (), bmi, DIB_RGB_COLORS, SRCCOPY);
 EndPaint ();
 }
 

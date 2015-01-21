@@ -556,9 +556,9 @@ CToolDlg::EnableControls (IDC_TRIGGER_DELETEALL, IDC_TRIGGER_DELETEALL, TriggerC
 sideP = other->Side ();
 CTexToolDlg::Refresh (sideP->Info ().nBaseTex, sideP->Info ().nOvlTex, 1);
 if ((m_nTrigger >= 0) && (m_nType == TT_CHANGE_TEXTURE))
-	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, Texture1 (), Texture2 ());
+	PaintTexture (&m_showTexWnd, RGB (128,128,128), Texture1 (), Texture2 ());
 else
-	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, MAX_TEXTURES);
+	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1);
 UpdateData (FALSE);
 }
 

@@ -252,7 +252,7 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 		faceRenderList [faceCount].m_zMin = zMin;
 		faceRenderList [faceCount].m_zMax = zMax;
 		CWall* wallP = sideP->Wall ();
-		faceRenderList [faceCount].m_bTransparent = segP->m_info.bTunnel || textureManager.Texture (sideP->BaseTex ())->Transparent () || ((wallP != null) && (wallP->Alpha () < 255));
+		faceRenderList [faceCount].m_bTransparent = segP->m_info.bTunnel || textureManager.Textures (sideP->BaseTex ())->Transparent () || ((wallP != null) && (wallP->Alpha () < 255));
 		++faceCount;
 		}
 	}

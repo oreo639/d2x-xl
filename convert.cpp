@@ -520,10 +520,10 @@ else
 fileTypeBackup = DLE.FileType ();
 theMine->SetFileType (RL2_FILE);
 paletteManager.Reload ();
-PaintTexture (&m_showD2, 0, -1, -1, texture2, 0);
+PaintTexture (&m_showD2, 0, texture2, 0);
 theMine->SetFileType (RDL_FILE);
 paletteManager.Reload ();
-PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
+PaintTexture (&m_showD1, 0, texture1, 0);
 
   // restore file type (should always be RDL_TYPE)
   theMine->SetFileType (fileTypeBackup);
@@ -599,7 +599,7 @@ colorMap = lightManager.ColorMap ();
 memcpy (colorMap.Buffer (), lightManager.ColorMap ().Buffer (), sizeof (colorMap));
 #endif
 
-textureManager.Release ();
+textureManager.ReleaseTextures ();
 undoManager.Reset ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
 theMine->SetFileType (RL2_FILE);
@@ -864,8 +864,8 @@ colorMap = lightManager.ColorMap ();
 memcpy (colorMap.Buffer (), lightManager.ColorMap ().Buffer (), sizeof (colorMap));
 #endif
 
-textureManager.Release ();
-textureManager.RemoveTextures ();
+textureManager.RemoveCustomTextures ();
+textureManager.ReleaseTextures ();
 undoManager.Reset ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
 theMine->SetFileType (RDL_FILE);
@@ -1005,7 +1005,7 @@ for (i = 0; i < wallManager.WallCount (); i++, wallP++) {
 #endif
 
 CSegment* segP = segmentManager.Segment (0);
-char** names = textureManager.m_names [1];
+//char** names = textureManager.m_names [1];
 
 for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	if (segP->Function () > SEGMENT_FUNC_ROBOTMAKER)
@@ -1018,8 +1018,8 @@ for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 		if ((nSegment == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 			nDbgSeg = nDbgSeg;
 #endif
-		if (names != textureManager.m_names [1])
-			names = textureManager.m_names [1];
+//		if (names != textureManager.m_names [1])
+//			names = textureManager.m_names [1];
 		if ((segP->ChildId (nSide) == -1) || (sideP->m_info.nWall < wallManager.Count ())) {
 			d2Texture = sideP->BaseTex ();
 			sideP->m_info.nBaseTex = MapD2TextureToD1 (d2Texture);

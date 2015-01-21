@@ -158,6 +158,18 @@ class CFileManager {
 		static void SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt);
 		static void ChangeFilenameExtension (char *dest, const char *src, const char *new_ext);
 
+		typedef struct {
+			const char *szFilterText;
+			const char *szExt;
+		} tFileFilter;
+		static bool RunOpenFileDialog (char *szFilename, const size_t cchFilename, const char *szFilterText, const char *szExt, HWND hWnd = 0);
+		static bool RunOpenFileDialog (char *szFilename, const size_t cchFilename, const tFileFilter *filters, const DWORD nFilters, HWND hWnd = 0);
+		static bool RunMultiOpenDialog (CArray <CString> &filenames, const char *szFilterText, const char *szExt, HWND hWnd = 0);
+		static bool RunMultiOpenDialog (CArray <CString> &filenames, const tFileFilter *filters, const DWORD nFilters, HWND hWnd = 0);
+		static bool RunSaveFileDialog (char *szFilename, const size_t cchFilename, const char *szFilterText, const char *szExt, HWND hWnd = 0);
+		static bool RunSaveFileDialog (char *szFilename, const size_t cchFilename, const tFileFilter *filters, const DWORD nFilters, HWND hWnd = 0);
+		static bool RunMultiSaveDialog (char *szPath, const size_t cchPath, const char *szPromptText, HWND hWnd = 0);
+
 		inline FILE*& File (void) { return m_info.file; }
 
 		inline bool IsOpen (void) { return File () != null; }
