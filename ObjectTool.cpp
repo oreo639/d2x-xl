@@ -461,7 +461,7 @@ undoManager.End (__FUNCTION__);
 void CObjectTool::SetTextureOverride (void)
 {
 CGameObject *objP = current->Object ();
-short nBaseTex = 0, nOvlTex = -1;
+short nBaseTex = -1;
 
 if (objP->m_info.renderType != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
@@ -469,13 +469,10 @@ else {
 	nBaseTex = (short) current->Object ()->rType.polyModelInfo.nOverrideTexture;
 	if ((nBaseTex < 0) || (nBaseTex >= ((DLE.IsD1File ()) ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2))) {
 		CBObjTexture ()->SetCurSel (0);
-		nBaseTex = 0;	// -> force PaintTexture to clear the texture display window
-		}
-	else {
-		nOvlTex = 0;
+		nBaseTex = -1;	// -> force PaintTexture to clear the texture display window
 		}
 	}
-PaintTexture (&m_showTextureWnd, IMG_BKCOLOR, nBaseTex, nOvlTex);
+PaintTexture (&m_showTextureWnd, IMG_BKCOLOR, nBaseTex, 0);
 }
 
 //------------------------------------------------------------------------

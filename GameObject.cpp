@@ -507,7 +507,8 @@ if (objectManager.Index (this) == nDbgObject)
 if (nTexture < 0)
 	return false;
 
-const CTexture* texP = bEffect ? &textureManager.Icon (nTexture) : textureManager.AllTextures (nTexture);
+// We render sprites using the D2 textures even in D1 levels
+const CTexture* texP = bEffect ? &textureManager.Icon (nTexture) : textureManager.AllTextures (nTexture, 1);
 if (!texP)
 	return false;
 

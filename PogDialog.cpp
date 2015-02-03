@@ -39,7 +39,7 @@ m_iSavedSelectedItem = -1;
 m_bLevelLoaded = bLevelLoaded;
 m_bPreselectTexture = bPreselectTexture;
 m_uiPreselectedTexture = uiSelectedTexture;
-if (m_bPreselectTexture) // always switch on the filter for the preselected texture
+if (m_bPreselectTexture && textureManager.Available ()) // always switch on the filter for the preselected texture
 	m_filters [ClassifyTexture (textureManager.Textures (m_uiPreselectedTexture))] = true;
 memset (m_szPreviousPigPath, 0, sizeof (m_szPreviousPigPath));
 }
@@ -50,6 +50,13 @@ CPogDialog::~CPogDialog (void)
 
 BOOL CPogDialog::OnInitDialog (void)
 {
+if (!textureManager.Available ()) {
+	ErrorMsg ("A valid Descent 2 PIG file must be loaded before the custom texture\n"
+	          "manager can be launched. Please select one from the Settings tool.");
+	OnCancel ();
+	return FALSE;
+	}
+
 CDialog::OnInitDialog ();
 m_preview.SubclassDlgItem (IDC_POGMANAGER_PREVIEW, this);
 int columnNum = 0;

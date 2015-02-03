@@ -107,8 +107,10 @@ uint CTextureManager::WriteCustomTextureHeader (CFileManager& fp, const CTexture
 	CPigTexture pigTexInfo (1);
 	ubyte *palIndex, *srcP;
 
+memset (pigTexInfo.name, 0, sizeof (pigTexInfo.name));
 if (*texP->Name ())
-	strncpy_s (pigTexInfo.name, texP->Name (), sizeof (pigTexInfo.name));
+	// Texture name in pigTexInfo is not null-terminated
+	memcpy_s (pigTexInfo.name, sizeof (pigTexInfo.name), texP->Name (), strlen (texP->Name ()));
 else {
 	char name [9];
 	sprintf_s (name, sizeof (name), "POG%04d", nId);

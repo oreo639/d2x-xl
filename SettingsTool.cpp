@@ -110,8 +110,12 @@ if (!HaveData (pDX))
 
 void CSettingsTool::Refresh (void)
 {
-if (::IsWindow (m_hWnd) && !m_bNoRefresh) {
-	OnCancel ();
+if (!m_bNoRefresh) {
+	appSettings.Get ();
+	if (::IsWindow (m_hWnd)) {
+		UpdateData (FALSE);
+		Current ()->UpdateData (FALSE);
+		}
 	}
 }
 

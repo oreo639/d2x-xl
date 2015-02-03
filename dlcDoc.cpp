@@ -390,6 +390,7 @@ if (!err) {
 	}
 //textureManager.CountCustomTextures ();
 DLE.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
+DLE.ToolView ()->SettingsTool ()->Refresh ();
 return (err == 0);
 }
 

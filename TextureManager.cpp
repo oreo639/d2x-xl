@@ -119,19 +119,6 @@ ReleaseExtras ();
 
 //------------------------------------------------------------------------
 
-#if EXTRA_TEXTURES
-void CTextureManager::ReleaseExtras (void) 
-{
-for (CExtraTexture* p = m_extra; p != null; ) {
-	m_extra = p->m_next;
-	delete p;
-	p = m_extra;
-	}
-}
-#endif
-
-//------------------------------------------------------------------------
-
 void CTextureManager::ReleaseTextures (void) 
 {
 // free any m_textures that have been buffered
@@ -345,7 +332,7 @@ bool CTextureManager::LoadTextures (int nVersion, bool bClearExisting)
 if (nVersion < 0) {
 	nVersion = Version ();
 	strcpy_s (m_pigFiles [nVersion], sizeof (m_pigFiles [nVersion]), descentFolder [nVersion]);
-	strcpy_s (m_paletteName [0], sizeof (m_paletteName [0]), paletteManager.Name ());
+	strcpy_s (m_paletteName [nVersion], sizeof (m_paletteName [nVersion]), paletteManager.Name ());
 	LoadInfo (nVersion);
 	}
 if (!m_textures [nVersion].Buffer ()) {
@@ -370,7 +357,6 @@ if (fp == null)
 paletteManager.Reload (m_paletteName [1]);
 
 CTexture* textures = m_textures [nVersion].Buffer ();
-ushort* index = m_index [nVersion];
 for (int i = 0, j = m_header [nVersion].nTextures; i < j; i++)
 	textures [i].LoadFromPig (*fp, i, nVersion);
 for (int i = 0; i < m_header [nVersion].nTextures; i++) {
@@ -435,21 +421,6 @@ else {
 	}
 }
 
-//------------------------------------------------------------------------------
-
-#if EXTRA_TEXTURES
-CTexture* CTextureManager::AddExtra (ushort nIndex)
-{
-	CExtraTexture* extraTexP = new CExtraTexture;
-if (!extraTexP)
-	return null;
-extraTexP->m_next = m_extra;
-m_extra = extraTexP;
-extraTexP->m_index = nIndex;
-return extraTexP;
-}
-#endif
-
 //------------------------------------------------------------------------
 
 void CTextureManager::UnTagUsedTextures (void)
@@ -481,8 +452,9 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 	CSide* sideP = segP->m_sides;
 	for (j = 6; j; j--, sideP++) {
 		if (((short) sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
-			m_bUsed [nVersion][sideP->BaseTex ()] = true;
-			if ((sideP->OvlTex (0)) != 0)
+			if (sideP->BaseTex () >= 0 && sideP->BaseTex () < MaxTextures (nVersion))
+				m_bUsed [nVersion][sideP->BaseTex ()] = true;
+			if (sideP->OvlTex (0) > 0 && sideP->OvlTex (0) < MaxTextures (nVersion))
 				m_bUsed [nVersion][sideP->OvlTex (0)] = true;
 			}
 		}

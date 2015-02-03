@@ -913,7 +913,8 @@ glDisable (GL_TEXTURE_2D);
 
 void CRendererGL::TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index)
 {
-TexturedPolygon (nTexture ? textureManager.Textures (nTexture) : null, texCoords, color, vertices, nVertices, index);
+// This is used for polymodels - texture index is for the D2 PIG regardless of whether we're editing a D1 or D2 level
+TexturedPolygon (nTexture ? textureManager.Textures (nTexture, 1) : null, texCoords, color, vertices, nVertices, index);
 }
 
 //------------------------------------------------------------------------------

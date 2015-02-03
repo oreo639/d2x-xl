@@ -50,9 +50,6 @@ class CTextureManager {
 		char				m_pigFiles [2][256];
 		bool				m_bAvailable [2];
 		bool*				m_bUsed [2];
-#if EXTRA_TEXTURES
-		CExtraTexture*	m_extra;
-#endif
 		CTexture			m_arrow;
 		CTexture			m_icons [ICON_COUNT];
 
@@ -82,7 +79,11 @@ class CTextureManager {
 			}
 
 		inline uint LevelTexToAllTex (int nTexLevel, int nVersion = -1) {
-			return m_index [(nVersion < 0) ? Version () : nVersion][nTexLevel] - 1;
+			// It's possible to store an out-of-bounds texture number; bad idea but shouldn't crash
+			if (nTexLevel >= 0 && nTexLevel < MaxTextures (nVersion))
+				return m_index [(nVersion < 0) ? Version () : nVersion][nTexLevel] - 1;
+			else
+				return 0;
 			}
 
 		bool FindLevelTex (uint nTexAll, int *pnTexLevel, int nVersion = -1);
@@ -117,10 +118,6 @@ class CTextureManager {
 		void RevertTexture (uint nTexAll, int nVersion = -1);
 		
 		void ReleaseTextures (void);
-		
-#if EXTRA_TEXTURES
-		void ReleaseExtras (void);
-#endif
 
 		bool HasCustomTextures (void);
 		
@@ -133,7 +130,7 @@ class CTextureManager {
 		void TagUsedTextures (void);
 
 		inline bool IsTextureUsed (int nTexLevel, int nVersion = -1) {
-			if (nTexLevel < 0)
+			if (nTexLevel < 0 || nTexLevel >= MaxTextures (nVersion))
 				return false;
 			return m_bUsed [(nVersion < 0) ? Version () : nVersion][nTexLevel];
 			}
@@ -145,10 +142,6 @@ class CTextureManager {
 		void UndoTextureChanges (void);
 		
 		CFileManager* OpenPigFile (int nVersion);
-		
-#if EXTRA_TEXTURES
-		CTexture* AddExtra (ushort nIndex);
-#endif
 
 		inline bool HaveInfo (int nVersion) { return m_info [nVersion] != null; }
 		
@@ -220,9 +213,6 @@ class CTextureManager {
 		size_t SharedBufferSize (void) { return sizeof (m_bmBuf); }
 
 		CTextureManager() { 
-#if EXTRA_TEXTURES
-			m_extra = null;
-#endif
 			m_paletteName [0][0] = 0; 
 			m_bAvailable [0] = m_bAvailable [1] = false;
 			}
