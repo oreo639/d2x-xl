@@ -814,6 +814,7 @@ else {
 	}
 if (DLE.IsD2XLevel ())
 	m_info.format = TGA;
+m_bValid = true;
 GenerateRenderBuffer ();
 #if 0
 else {
@@ -1308,7 +1309,7 @@ if (!m_glHandle)
 glEnable (GL_TEXTURE_2D);
 glBindTexture (GL_TEXTURE_2D, m_glHandle);
 // don't use height: Hires animations have all frames vertically stacked in one texture!
-glTexImage2D (GL_TEXTURE_2D, 0, 4, RenderWidth (), RenderWidth (), 0, GL_BGRA, GL_UNSIGNED_BYTE, RenderBuffer ());
+glTexImage2D (GL_TEXTURE_2D, 0, 4, RenderWidth (), RenderHeight (), 0, GL_BGRA, GL_UNSIGNED_BYTE, RenderBuffer ());
 glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 glDisable (GL_TEXTURE_2D);

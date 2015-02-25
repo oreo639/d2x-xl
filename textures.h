@@ -357,12 +357,9 @@ class CTexture {
 		bool        m_bValid;       // is the texture properly loaded and containing image data?
 
 	public:
-		CTexture (CBGRA* dataP = null) : m_data (dataP) {
+		CTexture (CBGRA* dataP = null) : m_data (dataP), m_renderBuffer (null), m_glHandle (0), m_bExtBuffer (dataP != null), m_bValid (false) {
 			memset (&m_info, 0, sizeof (m_info));
 			m_info.nTexLevel = -1;
-			m_renderBuffer = null;
-			m_glHandle = 0;
-			m_bExtBuffer = (dataP != null);
 			}
 
 		~CTexture() { Release (); }
