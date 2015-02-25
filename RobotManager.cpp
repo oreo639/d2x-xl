@@ -64,16 +64,16 @@ if (type == NORMAL_HAM)  {
 	fp->ReadInt32 (); // version (0x00000007)
 	t = fp->ReadInt32 ();
 	fp->Seek (sizeof (ushort) * t, SEEK_CUR);
-	fp->Seek (sizeof (TMAP_INFO) * t, SEEK_CUR);
+	fp->Seek (sizeof (tTextureEffectInfo) * t, SEEK_CUR);
 	t = fp->ReadInt32 ();
 	fp->Seek (sizeof (ubyte) * t, SEEK_CUR);
 	fp->Seek (sizeof (ubyte) * t, SEEK_CUR);
 	t = fp->ReadInt32 ();
 	fp->Seek (sizeof (tAnimationInfo) * t, SEEK_CUR);
 	t = fp->ReadInt32 ();
-	fp->Seek (sizeof (tEffectAnimationInfo) * t, SEEK_CUR);
+	fp->Seek (sizeof (tEffectInfo) * t, SEEK_CUR);
 	t = fp->ReadInt32 ();
-	fp->Seek (sizeof (tWallAnimationInfo) * t, SEEK_CUR);
+	fp->Seek (sizeof (tWallEffectInfo) * t, SEEK_CUR);
 	}
 else if (type == EXTENDED_HAM)  {
 	id = fp->ReadInt32 (); // "HAM!"

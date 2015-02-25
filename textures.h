@@ -73,6 +73,57 @@ return (w < h) ? Pow2ize (h) : Pow2ize (w);
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+typedef struct {
+  ubyte	flags;				//values defined above
+  ubyte	pad[3];				//keep alignment
+  int		lighting;			//how much light this casts
+  int		damage;				//how much damage being against this does (for lava)
+  short	nEffectInfo;		//the eclip that changes this, or -1
+  short	destroyed;			//bitmap to show when destroyed, or -1
+  short	slide_u, slide_v; //slide rates of texture, stored in 8:8 int
+} tTextureEffectInfo;
+
+typedef struct tAnimationInfo {
+  int		nPlayTime;  //total time (in seconds) of clip
+  int		nFrameCount;
+  int		nFrameTime; //time (in seconds) of each frame
+  int		nFlags;
+  short	nSound;
+  ushort	frames [MAX_ANIMATION_FRAMES];
+  int		nLightValue;
+} tAnimationInfo;
+
+typedef struct tEffectInfo {
+  tAnimationInfo  animationInfo;		//embedded bitmap (video) clip
+  int		nTimeLeft;						//for sequencing
+  int		nFrameCount;					//for sequencing
+  short	nChangingWallTexture;	   //Which element of Textures array to replace.
+  short	nChangingObjectTexture;		//Which element of ObjBitmapPtrs array to replace.
+  int		flags;							//see above
+  int		nCriticalAnimation;			//use this clip instead of above one when mine critical
+  int		nDestTexture;					//use this bitmap when monitor destroyed
+  int		nDestAnimation;				//what vclip to play when exploding
+  int		nDestEffect;					//what eclip to play when exploding
+  int		nDestSize;						//3d size of explosion
+  int		nSound;							//what sound this makes
+  int		nSegment, nSide;				//what segP & side, for one-shot clips
+} tEffectInfo;
+
+typedef struct tWallEffectInfo {
+  int		 nPlayTime;
+  short	 nFrameCount;
+  short	 frames [MAX_WALL_EFFECT_FRAMES_D2];
+  short	 nOpenSound;
+  short	 nCloseSound;
+  short	 nFlags;
+  char	 filename [13];
+  char	 pad;
+} tWallEffectInfo;
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
 class CPigHeader {
 public:
 	int nId;

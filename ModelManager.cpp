@@ -185,7 +185,7 @@ else {
 	fp.ReadInt32 ();                              
 	n = fp.ReadUInt32 ();                         
 	fp.Seek (n * sizeof (ushort), SEEK_CUR);	 
-	fp.Seek (n * sizeof (TMAP_INFO), SEEK_CUR); 
+	fp.Seek (n * sizeof (tTextureEffectInfo), SEEK_CUR); 
 	n = fp.ReadUInt32 ();                          
 	fp.Seek (n * sizeof (ubyte), SEEK_CUR);     
 	fp.Seek (n * sizeof (ubyte), SEEK_CUR);     
@@ -196,9 +196,9 @@ else {
 	fp.Seek (n * sizeof (tAnimationInfo), SEEK_CUR);     
 #endif
 	n = fp.ReadUInt32 ();                          
-	fp.Seek (n * sizeof (tEffectAnimationInfo), SEEK_CUR);     
+	fp.Seek (n * sizeof (tEffectInfo), SEEK_CUR);     
 	n = fp.ReadUInt32 ();                          
-	fp.Seek (n * sizeof (tWallAnimationInfo), SEEK_CUR);    
+	fp.Seek (n * sizeof (tWallEffectInfo), SEEK_CUR);    
 	n = fp.ReadUInt32 ();                          
 	for (i = 0; i < n; i++) 
 		robotManager.RobotInfo (i)->Read (&fp);

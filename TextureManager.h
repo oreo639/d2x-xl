@@ -105,6 +105,8 @@ class CTextureManager {
 		
 		bool LoadTextures (int nVersion = -1, bool bClearExisting = true);
 		
+		void LoadAnimationInfo (CFileManager& fp, int nVersion = -1);
+
 		bool Check (int nTexture);
 		
 		void Load (ushort nBaseTex, ushort nOvlTex);

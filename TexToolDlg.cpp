@@ -193,7 +193,7 @@ if (nWall >= wallManager.WallCount ())
 #endif
 	int i;
 	static int hold_time [2] = {0,0};
-	static int inc [2]= {1,1}; // 1=forward or -1=backwards
+	static int inc [2] = {1,1}; // 1=forward or -1=backwards
 	int index [2];
 	static ushort d1_anims [] = {
 		371, 376, 387, 399, 413, 419, 424, 436, 444, 459,
@@ -204,12 +204,14 @@ if (nWall >= wallManager.WallCount ())
 //       the number of m_frames in 577
 // The 0 is used to end the search
 
-	static ushort d2_anims [] = {
+	// these are only the animations the frames of which have successive texture ids
+	// To properly implement texture animation, the effect and video clip info from the descent 2 data need to be read and used
+	static ushort d2_anims [] = { 
 		435, 440, 451, 463, 477, 483, 488, 500, 508, 523,
 		536, 550, 556, 564, 572, 579, 585, 593, 600, 608,
 		615, 628, 635, 642, 649, 664, 672, 687, 702, 717,
 		725, 731, 738, 745, 754, 763, 772, 780, 790, 806,
-		817 ,827 ,838 ,849 ,858 ,863 ,871 ,886, 901 ,910,
+		817, 827, 838, 849, 858, 863, 871, 886, 901, 910,
 		0
 		};
 // note: 910 is not an anim texture, but it is used to calculate
@@ -220,7 +222,7 @@ if (nWall >= wallManager.WallCount ())
 // first find out if one of the textures is animated
 anim = (DLE.IsD1File ()) ? d1_anims : d2_anims;
 
-for (i=0; i<2;i++)
+for (i = 0; i < 2; i++)
 	for (index [i] = 0; anim [index [i]]; index [i]++)
 		if (texture [i] == anim [index [i]])
 			break;

@@ -327,6 +327,12 @@ return true;
 
 //------------------------------------------------------------------------------
 
+void CTextureManager::LoadAnimationInfo (CFileManager& fp, int nVersion)
+{
+}
+
+//------------------------------------------------------------------------------
+
 bool CTextureManager::LoadTextures (int nVersion, bool bClearExisting)
 {
 if (nVersion < 0) {
@@ -359,6 +365,7 @@ paletteManager.Reload (m_paletteName [1]);
 CTexture* textures = m_textures [nVersion].Buffer ();
 for (int i = 0, j = m_header [nVersion].nTextures; i < j; i++)
 	textures [i].LoadFromPig (*fp, i, nVersion);
+LoadAnimationInfo (*fp, nVersion);
 for (int i = 0; i < m_header [nVersion].nTextures; i++) {
 	if (textures [i].IsAnimated () && textures [i].FrameNum () == 0) {
 		textures [i].CalculateFrameCount ();

@@ -1,6 +1,7 @@
 #ifndef __ModelManager_h
 #define __ModelManager_h
 
+#include "textures.h"
 #include "Vertex.h"
 #include "GameObject.h"
 #include "ViewMatrix.h"
@@ -10,59 +11,12 @@
 
 //------------------------------------------------------------------------------
 
-#define MAX_OBJ_TEXTURES 600
-#define MAX_ANIMATIONS	110
+#define MAX_OBJ_TEXTURES	600
+#define MAX_ANIMATIONS		110
 
 typedef struct {
   ushort index;
 } BITMAP_INDEX;
-
-typedef struct {
-  ubyte	flags;				//values defined above
-  ubyte	pad[3];				//keep alignment
-  int		lighting;			//how much light this casts
-  int		damage;				//how much damage being against this does (for lava)
-  short	nEffectInfo;		//the eclip that changes this, or -1
-  short	destroyed;			//bitmap to show when destroyed, or -1
-  short	slide_u, slide_v; //slide rates of texture, stored in 8:8 int
-} TMAP_INFO;
-
-typedef struct tAnimationInfo {
-  int		nPlayTime;  //total time (in seconds) of clip
-  int		nFrameCount;
-  int		nFrameTime; //time (in seconds) of each frame
-  int		nFlags;
-  short	nSound;
-  ushort	frames [VCLIP_MAX_FRAMES];
-  int		nLightValue;
-} tAnimationInfo;
-
-typedef struct tEffectAnimationInfo {
-  tAnimationInfo  vc;					//imbedded vclip
-  int		nTimeLeft;						//for sequencing
-  int		nFrameCount;					//for sequencing
-  short	nChangingWallTexture;	   //Which element of Textures array to replace.
-  short	nChangingObjectTexture;		//Which element of ObjBitmapPtrs array to replace.
-  int		flags;							//see above
-  int		nCriticalAnimation;			//use this clip instead of above one when mine critical
-  int		nDestTexture;					//use this bitmap when monitor destroyed
-  int		nDestAnimation;				//what vclip to play when exploding
-  int		nDestEffect;					//what eclip to play when exploding
-  int		nDestSize;						//3d size of explosion
-  int		nSound;							//what sound this makes
-  int		nSegment, nSide;				//what segP & side, for one-shot clips
-} tEffectAnimationInfo;
-
-typedef struct tWallAnimationInfo {
-  int		 nPlayTime;
-  short	 nFrameCount;
-  short	 frames [MAX_CLIP_FRAMES_D2];
-  short	 nOpenSound;
-  short	 nCloseSound;
-  short	 nFlags;
-  char	 filename [13];
-  char	 pad;
-} tWallAnimationInfo;
 
 //------------------------------------------------------------------------------
 // the followin numbers are set using the original D2 robots

@@ -154,13 +154,13 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 #define MAX_WEAPON_TYPES		65
 
 // defines to support robot structures
-#define VCLIP_MAX_FRAMES 30
-#define MAX_GUNS         8  //should be multiple of 4 for ubyte array
-#define NDL              5  // Guessed at this value (B. Aamot 9/14/96)
-#define N_ANIM_STATES	 5
+#define MAX_ANIMATION_FRAMES 30
+#define MAX_GUNS					8  //should be multiple of 4 for ubyte array
+#define NDL							5  // Guessed at this value (B. Aamot 9/14/96)
+#define N_ANIM_STATES			5
 
 // the following are already defined below
-// #define MAX_CLIP_FRAMES 50  // (called MAX_CLIP_FRAMES_D2)
+// #define MAX_CLIP_FRAMES 50  // (called MAX_WALL_EFFECT_FRAMES_D2)
 // #define MAX_SUBMODELS   10  // I guessed at this value (BAA)
 
 // allow all caps types for vectors
@@ -434,8 +434,8 @@ inline double Degrees (double a) {
 #define MAX_WALL_ANIMS_D2				60  // Maximum different types of doors Descent 2
 #define MAX_DOOR_ANIMS_D1				25  // Maximum different types of doors Descent 1
 #define MAX_DOOR_ANIMS_D2				50  // Maximum different types of doors Descent 2
-#define MAX_CLIP_FRAMES_D1	         20 // Descent 1
-#define MAX_CLIP_FRAMES_D2	         50 // Descent 2
+#define MAX_WALL_EFFECT_FRAMES_D1	20 // Descent 1
+#define MAX_WALL_EFFECT_FRAMES_D2	50 // Descent 2
 #define MAX_STUCK_OBJECTS	         32
 #define MAX_SIDES_PER_SEGMENT			6
 #define MAX_VERTICES_PER_SEGMENT		8
