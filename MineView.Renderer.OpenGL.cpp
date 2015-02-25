@@ -575,6 +575,7 @@ void CRendererGL::RenderFace (CFaceListEntry& fle, const CTexture* texP [], CBGR
 	CSide*			sideP = segP->Side (fle.m_nSide);
 	CWall*			wallP = sideP->Wall ();
 	float				alpha = float (Alpha ()) / 255.0f * (colorP ? float (colorP->a) / 255.0f : 1.0f);
+	float				heightScale = (float) texP [0]->RenderWidth () / (float) texP [0]->RenderHeight ();
 	int				bIlluminate = RenderIllumination () && (segP->m_info.function != SEGMENT_FUNC_SKYBOX);
 	ushort*			vertexIds = segP->m_info.vertexIds;
 	ubyte*			vertexIdIndex = sideP->m_vertexIdIndex;
@@ -612,7 +613,7 @@ for (int i = 0, j = nOvlAlignment; i < nVertices; i++, j = (j + 1) % nVertices) 
 	CUVL uvl = sideP->m_info.uvls [i];
 	if (!colorP) {
 		texCoords [0][i].u = uvl.u;
-		texCoords [0][i].v = -uvl.v;
+		texCoords [0][i].v = -uvl.v * heightScale;
 		if (nTextures > 1)
 			RotateTexCoord2d (texCoords [1][i], texCoords [0][i], nOvlAlignment);
 		if (bArrow) {

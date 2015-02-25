@@ -67,7 +67,7 @@ return BlendTextures (texP [0], texP [1], mode, x0, y0);
 
 //------------------------------------------------------------------------
 
-int CTexture::BlendTextures (const CTexture* pBaseTex, const CTexture* pOvlTex, short nOvlAlignment, int x0, int y0)
+int CTexture::BlendTextures (const CTexture* baseTexP, const CTexture* ovlTexP, short nOvlAlignment, int x0, int y0)
 {
 if (!textureManager.Available ())
 	return 1;
@@ -86,11 +86,11 @@ if (!textureManager.Available ())
 	int			fileType = DLE.FileType ();
 
 // Define bmBufP based on texture numbers and rotation
-m_info.width = pBaseTex->Width ();
-m_info.height = pBaseTex->Height ();
+m_info.width = baseTexP->Width ();
+m_info.height = baseTexP->FrameHeight ();
 m_bValid = true;
 
-const CBGRA* srcDataP = pBaseTex->Buffer ();
+const CBGRA* srcDataP = baseTexP->Buffer (baseTexP->FrameOffset ());
 
 if (srcDataP != null) {
 	// if not rotated, then copy directly
@@ -99,14 +99,14 @@ if (srcDataP != null) {
 		}
 	else {
 		// otherwise, copy bit by bit
-		w = pBaseTex->Width ();
+		w = baseTexP->Width ();
 #if 0
 		int l1 = y0 * w + x0;
-		int l2 = pBaseTex->Size () - l1;
+		int l2 = baseTexP->Size () - l1;
 		memcpy (bmBufP, srcDataP + l1, l2 * sizeof (CBGRA));
 		memcpy (bmBufP + l2, srcDataP, l1 * sizeof (CBGRA));
 #else
-		h = pBaseTex->Height ();
+		h = m_info.height;
 #ifdef NDEBUG
 //#pragma omp parallel for 
 #endif
@@ -131,29 +131,29 @@ if (srcDataP != null) {
 
 // Overlay texture 2 if present
 
-if (pOvlTex == null)
+if (ovlTexP == null)
 	return 0;
-srcDataP = pOvlTex->Buffer ();
+srcDataP = ovlTexP->Buffer (ovlTexP->FrameOffset ());
 if (srcDataP == null)
 	return 0;
 
-if (pBaseTex->Width () == pOvlTex->Width ()) {
+if (baseTexP->Width () == ovlTexP->Width ()) {
 	scale.c = scale.d = 1;
 	fScale = 1.0;
 	}
-else if (pBaseTex->Width () < pOvlTex->Width ()) {
-	scale.c = pOvlTex->Width () / pBaseTex->Width ();
+else if (baseTexP->Width () < ovlTexP->Width ()) {
+	scale.c = ovlTexP->Width () / baseTexP->Width ();
 	scale.d = 1;
-	fScale = float (pOvlTex->Width ()) / float (pBaseTex->Width ());
+	fScale = float (ovlTexP->Width ()) / float (baseTexP->Width ());
 	}
 else {
-	scale.d = pBaseTex->Width () / pOvlTex->Width ();
+	scale.d = baseTexP->Width () / ovlTexP->Width ();
 	scale.c = 1;
-	fScale = float (pOvlTex->Width ()) / float (pBaseTex->Width ());
+	fScale = float (ovlTexP->Width ()) / float (baseTexP->Width ());
 	}
 offs = 0;
-w = pOvlTex->Width () / scale.c * scale.d;
-h = pOvlTex->Height () / scale.c * scale.d;
+w = ovlTexP->Width () / scale.c * scale.d;
+h = ovlTexP->FrameHeight ();
 
 if (!(x0 || y0)) {
 	if (nOvlAlignment == 0) {
@@ -293,17 +293,17 @@ if (color != null) {
 
 bool PaintTexture (CWnd *wndP, int bkColor, int texture1, int texture2, int xOffset, int yOffset)
 {
-	const CTexture *pBaseTex = (texture1 >= 0) ? textureManager.Textures (texture1) : null;
+	const CTexture *baseTexP = (texture1 >= 0) ? textureManager.Textures (texture1) : null;
 	int maskedTexture2 = texture2 & TEXTURE_MASK;
-	const CTexture *pOvlTex = (maskedTexture2 > 0) ? textureManager.Textures (maskedTexture2) : null;
+	const CTexture *ovlTexP = (maskedTexture2 > 0) ? textureManager.Textures (maskedTexture2) : null;
 	short nOvlAlignment = (maskedTexture2 > 0) ? (texture2 & ALIGNMENT_MASK) >> ALIGNMENT_SHIFT : 0;
 
-return PaintTexture (wndP, bkColor, pBaseTex, pOvlTex, nOvlAlignment, xOffset, yOffset);
+return PaintTexture (wndP, bkColor, baseTexP, ovlTexP, nOvlAlignment, xOffset, yOffset);
 }
 
 // --------------------------------------------------------------------------
 
-bool PaintTexture (CWnd *wndP, int bkColor, const CTexture *pBaseTex, const CTexture *pOvlTex, short nOvlAlignment, int xOffset, int yOffset)
+bool PaintTexture (CWnd *wndP, int bkColor, const CTexture *baseTexP, const CTexture *ovlTexP, short nOvlAlignment, int xOffset, int yOffset)
 {
 if (!wndP->m_hWnd)
 	return false;
@@ -326,7 +326,7 @@ if (!pDC)
 CRect	rc;
 wndP->GetClientRect (rc);
 
-if (pBaseTex == null)
+if (baseTexP == null)
 	bShowTexture = false;
 
 if (bShowTexture) {
@@ -343,7 +343,7 @@ if (bShowTexture) {
 		}
 	if (nOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
 		CTexture tex (textureManager.SharedBuffer ());
-		if (tex.BlendTextures (pBaseTex, pOvlTex, nOvlAlignment, xOffset, yOffset))
+		if (tex.BlendTextures (baseTexP, ovlTexP, nOvlAlignment, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (BlendTextures failed)");
 		//CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 		//pDC->RealizePalette ();
@@ -593,11 +593,17 @@ m_info.width = info.width;
 m_info.height = info.height;
 m_info.bTransparent = false;
 m_info.bSuperTransparent = false;
-m_info.bAnimated = (info.dflags & BM_DFLAG_ANIMATED) ? true : false;
+m_info.bAnimated = (info.dflags & BM_DFLAG_ANIMATED) != 0;
 m_info.nFrame = info.dflags & BM_DFLAG_ANIMFRAME_MASK;
+//if (m_info.bAnimated)
+//	strcat (m_info.szName, "#0");
 memset (m_data, 0, m_info.bufSize * sizeof (m_data [0]));
 
 if (m_info.format == TGA) {
+#ifdef _DEBUG
+	if (strstr (m_info.szName, "door34"))
+		m_info.szName [sizeof (m_info.szName) - 1] = '\0';
+#endif
 	tRGBA color;
 #if 1
 	uint h = info.width * (info.height - 1);

@@ -300,7 +300,7 @@ for (int i = 0; i < h; i++) {
 #endif
 	if (texP->IsCustom ())
 		continue;
-	sprintf (szFile, "%s\\%s.tga", pszFolder, texP->Name ());
+	sprintf (szFile, "%s\\%s%s.tga", pszFolder, texP->Name (), texP->IsAnimated () ? "#0" : "");
 	CTexture *newTexP = new CTexture ();
 	if (!newTexP)
 		ErrorMsg ("Not enough memory for texture.");

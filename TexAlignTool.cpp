@@ -410,6 +410,8 @@ DeleteObject(hPenGrid);
 
 //------------------------------------------------------------------------------
 
+extern short nDbgTexture;
+
 void CTextureAlignTool::DrawAlignment (CDC *pDC)
 {
 CHECKMINE;
@@ -428,6 +430,10 @@ offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_center
 offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_centerPt.y - 128;
 
 memset (tex.Buffer (), 0, textureManager.SharedBufferSize ());
+#ifdef DEBUG
+if (sideP->BaseTex () == nDbgTexture)
+	nDbgTexture = nDbgTexture;
+#endif
 if (tex.BlendTextures (sideP->BaseTex (), sideP->OvlTex (), 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (textureManager.BlendTextures failed)");
 	return;

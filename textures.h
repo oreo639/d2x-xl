@@ -402,6 +402,12 @@ class CTexture {
 
 		inline uint Size () const { return Width () * Height (); }
 
+		inline uint FrameHeight () const { return (Format () && IsAnimated ()) ? Width () : Height (); }
+
+		inline uint FrameSize () const { return IsAnimated () ? Width () * Width () : Size (); }
+
+		inline uint FrameOffset () const { return IsAnimated () ? FrameSize () * FrameNum () : 0; }
+
 		inline CBGRA* Buffer (uint i = 0) { return &m_data [i]; }
 
 		inline const CBGRA* Buffer (uint i = 0) const { return &m_data [i]; }
