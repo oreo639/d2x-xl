@@ -368,7 +368,7 @@ class CDynamicArray : public CQuickSort < _T > {
 		inline size_t Find (_T key) const {
 			for (uint i = 0; i < m_data.length; i++)
 				if (key == m_data.buffer [i])
-					return 0;
+					return i;
 			return -1;
 			}
 

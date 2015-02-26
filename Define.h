@@ -154,7 +154,11 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 #define MAX_WEAPON_TYPES		65
 
 // defines to support robot structures
-#define MAX_ANIMATION_FRAMES 30
+#define MAX_EFFECTS_D2			110
+#define MAX_EFFECTS_D1			60
+#define MAX_ANIMATIONS_D2     110
+#define MAX_ANIMATIONS_D1     70
+#define MAX_ANIMATION_FRAMES	30
 #define MAX_GUNS					8  //should be multiple of 4 for ubyte array
 #define NDL							5  // Guessed at this value (B. Aamot 9/14/96)
 #define N_ANIM_STATES			5

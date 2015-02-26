@@ -34,12 +34,12 @@ typedef struct {
 
 typedef struct {
 	char name[8];
-	ubyte dflags;  // bits 0-5 anim frame num, bit 6 abm flag
-	ubyte width;   // low 8 bits here, 4 more bits in pad
+	ubyte dflags;   // bits 0-5 anim frame num, bit 6 abm flag
+	ubyte width;    // low 8 bits here, 4 more bits in pad
 	ubyte height;   // low 8 bits here, 4 more bits in pad
-	ubyte whExtra;     // bits 0-3 xsize, bits 4-7 ysize
-	ubyte flags;   // see BM_FLAG_XXX in define.h
-	ubyte avgColor;   // average color
+	ubyte whExtra;  // bits 0-3 xsize, bits 4-7 ysize
+	ubyte flags;    // see BM_FLAG_XXX in define.h
+	ubyte avgColor; // average color
 	uint offset;
 } PIG_TEXTURE_D2;
 
@@ -51,6 +51,24 @@ typedef struct {
 	char name[8];
 	short number;
 } TEXTURE;
+
+typedef struct {
+	ubyte		flags;     //values defined above
+	ubyte		pad[3];    //keep alignment
+	int		lighting;  //how much light this casts
+	int		damage;    //how much damage being against this does (for lava)
+	short		nEffectClip; //the tEffectInfo that changes this, or -1
+	short		destroyed; //bitmap to show when destroyed, or -1
+	short		slide_u,slide_v;    //slide rates of texture, stored in 8:8 fix
+}  tTexMapInfoD2;
+
+typedef struct {
+	char		filename[13];
+	ubyte		flags;
+	int		lighting;		// 0 to 1
+	int		damage;			//how much damage being against this does
+	int		nEffectClip;		//if not -1, the tEffectInfo that changes this   
+} tTexMapInfoD1;
 
 //------------------------------------------------------------------------
 

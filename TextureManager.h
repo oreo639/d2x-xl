@@ -3,6 +3,94 @@
 
 #include "textures.h"
 #include "carray.h"
+#include "sll.h"
+
+//------------------------------------------------------------------------
+
+class CAnimationClipInfo {
+	public:
+		int						m_nPlayTime;
+		int						m_nFrameTime;
+		CDynamicArray<short>	m_frames;
+
+		int LoadAnimationFrames (CFileManager& fp, int nMaxFrames) {
+			if (m_frames.Buffer ())
+				m_frames.Read (fp);
+			for (; nMaxFrames > (int) m_frames.Length (); nMaxFrames--)
+				fp.ReadInt16 ();
+			return m_frames.Buffer () ? (int) m_frames.Length () : -1;
+			}
+
+		inline size_t Find (short nFrame) { return m_frames.Find (nFrame); }
+		inline bool operator== (short nFrame) { return Find (nFrame) >= 0; }
+		inline size_t FrameCount (void) { return m_frames.Length (); }
+};
+
+typedef CSLL< CAnimationClipInfo, CAnimationClipInfo >	CAnimationClipList;
+
+//------------------------------------------------------------------------
+
+class CAnimationClipLoader {
+	public:
+		virtual int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp) = 0;
+};
+
+class CAnimationClipLoaderD1 : public CAnimationClipLoader {
+	public:
+		virtual int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp);
+};
+
+class CAnimationClipLoaderD2 : public CAnimationClipLoader {
+	public:
+		virtual int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp);
+};
+
+class CEffectClipLoaderD1 : public CAnimationClipLoader {
+	public:
+		virtual int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp);
+};
+
+class CEffectClipLoaderD2 : public CAnimationClipLoader {
+	public:
+		virtual int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp);
+};
+
+class CWallEffectClipLoaderD1 : public CAnimationClipLoader {
+	public:
+		virtual int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp);
+};
+
+class CWallEffectClipLoaderD2 : public CAnimationClipLoader {
+	public:
+		virtual int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp);
+};
+
+class CAnimationLoaderFactory {
+	public:
+		CAnimationClipLoader* GetAnimationLoader (int nVersion, int nType) {
+			if (nVersion) {
+				switch (nType) {
+					case 0:
+						return new CAnimationClipLoaderD2;
+					case 1:
+						return new CEffectClipLoaderD2;
+					case 2:
+						return new CWallEffectClipLoaderD2;
+					}
+				}
+			else {
+				switch (nType) {
+					case 0:
+						return new CAnimationClipLoaderD1;
+					case 1:
+						return new CEffectClipLoaderD1;
+					case 2:
+						return new CWallEffectClipLoaderD1;
+					}
+				}
+			return null;
+			}
+	};
 
 //------------------------------------------------------------------------
 
@@ -35,9 +123,10 @@ typedef CTexture* textureList;
 class CTextureManager {
 	private:
 		textureList		m_textures [2];
-		CDynamicArray <CTexture*> m_overrides [2]; // Items can be blank if there is no custom texture
-		CDynamicArray <bool>      m_bModified [2]; // Tracks whether textures have changed since last save
-		CDynamicArray <CTexture*> m_previous [2];  // Previous texture as of save, to allow reverts
+		CDynamicArray <CTexture*>	m_overrides [2]; // Items can be blank if there is no custom texture
+		CDynamicArray <bool>			m_bModified [2]; // Tracks whether textures have changed since last save
+		CDynamicArray <CTexture*>	m_previous [2];  // Previous texture as of save, to allow reverts
+		CAnimationClipList			m_animationClips [2];
 
 		uint				m_nTextures [2];
 		char**			m_names [2];
@@ -105,7 +194,15 @@ class CTextureManager {
 		
 		bool LoadTextures (int nVersion = -1, bool bClearExisting = true);
 		
-		void LoadAnimationInfo (CFileManager& fp, int nVersion = -1);
+		int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp, CAnimationClipLoader* loader);
+
+		void LoadAnimationData (CFileManager& fp, int nVersion = -1);
+
+		CAnimationClipInfo* FindAnimation (short nTexture);
+
+		short PrevAnimationFrame (short nTexture);
+
+		short NextAnimationFrame (short nTexture);
 
 		bool Check (int nTexture);
 		
