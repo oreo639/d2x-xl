@@ -255,14 +255,16 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 
 // -----------------------------------------------------------------------------
 
-#define MAX_MACROS        100
-#define MAX_TEXTURES_D1   584
-#define MAX_TEXTURES_D2   910
-#define MAX_WALL_FLAGS_D1 5
-#define MAX_WALL_FLAGS_D2 9
-#define MAX_WALL_FLAGS    9
-#define NUM_LIGHTS_D1     48
-#define NUM_LIGHTS_D2     85
+#define MAX_MACROS			100
+#define MAX_TEXTURES_D1		584
+#define MAX_TEXTURES_D2		910
+#define MAX_WALL_FLAGS_D1	5
+#define MAX_WALL_FLAGS_D2	9
+#define MAX_WALL_FLAGS		9
+#define NUM_LIGHTS_D1		48
+#define NUM_LIGHTS_D2		85
+#define MAX_SOUNDS_D2		254     // bad to have sound 255!
+#define MAX_SOUNDS_D1		250     // bad to have sound 255!
 
 #define COMPILED_MINE_VERSION 0
 

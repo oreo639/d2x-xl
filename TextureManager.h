@@ -13,17 +13,19 @@ class CAnimationClipInfo {
 		int						m_nFrameTime;
 		CDynamicArray<short>	m_frames;
 
+		CAnimationClipInfo () : m_nPlayTime (0), m_nFrameTime (0) {}
 		int LoadAnimationFrames (CFileManager& fp, int nMaxFrames) {
 			if (m_frames.Buffer ())
 				m_frames.Read (fp);
-			for (; nMaxFrames > (int) m_frames.Length (); nMaxFrames--)
-				fp.ReadInt16 ();
+			fp.Seek ((nMaxFrames - (int) m_frames.Length ()) * sizeof (short), SEEK_CUR);
 			return m_frames.Buffer () ? (int) m_frames.Length () : -1;
 			}
 
 		inline size_t Find (short nFrame) { return m_frames.Find (nFrame); }
 		inline bool operator== (short nFrame) { return Find (nFrame) >= 0; }
 		inline size_t FrameCount (void) { return m_frames.Length (); }
+		inline short Frame (ushort i = 0) { return m_frames [i % (ushort) m_frames.Length ()]; }
+		inline int FrameTime (void) { return m_nFrameTime; }
 };
 
 typedef CSLL< CAnimationClipInfo, CAnimationClipInfo >	CAnimationClipList;
@@ -127,6 +129,7 @@ class CTextureManager {
 		CDynamicArray <bool>			m_bModified [2]; // Tracks whether textures have changed since last save
 		CDynamicArray <CTexture*>	m_previous [2];  // Previous texture as of save, to allow reverts
 		CAnimationClipList			m_animationClips [2];
+		CDynamicArray<CAnimationClipInfo*>	m_animationIndex [2];
 
 		uint				m_nTextures [2];
 		char**			m_names [2];
@@ -154,6 +157,7 @@ class CTextureManager {
 			return AllTextures (LevelTexToAllTex (nTexture), nVersionResolved);
 			}
 
+		inline CAnimationClipInfo* AnimationIndex (short nTexture) { return m_animationIndex [Version ()][nTexture]; }
 		// Looks up textures by global texture ID. Pointers returned by this function should not be
 		// stored persistently as they may change.
 		inline const CTexture* AllTextures (uint nTexAll, int nVersion = -1) {
@@ -196,7 +200,11 @@ class CTextureManager {
 		
 		int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp, CAnimationClipLoader* loader);
 
-		void LoadAnimationData (CFileManager& fp, int nVersion = -1);
+		bool OpenAnimationFile (CFileManager& fp);
+
+		bool SkipToAnimationData (CFileManager& fp);
+
+		void LoadAnimationData (int nVersion = -1);
 
 		CAnimationClipInfo* FindAnimation (short nTexture);
 

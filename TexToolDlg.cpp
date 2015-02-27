@@ -139,9 +139,53 @@ return CToolDlg::OnKillActive ();
 
 //------------------------------------------------------------------------------
 
-	static int scroll_offset_x = 0;
-	static int scroll_offset_y = 0;
-	static int old_x,old_y;
+bool CTexToolDlg::ScrollTexture (ushort texture [])
+{
+	int x, y;
+
+if (!textureManager.ScrollSpeed (texture [0], &x, &y)) {
+	m_xScrollOffset [0] =
+	m_yScrollOffset [0] = 0;
+	return false;
+	}
+
+PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1], m_xScrollOffset [0], m_yScrollOffset [0]);
+//	DrawTexture (texture [0], texture [1], m_xScrollOffset [0], m_yScrollOffset [0]);
+if (m_xScrollOffset [1] != x || m_yScrollOffset [1] != y) {
+	m_xScrollOffset [0] = 0;
+	m_yScrollOffset [0] = 0;
+	}
+m_xScrollOffset [1] = x;
+m_yScrollOffset [1] = y;
+m_xScrollOffset [0] += x;
+m_yScrollOffset [0] += y;
+m_xScrollOffset [0] &= 63;
+m_yScrollOffset [0] &= 63;
+return true;
+}
+
+//------------------------------------------------------------------------------
+
+void CTexToolDlg::UpdateTextureClip (ushort texture [])
+{
+	static int direction [2] = {1, 1};
+	int nVersion = DLE.IsD1File ();
+
+for (int i = 0; i < 2; i++) {
+	CAnimationClipInfo* aicP = textureManager.AnimationIndex (texture [i]);
+	if (aicP && aicP->FrameCount ()) {
+		m_frame [i] += direction [i];
+		if ((m_frame [i] < 0) || (m_frame [i] >= (int) aicP->FrameCount ())) {
+			direction [i] = -direction [i];
+			m_frame [i] += direction [i];
+			}
+		texture [i] = aicP->Frame (m_frame [i]);
+		}
+	}
+PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1]);
+}
+
+//------------------------------------------------------------------------------
 
 void CTexToolDlg::AnimateTexture (void)
 {
@@ -149,38 +193,13 @@ if (!TextureIsVisible ())
 	return;
 
 	CSegment *segP = m_bOtherSegment ? other->Segment () : current->Segment ();
-
-	ushort texture [2];
-	int bScroll;
-	int x,y;
-
 	CSide	*sideP = m_bOtherSegment ? other->Side () : current->Side ();
+	ushort texture [2] = { sideP->BaseTex (), sideP->OvlTex (0) };
 
-texture [0] = sideP->BaseTex ();
-texture [1] = sideP->OvlTex (0);
-
-// if texture1 is a scrolling texture, then offset the textures and
-// redraw them, then return
-bScroll = textureManager.ScrollSpeed (texture [0], &x, &y);
-if (bScroll) {
-	PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1], scroll_offset_x, scroll_offset_y);
-//	DrawTexture (texture [0], texture [1], scroll_offset_x, scroll_offset_y);
-	if (old_x != x || old_y != y) {
-		scroll_offset_x = 0;
-		scroll_offset_y = 0;
-		}
-	old_x = x;
-	old_y = y;
-	scroll_offset_x += x;
-	scroll_offset_y += y;
-	scroll_offset_x &= 63;
-	scroll_offset_y &= 63;
-	return;
-	}
-
-scroll_offset_x = 0;
-scroll_offset_y = 0;
-
+if (!ScrollTexture (texture))
+#if 1
+	UpdateTextureClip (texture);
+#else
 // abort if this is not a wall
 #ifndef _DEBUG
 ushort nWall = sideP->m_info.nWall;
@@ -251,6 +270,7 @@ if (anim [index [0]] || anim [index [1]]) {
 		}
 	PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1]);
 	}
+#endif
 }
 
 //------------------------------------------------------------------------------

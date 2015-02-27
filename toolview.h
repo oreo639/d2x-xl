@@ -331,6 +331,8 @@ class CTexToolDlg : public CToolDlg
 	COLORREF	m_bkColor;
 	int		m_frame [2];
 	bool		m_bOtherSegment;
+	int		m_xScrollOffset [2];
+	int		m_yScrollOffset [2];
 
 	CTexToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = null, 
 					 int nTexWndId = 0, int nTimerId = -1, COLORREF bkColor = RGB (0,0,0),
@@ -338,6 +340,8 @@ class CTexToolDlg : public CToolDlg
 	~CTexToolDlg ();
 	bool Refresh (short nBaseTex = -1, short nOvlTex = -1, short nVisible = -1);
 	void AnimateTexture (void);
+	bool ScrollTexture (ushort texture []);
+	void UpdateTextureClip (ushort texture []);
 
    virtual BOOL OnInitDialog ();
 	afx_msg void OnPaint ();

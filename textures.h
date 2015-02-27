@@ -101,6 +101,15 @@ typedef struct {
   short	slide_u, slide_v; //slide rates of texture, stored in 8:8 int
 } tTextureEffectInfo;
 
+typedef struct {
+	char	filename[13];
+	ubyte	flags;
+	int	lighting;		// 0 to 1
+	int	damage;			//how much damage being against this does
+	int	nEffectClip;		//if not -1, the tEffectInfo that changes this   
+} tTextureEffectInfoD1;
+
+
 typedef struct tAnimationInfo {
   int		nPlayTime;  //total time (in seconds) of clip
   int		nFrameCount;
@@ -574,6 +583,8 @@ class CTexture {
 		inline TextureFormat Format (void) const { return m_info.format; }
 
 		bool CreateBitmap (CBitmap **ppImage, bool bScale = false, int width = -1, int height = -1) const;
+
+		inline void SetFrameCount (ubyte nFrameCount) { m_info.nFrameCount = nFrameCount; }
 
 	private:
 		void Release (void);

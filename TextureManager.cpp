@@ -12,11 +12,19 @@ extern short nDbgTexture;
 static int LoadAnimationClip (CAnimationClipInfo& aci, CFileManager& fp, int nMaxFrames)
 {
 aci.m_nPlayTime = fp.ReadInt32 ();
-aci.m_frames.Create (fp.ReadInt32 ());
-aci.m_nFrameTime = fp.ReadInt32 ();
-aci.LoadAnimationFrames (fp, nMaxFrames);
+int nFrames = fp.ReadInt32 ();
+if (nFrames > nMaxFrames)
+	return -1;
+if (nFrames > 0)
+	aci.m_frames.Create (nFrames);
+aci.m_nFrameTime = int (X2F (fp.ReadInt32 ()) * 1000);
+fp.Seek (sizeof (int) + sizeof (short), SEEK_CUR);
+if (nFrames < 0)
+	fp.Seek (nMaxFrames * sizeof (short), SEEK_CUR);
+else
+	aci.LoadAnimationFrames (fp, nMaxFrames);
 fp.ReadInt32 ();
-return aci.m_frames.Buffer () ? aci.m_frames.Length () : -1;
+return aci.m_frames.Length ();
 }
 
 //------------------------------------------------------------------------
@@ -26,10 +34,10 @@ static int LoadAnimationData (CAnimationClipList& animations, CFileManager& fp, 
 	int nClips = fp.ReadInt32 ();
 
 for (int i = 0; i < nClips; i++) {
-	CAnimationClipInfo aci;
-	if (0 > LoadAnimationClip (aci, fp, nFrames))
+	CAnimationClipInfo* aciP = animations.Append ();
+	if (!aciP)
 		return -1;
-	if (!animations.Append (aci))
+	if (0 > LoadAnimationClip (*aciP, fp, nFrames))
 		return -1;
 	}
 return nClips;
@@ -52,10 +60,10 @@ static int LoadEffectClips (CAnimationClipList& animations, CFileManager& fp, in
 	int nClips = fp.ReadInt32 ();
 
 for (int i = 0; i < nClips; i++) {
-	CAnimationClipInfo aci;
-	if (0 > LoadEffectData (aci, fp, nMaxFrames))
+	CAnimationClipInfo* aciP = animations.Append ();
+	if (!aciP)
 		return -1;
-	if (!animations.Append (aci))
+	if (0 > LoadEffectData (*aciP, fp, nMaxFrames))
 		return -1;
 	}
 return nClips;
@@ -66,9 +74,16 @@ return nClips;
 int LoadWallEffectData (CAnimationClipInfo& aci, CFileManager& fp, short nMaxFrames)
 {
 aci.m_nPlayTime = fp.ReadInt32 ();
-aci.m_frames.Create (fp.ReadInt16 ());
-int nFrames = aci.LoadAnimationFrames (fp, nMaxFrames);
-aci.m_nFrameTime = aci.m_frames.Length () ? aci.m_nPlayTime / aci.m_frames.Length () : 0;
+short nFrames = fp.ReadInt16 ();
+if (nFrames > nMaxFrames)
+	return -1;
+if (nFrames < 0)
+	fp.Seek (nMaxFrames * sizeof (short), SEEK_CUR);
+else {
+	aci.m_frames.Create (nFrames);
+	nFrames = aci.LoadAnimationFrames (fp, nMaxFrames);
+	aci.m_nFrameTime = int (X2F (nFrames ? aci.m_nPlayTime / nFrames : 0) * 1000);
+	}
 fp.Seek (20, SEEK_CUR);
 return nFrames;
 }
@@ -80,10 +95,10 @@ static int LoadWallEffectClips (CAnimationClipList& animations, CFileManager& fp
 	int nClips = fp.ReadInt32 ();
 
 for (int i = 0; i < nClips; i++) {
-	CAnimationClipInfo aci;
-	if (0 > LoadWallEffectData (aci, fp, nMaxFrames))
+	CAnimationClipInfo* aciP = animations.Append ();
+	if (!aciP)
 		return -1;
-	if (!animations.Append (aci))
+	if (0 > LoadWallEffectData (*aciP, fp, nMaxFrames))
 		return -1;
 	}
 return nClips;
@@ -462,20 +477,100 @@ if (loader) {
 return -1;
 }
 
+
 //------------------------------------------------------------------------------
 
-void CTextureManager::LoadAnimationData (CFileManager& fp, int nVersion)
+bool CTextureManager::SkipToAnimationData (CFileManager& fp)
 {
+if (Version ()) {
+	if (fp.ReadInt32 () != 0x214d4148L) { // HAM Id
+		fp.Close ();
+		return false;
+		}
+	fp.ReadInt32 (); // HAM version
+	int n = fp.ReadUInt32 (); // # of textures                   
+	fp.Seek (n * sizeof (ushort), SEEK_CUR);	 
+	fp.Seek (n * sizeof (tTextureEffectInfo), SEEK_CUR); 
+	n = fp.ReadUInt32 (); // # of sounds     
+	fp.Seek (n * sizeof (ubyte), SEEK_CUR);     
+	fp.Seek (n * sizeof (ubyte), SEEK_CUR);     
+	}
+else {
+	fp.ReadUInt32 ();                         
+	int n = MAX_TEXTURES_D1;
+	fp.Seek (n * sizeof (ushort), SEEK_CUR);	 
+	fp.Seek (n * sizeof (tTextureEffectInfoD1), SEEK_CUR); 
+	n = MAX_SOUNDS_D1;
+	fp.Seek (n * sizeof (ubyte), SEEK_CUR);     
+	fp.Seek (n * sizeof (ubyte), SEEK_CUR);     
+	}
+return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool CTextureManager::OpenAnimationFile (CFileManager& fp)
+{
+	char filename [256];
+
+strcpy_s (filename, sizeof (filename), descentFolder [Version ()]);
+char *slash = strrchr (filename, '\\');
+if (slash)
+	*(slash+1) = '\0';
+else
+	filename [0] = '\0';
+strcat (filename, Version () ? "descent2.ham" : "descent.pig");
+if (!fp.Open (filename, "rb"))
+	return false;
+return SkipToAnimationData (fp);
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureManager::LoadAnimationData (int nVersion)
+{
+	CFileManager fp;
+
+if (!OpenAnimationFile (fp)) {
+	fp.Close ();
+	return;
+	}
+
 if (nVersion < 0)
 	nVersion = Version ();
 
 CAnimationLoaderFactory	alf;
 
-fp.Seek (nVersion ? MAX_TEXTURES_D2 * sizeof (tTexMapInfoD2) : MAX_TEXTURES_D1 * sizeof (tTexMapInfoD1), SEEK_CUR); // skip texture effect info
-fp.Seek (nVersion ? fp.ReadInt32 () * 2 : 500, SEEK_CUR); // skip sound index info
-
 for (int nType = 0; nType < 3; nType++)
 	LoadAnimationClips (m_animationClips [nVersion], fp, alf.GetAnimationLoader (nVersion, nType));
+
+m_animationIndex [nVersion].Clear ();
+CSLLIterator <CAnimationClipInfo, CAnimationClipInfo> iter (m_animationClips [Version ()]);
+CTexture* textures = m_textures [nVersion].Buffer ();
+
+short nMaxTexture = -1;
+for (iter.Begin (); *iter != iter.End (); iter++) {
+	CAnimationClipInfo& aic = **iter;
+	ubyte nFrames = (ubyte) aic.FrameCount ();
+	for (ubyte i = 0; i < nFrames; i++) {
+		short nTexture = aic.Frame (i);
+		if (nMaxTexture < nTexture)
+			nMaxTexture = nTexture;
+		}	
+	}
+
+m_animationIndex [nVersion].Create (nMaxTexture + 1);
+
+for (iter.Begin (); *iter != iter.End (); iter++) {
+	CAnimationClipInfo& aic = **iter;
+	ubyte nFrames = (ubyte) aic.FrameCount ();
+	for (ubyte i = 0; i < nFrames; i++) {
+		short nTexture = aic.Frame (i);
+		m_animationIndex [nVersion][nTexture] = *iter;
+		textures [nTexture].SetFrameCount (nFrames);
+		}
+	}
+fp.Close ();
 }
 
 //------------------------------------------------------------------------------
@@ -547,12 +642,14 @@ paletteManager.Reload (m_paletteName [1]);
 CTexture* textures = m_textures [nVersion].Buffer ();
 for (int i = 0, j = m_header [nVersion].nTextures; i < j; i++)
 	textures [i].LoadFromPig (*fp, i, nVersion);
-LoadAnimationData (*fp, nVersion);
+LoadAnimationData (nVersion);
+#if 0
 for (int i = 0; i < m_header [nVersion].nTextures; i++) {
 	if (textures [i].IsAnimated () && textures [i].FrameNum () == 0) {
 		textures [i].CalculateFrameCount ();
 		}
 	}
+#endif
 fp->Close ();
 delete fp;
 m_bAvailable [nVersion] = true;

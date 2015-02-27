@@ -408,11 +408,11 @@ void CTextureTool::AnimateTexture (void)
 	CSegment *segP = current->Segment ();
 
 	ushort texture [2];
-	static int scroll_offset_x = 0;
-	static int scroll_offset_y = 0;
+	static int m_xScrollOffset [0] = 0;
+	static int m_yScrollOffset [0] = 0;
 	int bScroll;
 	int x,y;
-	static int old_x,old_y;
+	static int m_xScrollOffset [1],m_yScrollOffset [1];
 
 	CSide	*sideP = current->Side ();
 
@@ -423,22 +423,22 @@ texture [1] = sideP->OvlTex (1);
 // redraw them, then return
 bScroll = textureManager.ScrollSpeed (texture [0], &x, &y);
 if (bScroll) {
-	DrawTexture (texture [0], texture [1], scroll_offset_x, scroll_offset_y);
-	if (old_x != x || old_y != y) {
-		scroll_offset_x = 0;
-		scroll_offset_y = 0;
+	DrawTexture (texture [0], texture [1], m_xScrollOffset [0], m_yScrollOffset [0]);
+	if (m_xScrollOffset [1] != x || m_yScrollOffset [1] != y) {
+		m_xScrollOffset [0] = 0;
+		m_yScrollOffset [0] = 0;
 		}
-	old_x = x;
-	old_y = y;
-	scroll_offset_x += x;
-	scroll_offset_y += y;
-	scroll_offset_x &= 63;
-	scroll_offset_y &= 63;
+	m_xScrollOffset [1] = x;
+	m_yScrollOffset [1] = y;
+	m_xScrollOffset [0] += x;
+	m_yScrollOffset [0] += y;
+	m_xScrollOffset [0] &= 63;
+	m_yScrollOffset [0] &= 63;
 	return;
 	}
 
-scroll_offset_x = 0;
-scroll_offset_y = 0;
+m_xScrollOffset [0] = 0;
+m_yScrollOffset [0] = 0;
 
 // abort if this is not a wall
 #ifndef _DEBUG

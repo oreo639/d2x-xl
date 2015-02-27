@@ -128,6 +128,19 @@ class CSLL {
 			return &nodeP->m_data;
 			}
 
+		_T* Append (void) {
+			CNode<_T>* nodeP = new CNode<_T>;
+			if (!nodeP)
+				return null;
+			if (m_tail)
+				m_tail->SetSucc (nodeP);
+			else
+				m_head = nodeP;
+			m_tail = nodeP;
+			++m_length;
+			return &nodeP->m_data;
+			}
+
 	inline CSLL<_T, _K>& operator= (CSLL<_T, _K>& other) {
 		m_head = other.Head ();
 		m_tail = other.Tail ();
