@@ -340,8 +340,8 @@ class CTexToolDlg : public CToolDlg
 	~CTexToolDlg ();
 	bool Refresh (short nBaseTex = -1, short nOvlTex = -1, short nVisible = -1);
 	void AnimateTexture (void);
-	bool ScrollTexture (ushort texture []);
-	void UpdateTextureClip (ushort texture []);
+	bool ScrollTexture (short texture []);
+	void UpdateTextureClip (short texture []);
 
    virtual BOOL OnInitDialog ();
 	afx_msg void OnPaint ();

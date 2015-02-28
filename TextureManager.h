@@ -12,13 +12,14 @@ class CAnimationClipInfo {
 		short						m_nTexture; // the level texture id of the texture the animation belongs to
 		int						m_nPlayTime;
 		int						m_nFrameTime;
+		bool						m_bBidirectional;
 		CDynamicArray<short>	m_frames;
 
-		CAnimationClipInfo () : m_nTexture (-1), m_nPlayTime (0), m_nFrameTime (0) {}
+		CAnimationClipInfo () : m_nTexture (-1), m_nPlayTime (0), m_nFrameTime (0), m_bBidirectional (false) {}
 		int LoadAnimationFrames (CFileManager& fp, int nMaxFrames, bool bIndices) {
 			int l = (int) m_frames.Length ();
 			for (int i = 0; i < l; i++)
-				m_frames [i] = bIndices ? -fp.ReadInt16 () - 1 : fp.ReadInt16 ();
+				m_frames [i] = bIndices ? -fp.ReadInt16 () : fp.ReadInt16 ();
 			if (l < nMaxFrames)
 				fp.Seek ((nMaxFrames - l) * sizeof (short), SEEK_CUR);
 			return m_frames.Buffer () ? (int) m_frames.Length () : -1;
@@ -30,6 +31,7 @@ class CAnimationClipInfo {
 		inline size_t FrameCount (void) { return m_frames.Length (); }
 		inline short Frame (ushort i = 0) { return m_frames.Buffer () ? m_frames [i % (ushort) m_frames.Length ()] : 0; }
 		inline int FrameTime (void) { return m_nFrameTime; }
+		inline bool Bidirectional (void) { return m_bBidirectional; }
 };
 
 typedef CSLL< CAnimationClipInfo, CAnimationClipInfo >	CAnimationClipList;

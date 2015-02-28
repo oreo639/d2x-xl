@@ -139,7 +139,7 @@ return CToolDlg::OnKillActive ();
 
 //------------------------------------------------------------------------------
 
-bool CTexToolDlg::ScrollTexture (ushort texture [])
+bool CTexToolDlg::ScrollTexture (short texture [])
 {
 	int x, y;
 
@@ -166,7 +166,7 @@ return true;
 
 //------------------------------------------------------------------------------
 
-void CTexToolDlg::UpdateTextureClip (ushort texture [])
+void CTexToolDlg::UpdateTextureClip (short texture [])
 {
 	static int direction [2] = {1, 1};
 	int nVersion = DLE.IsD1File ();
@@ -177,8 +177,12 @@ for (int i = 0; i < 2; i++) {
 	if (aicP && aicP->FrameCount ()) {
 		m_frame [i] += direction [i];
 		if ((m_frame [i] < 0) || (m_frame [i] >= (int) aicP->FrameCount ())) {
-			direction [i] = -direction [i];
-			m_frame [i] += direction [i];
+			if (aicP->Bidirectional ()) {
+				direction [i] = -direction [i];
+				m_frame [i] += direction [i];
+				}
+			else
+				m_frame [i] = 0;
 			}
 		texture [i] = aicP->Frame (m_frame [i]);
 		bAnimate = true;
@@ -197,7 +201,7 @@ if (!TextureIsVisible ())
 
 	CSegment *segP = m_bOtherSegment ? other->Segment () : current->Segment ();
 	CSide	*sideP = m_bOtherSegment ? other->Side () : current->Side ();
-	ushort texture [2] = { sideP->BaseTex (), sideP->OvlTex (0) };
+	short texture [2] = { sideP->BaseTex (), sideP->OvlTex (0) };
 
 if (ScrollTexture (texture))
 	return;

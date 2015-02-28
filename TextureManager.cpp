@@ -57,6 +57,7 @@ if (0 > LoadAnimationClip (aci, fp, nMaxFrames, true))
 fp.Seek (8, SEEK_CUR);
 aci.m_nTexture = fp.ReadInt16 (); // nChangingWallTexture
 fp.Seek (38, SEEK_CUR);
+aci.m_bBidirectional = true;
 return 1;
 }
 

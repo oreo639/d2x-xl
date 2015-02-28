@@ -294,8 +294,8 @@ if (color != null) {
 bool PaintTexture (CWnd *wndP, int bkColor, int texture1, int texture2, int xOffset, int yOffset)
 {
 	const CTexture *baseTexP = (texture1 >= 0) ? textureManager.Textures (texture1) : null;
-	int maskedTexture2 = texture2 & TEXTURE_MASK;
-	const CTexture *ovlTexP = (maskedTexture2 > 0) ? textureManager.Textures (maskedTexture2) : null;
+	int maskedTexture2 = (texture2 < 0) ? texture2 : texture2 & TEXTURE_MASK;
+	const CTexture *ovlTexP = (maskedTexture2 != 0) ? textureManager.Textures (maskedTexture2) : null;
 	short nOvlAlignment = (maskedTexture2 > 0) ? (texture2 & ALIGNMENT_MASK) >> ALIGNMENT_SHIFT : 0;
 
 return PaintTexture (wndP, bkColor, baseTexP, ovlTexP, nOvlAlignment, xOffset, yOffset);
