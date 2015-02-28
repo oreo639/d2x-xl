@@ -8,6 +8,24 @@ CTextureManager textureManager;
 extern short nDbgTexture;
 
 //------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+int CAnimationClipInfo::LoadAnimationFrames (CFileManager& fp, int nMaxFrames, bool bIndices) 
+{
+m_frames.Read (fp);
+int l = (int) m_frames.Length ();
+if (bIndices)
+	for (int i = 0; i < l; i++)
+		m_frames [i] = -m_frames [i];
+if (l < nMaxFrames)
+	fp.Seek ((nMaxFrames - l) * sizeof (short), SEEK_CUR);
+return m_frames.Buffer () ? (int) m_frames.Length () : -1;
+}
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
 static int LoadAnimationClip (CAnimationClipInfo& aci, CFileManager& fp, int nMaxFrames, bool bIndices)
 {
