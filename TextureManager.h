@@ -17,9 +17,11 @@ class CAnimationClipInfo {
 
 		CAnimationClipInfo () : m_nTexture (-1), m_nPlayTime (0), m_nFrameTime (0), m_bBidirectional (false) {}
 		int LoadAnimationFrames (CFileManager& fp, int nMaxFrames, bool bIndices) {
+			m_frames.Read (fp);
 			int l = (int) m_frames.Length ();
-			for (int i = 0; i < l; i++)
-				m_frames [i] = bIndices ? -fp.ReadInt16 () : fp.ReadInt16 ();
+			if (bIndices)
+				for (int i = 0; i < l; i++)
+					m_frames [i] = -m_frames [i];
 			if (l < nMaxFrames)
 				fp.Seek ((nMaxFrames - l) * sizeof (short), SEEK_CUR);
 			return m_frames.Buffer () ? (int) m_frames.Length () : -1;
