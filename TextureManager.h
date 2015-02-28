@@ -9,18 +9,22 @@
 
 class CAnimationClipInfo {
 	public:
+		short						m_nTexture; // the level texture id of the texture the animation belongs to
 		int						m_nPlayTime;
 		int						m_nFrameTime;
 		CDynamicArray<short>	m_frames;
 
-		CAnimationClipInfo () : m_nPlayTime (0), m_nFrameTime (0) {}
-		int LoadAnimationFrames (CFileManager& fp, int nMaxFrames) {
-			if (m_frames.Buffer ())
-				m_frames.Read (fp);
-			fp.Seek ((nMaxFrames - (int) m_frames.Length ()) * sizeof (short), SEEK_CUR);
+		CAnimationClipInfo () : m_nTexture (-1), m_nPlayTime (0), m_nFrameTime (0) {}
+		int LoadAnimationFrames (CFileManager& fp, int nMaxFrames, bool bIndices) {
+			int l = (int) m_frames.Length ();
+			for (int i = 0; i < l; i++)
+				m_frames [i] = bIndices ? -fp.ReadInt16 () - 1 : fp.ReadInt16 ();
+			if (l < nMaxFrames)
+				fp.Seek ((nMaxFrames - l) * sizeof (short), SEEK_CUR);
 			return m_frames.Buffer () ? (int) m_frames.Length () : -1;
 			}
 
+		inline short Key (void) { return m_nTexture; }
 		inline size_t Find (short nFrame) { return m_frames.Find (nFrame); }
 		inline bool operator== (short nFrame) { return Find (nFrame) >= 0; }
 		inline size_t FrameCount (void) { return m_frames.Length (); }
@@ -165,7 +169,7 @@ class CTextureManager {
 			int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 			if (!m_textures [nVersionResolved].Buffer ())
 				return null;
-			if (nIndex >= (uint) AllTextureCount (nVersionResolved))
+			if (nIndex >= (uint) GlobalTextureCount (nVersionResolved))
 				return null;
 			if (m_overrides [nVersionResolved][nIndex] != null)
 				return m_overrides [nVersionResolved][nIndex];
@@ -195,7 +199,7 @@ class CTextureManager {
 
 		int MaxTextures (int nVersion = -1);
 
-		int AllTextureCount (int nVersion = -1);
+		int GlobalTextureCount (int nVersion = -1);
 		
 		bool LoadTextures (int nVersion = -1, bool bClearExisting = true);
 		

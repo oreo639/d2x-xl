@@ -349,9 +349,10 @@ if (bShowTexture) {
 		//pDC->RealizePalette ();
 
 		// paint the background in case some of the window is unused
+#if 0
 		if (bkColor >= 0)
 			pDC->FillSolidRect (&rc, (COLORREF) bkColor);
-
+#endif
 		if (pDC->GetDeviceCaps (RASTERCAPS) & RC_STRETCHDIB) {
 			double scale = min ((double)rc.Width () / (double)tex.Width (), (double)rc.Height () / (double)tex.Height ());
 			// try to round the scale to reduce distortion
@@ -1609,7 +1610,7 @@ void CTexture::CalculateFrameCount (void)
 if (m_info.nFrame > 0)
 	return;
 
-for (uint nTexFrame = IdAll () + 1; nTexFrame < (uint)textureManager.AllTextureCount (); nTexFrame++) {
+for (uint nTexFrame = IdAll () + 1; nTexFrame < (uint)textureManager.GlobalTextureCount (); nTexFrame++) {
 	if (textureManager.TextureByIndex (nTexFrame)->FrameNum () == 0)
 		break;
 	nFrames++;

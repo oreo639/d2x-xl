@@ -137,7 +137,7 @@ m_customTextureIcons.Create (ICONLIST_ICON_SIZE, ICONLIST_ICON_SIZE, ILC_COLOR32
 TextureList ()->SetImageList (&m_customTextureIcons, LVSIL_SMALL);
 
 int nTexList = 0, nListItem = 0;
-for (uint nIndex = 0; nIndex < (uint)textureManager.AllTextureCount (); nIndex++) {
+for (uint nIndex = 0; nIndex < (uint)textureManager.GlobalTextureCount (); nIndex++) {
 	const CTexture *pTexture = textureManager.TextureByIndex (nIndex);
 	if (pTexture->IsAnimated ()) {
 		// Don't add individual frames to the list, we'll do that later

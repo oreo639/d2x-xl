@@ -9,7 +9,7 @@ extern short nDbgTexture;
 
 //------------------------------------------------------------------------
 
-static int LoadAnimationClip (CAnimationClipInfo& aci, CFileManager& fp, int nMaxFrames)
+static int LoadAnimationClip (CAnimationClipInfo& aci, CFileManager& fp, int nMaxFrames, bool bIndices)
 {
 aci.m_nPlayTime = fp.ReadInt32 ();
 int nFrames = fp.ReadInt32 ();
@@ -20,10 +20,14 @@ if (nFrames > 0)
 aci.m_nFrameTime = int (X2F (fp.ReadInt32 ()) * 1000);
 aci.m_nFrameTime = int (X2F (aci.m_nPlayTime) / float (nFrames) * 1000);
 fp.Seek (sizeof (int) + sizeof (short), SEEK_CUR);
-if (nFrames < 0)
+if (nFrames < 0) {
 	fp.Seek (nMaxFrames * sizeof (short), SEEK_CUR);
-else
-	aci.LoadAnimationFrames (fp, nMaxFrames);
+	aci.m_nTexture = -1;
+	}
+else {
+	aci.LoadAnimationFrames (fp, nMaxFrames, bIndices);
+	aci.m_nTexture = aci.Frame (0);
+	}
 fp.ReadInt32 ();
 return aci.m_frames.Length ();
 }
@@ -38,7 +42,7 @@ for (int i = 0; i < nClips; i++) {
 	CAnimationClipInfo* aciP = animations.Append ();
 	if (!aciP)
 		return -1;
-	if (0 > LoadAnimationClip (*aciP, fp, nFrames))
+	if (0 > LoadAnimationClip (*aciP, fp, nFrames, false))
 		return -1;
 	}
 return nClips;
@@ -48,9 +52,11 @@ return nClips;
 
 static int LoadEffectData (CAnimationClipInfo& aci, CFileManager& fp, int nMaxFrames)
 {
-if (0 > LoadAnimationClip (aci, fp, nMaxFrames))
+if (0 > LoadAnimationClip (aci, fp, nMaxFrames, true))
 	return -1;
-fp.Seek (48, SEEK_CUR);
+fp.Seek (8, SEEK_CUR);
+aci.m_nTexture = fp.ReadInt16 (); // nChangingWallTexture
+fp.Seek (38, SEEK_CUR);
 return 1;
 }
 
@@ -78,15 +84,18 @@ aci.m_nPlayTime = fp.ReadInt32 ();
 short nFrames = fp.ReadInt16 ();
 if (nFrames > nMaxFrames)
 	return -1;
-if (nFrames < 0)
+if (nFrames < 0) {
 	fp.Seek (nMaxFrames * sizeof (short), SEEK_CUR);
+	aci.m_nTexture = -1;
+	}
 else {
 	aci.m_frames.Create (nFrames);
-	nFrames = aci.LoadAnimationFrames (fp, nMaxFrames);
+	nFrames = aci.LoadAnimationFrames (fp, nMaxFrames, false);
 	aci.m_nFrameTime = int (X2F (nFrames ? aci.m_nPlayTime / nFrames : 0) * 1000);
+	aci.m_nTexture = aci.Frame (0);
 	}
 fp.Seek (20, SEEK_CUR);
-return nFrames;
+return aci.m_frames.Length ();
 }
 
 //------------------------------------------------------------------------
@@ -309,7 +318,7 @@ return ((nVersion < 0) ? DLE.IsD2File () : nVersion) ? MAX_TEXTURES_D2 : MAX_TEX
 
 //------------------------------------------------------------------------
 
-int CTextureManager::AllTextureCount (int nVersion)
+int CTextureManager::GlobalTextureCount (int nVersion)
 {
 return m_header [(nVersion < 0) ? Version () : nVersion].nTextures;
 }
@@ -321,9 +330,9 @@ int CTextureManager::TexIdFromIndex (uint nIndex, int nVersion)
 	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 
 // Search the index for this texture ID
-for (int i = 0; i < MaxTextures (nVersionResolved); i++) {
+for (uint i = 0; i < m_nTextures [nVersionResolved]; i++) {
 	if (m_index [nVersionResolved][i] - 1 == nIndex) {
-		return i;
+		return (int) i;
 		}
 	}
 
@@ -334,7 +343,7 @@ return -1;
 
 bool CTextureManager::HasCustomTextures (void) 
 {
-for (int i = 0; i < AllTextureCount (); i++)
+for (int i = 0; i < GlobalTextureCount (); i++)
 	if (TextureByIndex ((uint)i)->IsCustom ())
 		return true;
 return false;
@@ -344,10 +353,10 @@ return false;
 
 int CTextureManager::CountCustomTextures (void) 
 {
-	int			count = 0;
+	int count = 0;
 
-for (int i = 0; i < AllTextureCount (); i++)
-	if (TextureByIndex ((uint)i)->IsCustom ())
+for (int i = 0; i < GlobalTextureCount (); i++)
+	if (TextureByIndex ((uint) i)->IsCustom ())
 		count++;
 return count;
 }
@@ -358,8 +367,8 @@ int CTextureManager::CountModifiedTextures (void)
 {
 	int count = 0;
 
-for (int i = 0; i < AllTextureCount (); i++)
-	if (m_bModified [Version ()][i])
+for (int i = 0; i < GlobalTextureCount (); i++)
+	if (m_bModified [Version ()] [i])
 		count++;
 return count;
 }
@@ -553,28 +562,20 @@ for (iter.Begin (); *iter != iter.End (); iter++) {
 	CAnimationClipInfo& aic = **iter;
 	ubyte nFrames = (ubyte) aic.FrameCount ();
 	for (ubyte i = 0; i < nFrames; i++) {
-		short nTexture = TexIdFromIndex (aic.Frame (i), nVersion);
-		aic.m_frames [i] = nTexture;
+		short nTexture = aic.Frame (i);
 		if (nMaxTexture < nTexture)
 			nMaxTexture = nTexture;
 		}	
 	}
 
 m_animationIndex [nVersion].Create (nMaxTexture + 1);
+m_animationIndex [nVersion].Clear ();
 
 for (iter.Begin (); *iter != iter.End (); iter++) {
 	CAnimationClipInfo& aic = **iter;
-	if (aic.FrameCount ()) {
-		ubyte nFrames = 1; //(ubyte) aic.FrameCount ();
-		for (ubyte i = 0; i < nFrames; i++) {
-			short nTexture = aic.Frame (i);
-#ifdef _DEBUG
-			if (nTexture == 523)
-				nTexture = nTexture;
-#endif
-			m_animationIndex [nVersion][nTexture] = *iter;
-			textures [nTexture].SetFrameCount (nFrames);
-			}
+	if ((aic.Key () > -1) && aic.FrameCount ()) {
+		m_animationIndex [nVersion][aic.m_nTexture] = *iter;
+		textures [aic.m_nTexture].SetFrameCount (aic.FrameCount ());
 		}
 	}
 fp.Close ();
@@ -841,7 +842,7 @@ if (nCustom) {
 
 void CTextureManager::CommitTextureChanges (void)
 {
-for (int i = 0; i < AllTextureCount (); i++)
+for (int i = 0; i < GlobalTextureCount (); i++)
 	if (m_bModified [Version ()][i]) {
 		m_previous [Version ()][i] = null;
 		m_bModified [Version ()][i] = false;
@@ -854,7 +855,7 @@ void CTextureManager::UndoTextureChanges (void)
 {
 	int nReverted = 0;
 
-for (int i = 0; i < AllTextureCount (); i++)
+for (int i = 0; i < GlobalTextureCount (); i++)
 	if (m_bModified [Version ()][i]) {
 		if (m_previous [Version ()][i] == &m_textures [Version ()][i]) {
 			// Revert to default texture
@@ -987,7 +988,7 @@ void CTextureManager::CreateGLTextures (int nVersion)
 if (!Available (nVersionResolved))
 	return;
 
-for (int i = 0; i < AllTextureCount (); i++)
+for (int i = 0; i < GlobalTextureCount (); i++)
 	m_textures [nVersionResolved][i].GLCreate (false);
 m_arrow.GLCreate (false);
 for (int i = 0; i < ICON_COUNT; i++)
