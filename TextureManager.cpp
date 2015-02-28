@@ -35,7 +35,7 @@ if (nFrames > nMaxFrames)
 	return -1;
 if (nFrames > 0)
 	aci.m_frames.Create (nFrames);
-aci.m_nFrameTime = int (X2F (fp.ReadInt32 ()) * 1000);
+fp.Seek (sizeof (int), SEEK_CUR); // skip frame time stored in the file - it sometimes seems to be bogus
 aci.m_nFrameTime = int (X2F (aci.m_nPlayTime) / float (nFrames) * 1000);
 fp.Seek (sizeof (int) + sizeof (short), SEEK_CUR);
 if (nFrames < 0) {
