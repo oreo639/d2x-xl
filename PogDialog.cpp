@@ -70,7 +70,7 @@ TextureList ()->InsertColumn (columnNum++, "Transparent", LVCFMT_LEFT, 60, 5);
 TextureList ()->InsertColumn (columnNum++, "See-thru", LVCFMT_LEFT, 60, 6);
 RebuildTextureList ();
 if (m_bPreselectTexture)
-	SetFocusedTexture (GetTextureListIndexFromId (textureManager.LevelTexToAllTex (m_uiPreselectedTexture)));
+	SetFocusedTexture (GetTextureListIndexFromId (textureManager.Index (m_uiPreselectedTexture)));
 
 const char *pszCurrentPalette = null;
 for (int i = 0; i < paletteManager.NumAvailablePalettes (); i++) {
@@ -137,11 +137,11 @@ m_customTextureIcons.Create (ICONLIST_ICON_SIZE, ICONLIST_ICON_SIZE, ILC_COLOR32
 TextureList ()->SetImageList (&m_customTextureIcons, LVSIL_SMALL);
 
 int nTexList = 0, nListItem = 0;
-for (uint nTexAll = 0; nTexAll < (uint)textureManager.AllTextureCount (); nTexAll++) {
-	const CTexture *pTexture = textureManager.AllTextures (nTexAll);
+for (uint nIndex = 0; nIndex < (uint)textureManager.AllTextureCount (); nIndex++) {
+	const CTexture *pTexture = textureManager.TextureByIndex (nIndex);
 	if (pTexture->IsAnimated ()) {
 		// Don't add individual frames to the list, we'll do that later
-		nTexAll += pTexture->NumFrames () - 1;
+		nIndex += pTexture->NumFrames () - 1;
 		}
 	if (!IsTextureIncluded (pTexture))
 		continue;
@@ -185,7 +185,7 @@ for (uint nTexAll = 0; nTexAll < (uint)textureManager.AllTextureCount (); nTexAl
 	}
 
 if (expandAnim)
-	AddTextureListFrames (textureManager.AllTextures (nExpandAnimTexAll));
+	AddTextureListFrames (textureManager.TextureByIndex (nExpandAnimTexAll));
 
 TextureList ()->SortItems (&CPogDialog::CompareTextures, 0);
 m_nTexPreviousFocused = -1;
@@ -336,7 +336,6 @@ return shouldInclude;
 
 CPogDialog::TextureFilters CPogDialog::ClassifyTexture (const CTexture *pTexture)
 {
-	int nTexLevel;
 	char *robotTextures [] = {
 		"rbot*", "eye*", "glow*", "boss*", "metl*", "ctrl*", "react*", "rmap*", "ship*",
 		"energy01", "flare", "marker", "missile", "missiles", "missback", "water07"
@@ -349,7 +348,8 @@ CPogDialog::TextureFilters CPogDialog::ClassifyTexture (const CTexture *pTexture
 		"vammo", "vulcan"
 	};
 
-	if (textureManager.FindLevelTex (pTexture->IdAll (), &nTexLevel))
+	int nTexture = textureManager.TexIdFromIndex (pTexture->IdAll ());
+	if (nTexture >= 0)
 		return TextureFilters_Level;
 
 	for (int i = 0; i < ARRAYSIZE(robotTextures); i++)
@@ -373,20 +373,20 @@ CPogDialog::TextureFilters CPogDialog::ClassifyTexture (const CTexture *pTexture
 	return TextureFilters_Misc;
 }
 
-int CALLBACK CPogDialog::CompareTextures (LPARAM nTexAll1, LPARAM nTexAll2, LPARAM /*lParamSort*/)
+int CALLBACK CPogDialog::CompareTextures (LPARAM nIndex1, LPARAM nIndex2, LPARAM /*lParamSort*/)
 {
-	return _stricmp (textureManager.AllTextures (nTexAll1)->Name (), textureManager.AllTextures (nTexAll2)->Name ());
+return _stricmp (textureManager.TextureByIndex (nIndex1)->Name (), textureManager.TextureByIndex (nIndex2)->Name ());
 }
 
 bool CPogDialog::AreParentTexturesEqual (const CTexture *pTexture, const CTexture *pOtherTexture)
 {
-	if (pTexture == pOtherTexture)
-		return true;
-	if (!pTexture || !pOtherTexture)
-		return false;
-	if (pTexture->IsAnimated () && pOtherTexture->IsAnimated () && pTexture->GetParent () == pOtherTexture->GetParent ())
-		return true;
+if (pTexture == pOtherTexture)
+	return true;
+if (!pTexture || !pOtherTexture)
 	return false;
+if (pTexture->IsAnimated () && pOtherTexture->IsAnimated () && pTexture->GetParent () == pOtherTexture->GetParent ())
+	return true;
+return false;
 }
 
 void CPogDialog::UpdateTextureListFrameExpansion ()
@@ -483,10 +483,10 @@ int CPogDialog::GetFocusedTextureIndex (void)
 	return -1;
 }
 
-int CPogDialog::GetTextureListIndexFromId (uint nTexAll)
+int CPogDialog::GetTextureListIndexFromId (uint nIndex)
 {
 	for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
-		if (TextureList ()->GetItemData (i) == nTexAll)
+		if (TextureList ()->GetItemData (i) == nIndex)
 			return i;
 		}
 	return -1;
@@ -502,43 +502,43 @@ const CTexture *CPogDialog::GetFocusedTexture (void)
 
 const CTexture *CPogDialog::GetTextureAtIndex (uint uiTextureListIndex)
 {
-	if (uiTextureListIndex >= (uint)TextureList ()->GetItemCount ())
-		return null;
-	uint nTexAll = (uint) TextureList ()->GetItemData (uiTextureListIndex);
-	return textureManager.AllTextures (nTexAll);
+if (uiTextureListIndex >= (uint)TextureList ()->GetItemCount ())
+	return null;
+uint nIndex = (uint) TextureList ()->GetItemData (uiTextureListIndex);
+return textureManager.TextureByIndex (nIndex);
 }
 
 bool CPogDialog::IsSingleTextureSelected (void)
 {
-	int numSelectedTextures = 0;
-	for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
-		if (TextureList ()->GetItemState (i, LVIS_SELECTED) > 0) {
-			numSelectedTextures++;
-			}
+int numSelectedTextures = 0;
+for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
+	if (TextureList ()->GetItemState (i, LVIS_SELECTED) > 0) {
+		numSelectedTextures++;
 		}
-	return numSelectedTextures == 1;
+	}
+return numSelectedTextures == 1;
 }
 
 bool CPogDialog::ExecuteOnSelectedTextures (ExecuteOnSelectedTexturesCallback callback, ...)
 {
-	va_list vl;
-	va_start (vl, callback);
-	bool bExecuted = false;
-	for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
-		if (TextureList ()->GetItemState (i, LVIS_SELECTED) > 0) {
-			va_list args;
+va_list vl;
+va_start (vl, callback);
+bool bExecuted = false;
+for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
+	if (TextureList ()->GetItemState (i, LVIS_SELECTED) > 0) {
+		va_list args;
 #ifdef va_copy
-			va_copy (args, vl);
+		va_copy (args, vl);
 #else
-			args = vl;
+		args = vl;
 #endif
-			(this->*callback) (GetTextureAtIndex (i), args);
-			va_end (args);
-			bExecuted = true;
-			}
+		(this->*callback) (GetTextureAtIndex (i), args);
+		va_end (args);
+		bExecuted = true;
 		}
-	va_end (vl);
-	return bExecuted;
+	}
+va_end (vl);
+return bExecuted;
 }
 
 void CPogDialog::OnTextureListSelectionChanged (NMHDR *pNMHDR, LRESULT *pResult)

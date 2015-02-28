@@ -24,7 +24,7 @@ class CAnimationClipInfo {
 		inline size_t Find (short nFrame) { return m_frames.Find (nFrame); }
 		inline bool operator== (short nFrame) { return Find (nFrame) >= 0; }
 		inline size_t FrameCount (void) { return m_frames.Length (); }
-		inline short Frame (ushort i = 0) { return m_frames [i % (ushort) m_frames.Length ()]; }
+		inline short Frame (ushort i = 0) { return m_frames.Buffer () ? m_frames [i % (ushort) m_frames.Length ()] : 0; }
 		inline int FrameTime (void) { return m_nFrameTime; }
 };
 
@@ -153,38 +153,39 @@ class CTextureManager {
 			if (!m_textures [nVersionResolved].Buffer ())
 				return null;
 			if (nTexture < 0)
-				return AllTextures (-nTexture - 1, nVersionResolved);
-			return AllTextures (LevelTexToAllTex (nTexture), nVersionResolved);
+				return TextureByIndex (-nTexture - 1, nVersionResolved);
+			return TextureByIndex (Index (nTexture), nVersionResolved);
 			}
 
 		inline CAnimationClipInfo* AnimationIndex (short nTexture) { return m_animationIndex [Version ()][nTexture]; }
+
 		// Looks up textures by global texture ID. Pointers returned by this function should not be
 		// stored persistently as they may change.
-		inline const CTexture* AllTextures (uint nTexAll, int nVersion = -1) {
+		inline const CTexture* TextureByIndex (uint nIndex, int nVersion = -1) {
 			int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 			if (!m_textures [nVersionResolved].Buffer ())
 				return null;
-			if (nTexAll >= (uint) AllTextureCount (nVersionResolved))
+			if (nIndex >= (uint) AllTextureCount (nVersionResolved))
 				return null;
-			if (m_overrides [nVersionResolved][nTexAll] != null)
-				return m_overrides [nVersionResolved][nTexAll];
-			return &m_textures [nVersionResolved][nTexAll];
+			if (m_overrides [nVersionResolved][nIndex] != null)
+				return m_overrides [nVersionResolved][nIndex];
+			return &m_textures [nVersionResolved][nIndex];
 			}
 
-		inline uint LevelTexToAllTex (int nTexLevel, int nVersion = -1) {
+		inline uint Index (int nTexture, int nVersion = -1) {
 			// It's possible to store an out-of-bounds texture number; bad idea but shouldn't crash
-			if (nTexLevel >= 0 && nTexLevel < MaxTextures (nVersion))
-				return m_index [(nVersion < 0) ? Version () : nVersion][nTexLevel] - 1;
+			if ((nTexture >= 0) && (nTexture < MaxTextures (nVersion)))
+				return m_index [(nVersion < 0) ? Version () : nVersion][nTexture] - 1;
 			else
 				return 0;
 			}
 
-		bool FindLevelTex (uint nTexAll, int *pnTexLevel, int nVersion = -1);
+		int TexIdFromIndex (uint nIndex, int nVersion = -1);
 
-		inline CPigTexture* Info (int nVersion, uint nTexAll) {
+		inline CPigTexture* Info (int nVersion, uint nIndex) {
 			if (!m_info [nVersion])
 				return null;
-			return &m_info [nVersion][nTexAll];
+			return &m_info [nVersion][nIndex];
 			}
 
 		// Location at which texture bitmap data is stored in the PIG
@@ -220,9 +221,9 @@ class CTextureManager {
 	
 		void LoadMod (void);
 
-		CTexture* OverrideTexture (uint nTexAll, const CTexture* newTexture = null, int nVersion = -1);
+		CTexture* OverrideTexture (uint nIndex, const CTexture* newTexture = null, int nVersion = -1);
 
-		void RevertTexture (uint nTexAll, int nVersion = -1);
+		void RevertTexture (uint nIndex, int nVersion = -1);
 		
 		void ReleaseTextures (void);
 
@@ -236,10 +237,10 @@ class CTextureManager {
 
 		void TagUsedTextures (void);
 
-		inline bool IsTextureUsed (int nTexLevel, int nVersion = -1) {
-			if (nTexLevel < 0 || nTexLevel >= MaxTextures (nVersion))
+		inline bool IsTextureUsed (int nTexture, int nVersion = -1) {
+			if (nTexture < 0 || nTexture >= MaxTextures (nVersion))
 				return false;
-			return m_bUsed [(nVersion < 0) ? Version () : nVersion][nTexLevel];
+			return m_bUsed [(nVersion < 0) ? Version () : nVersion][nTexture];
 			}
 		
 		void RemoveCustomTextures (bool bUnusedOnly = true);
@@ -285,12 +286,12 @@ class CTextureManager {
 					 : 1.0;
 			}
 
-		int UsedCount (uint nTexAll);
+		int UsedCount (uint nIndex);
 
 		inline int UsedCount (const CTexture *pTexture) { return pTexture ? UsedCount (pTexture->IdAll ()) : 0; }
 
-		inline const CTexture* BaseTextures (uint nTexAll, int nVersion = -1) {
-			return &m_textures [(nVersion < 0) ? Version () : nVersion][nTexAll];
+		inline const CTexture* BaseTextures (uint nIndex, int nVersion = -1) {
+			return &m_textures [(nVersion < 0) ? Version () : nVersion][nIndex];
 			}
 
 		int ReadPog (CFileManager& fp, long nFileSize);

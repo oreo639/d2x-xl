@@ -18,6 +18,7 @@ if (nFrames > nMaxFrames)
 if (nFrames > 0)
 	aci.m_frames.Create (nFrames);
 aci.m_nFrameTime = int (X2F (fp.ReadInt32 ()) * 1000);
+aci.m_nFrameTime = int (X2F (aci.m_nPlayTime) / float (nFrames) * 1000);
 fp.Seek (sizeof (int) + sizeof (short), SEEK_CUR);
 if (nFrames < 0)
 	fp.Seek (nMaxFrames * sizeof (short), SEEK_CUR);
@@ -315,19 +316,18 @@ return m_header [(nVersion < 0) ? Version () : nVersion].nTextures;
 
 //------------------------------------------------------------------------
 
-bool CTextureManager::FindLevelTex (uint nTexAll, int *pnTexLevel, int nVersion)
+int CTextureManager::TexIdFromIndex (uint nIndex, int nVersion)
 {
 	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 
 // Search the index for this texture ID
 for (int i = 0; i < MaxTextures (nVersionResolved); i++) {
-	if (m_index [nVersionResolved][i] - 1 == nTexAll) {
-		*pnTexLevel = i;
-		return true;
+	if (m_index [nVersionResolved][i] - 1 == nIndex) {
+		return i;
 		}
 	}
 
-return false;
+return -1;
 }
 
 //------------------------------------------------------------------------
@@ -335,7 +335,7 @@ return false;
 bool CTextureManager::HasCustomTextures (void) 
 {
 for (int i = 0; i < AllTextureCount (); i++)
-	if (AllTextures ((uint)i)->IsCustom ())
+	if (TextureByIndex ((uint)i)->IsCustom ())
 		return true;
 return false;
 }
@@ -347,7 +347,7 @@ int CTextureManager::CountCustomTextures (void)
 	int			count = 0;
 
 for (int i = 0; i < AllTextureCount (); i++)
-	if (AllTextures ((uint)i)->IsCustom ())
+	if (TextureByIndex ((uint)i)->IsCustom ())
 		count++;
 return count;
 }
@@ -553,7 +553,8 @@ for (iter.Begin (); *iter != iter.End (); iter++) {
 	CAnimationClipInfo& aic = **iter;
 	ubyte nFrames = (ubyte) aic.FrameCount ();
 	for (ubyte i = 0; i < nFrames; i++) {
-		short nTexture = aic.Frame (i);
+		short nTexture = TexIdFromIndex (aic.Frame (i), nVersion);
+		aic.m_frames [i] = nTexture;
 		if (nMaxTexture < nTexture)
 			nMaxTexture = nTexture;
 		}	
@@ -563,11 +564,17 @@ m_animationIndex [nVersion].Create (nMaxTexture + 1);
 
 for (iter.Begin (); *iter != iter.End (); iter++) {
 	CAnimationClipInfo& aic = **iter;
-	ubyte nFrames = (ubyte) aic.FrameCount ();
-	for (ubyte i = 0; i < nFrames; i++) {
-		short nTexture = aic.Frame (i);
-		m_animationIndex [nVersion][nTexture] = *iter;
-		textures [nTexture].SetFrameCount (nFrames);
+	if (aic.FrameCount ()) {
+		ubyte nFrames = 1; //(ubyte) aic.FrameCount ();
+		for (ubyte i = 0; i < nFrames; i++) {
+			short nTexture = aic.Frame (i);
+#ifdef _DEBUG
+			if (nTexture == 523)
+				nTexture = nTexture;
+#endif
+			m_animationIndex [nVersion][nTexture] = *iter;
+			textures [nTexture].SetFrameCount (nFrames);
+			}
 		}
 	}
 fp.Close ();
@@ -658,7 +665,7 @@ return true;
 
 //------------------------------------------------------------------------------
 
-CTexture* CTextureManager::OverrideTexture (uint nTexAll, const CTexture* newTexture, int nVersion)
+CTexture* CTextureManager::OverrideTexture (uint nIndex, const CTexture* newTexture, int nVersion)
 {
 	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 	CTexture* texture = new CTexture ();
@@ -666,44 +673,44 @@ CTexture* CTextureManager::OverrideTexture (uint nTexAll, const CTexture* newTex
 if (newTexture != null)
 	texture->Copy (*newTexture);
 else
-	texture->Copy (*AllTextures (nTexAll, nVersionResolved));
+	texture->Copy (*TextureByIndex (nIndex, nVersionResolved));
 texture->SetCustom ();
 
 // We want to retain a copy of the texture as it was at load-time - custom or stock -
 // so we know what to revert to if requested
-if (m_overrides [nVersionResolved][nTexAll] != null && m_previous [nVersionResolved][nTexAll] != null)
-	delete m_overrides [nVersionResolved][nTexAll];
-else if (m_overrides [nVersionResolved][nTexAll] != null)
-	m_previous [nVersionResolved][nTexAll] = m_overrides [nVersionResolved][nTexAll];
+if (m_overrides [nVersionResolved][nIndex] != null && m_previous [nVersionResolved][nIndex] != null)
+	delete m_overrides [nVersionResolved][nIndex];
+else if (m_overrides [nVersionResolved][nIndex] != null)
+	m_previous [nVersionResolved][nIndex] = m_overrides [nVersionResolved][nIndex];
 else
-	m_previous [nVersionResolved][nTexAll] = &m_textures [nVersionResolved][nTexAll];
+	m_previous [nVersionResolved][nIndex] = &m_textures [nVersionResolved][nIndex];
 
-m_overrides [nVersionResolved][nTexAll] = texture;
-m_bModified [nVersionResolved][nTexAll] = true;
-return m_overrides [nVersionResolved][nTexAll];
+m_overrides [nVersionResolved][nIndex] = texture;
+m_bModified [nVersionResolved][nIndex] = true;
+return m_overrides [nVersionResolved][nIndex];
 }
 
 //------------------------------------------------------------------------------
 
-void CTextureManager::RevertTexture (uint nTexAll, int nVersion)
+void CTextureManager::RevertTexture (uint nIndex, int nVersion)
 {
 	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 
-if (m_overrides [nVersionResolved][nTexAll] == null)
+if (m_overrides [nVersionResolved][nIndex] == null)
 	return;
-else if (m_previous [nVersionResolved][nTexAll] != null) {
-	delete m_overrides [nVersionResolved][nTexAll];
-	m_overrides [nVersionResolved][nTexAll] = null;
-	if (m_previous [nVersionResolved][nTexAll] == &m_textures [nVersionResolved][nTexAll]) {
+else if (m_previous [nVersionResolved][nIndex] != null) {
+	delete m_overrides [nVersionResolved][nIndex];
+	m_overrides [nVersionResolved][nIndex] = null;
+	if (m_previous [nVersionResolved][nIndex] == &m_textures [nVersionResolved][nIndex]) {
 		// Revert operation counts as an undo, so unset modified
-		m_previous [nVersionResolved][nTexAll] = null;
-		m_bModified [nVersionResolved][nTexAll] = false;
+		m_previous [nVersionResolved][nIndex] = null;
+		m_bModified [nVersionResolved][nIndex] = false;
 		}
 	}
 else {
-	m_previous [nVersionResolved][nTexAll] = m_overrides [nVersionResolved][nTexAll];
-	m_overrides [nVersionResolved][nTexAll] = null;
-	m_bModified [nVersionResolved][nTexAll] = true;
+	m_previous [nVersionResolved][nIndex] = m_overrides [nVersionResolved][nIndex];
+	m_overrides [nVersionResolved][nIndex] = null;
+	m_bModified [nVersionResolved][nIndex] = true;
 	}
 }
 
@@ -755,22 +762,22 @@ for (i = 0; i < h; i++) {
 
 //------------------------------------------------------------------------
 
-int CTextureManager::UsedCount (uint nTexAll)
+int CTextureManager::UsedCount (uint nIndex)
 {
 if (!textureManager.Available ())
 	return 0;
 
-int nTexLevel;
-if (!FindLevelTex (nTexAll, &nTexLevel))
+int nTexture = TexIdFromIndex (nIndex);
+if (nTexture < 0)
 	return 0;
 
-const CTexture *texP = Textures (nTexLevel);
+const CTexture *texP = Textures (nTexture);
 
 if (texP->IsAssignableFrame ()) {
 	// This is a frame of an animated texture - we need to find the base before
 	// we can get the used count
 	bool bFoundParent = false;
-	for (int i = nTexLevel - 1; i > 0; i--) {
+	for (int i = nTexture - 1; i > 0; i--) {
 		texP = Textures (i);
 		if (!texP->IsAssignableFrame ()) {
 			bFoundParent = true;
@@ -815,8 +822,8 @@ if (nCustom) {
 
 	int nRemoved = 0;
 	for (int i = 0; i < m_header [Version ()].nTextures; i++) {
-		if (AllTextures (i)->IsCustom ()) {
-			if (!bUnusedOnly || !IsTextureUsed (AllTextures (i)->IdLevel ())) {
+		if (TextureByIndex (i)->IsCustom ()) {
+			if (!bUnusedOnly || !IsTextureUsed (TextureByIndex (i)->IdLevel ())) {
 				RevertTexture (i);
 				nRemoved++;
 				}
@@ -1014,9 +1021,9 @@ if (!LoadInfo (nVersionResolved) || !LoadTextures (nVersionResolved, false)) {
 
 // Change palettes for loaded custom textures - mark all as changed via OverrideTexture to allow saving to work correctly
 // TGA format textures don't need any changes
-for (uint nTexAll = 0, j = m_header [nVersionResolved].nTextures; nTexAll < j; nTexAll++) {
-	if (m_overrides [nVersionResolved][nTexAll] != null && m_overrides [nVersionResolved][nTexAll]->Format () != TGA) {
-		CTexture *pNewTexture = OverrideTexture (nTexAll, null, nVersionResolved);
+for (uint nIndex = 0, j = m_header [nVersionResolved].nTextures; nIndex < j; nIndex++) {
+	if (m_overrides [nVersionResolved][nIndex] != null && m_overrides [nVersionResolved][nIndex]->Format () != TGA) {
+		CTexture *pNewTexture = OverrideTexture (nIndex, null, nVersionResolved);
 		for (uint i = 0; i < pNewTexture->Size (); i++) {
 			// Even BMP format textures are stored in RGBA format in memory, which makes
 			// this pretty simple - just need to watch out for transparent color keys

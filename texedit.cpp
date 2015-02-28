@@ -331,7 +331,7 @@ CDialog::OnInitDialog ();
 
 	CWnd*	pWnd;
 	CRect	rc;
-	const CTexture *texP = textureManager.AllTextures (m_nTexAll);
+	const CTexture *texP = textureManager.TextureByIndex (m_nTexAll);
 
 pWnd = GetDlgItem (IDC_TEXEDIT_TEXTURE);
 pWnd->GetClientRect (rc);

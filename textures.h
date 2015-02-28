@@ -415,8 +415,8 @@ enum TextureFormat : ubyte {
 
 typedef struct tTexture {
 	uint           width, height, bufSize;
-	uint           nTexAll;
-	int            nTexLevel;
+	uint           nIndex;
+	int            nTexture;
 	bool           bFromMod, bAnimated, bTransparent, bSuperTransparent, bFlat;
 	ubyte          bCustom;
 	TextureFormat  format;
@@ -437,18 +437,18 @@ class CTexture {
 	public:
 		CTexture (CBGRA* dataP = null) : m_data (dataP), m_renderBuffer (null), m_glHandle (0), m_bExtBuffer (dataP != null), m_bValid (false) {
 			memset (&m_info, 0, sizeof (m_info));
-			m_info.nTexLevel = -1;
+			m_info.nTexture = -1;
 			}
 
 		~CTexture() { Release (); }
 
 		virtual void Clear (void) {
 			memset (&m_info, 0, sizeof (m_info));
-			m_info.nTexLevel = -1;
+			m_info.nTexture = -1;
 			Release ();
 		}
 
-		int LoadFromPig (CFileManager& fp, uint nTexAll, int nVersion = -1);
+		int LoadFromPig (CFileManager& fp, uint nIndex, int nVersion = -1);
 
 		bool LoadFromPog (CFileManager& fp, CPigTexture& info);
 
@@ -468,9 +468,9 @@ class CTexture {
 
 		void ComputeIndex (ubyte* bmIndex) const;
 
-		inline uint IdAll (void) const { return m_info.nTexAll; }
+		inline uint IdAll (void) const { return m_info.nIndex; }
 
-		inline int IdLevel (void) const { return m_info.nTexLevel; }
+		inline int IdLevel (void) const { return m_info.nTexture; }
 
 		inline bool Transparent (void) const { return m_info.bTransparent; }
 
@@ -484,7 +484,7 @@ class CTexture {
 
 		inline uint FrameSize () const { return IsAnimated () ? Width () * Width () : Size (); }
 
-		inline uint FrameOffset () const { return IsAnimated () ? FrameSize () * FrameNum () : 0; }
+		inline uint FrameOffset () const { return Format () ? IsAnimated () ? FrameSize () * FrameNum () : 0 : 0; }
 
 		inline CBGRA* Buffer (uint i = 0) { return &m_data [i]; }
 

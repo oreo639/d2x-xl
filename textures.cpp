@@ -90,7 +90,7 @@ m_info.width = baseTexP->Width ();
 m_info.height = baseTexP->FrameHeight ();
 m_bValid = true;
 
-const CBGRA* srcDataP = baseTexP->Buffer (baseTexP->FrameOffset ());
+const CBGRA* srcDataP = baseTexP->Buffer (offs = baseTexP->FrameOffset ());
 
 if (srcDataP != null) {
 	// if not rotated, then copy directly
@@ -693,24 +693,24 @@ m_bValid = true;
 
 //------------------------------------------------------------------------
 
-int CTexture::LoadFromPig (CFileManager& fp, uint nTexAll, int nVersion) 
+int CTexture::LoadFromPig (CFileManager& fp, uint nIndex, int nVersion) 
 {
 if (m_info.bCustom)
 	return 0;
 
 #ifdef _DEBUG
-if (nTexAll == nDbgTexture)
+if (nIndex == nDbgTexture)
 	nDbgTexture = nDbgTexture;
 #endif
-CPigTexture* infoP = textureManager.Info (nVersion, nTexAll);
+CPigTexture* infoP = textureManager.Info (nVersion, nIndex);
 if (!infoP)
 	return 0;
 
 int nSize = infoP->width * infoP->height;
 if (m_data && (m_info.bufSize == nSize))
 	return 0; // already loaded
-m_info.nTexAll = nTexAll;
-textureManager.FindLevelTex (nTexAll, &m_info.nTexLevel, nVersion);
+m_info.nIndex = nIndex;
+m_info.nTexture = textureManager.TexIdFromIndex (nIndex, nVersion);
 m_info.format = BMP;
 if (!Allocate (nSize)) 
 	return 1;
@@ -1594,8 +1594,8 @@ return bOk;
 
 bool CTexture::IsAssignableFrame (void) const
 {
-if (m_info.nTexLevel >= 0)
-	return strstr (textureManager.Name (-1, m_info.nTexLevel), "frame") != null;
+if (m_info.nTexture >= 0)
+	return strstr (textureManager.Name (-1, m_info.nTexture), "frame") != null;
 return false;
 }
 
@@ -1610,7 +1610,7 @@ if (m_info.nFrame > 0)
 	return;
 
 for (uint nTexFrame = IdAll () + 1; nTexFrame < (uint)textureManager.AllTextureCount (); nTexFrame++) {
-	if (textureManager.AllTextures (nTexFrame)->FrameNum () == 0)
+	if (textureManager.TextureByIndex (nTexFrame)->FrameNum () == 0)
 		break;
 	nFrames++;
 	}
@@ -1627,10 +1627,9 @@ const CTexture *CTexture::GetParent (void) const
 {
 if (!IsAnimated ())
 	return null;
-else if (FrameNum () == 0)
+if (FrameNum () == 0)
 	return this;
-else
-	return textureManager.AllTextures (IdAll () - FrameNum ());
+return textureManager.TextureByIndex (IdAll () - FrameNum ());
 }
 
 //------------------------------------------------------------------------
@@ -1639,10 +1638,9 @@ const CTexture *CTexture::GetFrame (uint nFrame) const
 {
 if (!IsAnimated () || FrameNum () != 0)
 	return null;
-else if (nFrame == 0)
+if (nFrame == 0)
 	return this;
-else
-	return textureManager.AllTextures (IdAll () + nFrame);
+return textureManager.TextureByIndex (IdAll () + nFrame);
 }
 
 //------------------------------------------------------------------------

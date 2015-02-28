@@ -170,6 +170,7 @@ void CTexToolDlg::UpdateTextureClip (ushort texture [])
 {
 	static int direction [2] = {1, 1};
 	int nVersion = DLE.IsD1File ();
+	bool bAnimate = false;
 
 for (int i = 0; i < 2; i++) {
 	CAnimationClipInfo* aicP = textureManager.AnimationIndex (texture [i]);
@@ -180,9 +181,11 @@ for (int i = 0; i < 2; i++) {
 			m_frame [i] += direction [i];
 			}
 		texture [i] = aicP->Frame (m_frame [i]);
+		bAnimate = true;
 		}
 	}
-PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1]);
+if (bAnimate)
+	PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1]);
 }
 
 //------------------------------------------------------------------------------
@@ -196,7 +199,9 @@ if (!TextureIsVisible ())
 	CSide	*sideP = m_bOtherSegment ? other->Side () : current->Side ();
 	ushort texture [2] = { sideP->BaseTex (), sideP->OvlTex (0) };
 
-if (!ScrollTexture (texture))
+if (ScrollTexture (texture))
+	return;
+
 #if 1
 	UpdateTextureClip (texture);
 #else
@@ -342,7 +347,7 @@ return true;
 void CAnimTexWnd::OnTimer (UINT_PTR nIdEvent)
 {
 if (nIdEvent == (UINT) m_nAnimTimer) {
-	const CTexture *pTexture = textureManager.AllTextures (m_nTexAll);
+	const CTexture *pTexture = textureManager.TextureByIndex (m_nTexAll);
 	PaintTexture (this, IMG_BKCOLOR, pTexture->GetFrame (m_nFrame));
 	m_nFrame++;
 	m_nFrame %= pTexture->NumFrames ();

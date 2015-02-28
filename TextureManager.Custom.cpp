@@ -251,7 +251,7 @@ pigFileInfo.nVersion = 1;
 pigFileInfo.nTextures = 0;
 
 for (i = 0; i < h; i++) {
-	texP = AllTextures (i);
+	texP = TextureByIndex (i);
 	if (texP->IsCustom ())
 		pigFileInfo.nTextures++;
 	}
@@ -259,7 +259,7 @@ pigFileInfo.Write (fp);
 
 // write list of textures
 for (i = 0; i < h; i++) {
-	texP = AllTextures (i);
+	texP = TextureByIndex (i);
 	if (texP->IsCustom ())
 		fp.WriteUInt16 (ushort (i + 1));
 	}
@@ -267,7 +267,7 @@ for (i = 0; i < h; i++) {
 // write texture headers
 nId = 0;
 for (i = 0; i < h; i++) {
-	texP = AllTextures (i);
+	texP = TextureByIndex (i);
 	if (texP->IsCustom ())
 		nOffset = WriteCustomTextureHeader (fp, texP, nId++, nOffset);
 	}
@@ -276,7 +276,7 @@ sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures", 
 DEBUGMSG (message);
 
 for (i = 0; i < h; i++) {
-	texP = AllTextures (i);
+	texP = TextureByIndex (i);
 	if (texP->IsCustom ())
 		WriteCustomTexture (fp, texP);
 	}

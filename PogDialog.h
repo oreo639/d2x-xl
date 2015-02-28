@@ -46,7 +46,7 @@ class CPogDialog : public CDialog, private CDlgHelpers {
 		void ScrollTextureList (uint uiTextureListIndex);
 		void SetFocusedTexture (uint uiTextureListIndex);
 		int GetFocusedTextureIndex (void);
-		int GetTextureListIndexFromId (uint nTexAll);
+		int GetTextureListIndexFromId (uint nIndex);
 		const CTexture *GetFocusedTexture (void);
 		const CTexture *GetTextureAtIndex (uint uiTextureListIndex);
 		bool IsSingleTextureSelected (void);
@@ -54,8 +54,8 @@ class CPogDialog : public CDialog, private CDlgHelpers {
 		bool ExecuteOnSelectedTextures (ExecuteOnSelectedTexturesCallback callback, ...);
 
 		// Supports < 0 values to allow nulls
-		inline const CTexture *CPogDialog::GetTextureFromId (int nTexAll) {
-			return (nTexAll >= 0) ? textureManager.AllTextures (nTexAll) : null;
+		inline const CTexture *CPogDialog::GetTextureFromId (int nIndex) {
+			return (nIndex >= 0) ? textureManager.TextureByIndex (nIndex) : null;
 		}
 
 		afx_msg void OnTextureListSelectionChanged (NMHDR *pNMHDR, LRESULT *pResult);
