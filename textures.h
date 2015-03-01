@@ -484,7 +484,7 @@ class CTexture {
 
 		inline uint FrameSize () const { return IsAnimated () ? Width () * Width () : Size (); }
 
-		inline uint FrameOffset () const { return Format () ? IsAnimated () ? FrameSize () * FrameNum () : 0 : 0; }
+		inline uint FrameOffset () const { return Format () ? IsAnimated () ? FrameSize () * GetCurrentFrame (true) : 0 : 0; }
 
 		inline CBGRA* Buffer (uint i = 0) { return &m_data [i]; }
 
@@ -568,9 +568,9 @@ class CTexture {
 
 		void CalculateFrameCount (void);
 
-		inline uint FrameNum (void) const { return m_info.nFrame; }
+		inline ubyte GetCurrentFrame (bool bUpsideDown = false) const { return bUpsideDown ? MaxVal (0, GetFrameCount () - m_info.nFrame - 1) : m_info.nFrame; }
 
-		inline uint NumFrames (void) const { return m_info.nFrameCount; }
+		inline ubyte GetFrameCount (void) const { return MaxVal ((ubyte) 1, m_info.nFrameCount); }
 
 		inline uint FrameTime (void) const { return 100; } // data comes from HAM, just using previous value (100) for now
 
@@ -585,6 +585,8 @@ class CTexture {
 		bool CreateBitmap (CBitmap **ppImage, bool bScale = false, int width = -1, int height = -1) const;
 
 		inline void SetFrameCount (ubyte nFrameCount) { m_info.nFrameCount = nFrameCount; }
+
+		inline void SetCurrentFrame (ubyte nFrame) { m_info.nFrame = nFrame; }
 
 	private:
 		void Release (void);

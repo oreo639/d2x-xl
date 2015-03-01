@@ -14,6 +14,7 @@
 #include "global.h"
 #include "FileManager.h"
 #include "Selection.h"
+#include "TextureManager.h"
 
 #include <math.h>
 
@@ -184,7 +185,11 @@ for (int i = 0; i < 2; i++) {
 			else
 				m_frame [i] = 0;
 			}
-		texture [i] = aicP->Frame (m_frame [i]);
+		CTexture* texP = textureManager.Textures (texture [i]);
+		if (texP->Format ())
+			texP->SetCurrentFrame (m_frame [i]);
+		else
+			texture [i] = aicP->Frame (m_frame [i]);
 		bAnimate = true;
 		}
 	}
@@ -354,7 +359,7 @@ if (nIdEvent == (UINT) m_nAnimTimer) {
 	const CTexture *pTexture = textureManager.TextureByIndex (m_nTexAll);
 	PaintTexture (this, IMG_BKCOLOR, pTexture->GetFrame (m_nFrame));
 	m_nFrame++;
-	m_nFrame %= pTexture->NumFrames ();
+	m_nFrame %= pTexture->GetFrameCount ();
 	}
 else 
 	CWnd::OnTimer (nIdEvent);

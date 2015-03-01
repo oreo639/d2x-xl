@@ -672,7 +672,7 @@ for (int i = 0, j = m_header [nVersion].nTextures; i < j; i++)
 LoadAnimationData (nVersion);
 #if 0
 for (int i = 0; i < m_header [nVersion].nTextures; i++) {
-	if (textures [i].IsAnimated () && textures [i].FrameNum () == 0) {
+	if (textures [i].IsAnimated () && textures [i].GetCurrentFrame () == 0) {
 		textures [i].CalculateFrameCount ();
 		}
 	}

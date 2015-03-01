@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "stdafx.h"
+#include "define.h"
 #include "textures.h"
 #include "FileManager.h"
 #include "dle-xp-res.h"
@@ -91,6 +92,13 @@ m_info.height = baseTexP->FrameHeight ();
 m_bValid = true;
 
 const CBGRA* srcDataP = baseTexP->Buffer (offs = baseTexP->FrameOffset ());
+
+#ifdef _DEBUG
+if (baseTexP && (baseTexP->IdLevel () == nDbgTexture))
+	nDbgTexture = nDbgTexture;
+if (ovlTexP && (ovlTexP->IdLevel () == nDbgTexture))
+	nDbgTexture = nDbgTexture;
+#endif
 
 if (srcDataP != null) {
 	// if not rotated, then copy directly
@@ -293,6 +301,11 @@ if (color != null) {
 
 bool PaintTexture (CWnd *wndP, int bkColor, int texture1, int texture2, int xOffset, int yOffset)
 {
+#ifdef _DEBUG
+if (texture1 == nDbgTexture)
+	nDbgTexture = nDbgTexture;
+#endif
+
 	const CTexture *baseTexP = (texture1 >= 0) ? textureManager.Textures (texture1) : null;
 	int maskedTexture2 = (texture2 < 0) ? texture2 : texture2 & TEXTURE_MASK;
 	const CTexture *ovlTexP = (maskedTexture2 != 0) ? textureManager.Textures (maskedTexture2) : null;
@@ -794,6 +807,7 @@ if (!Allocate (h))
 	return false;
 m_info.width = tgaHeader.width;
 m_info.height = tgaHeader.height;
+SetFrameCount (MaxVal ((uint) 1, m_info.height / m_info.width));
 if (tgaHeader.identSize)
 	fp.Read (imgIdent, tgaHeader.identSize, 1);
 int s = (tgaHeader.bits == 32) ? 4 : 3;
@@ -1611,7 +1625,7 @@ if (m_info.nFrame > 0)
 	return;
 
 for (uint nTexFrame = IdAll () + 1; nTexFrame < (uint)textureManager.GlobalTextureCount (); nTexFrame++) {
-	if (textureManager.TextureByIndex (nTexFrame)->FrameNum () == 0)
+	if (textureManager.TextureByIndex (nTexFrame)->GetCurrentFrame () == 0)
 		break;
 	nFrames++;
 	}
@@ -1628,16 +1642,16 @@ const CTexture *CTexture::GetParent (void) const
 {
 if (!IsAnimated ())
 	return null;
-if (FrameNum () == 0)
+if (GetCurrentFrame () == 0)
 	return this;
-return textureManager.TextureByIndex (IdAll () - FrameNum ());
+return textureManager.TextureByIndex (IdAll () - GetCurrentFrame ());
 }
 
 //------------------------------------------------------------------------
 
 const CTexture *CTexture::GetFrame (uint nFrame) const
 {
-if (!IsAnimated () || FrameNum () != 0)
+if (!IsAnimated () || GetCurrentFrame () != 0)
 	return null;
 if (nFrame == 0)
 	return this;

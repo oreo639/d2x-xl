@@ -117,11 +117,11 @@ void CPogDialog::RebuildTextureList ()
 	const CTexture *pFocusTexture = GetFocusedTexture ();
 
 if (pFocusTexture) {
-	if (pFocusTexture->IsAnimated () && pFocusTexture->FrameNum () == 0) {
+	if (pFocusTexture->IsAnimated () && pFocusTexture->GetCurrentFrame () == 0) {
 		expandAnim = true;
 		nExpandAnimTexAll = pFocusTexture->IdAll ();
 		}
-	else if (pFocusTexture->FrameNum () > 0) {
+	else if (pFocusTexture->GetCurrentFrame () > 0) {
 		expandAnim = true;
 		nExpandAnimTexAll = pFocusTexture->GetParent ()->IdAll ();
 		}
@@ -141,7 +141,7 @@ for (uint nIndex = 0; nIndex < (uint)textureManager.GlobalTextureCount (); nInde
 	const CTexture *pTexture = textureManager.TextureByIndex (nIndex);
 	if (pTexture->IsAnimated ()) {
 		// Don't add individual frames to the list, we'll do that later
-		nIndex += pTexture->NumFrames () - 1;
+		nIndex += pTexture->GetFrameCount () - 1;
 		}
 	if (!IsTextureIncluded (pTexture))
 		continue;
@@ -171,7 +171,7 @@ for (uint nIndex = 0; nIndex < (uint)textureManager.GlobalTextureCount (); nInde
 		TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
 		}
 	// Animated
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsAnimated () ? "Yes (%u frames)" : "No", pTexture->NumFrames ());
+	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsAnimated () ? "Yes (%u frames)" : "No", pTexture->GetFrameCount ());
 	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
 	// Transparent
 	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsTransparent () ? "Yes" : "No");
@@ -201,7 +201,7 @@ TextureList ()->SetRedraw (TRUE);
 
 void CPogDialog::AddTextureListFrames (const CTexture *pTexture)
 {
-if (pTexture->NumFrames () <= 1)
+if (pTexture->GetFrameCount () <= 1)
 	return;
 
 // Find the list item index for this texture
@@ -210,7 +210,7 @@ if (nListItem < 0)
 	return;
 
 // Add all frames from animated texture
-for (uint nFrame = 0; nFrame < pTexture->NumFrames (); nFrame++) {
+for (uint nFrame = 0; nFrame < pTexture->GetFrameCount (); nFrame++) {
 	const CTexture *pFrame = pTexture->GetFrame (nFrame);
 	char szFieldText [40] = {0};
 	int columnNum = 1;
@@ -249,7 +249,7 @@ for (uint nFrame = 0; nFrame < pTexture->NumFrames (); nFrame++) {
 
 void CPogDialog::RemoveTextureListFrames (const CTexture *pTexture)
 {
-if (pTexture->NumFrames () <= 1)
+if (pTexture->GetFrameCount () <= 1)
 	return;
 
 // Find the list item index for this texture
@@ -259,7 +259,7 @@ if (nListItem < 0)
 
 // Remove all frames from animated texture
 nListItem++; // Not the root itself though
-for (uint nFrame = 0; nFrame < pTexture->NumFrames (); nFrame++)
+for (uint nFrame = 0; nFrame < pTexture->GetFrameCount (); nFrame++)
 	TextureList ()->DeleteItem (nListItem);
 }
 
@@ -317,7 +317,7 @@ if (m_bShowCustomOnly) {
 	shouldInclude = pTexture->IsCustom ();
 	// We want to include animated textures if ANY frame is custom
 	if (!shouldInclude && pTexture->IsAnimated ())
-		for (uint j = pTexture->IdAll (); j < pTexture->IdAll () + pTexture->NumFrames (); j++)
+		for (uint j = pTexture->IdAll (); j < pTexture->IdAll () + pTexture->GetFrameCount (); j++)
 			if (pTexture->IsCustom ()) {
 				shouldInclude = true;
 				break;
@@ -401,7 +401,7 @@ void CPogDialog::UpdateTextureListFrameExpansion ()
 	if (pPreviousFocusedTexture && pPreviousFocusedTexture->IsAnimated ()) {
 		RemoveTextureListFrames (pPreviousFocusedTexture->GetParent ());
 		if (m_iSavedSelectedItem > GetTextureListIndexFromId (pPreviousFocusedTexture->GetParent ()->IdAll ()))
-			m_iSavedSelectedItem -= pPreviousFocusedTexture->GetParent ()->NumFrames ();
+			m_iSavedSelectedItem -= pPreviousFocusedTexture->GetParent ()->GetFrameCount ();
 		}
 
 	if (pCurrentFocusedTexture && pCurrentFocusedTexture->IsAnimated ())
@@ -447,7 +447,7 @@ bool CPogDialog::IsAnimatedTextureRoot (uint uiTextureListIndex)
 
 if (pTexture && pTexture->IsAnimated ()) {
 	// First frame of the texture points to the same object as the animated heading - we don't
-	// want to animate that, so we have to check the first column text instead of FrameNum
+	// want to animate that, so we have to check the first column text instead of GetCurrentFrame
 	char szName [40] = {0};
 	TextureList ()->GetItemText ((int) uiTextureListIndex, 0, szName, ARRAYSIZE (szName));
 	if (!strstr (szName, "Frame"))
@@ -460,7 +460,7 @@ void CPogDialog::ScrollTextureList (uint uiTextureListIndex)
 {
 	if (uiTextureListIndex >= (uint)TextureList ()->GetItemCount ())
 		return;
-	uint uiNumFrames = GetTextureAtIndex (uiTextureListIndex)->NumFrames ();
+	uint uiNumFrames = GetTextureAtIndex (uiTextureListIndex)->GetFrameCount ();
 	if (uiNumFrames > 1)
 		// Animated texture, try to get the frames in view too
 		TextureList ()->EnsureVisible ((int)uiTextureListIndex + uiNumFrames, FALSE);

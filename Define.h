@@ -40,6 +40,12 @@ inline void Swap (_T& a, _T& b) { _T h = a; a = b; b = h; }
 template<typename _T> 
 inline _T Clamp (_T v, _T vMin, _T vMax) { return (v < vMin) ? vMin : (v > vMax) ? vMax : v; }
 
+template<typename _T> 
+inline _T MinVal (_T a, _T b) { return (a <= b) ? a : b; }
+
+template<typename _T> 
+inline _T MaxVal (_T a, _T b) { return (a >= b) ? a : b; }
+
 // -----------------------------------------------------------------------------
 
 inline void Wrap (short& value, short delta, short min, short max) 

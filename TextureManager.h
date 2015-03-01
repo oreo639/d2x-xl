@@ -147,7 +147,7 @@ class CTextureManager {
 	public:
 		// Looks up textures by level texture ID. Pointers returned by this function should not be
 		// stored persistently as they may change.
-		inline const CTexture* Textures (int nTexture, int nVersion = -1) { 
+		inline CTexture* Textures (int nTexture, int nVersion = -1) { 
 			int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 			if (!m_textures [nVersionResolved].Buffer ())
 				return null;
@@ -160,7 +160,7 @@ class CTextureManager {
 
 		// Looks up textures by global texture ID. Pointers returned by this function should not be
 		// stored persistently as they may change.
-		inline const CTexture* TextureByIndex (uint nIndex, int nVersion = -1) {
+		inline CTexture* TextureByIndex (uint nIndex, int nVersion = -1) {
 			int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 			if (!m_textures [nVersionResolved].Buffer ())
 				return null;
