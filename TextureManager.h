@@ -156,7 +156,7 @@ class CTextureManager {
 			return TextureByIndex (Index (nTexture), nVersionResolved);
 			}
 
-		inline CAnimationClipInfo* AnimationIndex (short nTexture) { return m_animationIndex [Version ()][nTexture]; }
+		inline CAnimationClipInfo* AnimationIndex (short nTexture) { return m_animationIndex [Version ()].Buffer () ? m_animationIndex [Version ()][nTexture] : null; }
 
 		// Looks up textures by global texture ID. Pointers returned by this function should not be
 		// stored persistently as they may change.

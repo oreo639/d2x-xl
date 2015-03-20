@@ -137,37 +137,39 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 #define EXTENDED_HAM 1
 #define NORMAL_HAM	0
 
-#define LEVEL_VERSION			26	//current level version
+#define LEVEL_VERSION				26	//current level version
 
-#define MAX_PLAYERS_D2			8
-#define MAX_PLAYERS_D2X			16
-#define MAX_COOP_PLAYERS		3
+#define MAX_PLAYERS_D2				8
+#define MAX_PLAYERS_D2X				16
+#define MAX_COOP_PLAYERS			3
 
-#define NUM_HOT_BUTTONS			21
+#define NUM_HOT_BUTTONS				21
 
 // defines for reading ham files
-#define N_ROBOT_TYPES_D1      30
-#define N_ROBOT_TYPES_D2      66
-#define N_ROBOT_JOINTS_D2     1145
-#define N_POLYGON_MODELS_D2   166
-#define N_OBJBITMAPS_D2       422
-#define N_OBJBITMAPPTRS_D2    502 // why is this not the same as N_OBJBITMAPS_D2???
+#define N_ROBOT_TYPES_D1			30
+#define N_ROBOT_TYPES_D2			66
+#define N_ROBOT_JOINTS_D2			1145
+#define N_POLYGON_MODELS_D2		166
+#define N_OBJBITMAPS_D2				422
+#define N_OBJBITMAPPTRS_D2			502 // why is this not the same as N_OBJBITMAPS_D2???
 
-#define MAX_ROBOT_TYPES       85
-#define MAX_ROBOT_JOINTS      1250
-#define MAX_POLYGON_MODELS    200
-#define MAX_OBJ_BITMAPS       600
-#define MAX_WEAPON_TYPES		65
+#define MAX_ROBOT_TYPES				85
+#define MAX_ROBOT_JOINTS			1250
+#define MAX_POLYGON_MODELS			200
+#define MAX_OBJ_BITMAPS				600
+#define MAX_WEAPON_TYPES			65
 
 // defines to support robot structures
-#define MAX_EFFECTS_D2			110
-#define MAX_EFFECTS_D1			60
-#define MAX_ANIMATIONS_D2     110
-#define MAX_ANIMATIONS_D1     70
-#define MAX_ANIMATION_FRAMES	30
-#define MAX_GUNS					8  //should be multiple of 4 for ubyte array
-#define NDL							5  // Guessed at this value (B. Aamot 9/14/96)
-#define N_ANIM_STATES			5
+#define MAX_EFFECTS_D2				110
+#define MAX_EFFECTS_D1				60
+#define MAX_ANIMATIONS_D2			110
+#define MAX_ANIMATIONS_D1			70
+#define MAX_WALL_ANIMATIONS_D2	60
+#define MAX_WALL_ANIMATIONS_D1	30
+#define MAX_ANIMATION_FRAMES		30
+#define MAX_GUNS						8  //should be multiple of 4 for ubyte array
+#define NDL								5  // Guessed at this value (B. Aamot 9/14/96)
+#define N_ANIM_STATES				5
 
 // the following are already defined below
 // #define MAX_CLIP_FRAMES 50  // (called MAX_WALL_EFFECT_FRAMES_D2)

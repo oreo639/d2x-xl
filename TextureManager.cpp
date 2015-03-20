@@ -52,10 +52,8 @@ return aci.m_frames.Length ();
 
 //------------------------------------------------------------------------
 
-static int LoadAnimationData (CAnimationClipList& animations, CFileManager& fp, int nFrames)
+static int LoadAnimationData (CAnimationClipList& animations, CFileManager& fp, int nClips, int nFrames)
 {
-	int nClips = fp.ReadInt32 ();
-
 for (int i = 0; i < nClips; i++) {
 	CAnimationClipInfo* aciP = animations.Append ();
 	if (!aciP)
@@ -80,10 +78,8 @@ return 1;
 
 //------------------------------------------------------------------------
 
-static int LoadEffectClips (CAnimationClipList& animations, CFileManager& fp, int nMaxFrames)
+static int LoadEffectClips (CAnimationClipList& animations, CFileManager& fp, int nClips, int nMaxFrames)
 {
-	int nClips = fp.ReadInt32 ();
-
 for (int i = 0; i < nClips; i++) {
 	CAnimationClipInfo* aciP = animations.Append ();
 	if (!aciP)
@@ -96,7 +92,7 @@ return nClips;
 
 // -----------------------------------------------------------------------------------
 
-int LoadWallEffectData (CAnimationClipInfo& aci, CFileManager& fp, short nMaxFrames)
+int LoadWallEffectData (CAnimationClipInfo& aci, CFileManager& fp, int nClips, short nMaxFrames)
 {
 aci.m_nPlayTime = fp.ReadInt32 ();
 short nFrames = fp.ReadInt16 ();
@@ -119,15 +115,13 @@ return aci.m_frames.Length ();
 
 //------------------------------------------------------------------------
 
-static int LoadWallEffectClips (CAnimationClipList& animations, CFileManager& fp, int nMaxFrames)
+static int LoadWallEffectClips (CAnimationClipList& animations, CFileManager& fp, int nClips, int nMaxFrames)
 {
-	int nClips = fp.ReadInt32 ();
-
 for (int i = 0; i < nClips; i++) {
 	CAnimationClipInfo* aciP = animations.Append ();
 	if (!aciP)
 		return -1;
-	if (0 > LoadWallEffectData (*aciP, fp, nMaxFrames))
+	if (0 > LoadWallEffectData (*aciP, fp, nClips, nMaxFrames))
 		return -1;
 	}
 return nClips;
@@ -137,42 +131,44 @@ return nClips;
 
 int CAnimationClipLoaderD1::LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp)
 {
-return 0;
+fp.ReadInt32 ();
+return LoadAnimationData (animations, fp, MAX_ANIMATIONS_D1, MAX_ANIMATION_FRAMES);
 }
 
 //------------------------------------------------------------------------
 
 int CAnimationClipLoaderD2::LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp)
 {
-return LoadAnimationData (animations, fp, MAX_ANIMATION_FRAMES);
+return LoadAnimationData (animations, fp, fp.ReadInt32 (), MAX_ANIMATION_FRAMES);
 }
 
 //------------------------------------------------------------------------
 
 int CEffectClipLoaderD1::LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp)
 {
-return LoadEffectClips (animations, fp, MAX_ANIMATION_FRAMES);
+fp.ReadInt32 ();
+return LoadEffectClips (animations, fp, MAX_EFFECTS_D1, MAX_ANIMATION_FRAMES);
 }
 
 //------------------------------------------------------------------------
 
 int CEffectClipLoaderD2::LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp)
 {
-return LoadEffectClips (animations, fp, MAX_ANIMATION_FRAMES);
+return LoadEffectClips (animations, fp, fp.ReadInt32 (), MAX_ANIMATION_FRAMES);
 }
 
 //------------------------------------------------------------------------
 
 int CWallEffectClipLoaderD1::LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp)
 {
-return LoadWallEffectClips (animations, fp, MAX_WALL_EFFECT_FRAMES_D1);
+return LoadWallEffectClips (animations, fp, MAX_WALL_ANIMATIONS_D1, MAX_WALL_EFFECT_FRAMES_D1);
 }
 
 //------------------------------------------------------------------------
 
 int CWallEffectClipLoaderD2::LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp)
 {
-return LoadWallEffectClips (animations, fp, MAX_WALL_EFFECT_FRAMES_D2);
+return LoadWallEffectClips (animations, fp, fp.ReadInt32 (), MAX_WALL_EFFECT_FRAMES_D2);
 }
 
 //------------------------------------------------------------------------
@@ -525,7 +521,8 @@ if (Version ()) {
 	}
 else {
 	fp.ReadUInt32 ();                         
-	int n = MAX_TEXTURES_D1;
+	fp.ReadUInt32 ();   
+	int n = 800; //MAX_TEXTURES_D1;
 	fp.Seek (n * sizeof (ushort), SEEK_CUR);	 
 	fp.Seek (n * sizeof (tTextureEffectInfoD1), SEEK_CUR); 
 	n = MAX_SOUNDS_D1;
