@@ -140,18 +140,18 @@ return CToolDlg::OnKillActive ();
 
 //------------------------------------------------------------------------------
 
-bool CTexToolDlg::ScrollTexture (short texture [])
+bool CTexToolDlg::ScrollTexture (short texIds [])
 {
 	int x, y;
 
-if (!textureManager.ScrollSpeed (texture [0], &x, &y)) {
+if (!textureManager.ScrollSpeed (texIds [0], &x, &y)) {
 	m_xScrollOffset [0] =
 	m_yScrollOffset [0] = 0;
 	return false;
 	}
 
-PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1], m_xScrollOffset [0], m_yScrollOffset [0]);
-//	DrawTexture (texture [0], texture [1], m_xScrollOffset [0], m_yScrollOffset [0]);
+PaintTexture (&m_textureWnd, m_bkColor, texIds [0], texIds [1], m_xScrollOffset [0], m_yScrollOffset [0]);
+//	DrawTexture (texIds [0], texIds [1], m_xScrollOffset [0], m_yScrollOffset [0]);
 if (m_xScrollOffset [1] != x || m_yScrollOffset [1] != y) {
 	m_xScrollOffset [0] = 0;
 	m_yScrollOffset [0] = 0;
@@ -167,14 +167,16 @@ return true;
 
 //------------------------------------------------------------------------------
 
-void CTexToolDlg::UpdateTextureClip (short texture [])
+void CTexToolDlg::UpdateTextureClip (short texIds [])
 {
 	static int direction [2] = {1, 1};
-	int nVersion = DLE.IsD1File ();
-	bool bAnimate = false;
+
+	int			nVersion = DLE.IsD1File ();
+	bool			bAnimate = false;
+	CTexture*	textures [2] = { null, null };
 
 for (int i = 0; i < 2; i++) {
-	CAnimationClipInfo* aicP = textureManager.AnimationIndex (texture [i]);
+	CAnimationClipInfo* aicP = textureManager.AnimationIndex (texIds [i]);
 	if (aicP && !aicP->m_nType && aicP->FrameCount ()) {
 		m_frame [i] += direction [i];
 		if ((m_frame [i] < 0) || (m_frame [i] >= (int) aicP->FrameCount ())) {
@@ -185,16 +187,15 @@ for (int i = 0; i < 2; i++) {
 			else
 				m_frame [i] = 0;
 			}
-		CTexture* texP = textureManager.Textures (texture [i]);
-		if (texP->Format ())
-			texP->SetCurrentFrame (m_frame [i]);
-		else
-			texture [i] = aicP->Frame (m_frame [i]);
+		texIds [i] = aicP->Frame (m_frame [i]);
+		textures [i] = textureManager.Textures (texIds [i]);
+		if (textures [i]->Format ())
+			textures [i]->SetCurrentFrame (m_frame [i]);
 		bAnimate = true;
 		}
 	}
 if (bAnimate)
-	PaintTexture (&m_textureWnd, m_bkColor, texture [0], texture [1]);
+	PaintTexture (&m_textureWnd, m_bkColor, textures [0], textures [1]);
 }
 
 //------------------------------------------------------------------------------

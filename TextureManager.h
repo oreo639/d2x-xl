@@ -16,7 +16,7 @@ class CAnimationClipInfo {
 		bool						m_bBidirectional;
 		CDynamicArray<short>	m_frames;
 
-		CAnimationClipInfo () : m_nTexture (-1), m_nPlayTime (0), m_nFrameTime (0), m_bBidirectional (false) {}
+		CAnimationClipInfo () : m_nType (0), m_nTexture (-1), m_nPlayTime (0), m_nFrameTime (0), m_bBidirectional (false) {}
 		int LoadAnimationFrames (CFileManager& fp, int nMaxFrames, bool bIndices);
 
 		inline short Key (void) { return m_nTexture; }
@@ -148,7 +148,10 @@ class CTextureManager {
 	public:
 		// Looks up textures by level texture ID. Pointers returned by this function should not be
 		// stored persistently as they may change.
-		inline CTexture* Textures (int nTexture, int nVersion = -1) { 
+#if !DBG
+		inline 
+#endif
+		CTexture* Textures (int nTexture, int nVersion = -1) { 
 			int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 			if (!m_textures [nVersionResolved].Buffer ())
 				return null;
@@ -161,7 +164,10 @@ class CTextureManager {
 
 		// Looks up textures by global texture ID. Pointers returned by this function should not be
 		// stored persistently as they may change.
-		inline CTexture* TextureByIndex (uint nIndex, int nVersion = -1) {
+#if !DBG
+		inline 
+#endif
+		CTexture* TextureByIndex (uint nIndex, int nVersion = -1) {
 			int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 			if (!m_textures [nVersionResolved].Buffer ())
 				return null;
