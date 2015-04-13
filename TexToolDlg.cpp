@@ -175,7 +175,7 @@ void CTexToolDlg::UpdateTextureClip (short texture [])
 
 for (int i = 0; i < 2; i++) {
 	CAnimationClipInfo* aicP = textureManager.AnimationIndex (texture [i]);
-	if (aicP && aicP->FrameCount ()) {
+	if (aicP && !aicP->m_nType && aicP->FrameCount ()) {
 		m_frame [i] += direction [i];
 		if ((m_frame [i] < 0) || (m_frame [i] >= (int) aicP->FrameCount ())) {
 			if (aicP->Bidirectional ()) {

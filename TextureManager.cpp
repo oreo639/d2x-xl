@@ -29,6 +29,7 @@ return m_frames.Buffer () ? (int) m_frames.Length () : -1;
 
 static int LoadAnimationClip (CAnimationClipInfo& aci, CFileManager& fp, int nMaxFrames, bool bIndices)
 {
+aci.m_nType = 1;
 aci.m_nPlayTime = fp.ReadInt32 ();
 int nFrames = fp.ReadInt32 ();
 if (nFrames > nMaxFrames)
@@ -45,6 +46,10 @@ if (nFrames < 0) {
 else {
 	aci.LoadAnimationFrames (fp, nMaxFrames, bIndices);
 	aci.m_nTexture = aci.Frame (0);
+#if DBG
+	if (aci.m_nTexture == nDbgTexture)
+		nDbgTexture = nDbgTexture;
+#endif
 	}
 fp.ReadInt32 ();
 return aci.m_frames.Length ();
@@ -72,6 +77,15 @@ if (0 > LoadAnimationClip (aci, fp, nMaxFrames, true))
 	return -1;
 fp.Seek (8, SEEK_CUR);
 aci.m_nTexture = fp.ReadInt16 (); // nChangingWallTexture
+if (aci.m_nTexture < 0) {
+	aci.m_nTexture = fp.ReadInt16 (); // nChangingObjectTexture
+	if (aci.m_nTexture >= 0)
+		aci.m_nType = 1;
+	}
+#if DBG
+if (aci.m_nTexture == nDbgTexture)
+	nDbgTexture = nDbgTexture;
+#endif
 fp.Seek (38, SEEK_CUR);
 return 1;
 }
@@ -107,6 +121,10 @@ else {
 	nFrames = aci.LoadAnimationFrames (fp, nMaxFrames, false);
 	aci.m_nFrameTime = int (X2F (nFrames ? aci.m_nPlayTime / nFrames : 0) * 1000);
 	aci.m_nTexture = aci.Frame (0);
+#if DBG
+	if (aci.m_nTexture == nDbgTexture)
+		nDbgTexture = nDbgTexture;
+#endif
 	}
 fp.Seek (20, SEEK_CUR);
 aci.m_bBidirectional = true;
@@ -590,6 +608,10 @@ m_animationIndex [nVersion].Clear ();
 for (iter.Begin (); *iter != iter.End (); iter++) {
 	CAnimationClipInfo& aic = **iter;
 	if ((aic.Key () > -1) && aic.FrameCount ()) {
+#if DBG
+	if (aic.m_nTexture == nDbgTexture)
+		nDbgTexture = nDbgTexture;
+#endif
 		m_animationIndex [nVersion][aic.m_nTexture] = *iter;
 		textures [aic.m_nTexture].SetFrameCount (aic.FrameCount ());
 		}

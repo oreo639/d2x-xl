@@ -9,6 +9,7 @@
 
 class CAnimationClipInfo {
 	public:
+		short						m_nType; // 0: geometry, 1: object
 		short						m_nTexture; // the level texture id of the texture the animation belongs to
 		int						m_nPlayTime;
 		int						m_nFrameTime;
@@ -72,11 +73,11 @@ class CAnimationLoaderFactory {
 			if (nVersion) {
 				switch (nType) {
 					case 0:
-						return new CAnimationClipLoaderD2;
+						return new CAnimationClipLoaderD2; // object (robot) animations
 					case 1:
-						return new CEffectClipLoaderD2;
+						return new CEffectClipLoaderD2; // effect (e.g. explosion) animations
 					case 2:
-						return new CWallEffectClipLoaderD2;
+						return new CWallEffectClipLoaderD2; // wall (geometry) texture animations
 					}
 				}
 			else {
