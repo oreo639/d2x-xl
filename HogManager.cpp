@@ -37,11 +37,12 @@ return 1;
 
 //------------------------------------------------------------------------------
 
-int CLevelHeader::Write (CFileManager* fp) 
+int CLevelHeader::Write (CFileManager* fp, int bExtended) 
 {
 if (fp->Write (m_name, 1, sizeof (m_name)) != sizeof (m_name))
 	return 0;
-m_size = (m_bExtended = DLE.IsD2XLevel ()) ? -abs (m_size) : abs (m_size);
+m_bExtended = (bExtended < 0) ? DLE.IsD2XLevel () : bExtended;
+m_size = m_bExtended ? -abs (m_size) : abs (m_size);
 if (fp->Write (&m_size, sizeof (m_size), 1) != 1)
 	return 1;
 if (m_bExtended) {
@@ -577,7 +578,7 @@ else {
 	_strlwr_s (szNewName, lh.NameSize ());
 	strncpy_s (lh.Name (), nameSize, szNewName, nameSize);
 	fp.Seek (offset, SEEK_SET);
-	if (!lh.Write (&fp))
+	if (!lh.Write (&fp, lh.Extended ()))
 		ErrorMsg ("Cannot write to HOG file");
 	else {
 		// update list box

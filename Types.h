@@ -354,7 +354,7 @@ class CLevelHeader {
 		inline int Extended (void) { return m_size < 0; }
 
 		int Read (CFileManager* fp);
-		int Write (CFileManager* fp);
+		int Write (CFileManager* fp, int bExtended = -1);
 	};
 
 #endif
