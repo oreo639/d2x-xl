@@ -278,13 +278,33 @@ return memcmp (m_lightMap, dataP, sizeof (m_lightMap)) != 0;
 
 // ------------------------------------------------------------------------
 
+ubyte* CLightManager::ColorToFloat (CColor* colorP, ubyte* dataP)
+{
+colorP->m_info.index = *dataP++;
+colorP->m_info.color.r = (double) *((int *) dataP) / (double) 0x7fffffff;
+dataP += sizeof (int);
+colorP->m_info.color.g = (double) *((int *) dataP) / (double) 0x7fffffff;
+dataP += sizeof (int);
+colorP->m_info.color.b = (double) *((int *) dataP) / (double) 0x7fffffff;
+dataP += sizeof (int);
+return dataP;
+}
+
+// ------------------------------------------------------------------------
+
 bool CLightManager::HasCustomLightColors (void)
 {
 CResource res;
 ubyte *dataP;
 if (!(dataP = res.Load (DLE.IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
 	return false;
-return memcmp (&m_texColors [0], dataP, sizeof (m_texColors)) != 0;
+for (uint i = 0, l = m_texColors.Length (); i < l; i++) {
+	CColor color;
+	dataP = ColorToFloat (&color, dataP);
+	if (m_texColors [i] != color)
+		return true;
+	}
+return false;
 }
 
 // ------------------------------------------------------------------------
@@ -303,15 +323,8 @@ if (i > (int) m_texColors.Length ())
 if (i > sizeofa (m_texColors))
 	i = sizeofa (m_texColors);
 #endif
-for (CColor* colorP = &m_texColors [0]; i; i--, colorP++) {
-	colorP->m_info.index = *dataP++;
-	colorP->m_info.color.r = (double) *((int *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (int);
-	colorP->m_info.color.g = (double) *((int *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (int);
-	colorP->m_info.color.b = (double) *((int *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (int);
-	}
+for (CColor* colorP = &m_texColors [0]; i; i--, colorP++) 
+	dataP = ColorToFloat (colorP, dataP);
 
 if (!(dataP = res.Load (DLE.IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
 	return false;

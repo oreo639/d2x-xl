@@ -504,9 +504,9 @@ switch (nType) {
 			textureManager.CountModifiedTextures ());
 		// For new levels, we can have custom textures that aren't tagged "modified" so need to check differently
 		if (DoesSubFileExist (m_szFile, szSubFileName))
-			bShouldModify = textureManager.CountModifiedTextures () > 0 && QueryMsg (szOverwritePogQuery) == IDYES;
+			bShouldModify = textureManager.CountModifiedTextures () > 0 && (QueryMsg (szOverwritePogQuery) == IDYES);
 		else
-			bShouldModify = textureManager.CountCustomTextures () > 0 && QueryMsg (szPogQuery) == IDYES;
+			bShouldModify = textureManager.CountCustomTextures () > 0 && (QueryMsg (szPogQuery) == IDYES);
 		break;
 	case CUSTOM_FILETYPE_HXM:
 		if (DLE.IsD1File ())
@@ -514,9 +514,9 @@ switch (nType) {
 		// We don't currently track modified robots, so we'll just always prompt for overwrite (unless the
 		// custom robots have been removed in which case we won't ask as the question would be confusing)
 		if (DoesSubFileExist (m_szFile, szSubFileName))
-			bShouldModify = !robotManager.HasCustomRobots () || QueryMsg (szOverwriteHxmQuery) == IDYES;
+			bShouldModify = !robotManager.HasCustomRobots () || (QueryMsg (szOverwriteHxmQuery) == IDYES);
 		else
-			bShouldModify = robotManager.HasCustomRobots () && QueryMsg (szHxmQuery) == IDYES;
+			bShouldModify = robotManager.HasCustomRobots () && (QueryMsg (szHxmQuery) == IDYES);
 		break;
 	default:
 		break;

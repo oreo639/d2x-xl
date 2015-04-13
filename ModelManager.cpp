@@ -110,6 +110,7 @@ else {
 	*strstr (filename, "descent2.ham") = '\0';
 	strcat_s (filename, sizeof (filename), "d2x-xl.hog");
 	robotManager.ReadHXM (filename, "d2x-xl.hxm", false);
+	robotManager.Reset ();
 	}
 return 1;
 }

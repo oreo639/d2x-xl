@@ -244,6 +244,8 @@ class CLightManager {
 			{}
 
 	private:
+		ubyte* ColorToFloat (CColor* colorP, ubyte* dataP);
+
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
 
 		void CLightManager::SaveColors (CColor *pc, int nColors, CFileManager& fp);

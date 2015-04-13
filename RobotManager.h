@@ -31,6 +31,8 @@ class CRobotManager {
 		int				m_nRobotTypes;
 
 	public:
+		void Reset (void);
+
 		inline robotInfoList& RobotInfoList (void) { return m_robotInfo [0]; }
 
 		inline robotInfoList& DefRobotInfoList (void) { return m_robotInfo [1]; }

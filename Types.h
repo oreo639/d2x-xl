@@ -202,6 +202,14 @@ class CTextureColor : public CColor {
 			m_info = other.m_info; 
 			return *this;
 			}
+
+		inline const bool operator== (const CColor& other) { 
+			return memcmp (&m_info, &other.m_info, sizeof (m_info)) == 0;
+			}
+
+		inline const bool operator!= (const CColor& other) { 
+			return memcmp (&m_info, &other.m_info, sizeof (m_info)) != 0;
+			}
 };
 
 class CVertexColor : public CColor {

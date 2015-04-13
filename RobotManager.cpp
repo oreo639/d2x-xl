@@ -17,6 +17,17 @@ CRobotManager robotManager;
 
 //------------------------------------------------------------------------------
 
+void CRobotManager::Reset (void)
+{
+if (m_hxmExtraData) {
+	free (m_hxmExtraData);
+	m_hxmExtraData = null;
+	m_hxmExtraDataSize = 0;
+	}
+}
+
+//------------------------------------------------------------------------------
+
 #define MAKESIG(_sig)	(uint) *((int *) &(_sig))
 
 int CRobotManager::ReadHAM (CFileManager* fp, int type) 
@@ -148,11 +159,6 @@ if (id != 0x21584d48L) {
 	return 0;
 	}
 
-if (m_hxmExtraData) {
-	free (m_hxmExtraData);
-	m_hxmExtraData = null;
-	m_hxmExtraDataSize = 0;
-	}
 fp.ReadInt32 (); // version (0x00000001)
 
 // read robot information
