@@ -184,11 +184,11 @@ return C.Mag ();
 // CalcAngle ()
 //--------------------------------------------------------------------------
 
-double CDiagTool::CalcAngle (short vert0,short vert1,short vert2,short vert3) 
+double CDiagTool::CalcAngle (short vert0, short vert1, short vert2, short vert3) 
 {
-  CDoubleVector line1,line2,line3,orthog;
+  CDoubleVector line1, line2, line3, orthog;
   double ratio;
-  double dot_product, magnitude1, magnitude2,angle;
+  double dot_product, magnitude1, magnitude2, angle;
   CVertex* v0 = vertexManager.Vertex (vert0);
   CVertex* v1 = vertexManager.Vertex (vert1);
   CVertex* v2 = vertexManager.Vertex (vert2);
@@ -331,7 +331,8 @@ DLE.MainFrame ()->InitProgress (segmentManager.Count () * 3 +
 					if (!CheckTriggers ())
 						if (!CheckObjects ())
 							if (!CheckVertices ())
-								CheckLights ();
+								CheckLights ()
+								;
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 LBBugs ()->SetCurSel (0);
 if (m_bAutoFixBugs)
@@ -428,7 +429,7 @@ if (nBotGens != segmentManager.RobotMakerCount ()) {
 		segmentManager.RobotMakerCount () = nBotGens;
 		}
 	else
-		sprintf_s (message, sizeof (message),"ERROR: Invalid robot maker count");
+		sprintf_s (message, sizeof (message), "ERROR: Invalid robot maker count");
 	if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, -1))
 		return true;
 	}
@@ -449,9 +450,7 @@ if (theMine == null)
 	return false;
 
   short nSegment, nSide, nChild, nSide2;
-  short vert0, vert1, vert2, vert3;
   short i, j;
-  short match[4];
   CSegment *segP = segmentManager.Segment (0);
 
   // check Segments ()
@@ -463,7 +462,7 @@ LBBugs ()->AddString ("[Segments]");
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 // check geometry of segment
-// 	Given that each point has 3 lines (called L1, L2, and L3),
+// 	Given that each point has 3 lines (called L1, L2, and L3), 
 //	and an orthogonal vector of L1 and L2 (called V1), the angle
 //	between L3 and V1 must be less than PI/2.
 //
@@ -486,17 +485,17 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		short nPoint;
 		for (nPoint = 0; nPoint < 8; nPoint++) {
 	// define vert numbers
-			vert0 = segP->m_info.vertexIds [nPoint];
-			vert1 = segP->m_info.vertexIds [adjacentPointTable [nPoint][0]];
-			vert2 = segP->m_info.vertexIds [adjacentPointTable [nPoint][1]];
-			vert3 = segP->m_info.vertexIds [adjacentPointTable [nPoint][2]];
+			short vert0 = segP->m_info.vertexIds [nPoint];
+			short vert1 = segP->m_info.vertexIds [adjacentPointTable [nPoint][0]];
+			short vert2 = segP->m_info.vertexIds [adjacentPointTable [nPoint][1]];
+			short vert3 = segP->m_info.vertexIds [adjacentPointTable [nPoint][2]];
 			double angle = CalcAngle (vert0, vert1, vert2, vert3);
 			double a = CalcAngle (vert0, vert2, vert3, vert1);
 			angle = max (angle, a);
 			a = CalcAngle (vert0, vert3, vert1, vert2);
 			angle = max (angle, a);
 			if (angle > M_PI_2) {
-				sprintf_s (message, sizeof (message), "WARNING: Illegal segment geometry (segment=%d, point=%d, angle=%d)",nSegment,nPoint, (int) ( (angle*180.0)/M_PI));
+				sprintf_s (message, sizeof (message), "WARNING: Illegal segment geometry (segment=%d, point=%d, angle=%d)", nSegment, nPoint, (int) ( (angle*180.0)/M_PI));
 				if (UpdateStats (message, 0, nSegment, -1, -1, nPoint))
 					return true;
 				break; // from for loop
@@ -505,9 +504,9 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		if (nPoint == 8) { // angles must be ok from last test
 	// now test for flat sides
 			for (nSide = 0; nSide < 6; nSide++) {
-				double flatness = CalcFlatnessRatio (nSegment,nSide);
+				double flatness = CalcFlatnessRatio (nSegment, nSide);
 				if (flatness < 0.80) {
-					sprintf_s (message, sizeof (message),"ERROR: Illegal segment geometry (segment=%d, side=%d, flatness=%d%%)",nSegment,nSide, (int) (flatness*100));
+					sprintf_s (message, sizeof (message), "ERROR: Illegal segment geometry (segment=%d, side=%d, flatness=%d%%)", nSegment, nSide, (int) (flatness*100));
 					if (UpdateStats (message, 1, nSegment, nSide))
 						return true;
 					break; // from for loop
@@ -515,30 +514,31 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 				} 
 			}
 		}
-
 // Check length of each line.
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		nChild = segmentManager.Segment (nSegment)->ChildId (nSide);
 // check nChild range 
 		if ((nChild != -1) && (nChild != -2)) {
 			if (nChild < -2) {
-				sprintf_s (message, sizeof (message),"ERROR: Illegal child number %d (segment=%d, side=%d)", nChild, nSegment, nSide);
+				sprintf_s (message, sizeof (message), "ERROR: Illegal child number %d (segment=%d, side=%d)", nChild, nSegment, nSide);
 				if (UpdateStats (message, 1, nSegment, nSide))
 					return true;
 				}
 			else if (nChild >= segmentManager.Count ()) {
-				sprintf_s (message, sizeof (message),"ERROR: Child out of range %d (segment=%d, side=%d)", nChild, nSegment, nSide);
+				sprintf_s (message, sizeof (message), "ERROR: Child out of range %d (segment=%d, side=%d)", nChild, nSegment, nSide);
 				if (UpdateStats (message, 1, nSegment, nSide)) 
 					return true;
 				}
-			else if (segP->Side ()->Shape () > SIDE_SHAPE_TRIANGLE) {
+			else if (segP->Side (nSide)->Shape () > SIDE_SHAPE_TRIANGLE) {
+				if (m_bAutoFixBugs) {
 					segP->ReplaceChild (nChild, -1);
 					segmentManager.Segment (nChild)->ReplaceChild (nSegment, -1);
-				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message),"FIXED: Collapsed side has child segment %d (segment=%d, side=%d)", nChild, nSegment, nSide);
+					sprintf_s (message, sizeof (message), "FIXED: Collapsed side has child segment %d (segment=%d, side=%d)", nChild, nSegment, nSide);
 					}
 				else
-					sprintf_s (message, sizeof (message),"ERROR: Collapsed side has child segment %d (segment=%d, side=%d)", nChild, nSegment, nSide);
+					sprintf_s (message, sizeof (message), "ERROR: Collapsed side has child segment %d (segment=%d, side=%d)", nChild, nSegment, nSide);
+				if (UpdateStats (message, 1, nSegment, nSide)) 
+					return true;
 				}
 			else {
 			// make sure nChild segment has a nChild from this segment
@@ -548,8 +548,8 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 						break;
 					}					
 				if (nSide2 < MAX_SIDES_PER_SEGMENT) {
-					memset (match, 0, sizeof (match));
-					CSegment * segP = segmentManager.Segment (nSegment),
+					short match [4] = { 0, 0, 0, 0 };
+					CSegment * segP = segmentManager.Segment (nSegment), 
 								* childSegP = segmentManager.Segment (nChild);
 					int n = segP->Side (nSide)->VertexCount ();
 					for (i = 0; i < n; i++) {
@@ -561,13 +561,13 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 					for ( ; i < 4; i++)
 						match [i] = 1;
 					if ((match [0] != 1) || (match [1] != 1) || (match [2] != 1) || (match [3] != 1)) {
-						sprintf_s (message, sizeof (message),"WARNING:Child segment does not share points of segment (segment=%d, side=%d, child=%d)",nSegment,nSide,nChild);
+						sprintf_s (message, sizeof (message), "WARNING:Child segment does not share points of segment (segment=%d, side=%d, child=%d)", nSegment, nSide, nChild);
 						if (UpdateStats (message, 0, nSegment, -1, -1, -1, nChild))
 							return true;
 						}
 					}
 				else {
-					sprintf_s (message, sizeof (message), "WARNING:Child segment does not connect to this segment (segment=%d, side=%d, child=%d)",nSegment,nSide,nChild);
+					sprintf_s (message, sizeof (message), "WARNING:Child segment does not connect to this segment (segment=%d, side=%d, child=%d)", nSegment, nSide, nChild);
 					if (UpdateStats (message, 1, nSegment, -1, -1, -1, nChild))
 						return false;
 					}
@@ -640,10 +640,10 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 	if (nSegment < 0 || nSegment >= segmentManager.Count ()) {
 		if (m_bAutoFixBugs) {
 			objP->m_info.nSegment = nSegment = 0;
-			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
+			sprintf_s (message, sizeof (message), "FIXED: Bad segment number (object=%d, nSegment=%d)", nObject, nSegment);
 			}
 		else
-			sprintf_s (message, sizeof (message),"ERROR: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
+			sprintf_s (message, sizeof (message), "ERROR: Bad segment number (object=%d, nSegment=%d)", nObject, nSegment);
 		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
@@ -651,10 +651,10 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 	if (nSegment < 0 || nSegment >= segmentManager.Count ()) {
 		if (m_bAutoFixBugs) {
 			objP->m_info.nSegment = 0;
-			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
+			sprintf_s (message, sizeof (message), "FIXED: Bad segment number (object=%d, nSegment=%d)", nObject, nSegment);
 			}
 		else
-			sprintf_s (message, sizeof (message),"ERROR: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
+			sprintf_s (message, sizeof (message), "ERROR: Bad segment number (object=%d, nSegment=%d)", nObject, nSegment);
 		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
@@ -674,7 +674,7 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 		}
 	object_radius = Distance (objP->Position (), center);
    if ((object_radius > maxRadius) && (objP->Type () != OBJ_EFFECT)) {
-      sprintf_s (message, sizeof (message),"ERROR: Object is outside of segment (object=%d, segment=%d)",nObject,nSegment);
+      sprintf_s (message, sizeof (message), "ERROR: Object is outside of segment (object=%d, segment=%d)", nObject, nSegment);
       if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
     }
@@ -684,10 +684,10 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 	if (flags != 0) {
 		if (m_bAutoFixBugs) {
 			objP->m_info.flags = 0;
-			sprintf_s (message, sizeof (message),"FIXED: Flags for object non-zero (object=%d,flags=%d)",nObject,flags);
+			sprintf_s (message, sizeof (message), "FIXED: Flags for object non-zero (object=%d, flags=%d)", nObject, flags);
 			}
 		else
-			sprintf_s (message, sizeof (message),"ERROR: Flags for object non-zero (object=%d,flags=%d)",nObject,flags);
+			sprintf_s (message, sizeof (message), "ERROR: Flags for object non-zero (object=%d, flags=%d)", nObject, flags);
       if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject)) 
 			return true;
     }
@@ -695,11 +695,11 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
     // check type range
 	 if ((objP->Id () < 0) || (objP->Id () > 255)) {
 		 if (m_bAutoFixBugs) {
-			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id=%d)",nObject, objP->Id ());
+			sprintf_s (message, sizeof (message), "FIXED: Illegal object id (object=%d, id=%d)", nObject, objP->Id ());
 			objP->Id () = 0;
 			}
 		 else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id=%d)",nObject, objP->Id ());
+			sprintf_s (message, sizeof (message), "WARNING: Illegal object id (object=%d, id=%d)", nObject, objP->Id ());
 		 if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
@@ -711,11 +711,11 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 			  playerP = objP;
 			if (objP->Id () >= MAX_PLAYERS) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id=%d)",nObject, objP->Id ());
+					sprintf_s (message, sizeof (message), "FIXED: Illegal player id (object=%d, id=%d)", nObject, objP->Id ());
 				objP->Id () = MAX_PLAYERS - 1;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id=%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message), "WARNING: Illegal player id (object=%d, id=%d)", nObject, objP->Id ());
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
@@ -723,11 +723,11 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 	  case OBJ_COOP:
 		  if (objP->Id () >= MAX_PLAYERS + MAX_COOP_PLAYERS) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id=%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message), "FIXED: Illegal coop player id (object=%d, id=%d)", nObject, objP->Id ());
 				objP->Id () = MAX_PLAYERS + objP->Id () % MAX_COOP_PLAYERS;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id=%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message), "WARNING: Illegal coop player id (object=%d, id=%d)", nObject, objP->Id ());
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
@@ -736,16 +736,16 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 	  case OBJ_EFFECT:
 			if (objP->Id () > MAX_EFFECT_ID) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id=%d)",nObject, objP->Id ());
+					sprintf_s (message, sizeof (message), "FIXED: effect id (object=%d, id=%d)", nObject, objP->Id ());
 					objP->Id () = MAX_EFFECT_ID;
 					}
 				else
-					sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id=%d)",nObject, objP->Id ());
+					sprintf_s (message, sizeof (message), "WARNING: Illegal effect id (object=%d, id=%d)", nObject, objP->Id ());
 				if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 					return true;
 				}
 			else if (!objP->CheckEffectType (m_bAutoFixBugs == TRUE)) {
-				sprintf_s (message, sizeof (message),"%s: Illegal effect id (object=%d,id=%d)", m_bAutoFixBugs ? "FIXED" : "WARNING", nObject, objP->Id ());
+				sprintf_s (message, sizeof (message), "%s: Illegal effect id (object=%d, id=%d)", m_bAutoFixBugs ? "FIXED" : "WARNING", nObject, objP->Id ());
 				if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 					return true;
 				}
@@ -754,11 +754,11 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 	  case OBJ_ROBOT:
 		  if (objP->Id () > nMaxRobotId) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: robot id (object=%d,id=%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message), "FIXED: robot id (object=%d, id=%d)", nObject, objP->Id ());
 				objP->Id () = nMaxRobotId;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal robot id (object=%d,id=%d)",nObject, objP->Id ());
+				sprintf_s (message, sizeof (message), "WARNING: Illegal robot id (object=%d, id=%d)", nObject, objP->Id ());
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
@@ -780,10 +780,10 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 	  default:
 		 if (m_bAutoFixBugs) {
 			 objectManager.Delete (nObject);
-			sprintf_s (message, sizeof (message),"FIXED: Illegal object type (object=%d,type=%d)",nObject,type);
+			sprintf_s (message, sizeof (message), "FIXED: Illegal object type (object=%d, type=%d)", nObject, type);
 			}
 		 else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal object type (object=%d,type=%d)",nObject,type);
+			sprintf_s (message, sizeof (message), "WARNING: Illegal object type (object=%d, type=%d)", nObject, type);
 		if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
@@ -793,9 +793,9 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
     // check id range
     if (h = CheckId (objP->Type (), objP->Id ())) {
 		 if (h == 2)
-	      sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id=%d)",nObject,id);
+	      sprintf_s (message, sizeof (message), "FIXED: Illegal object id (object=%d, id=%d)", nObject, id);
 		else
-	      sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id=%d)",nObject,id);
+	      sprintf_s (message, sizeof (message), "WARNING: Illegal object id (object=%d, id=%d)", nObject, id);
       if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) 
 			return true;
     }
@@ -805,10 +805,10 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 	if (count < -1) {
 		if (m_bAutoFixBugs) {
 			objP->m_info.contents.count = 0;
-		  sprintf_s (message, sizeof (message),"FIXED: Spawn count must be >= -1 (object=%d,count=%d)",nObject,count);
+		  sprintf_s (message, sizeof (message), "FIXED: Spawn count must be >= -1 (object=%d, count=%d)", nObject, count);
 			}
 		else
-		  sprintf_s (message, sizeof (message),"WARNING: Spawn count must be >= -1 (object=%d,count=%d)",nObject,count);
+		  sprintf_s (message, sizeof (message), "WARNING: Spawn count must be >= -1 (object=%d, count=%d)", nObject, count);
       if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) 
 			return true;
     }
@@ -819,20 +819,20 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 		if (type != OBJ_ROBOT && type != OBJ_POWERUP) {
 			if (m_bAutoFixBugs) {
 				objP->m_info.contents.type = OBJ_POWERUP;
-				sprintf_s (message, sizeof (message),"FIXED: Illegal contained type (object=%d,contains=%d)",nObject,type);
+				sprintf_s (message, sizeof (message), "FIXED: Illegal contained type (object=%d, contains=%d)", nObject, type);
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",nObject,type);
+				sprintf_s (message, sizeof (message), "WARNING: Illegal contained type (object=%d, contains=%d)", nObject, type);
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) return true;
 			}
 		id = objP->m_info.contents.id;
 		// check contains id range
 		if (h = CheckId (objP->m_info.contents.id, objP->m_info.contents.type)) {
 			if (h == 2)
-				sprintf_s (message, sizeof (message),"FIXED: Illegal contains id (object=%d,contains id=%d)",nObject,id);
+				sprintf_s (message, sizeof (message), "FIXED: Illegal contains id (object=%d, contains id=%d)", nObject, id);
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",nObject,id);
-			if (UpdateStats (message, 0,1)) return true;
+				sprintf_s (message, sizeof (message), "WARNING: Illegal contains id (object=%d, contains id=%d)", nObject, id);
+			if (UpdateStats (message, 0, 1)) return true;
 			}
 		}
   }
@@ -902,23 +902,23 @@ if (m_bAutoFixBugs) {
 
 for (id= 0; id < MAX_PLAYERS; id++) {
 	if (players [id] == 0) {
-		sprintf_s (message, sizeof (message),"INFO: No player %d", id + 1);
+		sprintf_s (message, sizeof (message), "INFO: No player %d", id + 1);
 		if (UpdateStats (message, 0)) 
 			return true;
 		}
 	}
 if (nPlayers [0] > MAX_PLAYERS) {
-	sprintf_s (message, sizeof (message),"WARNING: too many players found (found %d, max. allowed %d)", nPlayers [0], MAX_PLAYERS);
+	sprintf_s (message, sizeof (message), "WARNING: too many players found (found %d, max. allowed %d)", nPlayers [0], MAX_PLAYERS);
 	if (UpdateStats (message, 0)) 
 		return true;
 	}
 if (nPlayers [1] < 3) {
-	sprintf_s (message, sizeof (message),"INFO: %d coop players found (3 allowed)", nPlayers [1]);
+	sprintf_s (message, sizeof (message), "INFO: %d coop players found (3 allowed)", nPlayers [1]);
 	if (UpdateStats (message, 0)) 
 		return true;
 	}
 else if (nPlayers [1] > 3) {
-	sprintf_s (message, sizeof (message),"WARNING: too many coop players found (found %d, max. allowed 3)", nPlayers [1]);
+	sprintf_s (message, sizeof (message), "WARNING: too many coop players found (found %d, max. allowed 3)", nPlayers [1]);
 	if (UpdateStats (message, 0)) 
 		return true;
 	}
@@ -926,28 +926,28 @@ else if (nPlayers [1] > 3) {
   // make sure there is only one control center
 count = 0;
 objP = objectManager.Object (0);
-for (nObject=0;nObject<objCount;nObject++, objP++) {
+for (nObject = 0; nObject < objCount; nObject++, objP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	type = objP->Type ();
 	if (type == OBJ_REACTOR) {
 		if (segmentManager.Segment (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_REACTOR) {
 			if (m_bAutoFixBugs && segmentManager.CreateRobotMaker (objP->m_info.nSegment, false, false))
-				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",nObject,objP->m_info.nSegment);
+				sprintf_s (message, sizeof (message), "FIXED: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)", nObject, objP->m_info.nSegment);
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",nObject,objP->m_info.nSegment);
+				sprintf_s (message, sizeof (message), "WARNING: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)", nObject, objP->m_info.nSegment);
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
 		count++;
 		if (count > 1) {
-			sprintf_s (message, sizeof (message),"WARNING: More than one Reactor found (object=%d)",nObject);
+			sprintf_s (message, sizeof (message), "WARNING: More than one Reactor found (object=%d)", nObject);
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
 		}
 	}
 if (count < 1) {
-	sprintf_s (message, sizeof (message),"WARNING: No Reactors found (note: ok if boss robot used)");
+	sprintf_s (message, sizeof (message), "WARNING: No Reactors found (note: ok if boss robot used)");
 	if (UpdateStats (message, 0)) 
 		return true;
 	}
@@ -1012,7 +1012,7 @@ for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	for (nWall = 0; wallP = wallManager.FindByTrigger (nTrigger, nWall); nWall++) {
 		nWall = wallManager.Index (wallP);
 		if (++count > 1) {
-			sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wall (trigger=%d, wall=%d)", nTrigger, nWall);
+			sprintf_s (message, sizeof (message), "WARNING: Trigger belongs to more than one wall (trigger=%d, wall=%d)", nTrigger, nWall);
 			if (UpdateStats (message, 0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 		// if exit, make sure it is linked to CReactorTrigger
@@ -1022,20 +1022,20 @@ for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 			if (m_bAutoFixBugs) {
 				if (bExit) {
 					triggerManager.ReactorTrigger ()->Add (*wallP);
-					sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					sprintf_s (message, sizeof (message), "FIXED: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 					}
 				else {
 					triggerManager.ReactorTrigger ()->Delete (*wallP);
-					sprintf_s (message, sizeof (message),"FIXED: Reactor linked to non-exit (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					sprintf_s (message, sizeof (message), "FIXED: Reactor linked to non-exit (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 					}
 				}
 			else {
 				if (bExit)
-					sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					sprintf_s (message, sizeof (message), "WARNING: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 				else
-					sprintf_s (message, sizeof (message),"WARNING: Reactor linked to non-exit (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					sprintf_s (message, sizeof (message), "WARNING: Reactor linked to non-exit (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 				}
-			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall))
+			if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall))
 				return true;
 			}
 		}
@@ -1046,12 +1046,12 @@ for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 			nTrigger--;
 			trigP--;
 			trigCount--;
-			sprintf_s (message, sizeof (message),"FIXED: Unused trigger (trigger=%d)", nTrigger + nDelTrigger);
+			sprintf_s (message, sizeof (message), "FIXED: Unused trigger (trigger=%d)", nTrigger + nDelTrigger);
 			nDelTrigger++;
 			}
 		else
-			sprintf_s (message, sizeof (message),"WARNING: Unused trigger (trigger=%d)", nTrigger);
-		if (UpdateStats (message, 0,1)) return true;
+			sprintf_s (message, sizeof (message), "WARNING: Unused trigger (trigger=%d)", nTrigger);
+		if (UpdateStats (message, 0, 1)) return true;
 		}
 	}
 
@@ -1075,7 +1075,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
 			   (tt != TT_SPEEDBOOST) && (tt != TT_SHIELD_DAMAGE_D2) && (tt != TT_ENERGY_DRAIN_D2)
 			) {
-			sprintf_s (message, sizeof (message),"WARNING: Trigger has no targets (trigger=%d)",nTrigger);
+			sprintf_s (message, sizeof (message), "WARNING: Trigger has no targets (trigger=%d)", nTrigger);
 			if (UpdateStats (message, 0, -1, -1, -1, -1, -1, -1, nTrigger))
 				return true;
 			}
@@ -1086,10 +1086,10 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 			if (nTarget >= MAX_TRIGGER_TARGETS) {
 				if (m_bAutoFixBugs) {
 					trigP->Count () = MAX_TRIGGER_TARGETS;
-					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigger=%d, number of links=%d)",nTrigger,nTarget);
+					sprintf_s (message, sizeof (message), "FIXED: Trigger has too many targets (trigger=%d, number of links=%d)", nTrigger, nTarget);
 					}
 				else
-					sprintf_s (message, sizeof (message),"WARNING: Trigger has too many targets (trigger=%d, number of links=%d)",nTrigger,nTarget);
+					sprintf_s (message, sizeof (message), "WARNING: Trigger has too many targets (trigger=%d, number of links=%d)", nTrigger, nTarget);
 				if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 					return true;
 				break;
@@ -1105,13 +1105,13 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						nTarget = MAX_TRIGGER_TARGETS;	// take care of the loops
 						trigP--;
 						}
-					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant %s (trigger=%d, segment=%d)", 
+					sprintf_s (message, sizeof (message), "FIXED: Trigger points to non-existant %s (trigger=%d, segment=%d)", 
 								  (nSide < 0) ? "object" : "segment", nTrigger, nSegment);
 					}
 				else
-					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant %s (triggger=%d, segment=%d)", 
+					sprintf_s (message, sizeof (message), "ERROR: Trigger points to non-existant %s (triggger=%d, segment=%d)", 
 								  (nSide < 0) ? "object" : "segment", nTrigger, nSegment);
-				if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
+				if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 					return true;
 				}
 			else {
@@ -1122,10 +1122,10 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 							nSide = 0;
 						else if (nSide > 5)
 							nSide = 5;
-						sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant side (trigger=%d, side=%d)",nTrigger,nSide);
+						sprintf_s (message, sizeof (message), "FIXED: Trigger points to non-existant side (trigger=%d, side=%d)", nTrigger, nSide);
 						}
 					else
-						sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant side (trigger=%d, side=%d)",nTrigger,nSide);
+						sprintf_s (message, sizeof (message), "ERROR: Trigger points to non-existant side (trigger=%d, side=%d)", nTrigger, nSide);
 					if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 						return true;
 				} else {
@@ -1144,10 +1144,10 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 									nTarget = MAX_TRIGGER_TARGETS;
 									trigP--;
 									}
-								sprintf_s (message, sizeof (message),"FIXED: Trigger does not target a door (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+								sprintf_s (message, sizeof (message), "FIXED: Trigger does not target a door (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 								}
 							else
-								sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a door (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+								sprintf_s (message, sizeof (message), "WARNING: Trigger does not target a door (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 						}
 
@@ -1155,13 +1155,13 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						CSideKey opp;
 						CSide* oppSideP = segmentManager.BackSide (CSideKey (nSegment, nSide), opp);
 						if (oppSideP == null) {
-							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))", nTrigger, nSegment, nSide);
+							sprintf_s (message, sizeof (message), "WARNING: Trigger opens a single sided door (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						else {
 							if (oppSideP->Wall () == null) {
-								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
-								if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
+								sprintf_s (message, sizeof (message), "WARNING: Trigger opens a single sided door (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
+								if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 								}
 							}
 						}
@@ -1178,17 +1178,17 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 									nTarget = MAX_TRIGGER_TARGETS;
 									trigP--;
 									}
-								sprintf_s (message, sizeof (message),"FIXED: Trigger target does not exist (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+								sprintf_s (message, sizeof (message), "FIXED: Trigger target does not exist (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 								}
 							else
-								sprintf_s (message, sizeof (message),"ERROR: Trigger target does not exist (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+								sprintf_s (message, sizeof (message), "ERROR: Trigger target does not exist (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						}
 //						if (trigP->Info ().flags == TRIGGER_MATCEN) {
 					else if (DLE.IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((segP->m_info.function != SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.function != SEGMENT_FUNC_EQUIPMAKER)) {
-							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+							sprintf_s (message, sizeof (message), "WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						}
@@ -1215,7 +1215,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	if (DLE.IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
-			sprintf_s (message, sizeof (message),"WARNING: More than one exit found (trigger=%d)",nTrigger);
+			sprintf_s (message, sizeof (message), "WARNING: More than one exit found (trigger=%d)", nTrigger);
 			if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 			}
 		}
@@ -1231,7 +1231,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
 		}
 	}
 if (count < 1) {
-	sprintf_s (message, sizeof (message),"WARNING: No exit found");
+	sprintf_s (message, sizeof (message), "WARNING: No exit found");
 	if (UpdateStats (message, 0)) return true;
 	}
 
@@ -1470,7 +1470,7 @@ for (int i = 0, j = lightManager.Count (); i < j; i++) {
 	CVariableLight* lightP = lightManager.VariableLight (i);
 	CSide* sideP = segmentManager.Segment (lightP->m_nSegment)->Side (lightP->m_nSide);
 	if (!(lightManager.IsLight (sideP->BaseTex ()) || lightManager.IsLight (sideP->OvlTex (0)))) {
-		sprintf_s (message, sizeof (message),"%: Variable light doesn't refer to a light source (segment=%d, side=%d)", 
+		sprintf_s (message, sizeof (message), "%: Variable light doesn't refer to a light source (segment=%d, side=%d)", 
 					  m_bAutoFixBugs ? "FIXED" : "ERROR", lightP->m_nSegment, lightP->m_nSide);
 		if (UpdateStats (message, m_bAutoFixBugs ? 1 : 0, lightP->m_nSegment, lightP->m_nSide)) return true;
 		if (m_bAutoFixBugs) {
@@ -1512,7 +1512,7 @@ bool CDiagTool::CheckWalls (void)
 if (theMine == null) 
 	return false;
 
-	short nSegment,nSide;
+	short nSegment, nSide;
 	ushort nWall, wallCount = wallManager.WallCount (), 
 			 maxWalls = MAX_WALLS;
 	CSegment *segP;
@@ -1538,8 +1538,8 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 		w = wallManager.Wall (nWall);
 		if (w->m_nSegment != nSegment) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),
-							"FIXED: Wall sits in wrong segment (segment=%d, wall=%d, parent=%d)",
+				sprintf_s (message, sizeof (message), 
+							"FIXED: Wall sits in wrong segment (segment=%d, wall=%d, parent=%d)", 
 							nSegment, nWall, w->m_nSegment);
 				if (wallFixed [nWall])
 					sideP->m_info.nWall = NO_WALL;
@@ -1554,15 +1554,15 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 					}
 				}
 			else
-				sprintf_s (message, sizeof (message),
-							"ERROR: Wall sits in wrong segment (segment=%d, wall=%d, parent=%d)",
+				sprintf_s (message, sizeof (message), 
+							"ERROR: Wall sits in wrong segment (segment=%d, wall=%d, parent=%d)", 
 							nSegment, nWall, w->m_nSegment);
-			if (UpdateStats (message,1, nSegment, nSide, -1, -1, -1, sideP->m_info.nWall)) return true;
+			if (UpdateStats (message, 1, nSegment, nSide, -1, -1, -1, sideP->m_info.nWall)) return true;
 			} 
 		else if (w->m_nSide != nSide) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),
-							"FIXED: Wall sits at wrong side (segment=%d, side=%d, wall=%d, parent=%d)",
+				sprintf_s (message, sizeof (message), 
+							"FIXED: Wall sits at wrong side (segment=%d, side=%d, wall=%d, parent=%d)", 
 							nSegment, nSide, nWall, w->m_nSegment);
 				if (wallFixed [nWall])
 					sideP->m_info.nWall = NO_WALL;
@@ -1580,10 +1580,10 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 					}
 				}
 			else
-				sprintf_s (message, sizeof (message),
-							"ERROR: Wall sits at wrong side (segment=%d, side=%d, wall=%d, parent=%d)",
+				sprintf_s (message, sizeof (message), 
+							"ERROR: Wall sits at wrong side (segment=%d, side=%d, wall=%d, parent=%d)", 
 							nSegment, nSide, nWall, w->m_nSegment);
-			if (UpdateStats (message,1, -1, -1, -1, -1, -1, sideP->m_info.nWall)) return true;
+			if (UpdateStats (message, 1, -1, -1, -1, -1, -1, sideP->m_info.nWall)) return true;
 			}
 		} 
 	}
@@ -1593,24 +1593,24 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
 	if (wallP->Type () > (DLE.IsD1File () ? WALL_CLOSED : DLE.IsStdLevel () ? WALL_CLOAKED : WALL_COLORED)) {
-		sprintf_s (message, sizeof (message),
-					"ERROR: Wall type out of range (wall=%d, type=%d)",
-					nWall,wallP->Type ());
+		sprintf_s (message, sizeof (message), 
+					"ERROR: Wall type out of range (wall=%d, type=%d)", 
+					nWall, wallP->Type ());
 		if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 		}
 		// check range of segment number that the wall points to
 	if (wallP->m_nSegment >= segmentManager.Count ()) {
-		sprintf_s (message, sizeof (message),
-					"ERROR: Wall sits in non-existant segment (wall=%d, segment=%d)",
-					nWall,wallP->m_nSegment);
-		if (UpdateStats (message,1,-1, -1, -1, -1, -1, nWall)) return true;
+		sprintf_s (message, sizeof (message), 
+					"ERROR: Wall sits in non-existant segment (wall=%d, segment=%d)", 
+					nWall, wallP->m_nSegment);
+		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, nWall)) return true;
 		} 
 	else if (wallP->m_nSide >= 6) {
 		// check range of side number that the wall points to
-		sprintf_s (message, sizeof (message),
-					"ERROR: Wall sits on side which is out of range (wall=%d, side=%d)",
-					nWall,wallP->m_nSide);
-		if (UpdateStats (message,1,-1 -1, -1, -1, -1, nWall)) return true;
+		sprintf_s (message, sizeof (message), 
+					"ERROR: Wall sits on side which is out of range (wall=%d, side=%d)", 
+					nWall, wallP->m_nSide);
+		if (UpdateStats (message, 1, -1 -1, -1, -1, -1, nWall)) return true;
 		}
 	else {
 		// check to make sure segment points back to wall
@@ -1619,7 +1619,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			w = wallManager.Wall (sideP->m_info.nWall);
 			if ((sideP->m_info.nWall < wallCount) && (w->m_nSegment == wallP->m_nSegment) && (w->m_nSide == wallP->m_nSide)) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message),
+					sprintf_s (message, sizeof (message), 
 								"FIXED: Duplicate wall found (wall=%d, segment=%d)", nWall, wallP->m_nSegment);
 					wallManager.Delete (nWall);
 					nWall--;
@@ -1628,50 +1628,50 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 					continue;
 					}
 				else 
-					sprintf_s (message, sizeof (message),
+					sprintf_s (message, sizeof (message), 
 								"ERROR: Duplicate wall found (wall=%d, segment=%d)", nWall, wallP->m_nSegment);
 				if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
 				if (m_bAutoFixBugs) {
 					sideP->m_info.nWall = nWall;
-					sprintf_s (message, sizeof (message),
-								"FIXED: Segment does not reference wall which sits in it (wall=%d, segment=%d)",
-								nWall,wallP->m_nSegment);
+					sprintf_s (message, sizeof (message), 
+								"FIXED: Segment does not reference wall which sits in it (wall=%d, segment=%d)", 
+								nWall, wallP->m_nSegment);
 					}
 				else 
-					sprintf_s (message, sizeof (message),
-								"ERROR: Segment does not reference wall which sits in it (wall=%d, segment=%d)",
-								nWall,wallP->m_nSegment);
-				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+					sprintf_s (message, sizeof (message), 
+								"ERROR: Segment does not reference wall which sits in it (wall=%d, segment=%d)", 
+								nWall, wallP->m_nSegment);
+				if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			}
 			// make sure trigger number of wall is in range
 		if ((wallP->Info ().nTrigger != NO_TRIGGER) && (wallP->Info ().nTrigger >= triggerManager.WallTriggerCount ())) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),
-							"FIXED: Wall has invalid trigger (wall=%d, trigger=%d)",
+				sprintf_s (message, sizeof (message), 
+							"FIXED: Wall has invalid trigger (wall=%d, trigger=%d)", 
 							nWall, wallP->Info ().nTrigger);
 				wallP->Info ().nTrigger = NO_TRIGGER;
 				}
 			else
-				sprintf_s (message, sizeof (message),
-							"ERROR: Wall has invalid trigger (wall=%d, trigger=%d)",
+				sprintf_s (message, sizeof (message), 
+							"ERROR: Wall has invalid trigger (wall=%d, trigger=%d)", 
 							nWall, wallP->Info ().nTrigger);
-			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+			if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 #if 1 // linked walls not supported in DLE and D2X-XL
 		if (wallP->Info ().linkedWall != -1) {
 			short invLinkedWall = wallP->Info ().linkedWall;
 			if (m_bAutoFixBugs) {
 				wallP->Info ().linkedWall = -1;
-				sprintf_s (message, sizeof (message),
-							  "FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
+				sprintf_s (message, sizeof (message), 
+							  "FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])", 
 							  nWall, invLinkedWall, wallP->Info ().linkedWall);
 				}
 			else
-				sprintf_s (message, sizeof (message),
-							  "ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
+				sprintf_s (message, sizeof (message), 
+							  "ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])", 
 							  nWall, invLinkedWall, wallP->Info ().linkedWall);
 			}
 #else
@@ -1682,41 +1682,41 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 					wallP->Info ().linkedWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
 					if ((wallP->Info ().linkedWall < -1) || (wallP->Info ().linkedWall >= wallCount))
 						wallP->Info ().linkedWall = -1;
-					sprintf_s (message, sizeof (message),
-						"FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
+					sprintf_s (message, sizeof (message), 
+						"FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])", 
 						nWall, invLinkedWall, wallP->Info ().linkedWall);
 					}
 				}
 			else
-				sprintf_s (message, sizeof (message),
-					"ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d)",
-					nWall,wallP->Info ().linkedWall);
+				sprintf_s (message, sizeof (message), 
+					"ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d)", 
+					nWall, wallP->Info ().linkedWall);
 			}
 		else if (wallP->Info ().linkedWall >= 0) {
 			short	oppSeg, oppSide;
 			if (theMine->OppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
 				short oppWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
 				if ((oppWall < 0) || (oppWall >= wallCount)) {
-					sprintf_s (message, sizeof (message),
-						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
-						m_bAutoFixBugs ? "FIXED" : "ERROR",
+					sprintf_s (message, sizeof (message), 
+						"%s: Wall links to non-existant wall (wall=%d, linked side=%d, %d)", 
+						m_bAutoFixBugs ? "FIXED" : "ERROR", 
 						nWall, wallManager.Wall (wallP->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (wallP->Info ().linkedWall)->nSide);
 						if (m_bAutoFixBugs)
 							wallP->Info ().linkedWall = -1;
 					}
 				else if (wallP->Info ().linkedWall != oppWall) {
-					sprintf_s (message, sizeof (message),
-						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d,%d)",
-						m_bAutoFixBugs ? "FIXED" : "ERROR",
+					sprintf_s (message, sizeof (message), 
+						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d, %d)", 
+						m_bAutoFixBugs ? "FIXED" : "ERROR", 
 						nWall, wallManager.Wall (wallP->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (wallP->Info ().linkedWall)->nSide);
 						if (m_bAutoFixBugs)
 							wallP->Info ().linkedWall = oppWall;
 					}
 				}
 			else {
-				sprintf_s (message, sizeof (message),
-					"%s: Wall links to non-existant side (wall=%d, linked side=%d,%d)",
-					m_bAutoFixBugs ? "FIXED" : "ERROR",
+				sprintf_s (message, sizeof (message), 
+					"%s: Wall links to non-existant side (wall=%d, linked side=%d, %d)", 
+					m_bAutoFixBugs ? "FIXED" : "ERROR", 
 					nWall, wallManager.Wall (wallP->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (wallP->Info ().linkedWall)->nSide);
 				if (m_bAutoFixBugs)
 					wallP->Info ().linkedWall = -1;
@@ -1740,24 +1740,24 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			  || (DLE.IsD1File () && wallP->Clip () > MAX_DOOR_ANIMS_D1)
 			  || (DLE.IsD2File () && wallP->Clip () > MAX_DOOR_ANIMS_D2))) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),
-							  "FIXED: Illegal wall clip number (wall=%d, clip number=%d)",
+				sprintf_s (message, sizeof (message), 
+							  "FIXED: Illegal wall clip number (wall=%d, clip number=%d)", 
 							  nWall, wallP->Clip ());
 				wallP->Clip () = ((wallP->Clip () - 1) % ((DLE.IsD1File () ? MAX_DOOR_ANIMS_D1 : MAX_DOOR_ANIMS_D2) - 1)) + 1;
 				}
 			else
-				sprintf_s (message, sizeof (message),
-							  "ERROR: Illegal wall clip number (wall=%d, clip number=%d)",
+				sprintf_s (message, sizeof (message), 
+							  "ERROR: Illegal wall clip number (wall=%d, clip number=%d)", 
 							  nWall, wallP->Clip ());
-			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+			if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 			// Make sure there is a child to the segment
 		if (wallP->Type () != WALL_OVERLAY) {
 			if (!(segmentManager.Segment (wallP->m_nSegment)->m_info.childFlags & (1<< wallP->m_nSide))) {
-				sprintf_s (message, sizeof (message),
-							"ERROR: No adjacent segment for this door (wall=%d, segment=%d)",
-							nWall,wallP->m_nSegment);
-				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+				sprintf_s (message, sizeof (message), 
+							"ERROR: No adjacent segment for this door (wall=%d, segment=%d)", 
+							nWall, wallP->m_nSegment);
+				if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
 				nSegment = segmentManager.Segment (wallP->m_nSegment)->ChildId (wallP->m_nSide);
@@ -1770,20 +1770,20 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 							break;
 					if (nSide != 6) {  // if child's side found
 						if (segP->m_sides[nSide].m_info.nWall >= wallManager.WallCount ()) {
-							sprintf_s (message, sizeof (message),
+							sprintf_s (message, sizeof (message), 
 										"WARNING: No matching wall for this wall (wall=%d, segment=%d)", 
-										nWall,nSegment);
-							if (UpdateStats (message, 0,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+										nWall, nSegment);
+							if (UpdateStats (message, 0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 							} 
 						else {
 							ushort wallnum2 = segP->m_sides[nSide].m_info.nWall;
 							if ((wallnum2 < wallCount) &&
 								 ((wallP->Clip () != wallManager.Wall (wallnum2)->Info ().nClip ||
 									wallP->Type () != wallManager.Wall (wallnum2)->Type ()))) {
-								sprintf_s (message, sizeof (message),
-											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, segment=%d)",
-											nWall,nSegment);
-								if (UpdateStats (message, 0,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+								sprintf_s (message, sizeof (message), 
+											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, segment=%d)", 
+											nWall, nSegment);
+								if (UpdateStats (message, 0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 								}
 							}
 						}
@@ -1795,7 +1795,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 
 	// make sure segP's wall points back to the segment
 segP = segmentManager.Segment (0);
-for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
+for (nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	sideP = segP->m_sides;
 	for (nSide = 0; nSide < 6; nSide++, sideP++) {
@@ -1804,19 +1804,19 @@ for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
 			if (nWall >= wallCount) {
 				if (m_bAutoFixBugs) {
 					sideP->m_info.nWall = wallCount;
-					sprintf_s (message, sizeof (message),"FIXED: Segment has an invalid wall number (wall=%d, segment=%d)",nWall,nSegment);
+					sprintf_s (message, sizeof (message), "FIXED: Segment has an invalid wall number (wall=%d, segment=%d)", nWall, nSegment);
 					}
 				else
-					sprintf_s (message, sizeof (message),"ERROR: Segment has an invalid wall number (wall=%d, segment=%d)",nWall,nSegment);
+					sprintf_s (message, sizeof (message), "ERROR: Segment has an invalid wall number (wall=%d, segment=%d)", nWall, nSegment);
 				if (UpdateStats (message, 1, nSegment, nSide)) return true;
 			} else {
 				if (wallManager.Wall (nWall)->m_nSegment != nSegment) {
 					if (m_bAutoFixBugs) {
 						wallManager.Wall (nWall)->m_nSegment = nSegment;
-						sprintf_s (message, sizeof (message),"FIXED: Segment's wall does not sit in segment (wall=%d, segment=%d)",nWall,nSegment);
+						sprintf_s (message, sizeof (message), "FIXED: Segment's wall does not sit in segment (wall=%d, segment=%d)", nWall, nSegment);
 						}
 					else
-						sprintf_s (message, sizeof (message),"ERROR: Segment's wall does not sit in segment (wall=%d, segment=%d)",nWall,nSegment);
+						sprintf_s (message, sizeof (message), "ERROR: Segment's wall does not sit in segment (wall=%d, segment=%d)", nWall, nSegment);
 					if (UpdateStats (message, 1, nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 					}
 				}
@@ -1878,9 +1878,9 @@ for (nVertex = vertexManager.Count (); nVertex > 0; )
 	vertexManager.Status (--nVertex) &= ~NEW_MASK;
 if (nUnused) {
 	if (m_bAutoFixBugs)
-		sprintf_s (message, sizeof (message),"FIXED: %d unused vertices found", nUnused);
+		sprintf_s (message, sizeof (message), "FIXED: %d unused vertices found", nUnused);
 	else
-		sprintf_s (message, sizeof (message),"WARNING: %d unused vertices found", nUnused);
+		sprintf_s (message, sizeof (message), "WARNING: %d unused vertices found", nUnused);
 	if (UpdateStats (message, 0)) return true;
 	}
 
