@@ -497,7 +497,7 @@ class CTexture {
 		}
 
 		inline uint RenderHeight () const {
-			return (m_info.format == TGA) ? m_info.height : Pow2Dim (m_info.width, m_info.height);
+			return (m_info.format == TGA) ? FrameHeight () : Pow2Dim (m_info.width, FrameHeight ());
 		}
 
 		inline uint RenderSize (void) const { return RenderWidth () * RenderHeight (); }
@@ -561,7 +561,15 @@ class CTexture {
 
 		inline bool IsSuperTransparent (void) const { return m_info.bSuperTransparent; }
 
-		inline bool IsAnimated (void) const { return m_info.bAnimated; }
+		inline bool IsAnimated (void) const { 
+			if (m_info.bAnimated)
+				return true; 
+			if (!Format ())
+				return false;
+			 if (Height () <= Width ())
+				 return false;
+			return (Height () % Width () == 0);
+			}
 
 		// true = this is a frame of a type that can be assigned to a surface in a level (usually doors)
 		bool IsAssignableFrame (void) const;

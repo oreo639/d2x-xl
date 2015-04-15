@@ -306,11 +306,15 @@ if (texture1 == nDbgTexture)
 	nDbgTexture = nDbgTexture;
 #endif
 
-	const CTexture *baseTexP = (texture1 >= 0) ? textureManager.Textures (texture1) : null;
+	CTexture *baseTexP = (texture1 >= 0) ? textureManager.Textures (texture1) : null;
+	if (baseTexP && baseTexP->Format ())
+		baseTexP->SetCurrentFrame (0);
 	int maskedTexture2 = (texture2 < 0) ? texture2 : texture2 & TEXTURE_MASK;
-	const CTexture *ovlTexP = (maskedTexture2 != 0) ? textureManager.Textures (maskedTexture2) : null;
+	CTexture *ovlTexP = (maskedTexture2 != 0) ? textureManager.Textures (maskedTexture2) : null;
+	if (ovlTexP && ovlTexP->Format ())
+		ovlTexP->SetCurrentFrame (0);
 	short nOvlAlignment = (maskedTexture2 > 0) ? (texture2 & ALIGNMENT_MASK) >> ALIGNMENT_SHIFT : 0;
-
+	
 return PaintTexture (wndP, bkColor, baseTexP, ovlTexP, nOvlAlignment, xOffset, yOffset);
 }
 

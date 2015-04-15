@@ -274,8 +274,8 @@ if ((i >= 0) && (i < LBLevels ()->GetCount ())) {
 		_strlwr_s (m_szLevel, sizeof (m_szLevel));
 		LBLevels ()->InsertString (i, m_szLevel);
 		LBLevels ()->SetCurSel (i);
-		//strncpy_s (m_missionData.levelList [i], sizeof (m_missionData.levelList [i]), m_szLevel, sizeof (m_missionData.levelList [i]));
-		//m_missionData.levelList [i] [sizeof (m_missionData.levelList [i]) - 1] = '\0';
+		strncpy_s (m_missionData.levelList [i], sizeof (m_missionData.levelList [i]), m_szLevel, sizeof (m_missionData.levelList [i]));
+		m_missionData.levelList [i] [sizeof (m_missionData.levelList [i]) - 1] = '\0';
 		*m_szLevel = '\0';
 	   AfxSetWindowText (((CWnd *) GetDlgItem (IDC_MISSION_LEVELEDIT))->GetSafeHwnd (), "");
 		}

@@ -1,4 +1,4 @@
-
+	
 #include "mine.h"
 #include "dle-xp.h"
 #include "TextureManager.h"
@@ -13,14 +13,16 @@ extern short nDbgTexture;
 
 int CAnimationClipInfo::LoadAnimationFrames (CFileManager& fp, int nMaxFrames, bool bIndices) 
 {
-m_frames.Read (fp);
 int l = (int) m_frames.Length ();
-if (bIndices)
-	for (int i = 0; i < l; i++)
-		m_frames [i] = -m_frames [i];
+if (l) {
+	m_frames.Read (fp);
+	if (bIndices)
+		for (int i = 0; i < l; i++)
+			m_frames [i] = -m_frames [i];
+	}
 if (l < nMaxFrames)
 	fp.Seek ((nMaxFrames - l) * sizeof (short), SEEK_CUR);
-return m_frames.Buffer () ? (int) m_frames.Length () : -1;
+return m_frames.Buffer () ? (int) m_frames.Length () : 0;
 }
 
 //------------------------------------------------------------------------
@@ -40,7 +42,7 @@ if (nFrames > 0)
 fp.Seek (sizeof (int), SEEK_CUR); // skip frame time stored in the file - it sometimes seems to be bogus
 aci.m_nFrameTime = int (X2F (aci.m_nPlayTime) / float (nFrames) * 1000);
 fp.Seek (sizeof (int) + sizeof (short), SEEK_CUR);
-if (nFrames < 0) {
+if (nFrames <= 0) {
 	fp.Seek (nMaxFrames * sizeof (short), SEEK_CUR);
 	aci.m_nTexture = -1;
 	}
@@ -102,8 +104,6 @@ for (int i = 0; i < nClips; i++) {
 	CAnimationClipInfo* aciP = animations.Append ();
 	if (!aciP)
 		return -1;
-	if (i == 93)
-		i = i;
 	if (0 > LoadEffectData (*aciP, fp, nMaxFrames))
 		return -1;
 	}
@@ -182,6 +182,7 @@ return LoadEffectClips (animations, fp, fp.ReadInt32 (), MAX_ANIMATION_FRAMES);
 
 int CWallEffectClipLoaderD1::LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp)
 {
+fp.ReadInt32 ();
 return LoadWallEffectClips (animations, fp, MAX_WALL_ANIMATIONS_D1, MAX_WALL_EFFECT_FRAMES_D1);
 }
 
