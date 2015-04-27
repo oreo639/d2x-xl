@@ -53,7 +53,7 @@ closestRadius = 1.0e30;
 // if there is a secret exit, then enable it in search
 int enable_secret = false;
 if (DLE.IsD2File ())
-	for(i = 0; i < (short) triggerManager.WallTriggerCount ();i++)
+	for(i = 0; i < (short) triggerManager.WallTriggerCount (); i++)
 		if (triggerManager.Trigger (i)->Type () == TT_SECRET_EXIT) {
 			enable_secret = true;
 			break;
@@ -616,6 +616,31 @@ switch (m_selectMode) {
 void CMineView::PrevSegmentElement ()
 {
 NextSegmentElement (-1);
+}
+
+//------------------------------------------------------------------------------
+
+void CMineView::LocateTexture (short nTexture)
+{
+	short nSegment = current->SegmentId ();
+	short nSide = current->SideId () + 1;
+	short	nSegments = segmentManager.Count ();
+
+for (short i = nSegments; i; i++) {
+	CSegment* segP = segmentManager.Segment (nSegment);
+	for (short j = nSide; j < MAX_SIDES_PER_SEGMENT; j++) {
+		CSide* sideP = segP->Side (j);
+		if ((sideP->Shape () <= SIDE_SHAPE_TRIANGLE) && ((sideP->BaseTex () == nTexture) || (nTexture && (sideP->OvlTex () == nTexture)))) {
+			current->SetSegmentId (nSegment);
+			current->SetSideId (j);
+			DLE.ToolView ()->Refresh ();
+			Refresh ();
+			return;
+			}
+		}
+	nSide = 0;
+	nSegment = (nSegment + 1) % nSegments;
+	}
 }
 
 //------------------------------------------------------------------------------

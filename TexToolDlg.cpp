@@ -193,6 +193,8 @@ for (int i = 0; i < 2; i++) {
 			textures [i]->SetCurrentFrame (m_frame [i]);
 		bAnimate = true;
 		}
+	else
+		textures [i] = textureManager.Textures (texIds [i]);
 	}
 if (bAnimate)
 	PaintTexture (&m_textureWnd, m_bkColor, textures [0], textures [1]);

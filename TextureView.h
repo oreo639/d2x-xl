@@ -32,6 +32,8 @@ class CTextureView : public CWnd {
 		uint				m_viewFlags;
 		BOOL				m_bShowAll;
 		bool				m_bDelayRefresh;
+		bool				m_bLButtonDown;
+		bool				m_bRButtonDown;
 		CTextureFilter	m_filter;
 		CSize				m_paneSize;
 
@@ -44,9 +46,12 @@ class CTextureView : public CWnd {
 		afx_msg BOOL OnEraseBkgnd (CDC* pDC);
 		afx_msg void OnPaint ();
 		afx_msg void OnSize (UINT nType, int cx, int cy);
-		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-		afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-		afx_msg void OnVScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+		afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
+		afx_msg void OnRButtonDown (UINT nFlags, CPoint point);
+		afx_msg void OnLButtonUp (UINT nFlags, CPoint point);
+		afx_msg void OnRButtonUp (UINT nFlags, CPoint point);
+		afx_msg void OnMButtonDown (UINT nFlags, CPoint point);
+		afx_msg void OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
 		afx_msg BOOL OnMouseWheel (UINT nFlags, short zDelta, CPoint pt);
 		void Setup ();
 		void RecalcLayout ();

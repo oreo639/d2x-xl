@@ -326,6 +326,8 @@ public:
 	BOOL DrawDragPos (void);
 	void FinishDrag (void);
 
+	void LocateTexture (short nTexture);
+
 	BOOL SetWindowPos (const CWnd *pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags);
 
 	void ApplyPreview (void);

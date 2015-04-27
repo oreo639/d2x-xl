@@ -36,6 +36,9 @@ BEGIN_MESSAGE_MAP(CTextureView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONDOWN()
+	ON_WM_MBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_RBUTTONUP()
 	ON_WM_VSCROLL()
 	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
@@ -46,6 +49,7 @@ CTextureView::CTextureView ()
 	: CWnd ()
 {
 m_pTextures = null;
+m_bLButtonDown = m_bRButtonDown = false;
 m_penCyan = new CPen (PS_SOLID, 1, RGB (0,255,255));
 int scale = TEXTURE_SCALE;
 m_iconSize.cx = 64 / scale;
@@ -145,12 +149,42 @@ Refresh ();
 
 void CTextureView::OnLButtonDown (UINT nFlags, CPoint point)
 {
+if (!m_bRButtonDown) 
+	m_bLButtonDown = true;
+else {
+	m_bRButtonDown = false;
+	short nTexture;
+	if (!PickTexture (point, nTexture))
+		DLE.MineView ()->LocateTexture (nTexture);
+	}
+}
+
+void CTextureView::OnRButtonDown (UINT nFlags, CPoint point)
+{
+if (!m_bLButtonDown) 
+	m_bRButtonDown = true;
+else {
+	m_bLButtonDown = false;
+	short nTexture;
+	if (!PickTexture (point, nTexture))
+		DLE.MineView ()->LocateTexture (nTexture);
+	}
+}
+
+//------------------------------------------------------------------------
+
+void CTextureView::OnLButtonUp (UINT nFlags, CPoint point)
+{
 CHECKMINE;
 
-	short nTexture;
+if (!m_bLButtonDown)
+	return;
+m_bLButtonDown = false;
 
+short nTexture;
 if (PickTexture (point, nTexture))
 	return;
+
 if (nFlags & MK_SHIFT) {
 	CGameObject *objP = objectManager.Object (current->ObjectId ());
    if (objP->m_info.renderType != RT_POLYOBJ) 
@@ -176,9 +210,13 @@ else {
 
 //------------------------------------------------------------------------
 
-void CTextureView::OnRButtonDown (UINT nFlags, CPoint point)
+void CTextureView::OnRButtonUp (UINT nFlags, CPoint point)
 {
 CHECKMINE;
+
+if (!m_bRButtonDown)
+	return;
+m_bRButtonDown = false;
 
 	CSide *sideP = current->Side ();
 	short	nTexture;
@@ -201,13 +239,24 @@ else {
 }
 
 //------------------------------------------------------------------------
+
+void CTextureView::OnMButtonDown (UINT nFlags, CPoint point)
+{
+CHECKMINE;
+
+short nTexture;
+if (!PickTexture (point, nTexture))
+	DLE.MineView ()->LocateTexture (nTexture);
+}
+
+//------------------------------------------------------------------------
 // CTextureView::PickTexture()
 //
 // Action - calculates position of textures and matches it up with mouse.
 // If a match is found, nBaseTex is defined and 0 is returned
 //------------------------------------------------------------------------
 
-int CTextureView::PickTexture (CPoint &point,short &nBaseTex) 
+int CTextureView::PickTexture (CPoint &point,short &nTexture) 
 {
 if (theMine == null)
 	return 1;
@@ -217,7 +266,7 @@ if (!textureManager.Available ())
 //if (!m_pTextures)
 //	return 0;
 
-  nBaseTex = 0;  // set default in case value is used when function fails
+  nTexture = 0;  // set default in case value is used when function fails
 
   CRect rect;
   GetClientRect(rect);
@@ -237,7 +286,7 @@ int i;
 for (i = 0; i < m_filter.Count (1); i++) {
 	if (GETBIT (filterP, i)) //filterP [i / 8] & (1 << (i & 7)))
 		if (!--h) {
-			nBaseTex = m_filter.MapViewToTex (i); //m_pTextures [i];
+			nTexture = m_filter.MapViewToTex (i); //m_pTextures [i];
 			return 0; // return success
 			}
 	}
