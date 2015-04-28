@@ -596,7 +596,7 @@ if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide))
 #endif
 
 if (bArrow) {
-	int nDir = textureManager.ScrollDirection (texP [0]->IdLevel ());
+	int nDir = textureManager.ScrollDirection (texP [0]->Id ());
 	if (nDir >= 0)
 		scrollAngle = scrollAngles [nDir];
 	}

@@ -305,7 +305,7 @@ for (int i = 0; i < h; i++) {
 	if (!newTexP)
 		ErrorMsg ("Not enough memory for texture.");
 	else if (newTexP->Copy (*texP) && newTexP->LoadFromFile (szFile, false)) {
-		OverrideTexture (texP->IdAll (), newTexP);
+		OverrideTexture (texP->Index (), newTexP);
 		newTexP->SetCustom ();
 		}
 	else

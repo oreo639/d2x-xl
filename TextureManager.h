@@ -294,7 +294,7 @@ class CTextureManager {
 
 		int UsedCount (uint nIndex);
 
-		inline int UsedCount (const CTexture *pTexture) { return pTexture ? UsedCount (pTexture->IdAll ()) : 0; }
+		inline int UsedCount (const CTexture *pTexture) { return pTexture ? UsedCount (pTexture->Index ()) : 0; }
 
 		inline const CTexture* BaseTextures (uint nIndex, int nVersion = -1) {
 			return &m_textures [(nVersion < 0) ? Version () : nVersion][nIndex];

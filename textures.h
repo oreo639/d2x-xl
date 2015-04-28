@@ -468,9 +468,9 @@ class CTexture {
 
 		void ComputeIndex (ubyte* bmIndex) const;
 
-		inline uint IdAll (void) const { return m_info.nIndex; }
+		inline uint Index (void) const { return m_info.nIndex; }
 
-		inline int IdLevel (void) const { return m_info.nTexture; }
+		inline int Id (void) const { return m_info.nTexture; }
 
 		inline bool Transparent (void) const { return m_info.bTransparent; }
 

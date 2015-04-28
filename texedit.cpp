@@ -307,7 +307,7 @@ m_pPaintWnd = null;
 m_pOldPal = null;
 m_lBtnDown =
 m_rBtnDown = false;
-m_nTexAll = pTexture->IdAll ();
+m_nTexAll = pTexture->Index ();
 strcpy_s (m_szName, sizeof (m_szName), pTexture->Name ());
 _strlwr_s (m_szName, sizeof (m_szName));
 }

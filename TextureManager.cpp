@@ -700,13 +700,12 @@ CTexture* textures = m_textures [nVersion].Buffer ();
 for (int i = 0, j = m_header [nVersion].nTextures; i < j; i++)
 	textures [i].LoadFromPig (*fp, i, nVersion);
 LoadAnimationData (nVersion);
-#if 0
+// Some textures (e.g. doors) don't have animation clip data in the HAM; we calculate frame counts for those here
 for (int i = 0; i < m_header [nVersion].nTextures; i++) {
-	if (textures [i].IsAnimated () && textures [i].GetCurrentFrame () == 0) {
+	if (textures [i].IsAnimated () && textures [i].GetCurrentFrame () == 0 && textures [i].GetFrameCount () == 1) {
 		textures [i].CalculateFrameCount ();
 		}
 	}
-#endif
 fp->Close ();
 delete fp;
 m_bAvailable [nVersion] = true;
@@ -805,7 +804,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 
 for (i = 0; i < h; i++) {
 	const CTexture* texP = Textures (i);
-	if (texP->IsAnimated () && m_bUsed [nVersion][texP->GetParent ()->IdLevel()])
+	if (texP->IsAnimated () && m_bUsed [nVersion][texP->GetParent ()->Id()])
 		m_bUsed [nVersion][i] = true;
 	}
 }
@@ -848,7 +847,7 @@ for (int i = 0; i < segmentManager.Count (); i++, segP++) {
 		if (((short) sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
 			// We aren't double-counting if the texture was used for both base AND overlay.
 			// Index 0 on an overlay texture doesn't count as an instance either.
-			if (sideP->BaseTex () == texP->IdLevel () || (texP->IdLevel () > 0 && sideP->OvlTex (0) == texP->IdLevel ()))
+			if (sideP->BaseTex () == texP->Id () || (texP->Id () > 0 && sideP->OvlTex (0) == texP->Id ()))
 				usedCount++;
 			}
 		}
@@ -873,7 +872,7 @@ if (nCustom) {
 	int nRemoved = 0;
 	for (int i = 0; i < m_header [Version ()].nTextures; i++) {
 		if (TextureByIndex (i)->IsCustom ()) {
-			if (!bUnusedOnly || !IsTextureUsed (TextureByIndex (i)->IdLevel ())) {
+			if (!bUnusedOnly || !IsTextureUsed (TextureByIndex (i)->Id ())) {
 				RevertTexture (i);
 				nRemoved++;
 				}

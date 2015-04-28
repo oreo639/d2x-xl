@@ -119,11 +119,11 @@ void CPogDialog::RebuildTextureList ()
 if (pFocusTexture) {
 	if (pFocusTexture->IsAnimated () && pFocusTexture->GetCurrentFrame () == 0) {
 		expandAnim = true;
-		nExpandAnimTexAll = pFocusTexture->IdAll ();
+		nExpandAnimTexAll = pFocusTexture->Index ();
 		}
 	else if (pFocusTexture->GetCurrentFrame () > 0) {
 		expandAnim = true;
-		nExpandAnimTexAll = pFocusTexture->GetParent ()->IdAll ();
+		nExpandAnimTexAll = pFocusTexture->GetParent ()->Index ();
 		}
 	}
 
@@ -153,7 +153,7 @@ for (uint nIndex = 0; nIndex < (uint)textureManager.GlobalTextureCount (); nInde
 	m_customTextureIcons.Add (pbmImage, (CBitmap *)null);
 	delete pbmImage;
 	TextureList ()->InsertItem (nListItem, pTexture->Name (), nTexList);
-	TextureList ()->SetItemData (nListItem, pTexture->IdAll ());
+	TextureList ()->SetItemData (nListItem, pTexture->Index ());
 
 	char szFieldText [40] = {0};
 	int columnNum = 1;
@@ -191,7 +191,7 @@ TextureList ()->SortItems (&CPogDialog::CompareTextures, 0);
 m_nTexPreviousFocused = -1;
 m_nTexCurrentFocused = -1;
 if (pFocusTexture) {
-	int nFocusTexture = GetTextureListIndexFromId (pFocusTexture->IdAll ());
+	int nFocusTexture = GetTextureListIndexFromId (pFocusTexture->Index ());
 	if (nFocusTexture >= 0)
 		// Focused texture still exists, restore state
 		SetFocusedTexture ((uint)nFocusTexture);
@@ -205,7 +205,7 @@ if (pTexture->GetFrameCount () <= 1)
 	return;
 
 // Find the list item index for this texture
-int nListItem = GetTextureListIndexFromId (pTexture->IdAll ());
+int nListItem = GetTextureListIndexFromId (pTexture->Index ());
 if (nListItem < 0)
 	return;
 
@@ -219,7 +219,7 @@ for (uint nFrame = 0; nFrame < pTexture->GetFrameCount (); nFrame++) {
 	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), "Frame %u", nFrame + 1);
 	// -1 prevents an icon being shown (currently we're not showing these for frames since they're not really needed)
 	TextureList ()->InsertItem (nListItem, szFieldText, -1);
-	TextureList ()->SetItemData (nListItem, pFrame->IdAll ());
+	TextureList ()->SetItemData (nListItem, pFrame->Index ());
 	TextureList ()->SetItem (nListItem, 0, LVIF_INDENT, null, 0, 0, 0, null, 1);
 
 	// Dimensions
@@ -253,7 +253,7 @@ if (pTexture->GetFrameCount () <= 1)
 	return;
 
 // Find the list item index for this texture
-int nListItem = GetTextureListIndexFromId (pTexture->IdAll ());
+int nListItem = GetTextureListIndexFromId (pTexture->Index ());
 if (nListItem < 0)
 	return;
 
@@ -317,7 +317,7 @@ if (m_bShowCustomOnly) {
 	shouldInclude = pTexture->IsCustom ();
 	// We want to include animated textures if ANY frame is custom
 	if (!shouldInclude && pTexture->IsAnimated ())
-		for (uint j = pTexture->IdAll (); j < pTexture->IdAll () + pTexture->GetFrameCount (); j++)
+		for (uint j = pTexture->Index (); j < pTexture->Index () + pTexture->GetFrameCount (); j++)
 			if (pTexture->IsCustom ()) {
 				shouldInclude = true;
 				break;
@@ -325,8 +325,12 @@ if (m_bShowCustomOnly) {
 	}
 
 // Preselected textures show up even if they aren't custom
-if (m_bPreselectTexture && pTexture->IdLevel () == m_uiPreselectedTexture)
-	shouldInclude = true;
+if (m_bPreselectTexture) {
+	// We actually need to compare the index, not level ID, because some level texture IDs
+	// point to the same base texture (e.g. scrolling variants)
+	if (pTexture->Index () == textureManager.Textures (m_uiPreselectedTexture)->Index ())
+		shouldInclude = true;
+	}
 
 if (!m_filters [ClassifyTexture (pTexture)])
 	shouldInclude = false;
@@ -348,7 +352,7 @@ CPogDialog::TextureFilters CPogDialog::ClassifyTexture (const CTexture *pTexture
 		"vammo", "vulcan"
 	};
 
-	int nTexture = textureManager.TexIdFromIndex (pTexture->IdAll ());
+	int nTexture = textureManager.TexIdFromIndex (pTexture->Index ());
 	if (nTexture >= 0)
 		return TextureFilters_Level;
 
@@ -400,7 +404,7 @@ void CPogDialog::UpdateTextureListFrameExpansion ()
 
 	if (pPreviousFocusedTexture && pPreviousFocusedTexture->IsAnimated ()) {
 		RemoveTextureListFrames (pPreviousFocusedTexture->GetParent ());
-		if (m_iSavedSelectedItem > GetTextureListIndexFromId (pPreviousFocusedTexture->GetParent ()->IdAll ()))
+		if (m_iSavedSelectedItem > GetTextureListIndexFromId (pPreviousFocusedTexture->GetParent ()->Index ()))
 			m_iSavedSelectedItem -= pPreviousFocusedTexture->GetParent ()->GetFrameCount ();
 		}
 
@@ -551,7 +555,7 @@ if ((pData->uNewState & (LVIS_FOCUSED | LVIS_SELECTED))
 		// Selection can get messed up by the mouse button up event after this, so we'll save it
 		m_iSavedSelectedItem = pData->iItem;
 		m_nTexPreviousFocused = m_nTexCurrentFocused;
-		m_nTexCurrentFocused = GetTextureAtIndex (pData->iItem)->IdAll ();
+		m_nTexCurrentFocused = GetTextureAtIndex (pData->iItem)->Index ();
 		UpdateTextureListFrameExpansion ();
 		// If we've just "opened" a new animated texture we want to scroll the list to fit it in view
 		if (!AreParentTexturesEqual (GetTextureFromId (m_nTexCurrentFocused), GetTextureFromId (m_nTexPreviousFocused)))
@@ -583,9 +587,9 @@ void CPogDialog::RevertTexture (const CTexture *pTexture, va_list args)
 {
 	if (pTexture) {
 		// If the texture still showed up with the custom texture filter on that might be confusing
-		if (m_bPreselectTexture && pTexture->IdLevel () == m_uiPreselectedTexture)
+		if (m_bPreselectTexture && pTexture->Id () == m_uiPreselectedTexture)
 			m_bPreselectTexture = false;
-		textureManager.RevertTexture (pTexture->IdAll ());
+		textureManager.RevertTexture (pTexture->Index ());
 		}
 }
 
@@ -616,7 +620,7 @@ void CPogDialog::OnImport (void)
 	if (!CFileManager::RunOpenFileDialog (szFile, ARRAYSIZE (szFile), filters, ARRAYSIZE (filters), m_hWnd))
 		return;
 	const CTexture *pTexture = GetFocusedTexture ();
-	CTexture *pNewTexture = textureManager.OverrideTexture (pTexture->IdAll ());
+	CTexture *pNewTexture = textureManager.OverrideTexture (pTexture->Index ());
 	if (pNewTexture->LoadFromFile (szFile)) {
 		UpdateTextureListItem (GetFocusedTextureIndex ());
 		UpdateData (FALSE);

@@ -343,7 +343,7 @@ if (m_nAnimTimer >= 0)
 	StopAnimation ();
 
 m_nAnimTimer = SetTimer (1, pTexture->FrameTime (), null);
-m_nTexAll = pTexture->IdAll ();
+m_nTexAll = pTexture->Index ();
 m_nFrame = 0;
 
 if (0 == m_nAnimTimer) {

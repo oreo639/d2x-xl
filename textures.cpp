@@ -94,9 +94,9 @@ m_bValid = true;
 const CBGRA* srcDataP = baseTexP->Buffer (offs = baseTexP->FrameOffset ());
 
 #ifdef _DEBUG
-if (baseTexP && (baseTexP->IdLevel () == nDbgTexture))
+if (baseTexP && (baseTexP->Id () == nDbgTexture))
 	nDbgTexture = nDbgTexture;
-if (ovlTexP && (ovlTexP->IdLevel () == nDbgTexture))
+if (ovlTexP && (ovlTexP->Id () == nDbgTexture))
 	nDbgTexture = nDbgTexture;
 #endif
 
@@ -750,7 +750,7 @@ if (!Allocate (nSize))
 Load (fp, info);
 // POGs can override some things that aren't necessarily safe or have no practical effect -
 // so we copy those from the base texture to avoid problems
-const CTexture *pBaseTexture = textureManager.BaseTextures (IdAll ());
+const CTexture *pBaseTexture = textureManager.BaseTextures (Index ());
 memcpy (m_info.szName, pBaseTexture->m_info.szName, sizeof (m_info.szName));
 m_info.bAnimated = pBaseTexture->m_info.bAnimated;
 m_info.nFrame = pBaseTexture->m_info.nFrame;
@@ -1628,7 +1628,7 @@ void CTexture::CalculateFrameCount (void)
 if (m_info.nFrame > 0)
 	return;
 
-for (uint nTexFrame = IdAll () + 1; nTexFrame < (uint)textureManager.GlobalTextureCount (); nTexFrame++) {
+for (uint nTexFrame = Index () + 1; nTexFrame < (uint)textureManager.GlobalTextureCount (); nTexFrame++) {
 	if (textureManager.TextureByIndex (nTexFrame)->GetCurrentFrame () == 0)
 		break;
 	nFrames++;
@@ -1648,7 +1648,7 @@ if (!IsAnimated ())
 	return null;
 if (GetCurrentFrame () == 0)
 	return this;
-return textureManager.TextureByIndex (IdAll () - GetCurrentFrame ());
+return textureManager.TextureByIndex (Index () - GetCurrentFrame ());
 }
 
 //------------------------------------------------------------------------
@@ -1659,7 +1659,7 @@ if (!IsAnimated () || GetCurrentFrame () != 0)
 	return null;
 if (nFrame == 0)
 	return this;
-return textureManager.TextureByIndex (IdAll () + nFrame);
+return textureManager.TextureByIndex (Index () + nFrame);
 }
 
 //------------------------------------------------------------------------
