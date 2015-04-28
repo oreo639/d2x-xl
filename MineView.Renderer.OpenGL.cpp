@@ -505,7 +505,7 @@ SetAlpha (255);
 short nBaseTex = sideP->BaseTex ();
 short nOvlTex = sideP->OvlTex (0);
 
-if (textureManager.IsAnimated (sideP->BaseTex ()) && !(bArrow = textureManager.HaveArrow ())) {
+if (textureManager.IsScrolling (sideP->BaseTex ()) && !(bArrow = textureManager.HaveArrow ())) {
 	texP [0] = &tex;
 	tex.BlendTextures (nBaseTex, nOvlTex, 0, 0);
 	tex.DrawAnimDirArrows (nBaseTex);

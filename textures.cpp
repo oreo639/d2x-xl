@@ -1663,4 +1663,11 @@ return textureManager.TextureByIndex (Index () + nFrame);
 }
 
 //------------------------------------------------------------------------
+
+inline bool CTexture::IsAnimated (void) const
+{
+return textureManager.HaveAnimationInfo () ? textureManager.IsAnimationRoot (-int (Index ()) - 1) : MaybeAnimated ();
+}
+
+//------------------------------------------------------------------------
 //eof textures.cpp

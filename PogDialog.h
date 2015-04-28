@@ -39,8 +39,8 @@ class CPogDialog : public CDialog, private CDlgHelpers {
 		bool IsTextureIncluded (const CTexture *pTexture);
 		TextureFilters ClassifyTexture (const CTexture *pTexture);
 		static int CALLBACK CompareTextures (LPARAM nTexAll1, LPARAM nTexAll2, LPARAM lParamSort);
-		bool AreParentTexturesEqual (const CTexture *pTexture, const CTexture *pOtherTexture);
-		void UpdateTextureListFrameExpansion ();
+		bool ParentTexturesAreEqual (const CTexture *pTexture, const CTexture *pOtherTexture);
+		void UpdateTextureListFrameExpansion (void);
 		void UpdateTexturePreviewAndControls (void);
 		bool IsAnimatedTextureRoot (uint uiTextureListIndex);
 		void ScrollTextureList (uint uiTextureListIndex);

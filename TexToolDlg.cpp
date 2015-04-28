@@ -170,14 +170,23 @@ return true;
 void CTexToolDlg::UpdateTextureClip (short texIds [])
 {
 	static int direction [2] = {1, 1};
+	static int prevTexIds [2] = {-1, -1};
 
 	int			nVersion = DLE.IsD1File ();
 	bool			bAnimate = false;
 	CTexture*	textures [2] = { null, null };
 
-for (int i = 0; i < 2; i++) {
-	CAnimationClipInfo* aicP = textureManager.AnimationIndex (texIds [i]);
-	if (aicP && !aicP->m_nType && aicP->FrameCount ()) {
+for (int i = 0; i < (texIds [1] ? 2 : 1); i++) 
+	if (prevTexIds [i] != texIds [i]) {
+		prevTexIds [i] = texIds [i];
+		direction [0] = direction [1] = 1;
+		m_frame [0] = m_frame [1] = 0;
+		}
+
+for (int i = 0; i < (texIds [1] ? 2 : 1); i++) {
+	int nIndex = textureManager.Index (texIds [i]);
+	CAnimationClipInfo* aicP = textureManager.AnimationIndex (nIndex);
+	if (aicP && !aicP->m_nType && aicP->FrameCount () && (aicP->Frame (0) == nIndex)) {
 		m_frame [i] += direction [i];
 		if ((m_frame [i] < 0) || (m_frame [i] >= (int) aicP->FrameCount ())) {
 			if (aicP->Bidirectional ()) {
@@ -188,7 +197,7 @@ for (int i = 0; i < 2; i++) {
 				m_frame [i] = 0;
 			}
 		texIds [i] = aicP->Frame (m_frame [i]);
-		textures [i] = textureManager.Textures (texIds [i]);
+		textures [i] = textureManager.Textures (-texIds [i] - 1);
 		if (textures [i]->Format ())
 			textures [i]->SetCurrentFrame (m_frame [i]);
 		bAnimate = true;

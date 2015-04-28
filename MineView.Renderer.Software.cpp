@@ -612,7 +612,7 @@ if (((nOvlTex & TEXTURE_MASK) != 0) && !sideP->OvlAlignment () && !textureManage
 	nOvlTex = 0;
 	}
 
-if (textureManager.IsAnimated (sideP->BaseTex ())) {
+if (textureManager.IsScrolling (sideP->BaseTex ())) {
 	texP [0] = &tex;
 	tex.BlendTextures (sideP->BaseTex (), sideP->OvlTex (), 0, 0);
 	tex.DrawAnimDirArrows (sideP->BaseTex ());

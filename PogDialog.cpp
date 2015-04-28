@@ -7,6 +7,8 @@
 #define ICONLIST_SIZE_INITIAL 200
 #define ICONLIST_SIZE_INCREMENT 50
 
+//------------------------------------------------------------------------------
+
 BEGIN_MESSAGE_MAP (CPogDialog, CDialog)
 	ON_NOTIFY (LVN_ITEMCHANGED, IDC_POGMANAGER_LIST, OnTextureListSelectionChanged)
 	ON_NOTIFY (NM_CLICK, IDC_POGMANAGER_LIST, OnTextureListClick)
@@ -24,6 +26,8 @@ BEGIN_MESSAGE_MAP (CPogDialog, CDialog)
 	ON_BN_CLICKED (IDCANCEL, OnCancel)
 	ON_WM_PAINT ()
 END_MESSAGE_MAP ()
+
+//------------------------------------------------------------------------------
 
 CPogDialog::CPogDialog (CWnd *pParentWnd, bool bLevelLoaded, bool bPreselectTexture, uint uiSelectedTexture) :
 	CDialog (IDD_POGMANAGER, pParentWnd),
@@ -44,9 +48,13 @@ if (m_bPreselectTexture && textureManager.Available ()) // always switch on the 
 memset (m_szPreviousPigPath, 0, sizeof (m_szPreviousPigPath));
 }
 
+//------------------------------------------------------------------------------
+
 CPogDialog::~CPogDialog (void)
 {
 }
+
+//------------------------------------------------------------------------------
 
 BOOL CPogDialog::OnInitDialog (void)
 {
@@ -85,6 +93,8 @@ UpdateData (FALSE);
 return TRUE;
 }
 
+//------------------------------------------------------------------------------
+
 void CPogDialog::DoDataExchange (CDataExchange *pDX)
 {
 CDialog::DoDataExchange (pDX);
@@ -102,6 +112,8 @@ if (!pDX->m_bSaveAndValidate) {
 	}
 }
 
+//------------------------------------------------------------------------------
+
 void CPogDialog::OnPaint (void)
 {
 CDialog::OnPaint ();
@@ -109,6 +121,8 @@ CDialog::OnPaint ();
 if (!IsAnimatedTextureRoot (GetFocusedTextureIndex ()))
 	PaintTexture (&m_preview, IMG_BKCOLOR, GetFocusedTexture ());
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::RebuildTextureList ()
 {
@@ -137,8 +151,12 @@ m_customTextureIcons.Create (ICONLIST_ICON_SIZE, ICONLIST_ICON_SIZE, ILC_COLOR32
 TextureList ()->SetImageList (&m_customTextureIcons, LVSIL_SMALL);
 
 int nTexList = 0, nListItem = 0;
-for (uint nIndex = 0; nIndex < (uint)textureManager.GlobalTextureCount (); nIndex++) {
+for (uint nIndex = 0; nIndex < (uint) textureManager.GlobalTextureCount (); nIndex++) {
 	const CTexture *pTexture = textureManager.TextureByIndex (nIndex);
+#if DBG
+	if (!strcmp (pTexture->Name (), "exp03"))
+		nIndex = nIndex;
+#endif
 	if (pTexture->IsAnimated ()) {
 		// Don't add individual frames to the list, we'll do that later
 		nIndex += pTexture->GetFrameCount () - 1;
@@ -155,30 +173,30 @@ for (uint nIndex = 0; nIndex < (uint)textureManager.GlobalTextureCount (); nInde
 	TextureList ()->InsertItem (nListItem, pTexture->Name (), nTexList);
 	TextureList ()->SetItemData (nListItem, pTexture->Index ());
 
-	char szFieldText [40] = {0};
+	char szLabel [40] = {0};
 	int columnNum = 1;
 
 	// Dimensions
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), "%ux%u", pTexture->Width (), pTexture->Height ());
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), "%ux%u", pTexture->Width (), pTexture->Height ());
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 	// Custom
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsCustom () ? "Yes" : "No");
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), pTexture->IsCustom () ? "Yes" : "No");
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 	// Used
 	if (m_bLevelLoaded) {
 		uint uiNumInstances = textureManager.UsedCount (pTexture);
-		sprintf_s (szFieldText, ARRAYSIZE (szFieldText), uiNumInstances > 0 ? "Yes (%u)" : "No", uiNumInstances);
-		TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+		sprintf_s (szLabel, ARRAYSIZE (szLabel), uiNumInstances > 0 ? "Yes (%u)" : "No", uiNumInstances);
+		TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 		}
 	// Animated
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsAnimated () ? "Yes (%u frames)" : "No", pTexture->GetFrameCount ());
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), pTexture->IsAnimated () ? "Yes (%u frames)" : "No", pTexture->GetFrameCount ());
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 	// Transparent
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsTransparent () ? "Yes" : "No");
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), pTexture->IsTransparent () ? "Yes" : "No");
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 	// See-thru
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsSuperTransparent () ? "Yes" : "No");
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), pTexture->IsSuperTransparent () ? "Yes" : "No");
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 
 	// Only increment these when we actually process an item
 	nTexList++, nListItem++;
@@ -199,6 +217,8 @@ if (pFocusTexture) {
 TextureList ()->SetRedraw (TRUE);
 }
 
+//------------------------------------------------------------------------------
+
 void CPogDialog::AddTextureListFrames (const CTexture *pTexture)
 {
 if (pTexture->GetFrameCount () <= 1)
@@ -212,40 +232,42 @@ if (nListItem < 0)
 // Add all frames from animated texture
 for (uint nFrame = 0; nFrame < pTexture->GetFrameCount (); nFrame++) {
 	const CTexture *pFrame = pTexture->GetFrame (nFrame);
-	char szFieldText [40] = {0};
+	char szLabel [40] = {0};
 	int columnNum = 1;
 	nListItem++;
 
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), "Frame %u", nFrame + 1);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), "Frame %u", nFrame + 1);
 	// -1 prevents an icon being shown (currently we're not showing these for frames since they're not really needed)
-	TextureList ()->InsertItem (nListItem, szFieldText, -1);
+	TextureList ()->InsertItem (nListItem, szLabel, -1);
 	TextureList ()->SetItemData (nListItem, pFrame->Index ());
 	TextureList ()->SetItem (nListItem, 0, LVIF_INDENT, null, 0, 0, 0, null, 1);
 
 	// Dimensions
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), "%ux%u", pFrame->Width (), pFrame->Height ());
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), "%ux%u", pFrame->Width (), pFrame->Height ());
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 	// Custom
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pFrame->IsCustom () ? "Yes" : "No");
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), pFrame->IsCustom () ? "Yes" : "No");
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 	// Used
 	if (m_bLevelLoaded) {
 		// Door frames can be used individually, but most frames can't
 		uint uiNumInstances = textureManager.UsedCount (pFrame);
-		sprintf_s (szFieldText, ARRAYSIZE (szFieldText), uiNumInstances > 0 ? "Yes (%u)" : "", uiNumInstances);
-		TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+		sprintf_s (szLabel, ARRAYSIZE (szLabel), uiNumInstances > 0 ? "Yes (%u)" : "", uiNumInstances);
+		TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 		}
 	// Animated
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), "");
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), "");
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 	// Transparent
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pFrame->IsTransparent () ? "Yes" : "No");
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), pFrame->IsTransparent () ? "Yes" : "No");
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 	// See-thru
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pFrame->IsSuperTransparent () ? "Yes" : "No");
-	TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), pFrame->IsSuperTransparent () ? "Yes" : "No");
+	TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 	}
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::RemoveTextureListFrames (const CTexture *pTexture)
 {
@@ -266,7 +288,7 @@ for (uint nFrame = 0; nFrame < pTexture->GetFrameCount (); nFrame++)
 void CPogDialog::UpdateTextureListItem (int nListItem)
 {
 	LVITEM item = {0};
-	char szFieldText [40] = {0};
+	char szLabel [40] = {0};
 	int columnNum = 1;
 
 if (nListItem < 0)
@@ -286,24 +308,25 @@ if (item.iImage != -1) {
 	}
 
 // Dimensions
-sprintf_s (szFieldText, ARRAYSIZE (szFieldText), "%ux%u", pTexture->Width (), pTexture->Height ());
-TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+sprintf_s (szLabel, ARRAYSIZE (szLabel), "%ux%u", pTexture->Width (), pTexture->Height ());
+TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 // Custom
-sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsCustom () ? "Yes" : "No");
-TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+sprintf_s (szLabel, ARRAYSIZE (szLabel), pTexture->IsCustom () ? "Yes" : "No");
+TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 // Used currently does not change while the dialog is open so we won't update it here
 // Animated currently does not change so we won't update it here
 // Transparent
-sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsTransparent () ? "Yes" : "No");
-TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+sprintf_s (szLabel, ARRAYSIZE (szLabel), pTexture->IsTransparent () ? "Yes" : "No");
+TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 // See-thru
-sprintf_s (szFieldText, ARRAYSIZE (szFieldText), pTexture->IsSuperTransparent () ? "Yes" : "No");
-TextureList ()->SetItemText (nListItem, columnNum++, szFieldText);
+sprintf_s (szLabel, ARRAYSIZE (szLabel), pTexture->IsSuperTransparent () ? "Yes" : "No");
+TextureList ()->SetItemText (nListItem, columnNum++, szLabel);
 
 // Display changes immediately
 TextureList ()->Update (nListItem);
 }
 
+//------------------------------------------------------------------------------
 // Check the texture against the filters - return true if we should still show it
 bool CPogDialog::IsTextureIncluded (const CTexture *pTexture)
 {
@@ -338,6 +361,8 @@ if (!m_filters [ClassifyTexture (pTexture)])
 return shouldInclude;
 }
 
+//------------------------------------------------------------------------------
+
 CPogDialog::TextureFilters CPogDialog::ClassifyTexture (const CTexture *pTexture)
 {
 	char *robotTextures [] = {
@@ -352,37 +377,41 @@ CPogDialog::TextureFilters CPogDialog::ClassifyTexture (const CTexture *pTexture
 		"vammo", "vulcan"
 	};
 
-	int nTexture = textureManager.TexIdFromIndex (pTexture->Index ());
-	if (nTexture >= 0)
-		return TextureFilters_Level;
+int nTexture = textureManager.TexIdFromIndex (pTexture->Index ());
+if (nTexture >= 0)
+	return TextureFilters_Level;
 
-	for (int i = 0; i < ARRAYSIZE(robotTextures); i++)
-		if (strchr (robotTextures [i], '*')) {
-			int count = strchr (robotTextures [i], '*') - robotTextures [i];
-			if (_strnicmp (pTexture->Name (), robotTextures [i], count) == 0)
-				return TextureFilters_Robot;
-			}
-		else if (_stricmp (pTexture->Name (), robotTextures [i]) == 0)
+for (int i = 0; i < ARRAYSIZE(robotTextures); i++)
+	if (strchr (robotTextures [i], '*')) {
+		int count = strchr (robotTextures [i], '*') - robotTextures [i];
+		if (_strnicmp (pTexture->Name (), robotTextures [i], count) == 0)
 			return TextureFilters_Robot;
+		}
+	else if (_stricmp (pTexture->Name (), robotTextures [i]) == 0)
+		return TextureFilters_Robot;
 
-	for (int i = 0; i < ARRAYSIZE(powerupTextures); i++)
-		if (strchr (powerupTextures [i], '*')) {
-			int count = strchr (powerupTextures [i], '*') - powerupTextures [i];
-			if (_strnicmp (pTexture->Name (), powerupTextures [i], count) == 0)
-				return TextureFilters_Powerup;
-			}
-		else if (_stricmp (pTexture->Name (), powerupTextures [i]) == 0)
+for (int i = 0; i < ARRAYSIZE(powerupTextures); i++)
+	if (strchr (powerupTextures [i], '*')) {
+		int count = strchr (powerupTextures [i], '*') - powerupTextures [i];
+		if (_strnicmp (pTexture->Name (), powerupTextures [i], count) == 0)
 			return TextureFilters_Powerup;
+		}
+	else if (_stricmp (pTexture->Name (), powerupTextures [i]) == 0)
+		return TextureFilters_Powerup;
 
-	return TextureFilters_Misc;
+return TextureFilters_Misc;
 }
+
+//------------------------------------------------------------------------------
 
 int CALLBACK CPogDialog::CompareTextures (LPARAM nIndex1, LPARAM nIndex2, LPARAM /*lParamSort*/)
 {
 return _stricmp (textureManager.TextureByIndex (nIndex1)->Name (), textureManager.TextureByIndex (nIndex2)->Name ());
 }
 
-bool CPogDialog::AreParentTexturesEqual (const CTexture *pTexture, const CTexture *pOtherTexture)
+//------------------------------------------------------------------------------
+
+bool CPogDialog::ParentTexturesAreEqual (const CTexture *pTexture, const CTexture *pOtherTexture)
 {
 if (pTexture == pOtherTexture)
 	return true;
@@ -393,24 +422,32 @@ if (pTexture->IsAnimated () && pOtherTexture->IsAnimated () && pTexture->GetPare
 return false;
 }
 
-void CPogDialog::UpdateTextureListFrameExpansion ()
+//------------------------------------------------------------------------------
+
+void CPogDialog::UpdateTextureListFrameExpansion (void)
 {
 	const CTexture *pCurrentFocusedTexture = GetTextureFromId (m_nTexCurrentFocused);
 	const CTexture *pPreviousFocusedTexture = GetTextureFromId (m_nTexPreviousFocused);
 
 	// If previous and new selected textures are the same or share the same root, do nothing
-	if (AreParentTexturesEqual (pCurrentFocusedTexture, pPreviousFocusedTexture))
-		return;
+#if 1
+if (textureManager.ShareAnimation (-m_nTexCurrentFocused - 1, -m_nTexPreviousFocused - 1))
+#else
+if (ParentTexturesAreEqual (pCurrentFocusedTexture, pPreviousFocusedTexture))
+#endif
+	return;
 
-	if (pPreviousFocusedTexture && pPreviousFocusedTexture->IsAnimated ()) {
-		RemoveTextureListFrames (pPreviousFocusedTexture->GetParent ());
-		if (m_iSavedSelectedItem > GetTextureListIndexFromId (pPreviousFocusedTexture->GetParent ()->Index ()))
-			m_iSavedSelectedItem -= pPreviousFocusedTexture->GetParent ()->GetFrameCount ();
-		}
+if (pPreviousFocusedTexture && textureManager.IsAnimationFrame (-m_nTexPreviousFocused - 1)) {
+	RemoveTextureListFrames (pPreviousFocusedTexture->GetParent ());
+	if (m_iSavedSelectedItem > GetTextureListIndexFromId (pPreviousFocusedTexture->GetParent ()->Index ()))
+		m_iSavedSelectedItem -= pPreviousFocusedTexture->GetParent ()->GetFrameCount ();
+	}
 
-	if (pCurrentFocusedTexture && pCurrentFocusedTexture->IsAnimated ())
-		AddTextureListFrames (pCurrentFocusedTexture);
+if (pCurrentFocusedTexture && pCurrentFocusedTexture->IsAnimated ())
+	AddTextureListFrames (pCurrentFocusedTexture);
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::UpdateTexturePreviewAndControls (void)
 {
@@ -430,20 +467,22 @@ EnableControls (IDC_POGMANAGER_REVERT, IDC_POGMANAGER_EXPORT, uiSelectedCount > 
 m_preview.StopAnimation ();
 
 if (pTexture) {
-	char szFieldText [40] = {0};
+	char szLabel [40] = {0};
 
 	if (isAnimatedTexture)
 		m_preview.StartAnimation (pTexture);
 	else
 		PaintTexture (&m_preview, IMG_BKCOLOR, pTexture);
-	sprintf_s (szFieldText, ARRAYSIZE (szFieldText), "%ux%u", pTexture->Width (), pTexture->Height ());
-	GetDlgItem (IDC_POGMANAGER_PREVIEW_SIZE)->SetWindowText (szFieldText);
+	sprintf_s (szLabel, ARRAYSIZE (szLabel), "%ux%u", pTexture->Width (), pTexture->Height ());
+	GetDlgItem (IDC_POGMANAGER_PREVIEW_SIZE)->SetWindowText (szLabel);
 	}
 else {
 	PaintTexture (&m_preview, IMG_BKCOLOR, -1);
 	GetDlgItem (IDC_POGMANAGER_PREVIEW_SIZE)->SetWindowText ("");
 	}
 }
+
+//------------------------------------------------------------------------------
 
 bool CPogDialog::IsAnimatedTextureRoot (uint uiTextureListIndex)
 {
@@ -460,49 +499,59 @@ if (pTexture && pTexture->IsAnimated ()) {
 return false;
 }
 
+//------------------------------------------------------------------------------
+
 void CPogDialog::ScrollTextureList (uint uiTextureListIndex)
 {
-	if (uiTextureListIndex >= (uint)TextureList ()->GetItemCount ())
-		return;
-	uint uiNumFrames = GetTextureAtIndex (uiTextureListIndex)->GetFrameCount ();
-	if (uiNumFrames > 1)
-		// Animated texture, try to get the frames in view too
-		TextureList ()->EnsureVisible ((int)uiTextureListIndex + uiNumFrames, FALSE);
-	TextureList ()->EnsureVisible ((int)uiTextureListIndex, FALSE);
+if (uiTextureListIndex >= (uint)TextureList ()->GetItemCount ())
+	return;
+uint uiNumFrames = GetTextureAtIndex (uiTextureListIndex)->GetFrameCount ();
+if (uiNumFrames > 1)
+	// Animated texture, try to get the frames in view too
+	TextureList ()->EnsureVisible ((int)uiTextureListIndex + uiNumFrames, FALSE);
+TextureList ()->EnsureVisible ((int)uiTextureListIndex, FALSE);
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::SetFocusedTexture (uint uiTextureListIndex)
 {
-	if (uiTextureListIndex >= (uint)TextureList ()->GetItemCount ())
-		return;
-	TextureList ()->SetItemState ((int)uiTextureListIndex, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
+if (uiTextureListIndex >= (uint)TextureList ()->GetItemCount ())
+	return;
+TextureList ()->SetItemState ((int)uiTextureListIndex, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 }
+
+//------------------------------------------------------------------------------
 
 int CPogDialog::GetFocusedTextureIndex (void)
 {
-	for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
-		if (TextureList ()->GetItemState (i, LVIS_FOCUSED) > 0)
-			return i;
-		}
-	return -1;
+for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
+	if (TextureList ()->GetItemState (i, LVIS_FOCUSED) > 0)
+		return i;
+	}
+return -1;
 }
+
+//------------------------------------------------------------------------------
 
 int CPogDialog::GetTextureListIndexFromId (uint nIndex)
 {
-	for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
-		if (TextureList ()->GetItemData (i) == nIndex)
-			return i;
-		}
-	return -1;
+for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
+	if (TextureList ()->GetItemData (i) == nIndex)
+		return i;
+	}
+return -1;
 }
+
+//------------------------------------------------------------------------------
 
 const CTexture *CPogDialog::GetFocusedTexture (void)
 {
-	int nFocused = GetFocusedTextureIndex ();
-	if (nFocused < 0)
-		return null;
-	return GetTextureAtIndex ((uint)nFocused);
+int nFocused = GetFocusedTextureIndex ();
+return (nFocused < 0) ? null : GetTextureAtIndex ((uint) nFocused);
 }
+
+//------------------------------------------------------------------------------
 
 const CTexture *CPogDialog::GetTextureAtIndex (uint uiTextureListIndex)
 {
@@ -511,6 +560,8 @@ if (uiTextureListIndex >= (uint)TextureList ()->GetItemCount ())
 uint nIndex = (uint) TextureList ()->GetItemData (uiTextureListIndex);
 return textureManager.TextureByIndex (nIndex);
 }
+
+//------------------------------------------------------------------------------
 
 bool CPogDialog::IsSingleTextureSelected (void)
 {
@@ -522,6 +573,8 @@ for (int i = 0; i < TextureList ()->GetItemCount (); i++) {
 	}
 return numSelectedTextures == 1;
 }
+
+//------------------------------------------------------------------------------
 
 bool CPogDialog::ExecuteOnSelectedTextures (ExecuteOnSelectedTexturesCallback callback, ...)
 {
@@ -545,6 +598,8 @@ va_end (vl);
 return bExecuted;
 }
 
+//------------------------------------------------------------------------------
+
 void CPogDialog::OnTextureListSelectionChanged (NMHDR *pNMHDR, LRESULT *pResult)
 {
 NMLISTVIEW *pData = (NMLISTVIEW *)pNMHDR;
@@ -558,12 +613,18 @@ if ((pData->uNewState & (LVIS_FOCUSED | LVIS_SELECTED))
 		m_nTexCurrentFocused = GetTextureAtIndex (pData->iItem)->Index ();
 		UpdateTextureListFrameExpansion ();
 		// If we've just "opened" a new animated texture we want to scroll the list to fit it in view
-		if (!AreParentTexturesEqual (GetTextureFromId (m_nTexCurrentFocused), GetTextureFromId (m_nTexPreviousFocused)))
-			ScrollTextureList ((uint)m_iSavedSelectedItem);
+#if 1
+		if (!textureManager.ShareAnimation (-m_nTexCurrentFocused - 1, -m_nTexPreviousFocused - 1))
+#else
+		if (!ParentTexturesAreEqual (GetTextureFromId (m_nTexCurrentFocused), GetTextureFromId (m_nTexPreviousFocused)))
+#endif
+			ScrollTextureList ((uint) m_iSavedSelectedItem);
 		}
 	UpdateData (FALSE);
 	}
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::OnTextureListClick (NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -574,6 +635,8 @@ if (m_iSavedSelectedItem >= 0) {
 	}
 }
 
+//------------------------------------------------------------------------------
+
 void CPogDialog::OnRevert (void)
 {
 if ((QueryMsg("Are you sure you want to revert these custom textures?") == IDYES)) {
@@ -583,15 +646,19 @@ if ((QueryMsg("Are you sure you want to revert these custom textures?") == IDYES
 	}
 }
 
+//------------------------------------------------------------------------------
+
 void CPogDialog::RevertTexture (const CTexture *pTexture, va_list args)
 {
-	if (pTexture) {
-		// If the texture still showed up with the custom texture filter on that might be confusing
-		if (m_bPreselectTexture && pTexture->Id () == m_uiPreselectedTexture)
-			m_bPreselectTexture = false;
-		textureManager.RevertTexture (pTexture->Index ());
-		}
+if (pTexture) {
+	// If the texture still showed up with the custom texture filter on that might be confusing
+	if (m_bPreselectTexture && pTexture->Id () == m_uiPreselectedTexture)
+		m_bPreselectTexture = false;
+	textureManager.RevertTexture (pTexture->Index ());
+	}
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::OnEdit (void)
 {
@@ -605,6 +672,8 @@ if (e.DoModal () == IDOK) { // was the texture actually changed?
 	UpdateData (FALSE);
 	}
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::OnImport (void)
 {
@@ -627,58 +696,66 @@ void CPogDialog::OnImport (void)
 		}
 }
 
+//------------------------------------------------------------------------------
+
 void CPogDialog::OnExport (void)
 {
-	if (IsSingleTextureSelected ()) {
-		char szFile [MAX_PATH] = {0};
-		const CTexture *pTexture = GetFocusedTexture ();
-		bool bGotFilename = false;
-		switch (pTexture->Format ()) {
-			case BMP:
-				sprintf_s (szFile, ARRAYSIZE (szFile), "%s.bmp", pTexture->Name ());
-				bGotFilename = CFileManager::RunSaveFileDialog (szFile, ARRAYSIZE (szFile), "256 color Bitmap Files", "bmp", m_hWnd);
-				break;
-			case TGA:
-				sprintf_s (szFile, ARRAYSIZE (szFile), "%s.tga", pTexture->Name ());
-				bGotFilename = CFileManager::RunSaveFileDialog (szFile, ARRAYSIZE (szFile), "Truevision Targa", "tga", m_hWnd);
-				break;
-			}
-		if (bGotFilename)
-			pTexture->Save (szFile);
+if (IsSingleTextureSelected ()) {
+	char szFile [MAX_PATH] = {0};
+	const CTexture *pTexture = GetFocusedTexture ();
+	bool bGotFilename = false;
+	switch (pTexture->Format ()) {
+		case BMP:
+			sprintf_s (szFile, ARRAYSIZE (szFile), "%s.bmp", pTexture->Name ());
+			bGotFilename = CFileManager::RunSaveFileDialog (szFile, ARRAYSIZE (szFile), "256 color Bitmap Files", "bmp", m_hWnd);
+			break;
+		case TGA:
+			sprintf_s (szFile, ARRAYSIZE (szFile), "%s.tga", pTexture->Name ());
+			bGotFilename = CFileManager::RunSaveFileDialog (szFile, ARRAYSIZE (szFile), "Truevision Targa", "tga", m_hWnd);
+			break;
 		}
-	else {
-		char szPath [MAX_PATH] = {0};
-		if (CFileManager::RunMultiSaveDialog (szPath, ARRAYSIZE (szPath), "Choose a location to export the textures to:", m_hWnd))
-			ExecuteOnSelectedTextures (&CPogDialog::ExportTexture, szPath);
-		}
+	if (bGotFilename)
+		pTexture->Save (szFile);
+	}
+else {
+	char szPath [MAX_PATH] = {0};
+	if (CFileManager::RunMultiSaveDialog (szPath, ARRAYSIZE (szPath), "Choose a location to export the textures to:", m_hWnd))
+		ExecuteOnSelectedTextures (&CPogDialog::ExportTexture, szPath);
+	}
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::ExportTexture (const CTexture *pTexture, va_list args)
 {
-	char szFile [MAX_PATH] = {0};
-	char *szPath;
-	szPath = va_arg (args, char *);
-	const char *szExt;
-	switch (pTexture->Format ()) {
-		case BMP:
-			szExt = "bmp";
-			break;
-		case TGA:
-			szExt = "tga";
-			break;
-		default:
-			break;
-		}
-	sprintf_s (szFile, ARRAYSIZE (szFile), "%s\\%s.%s", szPath, pTexture->Name (), szExt);
-	pTexture->Save (szFile);
+char szFile [MAX_PATH] = {0};
+char *szPath;
+szPath = va_arg (args, char *);
+const char *szExt;
+switch (pTexture->Format ()) {
+	case BMP:
+		szExt = "bmp";
+		break;
+	case TGA:
+		szExt = "tga";
+		break;
+	default:
+		break;
+	}
+sprintf_s (szFile, ARRAYSIZE (szFile), "%s\\%s.%s", szPath, pTexture->Name (), szExt);
+pTexture->Save (szFile);
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::OnShowAll (void)
 {
-	UpdateData (TRUE);
-	RebuildTextureList ();
-	UpdateData (FALSE); // selected texture might have changed
+UpdateData (TRUE);
+RebuildTextureList ();
+UpdateData (FALSE); // selected texture might have changed
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::OnChangeFilter (void)
 {
@@ -687,88 +764,97 @@ void CPogDialog::OnChangeFilter (void)
 	UpdateData (FALSE); // selected texture might have changed
 }
 
+//------------------------------------------------------------------------------
+
 void CPogDialog::OnChangePalette (void)
 {
-	CString pigFileName;
+CString pigFileName;
 
-	if (textureManager.HasCustomTextures () && (m_bPaletteQueryDone ||
-	    (QueryMsg ("Changing the palette will affect the existing custom textures in this POG file.\n"
-	               "They will be re-indexed but some color detail is likely to be lost.\n\n"
-	               "Are you sure you want to do this?") != IDYES))) {
-		// Revert selection
-		for (int i = 0; i < paletteManager.NumAvailablePalettes (); i++) {
-			PaletteList ()->GetLBText (i, pigFileName);
-			pigFileName.Append (".pig");
-			if (_stricmp (pigFileName.GetBuffer (), paletteManager.Name ()) == 0)
-				PaletteList ()->SetCurSel (i);
-			}
-		return;
+if (textureManager.HasCustomTextures () && (m_bPaletteQueryDone ||
+	   (QueryMsg ("Changing the palette will affect the existing custom textures in this POG file.\n"
+	            "They will be re-indexed but some color detail is likely to be lost.\n\n"
+	            "Are you sure you want to do this?") != IDYES))) {
+	// Revert selection
+	for (int i = 0; i < paletteManager.NumAvailablePalettes (); i++) {
+		PaletteList ()->GetLBText (i, pigFileName);
+		pigFileName.Append (".pig");
+		if (_stricmp (pigFileName.GetBuffer (), paletteManager.Name ()) == 0)
+			PaletteList ()->SetCurSel (i);
 		}
-	// Only prompt once per dialog instance, we'll presume the user knows the risks afterward
-	m_bPaletteQueryDone = true;
+	return;
+	}
+// Only prompt once per dialog instance, we'll presume the user knows the risks afterward
+m_bPaletteQueryDone = true;
 
-	// Construct the path of the new PIG file
-	char szPigPath [256];
-	PaletteList ()->GetLBText (PaletteList ()->GetCurSel (), pigFileName);
-	pigFileName.Append (".pig");
-	CFileManager::SplitPath (descentFolder [1], szPigPath, null, null);
-	// Save pre-edit location so we can revert if need be
-	if (!*m_szPreviousPigPath)
-		sprintf_s (m_szPreviousPigPath, ARRAYSIZE (m_szPreviousPigPath), "%s%s", szPigPath, paletteManager.Name ());
-	strcat_s (szPigPath, sizeof (szPigPath), pigFileName.GetBuffer ());
-	textureManager.ChangePigFile (szPigPath);
+// Construct the path of the new PIG file
+char szPigPath [256];
+PaletteList ()->GetLBText (PaletteList ()->GetCurSel (), pigFileName);
+pigFileName.Append (".pig");
+CFileManager::SplitPath (descentFolder [1], szPigPath, null, null);
+// Save pre-edit location so we can revert if need be
+if (!*m_szPreviousPigPath)
+	sprintf_s (m_szPreviousPigPath, ARRAYSIZE (m_szPreviousPigPath), "%s%s", szPigPath, paletteManager.Name ());
+strcat_s (szPigPath, sizeof (szPigPath), pigFileName.GetBuffer ());
+textureManager.ChangePigFile (szPigPath);
 
-	// Reload images, colors might have changed
-	RebuildTextureList ();
-	UpdateData (FALSE);
+// Reload images, colors might have changed
+RebuildTextureList ();
+UpdateData (FALSE);
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::OnOK (void)
 {
-	CDlcDoc *pDocument = DLE.GetDocument ();
-	ASSERT (pDocument); // we don't support stand-alone POGs yet
-	char szOverwritePogQuery [250] = { 0 };
-	sprintf_s (szOverwritePogQuery, ARRAYSIZE (szOverwritePogQuery),
-		"%d textures have been modified. Do you want to save these changes?\n\n"
-		"(Select \'No\' to revert changes and exit, or \'Cancel\' to return to the texture editor.)",
-		textureManager.CountModifiedTextures ());
+CDlcDoc *pDocument = DLE.GetDocument ();
+ASSERT (pDocument); // we don't support stand-alone POGs yet
+char szOverwritePogQuery [250] = { 0 };
+sprintf_s (szOverwritePogQuery, ARRAYSIZE (szOverwritePogQuery),
+	"%d textures have been modified. Do you want to save these changes?\n\n"
+	"(Select \'No\' to revert changes and exit, or \'Cancel\' to return to the texture editor.)",
+	textureManager.CountModifiedTextures ());
 
-	// If this is a new level we won't save right now - we don't know where it's going. We do need
-	// to commit textures though, so that subsequent visits to this dialog can't wipe them just by
-	// clicking "cancel".
-	if (textureManager.CountModifiedTextures () > 0 && (*pDocument->File () == '\0'))
-		textureManager.CommitTextureChanges ();
-	else if (textureManager.CountModifiedTextures () > 0) {
-		switch (Query2Msg (szOverwritePogQuery, MB_YESNOCANCEL)) {
-			case IDYES:
-				textureManager.CommitTextureChanges ();
-				WriteCustomFile (pDocument->File (), pDocument->SubFile (), CUSTOM_FILETYPE_POG);
-				break;
-			case IDNO:
-				textureManager.UndoTextureChanges ();
-				break;
-			case IDCANCEL:
-				// Don't close dialog - bypass overridden method
-				return;
-			default:
-				break;
-			}
+// If this is a new level we won't save right now - we don't know where it's going. We do need
+// to commit textures though, so that subsequent visits to this dialog can't wipe them just by
+// clicking "cancel".
+if (textureManager.CountModifiedTextures () > 0 && (*pDocument->File () == '\0'))
+	textureManager.CommitTextureChanges ();
+else if (textureManager.CountModifiedTextures () > 0) {
+	switch (Query2Msg (szOverwritePogQuery, MB_YESNOCANCEL)) {
+		case IDYES:
+			textureManager.CommitTextureChanges ();
+			WriteCustomFile (pDocument->File (), pDocument->SubFile (), CUSTOM_FILETYPE_POG);
+			break;
+		case IDNO:
+			textureManager.UndoTextureChanges ();
+			break;
+		case IDCANCEL:
+			// Don't close dialog - bypass overridden method
+			return;
+		default:
+			break;
 		}
+	}
 
-	CDialog::OnOK ();
+CDialog::OnOK ();
 }
+
+//------------------------------------------------------------------------------
 
 void CPogDialog::OnCancel (void)
 {
-	static const char *szQuery = "There are unsaved texture changes in the POG file.\nDo you want to abandon these changes?";
-	if (textureManager.CountModifiedTextures() > 0 || *m_szPreviousPigPath) {
-		if (QueryMsg (szQuery) == IDYES) {
-			if (*m_szPreviousPigPath)
-				textureManager.ChangePigFile (m_szPreviousPigPath);
-			textureManager.UndoTextureChanges ();
-			}
-		else
-			return;
+static const char *szQuery = "There are unsaved texture changes in the POG file.\nDo you want to abandon these changes?";
+
+if (textureManager.CountModifiedTextures() > 0 || *m_szPreviousPigPath) {
+	if (QueryMsg (szQuery) == IDYES) {
+		if (*m_szPreviousPigPath)
+			textureManager.ChangePigFile (m_szPreviousPigPath);
+		textureManager.UndoTextureChanges ();
 		}
-	CDialog::OnCancel ();
+	else
+		return;
+	}
+CDialog::OnCancel ();
 }
+
+//------------------------------------------------------------------------------

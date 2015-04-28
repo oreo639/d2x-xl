@@ -9,7 +9,7 @@
 
 class CAnimationClipInfo {
 	public:
-		short						m_nType; // 0: geometry, 1: object
+		short						m_nType; // 0: geometry, 1: object, 2: effect
 		short						m_nTexture; // the level texture id of the texture the animation belongs to
 		int						m_nPlayTime;
 		int						m_nFrameTime;
@@ -160,7 +160,42 @@ class CTextureManager {
 			return TextureByIndex (Index (nTexture), nVersionResolved);
 			}
 
-		inline CAnimationClipInfo* AnimationIndex (short nTexture) { return m_animationIndex [Version ()].Buffer () ? m_animationIndex [Version ()][nTexture] : null; }
+		inline bool HaveAnimationInfo (void) { return m_animationIndex [Version ()].Buffer () != null; }
+
+		inline CAnimationClipInfo* AnimationIndex (short nTexture) { return HaveAnimationInfo () ? m_animationIndex [Version ()][nTexture] : null; }
+
+		inline int AnimationFrame (int nTexture) { 
+			nTexture = (nTexture < 0) ? -nTexture - 1 : Index (nTexture);
+			CAnimationClipInfo* aicP = AnimationIndex (nTexture); 
+			if (!aicP)
+				return -1;
+			return int (aicP->Find (nTexture));
+			}
+
+		inline bool IsAnimationRoot (int nTexture) { 
+			nTexture = (nTexture < 0) ? -nTexture - 1 : Index (nTexture);
+			CAnimationClipInfo* aicP = AnimationIndex (nTexture); 
+			return aicP ? nTexture == aicP->Frame (0) : false;
+			}
+
+		inline bool IsAnimationFrame (int nTexture) { 
+			return AnimationFrame (nTexture) >= 0;
+			}
+
+		inline bool IsAnimationSubFrame (int nTexture) { 
+			CAnimationClipInfo* aicP = AnimationIndex ((nTexture < 0) ? -nTexture - 1 : Index (nTexture)); 
+			return aicP ? nTexture != aicP->Frame (0) : false;
+			}
+
+		inline int AnimationRoot (int nTexture) { 
+			CAnimationClipInfo* aicP = AnimationIndex ((nTexture < 0) ? -nTexture - 1 : Index (nTexture)); 
+			return aicP ? aicP->Frame (0) : -1;
+			}
+
+		inline bool ShareAnimation (int nTexture1, int nTexture2) { 
+			int nRoot = AnimationRoot (nTexture1);
+			return (nRoot >= 0) && (nRoot == AnimationRoot (nTexture2));
+			}
 
 		// Looks up textures by global texture ID. Pointers returned by this function should not be
 		// stored persistently as they may change.
@@ -280,7 +315,7 @@ class CTextureManager {
 
 		inline bool IsLava (short nTexture) { return (strstr (Name (-1, nTexture), "lava") != null); }
 
-		bool IsAnimated (UINT16 texture);
+		bool IsScrolling (UINT16 texture);
 
 		int ScrollSpeed (UINT16 texture, int *x, int *y);
 
@@ -347,6 +382,11 @@ class CTextureManager {
 		void Destroy (int nVersion);
 
 		uint WriteCustomTextureHeader (CFileManager& fp, const CTexture *texP, uint nId, uint nOffset);
+
+		int CreateMissingAnimationClips (int nVersion);
+
+		int AddMissingAnimationClip (CAnimationClipList& animations, int nIndex, int nFrames);
+
 	};
 
 extern CTextureManager textureManager;

@@ -561,7 +561,10 @@ class CTexture {
 
 		inline bool IsSuperTransparent (void) const { return m_info.bSuperTransparent; }
 
-		inline bool IsAnimated (void) const { 
+
+		inline bool IsAnimated (void) const;
+
+		inline bool MaybeAnimated (void) const { 
 			if (m_info.bAnimated)
 				return true; 
 			if (!Format ())
@@ -593,6 +596,10 @@ class CTexture {
 		bool CreateBitmap (CBitmap **ppImage, bool bScale = false, int width = -1, int height = -1) const;
 
 		inline void SetFrameCount (ubyte nFrameCount) { m_info.nFrameCount = nFrameCount; }
+
+		inline void SetFrame (ubyte nFrame) { m_info.nFrame = nFrame; }
+
+		inline void SetAnimated (bool bAnimated) { m_info.bAnimated = bAnimated; }
 
 		inline void SetCurrentFrame (ubyte nFrame) { m_info.nFrame = nFrame; }
 

@@ -626,7 +626,7 @@ void CMineView::LocateTexture (short nTexture)
 	short nSide = current->SideId () + 1;
 	short	nSegments = segmentManager.Count ();
 
-for (short i = nSegments; i; i++) {
+for (short i = nSegments; i; i--) {
 	CSegment* segP = segmentManager.Segment (nSegment);
 	for (short j = nSide; j < MAX_SIDES_PER_SEGMENT; j++) {
 		CSide* sideP = segP->Side (j);
