@@ -1644,7 +1644,8 @@ m_info.nFrameCount = nFrames;
 
 const CTexture *CTexture::GetParent (void) const
 {
-if (!IsAnimated ())
+// We don't want to use IsAnimated because it doesn't always count frames
+if (!MaybeAnimated ())
 	return null;
 if (GetCurrentFrame () == 0)
 	return this;

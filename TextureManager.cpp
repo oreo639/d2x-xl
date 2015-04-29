@@ -397,9 +397,8 @@ int CTextureManager::TexIdFromIndex (uint nIndex, int nVersion)
 	int nVersionResolved = (nVersion < 0) ? Version () : nVersion;
 
 // Search the index for this texture ID
-ushort* indexP = m_index [nVersionResolved];
 for (uint i = 0, h = m_nTextures [nVersionResolved]; i < h; i++) {
-	if (indexP [i] - 1 == nIndex) {
+	if (Index (i, nVersion) == nIndex) {
 		return (int) i;
 		}
 	}
