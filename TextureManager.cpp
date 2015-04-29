@@ -100,15 +100,10 @@ if (0 > LoadAnimationClip (aci, fp, nMaxFrames, true))
 	return -1;
 fp.Seek (8, SEEK_CUR);
 aci.m_nTexture = fp.ReadInt16 (); // nChangingWallTexture
-short t = fp.ReadInt16 ();
-#if DBG
-if ((nDbgTexture >= 0) && (t == nDbgTexture))
-	nDbgTexture = nDbgTexture;
-#endif
 if (aci.m_nTexture >= 0) 
-	fp.Seek (36 /*38*/, SEEK_CUR);
+	fp.Seek (38, SEEK_CUR);
 else {
-	aci.m_nTexture = t; //fp.ReadInt16 (); // nChangingObjectTexture
+	aci.m_nTexture = fp.ReadInt16 (); // nChangingObjectTexture
 	fp.Seek (36, SEEK_CUR);
 	if (aci.m_nTexture >= 0)
 		aci.m_nType = 1;
@@ -635,37 +630,74 @@ for (int nIndex = 0; nIndex < textureManager.GlobalTextureCount (); nIndex++) {
 	if ((nDbgTexture >= 0) && (nIndex == nDbgTexture))
 		nDbgTexture = nDbgTexture;
 #endif
+#if DBG
+	CTexture *pTexture = textureManager.TextureByIndex (nIndex);
+	if (AnimationIndex (nIndex)) {
+		nRootIndex = -1;
+		continue;
+		}
+	if ((nDbgTexture >= 0) && (nIndex == nDbgTexture))
+		nDbgTexture = nDbgTexture;
+	if (!strcmp (pTexture->Name (), "bluegoal"))
+		nIndex = nIndex;
+	if (!strcmp (pTexture->Name (), "redgoal"))
+		nIndex = nIndex;
+#else
 	if (FindAnimation (nIndex))
 		continue;
 	CTexture *pTexture = textureManager.TextureByIndex (nIndex);
-#if DBG
-	if ((nDbgTexture >= 0) && (nIndex == nDbgTexture))
-		nDbgTexture = nDbgTexture;
-	if (!strcmp (pTexture->Name (), "exp06"))
-		nIndex = nIndex;
 #endif
 	if (!pRootTex) {
 		nRootIndex = nIndex;
 		pRootTex = pTexture;
 		}
 	else if ((pRootTex->Width () != pTexture->Width ()) || (pRootTex->Height () != pTexture->Height ()) || (strcmp (pRootTex->Name (), pTexture->Name ()))) {
-		int nFrameCount = nIndex - nRootIndex;
-		if (nFrameCount < 2) 
-			pRootTex = pTexture;
-		else {
-			if (AddMissingAnimationClip (animations, nRootIndex, nFrameCount) < 0)
-				return -1;
-			pRootTex->SetAnimated (true);
-			pRootTex->SetFrameCount (ubyte (nFrameCount));
-			ubyte nFrame = 0;
-			for (; pRootTex < pTexture; pRootTex++)
-				pRootTex->SetFrame (nFrame++);
-			++nClips;
+		if (nRootIndex >= 0) {
+			int nFrameCount = nIndex - nRootIndex;
+			if (nFrameCount < 2) 
+				pRootTex = pTexture;
+			else {
+				if (AddMissingAnimationClip (animations, nRootIndex, nFrameCount) < 0)
+					return -1;
+				pRootTex->SetAnimated (true);
+				pRootTex->SetFrameCount (ubyte (nFrameCount));
+				ubyte nFrame = 0;
+				for (; pRootTex < pTexture; pRootTex++)
+					pRootTex->SetFrame (nFrame++);
+				++nClips;
+				}
 			}
 		nRootIndex = nIndex;
 		}
 	}
 return nClips;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureManager::BuildAnimationIndex (int nVersion)
+{
+CSLLIterator <CAnimationClipInfo, CAnimationClipInfo> iter (m_animationClips [Version ()]);
+CTexture* textures = m_textures [nVersion].Buffer ();
+
+for (iter.Begin (); *iter != iter.End (); iter++) {
+	CAnimationClipInfo& aic = **iter;
+#if DBG
+	if (aic.m_nTexture == nDbgTexture)
+		nDbgTexture = nDbgTexture;
+#endif
+	if ((aic.Key () > -1) && (aic.m_nType != 1) && aic.FrameCount ()) {
+#if DBG
+		if (aic.m_nTexture == nDbgTexture)
+			nDbgTexture = nDbgTexture;
+#endif
+		textures [aic.m_nTexture].SetFrameCount (aic.FrameCount ());
+		for (int i = 0, h = aic.FrameCount (); i < h; i++) {
+			m_animationIndex [nVersion][aic.Frame (i)] = *iter;
+			textures [aic.Frame (i)].SetFrame (i);
+			}
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -687,50 +719,13 @@ CAnimationLoaderFactory	alf;
 m_animationClips [nVersion].Destroy ();
 for (int nType = 0; nType < 3; nType++)
 	LoadAnimationClips (m_animationClips [nVersion], fp, alf.GetAnimationLoader (nVersion, nType));
+
+m_animationIndex [nVersion].Create (GlobalTextureCount () + 1);
+m_animationIndex [nVersion].Clear ();
+BuildAnimationIndex (nVersion);
 CreateMissingAnimationClips (nVersion);
+BuildAnimationIndex (nVersion);
 
-m_animationIndex [nVersion].Clear ();
-CSLLIterator <CAnimationClipInfo, CAnimationClipInfo> iter (m_animationClips [Version ()]);
-CTexture* textures = m_textures [nVersion].Buffer ();
-
-short nMaxTexture = -1;
-for (iter.Begin (); *iter != iter.End (); iter++) {
-	CAnimationClipInfo& aic = **iter;
-#if DBG
-	if (aic.m_nTexture == nDbgTexture)
-		nDbgTexture = nDbgTexture;
-#endif
-	if (aic.m_nType == 1)
-		continue;
-	ubyte nFrames = (ubyte) aic.FrameCount ();
-	for (ubyte i = 0; i < nFrames; i++) {
-		short nTexture = aic.Frame (i);
-		if (nMaxTexture < nTexture)
-			nMaxTexture = nTexture;
-		}	
-	}
-
-m_animationIndex [nVersion].Create (nMaxTexture + 1);
-m_animationIndex [nVersion].Clear ();
-
-for (iter.Begin (); *iter != iter.End (); iter++) {
-	CAnimationClipInfo& aic = **iter;
-#if DBG
-	if (aic.m_nTexture == nDbgTexture)
-		nDbgTexture = nDbgTexture;
-#endif
-	if ((aic.Key () > -1) && (aic.m_nType != 1) && aic.FrameCount ()) {
-#if DBG
-		if (aic.m_nTexture == nDbgTexture)
-			nDbgTexture = nDbgTexture;
-#endif
-		textures [aic.m_nTexture].SetFrameCount (aic.FrameCount ());
-		for (int i = 0, h = aic.FrameCount (); i < h; i++) {
-			m_animationIndex [nVersion][aic.Frame (i)] = *iter;
-			textures [aic.Frame (i)].SetFrame (i);
-			}
-		}
-	}
 fp.Close ();
 }
 

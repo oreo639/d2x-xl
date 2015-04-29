@@ -186,7 +186,7 @@ for (int i = 0; i < (texIds [1] ? 2 : 1); i++)
 for (int i = 0; i < (texIds [1] ? 2 : 1); i++) {
 	int nIndex = textureManager.Index (texIds [i]);
 	CAnimationClipInfo* aicP = textureManager.AnimationIndex (nIndex);
-	if (aicP && !aicP->m_nType && aicP->FrameCount () && (aicP->Frame (0) == nIndex)) {
+	if (aicP && (aicP->m_nType != 1) && aicP->FrameCount () && (aicP->Frame (0) == nIndex)) {
 		m_frame [i] += direction [i];
 		if ((m_frame [i] < 0) || (m_frame [i] >= (int) aicP->FrameCount ())) {
 			if (aicP->Bidirectional ()) {

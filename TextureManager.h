@@ -240,16 +240,6 @@ class CTextureManager {
 		
 		bool LoadTextures (int nVersion = -1, bool bClearExisting = true);
 		
-		int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp, CAnimationClipLoader* loader);
-
-		bool OpenAnimationFile (CFileManager& fp);
-
-		bool SkipToAnimationData (CFileManager& fp);
-
-		void LoadAnimationData (int nVersion = -1);
-
-		CAnimationClipInfo* FindAnimation (short nTexture);
-
 		short PrevAnimationFrame (short nTexture);
 
 		short NextAnimationFrame (short nTexture);
@@ -382,6 +372,18 @@ class CTextureManager {
 		void Destroy (int nVersion);
 
 		uint WriteCustomTextureHeader (CFileManager& fp, const CTexture *texP, uint nId, uint nOffset);
+
+		int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp, CAnimationClipLoader* loader);
+
+		bool OpenAnimationFile (CFileManager& fp);
+
+		bool SkipToAnimationData (CFileManager& fp);
+
+		void LoadAnimationData (int nVersion = -1);
+
+		void BuildAnimationIndex (int nVersion);
+
+		CAnimationClipInfo* FindAnimation (short nTexture);
 
 		int CreateMissingAnimationClips (int nVersion);
 
