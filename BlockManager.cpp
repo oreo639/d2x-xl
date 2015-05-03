@@ -44,11 +44,11 @@ t.m.fVec.Normalize ();
 
 //------------------------------------------------------------------------------
 
-bool CBlockManager::Error (int argsFound, int argsNeeded, char* msg, int nSegment)
+bool CBlockManager::Error (int argsFound, int argsNeeded, char* msg, int nSegment, char* szFunction)
 {
 if (argsNeeded == argsFound)
 	return false;
-undoManager.Unroll (__FUNCTION__);
+undoManager.Unroll (szFunction);
 if (nSegment < 0)
 	ErrorMsg (msg);
 else {
@@ -125,7 +125,7 @@ while (!fp.EoF ()) {
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
 	short nSegIdx = -1;
-	if (Error (fscanf_s (fp.File (), "segment %d\n", &nSegIdx), 1, "Invalid segment id", nSegIdx))
+	if (Error (fscanf_s (fp.File (), "segment %d\n", &nSegIdx), 1, "Invalid segment id", nSegIdx, __FUNCTION__))
 		return 0;
 	m_xlatSegNum [nSegIdx] = nSegment;
 	// invert segment number so its children can be children can be fixed later
@@ -135,7 +135,7 @@ while (!fp.EoF ()) {
 	CSide* sideP = segP->m_sides;
 	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 		short test;
-		if (Error (fscanf_s (fp.File (), "  side %hd\n", &test), 1, "Invalid side id", nSegIdx))
+		if (Error (fscanf_s (fp.File (), "  side %hd\n", &test), 1, "Invalid side id", nSegIdx, __FUNCTION__))
 			return 0;
 		int bVariableLight = m_bExtended && (test < 0);
 		if (bVariableLight)
@@ -147,13 +147,13 @@ while (!fp.EoF ()) {
 			}
 		sideP->m_info.nWall = NO_WALL;
 
-		if (Error (fscanf_s (fp.File (), textureIds [m_bExtended][0], &sideP->m_info.nBaseTex), 1, "Invalid base texture id", nSegIdx))
+		if (Error (fscanf_s (fp.File (), textureIds [m_bExtended][0], &sideP->m_info.nBaseTex), 1, "Invalid base texture id", nSegIdx, __FUNCTION__))
 			return 0;
-		if (Error (fscanf_s (fp.File (), textureIds [m_bExtended][1], &sideP->m_info.nOvlTex), 1,  "Invalid overlay texture id", nSegIdx))
+		if (Error (fscanf_s (fp.File (), textureIds [m_bExtended][1], &sideP->m_info.nOvlTex), 1,  "Invalid overlay texture id", nSegIdx, __FUNCTION__))
 			return 0;
 		for (i = 0; i < 4; i++) {
 			int u, v;
-			if (Error (fscanf_s (fp.File (), "    uvls %d %d %d\n", &u, &v, &sideP->m_info.uvls [i].l), 3, "Invalid UVL information", nSegIdx))
+			if (Error (fscanf_s (fp.File (), "    uvls %d %d %d\n", &u, &v, &sideP->m_info.uvls [i].l), 3, "Invalid UVL information", nSegIdx, __FUNCTION__))
 				return 0;
 			sideP->m_info.uvls [i].u = double (u) / 2048.0;
 			sideP->m_info.uvls [i].v = double (v) / 2048.0;
@@ -162,18 +162,18 @@ while (!fp.EoF ()) {
 			ushort vertexIdIndex [4];
 			if (Error (fscanf_s (fp.File (), "    vertex ids %hu %hu %hu %hu\n", 
 						  &vertexIdIndex [0], &vertexIdIndex [1], &vertexIdIndex [2], &vertexIdIndex [3]),
-						  4, "Invalid vertex id index", nSegIdx))
+						  4, "Invalid vertex id index", nSegIdx, __FUNCTION__))
 				return 0;
 			for (int j = 0; j < 4; j++)
 				sideP->m_vertexIdIndex [j] = ubyte (vertexIdIndex [j]);
 			sideP->DetectShape ();
 			if (bVariableLight) {
 				tVariableLight vl;
-				if (Error (fscanf_s (fp.File (), "    variable light %d %d %d\n", &vl.mask, &vl.timer, &vl.delay), 1, "Invalid variable light data", nSegIdx))
+				if (Error (fscanf_s (fp.File (), "    variable light %d %d %d\n", &vl.mask, &vl.timer, &vl.delay), 1, "Invalid variable light data", nSegIdx, __FUNCTION__))
 					return 0;
 				lightManager.AddVariableLight (CSideKey (nSegment, nSide), vl.mask, vl.timer);
 				}
-			if (Error (fscanf_s (fp.File (), "    wall %hd\n", &sideP->m_info.nWall), 1, "Invalid wall id", nSegIdx))
+			if (Error (fscanf_s (fp.File (), "    wall %hd\n", &sideP->m_info.nWall), 1, "Invalid wall id", nSegIdx, __FUNCTION__))
 				return 0;
 			if (sideP->m_info.nWall != NO_WALL) {
 				CWall w;
@@ -195,7 +195,7 @@ while (!fp.EoF ()) {
 				scanRes += fscanf_s (fp.File (), "        cloak %d\n", &byteBuf);
 				w.Info ().cloakValue = (ubyte) byteBuf;
 				scanRes += fscanf_s (fp.File (), "        trigger %d\n", &byteBuf);
-				if (Error (scanRes, 10, "Invalid wall information", nSegIdx))
+				if (Error (scanRes, 10, "Invalid wall information", nSegIdx, __FUNCTION__))
 					return 0;
 				w.Info ().nTrigger = (ubyte) byteBuf;
 				if ((w.Info ().nTrigger >= 0) && (w.Info ().nTrigger < MAX_TRIGGERS)) {
@@ -209,7 +209,7 @@ while (!fp.EoF ()) {
 						scanRes += fscanf_s (fp.File (), "			        segment %hd\n", &t [i].m_nSegment);
 						scanRes += fscanf_s (fp.File (), "			        side %hd\n", &t [i].m_nSide);
 						}
-					if (Error (scanRes, 5 + 2 * t.Count (), "Invalid trigger information", nSegIdx))
+					if (Error (scanRes, 5 + 2 * t.Count (), "Invalid trigger information", nSegIdx, __FUNCTION__))
 						return 0;
 					}
 				if (wallManager.HaveResources ()) {
@@ -240,7 +240,7 @@ while (!fp.EoF ()) {
 	short children [6];
 	if (Error (fscanf_s (fp.File (), "  children %hd %hd %hd %hd %hd %hd\n", 
 				  children + 0, children + 1, children + 2, children + 3, children + 4, children + 5, children + 6), 
-				  6, "Invalid child information", nSegIdx))
+				  6, "Invalid child information", nSegIdx, __FUNCTION__))
 		return 0;
 	for (i = 0; i < 6; i++)
 		segP->SetChild (i, children [i]);
@@ -250,7 +250,7 @@ while (!fp.EoF ()) {
 	for (i = 0; i < 8; i++) {
 		int x, y, z;
 		ushort index;
-		if (Error (fscanf_s (fp.File (), vertexIds [m_bExtended], &index, &x, &y, &z), 4, "Invalid vertex information", nSegIdx))
+		if (Error (fscanf_s (fp.File (), vertexIds [m_bExtended], &index, &x, &y, &z), 4, "Invalid vertex information", nSegIdx, __FUNCTION__))
 			return 0;
 		if (m_bExtended) {
 			segP->m_info.vertexIds [i] = index;
@@ -337,7 +337,7 @@ while (!fp.EoF ()) {
 		}
 #endif
 	// mark vertices
-	if (Error (fscanf_s (fp.File (), "  static_light %d\n", &segP->m_info.staticLight), 1, "Invalid static light information", nSegIdx))
+	if (Error (fscanf_s (fp.File (), "  static_light %d\n", &segP->m_info.staticLight), 1, "Invalid static light information", nSegIdx, __FUNCTION__))
 		return 0;
 	if (m_bExtended) {
 		scanRes = fscanf_s (fp.File (), "  special %d\n", &segP->m_info.function);
@@ -348,7 +348,7 @@ while (!fp.EoF ()) {
 		scanRes += fscanf_s (fp.File (), "  child_bitmask %d\n", &byteBuf);
 		segP->m_info.childFlags = (ubyte) byteBuf;
 		scanRes += fscanf_s (fp.File (), "  wall_bitmask %d\n", &byteBuf);
-		if (Error (scanRes, 5, "Invalid extended segment information", nSegIdx))
+		if (Error (scanRes, 5, "Invalid extended segment information", nSegIdx, __FUNCTION__))
 			return 0;
 		segP->m_info.wallFlags = (ubyte) byteBuf;
 		switch (segP->m_info.function) {

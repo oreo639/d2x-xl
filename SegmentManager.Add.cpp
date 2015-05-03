@@ -76,8 +76,10 @@ if (segmentManager.TaggedSideCount () > 50) {
 
 undoManager.Begin (__FUNCTION__, udSegments); 
 short nSegment = Create (*current);
-if (nSegment < 0)
+if (nSegment < 0) {
+	undoManager.End (__FUNCTION__);
 	return;
+	}
 current->SetSegmentId (nSegment);
 CSegment* segP = Segment (0);
 for (short nSegment = 0, nSegments = Count (); nSegment < nSegments; nSegment++, segP++) 
@@ -120,7 +122,7 @@ if (segP->ChildId (nCurSide) >= 0) {
 
 if (Side (key)->VertexCount () < 3) {
 	ErrorMsg ("Cannot add a new segment to this side."); 
-	undoManager.Unroll (__FUNCTION__);
+	//undoManager.Unroll (__FUNCTION__);
 	return -1;
 	}
 

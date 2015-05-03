@@ -471,6 +471,7 @@ return true;
 void CUndoManager::Unroll (char* szFunction) 
 {
 if (m_nNested > 0) {
+	PrintLog (-1, "Unroll Undo (%s)\n", szFunction);
 	m_history.Pop (szFunction);
 	if (--m_nNested == 0) {
 		SetModified (false);

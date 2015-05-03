@@ -37,7 +37,7 @@ class CBlockManager {
 
 		bool CheckTunnelMaker (void);
 
-		bool Error (int argsFound, int argsNeeded, char* msg, int nSegment);
+		bool Error (int argsFound, int argsNeeded, char* msg, int nSegment, char* szFunction);
 	};
 
 extern CBlockManager blockManager;
