@@ -177,12 +177,15 @@ public:
 	uint	m_nId;
 	char* m_szFunction;
 	int	m_dataFlags;
+	short	m_backupCalls [12];
 
 	inline uint& Id (void) { return m_nId; }
 
 	inline char* Function (void) { return m_szFunction; }
 	 
 	bool Backup (int dataFlags, char* szFunction = null);
+
+	void Cancel (int dataFlags);
 
 	bool Cleanup (void);
 
@@ -192,11 +195,17 @@ public:
 
 	void Reset (void);
 
+	void CountCalls (int dataFlags, int count);
+
+	int CallCount (void);
+
 	inline bool Modified (void) { return m_dataFlags != 0; }
 
 	inline int DataFlags (void) { return m_dataFlags; }
 
-	CUndoData () : m_nId (0), m_bSelections (false) { }
+	CUndoData () : m_nId (0), m_bSelections (false) { 
+		memset (m_backupCalls, 0, sizeof (m_backupCalls));
+		}
 
 	~CUndoData () { Destroy (); }
 	};
@@ -341,7 +350,7 @@ class CUndoManager
 
 		inline uint& Id (void) { return m_nId; }
 
-		bool Undo (void);
+		bool Undo (bool bRestore = true);
 
 		bool Redo (void);
 
@@ -349,7 +358,7 @@ class CUndoManager
 
 		void Reset (void);
 
-		bool Revert (void);
+		bool Revert (bool bRestore = true);
 
 		int Count (void);
 
@@ -372,7 +381,9 @@ class CUndoManager
 
 		void End (char* szFunction);
 
-		void Unroll (char* szFunction);
+		void Cancel (char* szFunction, int dataFlags);
+
+		void Unroll (char* szFunction, bool bRestore = true);
 
 		char* CreateId (char* szDest, char* szSrc);
 

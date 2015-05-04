@@ -82,6 +82,26 @@ m_dataFlags = 0;
 
 //------------------------------------------------------------------------------
 
+void CUndoData::CountCalls (int dataFlags, int count)
+{
+for (int i = 0; i < 12; i++)
+	if (dataFlags & (1 << i))
+		m_backupCalls [i] += count;
+}
+
+//------------------------------------------------------------------------------
+
+int CUndoData::CallCount (void)
+{
+	int count = 0;
+
+for (int i = 0; i < 12; i++)
+	count += m_backupCalls [i];
+return count;
+}
+
+//------------------------------------------------------------------------------
+
 bool CUndoData::Backup (int dataFlags, char* szFunction) 
 {
 if (szFunction && *szFunction)
@@ -137,6 +157,7 @@ if (!m_bSelections) {
 	m_bSelections = true;
 	}
 m_dataFlags |= dataFlags;
+CountCalls (dataFlags, 1);
 if (szFunction)
 	m_szFunction = szFunction;
 return true;
@@ -247,13 +268,13 @@ return m_nMaxSize = maxSize;
 
 //------------------------------------------------------------------------------
 
-bool CUndoManager::Undo (void)
+bool CUndoManager::Undo (bool bRestore)
 {
 if (Locked ())
 	return false;
 // need a backup of the current state when starting to undo
 PrintLog (0, "-> CUndoManager::Undo (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
-if ((m_nMode == 0) && (m_nCurrent == m_nTail) && !m_nTail.m_bTemporary) {
+if (bRestore && (m_nMode == 0) && (m_nCurrent == m_nTail) && !m_nTail.m_bTemporary) {
 	Append ();
 	m_nTail.m_bTemporary = true;
 	m_current.Backup (udAll);
@@ -261,8 +282,10 @@ if ((m_nMode == 0) && (m_nCurrent == m_nTail) && !m_nTail.m_bTemporary) {
 if (m_nCurrent != m_nHead)
 	--m_nCurrent;
 
-m_nMode = 1;
-Current ()->Restore ();
+if (bRestore) {
+	m_nMode = 1;
+	Current ()->Restore ();
+	}
 PrintLog (0, "<- CUndoManager::Undo (current = %d, head = %d, tail = %d)\n", m_nCurrent.m_index, m_nHead.m_index, m_nTail.m_index);
 return true;
 }
@@ -457,18 +480,30 @@ if (!Locked () && (m_nNested > 0)) {
 
 //------------------------------------------------------------------------------
 
-bool CUndoManager::Revert (void)
+void CUndoManager::Cancel (char* szFunction, int dataFlags) 
+{
+if (m_nNested > 0) {
+	PrintLog (-1, "Cancel Undo (%s)\n", szFunction);
+	m_current.CountCalls (dataFlags, -1);
+	if (m_current.CallCount () == 0)
+		Unroll (szFunction, false);
+	}
+}
+
+//------------------------------------------------------------------------------
+
+bool CUndoManager::Revert (bool bRestore)
 {
 if (!!Locked () || (m_nHead == -1))
 	return false;
-Undo ();
+Undo (bRestore);
 Truncate ();
 return true;
 }
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Unroll (char* szFunction) 
+void CUndoManager::Unroll (char* szFunction, bool bRestore) 
 {
 if (m_nNested > 0) {
 	PrintLog (-1, "Unroll Undo (%s)\n", szFunction);

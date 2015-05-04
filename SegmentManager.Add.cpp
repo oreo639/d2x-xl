@@ -310,12 +310,10 @@ if ((szError != null) && DLE.IsD1File ()) {
 	return 0;
 	}
 
-undoManager.Begin (__FUNCTION__, udSegments);
 if (bCreate) {
-	if (current->ChildId () >= 0) {
-		undoManager.End (__FUNCTION__);
+	if (current->ChildId () >= 0)
 		return -1;
-		}
+	undoManager.Begin (__FUNCTION__, udSegments);
 	nSegment = Create (*current, -1);
 	if (nSegment < 0) {
 		Remove (nSegment);
@@ -323,6 +321,9 @@ if (bCreate) {
 		return -1; 
 		}
 	}	
+else
+	undoManager.Begin (__FUNCTION__, udSegments);
+
 DLE.MineView ()->DelayRefresh (true);
 m_bCreating = true;
 if (!Define (nSegment, nFunction, -1)) {
