@@ -27,13 +27,13 @@ static char* vertexIds [2] = {"  vms_vector %hu %d %d %d\n", "  Vertex %hu %d %d
 
 void CBlockManager::SetupTransformation (CDoubleMatrix& t, CDoubleVector& o)
 {
-CSegment* segP = current->Segment ();
-o = *segP->Vertex (current->SideId (), current->Point ());
+CSegment* pSegment = current->Segment ();
+o = *pSegment->Vertex (current->SideId (), current->Point ());
 // set x'
-t.m.rVec = *segP->Vertex (current->SideId (), current->Point () + 1);
+t.m.rVec = *pSegment->Vertex (current->SideId (), current->Point () + 1);
 t.m.rVec -= o;
 // calculate y'
-CDoubleVector v = *segP->Vertex (current->SideId (), current->Point () + current->Side ()->VertexCount () - 1);
+CDoubleVector v = *pSegment->Vertex (current->SideId (), current->Point () + current->Side ()->VertexCount () - 1);
 v -= o;
 t.m.uVec = CrossProduct (t.m.rVec, v);
 t.m.fVec = CrossProduct (t.m.rVec, t.m.uVec);
@@ -119,21 +119,21 @@ while (!fp.EoF ()) {
 		ErrorMsg ("No more free segments");
 		return nNewSegs;
 		}
-	CSegment* segP = segmentManager.Segment (nSegment);
-	segP->SetLink (m_newSegments);
-	m_newSegments = segP;
-	segP->m_info.owner = -1;
-	segP->m_info.group = -1;
+	CSegment* pSegment = segmentManager.Segment (nSegment);
+	pSegment->SetLink (m_newSegments);
+	m_newSegments = pSegment;
+	pSegment->m_info.owner = -1;
+	pSegment->m_info.group = -1;
 	short nSegIdx = -1;
 	if (Error (fscanf_s (fp.File (), "segment %d\n", &nSegIdx), 1, "Invalid segment id", nSegIdx, __FUNCTION__))
 		return 0;
 	m_xlatSegNum [nSegIdx] = nSegment;
 	// invert segment number so its children can be children can be fixed later
-	segP->Index () = -nSegIdx - 1;
+	pSegment->Index () = -nSegIdx - 1;
 
 	// read in side information 
-	CSide* sideP = segP->m_sides;
-	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+	CSide* pSide = pSegment->m_sides;
+	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, pSide++) {
 		short test;
 		if (Error (fscanf_s (fp.File (), "  side %hd\n", &test), 1, "Invalid side id", nSegIdx, __FUNCTION__))
 			return 0;
@@ -145,18 +145,18 @@ while (!fp.EoF ()) {
 			ErrorMsg ("Invalid side number read");
 			return 0;
 			}
-		sideP->m_info.nWall = NO_WALL;
+		pSide->m_info.nWall = NO_WALL;
 
-		if (Error (fscanf_s (fp.File (), textureIds [m_bExtended][0], &sideP->m_info.nBaseTex), 1, "Invalid base texture id", nSegIdx, __FUNCTION__))
+		if (Error (fscanf_s (fp.File (), textureIds [m_bExtended][0], &pSide->m_info.nBaseTex), 1, "Invalid base texture id", nSegIdx, __FUNCTION__))
 			return 0;
-		if (Error (fscanf_s (fp.File (), textureIds [m_bExtended][1], &sideP->m_info.nOvlTex), 1,  "Invalid overlay texture id", nSegIdx, __FUNCTION__))
+		if (Error (fscanf_s (fp.File (), textureIds [m_bExtended][1], &pSide->m_info.nOvlTex), 1,  "Invalid overlay texture id", nSegIdx, __FUNCTION__))
 			return 0;
 		for (i = 0; i < 4; i++) {
 			int u, v;
-			if (Error (fscanf_s (fp.File (), "    uvls %d %d %d\n", &u, &v, &sideP->m_info.uvls [i].l), 3, "Invalid UVL information", nSegIdx, __FUNCTION__))
+			if (Error (fscanf_s (fp.File (), "    uvls %d %d %d\n", &u, &v, &pSide->m_info.uvls [i].l), 3, "Invalid UVL information", nSegIdx, __FUNCTION__))
 				return 0;
-			sideP->m_info.uvls [i].u = double (u) / 2048.0;
-			sideP->m_info.uvls [i].v = double (v) / 2048.0;
+			pSide->m_info.uvls [i].u = double (u) / 2048.0;
+			pSide->m_info.uvls [i].v = double (v) / 2048.0;
 			}
 		if (m_bExtended) {
 			ushort vertexIdIndex [4];
@@ -165,17 +165,17 @@ while (!fp.EoF ()) {
 						  4, "Invalid vertex id index", nSegIdx, __FUNCTION__))
 				return 0;
 			for (int j = 0; j < 4; j++)
-				sideP->m_vertexIdIndex [j] = ubyte (vertexIdIndex [j]);
-			sideP->DetectShape ();
+				pSide->m_vertexIdIndex [j] = ubyte (vertexIdIndex [j]);
+			pSide->DetectShape ();
 			if (bVariableLight) {
 				tVariableLight vl;
 				if (Error (fscanf_s (fp.File (), "    variable light %d %d %d\n", &vl.mask, &vl.timer, &vl.delay), 1, "Invalid variable light data", nSegIdx, __FUNCTION__))
 					return 0;
 				lightManager.AddVariableLight (CSideKey (nSegment, nSide), vl.mask, vl.timer);
 				}
-			if (Error (fscanf_s (fp.File (), "    wall %hd\n", &sideP->m_info.nWall), 1, "Invalid wall id", nSegIdx, __FUNCTION__))
+			if (Error (fscanf_s (fp.File (), "    wall %hd\n", &pSide->m_info.nWall), 1, "Invalid wall id", nSegIdx, __FUNCTION__))
 				return 0;
-			if (sideP->m_info.nWall != NO_WALL) {
+			if (pSide->m_info.nWall != NO_WALL) {
 				CWall w;
 				CTrigger t;
 				w.Clear ();
@@ -218,19 +218,19 @@ while (!fp.EoF ()) {
 							w.Info ().nTrigger = NO_TRIGGER;
 						else {
 							w.Info ().nTrigger = (ubyte) triggerManager.Add ();
-							CTrigger* trigP = triggerManager.Trigger (w.Info ().nTrigger);
-							*trigP = t;
-							trigP->Backup (opAdd);
-							trigP->SetLink (newTriggers);
-							newTriggers = trigP;
+							CTrigger* pTrigger = triggerManager.Trigger (w.Info ().nTrigger);
+							*pTrigger = t;
+							pTrigger->Backup (opAdd);
+							pTrigger->SetLink (newTriggers);
+							newTriggers = pTrigger;
 							++nNewTriggers;
 							}
 						}
-					sideP->m_info.nWall = wallManager.Add (false);
+					pSide->m_info.nWall = wallManager.Add (false);
 					w.m_nSegment = nSegment;
-					CWall* wallP = wallManager.Wall (sideP->m_info.nWall);
-					*wallP = w;
-					wallP->Backup (opAdd);
+					CWall* pWall = wallManager.Wall (pSide->m_info.nWall);
+					*pWall = w;
+					pWall->Backup (opAdd);
 					++nNewWalls;
 					}
 				}
@@ -243,19 +243,19 @@ while (!fp.EoF ()) {
 				  6, "Invalid child information", nSegIdx, __FUNCTION__))
 		return 0;
 	for (i = 0; i < 6; i++)
-		segP->SetChild (i, children [i]);
+		pSegment->SetChild (i, children [i]);
 	// read in vertices
 	ubyte bShared = 0;
-	segP->m_nShape = 0;
+	pSegment->m_nShape = 0;
 	for (i = 0; i < 8; i++) {
 		int x, y, z;
 		ushort index;
 		if (Error (fscanf_s (fp.File (), vertexIds [m_bExtended], &index, &x, &y, &z), 4, "Invalid vertex information", nSegIdx, __FUNCTION__))
 			return 0;
 		if (m_bExtended) {
-			segP->m_info.vertexIds [i] = index;
+			pSegment->m_info.vertexIds [i] = index;
 			if (index > MAX_VERTEX) {
-				segP->m_nShape++;
+				pSegment->m_nShape++;
 				continue;
 				}
 			}
@@ -273,10 +273,10 @@ while (!fp.EoF ()) {
 		v += origin;
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
-		CVertex* vertP = vertexManager.Find (v);
+		CVertex* pVertex = vertexManager.Find (v);
 		ushort nVertex;
-		if (vertP != null) {
-			nVertex = segP->m_info.vertexIds [i] = vertexManager.Index (vertP);
+		if (pVertex != null) {
+			nVertex = pSegment->m_info.vertexIds [i] = vertexManager.Index (pVertex);
 			bShared |= 1 << i;
 			}
 		// else make a new vertex
@@ -284,7 +284,7 @@ while (!fp.EoF ()) {
 			nVertex;
 			vertexManager.Add (&nVertex);
 			vertexManager.Status (nVertex) |= NEW_MASK;
-			segP->m_info.vertexIds [i] = nVertex;
+			pSegment->m_info.vertexIds [i] = nVertex;
 			*vertexManager.Vertex (nVertex) = v;
 			vertexManager.Vertex (nVertex)->Backup ();
 			}
@@ -295,7 +295,7 @@ while (!fp.EoF ()) {
 	// check each side whether it shares all four vertices with another side
 	// if so, make the segment owning that side a child
 	for (short nSide = 0; nSide < 6; nSide++) {
-		if (segP->ChildId (nSide) >= 0) // has a child in the block
+		if (pSegment->ChildId (nSide) >= 0) // has a child in the block
 			continue;
 		ushort nVertex;
 		ushort sharedVerts [4];
@@ -303,32 +303,32 @@ while (!fp.EoF ()) {
 			ushort h = sideVertexTable [nSide][nVertex];
 			if ((bShared & (1 << h)) == 0)
 				break;
-			sharedVerts [nVertex] = segP->m_info.vertexIds [h];
+			sharedVerts [nVertex] = pSegment->m_info.vertexIds [h];
 			}
 		if (nVertex == 4) {
 			for (nVertex = 0; nVertex < 4; nVertex++)
 				vertexManager.Status (sharedVerts [nVertex]) |= SHARED_MASK;
-			for (CSegment* childSegP = m_oldSegments; childSegP != null; childSegP = dynamic_cast<CSegment*>(childSegP->GetLink ())) {
+			for (CSegment* pChildSeg = m_oldSegments; pChildSeg != null; pChildSeg = dynamic_cast<CSegment*>(pChildSeg->GetLink ())) {
 				short nChildSide;
 				for (nChildSide = 0; nChildSide < 6; nChildSide++) {
-					if (childSegP->ChildId (nChildSide) != -1)
+					if (pChildSeg->ChildId (nChildSide) != -1)
 						continue;
 					short nChildVert;
 					for (nChildVert = 0; nChildVert < 4; nChildVert++) {
-						if (!childSegP->Vertex (sideVertexTable [nChildSide][nChildVert])->IsTagged (SHARED_MASK))
+						if (!pChildSeg->Vertex (sideVertexTable [nChildSide][nChildVert])->IsTagged (SHARED_MASK))
 							break;
 						}
 					if (nChildVert == 4) {
-						childSegP->SetChild (nChildSide, nSegment);
-						short nChildSeg = segmentManager.Index (childSegP);
-						segP->SetChild (nSide, nChildSeg);
+						pChildSeg->SetChild (nChildSide, nSegment);
+						short nChildSeg = segmentManager.Index (pChildSeg);
+						pSegment->SetChild (nSide, nChildSeg);
 						segmentManager.SetTextures (CSideKey (nSegment, nSide), 0, 0); 
 						segmentManager.SetTextures (CSideKey (nChildSeg, nChildSide), 0, 0); 
-						childSegP = null; // break out of outer loop
+						pChildSeg = null; // break out of outer loop
 						break;
 						}	
 					}
-				if (childSegP == null)
+				if (pChildSeg == null)
 					break;
 				}
 			for (nVertex = 0; nVertex < 4; nVertex++)
@@ -337,58 +337,58 @@ while (!fp.EoF ()) {
 		}
 #endif
 	// mark vertices
-	if (Error (fscanf_s (fp.File (), "  static_light %d\n", &segP->m_info.staticLight), 1, "Invalid static light information", nSegIdx, __FUNCTION__))
+	if (Error (fscanf_s (fp.File (), "  static_light %d\n", &pSegment->m_info.staticLight), 1, "Invalid static light information", nSegIdx, __FUNCTION__))
 		return 0;
 	if (m_bExtended) {
-		scanRes = fscanf_s (fp.File (), "  special %d\n", &segP->m_info.function);
+		scanRes = fscanf_s (fp.File (), "  special %d\n", &pSegment->m_info.function);
 		scanRes += fscanf_s (fp.File (), "  matcen_num %d\n", &byteBuf);
-		segP->m_info.nProducer = (ubyte) byteBuf;
+		pSegment->m_info.nProducer = (ubyte) byteBuf;
 		scanRes += fscanf_s (fp.File (), "  value %d\n", &byteBuf);
-		segP->m_info.value = (ubyte) byteBuf;
+		pSegment->m_info.value = (ubyte) byteBuf;
 		scanRes += fscanf_s (fp.File (), "  child_bitmask %d\n", &byteBuf);
-		segP->m_info.childFlags = (ubyte) byteBuf;
+		pSegment->m_info.childFlags = (ubyte) byteBuf;
 		scanRes += fscanf_s (fp.File (), "  wall_bitmask %d\n", &byteBuf);
 		if (Error (scanRes, 5, "Invalid extended segment information", nSegIdx, __FUNCTION__))
 			return 0;
-		segP->m_info.wallFlags = (ubyte) byteBuf;
-		switch (segP->m_info.function) {
+		pSegment->m_info.wallFlags = (ubyte) byteBuf;
+		switch (pSegment->m_info.function) {
 			case SEGMENT_FUNC_PRODUCER:
 				if (!segmentManager.CreateProducer (nSegment, SEGMENT_FUNC_PRODUCER, false, false))
-					segP->m_info.function = 0;
+					pSegment->m_info.function = 0;
 				break;
 			case SEGMENT_FUNC_REPAIRCEN:
 				if (!segmentManager.CreateProducer (nSegment, SEGMENT_FUNC_REPAIRCEN, false, false))
-					segP->m_info.function = 0;
+					pSegment->m_info.function = 0;
 				break;
 			case SEGMENT_FUNC_ROBOTMAKER:
 				if (!segmentManager.CreateRobotMaker (nSegment, false, false))
-					segP->m_info.function = 0;
+					pSegment->m_info.function = 0;
 				break;
 			case SEGMENT_FUNC_EQUIPMAKER:
 				if (!segmentManager.CreateEquipMaker (nSegment, false, false))
-					segP->m_info.function = 0;
+					pSegment->m_info.function = 0;
 				break;
 			case SEGMENT_FUNC_REACTOR:
 				if (!segmentManager.CreateReactor (nSegment, false, false))
-					segP->m_info.function = 0;
+					pSegment->m_info.function = 0;
 				break;
 			default:
 				break;
 			}
 		}
 	else {
-		segP->m_info.function = 0;
-		segP->m_info.nProducer = -1;
-		segP->m_info.value = -1;
+		pSegment->m_info.function = 0;
+		pSegment->m_info.nProducer = -1;
+		pSegment->m_info.value = -1;
 		}
-	segP->Tag (TAGGED_MASK); // no other bits
+	pSegment->Tag (TAGGED_MASK); // no other bits
 	// calculate childFlags
-	segP->m_info.childFlags = 0;
+	pSegment->m_info.childFlags = 0;
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-		if (segP->ChildId (i) >= 0)
-			segP->m_info.childFlags |= (1 << i);
+		if (pSegment->ChildId (i) >= 0)
+			pSegment->m_info.childFlags |= (1 << i);
 		}
-	segP->Backup ();
+	pSegment->Backup ();
 	nNewSegs++;
 	}
 
@@ -404,17 +404,17 @@ while (m_newSegments != null) {
 #endif
 
 while (newTriggers != null) {
-	CTrigger* trigP = newTriggers;
-	newTriggers = dynamic_cast<CTrigger*> (trigP->GetLink ());
-	for (j = 0; j < trigP->Count (); j++) {
-		if (trigP->Segment (j) >= 0)
-			trigP->Segment (j) = m_xlatSegNum [trigP->Segment (j)];
-		else if (trigP->Count () == 1) {
-			triggerManager.Delete (triggerManager.Index (trigP));
+	CTrigger* pTrigger = newTriggers;
+	newTriggers = dynamic_cast<CTrigger*> (pTrigger->GetLink ());
+	for (j = 0; j < pTrigger->Count (); j++) {
+		if (pTrigger->Segment (j) >= 0)
+			pTrigger->Segment (j) = m_xlatSegNum [pTrigger->Segment (j)];
+		else if (pTrigger->Count () == 1) {
+			triggerManager.Delete (triggerManager.Index (pTrigger));
 			i--;
 			}
 		else {
-			trigP->Delete (j);
+			pTrigger->Delete (j);
 			}
 		}
 	}
@@ -453,58 +453,58 @@ void CBlockManager::Write (CFileManager& fp)
 // set origin
 SetupTransformation (m, origin);
 
-CSegment* segP = segmentManager.Segment (0);
+CSegment* pSegment = segmentManager.Segment (0);
 int nSegments = segmentManager.Count ();
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	CSegment* segP = segmentManager.Segment (nSegment);
-	if (segP->IsTagged ()) {
+	CSegment* pSegment = segmentManager.Segment (nSegment);
+	if (pSegment->IsTagged ()) {
 		fprintf (fp.File (), "segment %d\n", nSegment);
-		CSide* sideP = segP->m_sides;
-		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
-			CVariableLight* vlP = lightManager.VariableLight (lightManager.VariableLight (CSideKey (nSegment, nSide)));
-			fprintf (fp.File (), "  side %d\n", (vlP == null) ? nSide : -nSide);
-			fprintf (fp.File (), "    %s %d\n", m_bExtended ? "BaseTex" : "tmap_num", sideP->BaseTex ());
-			fprintf (fp.File (), "    %s %d\n", m_bExtended ? "OvlTex" : "tmap_num2", sideP->m_info.nOvlTex);
+		CSide* pSide = pSegment->m_sides;
+		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, pSide++) {
+			CVariableLight* pLight = lightManager.VariableLight (lightManager.VariableLight (CSideKey (nSegment, nSide)));
+			fprintf (fp.File (), "  side %d\n", (pLight == null) ? nSide : -nSide);
+			fprintf (fp.File (), "    %s %d\n", m_bExtended ? "BaseTex" : "tmap_num", pSide->BaseTex ());
+			fprintf (fp.File (), "    %s %d\n", m_bExtended ? "OvlTex" : "tmap_num2", pSide->m_info.nOvlTex);
 			for (j = 0; j < 4; j++) {
-				fprintf (fp.File (), "    uvls %d %d %d\n", (int) Round (sideP->m_info.uvls [j].u * 2048.0), (int) Round (sideP->m_info.uvls [j].v * 2048.0), sideP->m_info.uvls [j].l);
+				fprintf (fp.File (), "    uvls %d %d %d\n", (int) Round (pSide->m_info.uvls [j].u * 2048.0), (int) Round (pSide->m_info.uvls [j].v * 2048.0), pSide->m_info.uvls [j].l);
 				}
 			if (m_bExtended) {
 				fprintf (fp.File (), "    vertex ids %hu %hu %hu %hu\n",
-							sideP->m_vertexIdIndex [0], sideP->m_vertexIdIndex [1], sideP->m_vertexIdIndex [2], sideP->m_vertexIdIndex [3]);
-				if (vlP) 
-					fprintf (fp.File (), "    variable light %d %d %d\n", vlP->m_info.mask, vlP->m_info.timer, vlP->m_info.delay);
-				fprintf (fp.File (), "    wall %d\n", sideP->m_info.nWall);
-				if (sideP->m_info.nWall != NO_WALL) {
-					CWall* wallP = sideP->Wall ();
-					fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
-					fprintf (fp.File (), "        side %d\n", wallP->m_nSide);
-					fprintf (fp.File (), "        hps %d\n", wallP->Info ().hps);
-					fprintf (fp.File (), "        type %d\n", wallP->Type ());
-					fprintf (fp.File (), "        flags %d\n", wallP->Info ().flags);
-					fprintf (fp.File (), "        state %d\n", wallP->Info ().state);
-					fprintf (fp.File (), "        clip %d\n", wallP->Info ().nClip);
-					fprintf (fp.File (), "        keys %d\n", wallP->Info ().keys);
-					fprintf (fp.File (), "        cloak %d\n", wallP->Info ().cloakValue);
-					if (wallP->Info ().nTrigger == NO_TRIGGER)
+							pSide->m_vertexIdIndex [0], pSide->m_vertexIdIndex [1], pSide->m_vertexIdIndex [2], pSide->m_vertexIdIndex [3]);
+				if (pLight) 
+					fprintf (fp.File (), "    variable light %d %d %d\n", pLight->m_info.mask, pLight->m_info.timer, pLight->m_info.delay);
+				fprintf (fp.File (), "    wall %d\n", pSide->m_info.nWall);
+				if (pSide->m_info.nWall != NO_WALL) {
+					CWall* pWall = pSide->Wall ();
+					fprintf (fp.File (), "        segment %d\n", pWall->m_nSegment);
+					fprintf (fp.File (), "        side %d\n", pWall->m_nSide);
+					fprintf (fp.File (), "        hps %d\n", pWall->Info ().hps);
+					fprintf (fp.File (), "        type %d\n", pWall->Type ());
+					fprintf (fp.File (), "        flags %d\n", pWall->Info ().flags);
+					fprintf (fp.File (), "        state %d\n", pWall->Info ().state);
+					fprintf (fp.File (), "        clip %d\n", pWall->Info ().nClip);
+					fprintf (fp.File (), "        keys %d\n", pWall->Info ().keys);
+					fprintf (fp.File (), "        cloak %d\n", pWall->Info ().cloakValue);
+					if (pWall->Info ().nTrigger == NO_TRIGGER)
 						fprintf (fp.File (), "        trigger %u\n", NO_TRIGGER);
 					else {
-						CTrigger *trigP = wallP->Trigger ();
+						CTrigger *pTrigger = pWall->Trigger ();
 						int iTarget, count = 0;
 						// count trigger targets in marked area
-						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
-							if (segmentManager.Segment (trigP->Segment (iTarget))->IsTagged ())
+						for (iTarget = 0; iTarget < pTrigger->Count (); iTarget++)
+							if (segmentManager.Segment (pTrigger->Segment (iTarget))->IsTagged ())
 								count++;
-						fprintf (fp.File (), "        trigger %d\n", wallP->Info ().nTrigger);
-						fprintf (fp.File (), "			    type %d\n", trigP->Type ());
-						fprintf (fp.File (), "			    flags %d\n", trigP->Info ().flags);
-						fprintf (fp.File (), "			    value %d\n", trigP->Info ().value);
-						fprintf (fp.File (), "			    timer %d\n", trigP->Info ().time);
+						fprintf (fp.File (), "        trigger %d\n", pWall->Info ().nTrigger);
+						fprintf (fp.File (), "			    type %d\n", pTrigger->Type ());
+						fprintf (fp.File (), "			    flags %d\n", pTrigger->Info ().flags);
+						fprintf (fp.File (), "			    value %d\n", pTrigger->Info ().value);
+						fprintf (fp.File (), "			    timer %d\n", pTrigger->Info ().time);
 						fprintf (fp.File (), "			    count %d\n", count);
-						for (iTarget = 0; iTarget < trigP->Count (); iTarget++)
-							if (segmentManager.Segment (trigP->Segment (iTarget))->IsTagged ()) {
-								fprintf (fp.File (), "			        segment %d\n", trigP->Segment (iTarget));
-								fprintf (fp.File (), "			        side %d\n", trigP->Side (iTarget));
+						for (iTarget = 0; iTarget < pTrigger->Count (); iTarget++)
+							if (segmentManager.Segment (pTrigger->Segment (iTarget))->IsTagged ()) {
+								fprintf (fp.File (), "			        segment %d\n", pTrigger->Segment (iTarget));
+								fprintf (fp.File (), "			        side %d\n", pTrigger->Side (iTarget));
 								}
 						}
 					}
@@ -512,7 +512,7 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 			}
 		fprintf (fp.File (), "  children");
 		for (short nSide = 0; nSide < 6; nSide++) {
-			short nChild = segP->ChildId (nSide);
+			short nChild = pSegment->ChildId (nSide);
 			fprintf (fp.File (), " %d", ((nChild < 0) || !segmentManager.Segment (nChild)->IsTagged ()) ? -1 : nChild);
 			}
 		fprintf (fp.File (), "\n");
@@ -522,15 +522,15 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 			// which is a constant (k) times the axis
 			// k = (B*A)/(A*A) where B is the vertex relative to the origin
 			//                       A is the axis unit vertex (always 1)
-			nVertex = segP->m_info.vertexIds [i];
+			nVertex = pSegment->m_info.vertexIds [i];
 			CVertex v = *vertexManager.Vertex (nVertex) - origin;
 			if (m_bExtended) {
-				if (segP->m_info.vertexIds [i] > MAX_VERTEX)
-					fprintf (fp.File (), "  Vertex %hu 0 0 0 \n", segP->m_info.vertexIds [i]);
+				if (pSegment->m_info.vertexIds [i] > MAX_VERTEX)
+					fprintf (fp.File (), "  Vertex %hu 0 0 0 \n", pSegment->m_info.vertexIds [i]);
 				else {
 					v = m * v;
 					fprintf (fp.File (), "  Vertex %hu %d %d %d\n", 
-								segP->m_info.vertexIds [i], D2X (v.v.x), D2X (v.v.y), D2X (v.v.z));
+								pSegment->m_info.vertexIds [i], D2X (v.v.x), D2X (v.v.y), D2X (v.v.z));
 					}
 				}
 			else {
@@ -538,13 +538,13 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 						ushort (i), D2X (v ^ m.m.rVec), D2X (v ^ m.m.uVec), D2X (v ^ m.m.fVec));
 				}
 			}
-		fprintf (fp.File (), "  static_light %d\n",segP->m_info.staticLight);
+		fprintf (fp.File (), "  static_light %d\n",pSegment->m_info.staticLight);
 		if (m_bExtended) {
-			fprintf (fp.File (), "  special %d\n", segP->m_info.function);
-			fprintf (fp.File (), "  matcen_num %d\n", segP->m_info.nProducer);
-			fprintf (fp.File (), "  value %d\n", segP->m_info.value);
-			fprintf (fp.File (), "  child_bitmask %d\n", segP->m_info.childFlags);
-			fprintf (fp.File (), "  wall_bitmask %d\n", segP->m_info.wallFlags);
+			fprintf (fp.File (), "  special %d\n", pSegment->m_info.function);
+			fprintf (fp.File (), "  matcen_num %d\n", pSegment->m_info.nProducer);
+			fprintf (fp.File (), "  value %d\n", pSegment->m_info.value);
+			fprintf (fp.File (), "  child_bitmask %d\n", pSegment->m_info.childFlags);
+			fprintf (fp.File (), "  wall_bitmask %d\n", pSegment->m_info.wallFlags);
 			}
 		}
 	}
@@ -676,10 +676,10 @@ strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
 undoManager.Begin (__FUNCTION__, udAll);
 DLE.MineView ()->DelayRefresh (true);
-CSegment* segP = segmentManager.Segment (0);
-for (short nSegment = 0; nSegment < SEGMENT_LIMIT; nSegment++, segP++) {
-	segP->Index () = nSegment;
-	segP->UnTag ();
+CSegment* pSegment = segmentManager.Segment (0);
+for (short nSegment = 0; nSegment < SEGMENT_LIMIT; nSegment++, pSegment++) {
+	pSegment->Index () = nSegment;
+	pSegment->UnTag ();
 	}
 
 // untag all vertices
@@ -691,21 +691,21 @@ short count = Read (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 
 // int up the new segmentManager.Segment () children
-for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<CSegment*>(newSegP->GetLink ())) {
+for (CSegment* pNewSeg = m_newSegments; pNewSeg != null; pNewSeg = dynamic_cast<CSegment*>(pNewSeg->GetLink ())) {
 	// if child has a segment number that was just inserted, set it to the
 	//  segment's offset number, otherwise set it to -1
 	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		if (newSegP->HasChild (nSide)) // has a child in the block
-			newSegP->SetChild (nSide, m_xlatSegNum [newSegP->ChildId (nSide)]);
+		if (pNewSeg->HasChild (nSide)) // has a child in the block
+			pNewSeg->SetChild (nSide, m_xlatSegNum [pNewSeg->ChildId (nSide)]);
 		else {
-			CVertex* v1 = vertexManager.Vertex (newSegP->m_info.vertexIds [newSegP->Side (nSide)->VertexIdIndex (0)]);
-			for (CSegment* oldSegP = m_oldSegments; oldSegP != null; oldSegP = dynamic_cast<CSegment*>(oldSegP->GetLink ())) {
-				CSide* sideP = oldSegP->Side (0);
-				for (short nChildSide = 0; nChildSide < 6; nChildSide++, sideP++) {
+			CVertex* v1 = vertexManager.Vertex (pNewSeg->m_info.vertexIds [pNewSeg->Side (nSide)->VertexIdIndex (0)]);
+			for (CSegment* pOldSeg = m_oldSegments; pOldSeg != null; pOldSeg = dynamic_cast<CSegment*>(pOldSeg->GetLink ())) {
+				CSide* pSide = pOldSeg->Side (0);
+				for (short nChildSide = 0; nChildSide < 6; nChildSide++, pSide++) {
 					for (short nChildVertex = 0; nChildVertex < 4; nChildVertex++) {
-						CVertex* v2 = vertexManager.Vertex (oldSegP->m_info.vertexIds [sideP->VertexIdIndex (nChildVertex)]);
+						CVertex* v2 = vertexManager.Vertex (pOldSeg->m_info.vertexIds [pSide->VertexIdIndex (nChildVertex)]);
 						if ((fabs (v1->v.x - v2->v.x) < 160.0) && (fabs (v1->v.y - v2->v.y) < 160.0) && (fabs (v1->v.z - v2->v.z) < 160.0)) {
-							segmentManager.Link (segmentManager.Index (newSegP), nSide, segmentManager.Index (oldSegP), nChildSide, 3.0);
+							segmentManager.Link (segmentManager.Index (pNewSeg), nSide, segmentManager.Index (pOldSeg), nChildSide, 3.0);
 							break;
 							}
 						}
@@ -718,9 +718,9 @@ for (CSegment* newSegP = m_newSegments; newSegP != null; newSegP = dynamic_cast<
 for (int nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 	vertexManager.Vertex (nVertex)->UnTag (NEW_MASK);
 // now set all seg_numbers
-segP = segmentManager.Segment (0);
-for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
-	segP->Index () = nSegment;
+pSegment = segmentManager.Segment (0);
+for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, pSegment++)
+	pSegment->Index () = nSegment;
 fp.Close ();
 DLE.MineView ()->Refresh ();
 undoManager.End (__FUNCTION__);
@@ -789,7 +789,7 @@ for (nSegment = segmentManager.Count () - 1; nSegment >= 0; nSegment--) {
 				continue;
 			objectManager.Move (objectManager.Object (0), nNewSeg);
 			}
-		segmentManager.Delete (nSegment, false); // delete segP w/o asking "are you sure"
+		segmentManager.Delete (nSegment, false); // delete pSegment w/o asking "are you sure"
 		}
 	}
 vertexManager.DeleteUnused ();

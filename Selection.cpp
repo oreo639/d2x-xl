@@ -98,8 +98,8 @@ return segmentManager.Wall (*this);
 
 CTrigger* CSelection::Trigger (void)
 {
-CWall* wallP = Wall ();
-return (wallP == null) ? null : wallP->Trigger ();
+CWall* pWall = Wall ();
+return (pWall == null) ? null : pWall->Trigger ();
 }
 
 // -----------------------------------------------------------------------------

@@ -33,7 +33,7 @@ END_MESSAGE_MAP ()
 CReactorTool::CReactorTool (CPropertySheet *pParent)
 	: CToolDlg (IDD_REACTORDATA_HORZ + nLayout, pParent)
 {
-m_triggerP = null;
+m_pTrigger = null;
 Reset ();
 }
 
@@ -96,11 +96,11 @@ void CReactorTool::InitLBTargets ()
 CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
-if (m_triggerP) {
-	m_targets = m_triggerP->Count ();
+if (m_pTrigger) {
+	m_targets = m_pTrigger->Count ();
 	int i;
 	for (i = 0; i < m_targets ; i++) {
-		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_triggerP->Segment (i), m_triggerP->Side (i) + 1);
+		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->Segment (i), m_pTrigger->Side (i) + 1);
 		plb->AddString (m_szTarget);
 		}
 	if ((m_iTarget < 0) || (m_iTarget >= m_targets))
@@ -122,7 +122,7 @@ void CReactorTool::Refresh ()
 if (!(m_bInited && theMine))
 	return;
 EnableControls (DLE.IsD2File ());
-m_triggerP = triggerManager.ReactorTrigger (m_nTrigger);
+m_pTrigger = triggerManager.ReactorTrigger (m_nTrigger);
 m_nCountDown = triggerManager.ReactorTime ();
 m_nSecretReturn = objectManager.SecretSegment ();
 InitLBTargets ();
@@ -168,7 +168,7 @@ undoManager.End (__FUNCTION__);
 
 void CReactorTool::AddTarget (short nSegment, short nSide) 
 {
-m_targets = m_triggerP->Count ();
+m_targets = m_pTrigger->Count ();
 if (m_targets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Reactor tool: No more targets possible for this trigger.");
 	return;
@@ -178,7 +178,7 @@ if (FindTarget (nSegment, nSide) >= 0) {
 	return;
 	}
 undoManager.Begin (__FUNCTION__, udTriggers);
-m_triggerP->Add (nSegment, nSide - 1);
+m_pTrigger->Add (nSegment, nSide - 1);
 undoManager.End (__FUNCTION__);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
@@ -222,7 +222,7 @@ m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
 undoManager.Begin (__FUNCTION__, udTriggers);
-m_targets = m_triggerP->Delete (m_iTarget);
+m_targets = m_pTrigger->Delete (m_iTarget);
 undoManager.End (__FUNCTION__);
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
@@ -235,7 +235,7 @@ Refresh ();
 
 int CReactorTool::FindTarget (short nSegment, short nSide)
 {
-return m_triggerP->Find (nSegment, nSide);
+return m_pTrigger->Find (nSegment, nSide);
 }
 
 //------------------------------------------------------------------------------
@@ -263,18 +263,18 @@ void CReactorTool::OnSetTarget ()
 // get affected segment/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" segment/side
-if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_triggerP->Count ()))
+if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->Count ()))
 	return;
 
-short nSegment = m_triggerP->Segment (m_iTarget);
+short nSegment = m_pTrigger->Segment (m_iTarget);
 if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	 return;
-short nSide = m_triggerP->Side (m_iTarget);
+short nSide = m_pTrigger->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
 if ((current->SegmentId () == nSegment) && (current->SideId () == nSide))
 	return;
-*((CSideKey *) other) = (*m_triggerP) [m_iTarget];
+*((CSideKey *) other) = (*m_pTrigger) [m_iTarget];
 DLE.MineView ()->Refresh ();
 }
 

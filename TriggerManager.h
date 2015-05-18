@@ -102,7 +102,7 @@ class CTriggerManager {
 
 		inline CTrigger* ObjTrigger (int i) { return Trigger (i, 1); }
 
-		short Index (CTrigger* trigP) { return (short) (trigP - &m_triggers [0][0]); }
+		short Index (CTrigger* pTrigger) { return (short) (pTrigger - &m_triggers [0][0]); }
 
 		void SetIndex (void);
 

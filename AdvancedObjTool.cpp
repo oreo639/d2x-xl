@@ -88,24 +88,24 @@ void CAdvancedObjTool::OnAccept (void)
 if (!(m_bInited && theMine))
 	return;
 UpdateData (TRUE);
-CGameObject *objP = current->Object ();
-objP->mType.physInfo.mass = m_mass;
-objP->mType.physInfo.drag = m_drag;
-objP->mType.physInfo.brakes = m_brakes;
-objP->mType.physInfo.turnRoll = m_turnRoll;
-objP->mType.physInfo.flags = m_flags;
-objP->mType.physInfo.velocity.x = m_velocity.v.x;
-objP->mType.physInfo.velocity.y = m_velocity.v.y;
-objP->mType.physInfo.velocity.z = m_velocity.v.z;
-objP->mType.physInfo.thrust.x = m_thrust.v.x;
-objP->mType.physInfo.thrust.y = m_thrust.v.y;
-objP->mType.physInfo.thrust.z = m_thrust.v.z;
-objP->mType.physInfo.rotVel.x = m_rotVel.v.x;
-objP->mType.physInfo.rotVel.y = m_rotVel.v.y;
-objP->mType.physInfo.rotVel.z = m_rotVel.v.z;
-objP->mType.physInfo.rotThrust.x = m_rotThrust.v.x;
-objP->mType.physInfo.rotThrust.y = m_rotThrust.v.y;
-objP->mType.physInfo.rotThrust.z = m_rotThrust.v.z;
+CGameObject *pObject = current->Object ();
+pObject->mType.physInfo.mass = m_mass;
+pObject->mType.physInfo.drag = m_drag;
+pObject->mType.physInfo.brakes = m_brakes;
+pObject->mType.physInfo.turnRoll = m_turnRoll;
+pObject->mType.physInfo.flags = m_flags;
+pObject->mType.physInfo.velocity.x = m_velocity.v.x;
+pObject->mType.physInfo.velocity.y = m_velocity.v.y;
+pObject->mType.physInfo.velocity.z = m_velocity.v.z;
+pObject->mType.physInfo.thrust.x = m_thrust.v.x;
+pObject->mType.physInfo.thrust.y = m_thrust.v.y;
+pObject->mType.physInfo.thrust.z = m_thrust.v.z;
+pObject->mType.physInfo.rotVel.x = m_rotVel.v.x;
+pObject->mType.physInfo.rotVel.y = m_rotVel.v.y;
+pObject->mType.physInfo.rotVel.z = m_rotVel.v.z;
+pObject->mType.physInfo.rotThrust.x = m_rotThrust.v.x;
+pObject->mType.physInfo.rotThrust.y = m_rotThrust.v.y;
+pObject->mType.physInfo.rotThrust.z = m_rotThrust.v.z;
 }
 
 								/*--------------------------*/
@@ -136,22 +136,22 @@ if (!objectManager.Count ()) {
 	}
 CDlgHelpers::EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_FRAMENO, TRUE);
 
-CGameObject *objP = current->Object ();
-m_size = objP->m_info.size;
-m_shields = objP->m_info.shields;
-CRobotInfo& robotInfo = *robotManager.RobotInfo (objP->m_info.id);
+CGameObject *pObject = current->Object ();
+m_size = pObject->m_info.size;
+m_shields = pObject->m_info.shields;
+CRobotInfo& robotInfo = *robotManager.RobotInfo (pObject->m_info.id);
 
-switch (objP->m_info.movementType) {
+switch (pObject->m_info.movementType) {
 	case MT_PHYSICS:	
-		m_mass = objP->mType.physInfo.mass ? objP->mType.physInfo.mass : robotInfo.Info ().mass;
-		m_drag = objP->mType.physInfo.drag ? objP->mType.physInfo.drag : robotInfo.Info ().drag;
-		m_brakes = objP->mType.physInfo.brakes;
-		m_turnRoll = objP->mType.physInfo.turnRoll;
-		m_flags = objP->mType.physInfo.flags ? objP->mType.physInfo.flags : robotInfo.Info ().flags;
-		m_velocity = objP->mType.physInfo.velocity;
-		m_thrust = objP->mType.physInfo.thrust;
-		m_rotVel = objP->mType.physInfo.rotVel;
-		m_rotThrust = objP->mType.physInfo.rotThrust;
+		m_mass = pObject->mType.physInfo.mass ? pObject->mType.physInfo.mass : robotInfo.Info ().mass;
+		m_drag = pObject->mType.physInfo.drag ? pObject->mType.physInfo.drag : robotInfo.Info ().drag;
+		m_brakes = pObject->mType.physInfo.brakes;
+		m_turnRoll = pObject->mType.physInfo.turnRoll;
+		m_flags = pObject->mType.physInfo.flags ? pObject->mType.physInfo.flags : robotInfo.Info ().flags;
+		m_velocity = pObject->mType.physInfo.velocity;
+		m_thrust = pObject->mType.physInfo.thrust;
+		m_rotVel = pObject->mType.physInfo.rotVel;
+		m_rotThrust = pObject->mType.physInfo.rotThrust;
 		break;
 
 	case MT_SPINNING:
@@ -170,10 +170,10 @@ switch (objP->m_info.movementType) {
 		break;
 	}
 
-switch (objP->m_info.renderType) {
+switch (pObject->m_info.renderType) {
 	case RT_MORPH:
 	case RT_POLYOBJ:
-		m_model = objP->rType.polyModelInfo.nModel ? objP->rType.polyModelInfo.nModel : robotInfo.Info ().nModel;
+		m_model = pObject->rType.polyModelInfo.nModel ? pObject->rType.polyModelInfo.nModel : robotInfo.Info ().nModel;
 		m_frame = 0;
 		m_frameNo = 0;
 		CDlgHelpers::EnableControls (IDC_ADVOBJ_FRAME, IDC_ADVOBJ_FRAMENO, FALSE);
@@ -183,9 +183,9 @@ switch (objP->m_info.renderType) {
 	case RT_HOSTAGE:
 	case RT_POWERUP:
 	case RT_FIREBALL:
-		m_model = objP->rType.animationInfo.nAnimation;
-		m_frame = objP->rType.animationInfo.nFrameTime;
-		m_frameNo = objP->rType.animationInfo.nFrame;
+		m_model = pObject->rType.animationInfo.nAnimation;
+		m_frame = pObject->rType.animationInfo.nFrameTime;
+		m_frameNo = pObject->rType.animationInfo.nFrame;
 		break;
 
 	case RT_LASER:

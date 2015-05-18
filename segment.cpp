@@ -308,11 +308,11 @@ fp->Write (m_info.wallFlags);
 // write wall numbers
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (m_info.wallFlags & (1 << i)) {
-		CWall _const_ * wallP = m_sides [i].Wall ();
+		CWall _const_ * pWall = m_sides [i].Wall ();
 		if (DLE.LevelVersion () >= 13)
-			fp->WriteUInt16 ((ushort) const_cast<CWall*>(wallP)->Index ());
+			fp->WriteUInt16 ((ushort) const_cast<CWall*>(pWall)->Index ());
 		else
-			fp->WriteSByte ((sbyte) const_cast<CWall*>(wallP)->Index ());
+			fp->WriteSByte ((sbyte) const_cast<CWall*>(pWall)->Index ());
 		}
 	}
 return m_info.wallFlags;
@@ -418,7 +418,7 @@ void CSegment::SetUV (short nSide, double x, double y)
 	int				i; 
 	double			angle1, sinAngle1, cosAngle1; 
 	double			angle2, sinAngle2, cosAngle2; 
-	CSide*			sideP = Side (nSide);
+	CSide*			pSide = Side (nSide);
 
 // for testing, x is used to tell how far to convert vector
 // 0, 1, 2, 3 represent B, C, D, E coordinate transformations
@@ -426,7 +426,7 @@ void CSegment::SetUV (short nSide, double x, double y)
 // copy side's four points into A
 
 for (i = 0; i < 4; i++)
-	A [i] = CDoubleVector (*vertexManager.Vertex (m_info.vertexIds [sideP->VertexIdIndex (i)])); 
+	A [i] = CDoubleVector (*vertexManager.Vertex (m_info.vertexIds [pSide->VertexIdIndex (i)])); 
 
 // subtract point 0 from all points in A to form B points
 for (i = 0; i < 3; i++) {
@@ -555,12 +555,12 @@ void CSegment::SetUV (short nSide, double x, double y)
 	CDoubleVector*	R;
 	int				i; 
 	double			angle; 
-	CSide*			sideP = Side (nSide);
+	CSide*			pSide = Side (nSide);
 
-for (i = 0; i < sideP->VertexCount(); i++)
-	A [i] = CDoubleVector (*vertexManager.Vertex (m_info.vertexIds [sideP->VertexIdIndex (i)])); 
+for (i = 0; i < pSide->VertexCount(); i++)
+	A [i] = CDoubleVector (*vertexManager.Vertex (m_info.vertexIds [pSide->VertexIdIndex (i)])); 
 
-switch (sideP->Shape ()) {
+switch (pSide->Shape ()) {
 	case SIDE_SHAPE_TRIANGLE:
 		{
 			CDoubleVector B1 [] = {A [0], A [1], A [2]};
@@ -611,7 +611,7 @@ switch (sideP->Shape ()) {
 CUVL *uvls = m_sides [nSide].m_info.uvls;
 undoManager.Begin (__FUNCTION__, udSegments); 
 m_sides [nSide].LoadTextures ();
-for (i = 0; i < sideP->VertexCount (); i++, uvls++) {
+for (i = 0; i < pSide->VertexCount (); i++, uvls++) {
 	uvls->u = (x + R [i].v.x) / 20.0; 
 	uvls->v = (y + R [i].v.y) / 20.0; 
 	}
@@ -670,13 +670,13 @@ return false;
 
 short CSegment::CommonVertices (short nOtherSeg, short nMaxVertices, ushort* vertices)
 {
-	CSegment* otherP = segmentManager.Segment (nOtherSeg);
+	CSegment* pOther = segmentManager.Segment (nOtherSeg);
 	short nCommon = 0;
 
 for (short i = 0; i < 8; i++) {
 	ushort nVertex = VertexId (i);
 	for (short j = 0; j < 8; j++) {
-		if (nVertex == otherP->VertexId (j)) {
+		if (nVertex == pOther->VertexId (j)) {
 			if (vertices)
 				vertices [nCommon] = nVertex;
 			if (++nCommon == nMaxVertices)
@@ -743,10 +743,10 @@ for (; nSide < 6; nSide++)
 if (nSide == 6)
 	return -1;
 
-CSegment* otherP = segmentManager.Segment (nOtherSeg);
+CSegment* pOther = segmentManager.Segment (nOtherSeg);
 
 for (nOtherSide = 0; nOtherSide < 6; nOtherSide++)
-	if (otherP->CommonSide (nOtherSide, vertices))
+	if (pOther->CommonSide (nOtherSide, vertices))
 		break;
 if (nOtherSide == 6)
 	return -1;
@@ -866,22 +866,22 @@ return m_sides [nSide].HasVertex (nIndex);
 
 bool CSegment::HasEdge (short nSide, ushort nVertex1, ushort nVertex2)
 {
-	CSide*	sideP = Side (nSide);
-	int		nVertices = sideP->VertexCount ();
+	CSide*	pSide = Side (nSide);
+	int		nVertices = pSide->VertexCount ();
 
 if (nVertices < 2)
 	return false;
 
 if (nVertices == 2) {
-	ushort v1 = m_info.vertexIds [sideP->VertexIdIndex (0)],
-			 v2 = m_info.vertexIds [sideP->m_vertexIdIndex [1]];
+	ushort v1 = m_info.vertexIds [pSide->VertexIdIndex (0)],
+			 v2 = m_info.vertexIds [pSide->m_vertexIdIndex [1]];
 	return ((v1 == nVertex1) && (v2 == nVertex2)) || ((v2 == nVertex1) && (v1 == nVertex2));
 	}
 
-ushort v1, v2 = m_info.vertexIds [sideP->VertexIdIndex (0)];
+ushort v1, v2 = m_info.vertexIds [pSide->VertexIdIndex (0)];
 for (int i = 1; i <= nVertices; i++) {
 	v1 = v2;
-	v2 = m_info.vertexIds [sideP->m_vertexIdIndex [i % nVertices]];
+	v2 = m_info.vertexIds [pSide->m_vertexIdIndex [i % nVertices]];
 	if (((v1 == nVertex1) && (v2 == nVertex2)) || ((v2 == nVertex1) && (v1 == nVertex2)))
 		return true;
 	}
@@ -890,11 +890,11 @@ return false;
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CSegment::Copy (CGameItem* destP)
+CGameItem* CSegment::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CSegment*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CSegment*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------
@@ -965,9 +965,9 @@ if (nSide < 0) {
 			vertexManager [m_info.vertexIds [i]].Tag (mask);
 	}
 else {
-	CSide* sideP = Side (nSide);
-	for (int i = 0, j = sideP->VertexCount (); i < j; i++)
-		vertexManager [m_info.vertexIds [sideP->VertexIdIndex (i)]].Tag (mask);
+	CSide* pSide = Side (nSide);
+	for (int i = 0, j = pSide->VertexCount (); i < j; i++)
+		vertexManager [m_info.vertexIds [pSide->VertexIdIndex (i)]].Tag (mask);
 	}
 }
 
@@ -981,9 +981,9 @@ if (nSide < 0) {
 			vertexManager [m_info.vertexIds [i]].UnTag (mask);
 	}
 else {
-	CSide* sideP = Side (nSide);
-	for (int i = 0, j = sideP->VertexCount (); i < j; i++)
-		vertexManager [m_info.vertexIds [sideP->VertexIdIndex (i)]].UnTag (mask);
+	CSide* pSide = Side (nSide);
+	for (int i = 0, j = pSide->VertexCount (); i < j; i++)
+		vertexManager [m_info.vertexIds [pSide->VertexIdIndex (i)]].UnTag (mask);
 	}
 }
 
@@ -997,9 +997,9 @@ if (nSide < 0) {
 			return true;
 	}
 else {
-	CSide* sideP = Side (nSide);
-	for (int i = 0, j = sideP->VertexCount (); i < j; i++)
-		if (vertexManager [m_info.vertexIds [sideP->VertexIdIndex (i)]].IsTagged (mask))
+	CSide* pSide = Side (nSide);
+	for (int i = 0, j = pSide->VertexCount (); i < j; i++)
+		if (vertexManager [m_info.vertexIds [pSide->VertexIdIndex (i)]].IsTagged (mask))
 			return true;
 	}
 return false;
@@ -1199,12 +1199,12 @@ for (int i = 0; i < j; i++)
 
 void CSegment::UpdateVertexIdIndex (ubyte nIndex)
 {
-CSide* sideP = Side (0);
-for (int i = 0; i < 6; i++, sideP++) {
-	int h = sideP->VertexCount ();
+CSide* pSide = Side (0);
+for (int i = 0; i < 6; i++, pSide++) {
+	int h = pSide->VertexCount ();
 	for (int j = 0; j < h; j++) {
-		if (sideP->m_vertexIdIndex [j] > nIndex)
-			sideP->m_vertexIdIndex [j]--;
+		if (pSide->m_vertexIdIndex [j] > nIndex)
+			pSide->m_vertexIdIndex [j]--;
 		}
 	}
 }
@@ -1213,20 +1213,20 @@ for (int i = 0; i < 6; i++, sideP++) {
 
 int CSegment::BuildEdgeList (CEdgeList& edgeList, ubyte nSide, bool bSparse)
 {
-	CSide* sideP = Side (nSide);
+	CSide* pSide = Side (nSide);
 
-if (bSparse && !sideP->IsVisible ())
+if (bSparse && !pSide->IsVisible ())
 	return 0; // only gather edges that are not shared with another segment
-short nVertices = sideP->VertexCount ();
+short nVertices = pSide->VertexCount ();
 if (nVertices < 2)
 	return 0;
 if (nVertices == 2)
-	edgeList.Add (nSide, sideP->VertexIdIndex (0), sideP->VertexIdIndex (1));
+	edgeList.Add (nSide, pSide->VertexIdIndex (0), pSide->VertexIdIndex (1));
 else {
-	ubyte v1, v2 = sideP->VertexIdIndex (0);
+	ubyte v1, v2 = pSide->VertexIdIndex (0);
 	for (short nVertex = 1; nVertex <= nVertices; nVertex++) {
 		v1 = v2;
-		v2 = sideP->VertexIdIndex (nVertex);
+		v2 = pSide->VertexIdIndex (nVertex);
 		edgeList.Add (nSide, v1, v2);
 		}
 	}
@@ -1263,12 +1263,12 @@ return m_vCenter;
 
 CVertex& CSegment::ComputeCenter (short nSide)
 {
-CSide* sideP = Side (nSide);
-CVertex& vCenter = sideP->m_vCenter;
+CSide* pSide = Side (nSide);
+CVertex& vCenter = pSide->m_vCenter;
 vCenter.Clear ();
 vCenter.m_view.Clear ();
 vCenter.m_screen.x = vCenter.m_screen.y = vCenter.m_screen.z = 0;
-short j = sideP->VertexCount ();
+short j = pSide->VertexCount ();
 for (short i = 0; i < j; i++) {
 	CVertex* v = Vertex (nSide, i);
 	vCenter += *v;
@@ -1332,20 +1332,20 @@ if (nSegment == nDbgSeg)
 	nDbgSeg = nDbgSeg;
 #endif
 CFrustum* frustum = DLE.MineView ()->Renderer ().Frustum ();
-CSide* sideP = Side (nSide);
-for (; nSide < 6; nSide++, sideP++) {
+CSide* pSide = Side (nSide);
+for (; nSide < 6; nSide++, pSide++) {
 	if (frustum && !frustum->Contains (nSegment, nSide))
 		continue;
-	sideP->SetParent (nSegment);
-	if (!sideP->IsSelected (viewport, xMouse, yMouse, m_info.vertexIds))
+	pSide->SetParent (nSegment);
+	if (!pSide->IsSelected (viewport, xMouse, yMouse, m_info.vertexIds))
 		continue;
 	if (!bSegments) {
 		ComputeCenter (nSide);
-		CVertex& center = sideP->Center ();
-		if (!sideP->IsVisible ()) {
-			sideP->ComputeNormals (m_info.vertexIds, Center ());
+		CVertex& center = pSide->Center ();
+		if (!pSide->IsVisible ()) {
+			pSide->ComputeNormals (m_info.vertexIds, Center ());
 			CVertex normal;
-			center += sideP->Normal (2) * 2.0;
+			center += pSide->Normal (2) * 2.0;
 			center.Transform (viewMatrix);
 			center.Project (viewMatrix);
 			}
@@ -1379,18 +1379,18 @@ return -1;
 
 void CSegment::MakeCoplanar (short nSide)
 {
-	CSide* sideP = Side (nSide);
-	short j = sideP->VertexCount ();
+	CSide* pSide = Side (nSide);
+	short j = pSide->VertexCount ();
 
 if (j < 4)
 	return;
 
-sideP->ComputeNormals (VertexIds (), ComputeCenter ());
-if (sideP->Normal (0) == sideP->Normal (1))
+pSide->ComputeNormals (VertexIds (), ComputeCenter ());
+if (pSide->Normal (0) == pSide->Normal (1))
 	return;
-CDoubleVector v0 = *Vertex (nSide, sideP->m_nPoint);
-CDoubleVector n = Normal (v0, *Vertex (nSide, sideP->m_nPoint + 1), *Vertex (nSide, sideP->m_nPoint - 1));
-CDoubleVector v1 = sideP->Center () - v0;
+CDoubleVector v0 = *Vertex (nSide, pSide->m_nPoint);
+CDoubleVector n = Normal (v0, *Vertex (nSide, pSide->m_nPoint + 1), *Vertex (nSide, pSide->m_nPoint - 1));
+CDoubleVector v1 = pSide->Center () - v0;
 if (Dot (v1, n) < 0.0)
 	n.Negate ();
 for (short i = 0; i < j; i++) {
@@ -1444,11 +1444,11 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CObjectProducer::Copy (CGameItem* destP)
+CGameItem* CObjectProducer::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CObjectProducer*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CObjectProducer*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------

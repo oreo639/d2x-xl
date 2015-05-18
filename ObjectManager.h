@@ -83,7 +83,7 @@ class CObjectManager {
 
 		void Sort (short left, short right);
 
-		inline short Index (CGameObject* objP) { return (objP == null) ? -1 : short (objP - &m_objects [0]); }
+		inline short Index (CGameObject* pObject) { return (pObject == null) ? -1 : short (pObject - &m_objects [0]); }
 
 		void SetIndex (void);
 	
@@ -99,7 +99,7 @@ class CObjectManager {
 
 		bool Create (ubyte newType, short nSegment = -1);
 
-		void Move (CGameObject * objP = null, int nSegment = -1);
+		void Move (CGameObject * pObject = null, int nSegment = -1);
 
 		inline void ReadInfo (CFileManager* fp) { m_info.Read (fp); }
 

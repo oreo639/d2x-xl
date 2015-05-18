@@ -72,11 +72,11 @@ if (current->ObjectId () == objectManager.Count ()) {
 	memset (m_nPos, 0, sizeof (double) * 3);
 	RefreshObjOrient (objectManager.SecretOrient ());
 } else {
-	CGameObject* objP = current->Object ();
-	m_nPos [0] = objP->m_location.pos.v.x;
-	m_nPos [1] = objP->m_location.pos.v.y;
-	m_nPos [2] = objP->m_location.pos.v.z;
-	RefreshObjOrient (objP->m_location.orient);
+	CGameObject* pObject = current->Object ();
+	m_nPos [0] = pObject->m_location.pos.v.x;
+	m_nPos [1] = pObject->m_location.pos.v.y;
+	m_nPos [2] = pObject->m_location.pos.v.z;
+	RefreshObjOrient (pObject->m_location.orient);
 	}
 }
 

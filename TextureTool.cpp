@@ -272,28 +272,28 @@ m_frame [0] = 0;
 m_frame [1] = 0;
 #endif
 
-CSegment* segP = current->Segment ();
-CSide* sideP = current->Side ();
+CSegment* pSegment = current->Segment ();
+CSide* pSide = current->Side ();
 int nSide = current->SideId ();
-short texture1 = sideP->BaseTex ();
-short texture2 = sideP->OvlTex (0);
+short texture1 = pSide->BaseTex ();
+short texture2 = pSide->OvlTex (0);
 if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
 	texture1 = 0;
 if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 	texture2 = 0;
 GetBrightness ((m_bUse2nd && !m_bUse1st) ? texture2 : texture1);
-short ovlAlign = sideP->OvlAlignment ();
+short ovlAlign = pSide->OvlAlignment ();
 // set edit fields to % of light and enable them
 for (i = 0; i < 4; i++) {
 	j = (i + lightIdxFromMode [ovlAlign]) % 4;
 	double h = 327.68 * lightManager.LightScale ();
-	m_lights [j] = (sideP->m_info.uvls [i].l >= h) ? h / 327.68 : (double) (sideP->m_info.uvls [i].l) / 327.68;
+	m_lights [j] = (pSide->m_info.uvls [i].l >= h) ? h / 327.68 : (double) (pSide->m_info.uvls [i].l) / 327.68;
 	}
 
-if (segP->ChildId (nSide)==-1)
+if (pSegment->ChildId (nSide)==-1)
 	bShowTexture = TRUE;
 else {
-	ushort nWall = sideP->m_info.nWall;
+	ushort nWall = pSide->m_info.nWall;
 	bShowTexture = (nWall >= 0) && (nWall < wallManager.WallCount ());
 	}
 if (bShowTexture) {
@@ -405,7 +405,7 @@ return CToolDlg::OnKillActive ();
 
 void CTextureTool::AnimateTexture (void)
 {
-	CSegment *segP = current->Segment ();
+	CSegment *pSegment = current->Segment ();
 
 	ushort texture [2];
 	static int m_xScrollOffset [0] = 0;
@@ -414,10 +414,10 @@ void CTextureTool::AnimateTexture (void)
 	int x,y;
 	static int m_xScrollOffset [1],m_yScrollOffset [1];
 
-	CSide	*sideP = current->Side ();
+	CSide	*pSide = current->Side ();
 
-texture [0] = sideP->BaseTex ();
-texture [1] = sideP->OvlTex (1);
+texture [0] = pSide->BaseTex ();
+texture [1] = pSide->OvlTex (1);
 
 // if texture1 is a scrolling texture, then offset the textures and
 // redraw them, then return
@@ -442,7 +442,7 @@ m_yScrollOffset [0] = 0;
 
 // abort if this is not a wall
 #ifndef _DEBUG
-ushort nWall = sideP->m_info.nWall;
+ushort nWall = pSide->m_info.nWall;
 if (nWall >= wallManager.WallCount ())
 	return;
 
@@ -535,12 +535,12 @@ void CTextureTool::SelectTexture (int nIdC, bool bFirst)
 {
 CHECKMINE;
 
-	CSide*		sideP = current->Side ();
+	CSide*		pSide = current->Side ();
 	CComboBox*	pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	int			index = pcb->GetCurSel ();
 	
 if (index <= 0)
-	sideP->m_info.nOvlTex = 0;
+	pSide->m_info.nOvlTex = 0;
 else {
 	short texture = (short) pcb->GetItemData (index);
 	if (bFirst)
@@ -559,12 +559,12 @@ void CTextureTool::OnSetLight ()
 CHECKMINE;
 
 UpdateData (TRUE);
-CSide *sideP = current->Side ();
-short ovlAlign = sideP->OvlAlignment ();
+CSide *pSide = current->Side ();
+short ovlAlign = pSide->OvlAlignment ();
 int i, j;
 for (i = 0; i < 4; i++) {
 	j = (i + lightIdxFromMode [ovlAlign]) % 4;
-	sideP->m_info.uvls [i].l = (ushort) (m_lights [j] * 327.68);
+	pSide->m_info.uvls [i].l = (ushort) (m_lights [j] * 327.68);
 	}
 DLE.MineView ()->Refresh ();
 }
@@ -604,12 +604,12 @@ void CTextureTool::OnSaveTexture ()
 {
 CHECKMINE;
 
-CSide* sideP = current->Side ();
-m_saveTexture [0] = sideP->BaseTex ();
-m_saveTexture [1] = sideP->OvlTex (0);
+CSide* pSide = current->Side ();
+m_saveTexture [0] = pSide->BaseTex ();
+m_saveTexture [1] = pSide->OvlTex (0);
 int i;
 for (i = 0; i < 4; i++)
-	m_saveUVLs [i].l = sideP->m_info.uvls [i].l;
+	m_saveUVLs [i].l = pSide->m_info.uvls [i].l;
 UpdateData (FALSE);
 //SaveTextureStatic->SetText(message);
 }
@@ -648,13 +648,13 @@ UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
 
-	CSide *sideP = current->Side ();
+	CSide *pSide = current->Side ();
 
 //CheckForDoor ();
 undoManager.Begin (__FUNCTION__, udSegments);
 segmentManager.SetTextures (*current, m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
 for (int i = 0; i < 4; i++)
-	sideP->m_info.uvls [i].l = m_saveUVLs [i].l;
+	pSide->m_info.uvls [i].l = m_saveUVLs [i].l;
 undoManager.End (__FUNCTION__);
 Refresh ();
 DLE.MineView ()->Refresh ();
@@ -675,9 +675,9 @@ if (m_saveTexture [0] == -1 || m_saveTexture [1] == -1)
 //CheckForDoor ();
 // set all segment sides as not "pasted" yet
 undoManager.Begin (__FUNCTION__, udSegments);
-CSegment *segP = segmentManager.Segment (0);
-for (short nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
-	segP->Index () = 0;
+CSegment *pSegment = segmentManager.Segment (0);
+for (short nSegment = segmentManager.Count (); nSegment; nSegment--, pSegment++)
+	pSegment->Index () = 0;
 PasteTexture (current->SegmentId (), current->SideId (), 1000);
 undoManager.End (__FUNCTION__);
 Refresh ();
@@ -728,8 +728,8 @@ if (!(m_bUse1st || m_bUse2nd))
 
 	short			nSegment,
 					nSide;
-	CSegment*	segP = segmentManager.Segment (0);
-	CSide*		sideP;
+	CSegment*	pSegment = segmentManager.Segment (0);
+	CSide*		pSide;
 	bool			bAll = !segmentManager.HasTaggedSegments (true);
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
@@ -737,14 +737,14 @@ if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 undoManager.Begin (__FUNCTION__, udSegments);
 if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
-for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
-	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++)
+for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, pSegment++)
+	for (nSide = 0, pSide = pSegment->m_sides; nSide < 6; nSide++, pSide++)
 		if (bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))) {
-			if (m_bUse1st && (sideP->BaseTex () != m_lastTexture [0]))
+			if (m_bUse1st && (pSide->BaseTex () != m_lastTexture [0]))
 				continue;
-			if (m_bUse2nd && ((sideP->OvlTex (0)) != m_lastTexture [1]))
+			if (m_bUse2nd && ((pSide->OvlTex (0)) != m_lastTexture [1]))
 				continue;
-			if ((segP->ChildId (nSide) >= 0) && (sideP->m_info.nWall == NO_WALL))
+			if ((pSegment->ChildId (nSide) >= 0) && (pSide->m_info.nWall == NO_WALL))
 				 continue;
 			segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
 			}
@@ -762,36 +762,36 @@ CHECKMINE;
 if (nDepth <= 0) 
 	return;
 
-	CSegment*	segP = segmentManager.Segment (nSegment);
-	CSide*		sideP = segP->m_sides + nSide;
+	CSegment*	pSegment = segmentManager.Segment (nSegment);
+	CSide*		pSide = pSegment->m_sides + nSide;
 	short			oldTexture1, 
 					oldTexture2;
 	int			i;
 
 // remember these texture for a comparison below
-oldTexture1 = sideP->BaseTex ();
-oldTexture2 = sideP->OvlTex ();
+oldTexture1 = pSide->BaseTex ();
+oldTexture2 = pSide->OvlTex ();
 if ((oldTexture1 < 0) || (oldTexture1 >= MAX_TEXTURES))
 	oldTexture1 = 0;
 if ((oldTexture2 < 0) || (oldTexture2 >= MAX_TEXTURES))
 	oldTexture2 = 0;
 // mark segment as "pasted"
-segP->Index () = 1;
+pSegment->Index () = 1;
 // paste texture
 segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? m_saveTexture [0] : -1, m_bUse2nd ? m_saveTexture [1] : -1);
 for (i = 0; i < 4; i++)
-	sideP->m_info.uvls [i].l = m_saveUVLs [i].l;
+	pSide->m_info.uvls [i].l = m_saveUVLs [i].l;
 
 // now check each adjing side to see it has the same texture
-for (i = 0; i < sideP->VertexCount (); i++) {
+for (i = 0; i < pSide->VertexCount (); i++) {
 	short nAdjSeg, nAdjSide;
 	if (GetAdjacentSide (nSegment, nSide, i, &nAdjSeg, &nAdjSide)) {
 		// if adj matches and its not "pasted" yet
-		segP = segmentManager.Segment (nAdjSeg);
-		sideP = segP->m_sides + nAdjSide;
-		if ((segP->Index () == 0) &&
-			 (!m_bUse1st || (sideP->BaseTex () == oldTexture1)) &&
-			 (!m_bUse2nd || (sideP->OvlTex () == oldTexture2))) {
+		pSegment = segmentManager.Segment (nAdjSeg);
+		pSide = pSegment->m_sides + nAdjSide;
+		if ((pSegment->Index () == 0) &&
+			 (!m_bUse1st || (pSide->BaseTex () == oldTexture1)) &&
+			 (!m_bUse2nd || (pSide->OvlTex () == oldTexture2))) {
 			PasteTexture (nAdjSeg, nAdjSide, --nDepth);
 			}
 		}
@@ -802,29 +802,29 @@ for (i = 0; i < sideP->VertexCount (); i++) {
 
 bool CTextureTool::GetAdjacentSide (short nStartSeg, short nStartSide, short nLine, short *nAdjSeg, short *nAdjSide) 
 {
-	CSegment *	segP;
+	CSegment *	pSegment;
 	short			nSide, nChild;
 	ushort		nEdgeVerts [2], nChildEdgeVerts [2];
 	short			nChildSide, nChildLine;
 
 // figure out which side of child shares two points w/ nStartSide
 // find vert numbers for the line's two end points
-segP = segmentManager.Segment (nStartSeg);
-nEdgeVerts [0] = segP->VertexId (nStartSide, nLine);
-nEdgeVerts [1] = segP->VertexId (nStartSide, nLine + 1);
+pSegment = segmentManager.Segment (nStartSeg);
+nEdgeVerts [0] = pSegment->VertexId (nStartSide, nLine);
+nEdgeVerts [1] = pSegment->VertexId (nStartSide, nLine + 1);
 
-nSide = segP->AdjacentSide (nStartSide, nEdgeVerts);
-nChild = segP->ChildId (nSide);
+nSide = pSegment->AdjacentSide (nStartSide, nEdgeVerts);
+nChild = pSegment->ChildId (nSide);
 if (nChild < 0 || nChild >= segmentManager.Count ())
 	return false;
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
-	CSegment* childSegP = segmentManager.Segment (nChild);
-	if ((childSegP->ChildId (nChildSide) == -1) || (childSegP->m_sides [nChildSide].Wall () != null)) {
-		CSide* childSideP = childSegP->Side (nChildSide);
-		for (nChildLine = 0; nChildLine < childSideP->VertexCount (); nChildLine++) {
+	CSegment* pChildSeg = segmentManager.Segment (nChild);
+	if ((pChildSeg->ChildId (nChildSide) == -1) || (pChildSeg->m_sides [nChildSide].Wall () != null)) {
+		CSide* pChildSide = pChildSeg->Side (nChildSide);
+		for (nChildLine = 0; nChildLine < pChildSide->VertexCount (); nChildLine++) {
 			// find vert numbers for the line's two end points
-			nChildEdgeVerts [0] = childSegP->VertexId (nChildSide, nChildLine);
-			nChildEdgeVerts [1] = childSegP->VertexId (nChildSide, nChildLine + 1);
+			nChildEdgeVerts [0] = pChildSeg->VertexId (nChildSide, nChildLine);
+			nChildEdgeVerts [1] = pChildSeg->VertexId (nChildSide, nChildLine + 1);
 			// if points of child's line == corresponding points of parent
 			if (((nChildEdgeVerts [0] == nEdgeVerts [1]) && (nChildEdgeVerts [1] == nEdgeVerts [0])) ||
 				 ((nChildEdgeVerts [0] == nEdgeVerts [0]) && (nChildEdgeVerts [1] == nEdgeVerts [1]))) {
@@ -873,8 +873,8 @@ void CTextureTool::SetBrightness (int nBrightness)
 if (!bSemaphore) {
 	bSemaphore = TRUE;
 
-	CSide* sideP = current->Side ();
-	short	texture = (m_bUse2nd && !m_bUse1st) ? sideP->OvlTex (0) : sideP->BaseTex ();
+	CSide* pSide = current->Side ();
+	short	texture = (m_bUse2nd && !m_bUse1st) ? pSide->OvlTex (0) : pSide->BaseTex ();
 
 	if (texture >= 0) {
 		m_nBrightness = nBrightness;

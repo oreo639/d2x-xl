@@ -132,7 +132,7 @@ class CSegmentManager {
 
 		int ProducerCount (void);
 
-		inline short Index (CSegment _const_ * segP) { return (short) (segP - &m_segments [0]); }
+		inline short Index (CSegment _const_ * pSegment) { return (short) (pSegment - &m_segments [0]); }
 
 		inline CSegment _const_ * Segment (_const_ int i) { return &m_segments [i]; }
 
@@ -164,9 +164,9 @@ class CSegmentManager {
 		//inline CWall* Wall (short nSegment = -1, short nSide = -1) {
 		inline CWall _const_ * Wall (CSideKey key) { 
 			current->Get (key);
-			CSide _const_ * sideP;
-			sideP = Side (key);
-			return sideP->Wall (); 
+			CSide _const_ * pSide;
+			pSide = Side (key);
+			return pSide->Wall (); 
 			}
 
 		inline CWall _const_ * Wall (CSideKey* key = null) { return Wall ((key == null) ? *current : *key); }
@@ -182,8 +182,8 @@ class CSegmentManager {
 
 		//inline CWall* OppositeWall (short nSegment = -1, short nSide = -1) {
 		inline _const_ CWall* OppositeWall (CSideKey key) {
-			_const_ CSide* sideP = Side (key);
-			return (sideP == null) ? null : sideP->Wall ();
+			_const_ CSide* pSide = Side (key);
+			return (pSide == null) ? null : pSide->Wall ();
 			}
 
 		inline _const_ CWall* OppositeWall (void) { return OppositeWall (CSideKey ()); }
@@ -239,7 +239,7 @@ class CSegmentManager {
 
 		bool SplitIn7 (void);
 
-		bool SplitIn8 (CSegment* rootSegP);
+		bool SplitIn8 (CSegment* pRootSeg);
 
 		bool CreateWedge (void);
 
@@ -253,9 +253,9 @@ class CSegmentManager {
 
 		CVertex& CalcCenter (CVertex& pos, short nSegment);
 
-		bool IsPointOfSide (CSegment *segP, int nSide, int nPoint);
+		bool IsPointOfSide (CSegment *pSegment, int nSide, int nPoint);
 
-		bool IsLineOfSide (CSegment *segP, int nSide, int nLine);
+		bool IsLineOfSide (CSegment *pSegment, int nSide, int nLine);
 
 		void JoinSegments (int automatic = 0);
 
@@ -419,9 +419,9 @@ class CSegmentManager {
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);
 
-		void UnlinkSeg (CSegment *segP, CSegment *rootSegP);
+		void UnlinkSeg (CSegment *pSegment, CSegment *pRootSeg);
 
-		void LinkSeg (CSegment *segP, CSegment *rootSegP);
+		void LinkSeg (CSegment *pSegment, CSegment *pRootSeg);
 
 		void DeleteWalls (short nSegment);
 
@@ -439,7 +439,7 @@ class CSegmentManager {
 
 		bool FindNearbySide (CSideKey thisKey, CSideKey& otherKey, short& thisPoint, short& otherPoint, tVertMatch* match);
 
-		void RemoveProducer (CSegment* segP, CObjectProducer* producers, CMineItemInfo& info, int nFunction);
+		void RemoveProducer (CSegment* pSegment, CObjectProducer* producers, CMineItemInfo& info, int nFunction);
 
 		bool CreateProducer (short nSegment, bool bCreate, ubyte nType, bool bSetDefTextures, CObjectProducer* producers, CMineItemInfo& info, char* szError);
 
@@ -479,8 +479,8 @@ class CTaggingStrategy {
 		CDynamicArray<CSideListEntry>		m_sideList;
 
 		CSideKey		m_parent, m_child;
-		CSegment	*	m_segP, * m_childSegP;
-		CSide*		m_sideP, * m_childSideP;
+		CSegment	*	m_pSegment, * m_pChildSeg;
+		CSide*		m_pSide, * m_pChildSide;
 		CEdgeKey		m_edgeKey;
 		ubyte			m_tag;
 
@@ -508,7 +508,7 @@ class CTagByAngle : public CTaggingStrategy {
 		
 		CTagByAngle () : m_maxAngle (cos (Radians (22.5))) {}
 
-		virtual bool Accept (void) { return m_childSideP->IsVisible () && (Dot (m_sideP->Normal (), m_childSideP->Normal ()) >= m_maxAngle); }
+		virtual bool Accept (void) { return m_pChildSide->IsVisible () && (Dot (m_pSide->Normal (), m_pChildSide->Normal ()) >= m_maxAngle); }
 	};
 
 // -----------------------------------------------------------------------------
@@ -522,12 +522,12 @@ class CTagByTextures : public CTaggingStrategy {
 
 		virtual bool Accept (void) { 
 			short nOtherSide;
-			return (m_bAll || m_segP->IsTagged () || m_sideP->IsTagged ()) &&
-					 m_childSideP->IsVisible () &&
+			return (m_bAll || m_pSegment->IsTagged () || m_pSide->IsTagged ()) &&
+					 m_pChildSide->IsVisible () &&
 					 (m_bIgnorePlane || (m_parent.m_nSegment != m_child.m_nSegment &&
-					  m_segP->CommonSides (m_child.m_nSegment, nOtherSide) != -1)) &&
-					 ((m_nBaseTex < 0) || (m_childSideP->BaseTex () == m_nBaseTex)) && 
-					 ((m_nOvlTex < 0) || (m_childSideP->OvlTex () == m_nOvlTex)); 
+					  m_pSegment->CommonSides (m_child.m_nSegment, nOtherSide) != -1)) &&
+					 ((m_nBaseTex < 0) || (m_pChildSide->BaseTex () == m_nBaseTex)) && 
+					 ((m_nOvlTex < 0) || (m_pChildSide->OvlTex () == m_nOvlTex)); 
 			}
 	};
 
@@ -536,12 +536,12 @@ class CTagByTextures : public CTaggingStrategy {
 class CTagTunnelStart : public CTaggingStrategy {
 	public:
 		double	m_maxAngle;
-		CSide*	m_startSideP;
+		CSide*	m_pStartSide;
 		
-		CTagTunnelStart () : m_maxAngle (cos (Radians (22.5))), m_startSideP (current->Side ()) {}
+		CTagTunnelStart () : m_maxAngle (cos (Radians (22.5))), m_pStartSide (current->Side ()) {}
 
 		virtual bool Accept (void) { 
-			return (m_childSegP->IsTagged () || m_childSideP->IsTagged ()) && !m_childSegP->HasChild (m_child.m_nSide) && (Dot (m_childSideP->Normal (), m_startSideP->Normal ()) >= m_maxAngle);
+			return (m_pChildSeg->IsTagged () || m_pChildSide->IsTagged ()) && !m_pChildSeg->HasChild (m_child.m_nSide) && (Dot (m_pChildSide->Normal (), m_pStartSide->Normal ()) >= m_maxAngle);
 			}
 	};
 

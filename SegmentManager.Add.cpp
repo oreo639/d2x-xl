@@ -50,14 +50,14 @@ if (nDelSeg < Count ()) {
 		triggerManager.UpdateTargets (Count (), nDelSeg);
 		objectManager.UpdateSegments (Count (), nDelSeg);
 		// update all walls inside the moved segment
-		CSide* sideP = Segment (nDelSeg)->Side (0);
-		for (int i = 0; i < 6; i++, sideP++) {
-			CSegment* segP = sideP->Child ();
-			if (segP != null)
-				segP->UpdateChildren (Count (), nDelSeg);
-			CWall* wallP = sideP->Wall ();
-			if (wallP != null)
-				wallP->m_nSegment = nDelSeg;
+		CSide* pSide = Segment (nDelSeg)->Side (0);
+		for (int i = 0; i < 6; i++, pSide++) {
+			CSegment* pSegment = pSide->Child ();
+			if (pSegment != null)
+				pSegment->UpdateChildren (Count (), nDelSeg);
+			CWall* pWall = pSide->Wall ();
+			if (pWall != null)
+				pWall->m_nSegment = nDelSeg;
 			}
 		}
 	}
@@ -81,10 +81,10 @@ if (nSegment < 0) {
 	return;
 	}
 current->SetSegmentId (nSegment);
-CSegment* segP = Segment (0);
-for (short nSegment = 0, nSegments = Count (); nSegment < nSegments; nSegment++, segP++) 
+CSegment* pSegment = Segment (0);
+for (short nSegment = 0, nSegments = Count (); nSegment < nSegments; nSegment++, pSegment++) 
 	for (short nSide = 0; nSide < 6; nSide++)
-		if (segP->IsTagged (nSide) && !segP->HasChild (nSide)) 
+		if (pSegment->IsTagged (nSide) && !pSegment->HasChild (nSide)) 
 			if (0 > Create (CSideKey (nSegment, nSide)))
 				break;
 undoManager.End (__FUNCTION__); 
@@ -112,10 +112,10 @@ if ((Count () == MAX_SEGMENTS - 1) && (QueryMsg ("Adding more segments will exce
 	}
 
 current->Get (key);
-CSegment* segP = Segment (key.m_nSegment); 
+CSegment* pSegment = Segment (key.m_nSegment); 
 
 short	nCurSide = key.m_nSide; 
-if (segP->ChildId (nCurSide) >= 0) {
+if (pSegment->ChildId (nCurSide) >= 0) {
 	ErrorMsg ("Cannot add a new segment to a side\nwhich already has a segment attached."); 
 	return -1;
 	}
@@ -135,50 +135,50 @@ if (addMode < 0)
 
 short nSides [2] = {key.m_nSide, oppSideTable [key.m_nSide]};
 
-if ((addMode == MIRROR) && (segP->Side (nSides [0])->Shape () != segP->Side (nSides [1])->Shape ())) // mirror not possible!
+if ((addMode == MIRROR) && (pSegment->Side (nSides [0])->Shape () != pSegment->Side (nSides [1])->Shape ())) // mirror not possible!
 	addMode = EXTEND;
 
 short nNewSeg = Add (); 
-CSegment* newSegP = Segment (nNewSeg); 
+CSegment* pNewSeg = Segment (nNewSeg); 
 
 ushort newVerts [4]; 
 vertexManager.Add (newVerts, Side (key)->VertexCount ());
 
 short nVertices = ComputeVertices (key, newVerts, addMode); 
 
-CSide* orgSideP = segP->Side (nSides [0]);
-CSide* farSideP = newSegP->Side (nSides [0]);
-CSide* oppSideP = newSegP->Side (nSides [1]);
-short nOppVertices = oppSideP->VertexCount ();
+CSide* pOrgSide = pSegment->Side (nSides [0]);
+CSide* pFarSide = pNewSeg->Side (nSides [0]);
+CSide* pOppSide = pNewSeg->Side (nSides [1]);
+short nOppVertices = pOppSide->VertexCount ();
 
-newSegP->Setup ();
+pNewSeg->Setup ();
 
 if (nVertices == 3) { //create a wedge shaped segment when adding to a triangular segment side
-	newSegP->SetShape (SEGMENT_SHAPE_WEDGE);
+	pNewSeg->SetShape (SEGMENT_SHAPE_WEDGE);
 	short nSide = 0;
 	for (; nSide < 6; nSide++)
-		if ((nSide != nSides [0]) && (nSide != nSides [1]) && segP->Side (nSide)->Shape ())
+		if ((nSide != nSides [0]) && (nSide != nSides [1]) && pSegment->Side (nSide)->Shape ())
 			break;
-	CSide* sideP = newSegP->Side (nSide);
-	short nEdge = 0, i = sideP->m_vertexIdIndex [0], v1, v2 = newSegP->m_info.vertexIds [i];
+	CSide* pSide = pNewSeg->Side (nSide);
+	short nEdge = 0, i = pSide->m_vertexIdIndex [0], v1, v2 = pNewSeg->m_info.vertexIds [i];
 	for (++nEdge; nEdge <= 4; nEdge++) {
 		v1 = v2;
-		i = sideP->m_vertexIdIndex [nEdge % 4];
-		v2 = newSegP->m_info.vertexIds [i];
-		if (newSegP->HasEdge (nSides [0], v1, v2) || newSegP->HasEdge (nSides [1], v1, v2))
+		i = pSide->m_vertexIdIndex [nEdge % 4];
+		v2 = pNewSeg->m_info.vertexIds [i];
+		if (pNewSeg->HasEdge (nSides [0], v1, v2) || pNewSeg->HasEdge (nSides [1], v1, v2))
 			break;
 		}
 	--nEdge;
-	segmentManager.CollapseEdge (nNewSeg, nSide, nEdge % sideP->VertexCount (), false);
-	if (nEdge < sideP->VertexCount ())
+	segmentManager.CollapseEdge (nNewSeg, nSide, nEdge % pSide->VertexCount (), false);
+	if (nEdge < pSide->VertexCount ())
 		nEdge++;
-	segmentManager.CollapseEdge (nNewSeg, nSide, nEdge % sideP->VertexCount (), false);
+	segmentManager.CollapseEdge (nNewSeg, nSide, nEdge % pSide->VertexCount (), false);
 	}
 
 #ifdef _DEBUG
 for (i = 0; i < 8; i++)
-	if (newSegP->m_info.vertexIds [i] < MAX_VERTEX)
-		newSegP->m_info.vertexIds [i] = MAX_VERTEX;
+	if (pNewSeg->m_info.vertexIds [i] < MAX_VERTEX)
+		pNewSeg->m_info.vertexIds [i] = MAX_VERTEX;
 #endif
 
 // Definitions:
@@ -192,15 +192,15 @@ for (i = 0; i < 8; i++)
 // The following code assigns vertices to the new segment by looking at the edges of 
 // the segment connecting opp side and far side
 
-ubyte oppVertexIdIndex [4], * vertexIdIndex = farSideP->m_vertexIdIndex;
-newSegP->CreateOppVertexIndex (nSides [0], oppVertexIdIndex);
+ubyte oppVertexIdIndex [4], * vertexIdIndex = pFarSide->m_vertexIdIndex;
+pNewSeg->CreateOppVertexIndex (nSides [0], oppVertexIdIndex);
 
 #if 0
 
 for (short i = 0; i < nVertices; i++) {
 	// define vertex numbers for new side
-	ubyte h = farSideP->m_vertexIdIndex [i];
-	newSegP->m_info.vertexIds [h] = newVerts [i]; 
+	ubyte h = pFarSide->m_vertexIdIndex [i];
+	pNewSeg->m_info.vertexIds [h] = newVerts [i]; 
 
 	// look for an edge that connects opp and far side and that shares the point we just assigned a vertex to. 
 	// The other point of that edge is the corresponding point of origin side.
@@ -215,7 +215,7 @@ for (short i = 0; i < nVertices; i++) {
 			continue;
 		if ((s1 == nSides [0]) || (s1 == nSides [1]) || (s2 == nSides [0]) || (s2 == nSides [1]))
 			continue;
-		newSegP->m_info.vertexIds [v] = segP->m_info.vertexIds [orgSideP->m_vertexIdIndex [i]]; 
+		pNewSeg->m_info.vertexIds [v] = pSegment->m_info.vertexIds [pOrgSide->m_vertexIdIndex [i]]; 
 		break;
 		}
 	}
@@ -224,59 +224,59 @@ for (short i = 0; i < nVertices; i++) {
 
 for (int i = 0; i < nVertices; i++) {
 	// define vertex numbers for new side
-	newSegP->m_info.vertexIds [vertexIdIndex [i]] = newVerts [i]; 
-	newSegP->m_info.vertexIds [oppVertexIdIndex [i]] = segP->m_info.vertexIds [orgSideP->m_vertexIdIndex [i]]; 
+	pNewSeg->m_info.vertexIds [vertexIdIndex [i]] = newVerts [i]; 
+	pNewSeg->m_info.vertexIds [oppVertexIdIndex [i]] = pSegment->m_info.vertexIds [pOrgSide->m_vertexIdIndex [i]]; 
 	}
 
 #endif
 
 // define children and special child
-newSegP->m_info.childFlags = 1 << oppSideTable [nCurSide]; // only opposite side connects to current segment
+pNewSeg->m_info.childFlags = 1 << oppSideTable [nCurSide]; // only opposite side connects to current segment
 for (int i = 0; i < MAX_SIDES_PER_SEGMENT; i++) { // no remaining children
-	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? key.m_nSegment : -1);
-	newSegP->Side (i)->DetectShape ();
+	pNewSeg->SetChild (i, (pNewSeg->m_info.childFlags & (1 << i)) ? key.m_nSegment : -1);
+	pNewSeg->Side (i)->DetectShape ();
 	}
 
 // define textures
 for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	if (newSegP->ChildId (nSide) < 0) {
+	if (pNewSeg->ChildId (nSide) < 0) {
 		// if other segment does not have a child (therefore it has a texture)
-		if ((segP->ChildId (nSide) < 0) && (segP->m_info.function == SEGMENT_FUNC_NONE)) {
-			newSegP->m_sides [nSide].SetTextures (segP->m_sides [nSide].BaseTex (), segP->m_sides [nSide].OvlTex ());
+		if ((pSegment->ChildId (nSide) < 0) && (pSegment->m_info.function == SEGMENT_FUNC_NONE)) {
+			pNewSeg->m_sides [nSide].SetTextures (pSegment->m_sides [nSide].BaseTex (), pSegment->m_sides [nSide].OvlTex ());
 			for (i = 0; i < nVertices; i++) {
 				if (addMode != ORTHOGONAL)
-					memcpy (newSegP->m_sides [nSide].m_info.uvls, segP->m_sides [nSide].m_info.uvls, sizeof (newSegP->m_sides [nSide].m_info.uvls));
+					memcpy (pNewSeg->m_sides [nSide].m_info.uvls, pSegment->m_sides [nSide].m_info.uvls, sizeof (pNewSeg->m_sides [nSide].m_info.uvls));
 				else
-					newSegP->m_sides [nSide].m_info.uvls [i].l = segP->m_sides [nSide].m_info.uvls [i].l; 
+					pNewSeg->m_sides [nSide].m_info.uvls [i].l = pSegment->m_sides [nSide].m_info.uvls [i].l; 
 				}
 			} 
 		}
 	else {
-		newSegP->m_sides [nSide].ResetTextures ();
+		pNewSeg->m_sides [nSide].ResetTextures ();
 		}
 	}
 
 // define static light
-newSegP->m_info.staticLight = segP->m_info.staticLight; 
+pNewSeg->m_info.staticLight = pSegment->m_info.staticLight; 
 
 // delete variable light if it exists
 lightManager.DeleteVariableLight (CSideKey (key.m_nSegment, nCurSide)); 
 
 // update current segment
-segP->SetChild (nCurSide, nNewSeg); 
-orgSideP->SetTextures (0, 0);
-memset (orgSideP->m_info.uvls, 0, sizeof (orgSideP->m_info.uvls));
+pSegment->SetChild (nCurSide, nNewSeg); 
+pOrgSide->SetTextures (0, 0);
+memset (pOrgSide->m_info.uvls, 0, sizeof (pOrgSide->m_info.uvls));
  
 // link the new segment with any touching Segment ()
 #if 1
-CVertex *vNewSeg = vertexManager.Vertex (newSegP->m_info.vertexIds [0]);
+CVertex *vNewSeg = vertexManager.Vertex (pNewSeg->m_info.vertexIds [0]);
 int nSegments = Count ();
-segP = Segment (0); 
-for (int i = 0; i < nSegments; i++, segP++) {
+pSegment = Segment (0); 
+for (int i = 0; i < nSegments; i++, pSegment++) {
 	if (i != nNewSeg) {
 		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		CVertex *vSeg = vertexManager.Vertex (segP->m_info.vertexIds [0]);
+		CVertex *vSeg = vertexManager.Vertex (pSegment->m_info.vertexIds [0]);
 		if (fabs (vNewSeg->v.x - vSeg->v.x) < 160.0 &&
 			 fabs (vNewSeg->v.y - vSeg->v.y) < 160.0 &&
 			 fabs (vNewSeg->v.z - vSeg->v.z) < 160.0)
@@ -441,7 +441,7 @@ if (nProducer >= MAX_NUM_RECHARGERS) {
 	return 0;
 	}
 
-CSegment *segP = Segment (0);
+CSegment *pSegment = Segment (0);
 
 undoManager.Begin (__FUNCTION__, udSegments);
 if (nType == SEGMENT_FUNC_REPAIRCEN)
@@ -472,12 +472,12 @@ return nSegment;
 
 short CSegmentManager::ComputeVerticesOrtho (CSideKey key, ushort newVerts [4])
 {
-	CSegment*		segP = segmentManager.Segment (key); 
-	CSide*			sideP = segP->Side (key.m_nSide);
-	short				nVertices = sideP->VertexCount ();
+	CSegment*		pSegment = segmentManager.Segment (key); 
+	CSide*			pSide = pSegment->Side (key.m_nSide);
+	short				nVertices = pSide->VertexCount ();
 
 	CDoubleVector	A [4]; 
-	short				i, nPoint = sideP->Point (), points [4]; 
+	short				i, nPoint = pSide->Point (), points [4]; 
 
 for (i = 0; i < 4; i++)
 	points [i] = (nPoint + i) % 4;
@@ -492,7 +492,7 @@ CDoubleVector newCenter = center + vNormal;
 // new method: extend points 0 and 1 with vNormal, then move point 0 toward point 1.
 // point 0
 ushort i1, i2;
-segP->GetEdgeVertices (key.m_nSide, nPoint, i1, i2);
+pSegment->GetEdgeVertices (key.m_nSide, nPoint, i1, i2);
 CDoubleVector a = vNormal + *vertexManager.Vertex (i1); 
 // point 1
 CDoubleVector b = vNormal + *vertexManager.Vertex (i2); 
@@ -538,9 +538,9 @@ return nVertices;
 
 short CSegmentManager::ComputeVerticesExtend (CSideKey key, ushort newVerts [4])
 {
-	CSegment*		segP = segmentManager.Segment (key); 
-	CSide*			sideP = segP->Side (key.m_nSide);
-	short				nVertices = sideP->VertexCount ();
+	CSegment*		pSegment = segmentManager.Segment (key); 
+	CSide*			pSide = pSegment->Side (key.m_nSide);
+	short				nVertices = pSide->VertexCount ();
 
 CDoubleVector center = CalcSideCenter (key); 
 CDoubleVector oppCenter = CalcSideCenter (CSideKey (key.m_nSegment, oppSideTable [key.m_nSide])); 
@@ -550,7 +550,7 @@ vNormal *= Distance (center, oppCenter);
 // set the new vertices
 for (int i = 0; i < nVertices; i++) {
 	ushort nVertex = newVerts [i];
-	*vertexManager.Vertex (nVertex) = *segP->Vertex (sideP->m_vertexIdIndex [i]) + vNormal; 
+	*vertexManager.Vertex (nVertex) = *pSegment->Vertex (pSide->m_vertexIdIndex [i]) + vNormal; 
 	vertexManager.Vertex (nVertex)->Backup (); // do not create a new backup right after adding this vertex
 	}
 return nVertices;
@@ -564,19 +564,19 @@ short CSegmentManager::ComputeVerticesMirror (CSideKey key, ushort newVerts [4])
 	short				i; 
 	CDoubleVector	center, oppCenter, newCenter, vNormal; 
 
-	CSegment*		segP = segmentManager.Segment (key); 
-	CSide*			sideP = segP->Side (key.m_nSide);
-	CSide*			oppSideP = segmentManager.Side (CSideKey (key.m_nSegment, oppSideTable [key.m_nSide]));
-	short				nVertices = sideP->VertexCount ();
+	CSegment*		pSegment = segmentManager.Segment (key); 
+	CSide*			pSide = pSegment->Side (key.m_nSide);
+	CSide*			pOppSide = segmentManager.Side (CSideKey (key.m_nSegment, oppSideTable [key.m_nSide]));
+	short				nVertices = pSide->VertexCount ();
 	ubyte				oppVertexIdIndex [4];
 
-	segP->CreateOppVertexIndex (key.m_nSide, oppVertexIdIndex);
+	pSegment->CreateOppVertexIndex (key.m_nSide, oppVertexIdIndex);
 
 // copy side's four points into A
 short nSide = key.m_nSide;
 for (i = 0; i < nVertices; i++) {
-	A [i] = *segP->Vertex (sideP->m_vertexIdIndex [i]); 
-	A [i + nVertices] = *segP->Vertex (oppVertexIdIndex [i]); 
+	A [i] = *pSegment->Vertex (pSide->m_vertexIdIndex [i]); 
+	A [i + nVertices] = *pSegment->Vertex (oppVertexIdIndex [i]); 
 	}
 
 // subtract point 0 from all points in A to form B points
@@ -619,7 +619,7 @@ for (i = nVertices; i < 2 * nVertices; i++)
 	B [i].Set (C [i].v.x, C [i].v.y * cos (angle1) + C [i].v.z * sin (angle1), C [i].v.z * cos (angle1) - C [i].v.y * sin (angle1)); 
 
 // and translate back
-ushort nVertex = segP->m_info.vertexIds [sideP->m_vertexIdIndex [0]]; 
+ushort nVertex = pSegment->m_info.vertexIds [pSide->m_vertexIdIndex [0]]; 
 for (i = nVertices; i < 2 * nVertices; i++) 
 	A [i] = B [i] + *vertexManager.Vertex (nVertex); 
 
@@ -664,23 +664,23 @@ if (nTexture < 0)
 	return true;
 
 short nSegment = current->SegmentId ();
-CSegment *segP = Segment (nSegment);
+CSegment *pSegment = Segment (nSegment);
 
 if (!m_bCreating)
-	segP->Backup ();
+	pSegment->Backup ();
 double scale = textureManager.Scale (DLE.FileType (), nTexture);
 
 undoManager.Begin (__FUNCTION__, udSegments);
-segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
+pSegment->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
-CSide *sideP = segP->m_sides;
-for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-	if (segP->ChildId (nSide) == -1) {
+CSide *pSide = pSegment->m_sides;
+for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+	if (pSegment->ChildId (nSide) == -1) {
 		SetTextures (CSideKey (nSegment, nSide), nTexture, 0);
 		for (int i = 0; i < 4; i++) {
-			sideP->m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale);
-			sideP->m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale);
-			sideP->m_info.uvls [i].l = defaultUVLs [i].l;
+			pSide->m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale);
+			pSide->m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale);
+			pSide->m_info.uvls [i].l = defaultUVLs [i].l;
 			}
 		Segment (nSegment)->SetUV (nSide, 0, 0);
 		}
@@ -694,12 +694,12 @@ return true;
 bool CSegmentManager::Define (short nSegment, ubyte nFunction, short nTexture)
 {
 undoManager.Begin (__FUNCTION__, udSegments);
-CSegment *segP = (nSegment < 0) ? current->Segment () : Segment (nSegment);
+CSegment *pSegment = (nSegment < 0) ? current->Segment () : Segment (nSegment);
 if (!m_bCreating)
-	segP->Backup ();
-Undefine (Index (segP));
-segP->m_info.function = nFunction;
-segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
+	pSegment->Backup ();
+Undefine (Index (pSegment));
+pSegment->m_info.function = nFunction;
+pSegment->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture);
 undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
@@ -708,33 +708,33 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::RemoveProducer (CSegment* segP, CObjectProducer* producers, CMineItemInfo& info, int nFunction)
+void CSegmentManager::RemoveProducer (CSegment* pSegment, CObjectProducer* producers, CMineItemInfo& info, int nFunction)
 {
 if (info.count > 0) {
 	// fill in deleted matcen
-	int nDelProducer = segP->m_info.nProducer;
+	int nDelProducer = pSegment->m_info.nProducer;
 	if (nDelProducer >= 0) {
 		// copy last producer in list to deleted producer's position
 		undoManager.Begin (__FUNCTION__, udSegments | udProducers);
-		segP->m_info.nProducer = -1;
-		segP->m_info.value = -1;
+		pSegment->m_info.nProducer = -1;
+		pSegment->m_info.value = -1;
 		if (nDelProducer < --info.count) {
 			memcpy (&producers [nDelProducer], &producers [info.count], sizeof (producers [0]));
 			producers [nDelProducer].m_info.nProducer = nDelProducer;
 			// point owner of relocated producer to that producer's new position
 			for (CSegmentIterator si; si; si++) {
-				CSegment *segP = &(*si);
-				if ((segP->m_info.function == nFunction) && (segP->m_info.nProducer == info.count)) {
-					segP->Backup ();
-					segP->m_info.nProducer = nDelProducer;
+				CSegment *pSegment = &(*si);
+				if ((pSegment->m_info.function == nFunction) && (pSegment->m_info.nProducer == info.count)) {
+					pSegment->Backup ();
+					pSegment->m_info.nProducer = nDelProducer;
 					break;
 					}
 				}
 			}
 		// remove producer from all robot maker triggers targetting it
-		CSideKey key = (-Index (segP) - 1, 0); 
+		CSideKey key = (-Index (pSegment) - 1, 0); 
 		for (int nClass = 0; nClass < 2; nClass++) {
-			CTrigger* trigP = triggerManager.Trigger (0, nClass);
+			CTrigger* pTrigger = triggerManager.Trigger (0, nClass);
 			for (CTriggerIterator ti (nClass); ti; ti++) {
 				if (ti->Info ().type == TT_MATCEN)
 					ti->Delete (key);
@@ -743,50 +743,50 @@ if (info.count > 0) {
 		undoManager.End (__FUNCTION__);
 		}
 	}
-segP->m_info.nProducer = -1;
+pSegment->m_info.nProducer = -1;
 }
 
 // ----------------------------------------------------------------------------- 
 
 void CSegmentManager::Undefine (short nSegment)
 {
-	CSegment *segP = (nSegment < 0) ? current->Segment () : Segment (nSegment);
+	CSegment *pSegment = (nSegment < 0) ? current->Segment () : Segment (nSegment);
 
-segP->Backup ();
-nSegment = Index (segP);
-if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
-	RemoveProducer (segP, RobotMaker (0), m_producerInfo [0], SEGMENT_FUNC_ROBOTMAKER);
-else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 
-	RemoveProducer (segP, EquipMaker (0), m_producerInfo [1], SEGMENT_FUNC_EQUIPMAKER);
-else if (segP->m_info.function == SEGMENT_FUNC_PRODUCER) { //remove all fuel cell walls
+pSegment->Backup ();
+nSegment = Index (pSegment);
+if (pSegment->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
+	RemoveProducer (pSegment, RobotMaker (0), m_producerInfo [0], SEGMENT_FUNC_ROBOTMAKER);
+else if (pSegment->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 
+	RemoveProducer (pSegment, EquipMaker (0), m_producerInfo [1], SEGMENT_FUNC_EQUIPMAKER);
+else if (pSegment->m_info.function == SEGMENT_FUNC_PRODUCER) { //remove all fuel cell walls
 	undoManager.Begin (__FUNCTION__, udSegments);
-	CSide *sideP = segP->m_sides;
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (segP->ChildId (nSide) < 0)	// assume no wall if no child segment at the current side
+	CSide *pSide = pSegment->m_sides;
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+		if (pSegment->ChildId (nSide) < 0)	// assume no wall if no child segment at the current side
 			continue;
-		CSegment* childSegP = Segment (segP->ChildId (nSide));
-		if (childSegP->m_info.function == SEGMENT_FUNC_PRODUCER)	// don't delete if child segment is fuel center
+		CSegment* pChildSeg = Segment (pSegment->ChildId (nSide));
+		if (pChildSeg->m_info.function == SEGMENT_FUNC_PRODUCER)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
 		CSideKey key (nSegment, nSide);
-		CWall *wallP = Wall (key);
-		if ((wallP != null) && (wallP->Type () == WALL_ILLUSION) && (sideP->BaseTex () == (DLE.IsD1File () ? 322 : 333)))
-			wallManager.Delete (sideP->m_info.nWall);
+		CWall *pWall = Wall (key);
+		if ((pWall != null) && (pWall->Type () == WALL_ILLUSION) && (pSide->BaseTex () == (DLE.IsD1File () ? 322 : 333)))
+			wallManager.Delete (pSide->m_info.nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		CSideKey back;
 		if (BackSide (key, back)) {
-			wallP = Wall (back);
-			if ((wallP != null) && (wallP->Type () == WALL_ILLUSION)) {
-				CSide* oppSideP = Side (back);
-				if (oppSideP->BaseTex () == (DLE.IsD1File () ? 322 : 333))
-					wallManager.Delete (oppSideP->m_info.nWall);
+			pWall = Wall (back);
+			if ((pWall != null) && (pWall->Type () == WALL_ILLUSION)) {
+				CSide* pOppSide = Side (back);
+				if (pOppSide->BaseTex () == (DLE.IsD1File () ? 322 : 333))
+					wallManager.Delete (pOppSide->m_info.nWall);
 				}
 			}
 		}
 	undoManager.End (__FUNCTION__);
 	}
-segP->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
-segP->m_info.function = SEGMENT_FUNC_NONE;
+pSegment->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
+pSegment->m_info.function = SEGMENT_FUNC_NONE;
 }
 
 // ----------------------------------------------------------------------------- 
@@ -803,10 +803,10 @@ if (tunnelMaker.Active ())
 	return;
 
 undoManager.Begin (__FUNCTION__, udSegments);
-CSegment* delSegP = Segment (nDelSeg); 
+CSegment* pDelSeg = Segment (nDelSeg); 
 current->Fix (nDelSeg);
 other->Fix (nDelSeg);
-delSegP->Backup (opDelete);
+pDelSeg->Backup (opDelete);
 Undefine (nDelSeg);
 
 // delete any variable lights that use this segment
@@ -821,7 +821,7 @@ DeleteWalls (nDelSeg);
 
 // delete any walls from adjacent segments' sides connecting to this segment
 for (short i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if (delSegP->ChildId (i) >= 0) {
+	if (pDelSeg->ChildId (i) >= 0) {
 		CSideKey back, key (nDelSeg, i);
 		if (BackSide (key, back))
 			wallManager.Delete (Side (back)->m_info.nWall); 
@@ -831,7 +831,7 @@ for (short i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	// delete any Objects () within segment
 objectManager.DeleteSegmentObjects (nDelSeg);
 
-// delete any control segP with this segment
+// delete any control pSegment with this segment
 for (short i = triggerManager.ReactorTriggerCount (); i > 0; )
 	triggerManager.ReactorTrigger (--i)->Delete (CSideKey (-nDelSeg - 1));
 
@@ -841,23 +841,23 @@ for (short i = triggerManager.ReactorTriggerCount (); i > 0; )
 		objectManager.SecretSegment () = 0; 
 
 	// update segment flags
-	delSegP->UnTag (); 
+	pDelSeg->UnTag (); 
 
 	// unlink any children with this segment number
 	int nSegments = segmentManager.Count ();
 	for (int si = 0; si < nSegments; si++) {
-		CSegment* segP = segmentManager.Segment (si);
+		CSegment* pSegment = segmentManager.Segment (si);
 		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
-			if (segP->ChildId (nChild) == nDelSeg) {
+			if (pSegment->ChildId (nChild) == nDelSeg) {
 				// remove nChild number and update nChild bitmask
-				segP->SetChild (nChild, -1); 
+				pSegment->SetChild (nChild, -1); 
 
 				// define textures, (u, v) and light
-				CSide *sideP = delSegP->m_sides + nChild;
-				SetTextures (CSideKey (si, nChild), sideP->BaseTex (), sideP->OvlTex ()); 
-				segP->SetUV (nChild, 0, 0); 
+				CSide *pSide = pDelSeg->m_sides + nChild;
+				SetTextures (CSideKey (si, nChild), pSide->BaseTex (), pSide->OvlTex ()); 
+				pSegment->SetUV (nChild, 0, 0); 
 				for (short j = 0; j < 4; j++) {
-					segP->Uvls (nChild) [j].l = delSegP->Uvls (nChild) [j].l; 
+					pSegment->Uvls (nChild) [j].l = pDelSeg->Uvls (nChild) [j].l; 
 				}
 			}
 		}

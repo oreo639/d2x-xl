@@ -248,11 +248,11 @@ fp->Write (m_info.always_0xabcd);
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CRobotInfo::Copy (CGameItem* destP)
+CGameItem* CRobotInfo::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CRobotInfo*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CRobotInfo*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------

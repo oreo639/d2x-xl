@@ -50,7 +50,7 @@ if (!textureManager.Available ())
 	return 1;
 
 	short nTextures [2], mode;
-	const CTexture* texP [2];
+	const CTexture* pTexture [2];
 
 mode = (nOvlTex >> ALIGNMENT_SHIFT) & 3;
 nTextures [0] = nBaseTex;
@@ -58,17 +58,17 @@ nTextures [1] = nOvlTex & TEXTURE_MASK;
 for (int i = 0; i < 2; i++) {
 	if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
 		nTextures [i] = 0;
-	texP [i] = textureManager.Textures (nTextures [i]);
+	pTexture [i] = textureManager.Textures (nTextures [i]);
 	}
 if (nTextures [1] == 0)
-	texP [1] = null;
+	pTexture [1] = null;
 
-return BlendTextures (texP [0], texP [1], mode, x0, y0);
+return BlendTextures (pTexture [0], pTexture [1], mode, x0, y0);
 }
 
 //------------------------------------------------------------------------
 
-int CTexture::BlendTextures (const CTexture* baseTexP, const CTexture* ovlTexP, short nOvlAlignment, int x0, int y0)
+int CTexture::BlendTextures (const CTexture* pBaseTex, const CTexture* pOvlTex, short nOvlAlignment, int x0, int y0)
 {
 if (!textureManager.Available ())
 	return 1;
@@ -87,16 +87,16 @@ if (!textureManager.Available ())
 	int			fileType = DLE.FileType ();
 
 // Define bmBufP based on texture numbers and rotation
-m_info.width = baseTexP->Width ();
-m_info.height = baseTexP->FrameHeight ();
+m_info.width = pBaseTex->Width ();
+m_info.height = pBaseTex->FrameHeight ();
 m_bValid = true;
 
-const CBGRA* srcDataP = baseTexP->Buffer (offs = baseTexP->FrameOffset ());
+const CBGRA* srcDataP = pBaseTex->Buffer (offs = pBaseTex->FrameOffset ());
 
 #ifdef _DEBUG
-if (baseTexP && (baseTexP->Id () == nDbgTexture))
+if (pBaseTex && (pBaseTex->Id () == nDbgTexture))
 	nDbgTexture = nDbgTexture;
-if (ovlTexP && (ovlTexP->Id () == nDbgTexture))
+if (pOvlTex && (pOvlTex->Id () == nDbgTexture))
 	nDbgTexture = nDbgTexture;
 #endif
 
@@ -107,10 +107,10 @@ if (srcDataP != null) {
 		}
 	else {
 		// otherwise, copy bit by bit
-		w = baseTexP->Width ();
+		w = pBaseTex->Width ();
 #if 0
 		int l1 = y0 * w + x0;
-		int l2 = baseTexP->Size () - l1;
+		int l2 = pBaseTex->Size () - l1;
 		memcpy (bmBufP, srcDataP + l1, l2 * sizeof (CBGRA));
 		memcpy (bmBufP + l2, srcDataP, l1 * sizeof (CBGRA));
 #else
@@ -139,29 +139,29 @@ if (srcDataP != null) {
 
 // Overlay texture 2 if present
 
-if (ovlTexP == null)
+if (pOvlTex == null)
 	return 0;
-srcDataP = ovlTexP->Buffer (ovlTexP->FrameOffset ());
+srcDataP = pOvlTex->Buffer (pOvlTex->FrameOffset ());
 if (srcDataP == null)
 	return 0;
 
-if (baseTexP->Width () == ovlTexP->Width ()) {
+if (pBaseTex->Width () == pOvlTex->Width ()) {
 	scale.c = scale.d = 1;
 	fScale = 1.0;
 	}
-else if (baseTexP->Width () < ovlTexP->Width ()) {
-	scale.c = ovlTexP->Width () / baseTexP->Width ();
+else if (pBaseTex->Width () < pOvlTex->Width ()) {
+	scale.c = pOvlTex->Width () / pBaseTex->Width ();
 	scale.d = 1;
-	fScale = float (ovlTexP->Width ()) / float (baseTexP->Width ());
+	fScale = float (pOvlTex->Width ()) / float (pBaseTex->Width ());
 	}
 else {
-	scale.d = baseTexP->Width () / ovlTexP->Width ();
+	scale.d = pBaseTex->Width () / pOvlTex->Width ();
 	scale.c = 1;
-	fScale = float (ovlTexP->Width ()) / float (baseTexP->Width ());
+	fScale = float (pOvlTex->Width ()) / float (pBaseTex->Width ());
 	}
 offs = 0;
-w = ovlTexP->Width () / scale.c * scale.d;
-h = ovlTexP->FrameHeight ();
+w = pOvlTex->Width () / scale.c * scale.d;
+h = pOvlTex->FrameHeight ();
 
 if (!(x0 || y0)) {
 	if (nOvlAlignment == 0) {
@@ -299,35 +299,35 @@ if (color != null) {
 
 // -------------------------------------------------------------------------- 
 
-bool PaintTexture (CWnd *wndP, int bkColor, int texture1, int texture2, int xOffset, int yOffset)
+bool PaintTexture (CWnd *pWindow, int bkColor, int texture1, int texture2, int xOffset, int yOffset)
 {
 #ifdef _DEBUG
 if (texture1 == nDbgTexture)
 	nDbgTexture = nDbgTexture;
 #endif
 
-	CTexture *baseTexP = (texture1 >= 0) ? textureManager.Textures (texture1) : null;
-	if (baseTexP && baseTexP->Format ())
-		baseTexP->SetCurrentFrame (0);
+	CTexture *pBaseTex = (texture1 >= 0) ? textureManager.Textures (texture1) : null;
+	if (pBaseTex && pBaseTex->Format ())
+		pBaseTex->SetCurrentFrame (0);
 	int maskedTexture2 = (texture2 < 0) ? texture2 : texture2 & TEXTURE_MASK;
-	CTexture *ovlTexP = (maskedTexture2 != 0) ? textureManager.Textures (maskedTexture2) : null;
-	if (ovlTexP && ovlTexP->Format ())
-		ovlTexP->SetCurrentFrame (0);
+	CTexture *pOvlTex = (maskedTexture2 != 0) ? textureManager.Textures (maskedTexture2) : null;
+	if (pOvlTex && pOvlTex->Format ())
+		pOvlTex->SetCurrentFrame (0);
 	short nOvlAlignment = (maskedTexture2 > 0) ? (texture2 & ALIGNMENT_MASK) >> ALIGNMENT_SHIFT : 0;
 	
-return PaintTexture (wndP, bkColor, baseTexP, ovlTexP, nOvlAlignment, xOffset, yOffset);
+return PaintTexture (pWindow, bkColor, pBaseTex, pOvlTex, nOvlAlignment, xOffset, yOffset);
 }
 
 // --------------------------------------------------------------------------
 
-bool PaintTexture (CWnd *wndP, int bkColor, const CTexture *baseTexP, const CTexture *ovlTexP, short nOvlAlignment, int xOffset, int yOffset)
+bool PaintTexture (CWnd *pWindow, int bkColor, const CTexture *pBaseTex, const CTexture *pOvlTex, short nOvlAlignment, int xOffset, int yOffset)
 {
-if (!wndP->m_hWnd)
+if (!pWindow->m_hWnd)
 	return false;
 
 	static int nOffset [2] = {0, 0};
 
-	CDC			*pDC = wndP->GetDC ();
+	CDC			*pDC = pWindow->GetDC ();
 
 if (!pDC)
 	return false;
@@ -341,9 +341,9 @@ if (!pDC)
 	char*				path = bDescent1 ? descentFolder [0] : descentFolder [1];
 
 CRect	rc;
-wndP->GetClientRect (rc);
+pWindow->GetClientRect (rc);
 
-if (baseTexP == null)
+if (pBaseTex == null)
 	bShowTexture = false;
 
 if (bShowTexture) {
@@ -360,7 +360,7 @@ if (bShowTexture) {
 		}
 	if (nOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
 		CTexture tex (textureManager.SharedBuffer ());
-		if (tex.BlendTextures (baseTexP, ovlTexP, nOvlAlignment, xOffset, yOffset))
+		if (tex.BlendTextures (pBaseTex, pOvlTex, nOvlAlignment, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (BlendTextures failed)");
 		//CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 		//pDC->RealizePalette ();
@@ -448,9 +448,9 @@ else if (bkColor < 0) {
 	}
 else if (bkColor >= 0)
 	pDC->FillSolidRect (&rc, (COLORREF) bkColor);
-wndP->ReleaseDC (pDC);
-wndP->InvalidateRect (null, TRUE);
-wndP->UpdateWindow ();
+pWindow->ReleaseDC (pDC);
+pWindow->InvalidateRect (null, TRUE);
+pWindow->UpdateWindow ();
 return bShowTexture;
 }
 
@@ -570,22 +570,22 @@ void CTexture::LoadFromResource (int nId)
 	CResource res;
 
 Clear ();
-ubyte* dataP = res.Load (nId);
-if (!dataP)
+ubyte* pData = res.Load (nId);
+if (!pData)
 	return;
-tTgaHeader* h = (tTgaHeader*) dataP;
+tTgaHeader* h = (tTgaHeader*) pData;
 int nSize = int (h->width) * int (h->height);
 if (res.Size () < sizeof (tTgaHeader) + nSize * sizeof (CBGRA))
 	return;
 if (!Allocate (nSize))
 	return;
-memcpy (m_data, dataP + sizeof (tTgaHeader), nSize * sizeof (m_data [0]));
+memcpy (m_data, pData + sizeof (tTgaHeader), nSize * sizeof (m_data [0]));
 m_info.width = h->width;
 m_info.height = h->height;
 m_info.format = TGA;
 #ifdef _DEBUG
-for (dataP += sizeof (tTgaHeader), nSize *= 4; nSize; nSize--, dataP++)
-	if (*dataP)
+for (pData += sizeof (tTgaHeader), nSize *= 4; nSize; nSize--, pData++)
+	if (*pData)
 		break;
 #endif
 GenerateRenderBuffer ();
@@ -644,7 +644,7 @@ if (m_info.format == TGA) {
 			m_info.bTransparent = true;
 		}
 #endif
-	//texP->m_info.bValid = TGA2Bitmap (texP->m_data, texP->m_data, (int) pigTexInfo.width, (int) pigTexInfo.height);
+	//pTexture->m_info.bValid = TGA2Bitmap (pTexture->m_data, pTexture->m_data, (int) pigTexInfo.width, (int) pigTexInfo.height);
 	}
 else if (info.flags & BM_FLAG_RLE) { // RLE packed
 	int nSize = fp.ReadInt32 ();
@@ -720,11 +720,11 @@ if (m_info.bCustom)
 if (nIndex == nDbgTexture)
 	nDbgTexture = nDbgTexture;
 #endif
-CPigTexture* infoP = textureManager.Info (nVersion, nIndex);
-if (!infoP)
+CPigTexture* pInfo = textureManager.Info (nVersion, nIndex);
+if (!pInfo)
 	return 0;
 
-int nSize = infoP->width * infoP->height;
+int nSize = pInfo->width * pInfo->height;
 if (m_data && (m_info.bufSize == nSize))
 	return 0; // already loaded
 m_info.nIndex = nIndex;
@@ -732,8 +732,8 @@ m_info.nTexture = textureManager.TexIdFromIndex (nIndex, nVersion);
 m_info.format = BMP;
 if (!Allocate (nSize)) 
 	return 1;
-fp.Seek (textureManager.TexDataOffset (nVersion) + infoP->offset, SEEK_SET);
-Load (fp, *infoP);
+fp.Seek (textureManager.TexDataOffset (nVersion) + pInfo->offset, SEEK_SET);
+Load (fp, *pInfo);
 return 0;
 }
 
@@ -1225,7 +1225,7 @@ return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 int CTexture::Shrink (int xFactor, int yFactor)
 {
 	int		xSrc, ySrc, xMax, yMax, xDest, yDest, x, y, w, h, bSuperTransp;
-	CBGRA		* dataP, * srcP, * destP;
+	CBGRA		* pData, * pSrc, * pDest;
 	CBGRA		superTranspKey;
 	double	cSum [4], nFactor2, nSuperTransp;
 
@@ -1242,40 +1242,40 @@ h = Height ();
 xMax = w / xFactor;
 yMax = h / yFactor;
 nFactor2 = xFactor * yFactor;
-if (!(dataP = new CBGRA [xMax * yMax]))
+if (!(pData = new CBGRA [xMax * yMax]))
 	return 0;
-destP = dataP;
+pDest = pData;
 
 for (yDest = 0; yDest < yMax; yDest++) {
-	for (xDest = 0; xDest < xMax; xDest++, destP++) {
+	for (xDest = 0; xDest < xMax; xDest++, pDest++) {
 		memset (&cSum, 0, sizeof (cSum));
 		ySrc = yDest * yFactor;
 		nSuperTransp = 0;
 		for (y = yFactor; y; ySrc++, y--) {
 			xSrc = xDest * xFactor;
-			srcP = m_data + (ySrc * w + xSrc);
-			for (x = xFactor; x; xSrc++, x--, srcP++) {
-				bSuperTransp = *srcP == superTranspKey;
+			pSrc = m_data + (ySrc * w + xSrc);
+			for (x = xFactor; x; xSrc++, x--, pSrc++) {
+				bSuperTransp = *pSrc == superTranspKey;
 				if (bSuperTransp)
 					nSuperTransp++;
 				else {
-					cSum [0] += srcP->r;
-					cSum [1] += srcP->g;
-					cSum [2] += srcP->b;
+					cSum [0] += pSrc->r;
+					cSum [1] += pSrc->g;
+					cSum [2] += pSrc->b;
 					}
 				}
 			}
 		if (nSuperTransp >= nFactor2 / 2)
-			*destP = superTranspKey;
+			*pDest = superTranspKey;
 		else {
-			destP->r = (ubyte) (cSum [0] / (nFactor2 - nSuperTransp) + 0.5);
-			destP->g = (ubyte) (cSum [1] / (nFactor2 - nSuperTransp) + 0.5);
-			destP->b = (ubyte) (cSum [2] / (nFactor2 - nSuperTransp) + 0.5);
+			pDest->r = (ubyte) (cSum [0] / (nFactor2 - nSuperTransp) + 0.5);
+			pDest->g = (ubyte) (cSum [1] / (nFactor2 - nSuperTransp) + 0.5);
+			pDest->b = (ubyte) (cSum [2] / (nFactor2 - nSuperTransp) + 0.5);
 			}
 		}
 	}
 Release ();
-m_data = dataP;
+m_data = pData;
 m_info.width = xMax;
 m_info.height = yMax;
 m_info.bufSize = xMax * yMax;
@@ -1290,7 +1290,7 @@ return 1;
 
 ubyte* CTexture::ToBitmap (void) const
 {
-	const CBGRA* colorP = Buffer ();
+	const CBGRA* pColor = Buffer ();
 	CBGR* palette = paletteManager.Current ();
 	int h = Size ();
 
@@ -1403,7 +1403,7 @@ y = pt0.y;
 int xStep = 0, yStep = 0;
 int dd = (dx >= dy) ? dx: dy;
 for (i = dd + 1; i; i--) {
-	*Buffer (y * texP->m_info.width + x) = color;
+	*Buffer (y * pTexture->m_info.width + x) = color;
 	yStep += dy;
 	if (yStep >= dx) {
 		y += yInc;
@@ -1482,15 +1482,15 @@ rgbaColorf& CTexture::GetAverageColor (rgbaColorf& color)
 if (Flat ())
 	color = m_info.averageColor;
 else {
-	CBGRA* bufP = Buffer ();
+	CBGRA* pBuffer = Buffer ();
 	color.r = color.g = color.b = color.a = 0.0f;
-	if (bufP) {
+	if (pBuffer) {
 		int bufSize = Size ();
-		for (int i = bufSize; i; i--, bufP++) {
-			color.r += bufP->r;
-			color.g += bufP->g;
-			color.b += bufP->b;
-			color.a += bufP->a;
+		for (int i = bufSize; i; i--, pBuffer++) {
+			color.r += pBuffer->r;
+			color.g += pBuffer->g;
+			color.b += pBuffer->b;
+			color.a += pBuffer->a;
 			}
 		color.r /= float (bufSize);
 		color.g /= float (bufSize);

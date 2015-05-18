@@ -36,12 +36,12 @@ void CWayPointTool::DoDataExchange (CDataExchange *pDX)
 {
 if (!HaveData (pDX)) 
 	return;
-CGameObject *objP = GetEffect (null, false);
-EnableControls (objP != null);
-if (objP) {
-	objP->cType.wayPointInfo.nId = DDX_Int (pDX, IDC_WAYPOINT_ID, objP->cType.wayPointInfo.nId);
-	objP->cType.wayPointInfo.nSuccessor = DDX_Int (pDX, IDC_WAYPOINT_SUCC, objP->cType.wayPointInfo.nSuccessor);
-	objP->cType.wayPointInfo.nSpeed = DDX_Int (pDX, IDC_WAYPOINT_SPEED, objP->cType.wayPointInfo.nSpeed);
+CGameObject *pObject = GetEffect (null, false);
+EnableControls (pObject != null);
+if (pObject) {
+	pObject->cType.wayPointInfo.nId = DDX_Int (pDX, IDC_WAYPOINT_ID, pObject->cType.wayPointInfo.nId);
+	pObject->cType.wayPointInfo.nSuccessor = DDX_Int (pDX, IDC_WAYPOINT_SUCC, pObject->cType.wayPointInfo.nSuccessor);
+	pObject->cType.wayPointInfo.nSpeed = DDX_Int (pDX, IDC_WAYPOINT_SPEED, pObject->cType.wayPointInfo.nSpeed);
 	}
 }
 
@@ -60,15 +60,15 @@ void CWayPointTool::Add (void)
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = current->Object ();
-objP->Type () = OBJ_EFFECT;
-objP->Id () = WAYPOINT_ID;
-objP->m_info.movementType = MT_NONE;
-objP->m_info.controlType = CT_WAYPOINT;
-objP->m_info.renderType = RT_NONE;
-objP->cType.wayPointInfo.nId = 0;
-objP->cType.wayPointInfo.nSuccessor = 0;
-objP->cType.wayPointInfo.nSpeed = 20;
+CGameObject *pObject = current->Object ();
+pObject->Type () = OBJ_EFFECT;
+pObject->Id () = WAYPOINT_ID;
+pObject->m_info.movementType = MT_NONE;
+pObject->m_info.controlType = CT_WAYPOINT;
+pObject->m_info.renderType = RT_NONE;
+pObject->cType.wayPointInfo.nId = 0;
+pObject->cType.wayPointInfo.nSuccessor = 0;
+pObject->cType.wayPointInfo.nSpeed = 20;
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -77,19 +77,19 @@ DLE.MineView ()->Refresh ();
 
 void CWayPointTool::Copy (void)
 {
-CGameObject *objP = GetEffect ();
-if (objP) {
-	m_wayPoint = objP->cType.wayPointInfo;
+CGameObject *pObject = GetEffect ();
+if (pObject) {
+	m_wayPoint = pObject->cType.wayPointInfo;
 	m_bValid = 1;
 	}
 }
 
 //------------------------------------------------------------------------
 
-void CWayPointTool::Paste (CGameObject* objP, bool bRefresh)
+void CWayPointTool::Paste (CGameObject* pObject, bool bRefresh)
 {
-if (Valid () && (objP = GetEffect (objP))) {
-	objP->cType.wayPointInfo = m_wayPoint;
+if (Valid () && (pObject = GetEffect (pObject))) {
+	pObject->cType.wayPointInfo = m_wayPoint;
 	if (bRefresh)
 		Refresh ();
 	}

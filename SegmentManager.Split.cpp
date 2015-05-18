@@ -13,29 +13,29 @@
 
 void CSegmentManager::UnlinkChild (short nParentSeg, short nSide) 
 {
-  CSegment *parentSegP = Segment (nParentSeg); 
+  CSegment *pParentSeg = Segment (nParentSeg); 
 
 // loop on each side of the parent
-int nChildSeg = parentSegP->ChildId (nSide); 
+int nChildSeg = pParentSeg->ChildId (nSide); 
 // does this side have a child?
 if (nChildSeg < 0 || nChildSeg >= Count ())
 	return;
-CSegment *childSegP = Segment (nChildSeg); 
+CSegment *pChildSeg = Segment (nChildSeg); 
 // yes, see if child has a side which points to the parent
 int nChildSide;
 for (nChildSide = 0; nChildSide < 6; nChildSide++)
-	if (childSegP->ChildId (nChildSide) == nParentSeg) 
+	if (pChildSeg->ChildId (nChildSide) == nParentSeg) 
 		break; 
 // if we found the matching side
 if (nChildSide < 6) {
 // define vert numbers for comparison
-	ushort* vertexIds = parentSegP->m_info.vertexIds;
-	CSide* sideP = parentSegP->Side (nSide), * childSideP = childSegP->Side (nChildSide);
-	int nVertices = sideP->VertexCount (), nMatch = 0;
+	ushort* vertexIds = pParentSeg->m_info.vertexIds;
+	CSide* pSide = pParentSeg->Side (nSide), * pChildSide = pChildSeg->Side (nChildSide);
+	int nVertices = pSide->VertexCount (), nMatch = 0;
 	for (int i = 0; i < nVertices; i++) {
-		ushort v = childSegP->VertexId (nChildSide, i); 
+		ushort v = pChildSeg->VertexId (nChildSide, i); 
 		for (int j = 0; j < nVertices; j++) {
-			if (vertexIds [sideP->VertexIdIndex (j)] == v) {
+			if (vertexIds [pSide->VertexIdIndex (j)] == v) {
 				++nMatch;
 				break;
 				}
@@ -57,21 +57,21 @@ else {
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::IsPointOfSide (CSegment *segP, int nSide, int nPoint)
+bool CSegmentManager::IsPointOfSide (CSegment *pSegment, int nSide, int nPoint)
 {
-CSide* sideP = segP->Side (nSide);
-for (int i = 0, j = sideP->VertexCount (); i < j; i++)
-	if (sideP->m_vertexIdIndex [i] == nPoint)
+CSide* pSide = pSegment->Side (nSide);
+for (int i = 0, j = pSide->VertexCount (); i < j; i++)
+	if (pSide->m_vertexIdIndex [i] == nPoint)
 		return true;
 return false;
 }
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::IsLineOfSide (CSegment *segP, int nSide, int nLine)
+bool CSegmentManager::IsLineOfSide (CSegment *pSegment, int nSide, int nLine)
 {
 for (int i = 0; i < 2; i++)
-	if (!IsPointOfSide (segP, nSide, edgeVertexTable [nLine][i]))
+	if (!IsPointOfSide (pSegment, nSide, edgeVertexTable [nLine][i]))
 		return false;
 return true;
 }
@@ -99,17 +99,17 @@ if (vertexManager.Count () > (MAX_VERTICES - 1)) {
 	return -1; 
 	}
 
-CSegment* segP = Segment (key.m_nSegment); 
+CSegment* pSegment = Segment (key.m_nSegment); 
 if (nVertexId < 0)
 	nVertexId = current->VertexId (); 
 
 // check to see if current point is shared by any other cubes
 bool found = false; 
-segP = Segment (0);
-for (nSegment = 0; (nSegment < Count ()) && !found; nSegment++, segP++)
+pSegment = Segment (0);
+for (nSegment = 0; (nSegment < Count ()) && !found; nSegment++, pSegment++)
 	if (nSegment != key.m_nSegment)
 		for (nVertex = 0; nVertex < 8; nVertex++)
-			if (segP->m_info.vertexIds [nVertex] == nVertexId) {
+			if (pSegment->m_info.vertexIds [nVertex] == nVertexId) {
 				found = true; 
 				break; 
 				}
@@ -125,14 +125,14 @@ if (bVerbose && (QueryMsg ("Are you sure you want to unjoin this point?") != IDY
 undoManager.Begin (__FUNCTION__, udSegments | udVertices);
 memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (nVertexId), sizeof (*vertexManager.Vertex (0)));
 // replace existing point with new point
-segP = Segment (key.m_nSegment); 
-int nPoint = segP->UpdateVertexId (nVertexId, vertexManager.Count ()); 
-segP->UnTag (); 
+pSegment = Segment (key.m_nSegment); 
+int nPoint = pSegment->UpdateVertexId (nVertexId, vertexManager.Count ()); 
+pSegment->UnTag (); 
 
 // update total number of vertices
 for (short nSide = 0; nSide < 6; nSide++) {
 	CSideKey back;
-	if (IsPointOfSide (segP, nSide, nPoint) && BackSide (CSideKey (key.m_nSegment, nSide), back)) {
+	if (IsPointOfSide (pSegment, nSide, nPoint) && BackSide (CSideKey (key.m_nSegment, nSide), back)) {
 		UnlinkChild (back.m_nSegment, back.m_nSide);
 		UnlinkChild (key.m_nSegment, nSide); 
 		}
@@ -168,15 +168,15 @@ if (vertexManager.Count () > (MAX_VERTICES - 2)) {
 if (nLine < 0)
 	nLine = current->Edge ();
 
-	CSegment*	segP = current->Segment (); 
-	CSide*		sideP = current->Side ();
-	ubyte			vertexIdIndex [2] = {sideP->VertexIdIndex (nLine), sideP->VertexIdIndex (nLine + 1)};
+	CSegment*	pSegment = current->Segment (); 
+	CSide*		pSide = current->Side ();
+	ubyte			vertexIdIndex [2] = {pSide->VertexIdIndex (nLine), pSide->VertexIdIndex (nLine + 1)};
 	ushort		nEdgeVerts [2]; 
 	bool			bShared [2]; 
 	int			i;
 
 for (i = 0; i < 2; i++) {
-	nEdgeVerts [i] = segP->m_info.vertexIds [vertexIdIndex [i]];
+	nEdgeVerts [i] = pSegment->m_info.vertexIds [vertexIdIndex [i]];
 	bShared [i] = VertexInUse (nEdgeVerts [i]); 
 	}
 if (!(bShared [0] && bShared [1])) {
@@ -194,14 +194,14 @@ for (i = 0; i < 2; i++)
 	if (bShared [i]) {
 		memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (nEdgeVerts [i]), sizeof (*vertexManager.Vertex (0)));
 		// replace existing point with new point
-		segP->m_info.vertexIds [vertexIdIndex [i]] = vertexManager.Count (); 
-		segP->UnTag (); 
+		pSegment->m_info.vertexIds [vertexIdIndex [i]] = vertexManager.Count (); 
+		pSegment->UnTag (); 
 		vertexManager.Status (vertexManager.Count ()++) = 0; 
 		}
 // this code will unlink all adjacement segments that share this edge, too
 for (short nSide = 0; nSide < 6; nSide++) {
 	CSideKey back, key (current->SegmentId (), nSide);
-	if (segP->HasEdge (nSide, nEdgeVerts [0], nEdgeVerts [1]) && BackSide (key, back)) {
+	if (pSegment->HasEdge (nSide, nEdgeVerts [0], nEdgeVerts [1]) && BackSide (key, back)) {
 		UnlinkChild (back.m_nSegment, back.m_nSide);
 		UnlinkChild (current->SegmentId (), nSide); 
 		}
@@ -230,9 +230,9 @@ bool CSegmentManager::SeparateSegments (int bSolidify, int nSide, bool bVerbose)
 if (tunnelMaker.Active ())
 	return false; 
 
-	CSegment* segP = current->Segment (); 
+	CSegment* pSegment = current->Segment (); 
 
-int nChildSeg = segP->ChildId (nSide); 
+int nChildSeg = pSegment->ChildId (nSide); 
 if (nChildSeg == -1) {
 	ErrorMsg ("The current side is not connected to another segment"); 
 	return false; 
@@ -240,15 +240,15 @@ if (nChildSeg == -1) {
 if (nSide < 0)
 	nSide = current->SideId ();
 
-	CSide*	sideP = segP->Side (nSide);
-	int		nVertices = sideP->VertexCount ();
+	CSide*	pSide = pSegment->Side (nSide);
+	int		nVertices = pSide->VertexCount ();
 	ushort	nFaceVerts [4];
 	bool		bShared [4];
 	int		i, nShared = 0;
 
 // check to see if current points are shared by any other cubes
 for (i = 0; i < nVertices; i++) {
-	nFaceVerts [i] = segP->m_info.vertexIds [sideP->VertexIdIndex (i)]; 
+	nFaceVerts [i] = pSegment->m_info.vertexIds [pSide->VertexIdIndex (i)]; 
 	if ((bShared [i] = VertexInUse (nFaceVerts [i])))
 		++nShared;
 	}
@@ -267,7 +267,7 @@ if (bVerbose && (QueryMsg ("Are you sure you want to unjoin this side?") != IDYE
 	return false; 
 
 undoManager.Begin (__FUNCTION__, udSegments | udVertices);
-segP = Segment (current->SegmentId ()); 
+pSegment = Segment (current->SegmentId ()); 
 if (nShared < nVertices)
 	bSolidify = 0;
 if (!bSolidify) {
@@ -276,8 +276,8 @@ if (!bSolidify) {
 		if (bShared [i]) {
 			memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (nFaceVerts [i]), sizeof (*vertexManager.Vertex (0)));
 			// replace existing points with new points
-			segP->m_info.vertexIds [sideP->VertexIdIndex (i)] = vertexManager.Count (); 
-			segP->UnTag (); 
+			pSegment->m_info.vertexIds [pSide->VertexIdIndex (i)] = vertexManager.Count (); 
+			pSegment->UnTag (); 
 			vertexManager.Status (vertexManager.Count ()++) = 0; 
 			}
 		}
@@ -290,11 +290,11 @@ if (!bSolidify) {
 	}
 else {
 	// does this side have a child?
-	CSegment *childSegP = Segment (nChildSeg); 
+	CSegment *pChildSeg = Segment (nChildSeg); 
 	// yes, see if child has a side which points to the parent
 	int nChildSide;
 	for (nChildSide = 0; nChildSide < 6; nChildSide++)
-		if (childSegP->ChildId (nChildSide) == current->SegmentId ()) 
+		if (pChildSeg->ChildId (nChildSide) == current->SegmentId ()) 
 			break; 
 	// if we bShared the matching side
 	if (nChildSide < 6)
@@ -313,14 +313,14 @@ return true;
 
 bool CSegmentManager::SplitIn7 (void)
 {
-	CSegment*	centerSegP = current->Segment ();
-	short			nCenterSeg = segmentManager.Index (centerSegP);
+	CSegment*	pCenterSeg = current->Segment ();
+	short			nCenterSeg = segmentManager.Index (pCenterSeg);
 	short			nNewSegs [6];
 	ushort		nNewVerts [8];
 	CVertex		segCenter;
 	bool			bVertDone [8];
 
-if (centerSegP->m_nShape) {
+if (pCenterSeg->m_nShape) {
 	ErrorMsg ("Cannot split segments with triangular faces."); 
 	return false;
 	}
@@ -333,68 +333,68 @@ undoManager.Begin (__FUNCTION__, udSegments | udVertices);
 //h = vertexManager.Count ();
 // compute segment center
 vertexManager.Add (nNewVerts, 8);
-CalcCenter (segCenter, Index (centerSegP));
+CalcCenter (segCenter, Index (pCenterSeg));
 // add center segment
 // compute center segment vertices
 memset (bVertDone, 0, sizeof (bVertDone));
 
 for (short j = 0; j < 8; j++)
-	*vertexManager.Vertex (nNewVerts [j]) = Average (*centerSegP->Vertex (j), segCenter);
+	*vertexManager.Vertex (nNewVerts [j]) = Average (*pCenterSeg->Vertex (j), segCenter);
 
 // create the surrounding segments
-CSide* sideP = centerSegP->Side (0);
-for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+CSide* pSide = pCenterSeg->Side (0);
+for (short nSide = 0; nSide < 6; nSide++, pSide++) {
 	nNewSegs [nSide] = Add ();
 	short nSegment = nNewSegs [nSide];
-	CSegment* segP = Segment (nSegment);
+	CSegment* pSegment = Segment (nSegment);
 	ubyte oppVertexIdIndex [4];
-	segP->Setup ();
-	memcpy (segP->m_info.vertexIds, centerSegP->m_info.vertexIds, sizeof (segP->m_info.vertexIds));
-	centerSegP->CreateOppVertexIndex (nSide, oppVertexIdIndex);
+	pSegment->Setup ();
+	memcpy (pSegment->m_info.vertexIds, pCenterSeg->m_info.vertexIds, sizeof (pSegment->m_info.vertexIds));
+	pCenterSeg->CreateOppVertexIndex (nSide, oppVertexIdIndex);
 	for (ushort nVertex = 0; nVertex < 4; nVertex++)
-		segP->m_info.vertexIds [oppVertexIdIndex [nVertex]] = nNewVerts [sideP->m_vertexIdIndex [nVertex]];
-	if ((segP->SetChild (nSide, centerSegP->ChildId (nSide))) > -1) 
-		Segment (segP->ChildId (nSide))->ReplaceChild (nCenterSeg, nSegment);
-	segP->SetChild (oppSideTable [nSide], nCenterSeg);
-	centerSegP->SetChild (nSide, nSegment);
-	CWall* wallP = centerSegP->m_sides [nSide].Wall ();
-	if (wallP == null)
-		segP->m_sides [nSide].m_info.nWall = NO_WALL;
+		pSegment->m_info.vertexIds [oppVertexIdIndex [nVertex]] = nNewVerts [pSide->m_vertexIdIndex [nVertex]];
+	if ((pSegment->SetChild (nSide, pCenterSeg->ChildId (nSide))) > -1) 
+		Segment (pSegment->ChildId (nSide))->ReplaceChild (nCenterSeg, nSegment);
+	pSegment->SetChild (oppSideTable [nSide], nCenterSeg);
+	pCenterSeg->SetChild (nSide, nSegment);
+	CWall* pWall = pCenterSeg->m_sides [nSide].Wall ();
+	if (pWall == null)
+		pSegment->m_sides [nSide].m_info.nWall = NO_WALL;
 	else {
-		segP->m_sides [nSide].m_info.nWall = wallManager.Index (wallP);
-		wallP->m_nSegment = nSegment;
-		centerSegP->m_sides [nSide].m_info.nWall = NO_WALL;
+		pSegment->m_sides [nSide].m_info.nWall = wallManager.Index (pWall);
+		pWall->m_nSegment = nSegment;
+		pCenterSeg->m_sides [nSide].m_info.nWall = NO_WALL;
 		}
 	}
 // relocate center segment vertex indices
-memcpy (centerSegP->m_info.vertexIds, nNewVerts, sizeof (nNewVerts));
+memcpy (pCenterSeg->m_info.vertexIds, nNewVerts, sizeof (nNewVerts));
 // join adjacent sides of the segments surrounding the center segment
 // don't process 6th segment as this is handled by processing the 1st one already
 for (short nSegment = 0; nSegment < 5; nSegment++) {
-	CSegment* segP = Segment (nNewSegs [nSegment]);
-	CSide* sideP = segP->Side (0);
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (segP->ChildId (nSide) >= 0)
+	CSegment* pSegment = Segment (nNewSegs [nSegment]);
+	CSide* pSide = pSegment->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+		if (pSegment->ChildId (nSide) >= 0)
 			continue;
 		for (short nChildSeg = nSegment + 1; nChildSeg < 6; nChildSeg++) {
-			CSegment* childSegP = Segment (nNewSegs [nChildSeg]);
-			CSide* childSideP = childSegP->Side (0);
-			for (short nChildSide = 0; nChildSide < 6; nChildSide++, childSideP++) {
-				if (childSegP->ChildId (nChildSide) >= 0)
+			CSegment* pChildSeg = Segment (nNewSegs [nChildSeg]);
+			CSide* pChildSide = pChildSeg->Side (0);
+			for (short nChildSide = 0; nChildSide < 6; nChildSide++, pChildSide++) {
+				if (pChildSeg->ChildId (nChildSide) >= 0)
 					continue;
 				short h = 0;
 				for (short i = 0; i < 4; i++) {
-					ushort k = segP->m_info.vertexIds [sideP->VertexIdIndex (i)];
+					ushort k = pSegment->m_info.vertexIds [pSide->VertexIdIndex (i)];
 					for (short j = 0; j < 4; j++) {
-						if (k == childSegP->m_info.vertexIds [childSideP->m_vertexIdIndex[j]]) {
+						if (k == pChildSeg->m_info.vertexIds [pChildSide->m_vertexIdIndex[j]]) {
 							h++;
 							break;
 							}
 						}
 					}
 				if (h == 4) {
-					segP->SetChild (nSide, nNewSegs [nChildSeg]);
-					childSegP->SetChild (nChildSide, nNewSegs [nSegment]);
+					pSegment->SetChild (nSide, nNewSegs [nChildSeg]);
+					pChildSeg->SetChild (nChildSide, nNewSegs [nSegment]);
 					break;
 					}
 				}
@@ -459,18 +459,18 @@ return -1;
 // -----------------------------------------------------------------------------
 // Splits a segment into 8 smaller segments
 
-bool CSegmentManager::SplitIn8 (CSegment* rootSegP)
+bool CSegmentManager::SplitIn8 (CSegment* pRootSeg)
 {
-if (!rootSegP)
-	rootSegP = current->Segment ();
+if (!pRootSeg)
+	pRootSeg = current->Segment ();
 
-if (rootSegP->m_nShape) {
+if (pRootSeg->m_nShape) {
 	ErrorMsg ("Cannot split wedge and pyramid shaped segments."); 
 	return false;
 	}
 
-	CSegment		rootSeg = *rootSegP;
-	short			nRootSeg = segmentManager.Index (rootSegP);
+	CSegment		rootSeg = *pRootSeg;
+	short			nRootSeg = segmentManager.Index (pRootSeg);
 	short			nSplitSegs [8];
 	ushort		nNewVerts [19]; // 0: root segment center, 1 - 6: side centers, 7 - 18: edge centers
 	CVertex		segCenter;
@@ -488,26 +488,26 @@ if (!vertexManager.Add (nNewVerts, 19)) {
 	ErrorMsg ("Cannot split this segment because\nthe maximum number of vertices would be exceeded."); 
 	return false;
 	}
-CalcCenter (segCenter, Index (rootSegP));
+CalcCenter (segCenter, Index (pRootSeg));
 // compute side center vertices
 *vertexManager.Vertex (nNewVerts [0]) = segCenter;
 short j = 1;
 for (short nSide = 0; nSide < 6; nSide++) {
 	CVertex vCenter;
 	for (ushort nVertex = 0; nVertex < 4; nVertex++) 
-		vCenter += *rootSegP->Vertex (rootSegP->Side (nSide)->m_vertexIdIndex [nVertex]);
+		vCenter += *pRootSeg->Vertex (pRootSeg->Side (nSide)->m_vertexIdIndex [nVertex]);
 	*vertexManager.Vertex (nNewVerts [j++]) = vCenter / 4;
 	}
 
-CSegment* childSegP;
+CSegment* pChildSeg;
 for (short nSide = 0; nSide < 6; nSide++)
-	if ((childSegP = rootSegP->Child (nSide))) {
-		childSegP->RemoveChild (nRootSeg);
-		rootSegP->SetChild (nSide, -1);
+	if ((pChildSeg = pRootSeg->Child (nSide))) {
+		pChildSeg->RemoveChild (nRootSeg);
+		pRootSeg->SetChild (nSide, -1);
 		}
 
 for (short nLine = 0; nLine < 12; nLine++)
-	*vertexManager.Vertex (nNewVerts [j++]) = Average (*rootSegP->Vertex (edgeVertexTable [nLine][0]), *rootSegP->Vertex (edgeVertexTable [nLine][1]));
+	*vertexManager.Vertex (nNewVerts [j++]) = Average (*pRootSeg->Vertex (edgeVertexTable [nLine][0]), *pRootSeg->Vertex (edgeVertexTable [nLine][1]));
 for (j = 0; j < 19; j++)
 	vertexManager.Status (nNewVerts [j]) |= TAGGED_MASK; 
 
@@ -519,10 +519,10 @@ for (j = 0; j < 19; j++)
 for (ubyte nCorner = 0; nCorner < 8; nCorner++) {
 	nSplitSegs [nCorner] = (nCorner == 7) ? nRootSeg : Add ();
 	short nSegment = nSplitSegs [nCorner];
-	CSegment* segP = Segment (nSegment);
+	CSegment* pSegment = Segment (nSegment);
 	ushort nBasePoint = rootSeg.VertexId (nCorner);
 	ushort vertexIds [8];
-	memset (vertexIds, 0xFF, sizeof (segP->m_info.vertexIds));
+	memset (vertexIds, 0xFF, sizeof (pSegment->m_info.vertexIds));
 
 	ushort nVertex;
 	for (short i = 0; i < 3; i++) {
@@ -549,59 +549,59 @@ for (ubyte nCorner = 0; nCorner < 8; nCorner++) {
 			}
 
 	if (nSegment == nRootSeg) {
-		memcpy (segP->m_info.vertexIds, vertexIds, sizeof (vertexIds));
+		memcpy (pSegment->m_info.vertexIds, vertexIds, sizeof (vertexIds));
 		for (short j = 0; j < 3; j++) 
-			segP->Side (adjacentSideTable [i][j])->DeleteWall ();
+			pSegment->Side (adjacentSideTable [i][j])->DeleteWall ();
 		}
 	else {
-		segP->Setup ();
-		segP->Function () = rootSeg.Function ();
-		segP->Props () = rootSeg.Props ();
-		memcpy (segP->m_info.vertexIds, vertexIds, sizeof (vertexIds));
+		pSegment->Setup ();
+		pSegment->Function () = rootSeg.Function ();
+		pSegment->Props () = rootSeg.Props ();
+		memcpy (pSegment->m_info.vertexIds, vertexIds, sizeof (vertexIds));
 		}
 
 	short nBaseTex, nOvlTex;
 	for (short i = 0; i < 2; i++) {
 		for (short j = i + 1; j < 3; j++) {
 			short nSide, nPoint = FindCornerByPoints (nCorner, adjacentPointTable [nCorner][i], adjacentPointTable [nCorner][j], nSide);
-			if ((nSegment != nRootSeg) && rootSeg.Side (nSide)->Wall () && !segP->Side (nSide)->Wall () && !wallManager.Full ()) {
+			if ((nSegment != nRootSeg) && rootSeg.Side (nSide)->Wall () && !pSegment->Side (nSide)->Wall () && !wallManager.Full ()) {
 				CSideKey key (nSegment, nSide);
-				segP->Side (nSide)->m_info.nWall = wallManager.Add (false, &key);
-				CWall* wallP = wallManager.Wall (segP->Side (nSide)->m_info.nWall);
-				if (wallP) {
-					wallP->Info () = rootSeg.Side (nSide)->Wall ()->Info ();
-					wallP->Info ().nTrigger = NO_TRIGGER;
-					*((CSideKey*) wallP) = key;
+				pSegment->Side (nSide)->m_info.nWall = wallManager.Add (false, &key);
+				CWall* pWall = wallManager.Wall (pSegment->Side (nSide)->m_info.nWall);
+				if (pWall) {
+					pWall->Info () = rootSeg.Side (nSide)->Wall ()->Info ();
+					pWall->Info ().nTrigger = NO_TRIGGER;
+					*((CSideKey*) pWall) = key;
 					}
 				}
 			rootSeg.Side (nSide)->GetTextures (nBaseTex, nOvlTex);
-			segP->Side (nSide)->SetTextures (nBaseTex, nOvlTex);
-			memcpy (segP->Uvls (nSide), rootSeg.Uvls (nSide), 4 * sizeof (CUVL));
+			pSegment->Side (nSide)->SetTextures (nBaseTex, nOvlTex);
+			memcpy (pSegment->Uvls (nSide), rootSeg.Uvls (nSide), 4 * sizeof (CUVL));
 			}
 		}
 	}
 
 
 for (int i = 0; i < 7; i++) {
-	CSegment* segP = Segment (nSplitSegs [i]);
+	CSegment* pSegment = Segment (nSplitSegs [i]);
 	for (int j = i + 1; j < 8; j++) {
-		short nOtherSide, nSide = segP->CommonSides (nSplitSegs [j], nOtherSide);
+		short nOtherSide, nSide = pSegment->CommonSides (nSplitSegs [j], nOtherSide);
 		if (0 <= nSide)
 			segmentManager.Link (nSplitSegs [i], nSide, nSplitSegs [j], nOtherSide, 1e-3);
 		}
 	}
 
 for (int i = 0; i < 8; i++) {
-	CSegment* segP = Segment (nSplitSegs [i]);
+	CSegment* pSegment = Segment (nSplitSegs [i]);
 	for (int j = 0; j < nOldSegments; j++) {
 		ushort nVertices [4];
-		short nCommon = segP->CommonVertices (j, 4, nVertices);
+		short nCommon = pSegment->CommonVertices (j, 4, nVertices);
 		if (!nCommon)
 			continue;
-		CSegment* otherSegP = Segment (j);
+		CSegment* pOtherSeg = Segment (j);
 		bool bLinked = false;
-		for (short nSide = 0; !bLinked && (0 <= (nSide = segP->FindSide (nSide, nCommon, nVertices))); nSide++)
-			for (short nOtherSide = 0; !bLinked && (0 <= (nOtherSide = otherSegP->FindSide (nOtherSide, nCommon, nVertices))); nOtherSide++)
+		for (short nSide = 0; !bLinked && (0 <= (nSide = pSegment->FindSide (nSide, nCommon, nVertices))); nSide++)
+			for (short nOtherSide = 0; !bLinked && (0 <= (nOtherSide = pOtherSeg->FindSide (nOtherSide, nCommon, nVertices))); nOtherSide++)
 				bLinked = segmentManager.Link (nSplitSegs [i], nSide, j, nOtherSide, 1.0);
 		}
 	}
@@ -623,25 +623,25 @@ if (!DLE.IsD2XLevel ())
 
 current->Get (nSegment, nSide);
 
-	CSegment*	segP = Segment (nSegment);
-	CSide*		sideP = segP->Side (nSide);
+	CSegment*	pSegment = Segment (nSegment);
+	CSide*		pSide = pSegment->Side (nSide);
 	ushort		nEdgeVerts [2]; // ids of the edge's vertices
 	ubyte			nSegVerts [2]; // indices of the edge's vertices' ids in the segment's vertex id table
 	short			nSideVerts [2]; // indices of the edge's vertices' ids in the side's vertex id index 
 
-if (sideP->VertexCount() < 2)
+if (pSide->VertexCount() < 2)
 	return false;
 if (nEdge < 0)
 	nEdge = current->Edge ();
 
 for (int i = 0; i < 2; i++) 
-	nEdgeVerts [i] = segP->m_info.vertexIds [nSegVerts [i] = sideP->m_vertexIdIndex [(nEdge + i) % sideP->VertexCount ()]]; 
+	nEdgeVerts [i] = pSegment->m_info.vertexIds [nSegVerts [i] = pSide->m_vertexIdIndex [(nEdge + i) % pSide->VertexCount ()]]; 
 
 if (nSegVerts [0] == nSegVerts [1])
 	return false;
 
-short nSides [2] = {nSide, segP->AdjacentSide (nSide, nEdgeVerts)};
-if ((segP->Side (nSides [0])->VertexCount () < 4) && (segP->Side (nSides [1])->VertexCount () < 4)) {
+short nSides [2] = {nSide, pSegment->AdjacentSide (nSide, nEdgeVerts)};
+if ((pSegment->Side (nSides [0])->VertexCount () < 4) && (pSegment->Side (nSides [1])->VertexCount () < 4)) {
 	if (!DLE.ExpertMode ())
 		ErrorMsg ("Cannot further collapse this segment."); 
 	return false;
@@ -655,11 +655,11 @@ if ((0 > (nEdgeVerts [0] = SeparatePoints (CSideKey (nSegment, nSide), nEdgeVert
 	return false;
 	}
 
-if ((sideP->VertexCount () == 3) && sideP->Wall ())
-	sideP->DeleteWall ();
+if ((pSide->VertexCount () == 3) && pSide->Wall ())
+	pSide->DeleteWall ();
 
-if (short (sideP->m_info.nChild) >= 0)
-	segmentManager.Segment (sideP->m_info.nChild)->ReplaceChild (nSegment, -1);
+if (short (pSide->m_info.nChild) >= 0)
+	segmentManager.Segment (pSide->m_info.nChild)->ReplaceChild (nSegment, -1);
 // compute the new vertex
 if (bUpdateCoord) {
 	*vertexManager.Vertex (nEdgeVerts [0]) += *vertexManager.Vertex (nEdgeVerts [1]);
@@ -671,43 +671,43 @@ for (short h = 0; h < 2; h++) {
 	short nSide = nSides [h];
 	if (nSide < 0)
 		continue;
-	sideP = segP->Side (nSide);
+	pSide = pSegment->Side (nSide);
 	for (int i = 0; i < 2; i++)
-		nSideVerts [i] = segP->SideVertexIndex (nSide, nSegVerts [i]);
+		nSideVerts [i] = pSegment->SideVertexIndex (nSide, nSegVerts [i]);
 #if 0
 	if (nSideVerts [0] > nSideVerts [1])
 		Swap (nSideVerts [0], nSideVerts [1]);
 #endif
 	if (nSideVerts [0] < 0)
 		continue;
-	CUVL uvl = sideP->m_info.uvls [nSideVerts [0]];
-	uvl.u = (uvl.u + sideP->m_info.uvls [nSideVerts [1]].u) / 2;
-	uvl.v = (uvl.v + sideP->m_info.uvls [nSideVerts [1]].v) / 2;
-	uvl.l = (uvl.l + sideP->m_info.uvls [nSideVerts [1]].l) / 2;
-	sideP->m_info.uvls [nSideVerts [0]] = uvl;
-	sideP->SetShape (sideP->Shape () + 1);
-	short h = sideP->VertexCount () - nSideVerts [1];
+	CUVL uvl = pSide->m_info.uvls [nSideVerts [0]];
+	uvl.u = (uvl.u + pSide->m_info.uvls [nSideVerts [1]].u) / 2;
+	uvl.v = (uvl.v + pSide->m_info.uvls [nSideVerts [1]].v) / 2;
+	uvl.l = (uvl.l + pSide->m_info.uvls [nSideVerts [1]].l) / 2;
+	pSide->m_info.uvls [nSideVerts [0]] = uvl;
+	pSide->SetShape (pSide->Shape () + 1);
+	short h = pSide->VertexCount () - nSideVerts [1];
 	if (h > 0) {
-		memcpy (sideP->m_vertexIdIndex + nSideVerts [1], sideP->m_vertexIdIndex + nSideVerts [1] + 1, h);
-		memcpy (sideP->m_info.uvls + nSideVerts [1], sideP->m_info.uvls + nSideVerts [1] + 1, h * sizeof (CUVL));
+		memcpy (pSide->m_vertexIdIndex + nSideVerts [1], pSide->m_vertexIdIndex + nSideVerts [1] + 1, h);
+		memcpy (pSide->m_info.uvls + nSideVerts [1], pSide->m_info.uvls + nSideVerts [1] + 1, h * sizeof (CUVL));
 		}
-	sideP->m_vertexIdIndex [sideP->VertexCount ()] = 0xff; //sideP->m_vertexIdIndex [nSideVerts [0]];
+	pSide->m_vertexIdIndex [pSide->VertexCount ()] = 0xff; //pSide->m_vertexIdIndex [nSideVerts [0]];
 	}
-sideP = segP->Side (0);
-for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-	short nVertexCount = sideP->VertexCount ();
+pSide = pSegment->Side (0);
+for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+	short nVertexCount = pSide->VertexCount ();
 	//if ((nSide == nSides [0]) || (nSide == nSides [1]))
 	//	continue;
 	int j = 0;
 	for (int i = 0; i < nVertexCount; i++) {
-		if (sideP->m_vertexIdIndex [i] == nSegVerts [1]) 
-			sideP->m_vertexIdIndex [i] = nSegVerts [0];
-		if (sideP->m_vertexIdIndex [i] == nSegVerts [0]) {
+		if (pSide->m_vertexIdIndex [i] == nSegVerts [1]) 
+			pSide->m_vertexIdIndex [i] = nSegVerts [0];
+		if (pSide->m_vertexIdIndex [i] == nSegVerts [0]) {
 			if (++j > 1) {
 				if (i < --nVertexCount)
-					memcpy (sideP->m_vertexIdIndex + i, sideP->m_vertexIdIndex + i + 1, nVertexCount - i);
-				sideP->m_vertexIdIndex [nVertexCount] = 0xff;
-				sideP->SetShape (sideP->Shape () + 1);
+					memcpy (pSide->m_vertexIdIndex + i, pSide->m_vertexIdIndex + i + 1, nVertexCount - i);
+				pSide->m_vertexIdIndex [nVertexCount] = 0xff;
+				pSide->SetShape (pSide->Shape () + 1);
 				break;
 				}
 			}
@@ -715,12 +715,12 @@ for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 	}
 
 #if 1
-segP->m_info.vertexIds [nSegVerts [1]] = 0xffff - nSegVerts [0]; // remember the vertex id index that has replaced this one => MAX_VERTICES must be <= 0xfff8!
+pSegment->m_info.vertexIds [nSegVerts [1]] = 0xffff - nSegVerts [0]; // remember the vertex id index that has replaced this one => MAX_VERTICES must be <= 0xfff8!
 #else
-segP->UpdateVertexIdIndex (nSegVerts [1]);
+pSegment->UpdateVertexIdIndex (nSegVerts [1]);
 if (nSegVerts [1] < 7)
-	memcpy (segP->m_info.vertexIds + nSegVerts [1], segP->m_info.vertexIds + nSegVerts [1] + 1, (7 - nSegVerts [1]) * sizeof (segP->m_info.vertexIds [0]));
-segP->m_info.vertexIds [7] = 0xffff;
+	memcpy (pSegment->m_info.vertexIds + nSegVerts [1], pSegment->m_info.vertexIds + nSegVerts [1] + 1, (7 - nSegVerts [1]) * sizeof (pSegment->m_info.vertexIds [0]));
+pSegment->m_info.vertexIds [7] = 0xffff;
 #endif
 
 if (bUpdateCoord)
@@ -738,14 +738,14 @@ if (!DLE.IsD2XLevel ())
 	return false;
 #endif
 
-	CSegment* segP = current->Segment ();
+	CSegment* pSegment = current->Segment ();
 
-if (segP->Shape () != SEGMENT_SHAPE_CUBE) {
+if (pSegment->Shape () != SEGMENT_SHAPE_CUBE) {
 	ErrorMsg ("Cannot turn this segment in a wedge.\nTry to collapse individual edges instead."); 
 	return false;
 	}
 
-	CSide* sideP = current->Side ();
+	CSide* pSide = current->Side ();
 	short nSide = current->SideId (), nOppSide = oppSideTable [current->SideId ()];
 
 undoManager.Begin (__FUNCTION__, udSegments | udVertices | udWalls);
@@ -761,7 +761,7 @@ if (!CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ())) {
 	undoManager.Unroll (__FUNCTION__);
 	return false;
 	}
-segP->SetShape (SEGMENT_SHAPE_WEDGE);
+pSegment->SetShape (SEGMENT_SHAPE_WEDGE);
 DLE.MineView ()->NextSide (1);
 undoManager.End (__FUNCTION__);
 return true;
@@ -776,14 +776,14 @@ if (!DLE.IsD2XLevel ())
 	return false;
 #endif
 
-	CSegment* segP = current->Segment ();
+	CSegment* pSegment = current->Segment ();
 
-if (segP->Shape () != SEGMENT_SHAPE_CUBE) {
+if (pSegment->Shape () != SEGMENT_SHAPE_CUBE) {
 	ErrorMsg ("Cannot turn this segment in a pyramid.\nTry to collapse individual edges instead."); 
 	return false;
 	}
 
-	CSide* sideP = current->Side ();
+	CSide* pSide = current->Side ();
 	short nSide = current->SideId (), nOppSide = oppSideTable [current->SideId ()];
 
 undoManager.Begin (__FUNCTION__, udSegments | udVertices | udWalls);
@@ -792,7 +792,7 @@ undoManager.Begin (__FUNCTION__, udSegments | udVertices | udWalls);
 for (int i = 0; i < 6; i++) {
 	if (i == nOppSide)
 		continue;
-	if (segP->Child (i) < 0)
+	if (pSegment->Child (i) < 0)
 		continue;
 	if (!SeparateSegments (i)) {
 		undoManager.Unlock ();
@@ -813,7 +813,7 @@ if (!(CollapseEdge (-1, -1, nLine % current->Side ()->VertexCount ()) && Collaps
 	undoManager.Unroll (__FUNCTION__);
 	return false;
 	}
-segP->SetShape (SEGMENT_SHAPE_PYRAMID);
+pSegment->SetShape (SEGMENT_SHAPE_PYRAMID);
 DLE.MineView ()->NextSide (1);
 undoManager.End (__FUNCTION__);
 return true;

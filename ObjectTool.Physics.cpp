@@ -103,7 +103,7 @@ if (current->ObjectId () == objectManager.Count ()) {
 	}
 EnableControls (TRUE);
 
-CGameObject* objP = current->Object ();
+CGameObject* pObject = current->Object ();
 RefreshRobot ();
 UpdateData (FALSE);
 DLE.MineView ()->Refresh (FALSE);

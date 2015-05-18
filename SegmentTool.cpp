@@ -221,22 +221,22 @@ return CToolDlg::OnSetActive ();
 
 //------------------------------------------------------------------------------
 
-bool CSegmentTool::IsRobotMaker (CSegment *segP)
+bool CSegmentTool::IsRobotMaker (CSegment *pSegment)
 {
 return 
-	(segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) &&
-	(segP->m_info.nProducer >= 0) &&
-	(segP->m_info.nProducer < segmentManager.RobotMakerCount ());
+	(pSegment->m_info.function == SEGMENT_FUNC_ROBOTMAKER) &&
+	(pSegment->m_info.nProducer >= 0) &&
+	(pSegment->m_info.nProducer < segmentManager.RobotMakerCount ());
 }
 
 //------------------------------------------------------------------------------
 
-bool CSegmentTool::IsEquipMaker (CSegment *segP)
+bool CSegmentTool::IsEquipMaker (CSegment *pSegment)
 {
 return 
-	(segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) &&
-	(segP->m_info.nProducer >= 0) &&
-	(segP->m_info.nProducer < segmentManager.EquipMakerCount ());
+	(pSegment->m_info.function == SEGMENT_FUNC_EQUIPMAKER) &&
+	(pSegment->m_info.nProducer >= 0) &&
+	(pSegment->m_info.nProducer < segmentManager.EquipMakerCount ());
 }
 
 //------------------------------------------------------------------------------
@@ -244,17 +244,17 @@ return
 void CSegmentTool::EnableControls (BOOL bEnable)
 {
 CHECKMINE;
-CSegment *segP = current->Segment ();
+CSegment *pSegment = current->Segment ();
 // enable/disable "end of exit tunnel" button
-EndOfExit ()->EnableWindow (segP->ChildId (m_nSide) < 0);
+EndOfExit ()->EnableWindow (pSegment->ChildId (m_nSide) < 0);
 // enable/disable add segment button
 GetDlgItem (IDC_SEGMENT_ADD)->EnableWindow ((segmentManager.Count () < SEGMENT_LIMIT) &&
 													  (vertexManager.Count () < VERTEX_LIMIT - 4) &&
-													  (segP->ChildId (m_nSide) < 0));
+													  (pSegment->ChildId (m_nSide) < 0));
 GetDlgItem (IDC_SEGMENT_DEL)->EnableWindow (segmentManager.Count () > 1);
 // enable/disable add robot button
-GetDlgItem (IDC_SEGMENT_ADDBOT)->EnableWindow ((IsRobotMaker (segP) || IsEquipMaker (segP)) && (LBAvailBots ()->GetCount () > 0));
-GetDlgItem (IDC_SEGMENT_DELBOT)->EnableWindow ((IsRobotMaker (segP) || IsEquipMaker (segP)) && (LBUsedBots ()->GetCount () > 0));
+GetDlgItem (IDC_SEGMENT_ADDBOT)->EnableWindow ((IsRobotMaker (pSegment) || IsEquipMaker (pSegment)) && (LBAvailBots ()->GetCount () > 0));
+GetDlgItem (IDC_SEGMENT_DELBOT)->EnableWindow ((IsRobotMaker (pSegment) || IsEquipMaker (pSegment)) && (LBUsedBots ()->GetCount () > 0));
 GetDlgItem (IDC_SEGMENT_WALLDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
 GetDlgItem (IDC_SEGMENT_TRIGGERDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
 GetDlgItem (IDC_SEGMENT_ADD_REPAIRCEN)->EnableWindow (DLE.IsD2File ());
@@ -279,10 +279,10 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord (void)
 {
 CHECKMINE;
-CVertex* vertP = current->Segment ()->Vertex (current->Side ()->VertexIdIndex (current->Point ()));
-m_nCoord [0] = vertP->v.x;
-m_nCoord [1] = vertP->v.y;
-m_nCoord [2] = vertP->v.z;
+CVertex* pVertex = current->Segment ()->Vertex (current->Side ()->VertexIdIndex (current->Point ()));
+m_nCoord [0] = pVertex->v.x;
+m_nCoord [1] = pVertex->v.y;
+m_nCoord [2] = pVertex->v.z;
 UpdateData (FALSE);
 DLE.MineView ()->Refresh (false);
 }
@@ -303,10 +303,10 @@ undoManager.Begin (__FUNCTION__, udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bTagged) {
-	CSegment *segP = segmentManager.Segment (0);
-	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->IsTagged ())
-			segP->m_info.props = m_nProps;
+	CSegment *pSegment = segmentManager.Segment (0);
+	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, pSegment++)
+		if (pSegment->IsTagged ())
+			pSegment->m_info.props = m_nProps;
 	}
 else 					
 	current->Segment ()->m_info.props = m_nProps;
@@ -354,11 +354,11 @@ void CSegmentTool::OnPoint4 () { OnPoint (3); }
 
 void CSegmentTool::SetDefTexture (short nTexture)
 {
-CSegment *segP = segmentManager.Segment (m_nSegment);
+CSegment *pSegment = segmentManager.Segment (m_nSegment);
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_SEGMENT_SETDEFTEXTURE))->GetCheck ()) {
 	int i;
 	for (i = 0; i < 6; i++)
-		if (segP->ChildId (i) == -1)
+		if (pSegment->ChildId (i) == -1)
 			segmentManager.SetTextures (CSideKey (m_nSegment, i), nTexture, 0);
 	}
 }
@@ -378,39 +378,39 @@ int h, i, j;
 
 // update automatic data
 // update segment number combo box if number of segments has changed
-CSegment *segP = current->Segment ();
-m_bEndOfExit = (segP->ChildId (current->SideId ()) == -2);
+CSegment *pSegment = current->Segment ();
+m_bEndOfExit = (pSegment->ChildId (current->SideId ()) == -2);
 m_nSegment = current->SegmentId ();
 m_nSide = current->SideId ();
 m_nPoint = current->Point ();
-m_nFunction = segP->m_info.function;
-m_nDamage [0] = segP->m_info.damage [0];
-m_nDamage [1] = segP->m_info.damage [1];
-m_nProps = segP->m_info.props;
-m_nOwner = segP->m_info.owner;
-m_nGroup = segP->m_info.group;
+m_nFunction = pSegment->m_info.function;
+m_nDamage [0] = pSegment->m_info.damage [0];
+m_nDamage [1] = pSegment->m_info.damage [1];
+m_nProps = pSegment->m_info.props;
+m_nOwner = pSegment->m_info.owner;
+m_nGroup = pSegment->m_info.group;
 //CBFunction ()->SetCurSel (m_nFunction);
 SelectItemData (CBFunction (), m_nFunction);
 SegFuncSpinner ()->SetPos (m_nFunction);
 OnResetCoord ();
   // show Triggers () that point at this segment
 LBTriggers()->ResetContent();
-CTrigger *trigP = triggerManager.Trigger (0);
+CTrigger *pTrigger = triggerManager.Trigger (0);
 int nTrigger;
-for (nTrigger = 0; nTrigger < triggerManager.WallTriggerCount (); nTrigger++, trigP++) {
-	for (i = 0; i < trigP->Count (); i++) {
-		if ((*trigP) [i] == CSideKey (m_nSegment, m_nSide)) {
-			// find the wallP with this trigP
-			CWall *wallP = wallManager.Wall (0);
+for (nTrigger = 0; nTrigger < triggerManager.WallTriggerCount (); nTrigger++, pTrigger++) {
+	for (i = 0; i < pTrigger->Count (); i++) {
+		if ((*pTrigger) [i] == CSideKey (m_nSegment, m_nSide)) {
+			// find the pWall with this pTrigger
+			CWall *pWall = wallManager.Wall (0);
 			int nWall;
-			for (nWall = 0; nWall < wallManager.WallCount (); nWall++, wallP++) {
-				if (wallP->Info ().nTrigger == nTrigger) 
+			for (nWall = 0; nWall < wallManager.WallCount (); nWall++, pWall++) {
+				if (pWall->Info ().nTrigger == nTrigger) 
 					break;
 				}
 			if (nWall < wallManager.WallCount ()) {
-				sprintf_s (message, sizeof (message),  "%d,%d", (int) wallP->m_nSegment, (int) wallP->m_nSide + 1);
+				sprintf_s (message, sizeof (message),  "%d,%d", (int) pWall->m_nSegment, (int) pWall->m_nSide + 1);
 				h = LBTriggers ()->AddString (message);
-				LBTriggers ()->SetItemData (h, (int) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
+				LBTriggers ()->SetItemData (h, (int) pWall->m_nSegment * 0x10000L + pWall->m_nSide);
 				}
 			}
 		}
@@ -429,11 +429,11 @@ if (!LBTriggers()->GetCount()) {
 	LBTriggers()->AddString ("none");
 	}
 
-m_nLight = ((double) segP->m_info.staticLight) / (24 * 327.68);
+m_nLight = ((double) pSegment->m_info.staticLight) / (24 * 327.68);
 
 CListBox *plb [2] = { LBAvailBots (), LBUsedBots () };
-if (IsRobotMaker (segP)) {
-	int nProducer = segP->m_info.nProducer;
+if (IsRobotMaker (pSegment)) {
+	int nProducer = pSegment->m_info.nProducer;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	
@@ -461,8 +461,8 @@ if (IsRobotMaker (segP)) {
 			}
 		}
 	}
-else if (IsEquipMaker (segP)) {
-	int nProducer = segP->m_info.nProducer;
+else if (IsEquipMaker (pSegment)) {
+	int nProducer = pSegment->m_info.nProducer;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	int objFlags [2];
@@ -512,10 +512,10 @@ UpdateData (FALSE);
 void CSegmentTool::OnEndOfExit ()
 {
 CHECKMINE;
-CSegment *segP = current->Segment ();
+CSegment *pSegment = current->Segment ();
 undoManager.Begin (__FUNCTION__, udSegments);
 m_bEndOfExit = EndOfExit ()->GetCheck ();
-segP->SetChild (m_nSide, m_bEndOfExit ? -2 : -1);
+pSegment->SetChild (m_nSide, m_bEndOfExit ? -2 : -1);
 undoManager.End (__FUNCTION__);
 }
 
@@ -554,10 +554,10 @@ undoManager.Begin (__FUNCTION__, udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bTagged) {
-	CSegment *segP = segmentManager.Segment (0);
-	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->IsTagged ())
-			segP->m_info.owner = m_nOwner;
+	CSegment *pSegment = segmentManager.Segment (0);
+	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, pSegment++)
+		if (pSegment->IsTagged ())
+			pSegment->m_info.owner = m_nOwner;
 	}
 else 					
 	current->Segment ()->m_info.owner = m_nOwner;
@@ -578,10 +578,10 @@ undoManager.Begin (__FUNCTION__, udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bTagged) {
-	CSegment *segP = segmentManager.Segment (0);
-	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->IsTagged ())
-			segP->m_info.group = m_nGroup;
+	CSegment *pSegment = segmentManager.Segment (0);
+	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, pSegment++)
+		if (pSegment->IsTagged ())
+			pSegment->m_info.group = m_nGroup;
 	}
 else 					
 	current->Segment ()->m_info.group = m_nGroup;
@@ -622,13 +622,13 @@ else {
 	nMaxSeg = nMinSeg + 1;
 	}
 undoManager.Begin (__FUNCTION__, udSegments);
-CSegment* segP = segmentManager.Segment (nMinSeg);
-for (nSegment = nMinSeg; nSegment < nMaxSeg; nSegment++, segP++) {
-	if (bTagged && !segP->IsTagged ())
+CSegment* pSegment = segmentManager.Segment (nMinSeg);
+for (nSegment = nMinSeg; nSegment < nMaxSeg; nSegment++, pSegment++) {
+	if (bTagged && !pSegment->IsTagged ())
 		continue;
-	if (nNewFunction == segP->m_info.function)
+	if (nNewFunction == pSegment->m_info.function)
 		continue;
-	//m_nFunction = segP->m_info.function;
+	//m_nFunction = pSegment->m_info.function;
 	switch (nNewFunction) {
 		// check to see if we are adding a robot maker
 		case SEGMENT_FUNC_ROBOTMAKER:
@@ -777,13 +777,13 @@ return j;
 void CSegmentTool::AddObjectToRobotMaker ()
 {
 CHECKMINE;
-CSegment *segP = current->Segment ();
+CSegment *pSegment = current->Segment ();
 char szObj [80];
 int i = FindObjectInRobotMaker (LBAvailBots (), szObj);
 if ((i < 0) || (i >= (DLE.IsD1File () ? N_ROBOT_TYPES_D1 : 64)))
 	return;
 undoManager.Begin (__FUNCTION__, udProducers);
-segmentManager.RobotMaker (segP->m_info.nProducer)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+segmentManager.RobotMaker (pSegment->m_info.nProducer)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 undoManager.End (__FUNCTION__);
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
@@ -798,13 +798,13 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::AddObjectToEquipMaker ()
 {
 CHECKMINE;
-CSegment *segP = current->Segment ();
+CSegment *pSegment = current->Segment ();
 char szObj [80];
 int i = FindObjectInEquipMaker (LBAvailBots (), szObj);
 if ((i < 0) || (i >= (DLE.IsD1File () ? MAX_POWERUP_IDS_D1 : MAX_POWERUP_IDS_D2)))
 	return;
 undoManager.Begin (__FUNCTION__, udProducers);
-segmentManager.EquipMaker (segP->m_info.nProducer)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+segmentManager.EquipMaker (pSegment->m_info.nProducer)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 undoManager.End (__FUNCTION__);
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
@@ -819,10 +819,10 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::OnAddObjectToProducer ()
 {
 CHECKMINE;
-CSegment *segP = current->Segment ();
-if (IsRobotMaker (segP))
+CSegment *pSegment = current->Segment ();
+if (IsRobotMaker (pSegment))
 	AddObjectToRobotMaker ();
-else if (IsEquipMaker (segP))
+else if (IsEquipMaker (pSegment))
 	AddObjectToEquipMaker ();
 }
 
@@ -831,13 +831,13 @@ else if (IsEquipMaker (segP))
 void CSegmentTool::DeleteObjectFromRobotMaker () 
 {
 CHECKMINE;
-CSegment *segP = current->Segment ();
+CSegment *pSegment = current->Segment ();
 char szObj [80];
 int i = FindObjectInRobotMaker (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 undoManager.Begin (__FUNCTION__, udProducers);
-segmentManager.RobotMaker (segP->m_info.nProducer)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+segmentManager.RobotMaker (pSegment->m_info.nProducer)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
 undoManager.End (__FUNCTION__);
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
@@ -852,13 +852,13 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::DeleteObjectFromEquipMaker () 
 {
 CHECKMINE;
-CSegment *segP = current->Segment ();
+CSegment *pSegment = current->Segment ();
 char szObj [80];
 int i = FindObjectInEquipMaker (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 undoManager.Begin (__FUNCTION__, udProducers);
-segmentManager.EquipMaker (segP->m_info.nProducer)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+segmentManager.EquipMaker (pSegment->m_info.nProducer)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
 undoManager.End (__FUNCTION__);
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
@@ -873,10 +873,10 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::OnDeleteObjectFromProducer () 
 {
 CHECKMINE;
-CSegment *segP = current->Segment ();
-if (IsRobotMaker (segP))
+CSegment *pSegment = current->Segment ();
+if (IsRobotMaker (pSegment))
 	DeleteObjectFromRobotMaker ();
-else if (IsEquipMaker (segP))
+else if (IsEquipMaker (pSegment))
 	DeleteObjectFromEquipMaker ();
 }
 

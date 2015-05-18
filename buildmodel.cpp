@@ -166,9 +166,9 @@ m_vMax.Set (-1e30f, -1e30f, -1e30f);
 
 //------------------------------------------------------------------------------
 
-void CSubModel::SetMinMax (CFloatVector *vertexP)
+void CSubModel::SetMinMax (CFloatVector *pVertex)
 {
-	CFloatVector v = *vertexP;
+	CFloatVector v = *pVertex;
 
 if (m_vMin.v.x > v.v.x)
 	m_vMin.v.x = v.v.x;

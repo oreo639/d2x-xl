@@ -186,21 +186,21 @@ if (PickTexture (point, nTexture))
 	return;
 
 if (nFlags & MK_SHIFT) {
-	CGameObject *objP = objectManager.Object (current->ObjectId ());
-   if (objP->m_info.renderType != RT_POLYOBJ) 
+	CGameObject *pObject = objectManager.Object (current->ObjectId ());
+   if (pObject->m_info.renderType != RT_POLYOBJ) 
 		return;
-	objP->rType.polyModelInfo.nOverrideTexture = nTexture;
+	pObject->rType.polyModelInfo.nOverrideTexture = nTexture;
   } 
 else if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->SetTexture (nTexture, -1);
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	CSegment* segP = segmentManager.Segment (0);
+	CSegment* pSegment = segmentManager.Segment (0);
 	undoManager.Begin (__FUNCTION__, udSegments); 
-	for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) 
+	for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, pSegment++) 
 		for (short nSide = 0; nSide < 6; nSide++)
-			if (segP->IsTagged (nSide)) 
+			if (pSegment->IsTagged (nSide)) 
 				segmentManager.SetTextures (CSideKey (nSegment, nSide), nTexture, -1);
 	segmentManager.SetTextures (*current, nTexture, -1);
 	undoManager.End (__FUNCTION__); 
@@ -218,7 +218,7 @@ if (!m_bRButtonDown)
 	return;
 m_bRButtonDown = false;
 
-	CSide *sideP = current->Side ();
+	CSide *pSide = current->Side ();
 	short	nTexture;
 
 if (PickTexture (point, nTexture))
@@ -228,10 +228,10 @@ if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	CSegment* segP = segmentManager.Segment (0);
-	for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, segP++) 
+	CSegment* pSegment = segmentManager.Segment (0);
+	for (short nSegment = 0, nSegments = segmentManager.Count (); nSegment < nSegments; nSegment++, pSegment++) 
 		for (short nSide = 0; nSide < 6; nSide++)
-			if (segP->IsTagged (nSide)) 
+			if (pSegment->IsTagged (nSide)) 
 				segmentManager.SetTextures (CSideKey (nSegment, nSide), -1, nTexture);
 	segmentManager.SetTextures (*current, -1, nTexture);
 	Refresh ();

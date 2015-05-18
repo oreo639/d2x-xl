@@ -34,7 +34,7 @@ BOOL CObjectSoundTool::OnInitDialog ()
 if (!CObjectTabDlg::OnInitDialog ())
 	return FALSE;
 
-CGameObject *objP = current->Object ();
+CGameObject *pObject = current->Object ();
 
 CStringResource res;
 
@@ -85,9 +85,9 @@ if (current->ObjectId () == objectManager.Count ()) {
 EnableControls (TRUE);
 
 // update object list box
-CGameObject* objP = current->Object ();
+CGameObject* pObject = current->Object ();
 // gray contains and behavior if not a robot type object
-if (objP->Type () != OBJ_ROBOT) {
+if (pObject->Type () != OBJ_ROBOT) {
 	for (int i = IDC_OBJ_SOUND_EXPLODE; i <= IDC_OBJ_SOUND_DEATH; i++)
 		CBCtrl (i)->SetCurSel (-1);
 	}
@@ -106,8 +106,8 @@ return true;
 
 void CObjectSoundTool::RefreshRobot (void)
 {
-CGameObject* objP = current->Object ();
-int nType = objP->Type ();
+CGameObject* pObject = current->Object ();
+int nType = pObject->Type ();
 
 if (nType != OBJ_ROBOT) {
 	CBSoundExpl ()->SetCurSel (-1);
@@ -118,7 +118,7 @@ if (nType != OBJ_ROBOT) {
 	return;
 	}
 
-int nId = int (objP->Id ());
+int nId = int (pObject->Id ());
 CRobotInfo robotInfo = *robotManager.RobotInfo (nId);
 
 SelectItemData (CBSoundExpl (), (int) robotInfo.Info ().expl [1].nSound);
@@ -132,8 +132,8 @@ SelectItemData (CBSoundDeath (), (int) robotInfo.Info ().deathRollSound);
 
 void CObjectSoundTool::UpdateRobot (void)
 {
-CGameObject* objP = current->Object ();
-int nId = int (objP->Id ());
+CGameObject* pObject = current->Object ();
+int nId = int (pObject->Id ());
 if (nId < 0 || nId >= MAX_ROBOT_ID_D2)
 	nId = 0;
 CRobotInfo robotInfo = *robotManager.RobotInfo (nId);

@@ -159,13 +159,13 @@ if (VariableLight (key) != -1) {
 	}
 // we are adding a new variable light
 undoManager.Begin (__FUNCTION__, udVariableLights);
-CVariableLight* lightP = AddVariableLight ();
-if (lightP == null) {
+CVariableLight* pLight = AddVariableLight ();
+if (pLight == null) {
 	undoManager.End (__FUNCTION__);
 	return -1;
 	}
-lightP->Setup (key, time, mask);
-lightP->Backup (opAdd);
+pLight->Setup (key, time, mask);
+pLight->Backup (opAdd);
 undoManager.End (__FUNCTION__);
 return Count ();
 }
@@ -211,16 +211,16 @@ current->Get (key);
 if (bUseTexColors && ApplyFaceLightSettingsGlobally ()) {
 	short nBaseTex, nOvlTex;
 	segmentManager.Textures (key, nBaseTex, nOvlTex);
-	CColor *colorP;
+	CColor *pColor;
 	if (nOvlTex > 0) {
-		colorP = GetTexColor (nOvlTex, false);
-		if (colorP != null)
-			return colorP;
+		pColor = GetTexColor (nOvlTex, false);
+		if (pColor != null)
+			return pColor;
 		}
-	CWall* wallP = segmentManager.Wall (key);
-	colorP = GetTexColor (nBaseTex, (wallP != null) && wallP->IsTransparent ());
-	if (colorP != null)
-		return colorP;
+	CWall* pWall = segmentManager.Wall (key);
+	pColor = GetTexColor (nBaseTex, (pWall != null) && pWall->IsTransparent ());
+	if (pColor != null)
+		return pColor;
 	}	
 return FaceColor (key.m_nSegment, key.m_nSide); 
 }
@@ -253,9 +253,9 @@ int CLightManager::LightIsOn (CSideKey key)
 short nLight = VariableLight (key);
 if (nLight < 0)
 	return -1;
-CVariableLight* lightP = lightManager.VariableLight (nLight);
-tLightTimer* timerP = lightManager.LightTimer (nLight);
-return (lightP->m_info.mask & (1 << timerP->impulse)) != 0;
+CVariableLight* pLight = lightManager.VariableLight (nLight);
+tLightTimer* pTimer = lightManager.LightTimer (nLight);
+return (pLight->m_info.mask & (1 << pTimer->impulse)) != 0;
 }
 
 //-------------------------------------------------------------------------
@@ -270,24 +270,24 @@ LoadDefaults ();
 bool CLightManager::HasCustomLightMap (void)
 {
 CResource res;
-ubyte *dataP;
-if (!(dataP = res.Load (DLE.IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
+ubyte *pData;
+if (!(pData = res.Load (DLE.IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
 	return false;
-return memcmp (m_lightMap, dataP, sizeof (m_lightMap)) != 0;
+return memcmp (m_lightMap, pData, sizeof (m_lightMap)) != 0;
 }
 
 // ------------------------------------------------------------------------
 
-ubyte* CLightManager::ColorToFloat (CColor* colorP, ubyte* dataP)
+ubyte* CLightManager::ColorToFloat (CColor* pColor, ubyte* pData)
 {
-colorP->m_info.index = *dataP++;
-colorP->m_info.color.r = (double) *((int *) dataP) / (double) 0x7fffffff;
-dataP += sizeof (int);
-colorP->m_info.color.g = (double) *((int *) dataP) / (double) 0x7fffffff;
-dataP += sizeof (int);
-colorP->m_info.color.b = (double) *((int *) dataP) / (double) 0x7fffffff;
-dataP += sizeof (int);
-return dataP;
+pColor->m_info.index = *pData++;
+pColor->m_info.color.r = (double) *((int *) pData) / (double) 0x7fffffff;
+pData += sizeof (int);
+pColor->m_info.color.g = (double) *((int *) pData) / (double) 0x7fffffff;
+pData += sizeof (int);
+pColor->m_info.color.b = (double) *((int *) pData) / (double) 0x7fffffff;
+pData += sizeof (int);
+return pData;
 }
 
 // ------------------------------------------------------------------------
@@ -295,12 +295,12 @@ return dataP;
 bool CLightManager::HasCustomLightColors (void)
 {
 CResource res;
-ubyte *dataP;
-if (!(dataP = res.Load (DLE.IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
+ubyte *pData;
+if (!(pData = res.Load (DLE.IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
 	return false;
 for (uint i = 0, l = m_texColors.Length (); i < l; i++) {
 	CColor color;
-	dataP = ColorToFloat (&color, dataP);
+	pData = ColorToFloat (&color, pData);
 	if (m_texColors [i] != color)
 		return true;
 	}
@@ -312,8 +312,8 @@ return false;
 short CLightManager::LoadDefaults (void)
 {
 CResource res;
-ubyte *dataP;
-if (!(dataP = res.Load (DLE.IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
+ubyte *pData;
+if (!(pData = res.Load (DLE.IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
 	return false;
 int i = int (res.Size () / (3 * sizeof (int) + sizeof (ubyte)));
 #if _DEBUG
@@ -323,12 +323,12 @@ if (i > (int) m_texColors.Length ())
 if (i > sizeofa (m_texColors))
 	i = sizeofa (m_texColors);
 #endif
-for (CColor* colorP = &m_texColors [0]; i; i--, colorP++) 
-	dataP = ColorToFloat (colorP, dataP);
+for (CColor* pColor = &m_texColors [0]; i; i--, pColor++) 
+	pData = ColorToFloat (pColor, pData);
 
-if (!(dataP = res.Load (DLE.IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
+if (!(pData = res.Load (DLE.IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
 	return false;
-memcpy (m_lightMap, dataP, min (res.Size (), sizeof (m_lightMap)));
+memcpy (m_lightMap, pData, min (res.Size (), sizeof (m_lightMap)));
 return 1;
 }
 

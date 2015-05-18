@@ -20,11 +20,11 @@ CDoubleVector CSegmentManager::CalcSideCenter (CSideKey key)
 {
 current->Get (key);
 
-	CSegment _const_ * segP = Segment (key.m_nSegment);
-	CSide _const_ * sideP = segP->Side (key.m_nSide);
-	ushort* vertexIds = segP->m_info.vertexIds;
-	ubyte* vertexIdIndex = sideP->m_vertexIdIndex;
-	int n = sideP->VertexCount ();
+	CSegment _const_ * pSegment = Segment (key.m_nSegment);
+	CSide _const_ * pSide = pSegment->Side (key.m_nSide);
+	ushort* vertexIds = pSegment->m_info.vertexIds;
+	ubyte* vertexIdIndex = pSide->m_vertexIdIndex;
+	int n = pSide->VertexCount ();
 
 CDoubleVector v = vertexManager [vertexIds [*vertexIdIndex]];
 for (int i = 1; i < n; i++)
@@ -39,12 +39,12 @@ CDoubleVector CSegmentManager::CalcSideNormal (CSideKey key)
 {
 current->Get (key);
 
-	CSegment _const_ * segP = Segment (key.m_nSegment);
-	int n = segP->Side (key.m_nSide)->VertexCount ();
+	CSegment _const_ * pSegment = Segment (key.m_nSegment);
+	int n = pSegment->Side (key.m_nSide)->VertexCount ();
 
 if (n < 3)
 	return CDoubleVector (0.0, 0.0, 0.0);
-return -Normal (*(segP->Vertex (key.m_nSide, 0)), *(segP->Vertex (key.m_nSide, 1)), *(segP->Vertex (key.m_nSide, n - 1)));
+return -Normal (*(pSegment->Vertex (key.m_nSide, 0)), *(pSegment->Vertex (key.m_nSide, 1)), *(pSegment->Vertex (key.m_nSide, n - 1)));
 }
 
 // ------------------------------------------------------------------------------ 
@@ -66,7 +66,7 @@ if (key.m_nSide < 0 || key.m_nSide >= 6)
 short nChildSeg = Segment (key.m_nSegment)->ChildId (key.m_nSide); 
 if (nChildSeg < 0 || nChildSeg >= Count ())
 	return null; 
-CSegment* childSegP = Segment (nChildSeg);
+CSegment* pChildSeg = Segment (nChildSeg);
 for (short nChildSide = 0; nChildSide < 6; nChildSide++) {
 	if (Segment (nChildSeg)->ChildId (nChildSide) == key.m_nSegment) {
 		back.m_nSegment = nChildSeg; 
@@ -82,12 +82,12 @@ return null;
 bool CSegmentManager::IsExit (short nSegment)
 {
 	CSideKey key (nSegment, 0);
-	CSegment* segP = segmentManager.Segment (nSegment);
+	CSegment* pSegment = segmentManager.Segment (nSegment);
 
 for (key.m_nSide = 0; key.m_nSide < 6; key.m_nSide++) {
-	CWall* wallP = Wall (key);
-	if (wallP) {
-		int i = wallP->Index ();
+	CWall* pWall = Wall (key);
+	if (pWall) {
+		int i = pWall->Index ();
 		if (wallManager.IsExit (i))
 			return true;
 		i = wallManager.Index (wallManager.OppositeWall (*wallManager.Wall (i)));
@@ -110,20 +110,20 @@ return (Segment (key.m_nSegment)->ChildId (key.m_nSide) == -1) || (Wall (key) !=
 
 void CSegmentManager::DeleteWalls (short nSegment)
 {
-	CSide _const_ * sideP = Segment (nSegment)->m_sides; 
+	CSide _const_ * pSide = Segment (nSegment)->m_sides; 
 
-for (int i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
-	wallManager.Delete (sideP->m_info.nWall);
+for (int i = MAX_SIDES_PER_SEGMENT; i; i--, pSide++)
+	wallManager.Delete (pSide->m_info.nWall);
 }
 
 // ----------------------------------------------------------------------------- 
 
 void CSegmentManager::UpdateVertices (short nOldVert, short nNewVert)
 {
-CSegment _const_ * segP = Segment (0);
+CSegment _const_ * pSegment = Segment (0);
 int nSegments = segmentManager.Count ();
-for (int nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
-	ushort* vertexIds = segP->m_info.vertexIds;
+for (int nSegment = 0; nSegment < nSegments; nSegment++, pSegment++) {
+	ushort* vertexIds = pSegment->m_info.vertexIds;
 	for (ushort nVertex = 0; nVertex < 8; nVertex++) {
 		if (vertexIds [nVertex] == nOldVert)
 			vertexIds [nVertex] = nNewVert;
@@ -136,12 +136,12 @@ for (int nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 void CSegmentManager::UpdateWalls (short nOldWall, short nNewWall)
 {
 if (nOldWall != nNewWall) {
-	CSegment _const_ * segP = Segment (0);
-	for (int i = Count (); i; i--, segP++) {
-		CSide* sideP = &segP->m_sides [0];
-		for (int j = 0; j < 6; j++, sideP++)
-			if ((sideP->m_info.nWall != NO_WALL) && (sideP->m_info.nWall >= nOldWall))
-				sideP->m_info.nWall = nNewWall;
+	CSegment _const_ * pSegment = Segment (0);
+	for (int i = Count (); i; i--, pSegment++) {
+		CSide* pSide = &pSegment->m_sides [0];
+		for (int j = 0; j < 6; j++, pSide++)
+			if ((pSide->m_info.nWall != NO_WALL) && (pSide->m_info.nWall >= nOldWall))
+				pSide->m_info.nWall = nNewWall;
 		}
 	}
 }
@@ -172,18 +172,18 @@ undoManager.End (__FUNCTION__);
 
 void CSegmentManager::SetLinesToDraw (void)
 {
-  CSegment *segP; 
+  CSegment *pSegment; 
   short nSegment, nSide; 
 
-for (nSegment = Count (), segP = Segment (0); nSegment; nSegment--, segP++) {
-	segP->m_info.mapBitmask |= 0xFFF; 
+for (nSegment = Count (), pSegment = Segment (0); nSegment; nSegment--, pSegment++) {
+	pSegment->m_info.mapBitmask |= 0xFFF; 
 	// if segment nSide has a child, clear bit for drawing line
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		if (segP->ChildId (nSide) > -1) { // -1 = no child,  - 2 = outside of world
-			segP->m_info.mapBitmask &= ~(1 << (sideEdgeTable [nSide][0])); 
-			segP->m_info.mapBitmask &= ~(1 << (sideEdgeTable [nSide][1])); 
-			segP->m_info.mapBitmask &= ~(1 << (sideEdgeTable [nSide][2])); 
-			segP->m_info.mapBitmask &= ~(1 << (sideEdgeTable [nSide][3])); 
+		if (pSegment->ChildId (nSide) > -1) { // -1 = no child,  - 2 = outside of world
+			pSegment->m_info.mapBitmask &= ~(1 << (sideEdgeTable [nSide][0])); 
+			pSegment->m_info.mapBitmask &= ~(1 << (sideEdgeTable [nSide][1])); 
+			pSegment->m_info.mapBitmask &= ~(1 << (sideEdgeTable [nSide][2])); 
+			pSegment->m_info.mapBitmask &= ~(1 << (sideEdgeTable [nSide][3])); 
 			}
 		}
 	}
@@ -198,11 +198,11 @@ void CSegmentManager::CopyOtherSegment (void)
 if (selections [0].m_nSegment == selections [1].m_nSegment)
 	return; 
 short nSegment = current->SegmentId (); 
-CSegment* segP = current->Segment ();
-CSegment* otherSegP = other->Segment (); 
+CSegment* pSegment = current->Segment ();
+CSegment* pOtherSeg = other->Segment (); 
 undoManager.Begin (__FUNCTION__, udSegments);
 for (int nSide = 0; nSide < 6; nSide++)
-	if (SetTextures (CSideKey (nSegment, nSide), otherSegP->m_sides [nSide].BaseTex (), otherSegP->m_sides [nSide].OvlTex ()))
+	if (SetTextures (CSideKey (nSegment, nSide), pOtherSeg->m_sides [nSide].BaseTex (), pOtherSeg->m_sides [nSide].OvlTex ()))
 		bChange = true;
 undoManager.End (__FUNCTION__);
 if (bChange)
@@ -217,21 +217,21 @@ int errFlags = 0;
 
 int nSegments = segmentManager.Count ();
 for (int si = 0; si < nSegments; si++) {
-	CSegment* segP = segmentManager.Segment (si);
+	CSegment* pSegment = segmentManager.Segment (si);
 	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		CSide& side = segP->m_sides [nSide];
+		CSide& side = pSegment->m_sides [nSide];
 		if ((side.m_info.nWall != NO_WALL) && ((side.m_info.nWall >= wallManager.Count () || !side.Wall ()->Used ()))) {
 			side.m_info.nWall = NO_WALL;
 			errFlags |= 1;
 			}
-		if ((segP->ChildId (nSide) < -2) || (segP->ChildId (nSide) > Count ())) {
-			segP->SetChild (nSide, -1);
+		if ((pSegment->ChildId (nSide) < -2) || (pSegment->ChildId (nSide) > Count ())) {
+			pSegment->SetChild (nSide, -1);
 			errFlags |= 2;
 			}
 		}
 	for (ushort nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
-		if ((segP->m_info.vertexIds [nVertex] <= MAX_VERTEX) && (segP->m_info.vertexIds [nVertex] >= vertexManager.Count ())) {
-			segP->m_info.vertexIds [nVertex] = 0;  // this will cause a bad looking picture
+		if ((pSegment->m_info.vertexIds [nVertex] <= MAX_VERTEX) && (pSegment->m_info.vertexIds [nVertex] >= vertexManager.Count ())) {
+			pSegment->m_info.vertexIds [nVertex] = 0;  // this will cause a bad looking picture
 			errFlags |= 4;
 			}
 		}
@@ -272,9 +272,9 @@ return DLE.IsD1File ()
 
 short CSegmentManager::FindByVertex (ushort nVertex, short nSegment)
 {
-CSegment* segP = Segment (nSegment);
-for (short i = Count (); nSegment < i; nSegment++, segP++)
-	if (segP->HasVertex (nVertex))
+CSegment* pSegment = Segment (nSegment);
+for (short i = Count (); nSegment < i; nSegment++, pSegment++)
+	if (pSegment->HasVertex (nVertex))
 		return nSegment;
 return -1;
 }
@@ -301,15 +301,15 @@ void CSegmentManager::ComputeNormals (bool bAll, bool bView)
 #	pragma omp parallel for if (nSegments > 15)
 #endif
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
-	CSegment* segP = Segment (nSegment);
-	segP->ComputeCenter (bView);
-	CSide* sideP = segP->Side (0);
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
+	CSegment* pSegment = Segment (nSegment);
+	pSegment->ComputeCenter (bView);
+	CSide* pSide = pSegment->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+		if (pSide->Shape () > SIDE_SHAPE_TRIANGLE)
 			continue;
-		if (!(bAll || sideP->IsVisible ()))
+		if (!(bAll || pSide->IsVisible ()))
 			continue;
-		sideP->ComputeNormals (segP->m_info.vertexIds, segP->m_vCenter, bView);
+		pSide->ComputeNormals (pSegment->m_info.vertexIds, pSegment->m_vCenter, bView);
 		}
 	}
 }
@@ -324,14 +324,14 @@ m_selectedSegments = null;
 	
 #pragma omp parallel for if (nSegments > 15)
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
-	CSegment* segP = Segment (nSegment);
-	if ((segP->Function () == SEGMENT_FUNC_SKYBOX) && !bAllowSkyBox)
+	CSegment* pSegment = Segment (nSegment);
+	if ((pSegment->Function () == SEGMENT_FUNC_SKYBOX) && !bAllowSkyBox)
 		continue;
-	if (segP->IsSelected (viewport, xMouse, yMouse, 0, true))
+	if (pSegment->IsSelected (viewport, xMouse, yMouse, 0, true))
 #pragma omp critical
 		{
-		segP->SetLink (m_selectedSegments);
-		m_selectedSegments = segP;
+		pSegment->SetLink (m_selectedSegments);
+		m_selectedSegments = pSegment;
 		}
 	}
 return m_selectedSegments;
@@ -350,13 +350,13 @@ m_selectedSides = null;
 #	pragma omp parallel for if (nSegments > 15)
 #endif
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
-	CSegment* segP = Segment (nSegment);
-	if ((segP->Function () == SEGMENT_FUNC_SKYBOX) && !bAllowSkyBox)
+	CSegment* pSegment = Segment (nSegment);
+	if ((pSegment->Function () == SEGMENT_FUNC_SKYBOX) && !bAllowSkyBox)
 		continue;
 	bool bSegmentSelected = false;
 	short nSide = 0;
 	for (; nSide < 6; nSide++) {
-		nSide = segP->IsSelected (viewport, xMouse, yMouse, nSide, bSegments);
+		nSide = pSegment->IsSelected (viewport, xMouse, yMouse, nSide, bSegments);
 		if (nSide < 0)
 			break;
 #ifdef NDEBUG
@@ -365,19 +365,19 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++) {
 			{
 			if (!bSegmentSelected) {
 				bSegmentSelected = true;
-				segP->SetLink (m_selectedSegments);
-				m_selectedSegments = segP;
+				pSegment->SetLink (m_selectedSegments);
+				m_selectedSegments = pSegment;
 				}
 			}
-			CSide* sideP = segP->Side (nSide);
+			CSide* pSide = pSegment->Side (nSide);
 #ifdef NDEBUG
 #	pragma omp critical
 #endif
 			{
-			sideP->SetLink (m_selectedSides);
-			m_selectedSides = sideP;
+			pSide->SetLink (m_selectedSides);
+			m_selectedSides = pSide;
 			}
-		sideP->SetParent (nSegment);
+		pSide->SetParent (nSegment);
 		}
 	}
 return m_selectedSides;
@@ -393,26 +393,26 @@ return m_selectedSides;
 void CSegmentManager::GatherEdges (CAVLTree <CEdgeTreeNode, uint>& edgeTree)
 {
 	CEdgeList	edgeList;
-	CSegment*	segP = Segment (0);
+	CSegment*	pSegment = Segment (0);
 	short			nSegments = Count ();
 
-for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
-	int nEdges = segP->BuildEdgeList (edgeList, false);
+for (short nSegment = 0; nSegment < nSegments; nSegment++, pSegment++) {
+	int nEdges = pSegment->BuildEdgeList (edgeList, false);
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
 		ubyte side1, side2, i1, i2;
 		edgeList.Get (nEdge, side1, side2, i1, i2);
-		ushort v1 = segP->VertexId (i1);
-		ushort v2 = segP->VertexId (i2);
+		ushort v1 = pSegment->VertexId (i1);
+		ushort v2 = pSegment->VertexId (i2);
 		uint key = CEdgeKey::Key (v1, v2);
-		bool bVisible [2] = { (side1 < 6) && segP->Side (side1)->IsVisible (), (side2 < 6) && segP->Side (side2)->IsVisible () };
+		bool bVisible [2] = { (side1 < 6) && pSegment->Side (side1)->IsVisible (), (side2 < 6) && pSegment->Side (side2)->IsVisible () };
 		if ((bVisible [0] || bVisible [1])) {
 			CEdgeTreeNode node (key);
-			CEdgeTreeNode*nodeP = edgeTree.Insert (node, key);
-			if (nodeP) { // insert sides into side list of current edge
+			CEdgeTreeNode*pNode = edgeTree.Insert (node, key);
+			if (pNode) { // insert sides into side list of current edge
 				if (bVisible [0])
-					nodeP->Insert (nSegment, side1);
+					pNode->Insert (nSegment, side1);
 				if (bVisible [1])
-					nodeP->Insert (nSegment, side2);
+					pNode->Insert (nSegment, side2);
 				}
 			}
 		}
@@ -423,13 +423,13 @@ for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
 
 uint CSegmentManager::VisibleSideCount (void)
 {
-	CSegment*	segP = Segment (0);
+	CSegment*	pSegment = Segment (0);
 	short			nSegments = Count ();
 	uint			nSides = 0;
 
-for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++)
+for (short nSegment = 0; nSegment < nSegments; nSegment++, pSegment++)
 	for (short nSide = 0; nSide < 6; nSide++)
-		if (segP->Side (nSide)->IsVisible ())
+		if (pSegment->Side (nSide)->IsVisible ())
 			nSides++;
 return nSides;
 }

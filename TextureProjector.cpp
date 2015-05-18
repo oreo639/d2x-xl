@@ -79,18 +79,18 @@ void CTextureProjector::ResetProjectOffset ()
 
 void CTextureProjector::ResetProjectDirection ()
 {
-	CSegment* segP = current->Segment ();
-	CSide* sideP = current->Side ();
+	CSegment* pSegment = current->Segment ();
+	CSide* pSide = current->Side ();
 	short nSide = current->SideId ();
 	short nEdge = current->Edge ();
-	ubyte v1 = sideP->VertexIdIndex (nEdge);
-	ubyte v2 = sideP->VertexIdIndex (nEdge + 1);
-	sideP->ComputeNormals (segP->m_info.vertexIds, m_vCenter);
-	segP->ComputeCenter (nSide);
+	ubyte v1 = pSide->VertexIdIndex (nEdge);
+	ubyte v2 = pSide->VertexIdIndex (nEdge + 1);
+	pSide->ComputeNormals (pSegment->m_info.vertexIds, m_vCenter);
+	pSegment->ComputeCenter (nSide);
 
-	CDoubleVector fVec = sideP->Normal ();
+	CDoubleVector fVec = pSide->Normal ();
 	fVec.Negate ();
-	CDoubleVector uVec = vertexManager [segP->m_info.vertexIds [v1]] - vertexManager [segP->m_info.vertexIds [v2]];
+	CDoubleVector uVec = vertexManager [pSegment->m_info.vertexIds [v1]] - vertexManager [pSegment->m_info.vertexIds [v2]];
 	uVec.Normalize ();
 	CDoubleVector rVec = CrossProduct (uVec, fVec);
 
@@ -161,31 +161,31 @@ void CTextureProjector::Project (CDynamicArray< CPreviewUVL > *previewUVLs)
 				previewUVLs->Resize (nModifiedUVLs + PREVIEWUVLS_EXPAND_INCREMENT);
 			}
 
-			CSegment* segP = segmentManager.Segment (i);
-			CSide *sideP = segP->Side (j);
+			CSegment* pSegment = segmentManager.Segment (i);
+			CSide *pSide = pSegment->Side (j);
 			CUVL vTranslate;
 			double maxAngle = 0, minAngle = (2 * M_PI);
 			CUVL uvlModified [4];
 
-			for (short k = 0; k < sideP->VertexCount (); k++) {
+			for (short k = 0; k < pSide->VertexCount (); k++) {
 				// Copy UVL from face
-				uvlModified [k] = *sideP->Uvls (k);
+				uvlModified [k] = *pSide->Uvls (k);
 
 				switch (m_nProjectionMode) {
 				case PROJECTION_MODE_PLANAR:
-					uvlModified [k].u = Dot (*segP->Vertex (j, k) - m_vCenter, m_projectOrient.R ()) / 20.0 - 0.5;
-					uvlModified [k].v = Dot (*segP->Vertex (j, k) - m_vCenter, m_projectOrient.U ()) / 20.0 - 0.5;
+					uvlModified [k].u = Dot (*pSegment->Vertex (j, k) - m_vCenter, m_projectOrient.R ()) / 20.0 - 0.5;
+					uvlModified [k].v = Dot (*pSegment->Vertex (j, k) - m_vCenter, m_projectOrient.U ()) / 20.0 - 0.5;
 					break;
 				case PROJECTION_MODE_CYLINDER:
 					{
-						CDoubleVector vIntersection = ProjectPointOnPlane (&m_vCenter, &m_projectOrient.U (), segP->Vertex (j, k));
+						CDoubleVector vIntersection = ProjectPointOnPlane (&m_vCenter, &m_projectOrient.U (), pSegment->Vertex (j, k));
 						vIntersection = m_projectOrient * (vIntersection - m_vCenter);
 						double angle = (vIntersection.v.x || vIntersection.v.z) ? atan3 (vIntersection.v.x, vIntersection.v.z) : 0;
 						maxAngle = max (maxAngle, angle);
 						minAngle = min (minAngle, angle);
 						uvlModified [k].u = angle / (2 * M_PI);
 					}
-					uvlModified [k].v = Dot (*segP->Vertex (j, k) - m_vCenter, m_projectOrient.U ()) / 20.0 - 0.5;
+					uvlModified [k].v = Dot (*pSegment->Vertex (j, k) - m_vCenter, m_projectOrient.U ()) / 20.0 - 0.5;
 					break;
 				default:
 					break;
@@ -195,7 +195,7 @@ void CTextureProjector::Project (CDynamicArray< CPreviewUVL > *previewUVLs)
 				uvlModified [k].v *= -m_projectScaleV;
 			}
 			if (m_nProjectionMode == PROJECTION_MODE_CYLINDER) {
-				for (short k = 0; k < sideP->VertexCount (); k++) {
+				for (short k = 0; k < pSide->VertexCount (); k++) {
 					// Check if the texture wrapped and if so, bump the lower-angle UVs up
 					if ((maxAngle - minAngle) > M_PI && uvlModified [k].u < 0) {
 						uvlModified [k].u += abs (m_projectScaleU);
@@ -213,13 +213,13 @@ void CTextureProjector::Project (CDynamicArray< CPreviewUVL > *previewUVLs)
 			// Write modified UVLs back to face or to preview
 			if (previewUVLs) {
 				(*previewUVLs) [nThisUVL] = CPreviewUVL (i, j);
-				for (short k = 0; k < sideP->VertexCount (); k++) {
-					(*previewUVLs) [nThisUVL].m_uvlOld [k] = *sideP->Uvls (k);
+				for (short k = 0; k < pSide->VertexCount (); k++) {
+					(*previewUVLs) [nThisUVL].m_uvlOld [k] = *pSide->Uvls (k);
 					(*previewUVLs) [nThisUVL].m_uvlPreview [k] = uvlModified [k];
 				}
 			} else {
-				for (short k = 0; k < sideP->VertexCount (); k++)
-					*sideP->Uvls (k) = uvlModified [k];
+				for (short k = 0; k < pSide->VertexCount (); k++)
+					*pSide->Uvls (k) = uvlModified [k];
 			}
 		}
 	}
@@ -237,18 +237,18 @@ bool CTextureProjector::ShouldProjectFace (short nSegment, short nSide)
 	CTextureTool *texTool = DLE.ToolView ()->TextureTool ();
 	if (!texTool)
 		return false;
-	CSide *sideP = segmentManager.Segment (nSegment)->Side (nSide);
-	if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
+	CSide *pSide = segmentManager.Segment (nSegment)->Side (nSide);
+	if (pSide->Shape () > SIDE_SHAPE_TRIANGLE)
 		return false;
 	// If any vertices are tagged, use tagged faces
 	if (vertexManager.HasTaggedVertices ()) {
-		if (!sideP->IsTagged ())
+		if (!pSide->IsTagged ())
 			return false;
 	}
 	// Find faces that match the saved texture(s) if requested
-	if (m_bProjectCopiedOnly && texTool->m_bUse1st && (sideP->BaseTex () != texTool->m_saveTexture [0]))
+	if (m_bProjectCopiedOnly && texTool->m_bUse1st && (pSide->BaseTex () != texTool->m_saveTexture [0]))
 		return false;
-	if (m_bProjectCopiedOnly && texTool->m_bUse2nd && (sideP->OvlTex (0) != texTool->m_saveTexture [1]))
+	if (m_bProjectCopiedOnly && texTool->m_bUse2nd && (pSide->OvlTex (0) != texTool->m_saveTexture [1]))
 		return false;
 	return true;
 }
@@ -352,12 +352,12 @@ renderer.EndRender ();
 
 void CPreviewUVL::Apply ()
 {
-CSegment* segP = segmentManager.Segment (m_nSegment);
-if (segP) {
-	CSide* sideP = segP->Side (m_nSide);
-	if (sideP) {
-		for (short nVertex = 0; nVertex < sideP->VertexCount (); nVertex++) {
-			*sideP->Uvls (nVertex) = m_uvlPreview [nVertex];
+CSegment* pSegment = segmentManager.Segment (m_nSegment);
+if (pSegment) {
+	CSide* pSide = pSegment->Side (m_nSide);
+	if (pSide) {
+		for (short nVertex = 0; nVertex < pSide->VertexCount (); nVertex++) {
+			*pSide->Uvls (nVertex) = m_uvlPreview [nVertex];
 			}
 		}
 	}
@@ -365,12 +365,12 @@ if (segP) {
 
 void CPreviewUVL::Revert ()
 {
-CSegment* segP = segmentManager.Segment (m_nSegment);
-if (segP) {
-	CSide* sideP = segP->Side (m_nSide);
-	if (sideP) {
-		for (short nVertex = 0; nVertex < sideP->VertexCount (); nVertex++) {
-			*sideP->Uvls (nVertex) = m_uvlOld [nVertex];
+CSegment* pSegment = segmentManager.Segment (m_nSegment);
+if (pSegment) {
+	CSide* pSide = pSegment->Side (m_nSide);
+	if (pSide) {
+		for (short nVertex = 0; nVertex < pSide->VertexCount (); nVertex++) {
+			*pSide->Uvls (nVertex) = m_uvlOld [nVertex];
 			}
 		}
 	}

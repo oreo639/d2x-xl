@@ -90,15 +90,15 @@ return szText;
 
 void CDiagTool::CountObjects (void)
 {
-CGameObject *objP = objectManager.Object (0);
+CGameObject *pObject = objectManager.Object (0);
 memset (m_nObjects, 0, sizeof (m_nObjects));
 memset (m_nContained, 0, sizeof (m_nContained));
 int i, j;
-for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
-	switch(objP->Type ()) {
+for (i = objectManager.Count (), j = 0; i; i--, j++, pObject++)
+	switch(pObject->Type ()) {
 		case OBJ_ROBOT:
 			m_nObjects [0]++;
-			m_nContained [0] += objP->m_info.contents.count;
+			m_nContained [0] += pObject->m_info.contents.count;
 			break;
 		case OBJ_HOSTAGE:
 			m_nObjects [1]++;
@@ -113,13 +113,13 @@ for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
 			m_nObjects [4]++;
 			break;
 		case OBJ_POWERUP:
-			switch (powerupTypeTable [objP->Id ()]) {
+			switch (powerupTypeTable [pObject->Id ()]) {
 				case POWERUP_WEAPON_MASK:
 					m_nObjects [4]++;
 					break;
 				case POWERUP_POWERUP_MASK:
 					m_nObjects [5]++;
-					m_nContained [1] += objP->m_info.contents.count;
+					m_nContained [1] += pObject->m_info.contents.count;
 					break;
 				case POWERUP_KEY_MASK:
 					m_nObjects [6]++;
@@ -144,23 +144,23 @@ for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
 
 int CDiagTool::CountTextures (void)
 {
-	CSegment *segP = segmentManager.Segment (0);
-	CSide *sideP;
+	CSegment *pSegment = segmentManager.Segment (0);
+	CSide *pSide;
 	char bUsed [(MAX_TEXTURES_D2 + 7) / 8];
 	int t, i, j, h = wallManager.WallCount ();
 	int nUsed = 0;
 
 memset (bUsed, 0, sizeof (bUsed));
-for (i = segmentManager.Count (); i; i--, segP++)
-	for (j = 0, sideP = segP->m_sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
-		if ((segP->ChildId (j) == -1) || (sideP->m_info.nWall < h)) {
-			t = sideP->BaseTex ();
+for (i = segmentManager.Count (); i; i--, pSegment++)
+	for (j = 0, pSide = pSegment->m_sides; j < MAX_SIDES_PER_SEGMENT; j++, pSide++)
+		if ((pSegment->ChildId (j) == -1) || (pSide->m_info.nWall < h)) {
+			t = pSide->BaseTex ();
 //			CBRK ((t >> 3) >= (MAX_TEXTURES_D2 + 7) / 8);
 			if ((t >= 0) && (t < MAX_TEXTURES_D2) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
 				nUsed++;
 				bUsed [t >> 3] |= (1 << (t & 7));
 				}
-			t = sideP->OvlTex (0);
+			t = pSide->OvlTex (0);
 //			CBRK ((t >> 3) >= (MAX_TEXTURES_D2 + 7) / 8);
 			if ((t > 0) && (t < MAX_TEXTURES_D2) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
 				nUsed++;

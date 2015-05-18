@@ -1,16 +1,16 @@
 #ifndef _BUILDMODEL_H
 #define _BUILDMODEL_H
 
-int AllocModel (RenderModel::CModel *modelP);
-int FreeModelItems (RenderModel::CModel *modelP);
+int AllocModel (RenderModel::CModel *pModel);
+int FreeModelItems (RenderModel::CModel *pModel);
 void FreeAllPolyModelItems (void);
 void SortFaces (RenderModel::CSubModel *subModelP, int left, int right, CBitmap *pTextures);
-void SortFaceVerts (RenderModel::CModel *modelP, RenderModel::CSubModel *psm, RenderModel::CVertex *psv);
-void SetupModel (RenderModel::CModel *modelP, int bHires, int bSort);
-int BuildModel (CObject *objP, int nModel, CPolyModel *polyModelP, CDynamicArray<CBitmap*>& modelBitmaps, CFloatVector* objColorP, int bHires);
+void SortFaceVerts (RenderModel::CModel *pModel, RenderModel::CSubModel *psm, RenderModel::CVertex *psv);
+void SetupModel (RenderModel::CModel *pModel, int bHires, int bSort);
+int BuildModel (CObject *pObject, int nModel, CPolyModel *polyModelP, CDynamicArray<CBitmap*>& modelBitmaps, CFloatVector* objColorP, int bHires);
 
-int BuildModelFromASE (CObject *objP, int nModel);
-int BuildModelFromPOF (CObject *objP, int nModel, CPolyModel *polyModelP, CDynamicArray<CBitmap*>& modelBitmaps, CFloatVector *objColorP);
+int BuildModelFromASE (CObject *pObject, int nModel);
+int BuildModelFromPOF (CObject *pObject, int nModel, CPolyModel *polyModelP, CDynamicArray<CBitmap*>& modelBitmaps, CFloatVector *objColorP);
 
 //------------------------------------------------------------------------------
 

@@ -449,12 +449,12 @@ short	nSeg,	nSide, nTextures;
 short segCount = segmentManager.Count ();
 char	szName [80];
 int h;
-CSegment *segP = segmentManager.Segment (0);
-CSide *sideP;
+CSegment *pSegment = segmentManager.Segment (0);
+CSide *pSide;
 // add textures that have been used to Texture 1 combo box
-for (nSeg = segCount; nSeg; nSeg--, segP++) {
-	for (sideP = segP->m_sides, nSide = 6; nSide; nSide--, sideP++) {
-		short nTextures [2] = {sideP->BaseTex (), sideP->OvlTex (0)};
+for (nSeg = segCount; nSeg; nSeg--, pSegment++) {
+	for (pSide = pSegment->m_sides, nSide = 6; nSide; nSide--, pSide++) {
+		short nTextures [2] = {pSide->BaseTex (), pSide->OvlTex (0)};
 		for (int i = 0; i < 2; i++) {
 			if (nTextures [i] != -1) {
 				// read name of texture from Descent 1 texture resource
@@ -608,38 +608,38 @@ textureManager.LoadTextures ();
 lightManager.LoadDefaults ();
 
   // convert textures
-CSegment* segP = segmentManager.Segment (0);
-for (nSegment = 0; nSegment < segCount; nSegment++, segP++) {
-	CSide* sideP = segP->m_sides;
-	for (nSide = 0; nSide < 6; nSide++, sideP++) {
+CSegment* pSegment = segmentManager.Segment (0);
+for (nSegment = 0; nSegment < segCount; nSegment++, pSegment++) {
+	CSide* pSide = pSegment->m_sides;
+	for (nSide = 0; nSide < 6; nSide++, pSide++) {
 #ifdef _DEBUG
 		if ((nSegment == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 			nDbgSeg = nDbgSeg;
 #endif
-		if (sideP->m_info.nWall >= wallCount)
-			sideP->m_info.nWall = NO_WALL;
-		if ((segP->ChildId (nSide) == -1) || (sideP->m_info.nWall < wallCount)) {
-			d1Texture = segP->m_sides [nSide].BaseTex ();
+		if (pSide->m_info.nWall >= wallCount)
+			pSide->m_info.nWall = NO_WALL;
+		if ((pSegment->ChildId (nSide) == -1) || (pSide->m_info.nWall < wallCount)) {
+			d1Texture = pSegment->m_sides [nSide].BaseTex ();
 			if ((d1Texture >= 0) && (d1Texture < MAX_TEXTURES_D1)) {
-				sideP->m_info.nBaseTex = textureMap [d1Texture];
-				*lightManager.LightMap (sideP->BaseTex ()) = lightMap [d1Texture];
-				*lightManager.TexColor (sideP->BaseTex ()) = colorMap [d1Texture];
+				pSide->m_info.nBaseTex = textureMap [d1Texture];
+				*lightManager.LightMap (pSide->BaseTex ()) = lightMap [d1Texture];
+				*lightManager.TexColor (pSide->BaseTex ()) = colorMap [d1Texture];
 				}
 			else { 
 				DEBUGMSG (" Level converter: Invalid texture 1 found")
-				sideP->m_info.nBaseTex = 0;
+				pSide->m_info.nBaseTex = 0;
 				}
-			d1Texture = sideP->OvlTex ();
+			d1Texture = pSide->OvlTex ();
 			mode = d1Texture & ALIGNMENT_MASK;
 			d1Texture &= TEXTURE_MASK;
 			if (d1Texture > 0 && d1Texture < MAX_TEXTURES_D1) {
-				sideP->m_info.nOvlTex = textureMap [d1Texture] | mode;
-				*lightManager.LightMap (sideP->BaseTex ()) = lightMap [d1Texture];
-				*lightManager.TexColor (sideP->BaseTex ()) = colorMap [d1Texture];
+				pSide->m_info.nOvlTex = textureMap [d1Texture] | mode;
+				*lightManager.LightMap (pSide->BaseTex ()) = lightMap [d1Texture];
+				*lightManager.TexColor (pSide->BaseTex ()) = colorMap [d1Texture];
 				}
 			else if (d1Texture < 0) {
 				DEBUGMSG (" Level converter: Invalid texture 2 found")
-				sideP->m_info.nOvlTex = 0;
+				pSide->m_info.nOvlTex = 0;
 				}
 			}
 		}
@@ -647,40 +647,40 @@ for (nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 
 // defined D2 wall parameters
 //--------------------------------------
-CWall* wallP = wallManager.Wall (0);
-for (i = 0; i < wallCount; i++, wallP++) {
-	wallP->Info ().controllingTrigger = 0;
-	wallP->Info ().cloakValue = 0;
+CWall* pWall = wallManager.Wall (0);
+for (i = 0; i < wallCount; i++, pWall++) {
+	pWall->Info ().controllingTrigger = 0;
+	pWall->Info ().cloakValue = 0;
 	}
 
-// change trigP type and flags
+// change pTrigger type and flags
 //-------------------------------------------
-CTrigger* trigP = triggerManager.Trigger (0);
-for (i = 0; i < triggerManager.WallTriggerCount (); i++, trigP++) {
-	switch (trigP->Flags ()) {
+CTrigger* pTrigger = triggerManager.Trigger (0);
+for (i = 0; i < triggerManager.WallTriggerCount (); i++, pTrigger++) {
+	switch (pTrigger->Flags ()) {
 		case TRIGGER_CONTROL_DOORS:
-			trigP->Type () = TT_OPEN_DOOR;
+			pTrigger->Type () = TT_OPEN_DOOR;
 			break;
 		case TRIGGER_EXIT:
-			trigP->Type () = TT_EXIT;
+			pTrigger->Type () = TT_EXIT;
 			break;
 		case TRIGGER_MATCEN:
-			trigP->Type () = TT_MATCEN;
+			pTrigger->Type () = TT_MATCEN;
 			break;
 		case TRIGGER_ILLUSION_OFF:
-			trigP->Type () = TT_ILLUSION_OFF;
+			pTrigger->Type () = TT_ILLUSION_OFF;
 			break;
 		case TRIGGER_ILLUSION_ON:
-			trigP->Type () = TT_ILLUSION_ON;
+			pTrigger->Type () = TT_ILLUSION_ON;
 			break;
 		case TRIGGER_SECRET_EXIT:
-			trigP->Type () = TT_SECRET_EXIT;
+			pTrigger->Type () = TT_SECRET_EXIT;
 			break;
 		case TRIGGER_OPEN_WALL:
-			trigP->Type () = TT_OPEN_WALL;
+			pTrigger->Type () = TT_OPEN_WALL;
 			break;
 		case TRIGGER_CLOSE_WALL:
-			trigP->Type () = TT_CLOSE_WALL;
+			pTrigger->Type () = TT_CLOSE_WALL;
 			break;
 
 		// unsupported types
@@ -692,46 +692,46 @@ for (i = 0; i < triggerManager.WallTriggerCount (); i++, trigP++) {
 			DEBUGMSG (" Level converter: Unsupported trigger type; trigger deleted")
 			triggerManager.Delete (i);
 			i--;
-			trigP--;
+			pTrigger--;
 			continue;
 		}
-	trigP->Flags () = 0;
+	pTrigger->Flags () = 0;
 	}
 
 // set robot_center nProducer and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < segmentManager.RobotMakerCount (); i++) {
 	segmentManager.RobotMaker (i)->m_info.objFlags [1] = 0;
-	for (j = 0, segP = segmentManager.Segment (0); j <= segCount; j++, segP++)
-		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nProducer == i))
-				segmentManager.RobotMaker (i)->m_info.nProducer = (short)(segP->m_info.value);
+	for (j = 0, pSegment = segmentManager.Segment (0); j <= segCount; j++, pSegment++)
+		if ((pSegment->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (pSegment->m_info.nProducer == i))
+				segmentManager.RobotMaker (i)->m_info.nProducer = (short)(pSegment->m_info.value);
 	}
 
 // set equip_center nProducer and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < segmentManager.EquipMakerCount (); i++) {
 	segmentManager.EquipMaker (i)->m_info.objFlags [1] = 0;
-	for (j = 0, segP = segmentManager.Segment (0); j <= segCount; j++, segP++)
-		if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (segP->m_info.nProducer == i))
-				segmentManager.EquipMaker (i)->m_info.nProducer = (short)(segP->m_info.value);
+	for (j = 0, pSegment = segmentManager.Segment (0); j <= segCount; j++, pSegment++)
+		if ((pSegment->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (pSegment->m_info.nProducer == i))
+				segmentManager.EquipMaker (i)->m_info.nProducer = (short)(pSegment->m_info.value);
 	}
 
 // Objects ()
 //-----------------------------------------------
 
-CGameObject* objP = objectManager.Object (0);
-for (i = 0; i < objectManager.Count (); i++, objP++) {
+CGameObject* pObject = objectManager.Object (0);
+for (i = 0; i < objectManager.Count (); i++, pObject++) {
 // int clip numbers for poly Objects () (except robots)
-	switch (objP->Type ()) {
+	switch (pObject->Type ()) {
 		case OBJ_PLAYER: // the player on the console
-			objP->rType.polyModelInfo.nModel = D2_PLAYER_CLIP_NUMBER;
+			pObject->rType.polyModelInfo.nModel = D2_PLAYER_CLIP_NUMBER;
 			break;
 		case OBJ_REACTOR: // the control center
-			objP->rType.polyModelInfo.nModel = D2_REACTOR_CLIP_NUMBER;
-			objP->Id () = 0; // only one reactor ID in D2 for this reactor type
+			pObject->rType.polyModelInfo.nModel = D2_REACTOR_CLIP_NUMBER;
+			pObject->Id () = 0; // only one reactor ID in D2 for this reactor type
 			break;
 		case OBJ_COOP: // a cooperative player object
-			objP->rType.polyModelInfo.nModel = D2_COOP_CLIP_NUMBER;
+			pObject->rType.polyModelInfo.nModel = D2_COOP_CLIP_NUMBER;
 			break;
 		}
 	}
@@ -885,41 +885,41 @@ for (i = wallManager.WallCount () - 1; i >= 0; i--) {
 		}
 	}
 
-CTrigger* trigP = triggerManager.Trigger (0);
-for (i = 0; i < triggerManager.WallTriggerCount (); i++, trigP++) {
-	switch (trigP->Type ()) {
+CTrigger* pTrigger = triggerManager.Trigger (0);
+for (i = 0; i < triggerManager.WallTriggerCount (); i++, pTrigger++) {
+	switch (pTrigger->Type ()) {
 		case TT_OPEN_DOOR:
-			trigP->Flags () = TRIGGER_CONTROL_DOORS;
+			pTrigger->Flags () = TRIGGER_CONTROL_DOORS;
 			break;
 		case TT_EXIT:
-			trigP->Flags () = TRIGGER_EXIT;
+			pTrigger->Flags () = TRIGGER_EXIT;
 			break;
 		case TT_MATCEN:
-			trigP->Flags () = TRIGGER_MATCEN;
+			pTrigger->Flags () = TRIGGER_MATCEN;
 			break;
 		case TT_OPEN_WALL:
-			trigP->Flags () = TRIGGER_OPEN_WALL;
+			pTrigger->Flags () = TRIGGER_OPEN_WALL;
 			break;
 		case TT_CLOSE_WALL:
-			trigP->Flags () = TRIGGER_CLOSE_WALL;
+			pTrigger->Flags () = TRIGGER_CLOSE_WALL;
 			break;
 		case TT_ILLUSION_OFF:
-			trigP->Flags () = TRIGGER_ILLUSION_OFF;
+			pTrigger->Flags () = TRIGGER_ILLUSION_OFF;
 			break;
 		case TT_ILLUSION_ON:
-			trigP->Flags () = TRIGGER_ILLUSION_ON;
+			pTrigger->Flags () = TRIGGER_ILLUSION_ON;
 			break;
 		case TT_SECRET_EXIT:
-			trigP->Flags () = TRIGGER_SECRET_EXIT;
+			pTrigger->Flags () = TRIGGER_SECRET_EXIT;
 			break;
 		case TT_ILLUSORY_WALL:
-			trigP->Flags () = TRIGGER_MAKE_ILLUSIONARY;
+			pTrigger->Flags () = TRIGGER_MAKE_ILLUSIONARY;
 			break;
 		case TT_SHIELD_DAMAGE_D2:
-			trigP->Flags () = TRIGGER_SHIELD_DAMAGE;
+			pTrigger->Flags () = TRIGGER_SHIELD_DAMAGE;
 			break;
 		case TT_ENERGY_DRAIN_D2:
-			trigP->Flags () = TRIGGER_ENERGY_DRAIN;
+			pTrigger->Flags () = TRIGGER_ENERGY_DRAIN;
 			break;
 		// unsupported types
 		default:
@@ -927,10 +927,10 @@ for (i = 0; i < triggerManager.WallTriggerCount (); i++, trigP++) {
 			DEBUGMSG (" Level converter: Unsupported trigger type; trigger deleted")
 			triggerManager.Delete (i);
 			i--;
-			trigP--;
+			pTrigger--;
 			continue;
 		}
-	trigP->Type () = 0;
+	pTrigger->Type () = 0;
 	}
 
 #if 0 
@@ -940,10 +940,10 @@ if (0 < (h = segmentManager.Count () - MAX_SEGMENTS_D1)) {
 	for (short nSegment = segmentManager.Count () - 1; nSegment >= 0; nSegment--) {
 		if (segmentManager.IsExit (nSegment))
 			continue;
-		CGameObject* objP;
+		CGameObject* pObject;
 		bool bDelete = true;
-		for (int i = 0; objP = objectManager.FindBySeg (nSegment); i = objP ? objP->Index () + 1 : objectManager.Count ()) {
-			if ((objP->Type () == OBJ_PLAYER) || objP->IsBoss () || (objP->Type () == OBJ_REACTOR)) {
+		for (int i = 0; pObject = objectManager.FindBySeg (nSegment); i = pObject ? pObject->Index () + 1 : objectManager.Count ()) {
+			if ((pObject->Type () == OBJ_PLAYER) || pObject->IsBoss () || (pObject->Type () == OBJ_REACTOR)) {
 				bDelete = false;
 				break;
 				}
@@ -951,12 +951,12 @@ if (0 < (h = segmentManager.Count () - MAX_SEGMENTS_D1)) {
 		if (bDelete) {
 			nDeleted [0]++;
 			CSideKey key (nSegment);
-			CSegment* segP = segmentManager.Segment (nSegment);
+			CSegment* pSegment = segmentManager.Segment (nSegment);
 			for (key.m_nSide = 0; key.m_nSide < 6; key.m_nSide++) {
-				CWall* wallP = segmentManager.Wall (key);
-				if (wallP) {
+				CWall* pWall = segmentManager.Wall (key);
+				if (pWall) {
 					nDeleted [1]++;
-					if (wallP->Trigger ())
+					if (pWall->Trigger ())
 						nDeleted [2]++;
 					}
 				}
@@ -990,49 +990,49 @@ if (0 < (h = wallManager.WallCount () - MAX_WALLS_D1)) {
 		}
 	}
 
-CWall* wallP = wallManager.Wall (0);
-for (i = 0; i < wallManager.WallCount (); i++, wallP++) {
-	if ((wallP->Type () == WALL_CLOAKED) || (wallP->Type () == WALL_COLORED)) {
-		wallP->Type () = WALL_CLOSED;
-		segmentManager.Side (*wallP)->m_info.nBaseTex = 302; // keep transparency by applying empty - light texture
+CWall* pWall = wallManager.Wall (0);
+for (i = 0; i < wallManager.WallCount (); i++, pWall++) {
+	if ((pWall->Type () == WALL_CLOAKED) || (pWall->Type () == WALL_COLORED)) {
+		pWall->Type () = WALL_CLOSED;
+		segmentManager.Side (*pWall)->m_info.nBaseTex = 302; // keep transparency by applying empty - light texture
 		}
-	else if ((wallP->Type () == WALL_DOOR) || (wallP->Type () == WALL_BLASTABLE)) {
-		wallP->Clip () = (char) MapD2DoorToD1 (wallP->Clip ());
+	else if ((pWall->Type () == WALL_DOOR) || (pWall->Type () == WALL_BLASTABLE)) {
+		pWall->Clip () = (char) MapD2DoorToD1 (pWall->Clip ());
 		}
-	wallP->Info ().controllingTrigger = 0;
-	wallP->Info ().cloakValue = 0;
+	pWall->Info ().controllingTrigger = 0;
+	pWall->Info ().cloakValue = 0;
 	}
 #endif
 
-CSegment* segP = segmentManager.Segment (0);
+CSegment* pSegment = segmentManager.Segment (0);
 //char** names = textureManager.m_names [1];
 
-for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
-	if (segP->Function () > SEGMENT_FUNC_ROBOTMAKER)
+for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, pSegment++) {
+	if (pSegment->Function () > SEGMENT_FUNC_ROBOTMAKER)
 		segmentManager.Undefine (nSegment);
-	segP->Props () = 0;
+	pSegment->Props () = 0;
 
-	CSide* sideP = segP->m_sides;
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+	CSide* pSide = pSegment->m_sides;
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
 #ifdef _DEBUG
 		if ((nSegment == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 			nDbgSeg = nDbgSeg;
 #endif
 //		if (names != textureManager.m_names [1])
 //			names = textureManager.m_names [1];
-		if ((segP->ChildId (nSide) == -1) || (sideP->m_info.nWall < wallManager.Count ())) {
-			d2Texture = sideP->BaseTex ();
-			sideP->m_info.nBaseTex = MapD2TextureToD1 (d2Texture);
-			*lightManager.LightMap (sideP->BaseTex ()) = lightMap [d2Texture];
-			*lightManager.TexColor (sideP->BaseTex ()) = colorMap [d2Texture];
-			if (sideP->OvlTex (0)) {
-				d2Texture = sideP->OvlTex ();
+		if ((pSegment->ChildId (nSide) == -1) || (pSide->m_info.nWall < wallManager.Count ())) {
+			d2Texture = pSide->BaseTex ();
+			pSide->m_info.nBaseTex = MapD2TextureToD1 (d2Texture);
+			*lightManager.LightMap (pSide->BaseTex ()) = lightMap [d2Texture];
+			*lightManager.TexColor (pSide->BaseTex ()) = colorMap [d2Texture];
+			if (pSide->OvlTex (0)) {
+				d2Texture = pSide->OvlTex ();
 				short mode = d2Texture & ALIGNMENT_MASK;
 				d2Texture &= TEXTURE_MASK;
-				sideP->m_info.nOvlTex = MapD2TextureToD1 (d2Texture);
-				*lightManager.LightMap (sideP->OvlTex (0)) = lightMap [d2Texture];
-				*lightManager.TexColor (sideP->OvlTex (0)) = colorMap [d2Texture];
-				sideP->m_info.nOvlTex |= mode;
+				pSide->m_info.nOvlTex = MapD2TextureToD1 (d2Texture);
+				*lightManager.LightMap (pSide->OvlTex (0)) = lightMap [d2Texture];
+				*lightManager.TexColor (pSide->OvlTex (0)) = colorMap [d2Texture];
+				pSide->m_info.nOvlTex |= mode;
 				}
 			}
 		}
@@ -1041,9 +1041,9 @@ for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 // change trigger type and flags
 //-------------------------------------------
 if (triggerManager.WallTriggerCount () > 0)
-	trigP = triggerManager.Trigger (triggerManager.WallTriggerCount () - 1);
-for (i = triggerManager.WallTriggerCount () - 1; i >= 0; i--, trigP--) {
-	if (!trigP->Count ()) {
+	pTrigger = triggerManager.Trigger (triggerManager.WallTriggerCount () - 1);
+for (i = triggerManager.WallTriggerCount () - 1; i >= 0; i--, pTrigger--) {
+	if (!pTrigger->Count ()) {
 		nDeleted [2]++;
 		triggerManager.Delete (i);
 		}
@@ -1064,9 +1064,9 @@ if (0 < (h = triggerManager.WallTriggerCount () - MAX_TRIGGERS_D1)) {
 //-----------------------------------------------
 for (i = 0; i < segmentManager.RobotMakerCount (); i++) {
 	segmentManager.RobotMaker (i)->m_info.objFlags [1] = 0;
-	for (j = 0, segP = segmentManager.Segment (0); j <= segmentManager.Count (); j++, segP++)
-		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nProducer == i))
-				segmentManager.RobotMaker (i)->m_info.nProducer = (short)(segP->m_info.value);
+	for (j = 0, pSegment = segmentManager.Segment (0); j <= segmentManager.Count (); j++, pSegment++)
+		if ((pSegment->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (pSegment->m_info.nProducer == i))
+				segmentManager.RobotMaker (i)->m_info.nProducer = (short)(pSegment->m_info.value);
 	}
 
 // objects
@@ -1079,70 +1079,70 @@ if (objectManager.Count () > MAX_OBJECTS_D1) {
 		}
 	}
 
-CGameObject* objP = objectManager.Object (0);
+CGameObject* pObject = objectManager.Object (0);
 short nPlayers = 0, nReactors = 0, nBosses = 0, nId;
 
-for (i = 0; i < objectManager.Count (); i++, objP++) {
+for (i = 0; i < objectManager.Count (); i++, pObject++) {
 // int clip numbers for poly Objects () (except robots)
 	bool bDelete = false;
-	switch (objP->Type ()) {
+	switch (pObject->Type ()) {
 		case OBJ_PLAYER: // the player on the console
 			if (++nPlayers > MAX_PLAYERS_D2)
 				bDelete = true;
 			else
-				objP->rType.polyModelInfo.nModel = D1_PLAYER_CLIP_NUMBER;
+				pObject->rType.polyModelInfo.nModel = D1_PLAYER_CLIP_NUMBER;
 			break;
 
 		case OBJ_REACTOR: // the control center
 			if (++nReactors > 1)
 				bDelete = true;
 			else
-				objP->rType.polyModelInfo.nModel = D1_REACTOR_CLIP_NUMBER;
+				pObject->rType.polyModelInfo.nModel = D1_REACTOR_CLIP_NUMBER;
 			break;
 
 		case OBJ_COOP: // a cooperative player object
-			objP->rType.polyModelInfo.nModel = D1_COOP_CLIP_NUMBER;
+			pObject->rType.polyModelInfo.nModel = D1_COOP_CLIP_NUMBER;
 			break;
 
 		case OBJ_ROBOT:
-			if (0 > (nId = MapD2RobotToD1 (objP->Id ())))
+			if (0 > (nId = MapD2RobotToD1 (pObject->Id ())))
 				bDelete = true;
-			else if (objP->IsBoss ())
+			else if (pObject->IsBoss ())
 				bDelete = (++nBosses > 1);
-			objP->Id () = (ubyte) nId;
-			if (objP->Contents ().count == 0)
+			pObject->Id () = (ubyte) nId;
+			if (pObject->Contents ().count == 0)
 				nId = -1;
-			else if (objP->Contents ().type == OBJ_ROBOT)
-				nId = MapD2RobotToD1 (objP->Contents ().id);
-			else if (objP->Contents ().type == OBJ_POWERUP) 
-				nId = MapD2PowerupToD1 (objP->Contents ().id);
+			else if (pObject->Contents ().type == OBJ_ROBOT)
+				nId = MapD2RobotToD1 (pObject->Contents ().id);
+			else if (pObject->Contents ().type == OBJ_POWERUP) 
+				nId = MapD2PowerupToD1 (pObject->Contents ().id);
 			if (0 <= nId) 
-				objP->Contents ().id = (ubyte) nId;
+				pObject->Contents ().id = (ubyte) nId;
 			else {
-				if (objP->Contents ().count && objP->Contents ().type)
+				if (pObject->Contents ().count && pObject->Contents ().type)
 					nDeleted [4]++;
-				objP->Contents ().type = 0;
-				objP->Contents ().id = 0;
-				objP->Contents ().count = 0;
+				pObject->Contents ().type = 0;
+				pObject->Contents ().id = 0;
+				pObject->Contents ().count = 0;
 				}
 			break;
 
 		case OBJ_POWERUP:
-			nId = MapD2PowerupToD1 (objP->Id ());
+			nId = MapD2PowerupToD1 (pObject->Id ());
 			if (0 > nId)
 				bDelete = true;
 			else
-				objP->Id () = (ubyte) nId;
+				pObject->Id () = (ubyte) nId;
 			break;
 
 		default:
-			bDelete = (objP->Type () >= OBJ_CAMBOT);
+			bDelete = (pObject->Type () >= OBJ_CAMBOT);
 		}
 	if (bDelete) {
 		nDeleted [3]++;
 		objectManager.Delete (i);
 		i--;
-		objP--;
+		pObject--;
 		}
 	}
 

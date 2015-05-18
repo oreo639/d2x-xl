@@ -21,9 +21,9 @@ bool CSegmentManager::IsTagged (short nSegment)
 #if 1
 return Segment (nSegment)->IsTagged ();
 #else
-CSegment *segP = Segment (nSegment);
+CSegment *pSegment = Segment (nSegment);
 for (int i = 0;  i < 8; i++)
-	if ((segP->VertexId (i) <= MAX_VERTEX) && !segP->Vertex (i)->IsTagged ())
+	if ((pSegment->VertexId (i) <= MAX_VERTEX) && !pSegment->Vertex (i)->IsTagged ())
 		return false;
 return true;
 #endif
@@ -38,13 +38,13 @@ return true;
 
 void CSegmentManager::Tag (short nSegment)
 {
-  CSegment *segP = Segment (nSegment); 
+  CSegment *pSegment = Segment (nSegment); 
 
-segP->Tag ();
+pSegment->Tag ();
 for (short nSide = 0; nSide < 6; nSide++)
-	segP->Side (nSide)->Tag ();
+	pSegment->Side (nSide)->Tag ();
 for (ushort nVertex = 0; nVertex < 8; nVertex++)
-	segP->Vertex (nVertex)->Status () |= TAGGED_MASK; 
+	pSegment->Vertex (nVertex)->Status () |= TAGGED_MASK; 
 }
 
 // -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ for (ushort nVertex = 0; nVertex < 8; nVertex++)
 void CSegmentManager::UpdateTagged (void)
 {
 // mark all cubes which have all 8 verts marked
-CSegment* segP = Segment (0);
+CSegment* pSegment = Segment (0);
 short nSegments = Count ();
 
 uint selectMode = DLE.MineView ()->GetSelectMode ();
@@ -60,31 +60,31 @@ uint selectMode = DLE.MineView ()->GetSelectMode ();
 if ((selectMode != eSelectSide) && (selectMode != eSelectSegment))
 	return;
 
-for (short i = 0; i < nSegments; i++, segP++) {
+for (short i = 0; i < nSegments; i++, pSegment++) {
 	short j = 0;
 	if (selectMode == eSelectSegment) {
-		ushort* vertexIds = segP->VertexIds ();
+		ushort* vertexIds = pSegment->VertexIds ();
 		for (; j < 8; j++) {
 			if ((vertexIds [j] <= MAX_VERTEX) && !vertexManager [vertexIds [j]].IsTagged ())
 				break;
 			}
 		if (j < 8)
-			segP->UnTag (); 
+			pSegment->UnTag (); 
 		else
-			segP->Tag (); 
+			pSegment->Tag (); 
 		}
 	for (short nSide = 0; nSide < 6; nSide++) {
-		short h = segP->Side (nSide)->VertexCount ();
+		short h = pSegment->Side (nSide)->VertexCount ();
 		j = 0;
 		if (h > 2) {
 			for (; j < h; j++)
-				if (!segP->Vertex (nSide, j)->IsTagged ())
+				if (!pSegment->Vertex (nSide, j)->IsTagged ())
 					break;
 			}
 		if (j < h)
-			segP->UnTag (nSide);
+			pSegment->UnTag (nSide);
 		else
-			segP->Tag (nSide);
+			pSegment->Tag (nSide);
 		}
 	}
 }
@@ -93,13 +93,13 @@ for (short i = 0; i < nSegments; i++, segP++) {
 
 void CSegmentManager::TagAll (ubyte mask) 
 {
-CSegment* segP = Segment (0);
+CSegment* pSegment = Segment (0);
 short nSegments = Count ();
-for (short i = 0; i < nSegments; i++, segP++) {
-	segP->Tag (mask); 
+for (short i = 0; i < nSegments; i++, pSegment++) {
+	pSegment->Tag (mask); 
 	for (short j = 0; j < 8; j++)
-		if (segP->VertexId (j) <= MAX_VERTEX)
-			segP->Vertex (j)->Status () |= mask;
+		if (pSegment->VertexId (j) <= MAX_VERTEX)
+			pSegment->Vertex (j)->Status () |= mask;
 	}
 DLE.MineView ()->Refresh (); 
 }
@@ -108,13 +108,13 @@ DLE.MineView ()->Refresh ();
 
 void CSegmentManager::UnTagAll (ubyte mask) 
 {
-CSegment* segP = Segment (0);
+CSegment* pSegment = Segment (0);
 short nSegments = Count ();
-for (short i = 0; i < nSegments; i++, segP++) {
-	segP->UnTag (mask); 
+for (short i = 0; i < nSegments; i++, pSegment++) {
+	pSegment->UnTag (mask); 
 	for (short j = 0; j < 8; j++)
-		if (segP->VertexId (j) <= MAX_VERTEX)
-			segP->Vertex (j)->Status () &= ~mask;
+		if (pSegment->VertexId (j) <= MAX_VERTEX)
+			pSegment->Vertex (j)->Status () &= ~mask;
 	}
 DLE.MineView ()->Refresh (); 
 }
@@ -125,7 +125,7 @@ bool CSegmentManager::HasTaggedSides (void)
 {
 int nSegments = segmentManager.Count ();
 for (int nSegment = 0; nSegment < nSegments; nSegment++) {
-	CSide* sideP = segmentManager.Segment (nSegment)->m_sides;
+	CSide* pSide = segmentManager.Segment (nSegment)->m_sides;
 	for (short nSide = 0; nSide < 6; nSide++)
 		if (IsTagged (CSideKey (nSegment, nSide)))
 			return true;
@@ -138,10 +138,10 @@ return false;
 short CSegmentManager::TaggedCount (bool bSides, bool bCheck)
 {
 int nCount = 0; 
-CSegment* segP = Segment (0);
+CSegment* pSegment = Segment (0);
 short nSegments = Count ();
-for (short i = 0; i < nSegments; i++, segP++) {
-	if (segP->IsTagged () || (bSides && segP->IsTagged (short (-1)))) {
+for (short i = 0; i < nSegments; i++, pSegment++) {
+	if (pSegment->IsTagged () || (bSides && pSegment->IsTagged (short (-1)))) {
 		if (bCheck)
 			return 1; 
 		++nCount; 
@@ -155,12 +155,12 @@ return nCount;
 ushort CSegmentManager::TaggedSideCount (void)
 {
 int nCount = 0; 
-CSegment* segP = Segment (0);
+CSegment* pSegment = Segment (0);
 short nSegments = Count ();
-for (short i = 0; i < nSegments; i++, segP++) {
-	CSide* sideP = segP->Side (0);
-	for (short j = 0; j < 6; j++, sideP++)
-		if ((sideP->Shape () <= SIDE_SHAPE_TRIANGLE) && sideP->IsTagged ())
+for (short i = 0; i < nSegments; i++, pSegment++) {
+	CSide* pSide = pSegment->Side (0);
+	for (short j = 0; j < 6; j++, pSide++)
+		if ((pSide->Shape () <= SIDE_SHAPE_TRIANGLE) && pSide->IsTagged ())
 			++nCount; 
 	}
 return nCount; 
@@ -171,7 +171,7 @@ return nCount;
 void CSegmentManager::TagSelected (void)
 {
 	bool	bSegTag = false; 
-	CSegment *segP = current->Segment (); 
+	CSegment *pSegment = current->Segment (); 
 	int i, j, p [8], nPoints; 
 	uint selectMode = DLE.MineView ()->GetSelectMode ();
 
@@ -183,21 +183,21 @@ switch (selectMode) {
 
 	case eSelectLine:
 		nPoints = 2; 
-		p [0] = segP->VertexId (current->Side ()->VertexIdIndex (current->Point ())); 
-		p [1] = segP->VertexId (current->Side ()->VertexIdIndex (current->Point () + 1)); 
+		p [0] = pSegment->VertexId (current->Side ()->VertexIdIndex (current->Point ())); 
+		p [1] = pSegment->VertexId (current->Side ()->VertexIdIndex (current->Point () + 1)); 
 		break; 
 
 	case eSelectSide:
 		nPoints = current->Side ()->VertexCount (); 
 		for (i = 0; i < nPoints; i++)
-			p [i] = segP->VertexId (current->Side ()->VertexIdIndex (i)); 
+			p [i] = pSegment->VertexId (current->Side ()->VertexIdIndex (i)); 
 		break; 
 
 	case eSelectSegment:
 	default:
 		nPoints = 8; 
 		for (i = 0, j = 0; i < nPoints; i++) {
-			p [j] = segP->VertexId (i); 
+			p [j] = pSegment->VertexId (i); 
 			if (p [j] <= MAX_VERTEX)
 				j++;
 			}
@@ -284,14 +284,14 @@ bool bTagVertices = DLE.MineView ()->SelectMode (eSelectPoint);
 
 while (nHead < nTail) {
 	m_parent = m_sideList [nHead++].m_child;
-	m_segP = segmentManager.Segment (m_parent);
-	m_sideP = segmentManager.Side (m_parent);
+	m_pSegment = segmentManager.Segment (m_parent);
+	m_pSide = segmentManager.Side (m_parent);
 	edgeList.Reset ();
 #ifdef _DEBUG
 	if ((m_child.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (m_child.m_nSide == nDbgSide)))
 		nDbgSeg = nDbgSeg;
 #endif
-	if (!m_segP->BuildEdgeList (edgeList, ubyte (m_parent.m_nSide), false))
+	if (!m_pSegment->BuildEdgeList (edgeList, ubyte (m_parent.m_nSide), false))
 		continue;
 	int nEdges = edgeList.Count ();
 	for (int nEdge = 0; nEdge < nEdges; nEdge++) {
@@ -304,33 +304,33 @@ while (nHead < nTail) {
 				continue;
 			}
 #endif
-		ushort v1 = m_segP->VertexId (i1);
-		ushort v2 = m_segP->VertexId (i2);
+		ushort v1 = m_pSegment->VertexId (i1);
+		ushort v2 = m_pSegment->VertexId (i2);
 		CEdgeTreeNode* node = m_edgeTree.Find (EdgeKey (v1, v2));
 		if (!node)
 			continue;
 		CSLLIterator<CSideKey, CSideKey> iter (node->m_sides);
 		for (iter.Begin (); *iter != iter.End (); iter++) {
 			m_child = **iter;
-			m_childSegP = segmentManager.Segment (m_child);
+			m_pChildSeg = segmentManager.Segment (m_child);
 #ifdef _DEBUG
 			if ((m_child.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (m_child.m_nSide == nDbgSide)))
 				nDbgSeg = nDbgSeg;
 #endif
-			if (!m_childSegP->IsTagged (iter->m_nSide, m_tag)) {
+			if (!m_pChildSeg->IsTagged (iter->m_nSide, m_tag)) {
 #ifdef _DEBUG
 				if ((m_child.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (m_child.m_nSide == nDbgSide)))
 					nDbgSeg = nDbgSeg;
 #endif
-				m_childSideP = segmentManager.Side (m_child);
+				m_pChildSide = segmentManager.Side (m_child);
 				if (Accept ()) {
 #ifdef _DEBUG
 					if ((m_child.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (m_child.m_nSide == nDbgSide)))
 						nDbgSeg = nDbgSeg;
 #endif
-					m_childSegP->Tag (iter->m_nSide, m_tag);
+					m_pChildSeg->Tag (iter->m_nSide, m_tag);
 					if (bTagVertices)
-						m_childSegP->TagVertices (m_tag, iter->m_nSide);
+						m_pChildSeg->TagVertices (m_tag, iter->m_nSide);
 					m_sideList [nTail].m_edge = m_edgeKey;
 					m_sideList [nTail].m_parent = m_parent;
 					m_sideList [nTail++].m_child = m_child;

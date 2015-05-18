@@ -114,8 +114,8 @@ short CMine::CreateNewLevel (CMemoryFile& fp)
 CResource res;
 // copy data to a file
 triggerManager.ObjTriggerCount () = 0;
-ubyte* dataP = res.Load (IsD1File () ? IDR_NEW_RDL : IDR_NEW_RL2);
-return fp.Load (dataP, res.Size ());
+ubyte* pData = res.Load (IsD1File () ? IDR_NEW_RDL : IDR_NEW_RL2);
+return fp.Load (pData, res.Size ());
 }
 
 
@@ -256,16 +256,16 @@ seg.m_info.wallFlags = 0;
 seg.Index () = 0;
 seg.m_info.mapBitmask = 0;
 
-CVertex *vertP = vertexManager.Vertex (0);
+CVertex *pVertex = vertexManager.Vertex (0);
 
-vertP [0] = CVertex (+10, +10, -10);
-vertP [1] = CVertex (+10, -10, -10);
-vertP [2] = CVertex (-10, -10, -10);
-vertP [3] = CVertex (-10, +10, -10);
-vertP [4] = CVertex (+10, +10, +10);
-vertP [5] = CVertex (+10, -10, +10);
-vertP [6] = CVertex (-10, -10, +10);
-vertP [7] = CVertex (-10, +10, +10);
+pVertex [0] = CVertex (+10, +10, -10);
+pVertex [1] = CVertex (+10, -10, -10);
+pVertex [2] = CVertex (-10, -10, -10);
+pVertex [3] = CVertex (-10, +10, -10);
+pVertex [4] = CVertex (+10, +10, +10);
+pVertex [5] = CVertex (+10, -10, +10);
+pVertex [6] = CVertex (-10, -10, +10);
+pVertex [7] = CVertex (-10, +10, +10);
 
 segmentManager.Count () = 1;
 vertexManager.Count () = 8;
@@ -280,9 +280,9 @@ void CMine::ClearMineData ()
 	int i;
 
 // initialize Segments ()
-CSegment *segP = segmentManager.Segment (0);
-for (i = 0; i < SEGMENT_LIMIT; i++, segP++)
-	segP->UnTag ();
+CSegment *pSegment = segmentManager.Segment (0);
+for (i = 0; i < SEGMENT_LIMIT; i++, pSegment++)
+	pSegment->UnTag ();
 segmentManager.Count () = 0;
 // initialize vertices
 for (i = 0; i < MAX_VERTICES; i++) 

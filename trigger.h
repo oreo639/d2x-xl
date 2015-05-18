@@ -94,7 +94,7 @@ class CTrigger : public CTriggerTargets, public CGameItem {
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual CGameItem* Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* pDest);
 
 		void Setup (short type, short flags);
 
@@ -127,7 +127,7 @@ class CReactorTrigger : public CTriggerTargets, public CGameItem {
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual CGameItem* Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* pDest);
 };
 
 //------------------------------------------------------------------------

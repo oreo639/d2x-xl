@@ -36,12 +36,12 @@ class CSLL {
 		uint			m_length;
 
 	private:
-		CNode<_T>* Find (_K key, CNode<_T>*& predP) {
-			predP = null;
-			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = nodeP->m_succ) {
-				if (nodeP->m_data == key)
-					return nodeP;
-				predP = nodeP;
+		CNode<_T>* Find (_K key, CNode<_T>*& pPred) {
+			pPred = null;
+			for (CNode<_T>* pNode = m_head; pNode; pNode = pNode->m_succ) {
+				if (pNode->m_data == key)
+					return pNode;
+				pPred = pNode;
 				}
 			return null;
 			}
@@ -59,9 +59,9 @@ class CSLL {
 
 		void Destroy (void) {
 			CNode<_T>* linkP;
-			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = linkP) {
-				linkP = nodeP->GetSucc ();
-				delete nodeP;
+			for (CNode<_T>* pNode = m_head; pNode; pNode = linkP) {
+				linkP = pNode->GetSucc ();
+				delete pNode;
 				}
 			m_head = null;
 			m_tail = null;
@@ -69,76 +69,76 @@ class CSLL {
 			}
 
 		_T* Find (_K key) {
-			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = nodeP->GetSucc ()) {
-				if (nodeP->m_data == key)
-					return &nodeP->m_data;
+			for (CNode<_T>* pNode = m_head; pNode; pNode = pNode->GetSucc ()) {
+				if (pNode->m_data == key)
+					return &pNode->m_data;
 				}
 			return null;
 			}
 
 		int Index (_K key) {
 			int index = 0;
-			for (CNode<_T>* nodeP = m_head; nodeP; nodeP = nodeP->GetSucc (), index++) {
-				if (nodeP->m_data == key)
+			for (CNode<_T>* pNode = m_head; pNode; pNode = pNode->GetSucc (), index++) {
+				if (pNode->m_data == key)
 					return index;
 				}
 			return -1;
 			}
 
 		bool Remove (_K key) {
-			CNode<_T>* predP, * nodeP = Find (key, predP);
-			if (!nodeP)
+			CNode<_T>* pPred, * pNode = Find (key, pPred);
+			if (!pNode)
 				return false;
-			if (predP)
-				predP->SetSucc (nodeP->GetSucc ());
-			if (m_head == nodeP)
-				m_head = nodeP->GetSucc ();
-			if (m_tail == nodeP)
-				m_tail = predP;
-			nodeP->SetSucc (null);
-			delete nodeP;
+			if (pPred)
+				pPred->SetSucc (pNode->GetSucc ());
+			if (m_head == pNode)
+				m_head = pNode->GetSucc ();
+			if (m_tail == pNode)
+				m_tail = pPred;
+			pNode->SetSucc (null);
+			delete pNode;
 			--m_length;
 			return true;
 			}
 
 		_T* Add (_T data) {
-			CNode<_T>* nodeP = new CNode<_T>;
-			if (!nodeP)
+			CNode<_T>* pNode = new CNode<_T>;
+			if (!pNode)
 				return null;
-			nodeP->SetSucc (m_head);
-			m_head = nodeP;
+			pNode->SetSucc (m_head);
+			m_head = pNode;
 			if (!m_tail)
-				m_tail = nodeP;
+				m_tail = pNode;
 			++m_length;
-			nodeP->m_data = data;
-			return &nodeP->m_data;
+			pNode->m_data = data;
+			return &pNode->m_data;
 			}
 
 		_T* Append (_T data) {
-			CNode<_T>* nodeP = new CNode<_T>;
-			if (!nodeP)
+			CNode<_T>* pNode = new CNode<_T>;
+			if (!pNode)
 				return null;
 			if (m_tail)
-				m_tail->SetSucc (nodeP);
+				m_tail->SetSucc (pNode);
 			else
-				m_head = nodeP;
-			m_tail = nodeP;
+				m_head = pNode;
+			m_tail = pNode;
 			++m_length;
-			nodeP->m_data = data;
-			return &nodeP->m_data;
+			pNode->m_data = data;
+			return &pNode->m_data;
 			}
 
 		_T* Append (void) {
-			CNode<_T>* nodeP = new CNode<_T>;
-			if (!nodeP)
+			CNode<_T>* pNode = new CNode<_T>;
+			if (!pNode)
 				return null;
 			if (m_tail)
-				m_tail->SetSucc (nodeP);
+				m_tail->SetSucc (pNode);
 			else
-				m_head = nodeP;
-			m_tail = nodeP;
+				m_head = pNode;
+			m_tail = pNode;
 			++m_length;
-			return &nodeP->m_data;
+			return &pNode->m_data;
 			}
 
 	inline CSLL<_T, _K>& operator= (CSLL<_T, _K>& other) {

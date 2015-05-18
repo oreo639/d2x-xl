@@ -105,13 +105,13 @@ if ((face.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (face.m_nSide == nDbgSide
 	nDbgSeg = nDbgSeg;
 #endif
 
-	CSegment*	segP = segmentManager.Segment (face.m_nSegment);
-	CSide*		sideP = segP->Side (face.m_nSide);
-	short			nVertices = sideP->VertexCount ();
+	CSegment*	pSegment = segmentManager.Segment (face.m_nSegment);
+	CSide*		pSide = pSegment->Side (face.m_nSide);
+	short			nVertices = pSide->VertexCount ();
 	int			b [4];
 
 for (int i = 0; i < nVertices; i++) {
-	b [i] = (int) sideP->m_info.uvls [i].l;
+	b [i] = (int) pSide->m_info.uvls [i].l;
 	// clip brightness
 	//if (b [i] & 0x8000) {
 	//	b [i] = 0x7fff;
@@ -129,24 +129,24 @@ if (bVariableLights /*&& (lightManager.LightIsOn (face) < 1)*/) {
 	int indexCount = lightManager.DeltaIndexCount ();
 #pragma omp parallel for if (indexCount > 15)
 	for (int i = 0; i < indexCount; i++) {
-		CLightDeltaIndex* indexP = lightManager.LightDeltaIndex (i);
+		CLightDeltaIndex* pIndex = lightManager.LightDeltaIndex (i);
 #ifdef _DEBUG
-		if ((indexP->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (indexP->m_nSide == nDbgSide)))
+		if ((pIndex->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (pIndex->m_nSide == nDbgSide)))
 			nDbgSeg = nDbgSeg;
 #endif
-		if (lightManager.LightIsOn (*indexP))
+		if (lightManager.LightIsOn (*pIndex))
 			continue; // light is on or there's no variable light for this delta light index (-> light data error!)
-		if (*indexP == face) {
+		if (*pIndex == face) {
 			int lightDelta = (int) lightManager.Brightness (face);
 			for (short k = 0; k < nVertices; k++) 
 #pragma omp atomic
 				b [k] -= lightDelta;
 			}
 		else {
-			CLightDeltaValue* deltaP = lightManager.LightDeltaValue (indexP->m_info.index);
-			ushort nSides = indexP->m_info.count;
-			for (ushort j = 0; j < nSides; j++, deltaP++) {
-				if (*deltaP == face) {
+			CLightDeltaValue* pLightDelta = lightManager.LightDeltaValue (pIndex->m_info.index);
+			ushort nSides = pIndex->m_info.count;
+			for (ushort j = 0; j < nSides; j++, pLightDelta++) {
+				if (*pLightDelta == face) {
 					for (short k = 0; k < nVertices; k++) {
 						//short lightDelta = ;
 						//if (lightDelta >= 0x20)
@@ -154,7 +154,7 @@ if (bVariableLights /*&& (lightManager.LightIsOn (face) < 1)*/) {
 						//else
 						//	lightDelta <<= 10;
 #pragma omp atomic
-						b [k] -= deltaP->m_info.vertLight [k];
+						b [k] -= pLightDelta->m_info.vertLight [k];
 						}
 					break;
 					}

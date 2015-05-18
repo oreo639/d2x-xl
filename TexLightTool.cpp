@@ -92,12 +92,12 @@ CTextureLightTool::~CTextureLightTool ()
 
 void CTextureLightTool::UpdateColorData (void)
 {
-CWall* wallP = current->Wall ();
-CColor* colorP = current->LightColor ();
-m_nColorIndex = ((wallP != null) && (wallP->Type () == WALL_COLORED)) ? wallP->Info ().cloakValue : colorP->m_info.index;
-m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
-m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
-m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);
+CWall* pWall = current->Wall ();
+CColor* pColor = current->LightColor ();
+m_nColorIndex = ((pWall != null) && (pWall->Type () == WALL_COLORED)) ? pWall->Info ().cloakValue : pColor->m_info.index;
+m_rgbColor.peRed = (char) (255.0 * pColor->m_info.color.r);
+m_rgbColor.peGreen = (char) (255.0 * pColor->m_info.color.g);
+m_rgbColor.peBlue = (char) (255.0 * pColor->m_info.color.b);
 }
 
 //------------------------------------------------------------------------------
@@ -258,11 +258,11 @@ for (int i = 0; i < 32; i++)
 		nLightMask |= (1 << i);
 short nDelay = (short) (I2X (m_nLightDelay) / 1000);
 
-CVariableLight* vlP = lightManager.VariableLight (m_iLight);
-if ((vlP->m_info.mask != nLightMask) || (vlP->m_info.delay != nDelay)) {
+CVariableLight* pLight = lightManager.VariableLight (m_iLight);
+if ((pLight->m_info.mask != nLightMask) || (pLight->m_info.delay != nDelay)) {
 	undoManager.Begin (__FUNCTION__, udVariableLights);
-	vlP->m_info.mask = nLightMask;
-	vlP->m_info.delay = nDelay;
+	pLight->m_info.mask = nLightMask;
+	pLight->m_info.delay = nDelay;
 	undoManager.End (__FUNCTION__);
 	}
 //m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
@@ -355,7 +355,7 @@ void CTextureLightTool::UpdateLightWnd (void)
 {
 CHECKMINE;
 
-CWall *wallP = current->Wall ();
+CWall *pWall = current->Wall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
@@ -494,23 +494,23 @@ void CTextureLightTool::SetWallColor (void)
 if (lightManager.ApplyFaceLightSettingsGlobally ()) {
 	short			nSegment, nSide;
 	short			nBaseTex = current->Side ()->BaseTex ();
-	CSegment*	segP = segmentManager.Segment (0);
-	CSide*		sideP;
-	CWall			*wallP;
+	CSegment*	pSegment = segmentManager.Segment (0);
+	CSide*		pSide;
+	CWall			*pWall;
 	bool			bAll = !segmentManager.HasTaggedSides ();
 
-	for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
-		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
-			if (sideP->m_info.nWall < 0)
+	for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, pSegment++) {
+		for (nSide = 0, pSide = pSegment->m_sides; nSide < 6; nSide++, pSide++) {
+			if (pSide->m_info.nWall < 0)
 				continue;
-			wallP = wallManager.Wall (sideP->m_info.nWall);
-			if ((wallP == null) || !wallP->IsTransparent ())
+			pWall = wallManager.Wall (pSide->m_info.nWall);
+			if ((pWall == null) || !pWall->IsTransparent ())
 				continue;
 			if (!(bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))))
 				continue;
-			if (sideP->BaseTex () != nBaseTex)
+			if (pSide->BaseTex () != nBaseTex)
 				continue;
-			wallP->Info ().cloakValue = m_nColorIndex;
+			pWall->Info ().cloakValue = m_nColorIndex;
 			}
 		}
 	}
@@ -528,9 +528,9 @@ if (/*(DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
 		point.x -= rcPal.left;
 		point.y -= rcPal.top;
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
-			CWall *wallP = current->Wall ();
-			if ((wallP != null) && (wallP->Type () == WALL_COLORED)) {
-				wallP->Info ().cloakValue = m_nColorIndex;
+			CWall *pWall = current->Wall ();
+			if ((pWall != null) && (pWall->Type () == WALL_COLORED)) {
+				pWall->Info ().cloakValue = m_nColorIndex;
 				SetWallColor ();
 				}
 			CColor *psc = current->LightColor ();
@@ -544,7 +544,7 @@ if (/*(DLE.IsD2XLevel ()) &&*/ SideHasLight ()) {
 				psc->m_info.color.g =
 				psc->m_info.color.b = 1.0;
 				}
-			//if (!wallP || (wallP->Type () != WALL_COLORED)) 
+			//if (!pWall || (pWall->Type () != WALL_COLORED)) 
 				{
 				lightManager.SetTexColor (current->Side ()->BaseTex (), psc);
 				lightManager.SetTexColor (current->Side ()->OvlTex (0), psc);
@@ -582,8 +582,8 @@ if	((lightManager.IsLight (current->Side ()->BaseTex ()) != -1) ||
 	 ((current->Side ()->OvlTex (0) != 0) &&
 	  (lightManager.IsLight (current->Side ()->OvlTex (0)) != -1)))
 	return true;
-CWall *wallP = current->Wall ();
-return (wallP != null) && (wallP->Type () == WALL_COLORED);
+CWall *pWall = current->Wall ();
+return (pWall != null) && (pWall->Type () == WALL_COLORED);
 
 }
 

@@ -73,7 +73,7 @@ class CWallManager {
 
 		CWall* OppositeWall (short nSegment, short nSide);
 
-		inline short Index (CWall* wallP) { return (wallP == null) ? -1 : short (wallP - &m_walls [0]); }
+		inline short Index (CWall* pWall) { return (pWall == null) ? -1 : short (pWall - &m_walls [0]); }
 
 		void SetIndex (void);
 
@@ -157,26 +157,26 @@ class CWallManager {
 		int Fix (void);
 
 		inline bool IsVisible (short nWall) {
-			CWall* wallP = Wall (nWall);
-			return (wallP != null) && wallP->IsVisible ();
+			CWall* pWall = Wall (nWall);
+			return (pWall != null) && pWall->IsVisible ();
 			}
 
 		inline bool IsDoor (short nWall) {
-			CWall* wallP = Wall (nWall);
-			return (wallP != null) && wallP->IsDoor ();
+			CWall* pWall = Wall (nWall);
+			return (pWall != null) && pWall->IsDoor ();
 			}
 
 		inline bool IsVariable (short nWall) {
-			CWall* wallP = Wall (nWall);
-			return (wallP != null) && wallP->IsVariable ();
+			CWall* pWall = Wall (nWall);
+			return (pWall != null) && pWall->IsVariable ();
 			}
 
 		inline bool IsExit (short nWall) {
-			CWall* wallP = Wall (nWall);
-			if (wallP == null) 
+			CWall* pWall = Wall (nWall);
+			if (pWall == null) 
 				return false;
-			CTrigger* trigP = wallP->Trigger ();
-			return (trigP != null) && trigP->IsExit ();
+			CTrigger* pTrigger = pWall->Trigger ();
+			return (pTrigger != null) && pTrigger->IsExit ();
 			}
 
 		bool ClipFromTexture (CSideKey key);

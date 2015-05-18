@@ -108,10 +108,10 @@ class CSubModel {
 		bool Create (void);
 		void Destroy (void) { Init (); }
 		void InitMinMax (void);
-		void SetMinMax (CFloatVector *vertexP);
+		void SetMinMax (CFloatVector *pVertex);
 		void SortFaces (CTexture* textureP);
 		void GatherVertices (CDynamicArray<CVertex>& source, CDynamicArray<CVertex>& dest);
-		void Size (CModel* pm, CObject* objP, CFixVector* vOffset);
+		void Size (CModel* pm, CObject* pObject, CFixVector* vOffset);
 		int Filter (int nGunId = 0, int nBombId = 0, int nMissileId = 0, int nMissiles = 4);
 		void Render (CModel& model, short nSubModel, int nGunId = 0, int nBombId = 0, int nMissileId = 0, int nMissiles = 4);
 	};
@@ -180,7 +180,7 @@ class CModel {
 		int BuildFromOOF (OOF::CModel& oofModel);
 		int BuildFromPOF (int nModel, CPolyModel& polyModel, CDynamicArray<CTexture*>& modelTextures, CFloatVector* objColorP);
 
-		int Render (CViewMatrix* view, CGameObject* objP, int nGunId = 0, int nBombId = 0, int nMissileId = 0, int nMissiles = 4);
+		int Render (CViewMatrix* view, CGameObject* pObject, int nGunId = 0, int nBombId = 0, int nMissileId = 0, int nMissiles = 4);
 
 	private:
 		void CountASEModelItems (ASE::CModel& aseModel);

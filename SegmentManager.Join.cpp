@@ -110,11 +110,11 @@ for (i = 0; i < n; i++) {
 	// update all Segment () that use this vertex
 	if (oldVertex != newVertex) {
 		int nSegments = segmentManager.Count ();
-		CSegment* segP = segmentManager.Segment (0);
-		for (int nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
+		CSegment* pSegment = segmentManager.Segment (0);
+		for (int nSegment = 0; nSegment < nSegments; nSegment++, pSegment++) {
 			for (nVertex = 0; nVertex < 8; nVertex++)
-				if (segP->m_info.vertexIds [nVertex] == oldVertex)
-					segP->m_info.vertexIds [nVertex] = newVertex; 
+				if (pSegment->m_info.vertexIds [nVertex] == oldVertex)
+					pSegment->m_info.vertexIds [nVertex] = newVertex; 
 			}
 		// then delete the vertex
 		vertexManager.Delete (oldVertex); 
@@ -271,8 +271,8 @@ class CSideMatcher {
 
 		bool SetSide (int nSide, CSideKey key) {
 			m_keys [nSide] = key;
-			CSegment* segP = segmentManager.Segment (key.m_nSegment);
-			short nVertices = segP->Side (key.m_nSide)->VertexCount ();
+			CSegment* pSegment = segmentManager.Segment (key.m_nSegment);
+			short nVertices = pSegment->Side (key.m_nSide)->VertexCount ();
 			if (nSide == 0) {
 				m_nVertices = nVertices;
 				m_minRadius = 1e30;
@@ -281,7 +281,7 @@ class CSideMatcher {
 			else if (m_nVertices != nVertices)
 				return false;
 			for (int i = 0; i < m_nVertices; i++) 
-				m_vertices [nSide][i] = segP->Vertex (key.m_nSide, i);
+				m_vertices [nSide][i] = pSegment->Vertex (key.m_nSide, i);
 			return true;
 			}
 
@@ -547,26 +547,26 @@ void CSegmentManager::FixChildren (void)
 short nNewSeg = current->SegmentId (); 
 short nNewSide = current->SideId (); 
 
-CSegment*	newSegP = Segment (nNewSeg);
-CVertex*		vNewSeg = vertexManager.Vertex (newSegP->m_info.vertexIds [0]);
+CSegment*	pNewSeg = Segment (nNewSeg);
+CVertex*		vNewSeg = vertexManager.Vertex (pNewSeg->m_info.vertexIds [0]);
 
 undoManager.Begin (__FUNCTION__, udSegments);
 int nSegments = segmentManager.Count ();
 for (int nSegment = 0; nSegment < nSegments; nSegment++) {
 	if (nSegment != nNewSeg) {
-		CSegment* segP = segmentManager.Segment (nSegment);
+		CSegment* pSegment = segmentManager.Segment (nSegment);
 		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		CVertex* vSeg = vertexManager.Vertex (segP->m_info.vertexIds [0]);
+		CVertex* vSeg = vertexManager.Vertex (pSegment->m_info.vertexIds [0]);
 		if (fabs ((double) (vNewSeg->v.x - vSeg->v.x)) < 160.0 &&
 		    fabs ((double) (vNewSeg->v.y - vSeg->v.y)) < 160.0 &&
 		    fabs ((double) (vNewSeg->v.z - vSeg->v.z)) < 160.0) {
 			for (short nSide = 0; nSide < 6; nSide++) {
 				if (!Link (nNewSeg, nNewSide, nSegment, nSide, 3)) {
 					// if these Segment () were linked, then unlink them
-					if ((newSegP->ChildId (nNewSide) == nSegment) && (segP->ChildId (nSide) == nNewSeg)) {
-						newSegP->SetChild (nNewSide, -1); 
-						segP->SetChild (nSide, -1); 
+					if ((pNewSeg->ChildId (nNewSide) == nSegment) && (pSegment->ChildId (nSide) == nNewSeg)) {
+						pNewSeg->SetChild (nNewSide, -1); 
+						pSegment->SetChild (nSide, -1); 
 						}
 					}
 				}

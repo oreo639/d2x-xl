@@ -72,7 +72,7 @@ for (int i = 0; i < 6; i++) {
 }
 
 //------------------------------------------------------------------------------
-// Check whether the frustum intersects with a face defined by side *sideP.
+// Check whether the frustum intersects with a face defined by side *pSide.
 
 bool CFrustum::Contains (short nSegment, short nSide)
 {
@@ -82,14 +82,14 @@ bool CFrustum::Contains (short nSegment, short nSide)
 		{0,4}, {1,5}, {2,6}, {3,7}
 	};
 
-	CSegment* segP = segmentManager.Segment (nSegment);
-	CSide* sideP = segP->Side (nSide);
-	int i, j, nInside = 0, nOutside [4] = {0, 0, 0, 0}, nVertices = sideP->VertexCount ();
+	CSegment* pSegment = segmentManager.Segment (nSegment);
+	CSide* pSide = pSegment->Side (nSide);
+	int i, j, nInside = 0, nOutside [4] = {0, 0, 0, 0}, nVertices = pSide->VertexCount ();
 	CVertex*	points [4];
 	CDoubleVector intersection;
 
 for (i = 0; i < nVertices; i++) {
-	points [i] = segP->Vertex (nSide, i);
+	points [i] = pSegment->Vertex (nSide, i);
 	}
 
 // check whether all vertices of the face are at the back side of at least one frustum plane,
@@ -123,7 +123,7 @@ for (j = 0; j < nVertices; j++)
 // if an edge intersects, check whether the intersection is inside the face
 // since the near plane is at 0.0, only 8 edges of 5 planes need to be checked
 for (i = 0; i < 12; i++)
-	if (sideP->LineHitsFace (&m_corners [lineVerts [i][0]], &m_corners [lineVerts [i][1]], segP->m_info.vertexIds, 0.0, true))
+	if (pSide->LineHitsFace (&m_corners [lineVerts [i][0]], &m_corners [lineVerts [i][1]], pSegment->m_info.vertexIds, 0.0, true))
 		return true;
 return false;
 }

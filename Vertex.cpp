@@ -23,11 +23,11 @@ fp->WriteVector (v);
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CVertex::Copy (CGameItem* destP)
+CGameItem* CVertex::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CVertex*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CVertex*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------

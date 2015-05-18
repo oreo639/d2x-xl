@@ -58,7 +58,7 @@ if (!CObjectTabDlg::OnInitDialog ())
 InitSliders (this, m_data, sliderData, sizeofa (m_data));
 m_data [4].SetFormatter (FormatProbability);
 
-CGameObject *objP = current->Object ();
+CGameObject *pObject = current->Object ();
 CBInit (CBExplType (), (char **) "explosion", null, exp2VClipTable, MAX_EXP2_VCLIP_NUM_TABLE, 2);
 CBContType ()->SetItemData (CBContType ()->AddString ("Robot"), OBJ_ROBOT);
 CBContType ()->SetItemData (CBContType ()->AddString ("Powerup"), OBJ_POWERUP);

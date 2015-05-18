@@ -339,9 +339,9 @@ class CTexToolDlg : public CToolDlg
 					 bool bOtherSegment = false);
 	~CTexToolDlg ();
 	bool Refresh (short nBaseTex = -1, short nOvlTex = -1, short nVisible = -1);
-	void AnimateTexture (void);
+	bool AnimateTexture (void);
 	bool ScrollTexture (short texIds []);
-	void UpdateTextureClip (short texIds []);
+	bool UpdateTextureClip (short texIds []);
 
    virtual BOOL OnInitDialog ();
 	afx_msg void OnPaint ();
@@ -364,11 +364,17 @@ class CAnimTexWnd : public CWnd
 
 	private:
 		UINT_PTR m_nAnimTimer;
-		uint m_nTexAll;
-		uint m_nFrame;
+		int		m_nTexId;
+		int		m_nFrame;
+		int		m_xScrollOffset [2];
+		int		m_yScrollOffset [2];
 
 		afx_msg void OnTimer (UINT_PTR nIdEvent);
 		afx_msg void OnDestroy (void);
+
+		bool ScrollTexture (short nTexId);
+		bool UpdateTextureClip (short nTexId);
+		bool AnimateTexture (short nTexId);
 
 		DECLARE_MESSAGE_MAP ()
 };
@@ -389,7 +395,7 @@ class CDiagTool : public CToolDlg
 		int			m_nErrors [2];
 		int			m_bAutoFixBugs;
 		int			m_bShowWarnings;
-		CReactorTrigger	*m_triggerP;
+		CReactorTrigger	*m_pTrigger;
 		bool			m_bCheckMsgs;
 		int			m_statsWidth;
 		ubyte			m_playerId;
@@ -459,7 +465,7 @@ class CReactorTool : public CToolDlg
 		int			m_nCountDown;
 		int			m_nSecretReturn;
 		char			m_szTarget [40];
-		CReactorTrigger	*m_triggerP;
+		CReactorTrigger	*m_pTrigger;
 
 		CReactorTool (CPropertySheet *pParent = null);
       virtual BOOL OnInitDialog ();
@@ -759,7 +765,7 @@ class CObjectTool : public CToolDlg
 		void UpdateRobot ();
 		int ObjOfAKindCount (int nType = -1, int nId = -1);
 		int GetObjectsOfAKind (int nType, CGameObject *objList []);
-		void SetNewObjId (CGameObject *objP, int nType, int nId, int nMaxId);
+		void SetNewObjId (CGameObject *pObject, int nType, int nId, int nMaxId);
 
 		afx_msg void OnPaint ();
 		afx_msg void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
@@ -801,7 +807,7 @@ class CObjectTool : public CToolDlg
 
 class CEffectTabDlg : public CTabDlg {
 	public:
-		CGameObject* GetEffect (CGameObject* objP, ubyte nId, char* szType);
+		CGameObject* GetEffect (CGameObject* pObject, ubyte nId, char* szType);
 
 		bool Refresh (void);
 		bool AddEffect (void);
@@ -813,9 +819,9 @@ class CEffectTabDlg : public CTabDlg {
 		virtual void Add (void) {}
 		virtual void Delete (void) { DeleteEffect (); }
 		virtual void Copy (void) {}
-		virtual void Paste (CGameObject* objP = null, bool bRefresh = true) {}
+		virtual void Paste (CGameObject* pObject = null, bool bRefresh = true) {}
 
-		virtual CGameObject* GetEffect (CGameObject* objP = null, bool bVerbose = true) = 0;
+		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) = 0;
 		virtual ubyte GetType (void) = 0;
 
 		CEffectTabDlg (UINT nId, CWnd* pParent = null) : CTabDlg (nId, pParent) {}
@@ -880,12 +886,12 @@ class CParticleEffectTool : public CEffectTabDlg
 
 		void Add (void);
 		void Copy (void);
-		void Paste (CGameObject* objP = null, bool bRefresh = true);
+		void Paste (CGameObject* pObject = null, bool bRefresh = true);
 		bool Refresh (void);
 		void UpdateColorCtrl (void);
 
 		virtual ubyte GetType (void) { return PARTICLE_ID; }
-		virtual CGameObject* GetEffect (CGameObject* objP = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (objP, PARTICLE_ID, bVerbose ? "particle" : null); }
+		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (pObject, PARTICLE_ID, bVerbose ? "particle" : null); }
 
 		CParticleEffectTool (UINT nId, CWnd* pParent = null) : CEffectTabDlg (nId, pParent) {}
 
@@ -918,12 +924,12 @@ class CLightningEffectTool : public CEffectTabDlg
 
 		void Add (void);
 		void Copy (void);
-		void Paste (CGameObject* objP = null, bool bRefresh = true);
+		void Paste (CGameObject* pObject = null, bool bRefresh = true);
 		bool Refresh (void);
 		void UpdateColorCtrl (bool bSave = false);
 
 		virtual ubyte GetType (void) { return LIGHTNING_ID; }
-		virtual CGameObject* GetEffect (CGameObject* objP = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (objP, LIGHTNING_ID, bVerbose ? "lightning" : null); }
+		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (pObject, LIGHTNING_ID, bVerbose ? "lightning" : null); }
 
 		CLightningEffectTool (UINT nId, CWnd* pParent = null) : CEffectTabDlg (nId, pParent) {}
 
@@ -950,10 +956,10 @@ class CSoundEffectTool : public CEffectTabDlg
 
 		virtual void Add (void);
 		virtual void Copy (void);
-		virtual void Paste (CGameObject* objP = null, bool bRefresh = true);
+		virtual void Paste (CGameObject* pObject = null, bool bRefresh = true);
 
 		virtual ubyte GetType (void) { return SOUND_ID; }
-		virtual CGameObject* GetEffect (CGameObject* objP = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (objP, SOUND_ID, bVerbose ? "sound" : null); }
+		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (pObject, SOUND_ID, bVerbose ? "sound" : null); }
 
 		CSoundEffectTool (UINT nId, CWnd* pParent = null) : CEffectTabDlg (nId, pParent) {}
 
@@ -975,10 +981,10 @@ class CWayPointTool : public CEffectTabDlg
 
 		void Add (void);
 		void Copy (void);
-		void Paste (CGameObject* objP = null, bool bRefresh = true);
+		void Paste (CGameObject* pObject = null, bool bRefresh = true);
 
 		virtual ubyte GetType (void) { return WAYPOINT_ID; }
-		virtual CGameObject* GetEffect (CGameObject* objP = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (objP, WAYPOINT_ID, bVerbose ? "waypoint" : null); }
+		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (pObject, WAYPOINT_ID, bVerbose ? "waypoint" : null); }
 
 		CWayPointTool (UINT nId, CWnd* pParent = null) : CEffectTabDlg (nId, pParent) {}
 
@@ -1021,8 +1027,8 @@ class CSegmentTool : public CToolDlg
 		void OnPoint (int nPoint);
 		int FindObjectInRobotMaker (CListBox *plb, LPSTR pszBot = null);
 		int FindObjectInEquipMaker (CListBox *plb, LPSTR pszBot = null);
-		bool IsRobotMaker (CSegment *segP);
-		bool IsEquipMaker (CSegment *segP);
+		bool IsRobotMaker (CSegment *pSegment);
+		bool IsEquipMaker (CSegment *pSegment);
 		void SetDefTexture (short nTexture);
 	
 		afx_msg void OnSetSegment ();
@@ -1121,7 +1127,7 @@ class CWallTool : public CTexToolDlg
 		int				m_bKeys [4];
 		int				m_bFlags [MAX_WALL_FLAGS];
 		char				m_szMsg [256];
-		CWall*			m_wallP [2];
+		CWall*			m_pWall [2];
 		CWall				m_defWall;
 		CWall				m_defDoor;
 		short				m_defTexture;
@@ -1221,7 +1227,7 @@ class CTriggerTool : public CTexToolDlg
 		int					m_nSliderValue;
 		double				m_nStrength;
 		CTrigger				m_defTrigger;
-		CTrigger*			m_triggerP;
+		CTrigger*			m_pTrigger;
 		int					m_nTrigger;
 		CTrigger*			m_pStdTrigger;
 		int					m_nStdTrigger;
@@ -1316,16 +1322,16 @@ class CTriggerTool : public CTexToolDlg
 		inline CComboBox *CBTexture2 ()
 			{ return CBCtrl(IDC_TRIGGER_TEXTURE2); }
 		inline short Texture1 (void)
-			{ return (short) ((m_nTrigger >= 0) && (m_triggerP && (m_nType == TT_CHANGE_TEXTURE)) ? m_triggerP->Info ().value & 0xffff : 0); }
+			{ return (short) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->Info ().value & 0xffff : 0); }
 		inline short Texture2 (void)
-			{ return (short) ((m_nTrigger >= 0) && (m_triggerP && (m_nType == TT_CHANGE_TEXTURE)) ? m_triggerP->Info ().value >> 16 : 0); }
+			{ return (short) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->Info ().value >> 16 : 0); }
 		inline void SetTexture (short texture1, short texture2) {
-			if ((m_nTrigger >= 0) && m_triggerP && (m_nType == TT_CHANGE_TEXTURE)) {
+			if ((m_nTrigger >= 0) && m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) {
 				if (texture1 < 0)
 					texture1 = Texture1 ();
 				if (texture2 < 0)
 					texture2 = Texture2 ();
-				m_triggerP->Info ().value = (int) (texture2 << 16) + (int) texture1; 
+				m_pTrigger->Info ().value = (int) (texture2 << 16) + (int) texture1; 
 				}
 			}
 	
@@ -1703,7 +1709,7 @@ class CTextureTool : public CTexToolDlg
 		CExtSliderCtrl		m_brightnessCtrl;
 		CToolTabCtrl		m_textureTools;
 
-		bool				m_bInitTextureListBoxes;
+		bool					m_bInitTextureListBoxes;
 
 		int					m_lastTexture [2];
 		int					m_lastMode;

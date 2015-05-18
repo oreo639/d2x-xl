@@ -23,8 +23,8 @@ return WallCount () >= MAX_WALLS;
 
 bool CWallManager::HaveResources (CSideKey* key)
 {
-CWall* wallP = segmentManager.Wall (key);
-if (wallP != null) {
+CWall* pWall = segmentManager.Wall (key);
+if (pWall != null) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
@@ -73,11 +73,11 @@ if (!HaveResources (&key))
 
 current->Get (key);
 
-CSegment *segP = segmentManager.Segment (key);
-CSide* sideP = segmentManager.Side (key);
+CSegment *pSegment = segmentManager.Segment (key);
+CSide* pSide = segmentManager.Side (key);
 
 // if wall is an overlay, make sure there is no child
-short nChild = segP->ChildId (key.m_nSide);
+short nChild = pSegment->ChildId (key.m_nSide);
 if (type < 0)
 	type = (nChild == -1) ? WALL_OVERLAY : WALL_OPEN;
 
@@ -99,17 +99,17 @@ ushort nWall = WallCount ();
 
 // link wall to segment/side
 undoManager.Begin (__FUNCTION__, udSegments | udWalls);
-sideP->SetWall (nWall);
-CWall* wallP = Wall (nWall);
-wallP->Setup (key, nWall, (ubyte) type, nClip, nTexture, false);
-wallP->Index () = nWall;
-wallP->Info ().flags = flags;
-wallP->Info ().keys = keys;
+pSide->SetWall (nWall);
+CWall* pWall = Wall (nWall);
+pWall->Setup (key, nWall, (ubyte) type, nClip, nTexture, false);
+pWall->Index () = nWall;
+pWall->Info ().flags = flags;
+pWall->Info ().keys = keys;
 // update number of Walls () in mine
 WallCount ()++;
 undoManager.End (__FUNCTION__);
 //DLE.MineView ()->Refresh ();
-return wallP;
+return pWall;
 }
 
 //--------------------------------------------------------------------------
@@ -118,8 +118,8 @@ CWall* CWallManager::OppositeWall (CSideKey key)
 {
 	CSideKey opp;
 
-CSide* sideP = segmentManager.BackSide (key, opp);
-return (sideP == null) ? null : sideP->Wall ();
+CSide* pSide = segmentManager.BackSide (key, opp);
+return (pSide == null) ? null : pSide->Wall ();
 }
 
 //--------------------------------------------------------------------------
@@ -141,9 +141,9 @@ WallCount ()--;
 #else
 
 if (nDelWall < --Count ()) {
-	CWall* delWallP = Wall (nDelWall);
-	*delWallP = *Wall (Count ());
-	segmentManager.Side (*delWallP)->SetWall (nDelWall);
+	CWall* pDelWall = Wall (nDelWall);
+	*pDelWall = *Wall (Count ());
+	segmentManager.Side (*pDelWall)->SetWall (nDelWall);
 	}
 
 #endif
@@ -155,26 +155,26 @@ void CWallManager::Delete (short nDelWall)
 {
 if (nDelWall == NO_WALL)
 	return;
-CWall* delWallP = (nDelWall < 0) ? null : Wall (nDelWall);
-if (delWallP == null) {
-	delWallP = current->Wall ();
-	if (delWallP == null)
+CWall* pDelWall = (nDelWall < 0) ? null : Wall (nDelWall);
+if (pDelWall == null) {
+	pDelWall = current->Wall ();
+	if (pDelWall == null)
 		return;
 	}
-nDelWall = Index (delWallP);
+nDelWall = Index (pDelWall);
 
 undoManager.Begin (__FUNCTION__, udSegments | udWalls | udTriggers);
-delWallP->Backup (opDelete);
+pDelWall->Backup (opDelete);
 // if trigger exists, remove it as well
-triggerManager.DeleteFromWall (delWallP->Info ().nTrigger);
+triggerManager.DeleteFromWall (pDelWall->Info ().nTrigger);
 // remove references to the deleted wall
-CWall* oppWallP = segmentManager.OppositeWall (*delWallP);
-if (oppWallP != null) 
-	oppWallP->Info ().linkedWall = -1;
+CWall* pOppWall = segmentManager.OppositeWall (*pDelWall);
+if (pOppWall != null) 
+	pOppWall->Info ().linkedWall = -1;
 
-triggerManager.DeleteTargets (*delWallP);
-segmentManager.Side (*delWallP)->SetWall (NO_WALL);
-delWallP->Backup ();
+triggerManager.DeleteTargets (*pDelWall);
+segmentManager.Side (*pDelWall)->SetWall (NO_WALL);
+pDelWall->Backup ();
 Remove (nDelWall);
 
 undoManager.End (__FUNCTION__);
@@ -205,11 +205,11 @@ return null;
 
 void CWallManager::UpdateTrigger (short nOldTrigger, short nNewTrigger)
 {
-	CWall* wallP = FindByTrigger (nOldTrigger);
+	CWall* pWall = FindByTrigger (nOldTrigger);
 
-if (wallP != null) {
+if (pWall != null) {
 	undoManager.Begin (__FUNCTION__, udWalls);
-	wallP->SetTrigger (nNewTrigger);
+	pWall->SetTrigger (nNewTrigger);
 	undoManager.End (__FUNCTION__);
 	}
 }
@@ -228,11 +228,11 @@ return null;
 
 void CWallManager::UpdateSegment (short nOldSegment, short nNewSegment)
 {
-	CWall* wallP = FindBySegment (nOldSegment);
+	CWall* pWall = FindBySegment (nOldSegment);
 
-if (wallP != null) {
+if (pWall != null) {
 	undoManager.Begin (__FUNCTION__, udWalls);
-	wallP->m_nSegment = nNewSegment;
+	pWall->m_nSegment = nNewSegment;
 	undoManager.End (__FUNCTION__);
 	}
 }
@@ -241,16 +241,16 @@ if (wallP != null) {
 
 bool CWallManager::ClipFromTexture (CSideKey key)
 {
-CWall* wallP = segmentManager.Wall (key);
+CWall* pWall = segmentManager.Wall (key);
 
-if (!(wallP && wallP->IsDoor ()))
+if (!(pWall && pWall->IsDoor ()))
 	return true;
 
 short nBaseTex, nOvlTex;
 
 segmentManager.Textures (key, nBaseTex, nOvlTex);
 
-return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
+return (pWall->SetClip (nOvlTex) >= 0) || (pWall->SetClip (nBaseTex) >= 0);
 }
 
 //------------------------------------------------------------------------------
@@ -448,9 +448,9 @@ if (m_info [0].Restore (fp)) {
 #endif
 	for (short i = 0; i < WallCount (); i++) {
 		if (i < MAX_WALLS) {
-			CWall* wallP = Wall (i);
-			wallP->Read (fp);
-			wallP->Index () = i;
+			CWall* pWall = Wall (i);
+			pWall->Read (fp);
+			pWall->Index () = i;
 			}
 		else {
 			CWall w;
@@ -542,11 +542,11 @@ if (DLE.ExpertMode ())
 	return;
 
 current->Get (key);
-CWall* wallP = segmentManager.Wall (key);
+CWall* pWall = segmentManager.Wall (key);
 
-if (!wallP)
+if (!pWall)
  return;
-if (!wallP->IsDoor ())
+if (!pWall->IsDoor ())
 	return;
 
 ErrorMsg ("Changing the texture of a door only affects\n"
@@ -572,15 +572,15 @@ for (int i = Count () - 1; i >= 0; i--)
 int CWallManager::Fix (void)
 {
 int errFlags = 0;
-CWall *wallP = Wall (0);
-for (short nWall = WallCount (); nWall > 0; nWall--, wallP++) {
+CWall *pWall = Wall (0);
+for (short nWall = WallCount (); nWall > 0; nWall--, pWall++) {
 	// check nSegment
-	if (wallP->m_nSegment < 0 || wallP->m_nSegment > segmentManager.Count ()) {
-		wallP->m_nSegment = 0;
+	if (pWall->m_nSegment < 0 || pWall->m_nSegment > segmentManager.Count ()) {
+		pWall->m_nSegment = 0;
 		errFlags |= 16;
 		}
-	if ((wallP->m_nSide < 0) || (wallP->m_nSide > 5)) {
-		wallP->m_nSide = 0;
+	if ((pWall->m_nSide < 0) || (pWall->m_nSide > 5)) {
+		pWall->m_nSide = 0;
 		errFlags |= 16;
 		}
 	}

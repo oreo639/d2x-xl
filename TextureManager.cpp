@@ -48,33 +48,33 @@ return m_frames.Buffer () ? (int) m_frames.Length () : 0;
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-static int LoadAnimationClip (CAnimationClipInfo& aci, CFileManager& fp, int nMaxFrames, bool bIndices)
+static int LoadAnimationClip (CAnimationClipInfo& clipInfo, CFileManager& fp, int nMaxFrames, bool bIndices)
 {
-aci.m_nPlayTime = fp.ReadInt32 ();
+clipInfo.m_nPlayTime = fp.ReadInt32 ();
 int nFrames = fp.ReadInt32 ();
 if (nFrames < 0)
 	nFrames = 0;
 if (nFrames > nMaxFrames)
 	return -1;
 if (nFrames > 0)
-	aci.m_frames.Create (nFrames);
+	clipInfo.m_frames.Create (nFrames);
 fp.Seek (sizeof (int), SEEK_CUR); // skip frame time stored in the file - it sometimes seems to be bogus
-aci.m_nFrameTime = int (X2F (aci.m_nPlayTime) / float (nFrames) * 1000);
+clipInfo.m_nFrameTime = int (X2F (clipInfo.m_nPlayTime) / float (nFrames) * 1000);
 fp.Seek (sizeof (int) + sizeof (short), SEEK_CUR);
 if (nFrames <= 0) {
 	fp.Seek (nMaxFrames * sizeof (short), SEEK_CUR);
-	aci.m_nTexture = -1;
+	clipInfo.m_nTexture = -1;
 	}
 else {
-	aci.LoadAnimationFrames (fp, nMaxFrames, bIndices);
-	aci.m_nTexture = aci.Frame (0);
+	clipInfo.LoadAnimationFrames (fp, nMaxFrames, bIndices);
+	clipInfo.m_nTexture = clipInfo.Frame (0);
 #if DBG
-	if ((nDbgTexture >= 0) && (aci.m_nTexture == nDbgTexture))
+	if ((nDbgTexture >= 0) && (clipInfo.m_nTexture == nDbgTexture))
 		nDbgTexture = nDbgTexture;
 #endif
 	}
 fp.ReadInt32 ();
-return aci.m_frames.Length ();
+return clipInfo.m_frames.Length ();
 }
 
 //------------------------------------------------------------------------
@@ -82,40 +82,40 @@ return aci.m_frames.Length ();
 static int LoadAnimationData (CAnimationClipList& animations, CFileManager& fp, int nClips, int nFrames)
 {
 for (int i = 0; i < nClips; i++) {
-	CAnimationClipInfo* aciP = animations.Append ();
-	if (!aciP)
+	CAnimationClipInfo* pClipInfo = animations.Append ();
+	if (!pClipInfo)
 		return -1;
-	if (0 > LoadAnimationClip (*aciP, fp, nFrames, false))
+	if (0 > LoadAnimationClip (*pClipInfo, fp, nFrames, false))
 		return -1;
-	aciP->m_nType = 1;
+	pClipInfo->m_nType = 1;
 	}
 return nClips;
 }
 
 //------------------------------------------------------------------------
 
-static int LoadEffectData (CAnimationClipInfo& aci, CFileManager& fp, int nMaxFrames)
+static int LoadEffectData (CAnimationClipInfo& clipInfo, CFileManager& fp, int nMaxFrames)
 {
-if (0 > LoadAnimationClip (aci, fp, nMaxFrames, true))
+if (0 > LoadAnimationClip (clipInfo, fp, nMaxFrames, true))
 	return -1;
 fp.Seek (8, SEEK_CUR);
-aci.m_nTexture = fp.ReadInt16 (); // nChangingWallTexture
-if (aci.m_nTexture >= 0) 
+clipInfo.m_nTexture = fp.ReadInt16 (); // nChangingWallTexture
+if (clipInfo.m_nTexture >= 0) 
 	fp.Seek (38, SEEK_CUR);
 else {
-	aci.m_nTexture = fp.ReadInt16 (); // nChangingObjectTexture
+	clipInfo.m_nTexture = fp.ReadInt16 (); // nChangingObjectTexture
 	fp.Seek (36, SEEK_CUR);
-	if (aci.m_nTexture >= 0)
-		aci.m_nType = 1;
+	if (clipInfo.m_nTexture >= 0)
+		clipInfo.m_nType = 1;
 	}
 #if DBG
-if ((nDbgTexture >= 0) && (aci.m_nTexture == nDbgTexture))
+if ((nDbgTexture >= 0) && (clipInfo.m_nTexture == nDbgTexture))
 	nDbgTexture = nDbgTexture;
 #endif
-if (aci.m_nTexture >= 0)
-	aci.m_nTexture = textureManager.Index (aci.m_nTexture);
+if (clipInfo.m_nTexture >= 0)
+	clipInfo.m_nTexture = textureManager.Index (clipInfo.m_nTexture);
 #if DBG
-if ((nDbgTexture >= 0) && (aci.m_nTexture == nDbgTexture))
+if ((nDbgTexture >= 0) && (clipInfo.m_nTexture == nDbgTexture))
 	nDbgTexture = nDbgTexture;
 #endif
 return 1;
@@ -126,10 +126,10 @@ return 1;
 static int LoadEffectClips (CAnimationClipList& animations, CFileManager& fp, int nClips, int nMaxFrames)
 {
 for (int i = 0; i < nClips; i++) {
-	CAnimationClipInfo* aciP = animations.Append ();
-	if (!aciP)
+	CAnimationClipInfo* pClipInfo = animations.Append ();
+	if (!pClipInfo)
 		return -1;
-	if (0 > LoadEffectData (*aciP, fp, nMaxFrames))
+	if (0 > LoadEffectData (*pClipInfo, fp, nMaxFrames))
 		return -1;
 	}
 return nClips;
@@ -137,26 +137,26 @@ return nClips;
 
 // -----------------------------------------------------------------------------------
 
-int LoadWallEffectData (CAnimationClipInfo& aci, CFileManager& fp, int nClips, short nMaxFrames)
+int LoadWallEffectData (CAnimationClipInfo& clipInfo, CFileManager& fp, int nClips, short nMaxFrames)
 {
-aci.m_nPlayTime = fp.ReadInt32 ();
+clipInfo.m_nPlayTime = fp.ReadInt32 ();
 short nFrames = fp.ReadInt16 ();
 if (nFrames < 0)
 	nFrames = 0;
 else if (nFrames > nMaxFrames)
 	return -1;
 if (nFrames > 0)
-	aci.m_frames.Create (nFrames);
-nFrames = aci.LoadAnimationFrames (fp, nMaxFrames, false);
-aci.m_nFrameTime = int (X2F (nFrames ? aci.m_nPlayTime / nFrames : 0) * 1000);
-aci.m_nTexture = aci.Frame (0);
+	clipInfo.m_frames.Create (nFrames);
+nFrames = clipInfo.LoadAnimationFrames (fp, nMaxFrames, false);
+clipInfo.m_nFrameTime = int (X2F (nFrames ? clipInfo.m_nPlayTime / nFrames : 0) * 1000);
+clipInfo.m_nTexture = clipInfo.Frame (0);
 #if DBG
-if ((nDbgTexture >= 0) && (aci.m_nTexture == nDbgTexture))
+if ((nDbgTexture >= 0) && (clipInfo.m_nTexture == nDbgTexture))
 	nDbgTexture = nDbgTexture;
 #endif
 fp.Seek (20, SEEK_CUR);
-aci.m_bBidirectional = true;
-return aci.m_frames.Length ();
+clipInfo.m_bBidirectional = true;
+return clipInfo.m_frames.Length ();
 }
 
 //------------------------------------------------------------------------
@@ -164,10 +164,10 @@ return aci.m_frames.Length ();
 static int LoadWallEffectClips (CAnimationClipList& animations, CFileManager& fp, int nClips, int nMaxFrames)
 {
 for (int i = 0; i < nClips; i++) {
-	CAnimationClipInfo* aciP = animations.Append ();
-	if (!aciP)
+	CAnimationClipInfo* pClipInfo = animations.Append ();
+	if (!pClipInfo)
 		return -1;
-	if (0 > LoadWallEffectData (*aciP, fp, nClips, nMaxFrames))
+	if (0 > LoadWallEffectData (*pClipInfo, fp, nClips, nMaxFrames))
 		return -1;
 	}
 return nClips;
@@ -304,9 +304,9 @@ return DLE.IsD1File () ? 0 : 1;
 void CTextureManager::ReleaseTextures (int nVersion) 
 {
 // free any m_textures that have been buffered
-CTexture* texP = &m_textures [nVersion][0];
-if (texP != null) {
-	for (int i = 0, h = m_header [nVersion].nTextures; i < h; i++, texP++) {
+CTexture* pTexture = &m_textures [nVersion][0];
+if (pTexture != null) {
+	for (int i = 0, h = m_header [nVersion].nTextures; i < h; i++, pTexture++) {
 #ifdef _DEBUG
 		if (i == nDbgTexture)
 			nDbgTexture = nDbgTexture;
@@ -316,11 +316,11 @@ if (texP != null) {
 			m_overrides [nVersion][i] = null;
 			}
 		if (m_previous [nVersion][i]) {
-			if (m_previous [nVersion][i] != texP)
+			if (m_previous [nVersion][i] != pTexture)
 				delete m_previous [nVersion][i];
 			m_previous [nVersion][i] = null;
 			}
-		texP->Clear ();
+		pTexture->Clear ();
 		}
 	}
 #if EXTRA_TEXTURES
@@ -485,21 +485,21 @@ int CTextureManager::LoadIndex (int nVersion)
 {
 	CResource res;	
 
-ushort* indexP = (ushort *) res.Load (nVersion ? IDR_TEXTURE2_DAT : IDR_TEXTURE_DAT);
-if (!indexP) {
+ushort* pIndex = (ushort *) res.Load (nVersion ? IDR_TEXTURE2_DAT : IDR_TEXTURE_DAT);
+if (!pIndex) {
 	DEBUGMSG (" Reading texture: Could not load texture index.");
 	return 1;
 	}
 // first long is number of m_textures
-m_nTextures [nVersion] = *((uint*) indexP);
-indexP += 2;
+m_nTextures [nVersion] = *((uint*) pIndex);
+pIndex += 2;
 m_index [nVersion] = new ushort [m_nTextures [nVersion]];
 if (m_index [nVersion] == null) {
 	DEBUGMSG (" Reading texture: Could not allocate texture index.");
 	return 3;
 	}
 for (uint i = 0; i < m_nTextures [nVersion]; i++)
-	m_index [nVersion][i] = (*indexP++);
+	m_index [nVersion][i] = (*pIndex++);
 return 0;
 }
 
@@ -601,18 +601,18 @@ return SkipToAnimationData (fp);
 
 int CTextureManager::AddMissingAnimationClip (CAnimationClipList& animations, int nIndex, int nFrames)
 {
-CAnimationClipInfo* aciP = animations.Append ();
-if (!aciP)
+CAnimationClipInfo* pClipInfo = animations.Append ();
+if (!pClipInfo)
 	return -1;
-if (!aciP->m_frames.Create (nFrames))
+if (!pClipInfo->m_frames.Create (nFrames))
 	return -1;
 for (int i = 0; i < nFrames; i++)
-	aciP->m_frames [i] = nIndex + i;
-aciP->m_nTexture = nIndex;
-aciP->m_nType = 2;
-aciP->m_nPlayTime = I2X (1);
-aciP->m_nFrameTime = aciP->m_nPlayTime / nFrames;
-aciP->m_bBidirectional = false;
+	pClipInfo->m_frames [i] = nIndex + i;
+pClipInfo->m_nTexture = nIndex;
+pClipInfo->m_nType = 2;
+pClipInfo->m_nPlayTime = I2X (1);
+pClipInfo->m_nFrameTime = pClipInfo->m_nPlayTime / nFrames;
+pClipInfo->m_bBidirectional = false;
 return 1;
 }
 
@@ -630,18 +630,20 @@ for (int nIndex = 0; nIndex < textureManager.GlobalTextureCount (); nIndex++) {
 	if ((nDbgTexture >= 0) && (nIndex == nDbgTexture))
 		nDbgTexture = nDbgTexture;
 #endif
-#if DBG
+#if 1 //DBG
 	CTexture *pTexture = textureManager.TextureByIndex (nIndex);
 	if (AnimationIndex (nIndex)) {
 		nRootIndex = -1;
 		continue;
 		}
+#	if DBG
 	if ((nDbgTexture >= 0) && (nIndex == nDbgTexture))
 		nDbgTexture = nDbgTexture;
 	if (!strcmp (pTexture->Name (), "bluegoal"))
 		nIndex = nIndex;
 	if (!strcmp (pTexture->Name (), "redgoal"))
 		nIndex = nIndex;
+#	endif
 #else
 	if (FindAnimation (nIndex))
 		continue;
@@ -744,24 +746,24 @@ return null;
 
 short CTextureManager::PrevAnimationFrame (short nTexture)
 {
-CAnimationClipInfo* aicP = FindAnimation (nTexture);
+CAnimationClipInfo* pClipInfo = FindAnimation (nTexture);
 
-if (!aicP)
+if (!pClipInfo)
 	return -1;
-size_t i = aicP->Find (nTexture) - 1;
-return short ((i < 0) ? aicP->FrameCount () - 1 : i);
+size_t i = pClipInfo->Find (nTexture) - 1;
+return short ((i < 0) ? pClipInfo->FrameCount () - 1 : i);
 }
 
 //------------------------------------------------------------------------------
 
 short CTextureManager::NextAnimationFrame (short nTexture)
 {
-CAnimationClipInfo* aicP = FindAnimation (nTexture);
+CAnimationClipInfo* pClipInfo = FindAnimation (nTexture);
 
-if (!aicP)
+if (!pClipInfo)
 	return -1;
-size_t i = aicP->Find (nTexture) + 1;
-return short ((i >= aicP->FrameCount ()) ? 0 : i);
+size_t i = pClipInfo->Find (nTexture) + 1;
+return short ((i >= pClipInfo->FrameCount ()) ? 0 : i);
 }
 
 //------------------------------------------------------------------------------
@@ -883,27 +885,27 @@ void CTextureManager::TagUsedTextures (void)
 if (!textureManager.Available ())
 	return;
 
-	CSegment* segP = segmentManager.Segment (0);
+	CSegment* pSegment = segmentManager.Segment (0);
 	int nVersion = DLE.IsD1File () ? 0 : 1;
 	int i, j, h = MaxTextures (nVersion);
 
 UnTagUsedTextures ();
 
-for (i = segmentManager.Count (); i; i--, segP++) {
-	CSide* sideP = segP->m_sides;
-	for (j = 6; j; j--, sideP++) {
-		if (((short) sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
-			if (sideP->BaseTex () >= 0 && sideP->BaseTex () < MaxTextures (nVersion))
-				m_bUsed [nVersion][sideP->BaseTex ()] = true;
-			if (sideP->OvlTex (0) > 0 && sideP->OvlTex (0) < MaxTextures (nVersion))
-				m_bUsed [nVersion][sideP->OvlTex (0)] = true;
+for (i = segmentManager.Count (); i; i--, pSegment++) {
+	CSide* pSide = pSegment->m_sides;
+	for (j = 6; j; j--, pSide++) {
+		if (((short) pSide->m_info.nChild < 0) || (pSide->m_info.nWall != NO_WALL)) {
+			if (pSide->BaseTex () >= 0 && pSide->BaseTex () < MaxTextures (nVersion))
+				m_bUsed [nVersion][pSide->BaseTex ()] = true;
+			if (pSide->OvlTex (0) > 0 && pSide->OvlTex (0) < MaxTextures (nVersion))
+				m_bUsed [nVersion][pSide->OvlTex (0)] = true;
 			}
 		}
 	}
 
 for (i = 0; i < h; i++) {
-	const CTexture* texP = Textures (i);
-	if (texP->IsAnimated () && m_bUsed [nVersion][texP->GetParent ()->Id()])
+	const CTexture* pTexture = Textures (i);
+	if (pTexture->IsAnimated () && m_bUsed [nVersion][pTexture->GetParent ()->Id()])
 		m_bUsed [nVersion][i] = true;
 	}
 }
@@ -919,15 +921,15 @@ int nTexture = TexIdFromIndex (nIndex);
 if (nTexture < 0)
 	return 0;
 
-const CTexture *texP = Textures (nTexture);
+const CTexture *pTexture = Textures (nTexture);
 
-if (texP->IsAssignableFrame ()) {
+if (pTexture->IsAssignableFrame ()) {
 	// This is a frame of an animated texture - we need to find the base before
 	// we can get the used count
 	bool bFoundParent = false;
 	for (int i = nTexture - 1; i > 0; i--) {
-		texP = Textures (i);
-		if (!texP->IsAssignableFrame ()) {
+		pTexture = Textures (i);
+		if (!pTexture->IsAssignableFrame ()) {
 			bFoundParent = true;
 			break;
 			}
@@ -939,14 +941,14 @@ if (texP->IsAssignableFrame ()) {
 	}
 
 int usedCount = 0;
-CSegment* segP = segmentManager.Segment (0);
-for (int i = 0; i < segmentManager.Count (); i++, segP++) {
-	CSide* sideP = segP->m_sides;
-	for (int j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
-		if (((short) sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
+CSegment* pSegment = segmentManager.Segment (0);
+for (int i = 0; i < segmentManager.Count (); i++, pSegment++) {
+	CSide* pSide = pSegment->m_sides;
+	for (int j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pSide++) {
+		if (((short) pSide->m_info.nChild < 0) || (pSide->m_info.nWall != NO_WALL)) {
 			// We aren't double-counting if the texture was used for both base AND overlay.
 			// Index 0 on an overlay texture doesn't count as an instance either.
-			if (sideP->BaseTex () == texP->Id () || (texP->Id () > 0 && sideP->OvlTex (0) == texP->Id ()))
+			if (pSide->BaseTex () == pTexture->Id () || (pTexture->Id () > 0 && pSide->OvlTex (0) == pTexture->Id ()))
 				usedCount++;
 			}
 		}
@@ -1111,6 +1113,72 @@ else {
 		return 6;
 	}
 return -1;
+}
+
+//------------------------------------------------------------------------------
+
+bool CTextureManager::CheckScrollingTexture (short nTexId, int xScrollOffset [], int yScrollOffset [], int& x, int& y)
+{
+if (ScrollSpeed (nTexId, &x, &y))
+	return true;
+xScrollOffset [0] =
+yScrollOffset [0] = 0;
+return false;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureManager::UpdateScrollingTexture (int xScrollOffset [], int yScrollOffset [], int x, int y)
+{
+if (xScrollOffset [1] != x || yScrollOffset [1] != y) {
+	xScrollOffset [0] = 0;
+	yScrollOffset [0] = 0;
+	}
+xScrollOffset [1] = x;
+yScrollOffset [1] = y;
+xScrollOffset [0] += x;
+yScrollOffset [0] += y;
+xScrollOffset [0] &= 63;
+yScrollOffset [0] &= 63;
+}
+
+//------------------------------------------------------------------------------
+
+CTexture *CTextureManager::UpdateTextureClip (short& nTexId, short& nPrevTexId, int& nFrame, int& nDirection)
+{
+	int			nVersion = DLE.IsD1File ();
+	bool			bAnimate = false;
+	CTexture		*pTexture = null;
+
+if (nPrevTexId != nTexId) {
+	nFrame = 0;
+	nPrevTexId = nTexId;
+	nDirection = nDirection = 1;
+	}
+
+int nIndex = (nTexId < 0) ? -nTexId - 1 : textureManager.Index (nTexId);
+CAnimationClipInfo* pClipInfo = textureManager.AnimationIndex (nIndex);
+if (!pClipInfo || (pClipInfo->m_nType == 1) || !pClipInfo->FrameCount () || (pClipInfo->Frame (0) != nIndex)) 
+	return null;
+
+nFrame += nDirection;
+if ((nFrame < 0) || (nFrame >= (int) pClipInfo->FrameCount ())) {
+	if (pClipInfo->Bidirectional ()) {
+		nDirection = -nDirection;
+		nFrame += nDirection;
+		}
+	else
+		nFrame = 0;
+	}
+pTexture = textureManager.Textures (-pClipInfo->Frame (0) - 1);
+if (pTexture->Format ())
+	pTexture->SetCurrentFrame (nFrame);
+else {
+	nTexId = pClipInfo->Frame (nFrame);
+	pTexture = textureManager.Textures (-nTexId - 1);
+	}
+
+return pTexture;
 }
 
 //------------------------------------------------------------------------

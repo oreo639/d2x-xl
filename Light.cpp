@@ -41,11 +41,11 @@ fp.WriteInt32 ((int) (m_info.color.b * 0x7fffffff + 0.5));
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CColor::Copy (CGameItem* destP)
+CGameItem* CColor::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CColor*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CColor*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------
@@ -104,11 +104,11 @@ m_info.mask = mask;
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CVariableLight::Copy (CGameItem* destP)
+CGameItem* CVariableLight::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CVariableLight*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CVariableLight*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------
@@ -196,11 +196,11 @@ for (int i = 0; i < 4; i++) {
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CLightDeltaValue::Copy (CGameItem* destP)
+CGameItem* CLightDeltaValue::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CLightDeltaValue*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CLightDeltaValue*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------
@@ -252,11 +252,11 @@ fp->Write (m_info.index);
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CLightDeltaIndex::Copy (CGameItem* destP)
+CGameItem* CLightDeltaIndex::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CLightDeltaIndex*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CLightDeltaIndex*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------

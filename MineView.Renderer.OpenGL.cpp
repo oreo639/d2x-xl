@@ -28,12 +28,12 @@ typedef struct tSinCosf {
 	float	fSin, fCos;
 } tSinCosf;
 
-void ComputeSinCosTable (tSinCosf *sinCosP, int nPoints)
+void ComputeSinCosTable (tSinCosf *pSinCos, int nPoints)
 {
-for (int i = 0; i < nPoints; i++, sinCosP++) {
+for (int i = 0; i < nPoints; i++, pSinCos++) {
 	double a = 2.0 * PI * i / nPoints;
-	sinCosP->fSin = (float) sin (a);
-	sinCosP->fCos = (float) cos (a);
+	pSinCos->fSin = (float) sin (a);
+	pSinCos->fCos = (float) cos (a);
 	}
 }
 
@@ -489,11 +489,11 @@ m_viewMatrix.MoveViewer (i, ViewMoveRate () * ((i == 1) ? offset : -offset));
 void CRendererGL::DrawFaceTextured (CFaceListEntry& fle) 
 {
 	CTexture		tex (textureManager.SharedBuffer ());
-	const CTexture* texP [3] = {null, null, null};
-	CSegment*	segP = segmentManager.Segment (fle);
-	CSide*		sideP = segmentManager.Side (fle);
-	CWall*		wallP = segmentManager.Wall (fle);
-	CBGRA			color, * colorP = null;
+	const CTexture* pTexture [3] = {null, null, null};
+	CSegment*	pSegment = segmentManager.Segment (fle);
+	CSide*		pSide = segmentManager.Side (fle);
+	CWall*		pWall = segmentManager.Wall (fle);
+	CBGRA			color, * pColor = null;
 	int			bArrow = 0;
 
 #ifdef _DEBUG
@@ -502,41 +502,41 @@ if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide))
 #endif
 
 SetAlpha (255);
-short nBaseTex = sideP->BaseTex ();
-short nOvlTex = sideP->OvlTex (0);
+short nBaseTex = pSide->BaseTex ();
+short nOvlTex = pSide->OvlTex (0);
 
-if (textureManager.IsScrolling (sideP->BaseTex ()) && !(bArrow = textureManager.HaveArrow ())) {
-	texP [0] = &tex;
+if (textureManager.IsScrolling (pSide->BaseTex ()) && !(bArrow = textureManager.HaveArrow ())) {
+	pTexture [0] = &tex;
 	tex.BlendTextures (nBaseTex, nOvlTex, 0, 0);
 	tex.DrawAnimDirArrows (nBaseTex);
 	tex.GLCreate ();
 	}
 else {
-	texP [0] = textureManager.Textures (nBaseTex);
-	//texP [0]->m_nTexture = nBaseTex;
+	pTexture [0] = textureManager.Textures (nBaseTex);
+	//pTexture [0]->m_nTexture = nBaseTex;
 	if (nOvlTex) {
-		texP [1] = textureManager.Textures (nOvlTex);
-		//texP [1]->m_nTexture = nOvlTex;
+		pTexture [1] = textureManager.Textures (nOvlTex);
+		//pTexture [1]->m_nTexture = nOvlTex;
 		}
 	if (bArrow)
-		texP [2] = &textureManager.Arrow ();
+		pTexture [2] = &textureManager.Arrow ();
 	}
-if (wallP != null) {
-	SetAlpha (wallP->Alpha ());
-	if (wallP->IsTransparent () || wallP->IsCloaked ()) {
+if (pWall != null) {
+	SetAlpha (pWall->Alpha ());
+	if (pWall->IsTransparent () || pWall->IsCloaked ()) {
 		CBGRA color;
-		if (wallP->IsCloaked ())
+		if (pWall->IsCloaked ())
 			color = CBGRA (0, 0, 0, 255);
 		else {
-			CColor* texColorP = lightManager.GetTexColor (sideP->BaseTex (), true);
-			color = CBGRA (texColorP->Red (), texColorP->Green (), texColorP->Blue (), 255);
+			CColor* pTexColor = lightManager.GetTexColor (pSide->BaseTex (), true);
+			color = CBGRA (pTexColor->Red (), pTexColor->Green (), pTexColor->Blue (), 255);
 			}
-		colorP = &color;
+		pColor = &color;
 		}
 	}
 
-RenderFace (fle, texP, colorP);
-if	(texP [0] == &tex)
+RenderFace (fle, pTexture, pColor);
+if	(pTexture [0] == &tex)
 	tex.GLRelease ();
 }
 
@@ -566,24 +566,24 @@ else {
 
 #define GL_TRANSFORM 0
 
-void CRendererGL::RenderFace (CFaceListEntry& fle, const CTexture* texP [], CBGRA* colorP)
+void CRendererGL::RenderFace (CFaceListEntry& fle, const CTexture* pTexture [], CBGRA* pColor)
 {
 	static float zoom = 10.0f;
 	static double scrollAngles [8] = {0.0, Radians (45.0), Radians (90.0), Radians (135.0), Radians (180.0), Radians (-135.0), Radians (-90.0), Radians (-45.0)};
 
-	CSegment*		segP = segmentManager.Segment (fle.m_nSegment);
-	CSide*			sideP = segP->Side (fle.m_nSide);
-	CWall*			wallP = sideP->Wall ();
-	float				alpha = float (Alpha ()) / 255.0f * (colorP ? float (colorP->a) / 255.0f : 1.0f);
-	float				heightScale = (float) texP [0]->RenderWidth () / (float) texP [0]->RenderHeight ();
-	int				bIlluminate = RenderIllumination () && (segP->m_info.function != SEGMENT_FUNC_SKYBOX);
-	ushort*			vertexIds = segP->m_info.vertexIds;
-	ubyte*			vertexIdIndex = sideP->m_vertexIdIndex;
-	int				nVertices = sideP->VertexCount (), 
-						nTextures = colorP ? 0 : texP [1] ? 2 : 1;
-	int				bArrow = texP [2] != null;
+	CSegment*		pSegment = segmentManager.Segment (fle.m_nSegment);
+	CSide*			pSide = pSegment->Side (fle.m_nSide);
+	CWall*			pWall = pSide->Wall ();
+	float				alpha = float (Alpha ()) / 255.0f * (pColor ? float (pColor->a) / 255.0f : 1.0f);
+	float				heightScale = (float) pTexture [0]->RenderWidth () / (float) pTexture [0]->RenderHeight ();
+	int				bIlluminate = RenderIllumination () && (pSegment->m_info.function != SEGMENT_FUNC_SKYBOX);
+	ushort*			vertexIds = pSegment->m_info.vertexIds;
+	ubyte*			vertexIdIndex = pSide->m_vertexIdIndex;
+	int				nVertices = pSide->VertexCount (), 
+						nTextures = pColor ? 0 : pTexture [1] ? 2 : 1;
+	int				bArrow = pTexture [2] != null;
 	double			scrollAngle = 0.0;
-	short				nOvlAlignment = sideP->OvlAlignment ();
+	short				nOvlAlignment = pSide->OvlAlignment ();
 	ushort			brightness [4];
 
 	tDoubleVector	vertices [4];
@@ -596,7 +596,7 @@ if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide))
 #endif
 
 if (bArrow) {
-	int nDir = textureManager.ScrollDirection (texP [0]->Id ());
+	int nDir = textureManager.ScrollDirection (pTexture [0]->Id ());
 	if (nDir >= 0)
 		scrollAngle = scrollAngles [nDir];
 	}
@@ -610,8 +610,8 @@ for (int i = 0, j = nOvlAlignment; i < nVertices; i++, j = (j + 1) % nVertices) 
 #else
 	vertices [i] = vertexManager [nVertex].m_view.v;
 #endif
-	CUVL uvl = sideP->m_info.uvls [i];
-	if (!colorP) {
+	CUVL uvl = pSide->m_info.uvls [i];
+	if (!pColor) {
 		texCoords [0][i].u = uvl.u;
 		texCoords [0][i].v = -uvl.v * heightScale;
 		if (nTextures > 1)
@@ -633,13 +633,13 @@ for (int i = 0, j = nOvlAlignment; i < nVertices; i++, j = (j + 1) % nVertices) 
 			colors [i].r = 
 			colors [i].g = 
 			colors [i].b = 1.0f;
-		colors [i].a = segP->m_info.bTunnel ? alpha * 0.7f : alpha;
+		colors [i].a = pSegment->m_info.bTunnel ? alpha * 0.7f : alpha;
 		}
 	}
 
-if (colorP) {
+if (pColor) {
 	glDisable (GL_TEXTURE_2D);
-	glColor4f (float (colorP->r) / 255.0f, float (colorP->g) / 255.0f, float (colorP->b) / 255.0f, alpha);
+	glColor4f (float (pColor->r) / 255.0f, float (pColor->g) / 255.0f, float (pColor->b) / 255.0f, alpha);
 	glDisableClientState (GL_COLOR_ARRAY);
 	glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 	glEnableClientState (GL_VERTEX_ARRAY);
@@ -648,12 +648,12 @@ if (colorP) {
 else {
 	int h = 0;
 	for (int i = 0; i < 3; i++) {
-		if (!texP [i]) 
+		if (!pTexture [i]) 
 			continue;
 		glActiveTexture (GL_TEXTURE0 + h);
 		glClientActiveTexture (GL_TEXTURE0 + h);
 		glEnable (GL_TEXTURE_2D);
-		if (!texP [i]->GLBind (GL_TEXTURE0 + h, GL_MODULATE))
+		if (!pTexture [i]->GLBind (GL_TEXTURE0 + h, GL_MODULATE))
 			return;
 		glEnableClientState (GL_COLOR_ARRAY);
 		glEnableClientState (GL_TEXTURE_COORD_ARRAY);
@@ -886,23 +886,23 @@ glEnd ();
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::TexturedPolygon (const CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index)
+void CRendererGL::TexturedPolygon (const CTexture* pTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index)
 {
 	static tTexCoord2d defaultTexCoords [4] = {{0.0, 0.0}, {0.0, 1.0}, {1.0, 1.0}, {1.0, 0.0}};
 
-if (!texP) {
+if (!pTexture) {
 	glDisable (GL_TEXTURE_2D);
 	glColor3dv ((GLdouble*) color);
 	}
 else {
-	texP->GLBind (GL_TEXTURE0, GL_MODULATE);
+	pTexture->GLBind (GL_TEXTURE0, GL_MODULATE);
 	glColor3f (1.0f, 1.0f, 1.0f);
 	if (!texCoords)
 		texCoords = defaultTexCoords;
 	}
 glBegin (GL_TRIANGLE_FAN); //(nVertices == 3) ? GL_TRIANGLES : (nVertices == 4) ? GL_QUADS : GL_POLYGON);
 for (int i = 0; i < nVertices; i++) {
-	if (texP)
+	if (pTexture)
 		glTexCoord2dv ((GLdouble*) &texCoords [i]);
 	glVertex3dv ((GLdouble*) &(vertices [index ? index [i] : i].m_view.v));
 	}
@@ -920,14 +920,14 @@ TexturedPolygon (nTexture ? textureManager.Textures (nTexture, 1) : null, texCoo
 
 //------------------------------------------------------------------------------
 
-void CRendererGL::Sprite (const CTexture* texP, CVertex center, double width, double height, bool bAlways)
+void CRendererGL::Sprite (const CTexture* pTexture, CVertex center, double width, double height, bool bAlways)
 {
 	static rgbColord color = {1.0, 1.0, 1.0};
 	static ushort index [4] = {0, 1, 2, 3};
 
 	CVertex vertices [4];
-	float				du = float (texP->RenderOffsetX ()) / float (texP->RenderWidth ());
-	float				dv = float (texP->RenderOffsetY ()) / float (texP->RenderHeight ());
+	float				du = float (pTexture->RenderOffsetX ()) / float (pTexture->RenderWidth ());
+	float				dv = float (pTexture->RenderOffsetY ()) / float (pTexture->RenderHeight ());
 	tTexCoord2d		texCoords [4] = {
 		{du, dv}, 
 		{du, 1.0f - dv}, 
@@ -950,7 +950,7 @@ vertices [2].m_view.v.z =
 vertices [3].m_view.v.z = center.m_view.v.z;
 if (bAlways)
 	glDepthFunc (GL_ALWAYS);
-TexturedPolygon (texP, texCoords, &color, vertices, 4, index);
+TexturedPolygon (pTexture, texCoords, &color, vertices, 4, index);
 if (bAlways)
 	glDepthFunc (GL_LESS);
 }

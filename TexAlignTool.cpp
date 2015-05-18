@@ -203,8 +203,8 @@ if (!m_alignWnd.m_hWnd)
 	return;
 
 	int			x, y, i, uv, dx, dy;
-	CSegment*	segP, * childSegP;
-	CSide*		sideP;
+	CSegment*	pSegment, * pChildSeg;
+	CSide*		pSide;
 	int			nSide,
 					nLine;
 	CPen			hPenAxis, 
@@ -236,11 +236,11 @@ maxRect.y = minRect.y + 166;
 m_centerPt.x = minRect.x + 166 / 2;
 m_centerPt.y = minRect.y + 166 / 2;
 
-segP = current->Segment ();
-sideP = current->Side ();
+pSegment = current->Segment ();
+pSide = current->Side ();
 nSide = current->SideId ();
 nLine = current->Edge ();
-short nEdges = sideP->VertexCount ();
+short nEdges = pSide->VertexCount ();
 
 // get device context handle
 pDC = m_alignWnd.GetDC ();
@@ -285,8 +285,8 @@ for (x = -32 * y; x < 32 * y; x += 32) {
 if (segmentManager.IsWall ()) {
 	// define array of screen points for (u,v) coordinates
 	for (i = 0; i < nEdges; i++) {
-		x = offset.x + (int) Round (m_zoom * sideP->m_info.uvls [i].u * 32.0);
-		y = offset.y + (int) Round (m_zoom * sideP->m_info.uvls [i].v * 32.0);
+		x = offset.x + (int) Round (m_zoom * pSide->m_info.uvls [i].u * 32.0);
+		y = offset.y + (int) Round (m_zoom * pSide->m_info.uvls [i].v * 32.0);
 		m_apts [i].x = x;
 		m_apts [i].y = y;
 		if (i == 0) {
@@ -312,32 +312,32 @@ if (segmentManager.IsWall ()) {
 		POINT childPoints [4];
 
 		CEdgeList edgeList;
-		segP->BuildEdgeList (edgeList);
+		pSegment->BuildEdgeList (edgeList);
 
 		// draw all sides (u,v)
 		pDC->SelectObject (hPenGrid);
 		for (nChildLine = 0; nChildLine < nEdges; nChildLine++) {
 			ubyte s1, s2, 
-				  v1 = sideP->VertexIdIndex (nChildLine), 
-				  v2 = sideP->VertexIdIndex (nChildLine + 1);
+				  v1 = pSide->VertexIdIndex (nChildLine), 
+				  v2 = pSide->VertexIdIndex (nChildLine + 1);
 			if (0 > edgeList.Find (0, s1, s2, v1, v2))
 				continue;
-			vert0 = segP->VertexId (v1);
-			vert1 = segP->VertexId (v2);
-			nChild = segP->ChildId ((s1 == nSide) ? s2 : s1);
+			vert0 = pSegment->VertexId (v1);
+			vert1 = pSegment->VertexId (v2);
+			nChild = pSegment->ChildId ((s1 == nSide) ? s2 : s1);
 			if (nChild > -1) {
-				childSegP = segmentManager.Segment (nChild);
+				pChildSeg = segmentManager.Segment (nChild);
 				// figure out which side of child shares two points w/ current->side
 				for (iChildSide = 0; iChildSide < 6; iChildSide++) {
 					// ignore children of different textures (or no texture)
-					CSide *childSideP = childSegP->m_sides + iChildSide;
-					if (childSideP->Shape () > SIDE_SHAPE_TRIANGLE)
+					CSide *pChildSide = pChildSeg->m_sides + iChildSide;
+					if (pChildSide->Shape () > SIDE_SHAPE_TRIANGLE)
 						continue;
-					short nChildEdges = childSideP->VertexCount ();
-					if (segmentManager.IsWall (CSideKey (nChild, iChildSide)) && (childSideP->BaseTex () == sideP->BaseTex ())) {
+					short nChildEdges = pChildSide->VertexCount ();
+					if (segmentManager.IsWall (CSideKey (nChild, iChildSide)) && (pChildSide->BaseTex () == pSide->BaseTex ())) {
 						for (iChildLine = 0; iChildLine < nChildEdges; iChildLine++) {
-							childVert0 = childSegP->VertexId (iChildSide, iChildLine);
-							childVert1 = childSegP->VertexId (iChildSide, iChildLine + 1);
+							childVert0 = pChildSeg->VertexId (iChildSide, iChildLine);
+							childVert1 = pChildSeg->VertexId (iChildSide, iChildLine + 1);
 							// if both points of line == either point of parent
 							if ((childVert0 == vert0 && childVert1 == vert1) ||
 								 (childVert0 == vert1 && childVert1 == vert0)) {
@@ -347,8 +347,8 @@ if (segmentManager.IsWall ()) {
 								// ..of the texture size in order to make it line up on the screen
 								// start by copying points into an array
 								for (i = 0; i < nChildEdges; i++) {
-									x = offset.x + (int) Round (m_zoom * childSideP->m_info.uvls [i].u * 32.0);
-									y = offset.y + (int) Round (m_zoom * childSideP->m_info.uvls [i].v * 32.0);
+									x = offset.x + (int) Round (m_zoom * pChildSide->m_info.uvls [i].u * 32.0);
+									y = offset.y + (int) Round (m_zoom * pChildSide->m_info.uvls [i].v * 32.0);
 									childPoints [i].x = x;
 									childPoints [i].y = y;
 									}
@@ -422,7 +422,7 @@ if (!m_bShowTexture)
 	CRgn			hRgn;
 	int			h, i, j, x, y;
 	POINT			offset;
-	CSide*		sideP = current->Side ();
+	CSide*		pSide = current->Side ();
 	CTexture		tex (textureManager.SharedBuffer ());
 	ushort		scale;
 
@@ -431,16 +431,16 @@ offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_center
 
 memset (tex.Buffer (), 0, textureManager.SharedBufferSize ());
 #ifdef DEBUG
-if (sideP->BaseTex () == nDbgTexture)
+if (pSide->BaseTex () == nDbgTexture)
 	nDbgTexture = nDbgTexture;
 #endif
-if (tex.BlendTextures (sideP->BaseTex (), sideP->OvlTex (), 0, 0)) {
+if (tex.BlendTextures (pSide->BaseTex (), pSide->OvlTex (), 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (textureManager.BlendTextures failed)");
 	return;
 	}
 oldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 pDC->RealizePalette();
-hRgn.CreatePolygonRgn (m_apts, sideP->VertexCount (), ALTERNATE);
+hRgn.CreatePolygonRgn (m_apts, pSide->VertexCount (), ALTERNATE);
 pDC->SelectObject (&hRgn);
 uint w = tex.Width ();
 scale = w / 64;
@@ -483,23 +483,23 @@ void CTextureAlignTool::OnAlignX ()
 {
 UpdateData (TRUE);
 
-	CSide*	sideP = current->Side ();
-	double	delta = sideP->m_info.uvls [current->Point ()].u - m_alignX / 20.0;
+	CSide*	pSide = current->Side ();
+	double	delta = pSide->m_info.uvls [current->Point ()].u - m_alignX / 20.0;
 
 if (delta) {
 	UpdateData (TRUE);
 	undoManager.Begin (__FUNCTION__, udSegments, true);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			sideP->m_info.uvls [current->Point ()].u -= delta;
+			pSide->m_info.uvls [current->Point ()].u -= delta;
 			break;
 		case LINE_MODE:
-			sideP->m_info.uvls [current->Edge ()].u -= delta;
-			sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].u -= delta;
+			pSide->m_info.uvls [current->Edge ()].u -= delta;
+			pSide->m_info.uvls [(current->Edge () + 1) % pSide->VertexCount ()].u -= delta;
 			break;
 		default:
-			for (int i = 0; i < sideP->VertexCount (); i++)
-				sideP->m_info.uvls [i].u -= delta;
+			for (int i = 0; i < pSide->VertexCount (); i++)
+				pSide->m_info.uvls [i].u -= delta;
 		}  
 	undoManager.End (__FUNCTION__);
 	UpdateAlignWnd ();
@@ -512,23 +512,23 @@ void CTextureAlignTool::OnAlignY ()
 {
 UpdateData (TRUE);
 
-	CSide*	sideP = current->Side ();
-	double	delta = sideP->m_info.uvls [current->Point ()].v - m_alignY / 20.0;
+	CSide*	pSide = current->Side ();
+	double	delta = pSide->m_info.uvls [current->Point ()].v - m_alignY / 20.0;
 
 if (delta) {
 	UpdateData (TRUE);
 	undoManager.Begin (__FUNCTION__, udSegments, true);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			sideP->m_info.uvls [current->Point ()].v -= delta;
+			pSide->m_info.uvls [current->Point ()].v -= delta;
 			break;
 		case LINE_MODE:
-			sideP->m_info.uvls [current->Edge ()].v -= delta;
-			sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].v -= delta;
+			pSide->m_info.uvls [current->Edge ()].v -= delta;
+			pSide->m_info.uvls [(current->Edge () + 1) % pSide->VertexCount ()].v -= delta;
 			break;
 		default:
-			for (int i = 0; i < sideP->VertexCount (); i++)
-				sideP->m_info.uvls [i].v -= delta;
+			for (int i = 0; i < pSide->VertexCount (); i++)
+				pSide->m_info.uvls [i].v -= delta;
 		}  
 	undoManager.End (__FUNCTION__);
 	UpdateAlignWnd ();
@@ -542,10 +542,10 @@ void CTextureAlignTool::OnAlignRot ()
 UpdateData (TRUE);
   
 	double	delta, dx, dy, angle;
-	CSide*	sideP = current->Side ();
+	CSide*	pSide = current->Side ();
 
-dx = sideP->m_info.uvls [1].u - sideP->m_info.uvls [0].u;
-dy = sideP->m_info.uvls [1].v - sideP->m_info.uvls [0].v;
+dx = pSide->m_info.uvls [1].u - pSide->m_info.uvls [0].u;
+dy = pSide->m_info.uvls [1].v - pSide->m_info.uvls [0].v;
 angle = (dx || dy) ? atan3 (dy, dx) - M_PI_2 : 0;
 delta = angle - m_alignAngle * PI / 180.0;
 RotateUV (delta, FALSE);
@@ -555,19 +555,19 @@ RotateUV (delta, FALSE);
 
 void CTextureAlignTool::RefreshAlignment ()
 {
-	CSide* sideP = current->Side ();
+	CSide* pSide = current->Side ();
 
-m_alignX = sideP->m_info.uvls [current->Point ()].u * 20.0;
-m_alignY = sideP->m_info.uvls [current->Point ()].v * 20.0;
+m_alignX = pSide->m_info.uvls [current->Point ()].u * 20.0;
+m_alignY = pSide->m_info.uvls [current->Point ()].v * 20.0;
 
-double dx = sideP->m_info.uvls [1].u - sideP->m_info.uvls [0].u;
-double dy = sideP->m_info.uvls [1].v - sideP->m_info.uvls [0].v;
+double dx = pSide->m_info.uvls [1].u - pSide->m_info.uvls [0].u;
+double dy = pSide->m_info.uvls [1].v - pSide->m_info.uvls [0].v;
 m_alignAngle = ((dx || dy) ? atan3 (dy,dx) - M_PI_2 : 0) * 180.0 / M_PI;
 if (m_alignAngle < 0)
 	m_alignAngle += 360.0;
 else if (m_alignAngle > 360.9)
 	m_alignAngle -= 360.0;
-int h = sideP->OvlAlignment ();
+int h = pSide->OvlAlignment ();
 for (m_alignRot2nd = 0; m_alignRot2nd < 4; m_alignRot2nd++)
 	if (rotMasks [m_alignRot2nd] == h)
 		break;
@@ -577,12 +577,12 @@ for (m_alignRot2nd = 0; m_alignRot2nd < 4; m_alignRot2nd++)
 
 void CTextureAlignTool::RotateUV (double angle, bool bUpdate)
 {
-	CSide*	sideP = current->Side ();
+	CSide*	pSide = current->Side ();
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments, true);
-for (int i = 0; i < sideP->VertexCount (); i++) 
-	sideP->Uvls (i)->Rotate (angle);
+for (int i = 0; i < pSide->VertexCount (); i++) 
+	pSide->Uvls (i)->Rotate (angle);
 if (bUpdate)
 	m_alignAngle -= angle * 180.0 / PI;
 UpdateData (FALSE);
@@ -594,7 +594,7 @@ UpdateAlignWnd ();
 
 void CTextureAlignTool::HFlip (void)
 {
-	CSide*	sideP = current->Side ();
+	CSide*	pSide = current->Side ();
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
@@ -602,11 +602,11 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		Swap (sideP->m_info.uvls [current->Edge ()].u, sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].u);
+		Swap (pSide->m_info.uvls [current->Edge ()].u, pSide->m_info.uvls [(current->Edge () + 1) % pSide->VertexCount ()].u);
 		break;
 	default:
 		for (int i = 0; i < 2; i++) 
-			Swap (sideP->m_info.uvls [i].u, sideP->m_info.uvls [i + 2].u);
+			Swap (pSide->m_info.uvls [i].u, pSide->m_info.uvls [i + 2].u);
 	}
 UpdateData (FALSE);
 undoManager.End (__FUNCTION__);
@@ -617,7 +617,7 @@ UpdateAlignWnd ();
 
 void CTextureAlignTool::VFlip (void)
 {
-	CSide*	sideP = current->Side ();
+	CSide*	pSide = current->Side ();
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
@@ -625,11 +625,11 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		Swap (sideP->m_info.uvls [current->Edge ()].v, sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].v);
+		Swap (pSide->m_info.uvls [current->Edge ()].v, pSide->m_info.uvls [(current->Edge () + 1) % pSide->VertexCount ()].v);
 		break;
 	default:
 		for (int i = 0; i < 2; i++) 
-			Swap (sideP->m_info.uvls [i].v, sideP->m_info.uvls [i + 2].v);
+			Swap (pSide->m_info.uvls [i].v, pSide->m_info.uvls [i + 2].v);
 	}
 UpdateData (FALSE);
 undoManager.End (__FUNCTION__);
@@ -640,24 +640,24 @@ UpdateAlignWnd ();
 
 void CTextureAlignTool::HAlign (int dir)
 {
-	CSide*	sideP = current->Side ();
+	CSide*	pSide = current->Side ();
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom * dir;
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		sideP->m_info.uvls [current->Point ()].u += delta;
+		pSide->m_info.uvls [current->Point ()].u += delta;
 		break;
 	case LINE_MODE:
-		sideP->m_info.uvls [current->Edge ()].u += delta;
-		sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].u += delta;
+		pSide->m_info.uvls [current->Edge ()].u += delta;
+		pSide->m_info.uvls [(current->Edge () + 1) % pSide->VertexCount ()].u += delta;
 		break;
 	default:
-		for (int i = 0; i < sideP->VertexCount (); i++)
-			sideP->m_info.uvls [i].u += delta;
+		for (int i = 0; i < pSide->VertexCount (); i++)
+			pSide->m_info.uvls [i].u += delta;
 	}
-m_alignX = (double) sideP->m_info.uvls [current->Point ()].u * 20.0;
+m_alignX = (double) pSide->m_info.uvls [current->Point ()].u * 20.0;
 UpdateData (FALSE);
 undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
@@ -667,24 +667,24 @@ UpdateAlignWnd ();
 
 void CTextureAlignTool::VAlign (int dir)
 {
-	CSide*	sideP = current->Side ();
+	CSide*	pSide = current->Side ();
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom * dir;
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		sideP->m_info.uvls [current->Point ()].v += delta;
+		pSide->m_info.uvls [current->Point ()].v += delta;
 		break;
 	case LINE_MODE:
-		sideP->m_info.uvls [current->Edge ()].v += delta;
-		sideP->m_info.uvls [(current->Edge () + 1) % sideP->VertexCount ()].v += delta;
+		pSide->m_info.uvls [current->Edge ()].v += delta;
+		pSide->m_info.uvls [(current->Edge () + 1) % pSide->VertexCount ()].v += delta;
 		break;
 	default:
-		for (int i = 0; i < sideP->VertexCount (); i++)
-			sideP->m_info.uvls [i].v += delta;
+		for (int i = 0; i < pSide->VertexCount (); i++)
+			pSide->m_info.uvls [i].v += delta;
 	}
-m_alignY = (double)sideP->m_info.uvls [current->Point ()].v * 20.0;
+m_alignY = (double)pSide->m_info.uvls [current->Point ()].v * 20.0;
 UpdateData (FALSE);
 undoManager.End (__FUNCTION__);
 UpdateAlignWnd ();
@@ -750,19 +750,19 @@ RotateUV (-theMine->RotateRate ());
 
 void CTextureAlignTool::OnHShrink ()
 {
-	CSide		*sideP = current->Side ();
-	int		h = sideP->VertexCount ();
+	CSide		*pSide = current->Side ();
+	int		h = pSide->VertexCount ();
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom;
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
-sideP->m_info.uvls [0].u -= delta;
+pSide->m_info.uvls [0].u -= delta;
 if (h > 1) {
-	sideP->m_info.uvls [1].u -= delta;
+	pSide->m_info.uvls [1].u -= delta;
 	if (h > 2) {
-		sideP->m_info.uvls [2].u += delta;
+		pSide->m_info.uvls [2].u += delta;
 		if (h > 3) 
-			sideP->m_info.uvls [3].u += delta;
+			pSide->m_info.uvls [3].u += delta;
 		}
 	}
 undoManager.End (__FUNCTION__);
@@ -773,19 +773,19 @@ UpdateAlignWnd ();
 
 void CTextureAlignTool::OnVShrink ()
 {
-	CSide*	sideP = current->Side ();
-	int		h = sideP->VertexCount ();
+	CSide*	pSide = current->Side ();
+	int		h = pSide->VertexCount ();
 	double	delta = DLE.MineView ()->MineMoveRate () / 8.0 / m_zoom;
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
-sideP->m_info.uvls [0].v += delta;
+pSide->m_info.uvls [0].v += delta;
 if (h > 1) {
-	sideP->m_info.uvls [3].v += delta;
+	pSide->m_info.uvls [3].v += delta;
 	if (h > 2) {
-		sideP->m_info.uvls [1].v -= delta;
+		pSide->m_info.uvls [1].v -= delta;
 		if (h > 3) 
-			sideP->m_info.uvls [2].v -= delta;
+			pSide->m_info.uvls [2].v -= delta;
 		}
 	}
 undoManager.End (__FUNCTION__);
@@ -817,17 +817,17 @@ void CTextureAlignTool::OnAlignResetTagged ()
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
-CSegment* segP = segmentManager.Segment (0);
+CSegment* pSegment = segmentManager.Segment (0);
 int nSegments = segmentManager.Count ();
-for (int nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
-	CSide* sideP = segP->Side (0);
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE) 
+for (int nSegment = 0; nSegment < nSegments; nSegment++, pSegment++) {
+	CSide* pSide = pSegment->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+		if (pSide->Shape () > SIDE_SHAPE_TRIANGLE) 
 			continue;
 		if (segmentManager.IsTagged (CSideKey (nSegment, nSide))) {
-			if ((segP->ChildId (nSide) == -1) || (segP->m_sides [nSide].m_info.nWall < nWalls)) {
-				segP->m_sides [nSide].m_info.nOvlTex &= TEXTURE_MASK; // rotate 0
-				segP->SetUV (nSide, 0.0, 0.0);
+			if ((pSegment->ChildId (nSide) == -1) || (pSegment->m_sides [nSide].m_info.nWall < nWalls)) {
+				pSegment->m_sides [nSide].m_info.nOvlTex &= TEXTURE_MASK; // rotate 0
+				pSegment->SetUV (nSide, 0.0, 0.0);
 				bModified = TRUE;
 				}
 			}
@@ -842,26 +842,26 @@ UpdateAlignWnd ();
 
 void CTextureAlignTool::OnAlignStretch2Fit ()
 {
-	CSide*		sideP = current->Side ();
-	CSegment*	segP;
+	CSide*		pSide = current->Side ();
+	CSegment*	pSegment;
 	short			nSegment, nSide;
 	int			i;
 
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
 if (!segmentManager.HasTaggedSides ()) {
-	for (i = 0; i < sideP->VertexCount (); i++) {
-		sideP->m_info.uvls [i].u = defaultUVLs [i].u;
-		sideP->m_info.uvls [i].v = defaultUVLs [i].v;
+	for (i = 0; i < pSide->VertexCount (); i++) {
+		pSide->m_info.uvls [i].u = defaultUVLs [i].u;
+		pSide->m_info.uvls [i].v = defaultUVLs [i].v;
 		}
 	}
 else {
-	for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
-		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
+	for (nSegment = 0, pSegment = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, pSegment++) {
+		for (nSide = 0, pSide = pSegment->m_sides; nSide < 6; nSide++, pSide++) {
 			if (segmentManager.IsTagged (CSideKey (nSegment, nSide))) {
-				for (i = 0; i < sideP->VertexCount (); i++) {
-					sideP->m_info.uvls [i].u = defaultUVLs [i].u;
-					sideP->m_info.uvls [i].v = defaultUVLs [i].v;
+				for (i = 0; i < pSide->VertexCount (); i++) {
+					pSide->m_info.uvls [i].u = defaultUVLs [i].u;
+					pSide->m_info.uvls [i].v = defaultUVLs [i].v;
 					}
 				}
 			}
@@ -878,9 +878,9 @@ void CTextureAlignTool::OnAlignAll (void)
 {
 // set all segment sides as not aligned yet
 	CSegment	* currSeg = current->Segment (),
-				* segP = segmentManager.Segment (0);
-	CSide		* sideP = current->Side (),
-				*childSideP;
+				* pSegment = segmentManager.Segment (0);
+	CSide		* pSide = current->Side (),
+				*pChildSide;
 	short		nSegment, 
 				nSide = current->SideId (),
 				nChildLine = 3;
@@ -890,30 +890,30 @@ void CTextureAlignTool::OnAlignAll (void)
 UpdateData (TRUE);
 undoManager.Begin (__FUNCTION__, udSegments);
 bool bAll = !segmentManager.HasTaggedSegments (true);
-for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++)
-	 segP->Index () = 0;
-for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
-	if (segP->Index ())
+for (nSegment = 0, pSegment = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, pSegment++)
+	 pSegment->Index () = 0;
+for (nSegment = 0, pSegment = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, pSegment++) {
+	if (pSegment->Index ())
 		continue;
-	childSideP = segP->m_sides + nSide;
-	if (childSideP->Shape () > SIDE_SHAPE_TRIANGLE)
+	pChildSide = pSegment->m_sides + nSide;
+	if (pChildSide->Shape () > SIDE_SHAPE_TRIANGLE)
 		continue;
-	if (texTool->m_bUse1st && (sideP->BaseTex () != childSideP->BaseTex ()))
+	if (texTool->m_bUse1st && (pSide->BaseTex () != pChildSide->BaseTex ()))
 		continue;
-	if (texTool->m_bUse2nd && (sideP->OvlTex (0) != childSideP->OvlTex (0)))
+	if (texTool->m_bUse2nd && (pSide->OvlTex (0) != pChildSide->OvlTex (0)))
 		continue;
 	if (!(bAll || segmentManager.IsTagged (CSideKey (nSegment, nSide))))
 		continue;
 	if (nSegment != current->SegmentId ()) {
 		segmentManager.Segment (nSegment)->SetUV (nSide, 0, 0);
-		sAngle = atan3 (sideP->m_info.uvls [(nChildLine + 1) % sideP->VertexCount ()].v - sideP->m_info.uvls [nChildLine].v, 
-							 sideP->m_info.uvls [(nChildLine + 1) % sideP->VertexCount ()].u - sideP->m_info.uvls [nChildLine].u); 
-		cAngle = atan3 (childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) % sideP->VertexCount ()].v, 
-							 childSideP->m_info.uvls [nChildLine].u - childSideP->m_info.uvls [(nChildLine + 1) % sideP->VertexCount ()].u); 
+		sAngle = atan3 (pSide->m_info.uvls [(nChildLine + 1) % pSide->VertexCount ()].v - pSide->m_info.uvls [nChildLine].v, 
+							 pSide->m_info.uvls [(nChildLine + 1) % pSide->VertexCount ()].u - pSide->m_info.uvls [nChildLine].u); 
+		cAngle = atan3 (pChildSide->m_info.uvls [nChildLine].v - pChildSide->m_info.uvls [(nChildLine + 1) % pSide->VertexCount ()].v, 
+							 pChildSide->m_info.uvls [nChildLine].u - pChildSide->m_info.uvls [(nChildLine + 1) % pSide->VertexCount ()].u); 
 		// now rotate childs (u, v) coords around child_point1 (cAngle - sAngle)
 		angle = cAngle - sAngle;
-		for (int i = 0; i < childSideP->VertexCount (); i++) 
-			childSideP->m_info.uvls [i].Rotate (angle); 
+		for (int i = 0; i < pChildSide->VertexCount (); i++) 
+			pChildSide->m_info.uvls [i].Rotate (angle); 
 		}
 	segmentManager.AlignTextures (nSegment, nSide, texTool->m_bUse1st, texTool->m_bUse2nd, m_bIgnorePlane, false, false);
 	}
@@ -960,12 +960,12 @@ if (m_zoom > 1.0/16.0) {
 
 void CTextureAlignTool::Rot2nd (int iAngle)
 {
-	CSide *sideP = current->Side ();
+	CSide *pSide = current->Side ();
  
-if ((sideP->OvlTex (0)) && ((sideP->OvlAlignment ()) != rotMasks [iAngle])) {
+if ((pSide->OvlTex (0)) && ((pSide->OvlAlignment ()) != rotMasks [iAngle])) {
 	undoManager.Begin (__FUNCTION__, udSegments);
-	sideP->m_info.nOvlTex &= TEXTURE_MASK;
-   sideP->m_info.nOvlTex |= (rotMasks [iAngle] << 14);
+	pSide->m_info.nOvlTex &= TEXTURE_MASK;
+   pSide->m_info.nOvlTex |= (rotMasks [iAngle] << 14);
 	m_alignRot2nd = iAngle;
 	UpdateData (FALSE);
 	undoManager.End (__FUNCTION__);

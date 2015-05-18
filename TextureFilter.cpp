@@ -467,8 +467,8 @@ if (!textureManager.Available ())
   // calculate total number of textures
 m_nTextures [1] = 0;
 for (int i = 0; i < nTextures; i++) {
-	const CTexture* texP = textureManager.Textures (i);
-	if (texP->IsAssignableFrame ())
+	const CTexture* pTexture = textureManager.Textures (i);
+	if (pTexture->IsAssignableFrame ())
 	//if (textureManager.Texture (i)->IsAssignableFrame ())
 		++nFrames;
 	else
@@ -521,16 +521,16 @@ if (bShowAll) {
 	}
 else {
 	ushort nSegment,nSide;
-	CSegment *segP;
+	CSegment *pSegment;
 
 	memset (filterP, 0, (MAX_TEXTURES_D2 + 7) / 8);
 	m_nTextures [0] = 0;
-	for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++)
+	for (nSegment = 0, pSegment = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, pSegment++)
       for (nSide = 0; nSide < 6; nSide++) {
-			ushort nWall = segP->m_sides [nSide].m_info.nWall;
-			if ((segP->ChildId (nSide) == -1) ||
+			ushort nWall = pSegment->m_sides [nSide].m_info.nWall;
+			if ((pSegment->ChildId (nSide) == -1) ||
 				 ((nWall != NO_WALL) && wallManager.Wall (nWall)->Info ().type != WALL_OPEN)) {
-				int t = segP->m_sides [nSide].BaseTex ();
+				int t = pSegment->m_sides [nSide].BaseTex ();
 				int i = TextureIndex (t);
 				int j = FilterIndex (t);
 				if ((i >= 0) && !GETBIT (filterP, i) && 
@@ -538,7 +538,7 @@ else {
 					SETBIT (filterP, i);
 					m_nTextures [0]++;
 					}
-				t = segP->m_sides [nSide].OvlTex (0);
+				t = pSegment->m_sides [nSide].OvlTex (0);
 				i = TextureIndex (t);
 				j = FilterIndex (t);
 				if ((t > 0) && !GETBIT (filterP, i)) {

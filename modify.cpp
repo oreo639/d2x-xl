@@ -23,13 +23,13 @@ extern int nDbgVertex;
 bool CMine::EditGeoFwd (void)
 {
 	CDoubleVector	vDelta;
-	CSegment*		segP = current->Segment ();
+	CSegment*		pSegment = current->Segment ();
 
 if (DLE.MineView ()->GetElementMovementReference ()) {
 	vDelta = DLE.MineView ()->ViewMatrix ()->Forward ();
 	}
 else {
-	vDelta = segP->ComputeCenter (current->SideId ()) - segP->ComputeCenter (short (oppSideTable [current->SideId ()]));
+	vDelta = pSegment->ComputeCenter (current->SideId ()) - pSegment->ComputeCenter (short (oppSideTable [current->SideId ()]));
 	// normalize direction
 	double radius = vDelta.Mag ();
 	if (radius > 0.1)
@@ -47,8 +47,8 @@ else {
 
 bool CMine::EditGeoBack (void) 
 {
-	CSegment*	segP = current->Segment ();
-	CSide*		sideP = current->Side ();
+	CSegment*	pSegment = current->Segment ();
+	CSide*		pSide = current->Side ();
 	bool			okToMove = true;
 
 	CEdgeList	edgeList;
@@ -56,8 +56,8 @@ bool CMine::EditGeoBack (void)
 	ubyte			v1, v2, s1, s2;
 	short			nSide = current->SideId ();
 	short			nOppSide = oppSideTable [nSide];
-	short			nVertices = sideP->VertexCount ();
-	int			nEdges = segP->BuildEdgeList (edgeList);
+	short			nVertices = pSide->VertexCount ();
+	int			nEdges = pSegment->BuildEdgeList (edgeList);
 	short			p1, p2;
 	double		moveRate = DLE.MineView ()->MineMoveRate ();
 	
@@ -77,18 +77,18 @@ for (int i = 0; (i < nEdges) && okToMove; i++) {
 	if (m_selectMode == POINT_MODE) {
 		if ((p1 != v1) && (p1 != v2))
 			continue;
-		if (Distance (*segP->Vertex (v1), *segP->Vertex (v2)) - moveRate < 0.25) 
+		if (Distance (*pSegment->Vertex (v1), *pSegment->Vertex (v2)) - moveRate < 0.25) 
 			okToMove = false;
 		break;
 		}
 	else if (m_selectMode == LINE_MODE) {
 		if ((p1 != v1) && (p1 != v2) && (p2 != v1) && (p2 != v2))
 			continue;
-		if (Distance (*segP->Vertex (v1), *segP->Vertex (v2)) - moveRate < 0.25) 
+		if (Distance (*pSegment->Vertex (v1), *pSegment->Vertex (v2)) - moveRate < 0.25) 
 			okToMove = false;
 		}
 	else if (m_selectMode == SIDE_MODE) {
-		if (Distance (*segP->Vertex (v1), *segP->Vertex (v2)) - moveRate < 0.25) 
+		if (Distance (*pSegment->Vertex (v1), *pSegment->Vertex (v2)) - moveRate < 0.25) 
 			okToMove = false;
 		}
 	}
@@ -102,7 +102,7 @@ CDoubleVector vDelta;
 if (DLE.MineView ()->GetElementMovementReference ())
 	vDelta = DLE.MineView ()->ViewMatrix ()->Forward ();
 else {
-	vDelta = segP->ComputeCenter (current->SideId ()) - segP->ComputeCenter (short (oppSideTable [current->SideId ()]));
+	vDelta = pSegment->ComputeCenter (current->SideId ()) - pSegment->ComputeCenter (short (oppSideTable [current->SideId ()]));
 	// normalize direction
 	double radius = vDelta.Mag ();
 	if (radius > 0.1)
@@ -199,8 +199,8 @@ bool CMine::RotateSelection (double angle, bool perpendicular)
 {
 	int			nSegment = current->SegmentId ();
 	int			nSide = current->SideId (), nOppSide = oppSideTable [nSide];
-	CSegment*	segP = current->Segment ();
-	CSide*		sideP = segP->Side (nSide);
+	CSegment*	pSegment = current->Segment ();
+	CSide*		pSide = pSegment->Side (nSide);
 	CVertex		center, oppCenter;
 	ubyte			oppSideVerts [4];
 	int			pts [4];
@@ -229,18 +229,18 @@ switch (m_selectMode) {
 			pts [3] = 3;
 			}
 		// calculate center opp side line 0
-		segP->CreateOppVertexIndex (nSide, oppSideVerts);
-		n = segP->Side (nOppSide)->VertexCount ();
-		oppCenter = Average (*segP->Vertex (oppSideVerts [pts [0] % n]),
-									*segP->Vertex (oppSideVerts [pts [1] % n]));
+		pSegment->CreateOppVertexIndex (nSide, oppSideVerts);
+		n = pSegment->Side (nOppSide)->VertexCount ();
+		oppCenter = Average (*pSegment->Vertex (oppSideVerts [pts [0] % n]),
+									*pSegment->Vertex (oppSideVerts [pts [1] % n]));
 		// calculate center opp side line 2
-		center = Average (*segP->Vertex (oppSideVerts [pts [2] % n]),
-									*segP->Vertex (oppSideVerts [pts [3] % n]));
+		center = Average (*pSegment->Vertex (oppSideVerts [pts [2] % n]),
+									*pSegment->Vertex (oppSideVerts [pts [3] % n]));
 		// rotate points around a line
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
-		n = sideP->VertexCount ();
+		n = pSide->VertexCount ();
 		for (i = 0; i < n; i++)
-			segP->Vertex (sideP->VertexIdIndex (i))->Rotate (center, oppCenter, angle);
+			pSegment->Vertex (pSide->VertexIdIndex (i))->Rotate (center, oppCenter, angle);
 		undoManager.End (__FUNCTION__);	
 		break;
 	
@@ -265,11 +265,11 @@ return true;
 // prevent lines from being bigger than 8*20 and less than 3
 //--------------------------------------------------------------------------------
 
-bool CMine::ResizeLine (CSegment *segP, int nVertexId1, int nVertexId2, double delta, int nStage) 
+bool CMine::ResizeLine (CSegment *pSegment, int nVertexId1, int nVertexId2, double delta, int nStage) 
 {
 if ((nStage < 0) || (nStage == 0)) {
-	CVertex	*v1 = segP->Vertex (nVertexId1),
-				*v2 = segP->Vertex (nVertexId2);
+	CVertex	*v1 = pSegment->Vertex (nVertexId1),
+				*v2 = pSegment->Vertex (nVertexId2);
 	CDoubleVector v (*v1 - *v2);
 	// figure out direction to modify line
 	// normalize direction
@@ -291,8 +291,8 @@ if ((nStage < 0) || (nStage == 1)) {
 	segmentManager.UpdateTexCoords (nVertexId2, false);
 	}
 if ((nStage < 0) || (nStage == 2)) {
-	segP->Vertex (nVertexId1)->Move ();
-	segP->Vertex (nVertexId2)->Move ();
+	pSegment->Vertex (nVertexId1)->Move ();
+	pSegment->Vertex (nVertexId2)->Move ();
 	segmentManager.UpdateTexCoords (nVertexId1, true);
 	segmentManager.UpdateTexCoords (nVertexId2, true);
 	}
@@ -312,9 +312,9 @@ bool CMine::ResizeItem (double delta)
 {
 	int			nSegment = current->SegmentId ();
 	int			nSide = current->SideId ();
-	CSegment*	segP = current->Segment ();
-	CSide*		sideP = segP->Side (nSide);
-	int			i, j, n = sideP->VertexCount ();
+	CSegment*	pSegment = current->Segment ();
+	CSide*		pSide = pSegment->Side (nSide);
+	int			i, j, n = pSide->VertexCount ();
 	ubyte			s1, s2, v1, v2;
 	int			point [4];
 	bool			result = false;
@@ -326,28 +326,28 @@ switch (m_selectMode) {
 		return false;
 
 	case LINE_MODE:
-		point [0] = sideP->VertexIdIndex (current->Edge ());
-		point [1] = sideP->VertexIdIndex (current->Edge () + 1);
+		point [0] = pSide->VertexIdIndex (current->Edge ());
+		point [1] = pSide->VertexIdIndex (current->Edge () + 1);
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
-		result = ResizeLine (segP, point [0], point [1], delta, -1);
+		result = ResizeLine (pSegment, point [0], point [1], delta, -1);
 		undoManager.End (__FUNCTION__);
 		return result;
 
 	case SIDE_MODE:
-		if (sideP->Shape () > SIDE_SHAPE_EDGE)
+		if (pSide->Shape () > SIDE_SHAPE_EDGE)
 			return false;
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
 		delta *= sqrt (2.0);
 #if 0
 		for (i = 0; i < n; i++)
-			if (!ResizeLine (segP, sideP->VertexIdIndex (i), sideP->VertexIdIndex (i + 1)))
+			if (!ResizeLine (pSegment, pSide->VertexIdIndex (i), pSide->VertexIdIndex (i + 1)))
 				result = false;
 #else
 		for (i = 0; i < n; i++)
-			point [i] = sideP->VertexIdIndex (i);
+			point [i] = pSide->VertexIdIndex (i);
 		// enlarge the diagonals -- doesn't work for triangular sides
 		for (i = 0; i < 3; i++)
-			if (!(result = ResizeLine (segP, point [0], point [2], delta, i) && ((n < 4) || ResizeLine (segP, point [1], point [3], delta, i))))
+			if (!(result = ResizeLine (pSegment, point [0], point [2], delta, i) && ((n < 4) || ResizeLine (pSegment, point [1], point [3], delta, i))))
 				break;
 #endif
 		undoManager.End (__FUNCTION__);
@@ -358,10 +358,10 @@ switch (m_selectMode) {
 					minPoint (0x7fffffffL, 0x7fffffffL, 0x7fffffffL), 
 					center;
 		for (i = 0; i < 8; i++) {
-			if (segP->VertexId (i) <= MAX_VERTEX) {
-				CVertex* vertP = segP->Vertex (i);
-				maxPoint = Max (maxPoint, *vertP);
-				minPoint = Min (minPoint, *vertP);
+			if (pSegment->VertexId (i) <= MAX_VERTEX) {
+				CVertex* pVertex = pSegment->Vertex (i);
+				maxPoint = Max (maxPoint, *pVertex);
+				minPoint = Min (minPoint, *pVertex);
 				}
 			}
 		center = Average (maxPoint, minPoint);
@@ -371,7 +371,7 @@ switch (m_selectMode) {
 		else
 			delta = 1.0 + sqrt (3.0) / Distance (minPoint, maxPoint) * DLE.MineView ()->MineMoveRate ();
 		for (i = 0; i < 8; i++) {
-			ushort nVertexId = segP->VertexId (i);
+			ushort nVertexId = pSegment->VertexId (i);
 			if (nVertexId <= MAX_VERTEX) {
 				CVertex v = vertexManager [nVertexId];
 				v -= center;
@@ -382,22 +382,22 @@ switch (m_selectMode) {
 				}
 			}
 		for (i = 0; i < 8; i++) {
-			ushort nVertexId = segP->VertexId (i);
+			ushort nVertexId = pSegment->VertexId (i);
 			if (nVertexId <= MAX_VERTEX) 
 				segmentManager.UpdateTexCoords (nVertexId, false);
 			}
 		for (i = 0; i < 8; i++) {
-			ushort nVertexId = segP->VertexId (i);
+			ushort nVertexId = pSegment->VertexId (i);
 			if (nVertexId <= MAX_VERTEX) {
 				vertexManager [nVertexId].Move ();
 				segmentManager.UpdateTexCoords (nVertexId, true);
 				}
 			}
 #if 1
-		n = segP->BuildEdgeList (edgeList);
+		n = pSegment->BuildEdgeList (edgeList);
 		for (i = 0; i < n; i++) {
 			edgeList.Get (i, s1, s2, v1, v2);
-			if (Distance (*segP->Vertex (v1), *segP->Vertex (v2)) < 1.0) {
+			if (Distance (*pSegment->Vertex (v1), *pSegment->Vertex (v2)) < 1.0) {
 				undoManager.Unroll (__FUNCTION__);
 				return false;
 				}
@@ -414,11 +414,11 @@ switch (m_selectMode) {
 		CVertex	maxPoint (-0x7fffffffL, -0x7fffffffL, -0x7fffffffL), 
 					minPoint (0x7fffffffL, 0x7fffffffL, 0x7fffffffL), 
 					center;
-		CVertex* vertexP = vertexManager.Vertex (0);
-		for (i = vertexManager.Count (), j = 0; j < i; j++, vertexP++)
-			if (vertexP->Status () & TAGGED_MASK) {
-				maxPoint = Max (maxPoint, *vertexP);
-				minPoint = Min (minPoint, *vertexP);
+		CVertex* pVertex = vertexManager.Vertex (0);
+		for (i = vertexManager.Count (), j = 0; j < i; j++, pVertex++)
+			if (pVertex->Status () & TAGGED_MASK) {
+				maxPoint = Max (maxPoint, *pVertex);
+				minPoint = Min (minPoint, *pVertex);
 				}
 		center = Average (maxPoint, minPoint);
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
@@ -428,24 +428,24 @@ switch (m_selectMode) {
 		else
 			delta = 1.0 + sqrt (3.0) / Distance (minPoint, maxPoint) * DLE.MineView ()->MineMoveRate ();
 		j = vertexManager.Count ();
-		vertexP = vertexManager.Vertex (0);
-		for (i = 0; i < j; i++, vertexP++)
-			if (vertexP->IsTagged ()) {
-				CVertex v = *vertexP;
+		pVertex = vertexManager.Vertex (0);
+		for (i = 0; i < j; i++, pVertex++)
+			if (pVertex->IsTagged ()) {
+				CVertex v = *pVertex;
 				v -= center;
 				v *= delta;
 				v += center;
-				v -= *vertexP;
-				vertexP->SetDelta (v);
+				v -= *pVertex;
+				pVertex->SetDelta (v);
 				}
-		vertexP = vertexManager.Vertex (0);
-		for (i = 0; i < j; i++, vertexP++)
-			if (vertexP->IsTagged ())
+		pVertex = vertexManager.Vertex (0);
+		for (i = 0; i < j; i++, pVertex++)
+			if (pVertex->IsTagged ())
 				segmentManager.UpdateTexCoords (i, false);
-		vertexP = vertexManager.Vertex (0);
-		for (i = 0; i < j; i++, vertexP++)
-			if (vertexP->IsTagged ()) {
-				vertexP->Move ();
+		pVertex = vertexManager.Vertex (0);
+		for (i = 0; i < j; i++, pVertex++)
+			if (pVertex->IsTagged ()) {
+				pVertex->Move ();
 				segmentManager.UpdateTexCoords (i, true);
 				}
 		undoManager.End (__FUNCTION__);
@@ -464,8 +464,8 @@ return false;
 
 bool CMine::MovePoints (CDoubleVector vDelta) 
 {
-	CSegment*		segP = current->Segment ();
-	CSide*			sideP = segP->Side (current->SideId ());
+	CSegment*		pSegment = current->Segment ();
+	CSide*			pSide = pSegment->Side (current->SideId ());
 	double			length = vDelta.Mag ();
 	int				i;
 	short				selectMode = DLE.MineView ()->Perspective () ? BLOCK_MODE : m_selectMode;
@@ -479,37 +479,37 @@ else
 switch (selectMode) {
 	case POINT_MODE:
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
-		segP->Vertex (current->SideId (), current->Point ())->SetDelta (vDelta);
-		segmentManager.UpdateTexCoords (segP->VertexId (current->SideId (), current->Point ()), false);
-		segP->Vertex (current->SideId (), current->Point ())->Move ();
-		segmentManager.UpdateTexCoords (segP->VertexId (current->SideId (), current->Point ()), true);
+		pSegment->Vertex (current->SideId (), current->Point ())->SetDelta (vDelta);
+		segmentManager.UpdateTexCoords (pSegment->VertexId (current->SideId (), current->Point ()), false);
+		pSegment->Vertex (current->SideId (), current->Point ())->Move ();
+		segmentManager.UpdateTexCoords (pSegment->VertexId (current->SideId (), current->Point ()), true);
 		undoManager.End (__FUNCTION__);
 		break;
 
 	case LINE_MODE:
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
-		segP->Vertex (current->SideId (), current->Point ())->SetDelta (vDelta);
-		segP->Vertex (current->SideId (), current->Point () + 1)->SetDelta (vDelta);
-		segmentManager.UpdateTexCoords (segP->VertexId (current->SideId (), current->Point ()), false);
-		segmentManager.UpdateTexCoords (segP->VertexId (current->SideId (), current->Point () + 1), false);
-		segP->Vertex (current->SideId (), current->Point ())->Move ();
-		segP->Vertex (current->SideId (), current->Point () + 1)->Move ();
-		segmentManager.UpdateTexCoords (segP->VertexId (current->SideId (), current->Point ()), true);
-		segmentManager.UpdateTexCoords (segP->VertexId (current->SideId (), current->Point () + 1), true);
+		pSegment->Vertex (current->SideId (), current->Point ())->SetDelta (vDelta);
+		pSegment->Vertex (current->SideId (), current->Point () + 1)->SetDelta (vDelta);
+		segmentManager.UpdateTexCoords (pSegment->VertexId (current->SideId (), current->Point ()), false);
+		segmentManager.UpdateTexCoords (pSegment->VertexId (current->SideId (), current->Point () + 1), false);
+		pSegment->Vertex (current->SideId (), current->Point ())->Move ();
+		pSegment->Vertex (current->SideId (), current->Point () + 1)->Move ();
+		segmentManager.UpdateTexCoords (pSegment->VertexId (current->SideId (), current->Point ()), true);
+		segmentManager.UpdateTexCoords (pSegment->VertexId (current->SideId (), current->Point () + 1), true);
 		undoManager.End (__FUNCTION__);
 		break;
 
 	case SIDE_MODE:
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
-		for (i = 0; i < sideP->VertexCount (); i++) {
+		for (i = 0; i < pSide->VertexCount (); i++) {
 #ifdef _DEBUG
 			if (i == nDbgSide)
 				nDbgSide = nDbgSide;
 #endif
-			segP->Vertex (current->SideId (), i)->SetDelta (vDelta);
-			segmentManager.UpdateTexCoords (segP->VertexId (current->SideId (), ubyte (i)), false);
-			segP->Vertex (current->SideId (), i)->Move ();
-			segmentManager.UpdateTexCoords (segP->VertexId (current->SideId (), ubyte (i)), true);
+			pSegment->Vertex (current->SideId (), i)->SetDelta (vDelta);
+			segmentManager.UpdateTexCoords (pSegment->VertexId (current->SideId (), ubyte (i)), false);
+			pSegment->Vertex (current->SideId (), i)->Move ();
+			segmentManager.UpdateTexCoords (pSegment->VertexId (current->SideId (), ubyte (i)), true);
 			}
 		undoManager.End (__FUNCTION__);
 		break;
@@ -517,10 +517,10 @@ switch (selectMode) {
 	case SEGMENT_MODE:
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
 		for (i = 0; i < 8; i++) {
-			if (segP->VertexId (i) <= MAX_VERTEX) {
-				segP->Vertex (i)->SetDelta (vDelta);
+			if (pSegment->VertexId (i) <= MAX_VERTEX) {
+				pSegment->Vertex (i)->SetDelta (vDelta);
 				segmentManager.UpdateTexCoords (ushort (i), false);
-				segP->Vertex (i)->Move ();
+				pSegment->Vertex (i)->Move ();
 				segmentManager.UpdateTexCoords (ushort (i), true);
 				}
 			}
@@ -555,8 +555,8 @@ return true;
 
 bool CMine::MovePoints (int pt0, int pt1) 
 {
-CSegment* segP = current->Segment ();
-return MovePoints (*segP->Vertex (current->SideId (), current->Point () + pt1) - *segP->Vertex (current->SideId (), current->Point () + pt0));
+CSegment* pSegment = current->Segment ();
+return MovePoints (*pSegment->Vertex (current->SideId (), current->Point () + pt1) - *pSegment->Vertex (current->SideId (), current->Point () + pt0));
 }
 
 /***************************************************************************
@@ -570,43 +570,43 @@ bool CMine::MoveElements (CDoubleVector vDelta)
 	int				nPoint = current->Point ();
 	int				nLine = current->Edge ();
 	int				i;
-	CSegment*		segP = current->Segment ();
-	CSide*			sideP = current->Side ();
-	CGameObject*	objP;
+	CSegment*		pSegment = current->Segment ();
+	CSide*			pSide = current->Side ();
+	CGameObject*	pObject;
 	short				selectMode = DLE.MineView ()->Perspective () ? BLOCK_MODE : m_selectMode;
 
 switch (selectMode) {
 	case POINT_MODE:
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
-		segP->Vertex (sideP->VertexIdIndex (nPoint))->SetDelta (vDelta);
-		segmentManager.UpdateTexCoords (segP->VertexId (nSide, nPoint), false);
-		segP->Vertex (sideP->VertexIdIndex (nPoint))->Move ();
-		segmentManager.UpdateTexCoords (segP->VertexId (nSide, nPoint), true);
+		pSegment->Vertex (pSide->VertexIdIndex (nPoint))->SetDelta (vDelta);
+		segmentManager.UpdateTexCoords (pSegment->VertexId (nSide, nPoint), false);
+		pSegment->Vertex (pSide->VertexIdIndex (nPoint))->Move ();
+		segmentManager.UpdateTexCoords (pSegment->VertexId (nSide, nPoint), true);
 		undoManager.End (__FUNCTION__);
 		break;
 
 	case LINE_MODE:
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
-		segP->Vertex (sideP->VertexIdIndex (nLine))->SetDelta (vDelta);
-		segP->Vertex (sideP->VertexIdIndex (nLine + 1))->SetDelta (vDelta);
-		segmentManager.UpdateTexCoords (segP->VertexId (nSide, nLine), false);
-		segmentManager.UpdateTexCoords (segP->VertexId (nSide, nLine + 1), false);
-		segP->Vertex (sideP->VertexIdIndex (nLine))->Move ();
-		segP->Vertex (sideP->VertexIdIndex (nLine + 1))->Move ();
-		segmentManager.UpdateTexCoords (segP->VertexId (nSide, nLine), true);
-		segmentManager.UpdateTexCoords (segP->VertexId (nSide, nLine + 1), true);
+		pSegment->Vertex (pSide->VertexIdIndex (nLine))->SetDelta (vDelta);
+		pSegment->Vertex (pSide->VertexIdIndex (nLine + 1))->SetDelta (vDelta);
+		segmentManager.UpdateTexCoords (pSegment->VertexId (nSide, nLine), false);
+		segmentManager.UpdateTexCoords (pSegment->VertexId (nSide, nLine + 1), false);
+		pSegment->Vertex (pSide->VertexIdIndex (nLine))->Move ();
+		pSegment->Vertex (pSide->VertexIdIndex (nLine + 1))->Move ();
+		segmentManager.UpdateTexCoords (pSegment->VertexId (nSide, nLine), true);
+		segmentManager.UpdateTexCoords (pSegment->VertexId (nSide, nLine + 1), true);
 		undoManager.End (__FUNCTION__);
 		break;
 
 	case SIDE_MODE:
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
-		for (i = 0; i < sideP->VertexCount (); i++)
-			segP->Vertex (sideP->VertexIdIndex (i))->SetDelta (vDelta);
-		for (i = 0; i < sideP->VertexCount (); i++)
-			segmentManager.UpdateTexCoords (segP->VertexId (nSide, i), false, current->SegmentId (), current->SideId ());
-		for (i = 0; i < sideP->VertexCount (); i++) {
-			segP->Vertex (sideP->VertexIdIndex (i))->Move ();
-			segmentManager.UpdateTexCoords (segP->VertexId (nSide, i), true, current->SegmentId (), current->SideId ());
+		for (i = 0; i < pSide->VertexCount (); i++)
+			pSegment->Vertex (pSide->VertexIdIndex (i))->SetDelta (vDelta);
+		for (i = 0; i < pSide->VertexCount (); i++)
+			segmentManager.UpdateTexCoords (pSegment->VertexId (nSide, i), false, current->SegmentId (), current->SideId ());
+		for (i = 0; i < pSide->VertexCount (); i++) {
+			pSegment->Vertex (pSide->VertexIdIndex (i))->Move ();
+			segmentManager.UpdateTexCoords (pSegment->VertexId (nSide, i), true, current->SegmentId (), current->SideId ());
 			}
 		undoManager.End (__FUNCTION__);
 		break;
@@ -614,20 +614,20 @@ switch (selectMode) {
 	case SEGMENT_MODE:
 		undoManager.Begin (__FUNCTION__, udVertices | udObjects);
 		for (i = 0; i < 8; i++) 
-			if (segP->VertexId (i) <= MAX_VERTEX)
-				segP->Vertex (i)->SetDelta (vDelta);
+			if (pSegment->VertexId (i) <= MAX_VERTEX)
+				pSegment->Vertex (i)->SetDelta (vDelta);
 		for (i = 0; i < 8; i++) 
-			if (segP->VertexId (i) <= MAX_VERTEX)
-				segmentManager.UpdateTexCoords (segP->VertexId (i), false, current->SegmentId ());
+			if (pSegment->VertexId (i) <= MAX_VERTEX)
+				segmentManager.UpdateTexCoords (pSegment->VertexId (i), false, current->SegmentId ());
 		for (i = 0; i < 8; i++) 
-			if (segP->VertexId (i) <= MAX_VERTEX) {
-				segP->Vertex (i)->Move ();
-				segmentManager.UpdateTexCoords (segP->VertexId (i), true, current->SegmentId ());
+			if (pSegment->VertexId (i) <= MAX_VERTEX) {
+				pSegment->Vertex (i)->Move ();
+				segmentManager.UpdateTexCoords (pSegment->VertexId (i), true, current->SegmentId ());
 				}
-		objP = objectManager.Object (0);
-		for (i = objectManager.Count (); i; i--, objP++)
-			if (objP->m_info.nSegment == nSegment)
-				objP->Position () += vDelta;
+		pObject = objectManager.Object (0);
+		for (i = objectManager.Count (); i; i--, pObject++)
+			if (pObject->m_info.nSegment == nSegment)
+				pObject->Position () += vDelta;
 		undoManager.End (__FUNCTION__);
 		break;
 
@@ -640,7 +640,7 @@ switch (selectMode) {
 
 	case BLOCK_MODE:
 		undoManager.Begin (__FUNCTION__, udObjects);
-		CGameObject *objP = objectManager.Object (0);
+		CGameObject *pObject = objectManager.Object (0);
 		for (i = 0; i < MAX_VERTICES; i++)
 			if (vertexManager.Status (i) & TAGGED_MASK) 
 				vertexManager.Vertex (i)->SetDelta (vDelta);
@@ -652,10 +652,10 @@ switch (selectMode) {
 				vertexManager.Vertex (i)->Move ();
 				segmentManager.UpdateTexCoords (i, true, 0x7FFF);
 				}
-		for (i = objectManager.Count (); i; i--, objP++)
-			if (objP->m_info.nSegment >= 0)
-				if (objP->Segment ()->IsTagged ())
-					objP->Position () += vDelta;
+		for (i = objectManager.Count (); i; i--, pObject++)
+			if (pObject->m_info.nSegment >= 0)
+				if (pObject->Segment ()->IsTagged ())
+					pObject->Position () += vDelta;
 		undoManager.End (__FUNCTION__);
 		break;
 	}
@@ -727,9 +727,9 @@ if (nVertexId <= MAX_VERTEX)
 
 bool CMine::SpinSelection (double angle) 
 {
-	CSegment*		segP = current->Segment ();
-	CSide*			sideP = current->Side ();
-	CGameObject*	objP;
+	CSegment*		pSegment = current->Segment ();
+	CSide*			pSide = current->Side ();
+	CGameObject*	pObject;
 	CDoubleMatrix* orient;
 	CVertexSpinner	spinner (angle);
 	int				i, j;
@@ -748,7 +748,7 @@ switch (selectMode) {
 	
 	case SIDE_MODE: // spin side around its center in the plane of the side
 		// calculate center of current side
-		spinner.m_vCenter = segP->ComputeCenter (spinner.m_nSide);
+		spinner.m_vCenter = pSegment->ComputeCenter (spinner.m_nSide);
 		// calculate orthogonal vector from lines which intersect point 0
 		//       |x  y  z |
 		// AxB = |ax ay az| = x(aybz-azby), y(azbx-axbz), z(axby-aybx)
@@ -756,37 +756,37 @@ switch (selectMode) {
 		if (DLE.MineView ()->GetElementMovementReference ())
 			spinner.m_vOppCenter = spinner.m_vCenter + DLE.MineView ()->ViewMatrix ()->Forward ();
 		else {
-			segP->ComputeNormals (spinner.m_nSide);
-			spinner.m_vNormal = sideP->Normal ();
+			pSegment->ComputeNormals (spinner.m_nSide);
+			spinner.m_vNormal = pSide->Normal ();
 			spinner.m_vOppCenter = spinner.m_vCenter + spinner.m_vNormal;
 			}
 		/* rotate points around a line */
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
-		j = sideP->VertexCount ();
+		j = pSide->VertexCount ();
 		for (i = 0; i < j; i++) 
-			spinner.SetDelta (segP->VertexId (current->SideId (), i));
+			spinner.SetDelta (pSegment->VertexId (current->SideId (), i));
 		for (i = 0; i < j; i++) 
-			spinner.UpdateTexCoords (segP->VertexId (current->SideId (), i), false);
+			spinner.UpdateTexCoords (pSegment->VertexId (current->SideId (), i), false);
 		for (i = 0; i < j; i++) {
-			spinner.Move (segP->VertexId (current->SideId (), i));
-			spinner.UpdateTexCoords (segP->VertexId (current->SideId (), i), true);
+			spinner.Move (pSegment->VertexId (current->SideId (), i));
+			spinner.UpdateTexCoords (pSegment->VertexId (current->SideId (), i), true);
 			}
 		undoManager.End (__FUNCTION__);
 		break;
 
 	case SEGMENT_MODE:	// spin segment around the spinner.m_vCenter of the segment using screen's perspective
-		spinner.m_vCenter = segP->ComputeCenter ();
-		spinner.m_vOppCenter = DLE.MineView ()->GetElementMovementReference () ? DLE.MineView ()->ViewMatrix ()->Forward () : segP->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
+		spinner.m_vCenter = pSegment->ComputeCenter ();
+		spinner.m_vOppCenter = DLE.MineView ()->GetElementMovementReference () ? DLE.MineView ()->ViewMatrix ()->Forward () : pSegment->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
 
 		// rotate points about a point
 		undoManager.Begin (__FUNCTION__, udVertices | udSegments);
 		for (i = 0; i < 8; i++)
-			spinner.SetDelta (segP->VertexId (i));
+			spinner.SetDelta (pSegment->VertexId (i));
 		for (i = 0; i < 8; i++)
-			spinner.UpdateTexCoords (segP->VertexId (i), false);
+			spinner.UpdateTexCoords (pSegment->VertexId (i), false);
 		for (i = 0; i < 8; i++) {
-			spinner.Move (segP->VertexId (i));
-			spinner.UpdateTexCoords (segP->VertexId (i), true);
+			spinner.Move (pSegment->VertexId (i));
+			spinner.UpdateTexCoords (pSegment->VertexId (i), true);
 			}
 		undoManager.End (__FUNCTION__);
 		break;
@@ -818,17 +818,17 @@ switch (selectMode) {
 		break;
 
 	case BLOCK_MODE:
-		spinner.m_vCenter = segP->ComputeCenter ();
+		spinner.m_vCenter = pSegment->ComputeCenter ();
 		if (DLE.MineView ()->GetElementMovementReference ()) {
 			spinner.m_vOppCenter = spinner.m_vCenter + DLE.MineView ()->ViewMatrix ()->Forward ();
-			CVertex& v = segP->ComputeCenter ();
+			CVertex& v = pSegment->ComputeCenter ();
 			CVertex v1 = spinner.m_vCenter - v;
 			CVertex v2 = spinner.m_vOppCenter - v;
 			if (Dot (v1, v2) < 0.0)
 				spinner.m_vOppCenter = spinner.m_vCenter - DLE.MineView ()->ViewMatrix ()->Forward ();
 			}
 		else
-			spinner.m_vOppCenter = segP->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
+			spinner.m_vOppCenter = pSegment->ComputeCenter ((short) oppSideTable [spinner.m_nSide]);
 		// rotate points about a point
 		undoManager.Begin  (__FUNCTION__, udVertices | udObjects);
 		for (i = 0; i < vertexManager.Count (); i++)
@@ -843,10 +843,10 @@ switch (selectMode) {
 				spinner.UpdateTexCoords (i, true);
 				}
 		// rotate Objects () within marked segments
-		objP = objectManager.Object (0);
-		for (i = objectManager.Count (); i; i--, objP++)
-			if (objP->Segment ()->IsTagged ())
-				objP->Position ().Rotate (spinner.m_vCenter, spinner.m_vOppCenter, angle);
+		pObject = objectManager.Object (0);
+		for (i = objectManager.Count (); i; i--, pObject++)
+			if (pObject->Segment ()->IsTagged ())
+				pObject->Position ().Rotate (spinner.m_vCenter, spinner.m_vOppCenter, angle);
 		undoManager.End (__FUNCTION__);
 		break;
 	}

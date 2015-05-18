@@ -331,7 +331,7 @@ CDialog::OnInitDialog ();
 
 	CWnd*	pWnd;
 	CRect	rc;
-	const CTexture *texP = textureManager.TextureByIndex (m_nTexAll);
+	const CTexture *pTexture = textureManager.TextureByIndex (m_nTexAll);
 
 pWnd = GetDlgItem (IDC_TEXEDIT_TEXTURE);
 pWnd->GetClientRect (rc);
@@ -351,11 +351,11 @@ m_lBtnDown  = false;
 m_rBtnDown = false;
 m_bModified = false;
 m_bPendingRevert = false;
-if ((texP->Buffer () == null) || !texP->IsLoaded ()) {
+if ((pTexture->Buffer () == null) || !pTexture->IsLoaded ()) {
 	DEBUGMSG (" Texture tool: Invalid texture");
 	EndDialog (IDCANCEL);
 	}
-else if (!m_texture [0].Copy (*texP)) {
+else if (!m_texture [0].Copy (*pTexture)) {
 	DEBUGMSG (" Texture tool: Not enough memory for texture editing");
 	EndDialog (IDCANCEL);
 	}
@@ -364,8 +364,8 @@ if (!m_texture [1].Copy (m_texture [0]))
 	DEBUGMSG (" Texture tool: Not enough memory for undo function");
 Backup ();
 Refresh ();
-m_nWidth = texP->Width ();
-m_nHeight = texP->Height ();
+m_nWidth = pTexture->Width ();
+m_nHeight = pTexture->Height ();
 return TRUE;
 }
 

@@ -771,10 +771,10 @@ fp.Write (m_bCustom);
 
 m_textures.WriteBinary (fp);
 
-CSubModel*	smP = m_subModels;
+CSubModel*	pSubModel = m_subModels;
 
-for (int i = 0; i < m_nSubModels; i++, smP = smP->m_next)
-	smP->SaveBinary (fp);
+for (int i = 0; i < m_nSubModels; i++, pSubModel = pSubModel->m_next)
+	pSubModel->SaveBinary (fp);
 fp.Close ();
 return 1;
 }
@@ -858,22 +858,22 @@ if (m_textures.ReadBinary (fp)) {
 	return 0;
 	}
 
-CSubModel*	smP, * tailP = null;
+CSubModel*	pSubModel, * pTail = null;
 
 m_subModels = null;
 for (i = 0; i < m_nSubModels; i++) {
-	if (!(smP = new CSubModel)) {
+	if (!(pSubModel = new CSubModel)) {
 		fp.Close ();
 		Destroy ();
 		return 0;
 		}
 	if (m_subModels)
-		tailP->m_next = smP;
+		pTail->m_next = pSubModel;
 	else
-		m_subModels = smP;
-	tailP = smP;
+		m_subModels = pSubModel;
+	pTail = pSubModel;
 	try {
-		if (!smP->ReadBinary (fp)) {
+		if (!pSubModel->ReadBinary (fp)) {
 			fp.Close ();
 			Destroy ();
 			return 0;

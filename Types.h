@@ -172,7 +172,7 @@ class CColor : public CGameItem {
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual CGameItem* Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* pDest);
 
 		CColor (eItemType itemType = itUndefined) : CGameItem (itemType) {}
 

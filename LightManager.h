@@ -142,9 +142,9 @@ class CLightManager {
 
 		inline int& DeltaValueCount (void) { return m_deltaValueInfo.count; }
 
-		inline void SetTexColor (short nBaseTex, CColor* colorP)	{
+		inline void SetTexColor (short nBaseTex, CColor* pColor)	{
 			if (ApplyFaceLightSettingsGlobally () && (IsLight (nBaseTex) != -1))
-				m_texColors [nBaseTex] = *colorP;
+				m_texColors [nBaseTex] = *pColor;
 			}
 
 		inline CColor* GetTexColor (short nTexture, bool bIsTranspWall)	
@@ -191,7 +191,7 @@ class CLightManager {
 		int IsExplodingLight(int nBaseTex);
 
 		int LightIsOn (CSideKey key);
-		uint Brightness (CSegment* segP, CSide* sideP);
+		uint Brightness (CSegment* pSegment, CSide* pSide);
 		uint Brightness (CSideKey& key);
 
 
@@ -244,7 +244,7 @@ class CLightManager {
 			{}
 
 	private:
-		ubyte* ColorToFloat (CColor* colorP, ubyte* dataP);
+		ubyte* ColorToFloat (CColor* pColor, ubyte* pData);
 
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
 
@@ -258,7 +258,7 @@ class CLightManager {
 
 		bool PointSeesPoint (CVertex* p1, CVertex* p2, short nStartSeg, short nDestSeg, short nDestSide);
 
-		bool FaceHasVariableLight (CSideKey key, CSide* sideP, CWall* wallP);
+		bool FaceHasVariableLight (CSideKey key, CSide* pSide, CWall* pWall);
 
 		bool ComputeLightDeltas (int bForce, int nDepth);
 
@@ -272,11 +272,11 @@ class CLightManager {
 
 		void UnsortDeltaIndex (void);
 
-		void BlendColors (CColor* srcColorP, CColor* destColorP, double srcBrightness, double destBrightness);
+		void BlendColors (CColor* pSrcColor, CColor* pDestColor, double srcBrightness, double destBrightness);
 
 		void GatherLight (short nSrcSide, short nSrcSeg, uint brightness, bool bAll = false, bool bCopyTexLights = false);
 
-		void GatherFaceLight (double cornerLights [], CSegment* segP, short nSide, uint brightness, CColor* lightColorP);
+		void GatherFaceLight (double cornerLights [], CSegment* pSegment, short nSide, uint brightness, CColor* pLightColor);
 };
 
 extern CLightManager lightManager;

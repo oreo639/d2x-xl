@@ -141,7 +141,7 @@ class CMine {
 		bool ResizeItem (double delta); 
 		bool MovePoints (CDoubleVector vDelta); 
 		bool MovePoints (int pt0, int pt1); 
-		bool ResizeLine (CSegment *segP, int point0, int point1, double delta, int nStage); 
+		bool ResizeLine (CSegment *pSegment, int point0, int point1, double delta, int nStage); 
 		bool MoveElements (CDoubleVector delta); 
 		bool SpinSelection (double angle); 
 		void LoadSideTextures (short nSegment, short nSide);

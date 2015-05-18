@@ -205,14 +205,14 @@ void CMineView::AlignSide()
 void CMineView::TagVisibleVerts (bool bReset)
 {
 	int			h, i;
-	CSegment*	segP;
+	CSegment*	pSegment;
 
-segP = segmentManager.Segment (0);
-for (i = 0, h = segmentManager.Count (); i < h; i++, segP++) {
-	ubyte status = bReset ? 0 : Visible (segP) ? 1 : 255;
+pSegment = segmentManager.Segment (0);
+for (i = 0, h = segmentManager.Count (); i < h; i++, pSegment++) {
+	ubyte status = bReset ? 0 : Visible (pSegment) ? 1 : 255;
 	for (int j = 0; j < 8; j++)
-		if (segP->m_info.vertexIds [j] <= MAX_VERTEX)
-			vertexManager.Status (segP->m_info.vertexIds [j]) = status;
+		if (pSegment->m_info.vertexIds [j] <= MAX_VERTEX)
+			vertexManager.Status (pSegment->m_info.vertexIds [j]) = status;
 	}
 }
 
@@ -225,15 +225,15 @@ CHECKMINE;
 //	CDlcDoc* pDoc = GetDocument();
 //	ASSERT_VALID(pDoc);
 
-	CVertex*		vertP;
+	CVertex*		pVertex;
 	CVertex		vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
 
 TagVisibleVerts ();
-vertP = vertexManager.Vertex (0);
-for (int i = 0, h = vertexManager.Count (); i < h; i++, vertP++) {
+pVertex = vertexManager.Vertex (0);
+for (int i = 0, h = vertexManager.Count (); i < h; i++, pVertex++) {
 	if (vertexManager.Status (i)) {
-		vMin = Min (vMin, *vertP);
-		vMax = Max (vMax, *vertP);
+		vMin = Min (vMin, *pVertex);
+		vMax = Max (vMax, *pVertex);
 		}
 	}
 Rotation ().Set (M_PI / 4.0, M_PI / 4.0, 0.0);
@@ -293,18 +293,18 @@ Refresh (false);
 void CMineView::AlignViewerWithSide (void)
 {
 if (Perspective ()) {
-	CSegment* segP = current->Segment ();
-	CSide* sideP = current->Side ();
-	sideP->ComputeNormals (segP->m_info.vertexIds, segP->ComputeCenter ());
+	CSegment* pSegment = current->Segment ();
+	CSide* pSide = current->Side ();
+	pSide->ComputeNormals (pSegment->m_info.vertexIds, pSegment->ComputeCenter ());
 	CDoubleMatrix r;
-	r.m.fVec = sideP->Normal (2);
+	r.m.fVec = pSide->Normal (2);
 	r.m.fVec.Negate ();
 	short nSide = current->SideId ();
 	short nEdge = current->Edge ();
-	r.m.rVec = *segP->Vertex (nSide, nEdge + 1) - *segP->Vertex (nSide, nEdge);
+	r.m.rVec = *pSegment->Vertex (nSide, nEdge + 1) - *pSegment->Vertex (nSide, nEdge);
 	r.m.rVec.Normalize ();
-	segP->ComputeCenter (nSide);
-	r.m.uVec = Normal (sideP->Center (), r.m.fVec, r.m.rVec);
+	pSegment->ComputeCenter (nSide);
+	r.m.uVec = Normal (pSide->Center (), r.m.fVec, r.m.rVec);
 	//r.m.uVec.Negate ();
 #if 1//def NDEBUG
 	ViewMatrix ()->Stuff (r);
@@ -320,7 +320,7 @@ if (Perspective ()) {
 	ViewMatrix ()->Rotate ('X', Rotation ().v.x);
 #	endif
 #endif
-	SetCenter (segP->Center (), 1);
+	SetCenter (pSegment->Center (), 1);
 	Invalidate (FALSE);
 	}
 }

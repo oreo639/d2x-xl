@@ -78,7 +78,7 @@ class CVertexManager  {
 
 		inline int& FileOffset (void) { return m_info.offset; }
 
-		inline ushort Index (CVertex* vertP) { return (ushort) (vertP - &m_vertices [0]); }
+		inline ushort Index (CVertex* pVertex) { return (ushort) (pVertex - &m_vertices [0]); }
 
 		ushort Add (ushort* nVertices, ushort count = 1, bool bUndo = true);
 

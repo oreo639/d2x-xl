@@ -14,9 +14,9 @@ SortObjects () = GetPrivateProfileInt ("DLE", "SortObjects", objectManager.SortO
 
 CGameObject* CObjectManager::FindBySeg (short nSegment, short i)
 {
-for (CGameObject* objP = Object (i); i < Count (); i++)
-	if (objP->m_info.nSegment == nSegment)
-		return objP;
+for (CGameObject* pObject = Object (i); i < Count (); i++)
+	if (pObject->m_info.nSegment == nSegment)
+		return pObject;
 return null;
 }
 
@@ -24,11 +24,11 @@ return null;
 
 CGameObject* CObjectManager::FindBySig (short nSignature)
 {
-	CGameObject* objP = Object (0);
+	CGameObject* pObject = Object (0);
 
-for (short i = Count (); i; i--, objP++)
-	if (objP->m_info.signature == nSignature)
-		return objP;
+for (short i = Count (); i; i--, pObject++)
+	if (pObject->m_info.signature == nSignature)
+		return pObject;
 return null;
 }
 
@@ -36,9 +36,9 @@ return null;
 
 CGameObject* CObjectManager::FindRobot (short nId, short i)
 {
-for (CGameObject* objP = Object (i); i < Count (); i++, objP++)
-	if (objP->Id () == nId)
-		return objP;
+for (CGameObject* pObject = Object (i); i < Count (); i++, pObject++)
+	if (pObject->Id () == nId)
+		return pObject;
 return null;
 }
 
@@ -154,7 +154,7 @@ return Count ()++;
 bool CObjectManager::Create (ubyte newType, short nSegment) 
 {
 	short ids [MAX_PLAYERS_D2X + MAX_COOP_PLAYERS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	CGameObject *objP, *currObjP;
+	CGameObject *pObject, *currObjP;
 	ubyte type;
 	short nObject, id;
 
@@ -168,10 +168,10 @@ type = (newType == OBJ_NONE) ? current->Object ()->m_info.type : newType;
 // Make sure it is ok to add another object of this type
 // Set the id if it's a player or coop
 if ((type == OBJ_PLAYER) || (type == OBJ_COOP)) {
-	objP = Object (0);
-	for (nObject = Count (); nObject; nObject--, objP++)
-		if (objP->Type () == type) {
-			id = objP->Id ();
+	pObject = Object (0);
+	for (nObject = Count (); nObject; nObject--, pObject++)
+		if (pObject->Type () == type) {
+			id = pObject->Id ();
 			if ((id >= 0) && (id < MAX_PLAYERS + MAX_COOP_PLAYERS))
 				ids [id]++;
 			}
@@ -209,31 +209,31 @@ if (nObject == 0) {
 	}
 else {
 	// Make a copy of the current object
-	objP = Object (nObject);
+	pObject = Object (nObject);
 	currObjP = current->Object ();
-	memcpy (objP, currObjP, sizeof (CGameObject));
+	memcpy (pObject, currObjP, sizeof (CGameObject));
 	}
-objP->m_info.flags = 0;                                      // new: 1/27/97
-//objP->m_info.nSegment = current->SegmentId ();
+pObject->m_info.flags = 0;                                      // new: 1/27/97
+//pObject->m_info.nSegment = current->SegmentId ();
 // set object position in the center of the segment for now
 CVertex center;
-//objP->Position () = segmentManager.CalcCenter (center, current->SegmentId ());
-//objP->m_location.lastPos = objP->Position ();
-objP->Info ().nSegment = -1;
+//pObject->Position () = segmentManager.CalcCenter (center, current->SegmentId ());
+//pObject->m_location.lastPos = pObject->Position ();
+pObject->Info ().nSegment = -1;
 current->SetObjectId (nObject);
-Move (objP);
+Move (pObject);
 // set the id if new object is a player or a coop
 if ((type == OBJ_PLAYER) || (type == OBJ_COOP))
-	objP->Id () = (ubyte) id;
+	pObject->Id () = (ubyte) id;
 // set object data if new object being added
 if (newType != OBJ_NONE)
-	objP->Setup (objP->Type () = newType);
+	pObject->Setup (pObject->Type () = newType);
 // set the contents to zero
-objP->m_info.contents.type = 0;
-objP->m_info.contents.id = 0;
-objP->m_info.contents.count = 0;
+pObject->m_info.contents.type = 0;
+pObject->m_info.contents.id = 0;
+pObject->m_info.contents.count = 0;
 Sort ();
-objP->Backup ();
+pObject->Backup ();
 DLE.MineView ()->Refresh (false);
 DLE.ToolView ()->ObjectTool ()->Refresh ();
 undoManager.End (__FUNCTION__);
@@ -292,7 +292,7 @@ for (short i = Count (); i >= 0; i--)
 
 // -----------------------------------------------------------------------------
 
-void CObjectManager::Move (CGameObject * objP, int nSegment)
+void CObjectManager::Move (CGameObject * pObject, int nSegment)
 {
 #if 0
 if (QueryMsg ("Are you sure you want to move the\n"
@@ -300,9 +300,9 @@ if (QueryMsg ("Are you sure you want to move the\n"
 	return;
 #endif
 undoManager.Begin (__FUNCTION__, udObjects);
-if (objP == null)
-	objP = current->Object ();
-if (Index (objP) == Count ())
+if (pObject == null)
+	pObject = current->Object ();
+if (Index (pObject) == Count ())
 	SecretSegment () = current->SegmentId ();
 else {
 	CVertex center;
@@ -311,10 +311,10 @@ else {
 	// bump position over if this is not the first object in the segment (unless disabled in settings)
 	int i, count = 0;
 	for (i = 0; (i < Count ()) && m_bBumpObjects; i++)
-		if (Object (i)->Info ().nSegment == nSegment && Index (objP) != i) 
+		if (Object (i)->Info ().nSegment == nSegment && Index (pObject) != i) 
 			count++;
-	objP->Info ().nSegment = current->SegmentId ();
-	objP->Position () = segmentManager.CalcCenter (center, nSegment);
+	pObject->Info ().nSegment = current->SegmentId ();
+	pObject->Position () = segmentManager.CalcCenter (center, nSegment);
 	if (0 < count) {
 		int dir = ((count - 1) % 6) / 2;
 		//count -= 2 * dir;
@@ -322,18 +322,18 @@ else {
 		bumpAmount *= count / 6 + 1;
 		bumpAmount *= m_bumpIncrement;
 		if (dir == 2) {
-			objP->Position ().v.x += bumpAmount;
-			objP->m_location.lastPos.v.x += bumpAmount;
+			pObject->Position ().v.x += bumpAmount;
+			pObject->m_location.lastPos.v.x += bumpAmount;
 			}
 		else if (dir == 1) {
-			objP->Position ().v.z += bumpAmount;
-			objP->m_location.lastPos.v.z += bumpAmount;
+			pObject->Position ().v.z += bumpAmount;
+			pObject->m_location.lastPos.v.z += bumpAmount;
 			}
 		else { //if (!dir || ((count - 1) / 6)) {
-			objP->Position ().v.y += bumpAmount;
-			objP->m_location.lastPos.v.y += bumpAmount;
+			pObject->Position ().v.y += bumpAmount;
+			pObject->m_location.lastPos.v.y += bumpAmount;
 			}
-		objP->Info ().nSegment = nSegment;
+		pObject->Info ().nSegment = nSegment;
 		}
 	}
 DLE.MineView ()->Refresh (false);

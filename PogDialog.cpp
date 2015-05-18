@@ -46,6 +46,7 @@ m_uiPreselectedTexture = uiSelectedTexture;
 if (m_bPreselectTexture && textureManager.Available ()) // always switch on the filter for the preselected texture
 	m_filters [ClassifyTexture (textureManager.Textures (m_uiPreselectedTexture))] = true;
 memset (m_szPreviousPigPath, 0, sizeof (m_szPreviousPigPath));
+m_nFrame = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -114,17 +115,52 @@ if (!pDX->m_bSaveAndValidate) {
 
 //------------------------------------------------------------------------------
 
+bool CPogDialog::ScrollTexture (short nTexId)
+{
+	int x, y;
+
+if (!textureManager.CheckScrollingTexture (nTexId, m_xScrollOffset, m_yScrollOffset, x, y))
+	return false;
+PaintTexture (this, IMG_BKCOLOR, nTexId, -1, m_xScrollOffset [0], m_yScrollOffset [0]);
+textureManager.UpdateScrollingTexture (m_xScrollOffset, m_yScrollOffset, x, y);
+return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool CPogDialog::UpdateTextureClip (short nTexId)
+{
+	static int nDirection = 1;
+	static short nPrevTexId = -1;
+
+CTexture *pTexture = textureManager.UpdateTextureClip (nTexId, nPrevTexId, m_nFrame, nDirection);
+if (!pTexture)
+	return false;
+PaintTexture (this, IMG_BKCOLOR, pTexture);
+return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool CPogDialog::AnimateTexture (short nTexId)
+{
+return ScrollTexture (nTexId) || UpdateTextureClip (nTexId);
+}
+
+//------------------------------------------------------------------------------
+
 void CPogDialog::OnPaint (void)
 {
 CDialog::OnPaint ();
 // This is mainly needed to draw preselected textures on dialog init
-if (!IsAnimatedTextureRoot (GetFocusedTextureIndex ()))
+short nIndex = (short) GetFocusedTextureIndex ();
+if (!AnimateTexture (nIndex))
 	PaintTexture (&m_preview, IMG_BKCOLOR, GetFocusedTexture ());
 }
 
 //------------------------------------------------------------------------------
 
-void CPogDialog::RebuildTextureList ()
+void CPogDialog::RebuildTextureList (void)
 {
 	bool expandAnim = false;
 	uint nExpandAnimTexAll = 0;

@@ -74,7 +74,7 @@ void CDiagTool::OnShowBug (void)
 CHECKMINE;
 
 	bool bCurSeg;
-	CWall *wallP = null;
+	CWall *pWall = null;
 	int nWall;
 
 int i = LBBugs ()->GetCurSel ();
@@ -96,15 +96,15 @@ if ((pbp->nPoint >= 0) && (pbp->nPoint < 8))
 if ((pbp->nWall >= 0) && (pbp->nWall < wallManager.WallCount ()))
 	nWall = pbp->nWall;
 else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < triggerManager.WallTriggerCount ()))
-	wallP = wallManager.FindByTrigger (pbp->nTrigger);
-if ((wallP != null) && TagSegment (wallP->m_nSegment))
+	pWall = wallManager.FindByTrigger (pbp->nTrigger);
+if ((pWall != null) && TagSegment (pWall->m_nSegment))
 	if (bCurSeg) {
-		other->m_nSegment = wallP->m_nSegment;
-		other->m_nSide = wallP->m_nSide;
+		other->m_nSegment = pWall->m_nSegment;
+		other->m_nSide = pWall->m_nSide;
 		}
 	else {
-		current->SetSegmentId (wallP->m_nSegment);
-		current->SetSideId (wallP->m_nSide);
+		current->SetSegmentId (pWall->m_nSegment);
+		current->SetSideId (pWall->m_nSide);
 		}
 if ((pbp->nObject >= 0) && (pbp->nObject < objectManager.Count ()))
 	current->SetObjectId (pbp->nObject);
@@ -129,15 +129,15 @@ double CDiagTool::CalcFlatnessRatio (short nSegment, short nSide)
 	double		ratio;
 	CVertex		vert [4];
   // copy vertnums into an array
-	CSegment*	segP = segmentManager.Segment (nSegment);
-	CSide*		sideP = segP->Side (nSide);
-	short			i, n = sideP->VertexCount ();
+	CSegment*	pSegment = segmentManager.Segment (nSegment);
+	CSide*		pSide = pSegment->Side (nSide);
+	short			i, n = pSide->VertexCount ();
 
 if (n < 3)
 	return 1.0;
 
 for (i = 0; i < n; i++)
-	vert [i] = *segP->Vertex (nSide, i);
+	vert [i] = *pSegment->Vertex (nSide, i);
 
 length1 = CalcDistance (vert + 0, vert + 1, vert + 2);
 length2 = (n < 4) ? 0.0 : CalcDistance (vert + 0, vert + 1, vert + 3);
@@ -407,10 +407,10 @@ if (theMine == null)
 	return false;
 
 	short	i, nBotGens = 0, nEquipGens = 0, nProducers = 0;
-	CSegment	*segP = segmentManager.Segment (0);
+	CSegment	*pSegment = segmentManager.Segment (0);
 
-for (i = segmentManager.Count (); i; i--, segP++)
-	switch (segP->m_info.function) {
+for (i = segmentManager.Count (); i; i--, pSegment++)
+	switch (pSegment->m_info.function) {
 		case SEGMENT_FUNC_ROBOTMAKER:
 			nBotGens++;
 			break;
@@ -451,7 +451,7 @@ if (theMine == null)
 
   short nSegment, nSide, nChild, nSide2;
   short i, j;
-  CSegment *segP = segmentManager.Segment (0);
+  CSegment *pSegment = segmentManager.Segment (0);
 
   // check Segments ()
   //--------------------------------------------------------------
@@ -459,36 +459,36 @@ short sub_errors = m_nErrors [0];
 short sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Segments]");
 
-for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
+for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, pSegment++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 // check geometry of segment
 // 	Given that each point has 3 lines (called L1, L2, and L3), 
 //	and an orthogonal vector of L1 and L2 (called V1), the angle
 //	between L3 and V1 must be less than PI/2.
 //
-	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
-		if ((segP->m_info.nProducer >= segmentManager.RobotMakerCount ()) || (segmentManager.RobotMaker (segP->m_info.nProducer)->m_info.nSegment != nSegment)) {
+	if (pSegment->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
+		if ((pSegment->m_info.nProducer >= segmentManager.RobotMakerCount ()) || (segmentManager.RobotMaker (pSegment->m_info.nProducer)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				segmentManager.Undefine (nSegment);
 			}
 		}
-	if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
-		if ((segP->m_info.nProducer >= segmentManager.EquipMakerCount ()) || (segmentManager.EquipMaker (segP->m_info.nProducer)->m_info.nSegment != nSegment)) {
+	if (pSegment->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
+		if ((pSegment->m_info.nProducer >= segmentManager.EquipMakerCount ()) || (segmentManager.EquipMaker (pSegment->m_info.nProducer)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				segmentManager.Undefine (nSegment);
 			}
 		}
 
-	if (!segP->Shape ()) {
+	if (!pSegment->Shape ()) {
 		short nPoint;
 		for (nPoint = 0; nPoint < 8; nPoint++) {
 	// define vert numbers
-			short vert0 = segP->m_info.vertexIds [nPoint];
-			short vert1 = segP->m_info.vertexIds [adjacentPointTable [nPoint][0]];
-			short vert2 = segP->m_info.vertexIds [adjacentPointTable [nPoint][1]];
-			short vert3 = segP->m_info.vertexIds [adjacentPointTable [nPoint][2]];
+			short vert0 = pSegment->m_info.vertexIds [nPoint];
+			short vert1 = pSegment->m_info.vertexIds [adjacentPointTable [nPoint][0]];
+			short vert2 = pSegment->m_info.vertexIds [adjacentPointTable [nPoint][1]];
+			short vert3 = pSegment->m_info.vertexIds [adjacentPointTable [nPoint][2]];
 			double angle = CalcAngle (vert0, vert1, vert2, vert3);
 			double a = CalcAngle (vert0, vert2, vert3, vert1);
 			angle = max (angle, a);
@@ -529,9 +529,9 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 				if (UpdateStats (message, 1, nSegment, nSide)) 
 					return true;
 				}
-			else if (segP->Side (nSide)->Shape () > SIDE_SHAPE_TRIANGLE) {
+			else if (pSegment->Side (nSide)->Shape () > SIDE_SHAPE_TRIANGLE) {
 				if (m_bAutoFixBugs) {
-					segP->ReplaceChild (nChild, -1);
+					pSegment->ReplaceChild (nChild, -1);
 					segmentManager.Segment (nChild)->ReplaceChild (nSegment, -1);
 					sprintf_s (message, sizeof (message), "FIXED: Collapsed side has child segment %d (segment=%d, side=%d)", nChild, nSegment, nSide);
 					}
@@ -549,13 +549,13 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 					}					
 				if (nSide2 < MAX_SIDES_PER_SEGMENT) {
 					short match [4] = { 0, 0, 0, 0 };
-					CSegment * segP = segmentManager.Segment (nSegment), 
-								* childSegP = segmentManager.Segment (nChild);
-					int n = segP->Side (nSide)->VertexCount ();
+					CSegment * pSegment = segmentManager.Segment (nSegment), 
+								* pChildSeg = segmentManager.Segment (nChild);
+					int n = pSegment->Side (nSide)->VertexCount ();
 					for (i = 0; i < n; i++) {
-						ushort v = segP->m_info.vertexIds [segP->Side (nSide)->VertexIdIndex (i)];
+						ushort v = pSegment->m_info.vertexIds [pSegment->Side (nSide)->VertexIdIndex (i)];
 						for (j = 0; j < n; j++)
-							if (v == childSegP->m_info.vertexIds [childSegP->Side (nSide2)->VertexIdIndex (j)])
+							if (v == pChildSeg->m_info.vertexIds [pChildSeg->Side (nSide2)->VertexIdIndex (j)])
 								match[i]++;
 						}
 					for ( ; i < 4; i++)
@@ -624,22 +624,22 @@ if (theMine == null)
 	int				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
 	CVertex			center;
 	double			radius, maxRadius, object_radius;
-	CGameObject*	objP = objectManager.Object (0);
+	CGameObject*	pObject = objectManager.Object (0);
 	CGameObject*	playerP = null;
 	int				objCount = objectManager.Count ();
-	CSegment*		segP;
+	CSegment*		pSegment;
   ubyte				nMaxRobotId = (DLE.IsD2XFile () || theMine->m_bVertigo) ? MAX_ROBOT_TYPES : DLE.IsD2File () ? N_ROBOT_TYPES_D2 : N_ROBOT_TYPES_D1;
 
 short sub_errors = m_nErrors [0];
 short sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Objects]");
-for (nObject = 0; nObject < objCount ; nObject++, objP++) {
+for (nObject = 0; nObject < objCount ; nObject++, pObject++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	// check segment range
-	nSegment = objP->m_info.nSegment;
+	nSegment = pObject->m_info.nSegment;
 	if (nSegment < 0 || nSegment >= segmentManager.Count ()) {
 		if (m_bAutoFixBugs) {
-			objP->m_info.nSegment = nSegment = 0;
+			pObject->m_info.nSegment = nSegment = 0;
 			sprintf_s (message, sizeof (message), "FIXED: Bad segment number (object=%d, nSegment=%d)", nObject, nSegment);
 			}
 		else
@@ -650,7 +650,7 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 
 	if (nSegment < 0 || nSegment >= segmentManager.Count ()) {
 		if (m_bAutoFixBugs) {
-			objP->m_info.nSegment = 0;
+			pObject->m_info.nSegment = 0;
 			sprintf_s (message, sizeof (message), "FIXED: Bad segment number (object=%d, nSegment=%d)", nObject, nSegment);
 			}
 		else
@@ -659,31 +659,31 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 			return true;
 		}
 
-	segP = segmentManager.Segment (nSegment);
+	pSegment = segmentManager.Segment (nSegment);
     // make sure object is within its segment
     // find center of segment then find maximum distance
 	// of corner to center.  Calculate Objects () distance
     // from center and make sure it is less than max corner.
-   center = segP->ComputeCenter ();
+   center = pSegment->ComputeCenter ();
    maxRadius = 0;
 	for (corner = 0; corner < 8; corner++) {
-		if (segP->m_info.vertexIds [corner] <= MAX_VERTEX) {
-			radius = Distance (*vertexManager.Vertex (segP->m_info.vertexIds [corner]), center);
+		if (pSegment->m_info.vertexIds [corner] <= MAX_VERTEX) {
+			radius = Distance (*vertexManager.Vertex (pSegment->m_info.vertexIds [corner]), center);
 			maxRadius = max (maxRadius, radius);
 			}
 		}
-	object_radius = Distance (objP->Position (), center);
-   if ((object_radius > maxRadius) && (objP->Type () != OBJ_EFFECT)) {
+	object_radius = Distance (pObject->Position (), center);
+   if ((object_radius > maxRadius) && (pObject->Type () != OBJ_EFFECT)) {
       sprintf_s (message, sizeof (message), "ERROR: Object is outside of segment (object=%d, segment=%d)", nObject, nSegment);
       if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
     }
 
     // check for non-zero flags (I don't know what these flags are for)
-   flags = objP->m_info.flags;
+   flags = pObject->m_info.flags;
 	if (flags != 0) {
 		if (m_bAutoFixBugs) {
-			objP->m_info.flags = 0;
+			pObject->m_info.flags = 0;
 			sprintf_s (message, sizeof (message), "FIXED: Flags for object non-zero (object=%d, flags=%d)", nObject, flags);
 			}
 		else
@@ -693,72 +693,72 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
     }
 
     // check type range
-	 if ((objP->Id () < 0) || (objP->Id () > 255)) {
+	 if ((pObject->Id () < 0) || (pObject->Id () > 255)) {
 		 if (m_bAutoFixBugs) {
-			sprintf_s (message, sizeof (message), "FIXED: Illegal object id (object=%d, id=%d)", nObject, objP->Id ());
-			objP->Id () = 0;
+			sprintf_s (message, sizeof (message), "FIXED: Illegal object id (object=%d, id=%d)", nObject, pObject->Id ());
+			pObject->Id () = 0;
 			}
 		 else
-			sprintf_s (message, sizeof (message), "WARNING: Illegal object id (object=%d, id=%d)", nObject, objP->Id ());
+			sprintf_s (message, sizeof (message), "WARNING: Illegal object id (object=%d, id=%d)", nObject, pObject->Id ());
 		 if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
 
-	type = objP->Type ();
+	type = pObject->Type ();
     switch (type) {
 	  case OBJ_PLAYER:
 		  if (!playerP)
-			  playerP = objP;
-			if (objP->Id () >= MAX_PLAYERS) {
+			  playerP = pObject;
+			if (pObject->Id () >= MAX_PLAYERS) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message), "FIXED: Illegal player id (object=%d, id=%d)", nObject, objP->Id ());
-				objP->Id () = MAX_PLAYERS - 1;
+					sprintf_s (message, sizeof (message), "FIXED: Illegal player id (object=%d, id=%d)", nObject, pObject->Id ());
+				pObject->Id () = MAX_PLAYERS - 1;
 				}
 			else
-				sprintf_s (message, sizeof (message), "WARNING: Illegal player id (object=%d, id=%d)", nObject, objP->Id ());
+				sprintf_s (message, sizeof (message), "WARNING: Illegal player id (object=%d, id=%d)", nObject, pObject->Id ());
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
 
 	  case OBJ_COOP:
-		  if (objP->Id () >= MAX_PLAYERS + MAX_COOP_PLAYERS) {
+		  if (pObject->Id () >= MAX_PLAYERS + MAX_COOP_PLAYERS) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message), "FIXED: Illegal coop player id (object=%d, id=%d)", nObject, objP->Id ());
-				objP->Id () = MAX_PLAYERS + objP->Id () % MAX_COOP_PLAYERS;
+				sprintf_s (message, sizeof (message), "FIXED: Illegal coop player id (object=%d, id=%d)", nObject, pObject->Id ());
+				pObject->Id () = MAX_PLAYERS + pObject->Id () % MAX_COOP_PLAYERS;
 				}
 			else
-				sprintf_s (message, sizeof (message), "WARNING: Illegal coop player id (object=%d, id=%d)", nObject, objP->Id ());
+				sprintf_s (message, sizeof (message), "WARNING: Illegal coop player id (object=%d, id=%d)", nObject, pObject->Id ());
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
 			break;
 
 	  case OBJ_EFFECT:
-			if (objP->Id () > MAX_EFFECT_ID) {
+			if (pObject->Id () > MAX_EFFECT_ID) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message), "FIXED: effect id (object=%d, id=%d)", nObject, objP->Id ());
-					objP->Id () = MAX_EFFECT_ID;
+					sprintf_s (message, sizeof (message), "FIXED: effect id (object=%d, id=%d)", nObject, pObject->Id ());
+					pObject->Id () = MAX_EFFECT_ID;
 					}
 				else
-					sprintf_s (message, sizeof (message), "WARNING: Illegal effect id (object=%d, id=%d)", nObject, objP->Id ());
+					sprintf_s (message, sizeof (message), "WARNING: Illegal effect id (object=%d, id=%d)", nObject, pObject->Id ());
 				if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 					return true;
 				}
-			else if (!objP->CheckEffectType (m_bAutoFixBugs == TRUE)) {
-				sprintf_s (message, sizeof (message), "%s: Illegal effect id (object=%d, id=%d)", m_bAutoFixBugs ? "FIXED" : "WARNING", nObject, objP->Id ());
+			else if (!pObject->CheckEffectType (m_bAutoFixBugs == TRUE)) {
+				sprintf_s (message, sizeof (message), "%s: Illegal effect id (object=%d, id=%d)", m_bAutoFixBugs ? "FIXED" : "WARNING", nObject, pObject->Id ());
 				if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 					return true;
 				}
 			break;
 
 	  case OBJ_ROBOT:
-		  if (objP->Id () > nMaxRobotId) {
+		  if (pObject->Id () > nMaxRobotId) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message), "FIXED: robot id (object=%d, id=%d)", nObject, objP->Id ());
-				objP->Id () = nMaxRobotId;
+				sprintf_s (message, sizeof (message), "FIXED: robot id (object=%d, id=%d)", nObject, pObject->Id ());
+				pObject->Id () = nMaxRobotId;
 				}
 			else
-				sprintf_s (message, sizeof (message), "WARNING: Illegal robot id (object=%d, id=%d)", nObject, objP->Id ());
+				sprintf_s (message, sizeof (message), "WARNING: Illegal robot id (object=%d, id=%d)", nObject, pObject->Id ());
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
@@ -788,10 +788,10 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 			return true;
 		}
 
-    id = objP->Id ();
+    id = pObject->Id ();
 
     // check id range
-    if (h = CheckId (objP->Type (), objP->Id ())) {
+    if (h = CheckId (pObject->Type (), pObject->Id ())) {
 		 if (h == 2)
 	      sprintf_s (message, sizeof (message), "FIXED: Illegal object id (object=%d, id=%d)", nObject, id);
 		else
@@ -801,10 +801,10 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
     }
 
 	// check contains count range
-    count = objP->m_info.contents.count;
+    count = pObject->m_info.contents.count;
 	if (count < -1) {
 		if (m_bAutoFixBugs) {
-			objP->m_info.contents.count = 0;
+			pObject->m_info.contents.count = 0;
 		  sprintf_s (message, sizeof (message), "FIXED: Spawn count must be >= -1 (object=%d, count=%d)", nObject, count);
 			}
 		else
@@ -815,19 +815,19 @@ for (nObject = 0; nObject < objCount ; nObject++, objP++) {
 
 	// check container type range
 	if (count > 0) {
-		type = objP->m_info.contents.type;
+		type = pObject->m_info.contents.type;
 		if (type != OBJ_ROBOT && type != OBJ_POWERUP) {
 			if (m_bAutoFixBugs) {
-				objP->m_info.contents.type = OBJ_POWERUP;
+				pObject->m_info.contents.type = OBJ_POWERUP;
 				sprintf_s (message, sizeof (message), "FIXED: Illegal contained type (object=%d, contains=%d)", nObject, type);
 				}
 			else
 				sprintf_s (message, sizeof (message), "WARNING: Illegal contained type (object=%d, contains=%d)", nObject, type);
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) return true;
 			}
-		id = objP->m_info.contents.id;
+		id = pObject->m_info.contents.id;
 		// check contains id range
-		if (h = CheckId (objP->m_info.contents.id, objP->m_info.contents.type)) {
+		if (h = CheckId (pObject->m_info.contents.id, pObject->m_info.contents.type)) {
 			if (h == 2)
 				sprintf_s (message, sizeof (message), "FIXED: Illegal contains id (object=%d, contains id=%d)", nObject, id);
 			else
@@ -861,14 +861,14 @@ if (objectManager.Object (0)->m_info.type != OBJ_PLAYER || objectManager.Object 
 	memset (nPlayers, 0, sizeof (nPlayers));
 	bFix = 0;
 	// count each
-	objP = objectManager.Object (0);
-	for (nObject = 0; nObject < objCount; nObject++, objP++) {
-		if (objP->Type () == OBJ_PLAYER) {
+	pObject = objectManager.Object (0);
+	for (nObject = 0; nObject < objCount; nObject++, pObject++) {
+		if (pObject->Type () == OBJ_PLAYER) {
 			nPlayers [0]++;
 			if (CheckAndFixPlayer (0, MAX_PLAYERS, nObject, players))
 				bFix |= 1;
 			}
-		else if (objP->Type () == OBJ_COOP) {
+		else if (pObject->Type () == OBJ_COOP) {
 			nPlayers [1]++;
 			if (CheckAndFixPlayer (MAX_PLAYERS, MAX_PLAYERS + MAX_COOP_PLAYERS, nObject, players))
 				bFix |= 2;
@@ -887,15 +887,15 @@ if (m_bAutoFixBugs) {
 			if (players [id] != 0) 
 				players [id] = id;
 		}
-	objP = objectManager.Object (0);
-	for (nObject = 0; nObject < objCount; nObject++, objP++) {
-		if (objP->Type () == OBJ_PLAYER) {
-			if ((bFix & 1) && (objP->Id () >= 0) && (objP->Id () < MAX_PLAYERS))
-				objP->Id () = players [objP->Id ()] - 1;
+	pObject = objectManager.Object (0);
+	for (nObject = 0; nObject < objCount; nObject++, pObject++) {
+		if (pObject->Type () == OBJ_PLAYER) {
+			if ((bFix & 1) && (pObject->Id () >= 0) && (pObject->Id () < MAX_PLAYERS))
+				pObject->Id () = players [pObject->Id ()] - 1;
 			}
-		else if (objP->Type () == OBJ_COOP) {
-			if ((bFix & 2) && (objP->Id () >= MAX_PLAYERS) && (objP->Id () < MAX_PLAYERS + MAX_COOP_PLAYERS))
-				objP->Id () = players [objP->Id ()] - 1;
+		else if (pObject->Type () == OBJ_COOP) {
+			if ((bFix & 2) && (pObject->Id () >= MAX_PLAYERS) && (pObject->Id () < MAX_PLAYERS + MAX_COOP_PLAYERS))
+				pObject->Id () = players [pObject->Id ()] - 1;
 			}
 		}
 	}
@@ -925,16 +925,16 @@ else if (nPlayers [1] > 3) {
 
   // make sure there is only one control center
 count = 0;
-objP = objectManager.Object (0);
-for (nObject = 0; nObject < objCount; nObject++, objP++) {
+pObject = objectManager.Object (0);
+for (nObject = 0; nObject < objCount; nObject++, pObject++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	type = objP->Type ();
+	type = pObject->Type ();
 	if (type == OBJ_REACTOR) {
-		if (segmentManager.Segment (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_REACTOR) {
-			if (m_bAutoFixBugs && segmentManager.CreateRobotMaker (objP->m_info.nSegment, false, false))
-				sprintf_s (message, sizeof (message), "FIXED: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)", nObject, objP->m_info.nSegment);
+		if (segmentManager.Segment (pObject->m_info.nSegment)->m_info.function != SEGMENT_FUNC_REACTOR) {
+			if (m_bAutoFixBugs && segmentManager.CreateRobotMaker (pObject->m_info.nSegment, false, false))
+				sprintf_s (message, sizeof (message), "FIXED: Reactor belongs to a segment of wrong type (pObject=%d, pSegment=%d)", nObject, pObject->m_info.nSegment);
 			else
-				sprintf_s (message, sizeof (message), "WARNING: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)", nObject, objP->m_info.nSegment);
+				sprintf_s (message, sizeof (message), "WARNING: Reactor belongs to a segment of wrong type (pObject=%d, pSegment=%d)", nObject, pObject->m_info.nSegment);
 			if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
@@ -984,12 +984,12 @@ if (theMine == null)
 	LBBugs ()->AddString ("[Triggers]");
 	int segCount = segmentManager.Count ();
 	int trigCount = triggerManager.WallTriggerCount ();
-	CTrigger *trigP = triggerManager.Trigger (0);
+	CTrigger *pTrigger = triggerManager.Trigger (0);
 	int wallCount = wallManager.WallCount ();
-	CWall *wallP;
+	CWall *pWall;
 	CReactorTrigger *reactorTrigger = triggerManager.ReactorTrigger (0);
 
-	// make sure trigP is linked to exactly one wallP
+	// make sure pTrigger is linked to exactly one pWall
 for (i = 0; i < reactorTrigger->Count (); i++)
 	if ((reactorTrigger->Segment (i) >= segCount) ||
 		(segmentManager.Segment (reactorTrigger->Segment (i))->m_sides [reactorTrigger->Side (i)].m_info.nWall >= wallCount)) {
@@ -1005,37 +1005,37 @@ for (i = 0; i < reactorTrigger->Count (); i++)
 				return true;
 			}
 		}
-for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
+for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, pTrigger++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	count = 0;
-	CWall* wallP = null;
-	for (nWall = 0; wallP = wallManager.FindByTrigger (nTrigger, nWall); nWall++) {
-		nWall = wallManager.Index (wallP);
+	CWall* pWall = null;
+	for (nWall = 0; pWall = wallManager.FindByTrigger (nTrigger, nWall); nWall++) {
+		nWall = wallManager.Index (pWall);
 		if (++count > 1) {
 			sprintf_s (message, sizeof (message), "WARNING: Trigger belongs to more than one wall (trigger=%d, wall=%d)", nTrigger, nWall);
-			if (UpdateStats (message, 0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+			if (UpdateStats (message, 0, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 		// if exit, make sure it is linked to CReactorTrigger
-		bool bExit = trigP->IsExit (false);
-		bool bFound = (reactorTrigger->Find (*wallP) >= 0);
+		bool bExit = pTrigger->IsExit (false);
+		bool bFound = (reactorTrigger->Find (*pWall) >= 0);
 		if (bExit != bFound) {
 			if (m_bAutoFixBugs) {
 				if (bExit) {
-					triggerManager.ReactorTrigger ()->Add (*wallP);
-					sprintf_s (message, sizeof (message), "FIXED: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					triggerManager.ReactorTrigger ()->Add (*pWall);
+					sprintf_s (message, sizeof (message), "FIXED: Exit not linked to reactor (segment=%d, side=%d)", pWall->m_nSegment, pWall->m_nSide);
 					}
 				else {
-					triggerManager.ReactorTrigger ()->Delete (*wallP);
-					sprintf_s (message, sizeof (message), "FIXED: Reactor linked to non-exit (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					triggerManager.ReactorTrigger ()->Delete (*pWall);
+					sprintf_s (message, sizeof (message), "FIXED: Reactor linked to non-exit (segment=%d, side=%d)", pWall->m_nSegment, pWall->m_nSide);
 					}
 				}
 			else {
 				if (bExit)
-					sprintf_s (message, sizeof (message), "WARNING: Exit not linked to reactor (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					sprintf_s (message, sizeof (message), "WARNING: Exit not linked to reactor (segment=%d, side=%d)", pWall->m_nSegment, pWall->m_nSide);
 				else
-					sprintf_s (message, sizeof (message), "WARNING: Reactor linked to non-exit (segment=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					sprintf_s (message, sizeof (message), "WARNING: Reactor linked to non-exit (segment=%d, side=%d)", pWall->m_nSegment, pWall->m_nSide);
 				}
-			if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall))
+			if (UpdateStats (message, 1, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall))
 				return true;
 			}
 		}
@@ -1044,7 +1044,7 @@ for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		if (m_bAutoFixBugs) {
 			triggerManager.Delete (nTrigger);
 			nTrigger--;
-			trigP--;
+			pTrigger--;
 			trigCount--;
 			sprintf_s (message, sizeof (message), "FIXED: Unused trigger (trigger=%d)", nTrigger + nDelTrigger);
 			nDelTrigger++;
@@ -1056,20 +1056,20 @@ for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	}
 
 short trigSeg, trigSide;
-trigP = triggerManager.Trigger (0);
-for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
+pTrigger = triggerManager.Trigger (0);
+for (nTrigger = 0; nTrigger < trigCount; nTrigger++, pTrigger++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	wallP = wallManager.FindByTrigger (nTrigger);
-	if (wallP != null) {
-		trigSeg = wallP->m_nSegment;
-		trigSide = wallP->m_nSide;
+	pWall = wallManager.FindByTrigger (nTrigger);
+	if (pWall != null) {
+		trigSeg = pWall->m_nSegment;
+		trigSide = pWall->m_nSide;
 		}
 	else
 		trigSeg = trigSide = -1;
-	// check number of links of trigP (only for
-	int tt = trigP->Type ();
-	int tf = trigP->Info ().flags;
-	if (trigP->Count () == 0) {
+	// check number of links of pTrigger (only for
+	int tt = pTrigger->Type ();
+	int tf = pTrigger->Info ().flags;
+	if (pTrigger->Count () == 0) {
 		if (DLE.IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
@@ -1082,10 +1082,10 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		}
 	else {
 		// check range of links
-		for (nTarget = 0; nTarget < trigP->Count (); nTarget++) {
+		for (nTarget = 0; nTarget < pTrigger->Count (); nTarget++) {
 			if (nTarget >= MAX_TRIGGER_TARGETS) {
 				if (m_bAutoFixBugs) {
-					trigP->Count () = MAX_TRIGGER_TARGETS;
+					pTrigger->Count () = MAX_TRIGGER_TARGETS;
 					sprintf_s (message, sizeof (message), "FIXED: Trigger has too many targets (trigger=%d, number of links=%d)", nTrigger, nTarget);
 					}
 				else
@@ -1095,15 +1095,15 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 				break;
 				}
 			// check segment range
-			nSegment = trigP->Segment (nTarget);
-			nSide = trigP->Side (nTarget);
+			nSegment = pTrigger->Segment (nTarget);
+			nSide = pTrigger->Side (nTarget);
 			if ((nSegment < 0) || ((nSide < 0) ? (nSegment >= objectManager.Count ()) : (nSegment >= segmentManager.Count ()))) {
 				if (m_bAutoFixBugs) {
-					if (trigP->Delete (nTarget))
+					if (pTrigger->Delete (nTarget))
 						nTarget--;
-					else { // => trigP deleted
+					else { // => pTrigger deleted
 						nTarget = MAX_TRIGGER_TARGETS;	// take care of the loops
-						trigP--;
+						pTrigger--;
 						}
 					sprintf_s (message, sizeof (message), "FIXED: Trigger points to non-existant %s (trigger=%d, segment=%d)", 
 								  (nSide < 0) ? "object" : "segment", nTrigger, nSegment);
@@ -1129,20 +1129,20 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 					if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 						return true;
 				} else {
-					CSegment *segP = segmentManager.Segment (nSegment);
-					// check door opening trigP
-//						if (trigP->Info ().flags == TRIGGER_CONTROL_DOORS) {
+					CSegment *pSegment = segmentManager.Segment (nSegment);
+					// check door opening pTrigger
+//						if (pTrigger->Info ().flags == TRIGGER_CONTROL_DOORS) {
 					if (DLE.IsD1File ()
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
-						// make sure trigP points to a wallP if it controls doors
-						if (segP->m_sides[nSide].m_info.nWall >= wallCount) {
+						// make sure pTrigger points to a pWall if it controls doors
+						if (pSegment->m_sides[nSide].m_info.nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
-								if (trigP->Delete (nTarget))
+								if (pTrigger->Delete (nTarget))
 									nTarget--;
 								else {
 									nTarget = MAX_TRIGGER_TARGETS;
-									trigP--;
+									pTrigger--;
 									}
 								sprintf_s (message, sizeof (message), "FIXED: Trigger does not target a door (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 								}
@@ -1151,15 +1151,15 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 						}
 
-						// make sure oposite segment/side has a wallP too
+						// make sure oposite segment/side has a pWall too
 						CSideKey opp;
-						CSide* oppSideP = segmentManager.BackSide (CSideKey (nSegment, nSide), opp);
-						if (oppSideP == null) {
+						CSide* pOppSide = segmentManager.BackSide (CSideKey (nSegment, nSide), opp);
+						if (pOppSide == null) {
 							sprintf_s (message, sizeof (message), "WARNING: Trigger opens a single sided door (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						else {
-							if (oppSideP->Wall () == null) {
+							if (pOppSide->Wall () == null) {
 								sprintf_s (message, sizeof (message), "WARNING: Trigger opens a single sided door (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 								if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 								}
@@ -1169,14 +1169,14 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 								? tf & (TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 								: tt == TT_ILLUSION_OFF || tt == TT_ILLUSION_ON || tt == TT_OPEN_WALL || tt == TT_CLOSE_WALL || tt == TT_ILLUSORY_WALL
 							  ) {
-						// make sure trigP points to a wallP if it controls doors
-						if (segP->m_sides [nSide].m_info.nWall >= wallCount) {
+						// make sure pTrigger points to a pWall if it controls doors
+						if (pSegment->m_sides [nSide].m_info.nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
-								if (trigP->Delete (nTarget))
+								if (pTrigger->Delete (nTarget))
 									nTarget--;
 								else {
 									nTarget = MAX_TRIGGER_TARGETS;
-									trigP--;
+									pTrigger--;
 									}
 								sprintf_s (message, sizeof (message), "FIXED: Trigger target does not exist (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 								}
@@ -1185,9 +1185,9 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						}
-//						if (trigP->Info ().flags == TRIGGER_MATCEN) {
+//						if (pTrigger->Info ().flags == TRIGGER_MATCEN) {
 					else if (DLE.IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
-						if ((segP->m_info.function != SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.function != SEGMENT_FUNC_EQUIPMAKER)) {
+						if ((pSegment->m_info.function != SEGMENT_FUNC_ROBOTMAKER) && (pSegment->m_info.function != SEGMENT_FUNC_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message), "WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d, %d))", nTrigger, nSegment, nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
@@ -1200,18 +1200,18 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 
 // make sure there is exactly one exit and its linked to the CReactorTrigger
 count = 0;
-trigP = triggerManager.Trigger (0);
-for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
+pTrigger = triggerManager.Trigger (0);
+for (nTrigger = 0; nTrigger < trigCount; nTrigger++, pTrigger++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	wallP = wallManager.FindByTrigger (nTrigger);
-	if (wallP != null) {
-		trigSeg = wallP->m_nSegment;
-		trigSide = wallP->m_nSide;
+	pWall = wallManager.FindByTrigger (nTrigger);
+	if (pWall != null) {
+		trigSeg = pWall->m_nSegment;
+		trigSide = pWall->m_nSide;
 		}
 	else
 		trigSeg = trigSide = -1;
-	int tt = trigP->Type ();
-	int tf = trigP->Info ().flags;
+	int tt = pTrigger->Type ();
+	int tf = pTrigger->Info ().flags;
 	if (DLE.IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
@@ -1224,10 +1224,10 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 trigCount = triggerManager.ObjTriggerCount ();
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	trigP = triggerManager.ObjTrigger (nTrigger);
-	if ((trigP->Type () != TT_MESSAGE) && (trigP->Type () != TT_SOUND) && (trigP->Type () != TT_COUNTDOWN) && !trigP->Count ()) {
-		sprintf_s (message, sizeof (message), "ERROR: Object trigger has no targets (trigger=%d, object=%d))", nTrigger, trigP->Info ().nObject);
-		if (UpdateStats (message, 0, nTrigger, trigP->Info ().nObject, -1, -1, -1, -1, nTrigger)) return true;
+	pTrigger = triggerManager.ObjTrigger (nTrigger);
+	if ((pTrigger->Type () != TT_MESSAGE) && (pTrigger->Type () != TT_SOUND) && (pTrigger->Type () != TT_COUNTDOWN) && !pTrigger->Count ()) {
+		sprintf_s (message, sizeof (message), "ERROR: Object trigger has no targets (trigger=%d, object=%d))", nTrigger, pTrigger->Info ().nObject);
+		if (UpdateStats (message, 0, nTrigger, pTrigger->Info ().nObject, -1, -1, -1, -1, nTrigger)) return true;
 		}
 	}
 if (count < 1) {
@@ -1270,13 +1270,13 @@ return h;
 
 void CDiagTool::CountProducerRefs (int nSpecialType, short* refList, CObjectProducer* producerP, short nProducers)
 {
-	CSegment*		segP = segmentManager.Segment (0);
+	CSegment*		pSegment = segmentManager.Segment (0);
 	short				n, h, i, j = segmentManager.Count ();
 
 memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS_D2);
-for (h = i = 0; i < j; i++, segP++) {
-	if (segP->m_info.function == ubyte (nSpecialType)) {
-		n = segP->m_info.nProducer;
+for (h = i = 0; i < j; i++, pSegment++) {
+	if (pSegment->m_info.function == ubyte (nSpecialType)) {
+		n = pSegment->m_info.nProducer;
 		if ((n >= 0) && (n < nProducers) && (refList [n] >= 0)) {
 			if (producerP [n].m_info.nSegment == i)
 				refList [n] = -1;
@@ -1291,16 +1291,16 @@ for (h = i = 0; i < j; i++, segP++) {
 
 short CDiagTool::FixProducers (int nSpecialType, short* segList, short* refList, CObjectProducer* producerP, short nProducers, char* pszType)
 {
-	CSegment*	segP = segmentManager.Segment (0);
+	CSegment*	pSegment = segmentManager.Segment (0);
 	short			n, h, i, j = segmentManager.Count ();
 
-for (h = i = 0; i < j; i++, segP++) {
-	if (segP->m_info.function != ubyte (nSpecialType))
+for (h = i = 0; i < j; i++, pSegment++) {
+	if (pSegment->m_info.function != ubyte (nSpecialType))
 		continue;
-	n = segP->m_info.nProducer;
+	n = pSegment->m_info.nProducer;
 	if ((n < 0) || (n >= nProducers)) {
 		if (m_bAutoFixBugs)
-			n = segP->m_info.nProducer = char (FindProducer (producerP, i));
+			n = pSegment->m_info.nProducer = char (FindProducer (producerP, i));
 		sprintf_s (message, sizeof (message), "%s: %s maker list corrupted (segment=%d)", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
 		if (UpdateStats (message, i)) return true;
 		}
@@ -1310,17 +1310,17 @@ for (h = i = 0; i < j; i++, segP++) {
 		if (m_bAutoFixBugs) {
 			n = char (FindProducer (producerP, i));
 			if (n >= 0) {
-				segP->m_info.nProducer = n;
+				pSegment->m_info.nProducer = n;
 				refList [n] = -1;
 				}
 			else {
-				n = segP->m_info.nProducer;
+				n = pSegment->m_info.nProducer;
 				if (refList [n] >= 0) {
 					producerP [n].m_info.nSegment = i;
 					refList [n] = -1;
 					}
 				else
-					segP->m_info.nProducer = -1;
+					pSegment->m_info.nProducer = -1;
 				}
 			}
 		}
@@ -1342,18 +1342,18 @@ short CDiagTool::AssignProducers (int nSpecialType, short* segList, short* refLi
 if (!m_bAutoFixBugs)
 	return nProducers;
 
-	CSegment*	segP = segmentManager.Segment (0);
+	CSegment*	pSegment = segmentManager.Segment (0);
 	short			h, i, j = segmentManager.Count ();
 
-for (h = i = 0; i < j; i++, segP++) {
-	if (segP->m_info.function != ubyte (nSpecialType))
+for (h = i = 0; i < j; i++, pSegment++) {
+	if (pSegment->m_info.function != ubyte (nSpecialType))
 		continue;
-	short n = segP->m_info.nProducer;
+	short n = pSegment->m_info.nProducer;
 	if (n >= 0)
 		continue;
 	n = FindProducer (producerP, i, refList);
 	if (n >= 0) {
-		segP->m_info.nProducer = n;
+		pSegment->m_info.nProducer = n;
 		producerP [n].m_info.nSegment = i;
 		refList [n] = -1;
 		}
@@ -1370,7 +1370,7 @@ short CDiagTool::CleanupProducers (short* refList, CObjectProducer* producerP, s
 if (!m_bAutoFixBugs)
 	return nProducers;
 
-	CSegment*	segP = segmentManager.Segment (0);
+	CSegment*	pSegment = segmentManager.Segment (0);
 	
 for (int i = 0; i < nProducers; i) {
 	if (refList [i] < 0) 
@@ -1379,7 +1379,7 @@ for (int i = 0; i < nProducers; i) {
 		if (i < --nProducers) {
 			producerP [i] = producerP [nProducers];
 			producerP [i].m_info.nProducer =
-			segP [producerP [i].m_info.nSegment].m_info.nProducer = i;
+			pSegment [producerP [i].m_info.nSegment].m_info.nProducer = i;
 			refList [i] = refList [nProducers];
 			}
 		}
@@ -1397,7 +1397,7 @@ if (theMine == null)
 	short					h = segmentManager.Count (), i, nSegment = 0;
 	bool					bOk = true;
 	short					nProducerSegs, nProducers = short (segmentManager.RobotMakerCount ());
-	CSegment*			segP = segmentManager.Segment (0);
+	CSegment*			pSegment = segmentManager.Segment (0);
 	CObjectProducer*	producerP = segmentManager.RobotMaker (0);
 	short					segList [MAX_NUM_MATCENS_D2];
 	short					refList [MAX_NUM_MATCENS_D2];
@@ -1467,23 +1467,23 @@ if (DLE.LevelVersion () < 7)
   LBBugs ()->AddString ("[Lights]");
 
 for (int i = 0, j = lightManager.Count (); i < j; i++) {
-	CVariableLight* lightP = lightManager.VariableLight (i);
-	CSide* sideP = segmentManager.Segment (lightP->m_nSegment)->Side (lightP->m_nSide);
-	if (!(lightManager.IsLight (sideP->BaseTex ()) || lightManager.IsLight (sideP->OvlTex (0)))) {
+	CVariableLight* pLight = lightManager.VariableLight (i);
+	CSide* pSide = segmentManager.Segment (pLight->m_nSegment)->Side (pLight->m_nSide);
+	if (!(lightManager.IsLight (pSide->BaseTex ()) || lightManager.IsLight (pSide->OvlTex (0)))) {
 		sprintf_s (message, sizeof (message), "%: Variable light doesn't refer to a light source (segment=%d, side=%d)", 
-					  m_bAutoFixBugs ? "FIXED" : "ERROR", lightP->m_nSegment, lightP->m_nSide);
-		if (UpdateStats (message, m_bAutoFixBugs ? 1 : 0, lightP->m_nSegment, lightP->m_nSide)) return true;
+					  m_bAutoFixBugs ? "FIXED" : "ERROR", pLight->m_nSegment, pLight->m_nSide);
+		if (UpdateStats (message, m_bAutoFixBugs ? 1 : 0, pLight->m_nSegment, pLight->m_nSide)) return true;
 		if (m_bAutoFixBugs) {
-			lightManager.DeleteVariableLight (*lightP);
+			lightManager.DeleteVariableLight (*pLight);
 			--i;
 			}
 		}
-	else if (!lightP->m_info.delay) {
+	else if (!pLight->m_info.delay) {
 		if (m_bAutoFixBugs) 
-			lightP->m_info.delay = 100;
+			pLight->m_info.delay = 100;
 		sprintf_s (message, sizeof (message), "%s: Variable light has no delay (segment=%d, side=%d)", 
-					  m_bAutoFixBugs ? "FIXED" : "ERROR", lightP->m_nSegment, lightP->m_nSide);
-		if (UpdateStats (message, m_bAutoFixBugs ? 1 : 0, lightP->m_nSegment, lightP->m_nSide)) return true;
+					  m_bAutoFixBugs ? "FIXED" : "ERROR", pLight->m_nSegment, pLight->m_nSide);
+		if (UpdateStats (message, m_bAutoFixBugs ? 1 : 0, pLight->m_nSegment, pLight->m_nSide)) return true;
 		}
 	}
 if (sub_errors == m_nErrors [0] && sub_warnings == m_nErrors [1]) {
@@ -1499,9 +1499,9 @@ return false;
 CWall *CDiagTool::OppWall (ushort nSegment, ushort nSide)
 {
 	CSideKey	opp;
-	CSide*	sideP = segmentManager.BackSide (CSideKey (nSegment, nSide), opp);
+	CSide*	pSide = segmentManager.BackSide (CSideKey (nSegment, nSide), opp);
 
-return (sideP == null) ? null : sideP->Wall ();
+return (pSide == null) ? null : pSide->Wall ();
 }
 
 //--------------------------------------------------------------------------
@@ -1515,8 +1515,8 @@ if (theMine == null)
 	short nSegment, nSide;
 	ushort nWall, wallCount = wallManager.WallCount (), 
 			 maxWalls = MAX_WALLS;
-	CSegment *segP;
-	CSide *sideP;
+	CSegment *pSegment;
+	CSide *pSide;
 	CWall *w, *ow;
 	int segCount = segmentManager.Count ();
 	ubyte wallFixed [MAX_WALLS_D2];
@@ -1527,12 +1527,12 @@ if (theMine == null)
 
 memset (wallFixed, 0, sizeof (wallFixed));
 *message = '\0';
-for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegment++, segP++) {
-	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
-		nWall = sideP->m_info.nWall;
+for (nSegment = 0, pSegment = segmentManager.Segment (0); nSegment < segCount; nSegment++, pSegment++) {
+	for (nSide = 0, pSide = pSegment->m_sides; nSide < 6; nSide++, pSide++) {
+		nWall = pSide->m_info.nWall;
 		if ((nWall < 0) || (nWall >= wallCount) || (nWall >= maxWalls)) {
 			if (nWall != NO_WALL)
-				sideP->m_info.nWall = NO_WALL;
+				pSide->m_info.nWall = NO_WALL;
 			continue;
 			}
 		w = wallManager.Wall (nWall);
@@ -1542,10 +1542,10 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 							"FIXED: Wall sits in wrong segment (segment=%d, wall=%d, parent=%d)", 
 							nSegment, nWall, w->m_nSegment);
 				if (wallFixed [nWall])
-					sideP->m_info.nWall = NO_WALL;
+					pSide->m_info.nWall = NO_WALL;
 				else {
 					if (segmentManager.Segment (w->m_nSegment)->m_sides [w->m_nSide].m_info.nWall == nWall)
-						sideP->m_info.nWall = NO_WALL;
+						pSide->m_info.nWall = NO_WALL;
 					else {
 						w->m_nSegment = nSegment;
 						w->m_nSide = nSide;
@@ -1557,7 +1557,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 				sprintf_s (message, sizeof (message), 
 							"ERROR: Wall sits in wrong segment (segment=%d, wall=%d, parent=%d)", 
 							nSegment, nWall, w->m_nSegment);
-			if (UpdateStats (message, 1, nSegment, nSide, -1, -1, -1, sideP->m_info.nWall)) return true;
+			if (UpdateStats (message, 1, nSegment, nSide, -1, -1, -1, pSide->m_info.nWall)) return true;
 			} 
 		else if (w->m_nSide != nSide) {
 			if (m_bAutoFixBugs) {
@@ -1565,15 +1565,15 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 							"FIXED: Wall sits at wrong side (segment=%d, side=%d, wall=%d, parent=%d)", 
 							nSegment, nSide, nWall, w->m_nSegment);
 				if (wallFixed [nWall])
-					sideP->m_info.nWall = NO_WALL;
+					pSide->m_info.nWall = NO_WALL;
 				else {
 					ow = OppWall (nSegment, nSide);
 					if (ow && (ow->Type () == w->Type ())) {
-						segP->m_sides [w->m_nSide].m_info.nWall = NO_WALL;
+						pSegment->m_sides [w->m_nSide].m_info.nWall = NO_WALL;
 						w->m_nSide = nSide;
 						}
-					else if (segP->m_sides [w->m_nSide].m_info.nWall == nWall)
-						sideP->m_info.nWall = NO_WALL;
+					else if (pSegment->m_sides [w->m_nSide].m_info.nWall == nWall)
+						pSide->m_info.nWall = NO_WALL;
 					else
 						w->m_nSide = nSide;
 					wallFixed [nWall] = 1;
@@ -1583,207 +1583,207 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 				sprintf_s (message, sizeof (message), 
 							"ERROR: Wall sits at wrong side (segment=%d, side=%d, wall=%d, parent=%d)", 
 							nSegment, nSide, nWall, w->m_nSegment);
-			if (UpdateStats (message, 1, -1, -1, -1, -1, -1, sideP->m_info.nWall)) return true;
+			if (UpdateStats (message, 1, -1, -1, -1, -1, -1, pSide->m_info.nWall)) return true;
 			}
 		} 
 	}
 
-CWall *wallP = wallManager.Wall (0);
-for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
+CWall *pWall = wallManager.Wall (0);
+for (nWall = 0; nWall < wallCount; nWall++, pWall++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
-	if (wallP->Type () > (DLE.IsD1File () ? WALL_CLOSED : DLE.IsStdLevel () ? WALL_CLOAKED : WALL_COLORED)) {
+	if (pWall->Type () > (DLE.IsD1File () ? WALL_CLOSED : DLE.IsStdLevel () ? WALL_CLOAKED : WALL_COLORED)) {
 		sprintf_s (message, sizeof (message), 
 					"ERROR: Wall type out of range (wall=%d, type=%d)", 
-					nWall, wallP->Type ());
-		if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+					nWall, pWall->Type ());
+		if (UpdateStats (message, 1, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 		}
 		// check range of segment number that the wall points to
-	if (wallP->m_nSegment >= segmentManager.Count ()) {
+	if (pWall->m_nSegment >= segmentManager.Count ()) {
 		sprintf_s (message, sizeof (message), 
 					"ERROR: Wall sits in non-existant segment (wall=%d, segment=%d)", 
-					nWall, wallP->m_nSegment);
+					nWall, pWall->m_nSegment);
 		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, nWall)) return true;
 		} 
-	else if (wallP->m_nSide >= 6) {
+	else if (pWall->m_nSide >= 6) {
 		// check range of side number that the wall points to
 		sprintf_s (message, sizeof (message), 
 					"ERROR: Wall sits on side which is out of range (wall=%d, side=%d)", 
-					nWall, wallP->m_nSide);
+					nWall, pWall->m_nSide);
 		if (UpdateStats (message, 1, -1 -1, -1, -1, -1, nWall)) return true;
 		}
 	else {
 		// check to make sure segment points back to wall
-		sideP = segmentManager.Segment (wallP->m_nSegment)->m_sides + wallP->m_nSide;
-		if (sideP->m_info.nWall != nWall) {
-			w = wallManager.Wall (sideP->m_info.nWall);
-			if ((sideP->m_info.nWall < wallCount) && (w->m_nSegment == wallP->m_nSegment) && (w->m_nSide == wallP->m_nSide)) {
+		pSide = segmentManager.Segment (pWall->m_nSegment)->m_sides + pWall->m_nSide;
+		if (pSide->m_info.nWall != nWall) {
+			w = wallManager.Wall (pSide->m_info.nWall);
+			if ((pSide->m_info.nWall < wallCount) && (w->m_nSegment == pWall->m_nSegment) && (w->m_nSide == pWall->m_nSide)) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message), 
-								"FIXED: Duplicate wall found (wall=%d, segment=%d)", nWall, wallP->m_nSegment);
+								"FIXED: Duplicate wall found (wall=%d, segment=%d)", nWall, pWall->m_nSegment);
 					wallManager.Delete (nWall);
 					nWall--;
-					wallP--;
+					pWall--;
 					wallCount--;
 					continue;
 					}
 				else 
 					sprintf_s (message, sizeof (message), 
-								"ERROR: Duplicate wall found (wall=%d, segment=%d)", nWall, wallP->m_nSegment);
-				if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+								"ERROR: Duplicate wall found (wall=%d, segment=%d)", nWall, pWall->m_nSegment);
+				if (UpdateStats (message, 1, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
 				if (m_bAutoFixBugs) {
-					sideP->m_info.nWall = nWall;
+					pSide->m_info.nWall = nWall;
 					sprintf_s (message, sizeof (message), 
 								"FIXED: Segment does not reference wall which sits in it (wall=%d, segment=%d)", 
-								nWall, wallP->m_nSegment);
+								nWall, pWall->m_nSegment);
 					}
 				else 
 					sprintf_s (message, sizeof (message), 
 								"ERROR: Segment does not reference wall which sits in it (wall=%d, segment=%d)", 
-								nWall, wallP->m_nSegment);
-				if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+								nWall, pWall->m_nSegment);
+				if (UpdateStats (message, 1, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			}
 			// make sure trigger number of wall is in range
-		if ((wallP->Info ().nTrigger != NO_TRIGGER) && (wallP->Info ().nTrigger >= triggerManager.WallTriggerCount ())) {
+		if ((pWall->Info ().nTrigger != NO_TRIGGER) && (pWall->Info ().nTrigger >= triggerManager.WallTriggerCount ())) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message), 
 							"FIXED: Wall has invalid trigger (wall=%d, trigger=%d)", 
-							nWall, wallP->Info ().nTrigger);
-				wallP->Info ().nTrigger = NO_TRIGGER;
+							nWall, pWall->Info ().nTrigger);
+				pWall->Info ().nTrigger = NO_TRIGGER;
 				}
 			else
 				sprintf_s (message, sizeof (message), 
 							"ERROR: Wall has invalid trigger (wall=%d, trigger=%d)", 
-							nWall, wallP->Info ().nTrigger);
-			if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+							nWall, pWall->Info ().nTrigger);
+			if (UpdateStats (message, 1, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 #if 1 // linked walls not supported in DLE and D2X-XL
-		if (wallP->Info ().linkedWall != -1) {
-			short invLinkedWall = wallP->Info ().linkedWall;
+		if (pWall->Info ().linkedWall != -1) {
+			short invLinkedWall = pWall->Info ().linkedWall;
 			if (m_bAutoFixBugs) {
-				wallP->Info ().linkedWall = -1;
+				pWall->Info ().linkedWall = -1;
 				sprintf_s (message, sizeof (message), 
 							  "FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])", 
-							  nWall, invLinkedWall, wallP->Info ().linkedWall);
+							  nWall, invLinkedWall, pWall->Info ().linkedWall);
 				}
 			else
 				sprintf_s (message, sizeof (message), 
 							  "ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])", 
-							  nWall, invLinkedWall, wallP->Info ().linkedWall);
+							  nWall, invLinkedWall, pWall->Info ().linkedWall);
 			}
 #else
-		if ((wallP->Info ().linkedWall < -1) || (wallP->Info ().linkedWall >= wallCount)) {
+		if ((pWall->Info ().linkedWall < -1) || (pWall->Info ().linkedWall >= wallCount)) {
 			if (m_bAutoFixBugs) {
-				short	oppSeg, oppSide, invLinkedWall = wallP->Info ().linkedWall;
-				if (theMine->OppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
-					wallP->Info ().linkedWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
-					if ((wallP->Info ().linkedWall < -1) || (wallP->Info ().linkedWall >= wallCount))
-						wallP->Info ().linkedWall = -1;
+				short	oppSeg, oppSide, invLinkedWall = pWall->Info ().linkedWall;
+				if (theMine->OppositeSide (oppSeg, oppSide, pWall->m_nSegment, pWall->m_nSide)) {
+					pWall->Info ().linkedWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
+					if ((pWall->Info ().linkedWall < -1) || (pWall->Info ().linkedWall >= wallCount))
+						pWall->Info ().linkedWall = -1;
 					sprintf_s (message, sizeof (message), 
 						"FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])", 
-						nWall, invLinkedWall, wallP->Info ().linkedWall);
+						nWall, invLinkedWall, pWall->Info ().linkedWall);
 					}
 				}
 			else
 				sprintf_s (message, sizeof (message), 
 					"ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d)", 
-					nWall, wallP->Info ().linkedWall);
+					nWall, pWall->Info ().linkedWall);
 			}
-		else if (wallP->Info ().linkedWall >= 0) {
+		else if (pWall->Info ().linkedWall >= 0) {
 			short	oppSeg, oppSide;
-			if (theMine->OppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
+			if (theMine->OppositeSide (oppSeg, oppSide, pWall->m_nSegment, pWall->m_nSide)) {
 				short oppWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
 				if ((oppWall < 0) || (oppWall >= wallCount)) {
 					sprintf_s (message, sizeof (message), 
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d, %d)", 
 						m_bAutoFixBugs ? "FIXED" : "ERROR", 
-						nWall, wallManager.Wall (wallP->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (wallP->Info ().linkedWall)->nSide);
+						nWall, wallManager.Wall (pWall->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (pWall->Info ().linkedWall)->nSide);
 						if (m_bAutoFixBugs)
-							wallP->Info ().linkedWall = -1;
+							pWall->Info ().linkedWall = -1;
 					}
-				else if (wallP->Info ().linkedWall != oppWall) {
+				else if (pWall->Info ().linkedWall != oppWall) {
 					sprintf_s (message, sizeof (message), 
 						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d, %d)", 
 						m_bAutoFixBugs ? "FIXED" : "ERROR", 
-						nWall, wallManager.Wall (wallP->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (wallP->Info ().linkedWall)->nSide);
+						nWall, wallManager.Wall (pWall->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (pWall->Info ().linkedWall)->nSide);
 						if (m_bAutoFixBugs)
-							wallP->Info ().linkedWall = oppWall;
+							pWall->Info ().linkedWall = oppWall;
 					}
 				}
 			else {
 				sprintf_s (message, sizeof (message), 
 					"%s: Wall links to non-existant side (wall=%d, linked side=%d, %d)", 
 					m_bAutoFixBugs ? "FIXED" : "ERROR", 
-					nWall, wallManager.Wall (wallP->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (wallP->Info ().linkedWall)->nSide);
+					nWall, wallManager.Wall (pWall->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (pWall->Info ().linkedWall)->nSide);
 				if (m_bAutoFixBugs)
-					wallP->Info ().linkedWall = -1;
+					pWall->Info ().linkedWall = -1;
 				}
 			}
 #endif
-		if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+		if (UpdateStats (message, 1, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 		// check wall nClip
-		if ((wallP->Type () == WALL_CLOAKED) && (wallP->Info ().cloakValue > 31)) {
+		if ((pWall->Type () == WALL_CLOAKED) && (pWall->Info ().cloakValue > 31)) {
 			if (m_bAutoFixBugs) {
-				wallP->Info ().cloakValue = 31;
+				pWall->Info ().cloakValue = 31;
 				sprintf_s (message, sizeof (message), "FIXED: Wall has invalid cloak value (wall=%d)", nWall);
 				}
 			else
 				sprintf_s (message, sizeof (message), "ERROR: Wall has invalid cloak value (wall=%d)", nWall);
 			}
-		if (((wallP->Type () == WALL_BLASTABLE) || (wallP->Type () == WALL_DOOR)) &&
-			 (   (wallP->Clip () < 0)
-			  || (wallP->Clip () == 2)
-			  || (wallP->Clip () == 8)
-			  || (DLE.IsD1File () && wallP->Clip () > MAX_DOOR_ANIMS_D1)
-			  || (DLE.IsD2File () && wallP->Clip () > MAX_DOOR_ANIMS_D2))) {
+		if (((pWall->Type () == WALL_BLASTABLE) || (pWall->Type () == WALL_DOOR)) &&
+			 (   (pWall->Clip () < 0)
+			  || (pWall->Clip () == 2)
+			  || (pWall->Clip () == 8)
+			  || (DLE.IsD1File () && pWall->Clip () > MAX_DOOR_ANIMS_D1)
+			  || (DLE.IsD2File () && pWall->Clip () > MAX_DOOR_ANIMS_D2))) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message), 
 							  "FIXED: Illegal wall clip number (wall=%d, clip number=%d)", 
-							  nWall, wallP->Clip ());
-				wallP->Clip () = ((wallP->Clip () - 1) % ((DLE.IsD1File () ? MAX_DOOR_ANIMS_D1 : MAX_DOOR_ANIMS_D2) - 1)) + 1;
+							  nWall, pWall->Clip ());
+				pWall->Clip () = ((pWall->Clip () - 1) % ((DLE.IsD1File () ? MAX_DOOR_ANIMS_D1 : MAX_DOOR_ANIMS_D2) - 1)) + 1;
 				}
 			else
 				sprintf_s (message, sizeof (message), 
 							  "ERROR: Illegal wall clip number (wall=%d, clip number=%d)", 
-							  nWall, wallP->Clip ());
-			if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+							  nWall, pWall->Clip ());
+			if (UpdateStats (message, 1, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 			// Make sure there is a child to the segment
-		if (wallP->Type () != WALL_OVERLAY) {
-			if (!(segmentManager.Segment (wallP->m_nSegment)->m_info.childFlags & (1<< wallP->m_nSide))) {
+		if (pWall->Type () != WALL_OVERLAY) {
+			if (!(segmentManager.Segment (pWall->m_nSegment)->m_info.childFlags & (1<< pWall->m_nSide))) {
 				sprintf_s (message, sizeof (message), 
 							"ERROR: No adjacent segment for this door (wall=%d, segment=%d)", 
-							nWall, wallP->m_nSegment);
-				if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+							nWall, pWall->m_nSegment);
+				if (UpdateStats (message, 1, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
-				nSegment = segmentManager.Segment (wallP->m_nSegment)->ChildId (wallP->m_nSide);
-				CSegment *segP = segmentManager.Segment (nSegment);
+				nSegment = segmentManager.Segment (pWall->m_nSegment)->ChildId (pWall->m_nSide);
+				CSegment *pSegment = segmentManager.Segment (nSegment);
 				if ((nSegment >= 0 && nSegment < segmentManager.Count ()) &&
-					 (wallP->Type () == WALL_DOOR || wallP->Type () == WALL_ILLUSION)) {
+					 (pWall->Type () == WALL_DOOR || pWall->Type () == WALL_ILLUSION)) {
 					// find segment's child side
 					for (nSide = 0; nSide < 6; nSide++)
-						if (segP->ChildId (nSide) == wallP->m_nSegment)
+						if (pSegment->ChildId (nSide) == pWall->m_nSegment)
 							break;
 					if (nSide != 6) {  // if child's side found
-						if (segP->m_sides[nSide].m_info.nWall >= wallManager.WallCount ()) {
+						if (pSegment->m_sides[nSide].m_info.nWall >= wallManager.WallCount ()) {
 							sprintf_s (message, sizeof (message), 
 										"WARNING: No matching wall for this wall (wall=%d, segment=%d)", 
 										nWall, nSegment);
-							if (UpdateStats (message, 0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+							if (UpdateStats (message, 0, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 							} 
 						else {
-							ushort wallnum2 = segP->m_sides[nSide].m_info.nWall;
+							ushort wallnum2 = pSegment->m_sides[nSide].m_info.nWall;
 							if ((wallnum2 < wallCount) &&
-								 ((wallP->Clip () != wallManager.Wall (wallnum2)->Info ().nClip ||
-									wallP->Type () != wallManager.Wall (wallnum2)->Type ()))) {
+								 ((pWall->Clip () != wallManager.Wall (wallnum2)->Info ().nClip ||
+									pWall->Type () != wallManager.Wall (wallnum2)->Type ()))) {
 								sprintf_s (message, sizeof (message), 
 											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, segment=%d)", 
 											nWall, nSegment);
-								if (UpdateStats (message, 0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+								if (UpdateStats (message, 0, pWall->m_nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 								}
 							}
 						}
@@ -1793,17 +1793,17 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		}
 	}
 
-	// make sure segP's wall points back to the segment
-segP = segmentManager.Segment (0);
-for (nSegment = 0; nSegment < segCount; nSegment++, segP++) {
+	// make sure pSegment's wall points back to the segment
+pSegment = segmentManager.Segment (0);
+for (nSegment = 0; nSegment < segCount; nSegment++, pSegment++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	sideP = segP->m_sides;
-	for (nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (sideP->m_info.nWall <	wallCount) {
-			nWall = sideP->m_info.nWall;
+	pSide = pSegment->m_sides;
+	for (nSide = 0; nSide < 6; nSide++, pSide++) {
+		if (pSide->m_info.nWall <	wallCount) {
+			nWall = pSide->m_info.nWall;
 			if (nWall >= wallCount) {
 				if (m_bAutoFixBugs) {
-					sideP->m_info.nWall = wallCount;
+					pSide->m_info.nWall = wallCount;
 					sprintf_s (message, sizeof (message), "FIXED: Segment has an invalid wall number (wall=%d, segment=%d)", nWall, nSegment);
 					}
 				else
@@ -1817,7 +1817,7 @@ for (nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 						}
 					else
 						sprintf_s (message, sizeof (message), "ERROR: Segment's wall does not sit in segment (wall=%d, segment=%d)", nWall, nSegment);
-					if (UpdateStats (message, 1, nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
+					if (UpdateStats (message, 1, nSegment, pWall->m_nSide, -1, -1, -1, nWall)) return true;
 					}
 				}
 			}
@@ -1853,11 +1853,11 @@ for (nVertex = vertexManager.Count (); nVertex > 0; )
 	vertexManager.Status (--nVertex) &= ~NEW_MASK;
 
 // mark all used verts
-CSegment *segP = segmentManager.Segment (0);
-for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
+CSegment *pSegment = segmentManager.Segment (0);
+for (nSegment = segmentManager.Count (); nSegment; nSegment--, pSegment++)
 	for (point = 0; point < 8; point++)
-		if (segP->m_info.vertexIds [point] <= MAX_VERTEX)
-			vertexManager.Status (segP->m_info.vertexIds [point]) |= NEW_MASK;
+		if (pSegment->m_info.vertexIds [point] <= MAX_VERTEX)
+			vertexManager.Status (pSegment->m_info.vertexIds [point]) |= NEW_MASK;
 
 for (nVertex = vertexManager.Count (); nVertex > 0; ) {
 	DLE.MainFrame ()->Progress ().StepIt ();
@@ -1866,11 +1866,11 @@ for (nVertex = vertexManager.Count (); nVertex > 0; ) {
 		if (m_bAutoFixBugs) {
 			if (nVertex < --vertexManager.Count ())
 				memcpy (vertexManager.Vertex (nVertex), vertexManager.Vertex (nVertex + 1), (vertexManager.Count () - nVertex) * sizeof (*vertexManager.Vertex (0)));
-			CSegment *segP = segmentManager.Segment (0);
-			for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
+			CSegment *pSegment = segmentManager.Segment (0);
+			for (nSegment = segmentManager.Count (); nSegment; nSegment--, pSegment++)
 				for (point = 0; point < 8; point++)
-					if (segP->m_info.vertexIds [point] >= nVertex)
-						segP->m_info.vertexIds [point]--;
+					if (pSegment->m_info.vertexIds [point] >= nVertex)
+						pSegment->m_info.vertexIds [point]--;
 			}
 		}
 	}

@@ -391,7 +391,7 @@ class CGameObject : public CGameItem {
 
 		void Setup (ubyte type);
 
-		void DrawBitmap (CWnd* wndP);
+		void DrawBitmap (CWnd* pWindow);
 
 		int DrawArrow (CRenderer& renderer, int bCurrent);
 
@@ -426,7 +426,7 @@ class CGameObject : public CGameItem {
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual CGameItem* Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* pDest);
 
 		virtual void Undo (void);
 

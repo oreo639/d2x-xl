@@ -101,12 +101,12 @@ if (m_DIB == 0) {
 if (m_DIB != 0) {
 	m_pDC = &m_DC;
 	m_DC.SelectObject (m_DIB);
-	depthType* bufP = DepthBuffer ();
-	if (bufP != null) {
+	depthType* pBuffer = DepthBuffer ();
+	if (pBuffer != null) {
 		int h = ViewWidth () * ViewHeight ();
 #pragma omp parallel for
 		for (int i = 0; i < h; i++)
-			bufP [i] = MAX_DEPTH;
+			pBuffer [i] = MAX_DEPTH;
 		}
 	bUpdate = 1;
 	}
@@ -352,28 +352,28 @@ return true;
 
 //------------------------------------------------------------------------------
 
-void CRendererSW::RenderFace (CFaceListEntry& fle, const CTexture* texP, ushort rowOffset, CBGRA* colorP)
+void CRendererSW::RenderFace (CFaceListEntry& fle, const CTexture* pTexture, ushort rowOffset, CBGRA* pColor)
 {
 	int				i;
 	CLongVector		minPt, maxPt;
 	CDoubleMatrix	A, IA, B, UV;
 	CUVL*				uvls;
 	bool				bD2XLights = (DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
-	CSegment*		segP = segmentManager.Segment (fle.m_nSegment);
-	CSide&			side = *segP->Side (fle.m_nSide);
+	CSegment*		pSegment = segmentManager.Segment (fle.m_nSegment);
+	CSide&			side = *pSegment->Side (fle.m_nSide);
 	ushort			light [4];
 	ushort			bmWidth2;
 	ubyte*				fadeTables = paletteManager.FadeTable ();
-	bool				bTexColor = (colorP == null);
-	double			scale = (double) max (texP->RenderWidth (), texP->RenderHeight ());
-	const CBGRA*	colorBuf = texP->Buffer ();
+	bool				bTexColor = (pColor == null);
+	double			scale = (double) max (pTexture->RenderWidth (), pTexture->RenderHeight ());
+	const CBGRA*	colorBuf = pTexture->Buffer ();
 	int				bIlluminate = RenderIllumination ();
 
-bmWidth2 = texP->RenderWidth () / 2;
+bmWidth2 = pTexture->RenderWidth () / 2;
 m_alpha = float (Alpha ()) / 255.0f;
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
-	ushort nVertex = segP->m_info.vertexIds [side.VertexIdIndex (i)];
+	ushort nVertex = pSegment->m_info.vertexIds [side.VertexIdIndex (i)];
 	m_screenCoord [i] = vertexManager [nVertex].m_screen;
 	}
 // determin min/max points
@@ -404,7 +404,7 @@ IA = A.Adjoint ();
 // store uv coordinates into m_texCoord []
 // fill in texture
 CLongVector m_texCoord [4];  // Descent's (u,v) coordinates for textures
-uvls = segP->m_sides [fle.m_nSide].m_info.uvls;
+uvls = pSegment->m_sides [fle.m_nSide].m_info.uvls;
 for (i = 0; i < 4; i++) {
 	m_texCoord [i].x = (int) Round (uvls [i].u * 2048.0);
 	m_texCoord [i].y = (int) Round (uvls [i].v * 2048.0);
@@ -425,7 +425,7 @@ B = IA * UV;
 #endif
 for (int y = minPt.y; y < maxPt.y; y++) {
 	int i;
-	const CBGRA* texColorP = colorP;
+	const CBGRA* pTexColor = pColor;
 	short deltaLight, scanLight;
 	// Determine min and max x for this y.
 	// Check each of the four lines of the quadrilateral
@@ -491,7 +491,7 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				// the 22 allows for large texture bitmap sizes
 				// the 10 gives more than enough accuracy for the delta values
 
-				m = min (texP->RenderWidth (), texP->RenderHeight ());
+				m = min (pTexture->RenderWidth (), pTexture->RenderHeight ());
 				if (!m)
 					m = 64;
 				m *= 1024;
@@ -499,12 +499,12 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 				if (!dx)
 					dx = 1;
 				du = ((uint) (((u1 - u0) * 1024.0) / dx) % m);
-				// v0 & v1 swapped since texP->Buffer () is flipped
+				// v0 & v1 swapped since pTexture->Buffer () is flipped
 				dv = ((uint) (((v0 - v1) * 1024.0) / dx) % m);
 				u = ((uint) (u0 * 1024.0)) % m;
 				v = ((uint) (-v0 * 1024.0)) % m;
-				vd = 1024 / texP->RenderHeight ();
-				vm = texP->RenderWidth () * (texP->RenderHeight () - 1);
+				vd = 1024 / pTexture->RenderHeight ();
+				vm = pTexture->RenderWidth () * (pTexture->RenderHeight () - 1);
 				
 				i = (uint) y/*(ViewHeight () - y - 1)*/ * (uint) rowOffset + x0;
 				double z, dz;
@@ -529,19 +529,19 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							texColorP = &colorBuf [(u / 1024) + ((v / vd) & vm)];
+							pTexColor = &colorBuf [(u / 1024) + ((v / vd) & vm)];
 							}
-						Blend (RenderBuffer (i), *texColorP, DepthBuffer (i), (depthType) z, scanLight);
+						Blend (RenderBuffer (i), *pTexColor, DepthBuffer (i), (depthType) z, scanLight);
 						z += dz;
 #else
 						int t = (u / 1024) + ((v / vd) & vm);
-						if (texP->Buffer () [t].m_screenCoord > 0) {
-							CBGR c = texP->Buffer () [t];
+						if (pTexture->Buffer () [t].m_screenCoord > 0) {
+							CBGR c = pTexture->Buffer () [t];
 							CBGR* pixel = m_renderBuffer + i;
-							pixelP->r = (ubyte) ((int) (c.r) * fade / 8191);
-							pixelP->g = (ubyte) ((int) (c.g) * fade / 8191);
-							pixelP->b = (ubyte) ((int) (c.b) * fade / 8191);
-							pixelP->m_texCoord = (ubyte) ((int) (c.m_texCoord) * fade / 8191);
+							pPixel->r = (ubyte) ((int) (c.r) * fade / 8191);
+							pPixel->g = (ubyte) ((int) (c.g) * fade / 8191);
+							pPixel->b = (ubyte) ((int) (c.b) * fade / 8191);
+							pPixel->m_texCoord = (ubyte) ((int) (c.m_texCoord) * fade / 8191);
 							}
 #endif
 						scanLight += deltaLight;
@@ -554,15 +554,15 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							texColorP = &colorBuf [(u / 1024) + ((v / vd) & vm)];
+							pTexColor = &colorBuf [(u / 1024) + ((v / vd) & vm)];
 							}
 #if 1
-						Blend (RenderBuffer (i), *texColorP, DepthBuffer (i), (depthType) z);
+						Blend (RenderBuffer (i), *pTexColor, DepthBuffer (i), (depthType) z);
 						z += dz;
 #else
 						int t = (u / 1024) + ((v / vd) & vm);
-						if (texP->Buffer () [t].m_screenCoord > 0)
-							m_renderBuffer [i] = texP->Buffer () [t];
+						if (pTexture->Buffer () [t].m_screenCoord > 0)
+							m_renderBuffer [i] = pTexture->Buffer () [t];
 #endif
 						}
 					}
@@ -574,13 +574,13 @@ for (int y = minPt.y; y < maxPt.y; y++) {
 
 //----------------------------------------------------------------------------
 
-int CRendererSW::FaceIsVisible (CSegment* segP, CSide* sideP)
+int CRendererSW::FaceIsVisible (CSegment* pSegment, CSide* pSide)
 {
 if (4 < 4)
 	return 1;
-CLongVector& p0 = vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (0)]].m_screen;
-CLongVector& p1 = vertexManager [segP->m_info.vertexIds [sideP->m_vertexIdIndex [1]]].m_screen;
-CLongVector& p3 = vertexManager [segP->m_info.vertexIds [sideP->m_vertexIdIndex [sideP->VertexCount () - 1]]].m_screen;
+CLongVector& p0 = vertexManager [pSegment->m_info.vertexIds [pSide->VertexIdIndex (0)]].m_screen;
+CLongVector& p1 = vertexManager [pSegment->m_info.vertexIds [pSide->m_vertexIdIndex [1]]].m_screen;
+CLongVector& p3 = vertexManager [pSegment->m_info.vertexIds [pSide->m_vertexIdIndex [pSide->VertexCount () - 1]]].m_screen;
 
 CDoubleVector	a ((double) (p1.x - p0.x), (double) (p1.y - p0.y), 0.0), 
 					b ((double) (p3.x - p0.x), (double) (p3.y - p0.y), 0.0);
@@ -591,12 +591,13 @@ return (a.v.x * b.v.y > a.v.y * b.v.x);
 
 void CRendererSW::DrawFaceTextured (CFaceListEntry& fle) 
 {
+	const CTexture* pTexture [2] = {null, null};
+
 	CTexture		tex (textureManager.SharedBuffer ());
-	const CTexture* texP [2] = {null, null};
-	CSegment*	segP = segmentManager.Segment (fle);
-	CSide*		sideP = segmentManager.Side (fle);
-	CWall*		wallP = segmentManager.Wall (fle);
-	CBGRA			color, * colorP = null;
+	CSegment*	pSegment = segmentManager.Segment (fle);
+	CSide*		pSide = segmentManager.Side (fle);
+	CWall*		pWall = segmentManager.Wall (fle);
+	CBGRA			color, * pColor = null;
 
 #ifdef _DEBUG
 if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide)))
@@ -605,40 +606,40 @@ if ((fle.m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (fle.m_nSide == nDbgSide))
 
 SetAlpha (255);
 
-short nBaseTex = sideP->BaseTex ();
-short nOvlTex = sideP->OvlTex (1);
-if (((nOvlTex & TEXTURE_MASK) != 0) && !sideP->OvlAlignment () && !textureManager.Textures (nOvlTex)->Transparent ()) {
+short nBaseTex = pSide->BaseTex ();
+short nOvlTex = pSide->OvlTex (1);
+if (((nOvlTex & TEXTURE_MASK) != 0) && !pSide->OvlAlignment () && !textureManager.Textures (nOvlTex)->Transparent ()) {
 	nBaseTex = nOvlTex;
 	nOvlTex = 0;
 	}
 
-if (textureManager.IsScrolling (sideP->BaseTex ())) {
-	texP [0] = &tex;
-	tex.BlendTextures (sideP->BaseTex (), sideP->OvlTex (), 0, 0);
-	tex.DrawAnimDirArrows (sideP->BaseTex ());
+if (textureManager.IsScrolling (pSide->BaseTex ())) {
+	pTexture [0] = &tex;
+	tex.BlendTextures (pSide->BaseTex (), pSide->OvlTex (), 0, 0);
+	tex.DrawAnimDirArrows (pSide->BaseTex ());
 	}
 else if (nOvlTex) {
-	texP [0] = &tex;
+	pTexture [0] = &tex;
 	tex.BlendTextures (nBaseTex, nOvlTex, 0, 0);
 	}
 else {
-	texP [0] = textureManager.Textures (nBaseTex);
-	if (wallP != null) {
-		m_alpha = wallP->Alpha ();
-		if (wallP->IsTransparent () || wallP->IsCloaked ()) {
+	pTexture [0] = textureManager.Textures (nBaseTex);
+	if (pWall != null) {
+		m_alpha = pWall->Alpha ();
+		if (pWall->IsTransparent () || pWall->IsCloaked ()) {
 			CBGRA color;
-			if (wallP->IsCloaked ())
+			if (pWall->IsCloaked ())
 				color = CBGRA (0, 0, 0, 255);
 			else {
-				CColor* texColorP = lightManager.GetTexColor (sideP->BaseTex (), true);
-				color = CBGRA (texColorP->Red (), texColorP->Green (), texColorP->Blue (), 255);
+				CColor* pTexColor = lightManager.GetTexColor (pSide->BaseTex (), true);
+				color = CBGRA (pTexColor->Red (), pTexColor->Green (), pTexColor->Blue (), 255);
 				}
-			colorP = &color;
+			pColor = &color;
 			}
 		}
 	}
 
-RenderFace (fle, texP [0], (ViewWidth () + 3) & ~3, colorP);
+RenderFace (fle, pTexture [0], (ViewWidth () + 3) & ~3, pColor);
 }
 
 //------------------------------------------------------------------------------

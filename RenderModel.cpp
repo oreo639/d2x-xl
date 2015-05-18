@@ -81,7 +81,7 @@ static int nLevel = 0;
 
 void RenderModel::CSubModel::Render (RenderModel::CModel& model, short nSubModel, int nGunId, int nBombId, int nMissileId, int nMissiles)
 {
-	RenderModel::CFace*	faceP;
+	RenderModel::CFace*	pFace;
 	int						i;
 	short						nTexture = -1;
 	ushort					nFaceVerts, nVerts, nIndex;
@@ -109,9 +109,9 @@ if (m_bBillboard) {
 
 glDisable (GL_TEXTURE_2D);
 
-for (i = m_nFaces, faceP = m_faces; i; ) {
-	if (nTexture != faceP->m_nTexture) {
-		if (0 > (nTexture = faceP->m_nTexture))
+for (i = m_nFaces, pFace = m_faces; i; ) {
+	if (nTexture != pFace->m_nTexture) {
+		if (0 > (nTexture = pFace->m_nTexture))
 			glDisable (GL_TEXTURE_2D);
 		else {
 			glEnable (GL_TEXTURE_2D);
@@ -119,20 +119,20 @@ for (i = m_nFaces, faceP = m_faces; i; ) {
 				continue;
 			}
 		}
-	nIndex = faceP->m_nIndex;
-	if ((nFaceVerts = faceP->m_nVerts) > 4) {
+	nIndex = pFace->m_nIndex;
+	if ((nFaceVerts = pFace->m_nVerts) > 4) {
 		nVerts = nFaceVerts;
-		faceP++;
+		pFace++;
 		i--;
 		}
 	else {
-		short nId = faceP->m_nId;
+		short nId = pFace->m_nId;
 		nVerts = 0;
 		do {
 			nVerts += nFaceVerts;
-			faceP++;
+			pFace++;
 			i--;
-			} while (i && (faceP->m_nId == nId));
+			} while (i && (pFace->m_nId == nId));
 		}
 	glDrawRangeElements ((nFaceVerts == 3) ? GL_TRIANGLES : (nFaceVerts == 4) ? GL_QUADS : GL_TRIANGLE_FAN,
 								0, model.m_nFaceVerts - 1, nVerts, GL_UNSIGNED_SHORT,
@@ -145,7 +145,7 @@ if ((0 != m_vOffset.v.x) || (0 != m_vOffset.v.y) || (0 != m_vOffset.v.z))
 
 //------------------------------------------------------------------------------
 
-int RenderModel::CModel::Render (CViewMatrix* view, CGameObject* objP, int nGunId, int nBombId, int nMissileId, int nMissiles)
+int RenderModel::CModel::Render (CViewMatrix* view, CGameObject* pObject, int nGunId, int nBombId, int nMissileId, int nMissiles)
 {
 #if 0
 	return 0;
@@ -174,7 +174,7 @@ glDepthMask (1);
 glColor3f (1.0f, 1.0f, 1.0f);
 
 view->SetupOpenGL ();
-view->SetupOpenGL (&objP->Orient (), &objP->Position ());
+view->SetupOpenGL (&pObject->Orient (), &pObject->Position ());
 
 for (int i = 0; i < m_nSubModels; i++) {
 	if (m_subModels [i].m_nParent == -1)

@@ -56,20 +56,20 @@ CHECKMINE;
 
 cbEffects->ResetContent ();
 CGameObject *curObj = current->Object (),
-				*objP = objectManager.Object (0);
+				*pObject = objectManager.Object (0);
 
-for (int i = 0; i < objectManager.Count (); i++, objP++) {
-	if (objP->Type () != OBJ_EFFECT)
+for (int i = 0; i < objectManager.Count (); i++, pObject++) {
+	if (pObject->Type () != OBJ_EFFECT)
 		continue;
-	if (objP == curObj)
+	if (pObject == curObj)
 		curSel = i;
-	if (objP->Id () == PARTICLE_ID)
+	if (pObject->Id () == PARTICLE_ID)
 		sprintf_s (szEffect, sizeof (szEffect), "Particles (%d)", i);
-	else if (objP->Id () == LIGHTNING_ID)
-		sprintf_s (szEffect, sizeof (szEffect), "Lightning %d (%d)", objP->rType.lightningInfo.nId, i);
-	else if (objP->Id () == SOUND_ID)
+	else if (pObject->Id () == LIGHTNING_ID)
+		sprintf_s (szEffect, sizeof (szEffect), "Lightning %d (%d)", pObject->rType.lightningInfo.nId, i);
+	else if (pObject->Id () == SOUND_ID)
 		sprintf_s (szEffect, sizeof (szEffect), "Sound (%d)", i);
-	else if (objP->Id () == WAYPOINT_ID)
+	else if (pObject->Id () == WAYPOINT_ID)
 		sprintf_s (szEffect, sizeof (szEffect), "Waypoint (%d)", i);
 	else
 		continue;
@@ -110,8 +110,8 @@ void CEffectTool::DoDataExchange (CDataExchange *pDX)
 DDX_Control (pDX, IDC_TOOL_TAB, m_effectTools);
 if (!HaveData (pDX)) 
 	return;
-CGameObject *objP = current->Object ();
-if (objP->Type () != OBJ_EFFECT)
+CGameObject *pObject = current->Object ();
+if (pObject->Type () != OBJ_EFFECT)
 	return;
 }
 
@@ -192,9 +192,9 @@ void CEffectTool::OnPasteAll ()
 if (!Current ()->Valid ())
 	ErrorMsg ("No effect data of that type currently available (copy data first)");
 else {
-	CGameObject *objP = objectManager.Object (0);
-	for (int i = objectManager.Count (); i; i--, objP++)
-		Current ()->Paste (objP, false);
+	CGameObject *pObject = objectManager.Object (0);
+	for (int i = objectManager.Count (); i; i--, pObject++)
+		Current ()->Paste (pObject, false);
 	}
 Refresh ();
 }
@@ -254,12 +254,12 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 
 //------------------------------------------------------------------------
 
-CGameObject* CEffectTabDlg::GetEffect (CGameObject* objP, ubyte nId, char* szType)
+CGameObject* CEffectTabDlg::GetEffect (CGameObject* pObject, ubyte nId, char* szType)
 {
-if (!objP)
-	objP = current->Object ();
-if ((objP->Type () == OBJ_EFFECT) && (objP->Id () == nId)) 
-	return objP;
+if (!pObject)
+	pObject = current->Object ();
+if ((pObject->Type () == OBJ_EFFECT) && (pObject->Id () == nId)) 
+	return pObject;
 if (szType) {
 	char szMsg [100];
 	sprintf_s (szMsg, sizeof (szMsg), "no %s object currently selected", szType);

@@ -166,16 +166,16 @@ class CTextureManager {
 
 		inline int AnimationFrame (int nTexture) { 
 			nTexture = (nTexture < 0) ? -nTexture - 1 : Index (nTexture);
-			CAnimationClipInfo* aicP = AnimationIndex (nTexture); 
-			if (!aicP)
+			CAnimationClipInfo* pClipInfo = AnimationIndex (nTexture); 
+			if (!pClipInfo)
 				return -1;
-			return int (aicP->Find (nTexture));
+			return int (pClipInfo->Find (nTexture));
 			}
 
 		inline bool IsAnimationRoot (int nTexture) { 
 			nTexture = (nTexture < 0) ? -nTexture - 1 : Index (nTexture);
-			CAnimationClipInfo* aicP = AnimationIndex (nTexture); 
-			return aicP ? nTexture == aicP->Frame (0) : false;
+			CAnimationClipInfo* pClipInfo = AnimationIndex (nTexture); 
+			return pClipInfo ? nTexture == pClipInfo->Frame (0) : false;
 			}
 
 		inline bool IsAnimationFrame (int nTexture) { 
@@ -183,13 +183,13 @@ class CTextureManager {
 			}
 
 		inline bool IsAnimationSubFrame (int nTexture) { 
-			CAnimationClipInfo* aicP = AnimationIndex ((nTexture < 0) ? -nTexture - 1 : Index (nTexture)); 
-			return aicP ? nTexture != aicP->Frame (0) : false;
+			CAnimationClipInfo* pClipInfo = AnimationIndex ((nTexture < 0) ? -nTexture - 1 : Index (nTexture)); 
+			return pClipInfo ? nTexture != pClipInfo->Frame (0) : false;
 			}
 
 		inline int AnimationRoot (int nTexture) { 
-			CAnimationClipInfo* aicP = AnimationIndex ((nTexture < 0) ? -nTexture - 1 : Index (nTexture)); 
-			return aicP ? aicP->Frame (0) : -1;
+			CAnimationClipInfo* pClipInfo = AnimationIndex ((nTexture < 0) ? -nTexture - 1 : Index (nTexture)); 
+			return pClipInfo ? pClipInfo->Frame (0) : -1;
 			}
 
 		inline bool ShareAnimation (int nTexture1, int nTexture2) { 
@@ -295,7 +295,7 @@ class CTextureManager {
 			return p ? p : "";
 			}
 		
-		inline int Index (CTexture* texP, int nVersion = -1) { return int (texP - &m_textures [(nVersion < 0) ? Version () : nVersion][0]); }
+		inline int Index (CTexture* pTexture, int nVersion = -1) { return int (pTexture - &m_textures [(nVersion < 0) ? Version () : nVersion][0]); }
 
 		inline CTexture& Arrow (void) { return m_arrow; }
 
@@ -329,7 +329,7 @@ class CTextureManager {
 
 		int CreatePog (CFileManager& fp);
 
-		int WriteCustomTexture (CFileManager& fp, const CTexture *texP);
+		int WriteCustomTexture (CFileManager& fp, const CTexture *pTexture);
 
 		void Setup (void);
 
@@ -351,6 +351,13 @@ class CTextureManager {
 
 		size_t SharedBufferSize (void) { return sizeof (m_bmBuf); }
 
+		CTexture *UpdateTextureClip (short& nTexId, short& nPrevTexId, int& nFrame, int& nDirection);
+	
+		bool CheckScrollingTexture (short nTexId, int xScrollOffset [], int yScrollOffset [], int& x, int& y);
+
+		void UpdateScrollingTexture (int xScrollOffset [], int yScrollOffset [], int x, int y);
+
+
 		CTextureManager() { 
 			m_paletteName [0][0] = 0; 
 			m_bAvailable [0] = m_bAvailable [1] = false;
@@ -371,7 +378,7 @@ class CTextureManager {
 
 		void Destroy (int nVersion);
 
-		uint WriteCustomTextureHeader (CFileManager& fp, const CTexture *texP, uint nId, uint nOffset);
+		uint WriteCustomTextureHeader (CFileManager& fp, const CTexture *pTexture, uint nId, uint nOffset);
 
 		int LoadAnimationClips (CAnimationClipList& animations, CFileManager& fp, CAnimationClipLoader* loader);
 

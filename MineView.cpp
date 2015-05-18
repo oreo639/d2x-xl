@@ -406,15 +406,15 @@ CHECKMINE;
 
 #pragma omp parallel for if (j > 15)
 for (i = 0; i < j; i++) {
-	CVariableLight *flP = lightManager.VariableLight (i);
-	int delay = X2I (flP->m_info.delay * 1000);
+	CVariableLight *pLight = lightManager.VariableLight (i);
+	int delay = X2I (pLight->m_info.delay * 1000);
 	if (delay) {
-		tLightTimer *ltP = lightManager.LightTimer (i);
-		ltP->ticks += (1000 + m_nFrameRate / 2) / m_nFrameRate;
-		if (ltP->ticks >= delay) {
-			short h = ltP->ticks / delay;
-			ltP->ticks %= delay;
-			ltP->impulse = (ltP->impulse + h) % 32;
+		tLightTimer *pTimer = lightManager.LightTimer (i);
+		pTimer->ticks += (1000 + m_nFrameRate / 2) / m_nFrameRate;
+		if (pTimer->ticks >= delay) {
+			short h = pTimer->ticks / delay;
+			pTimer->ticks %= delay;
+			pTimer->impulse = (pTimer->impulse + h) % 32;
 			}
 		}
 	}
@@ -426,10 +426,10 @@ bool CMineView::SetLightStatus (void)
 {
 #if 0
 	int h, i, j;
-	CLightDeltaIndex *ldiP = lightManager.LightDeltaIndex (0);
-	CLightDeltaValue *ldvP;
+	CLightDeltaIndex *pDeltaIndex = lightManager.LightDeltaIndex (0);
+	CLightDeltaValue *pDeltaValue;
 	tLightTimer *ltP;
-	CVariableLight *flP = lightManager.VariableLight (0);
+	CVariableLight *pLight = lightManager.VariableLight (0);
 	tLightStatus *pls;
 	bool bChange = false;
 	bool bD2XLights = (DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
@@ -440,18 +440,18 @@ pls = lightManager.LightStatus (0);
 for (i = segmentManager.Count (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
-for (h = 0; h < lightManager.DeltaIndexCount (); h++, ldiP++) {
-	nSrcSide = ldiP->m_nSegment;
-	nSrcSeg = ldiP->m_nSide;
+for (h = 0; h < lightManager.DeltaIndexCount (); h++, pDeltaIndex++) {
+	nSrcSide = pDeltaIndex->m_nSegment;
+	nSrcSeg = pDeltaIndex->m_nSide;
 	j = lightManager.VariableLight (CSideKey (nSrcSide, nSrcSeg));
 	if (j < 0)
 		continue;	//shouldn't happen here, as there is a delta light value, but you never know ...
 	if (j >= MAX_VARIABLE_LIGHTS)
 		continue;	//shouldn't happen 
-	ldvP = lightManager.LightDeltaValue (ldiP->m_info.index);
-	for (i = ldiP->m_info.count; i; i--, ldvP++) {
-		nSegment = ldvP->m_nSegment;
-		nSide = ldvP->m_nSide;
+	pDeltaValue = lightManager.LightDeltaValue (pDeltaIndex->m_info.index);
+	for (i = pDeltaIndex->m_info.count; i; i--, pDeltaValue++) {
+		nSegment = pDeltaValue->m_nSegment;
+		nSide = pDeltaValue->m_nSide;
 		if (m_bShowLightSource) {
 			if ((nSegment != nSrcSeg) || (nSide != nSrcSide)) 
 				continue;
@@ -464,7 +464,7 @@ for (h = 0; h < lightManager.DeltaIndexCount (); h++, ldiP++) {
 			}
 		pls = lightManager.LightStatus (nSegment, nSide);
 		ltP = lightManager.LightTimer (j);
-		pls->bIsOn = (flP [j].m_info.mask & (1 << lightManager.LightTimer (j)->impulse)) != 0;
+		pls->bIsOn = (pLight [j].m_info.mask & (1 << lightManager.LightTimer (j)->impulse)) != 0;
 		if (pls->bWasOn != pls->bIsOn)
 			bChange = true;
 		}
@@ -570,21 +570,21 @@ Renderer ().ClearView ();
 
 //--------------------------------------------------------------------------
 
-bool CMineView::ViewObject (CGameObject *objP)
+bool CMineView::ViewObject (CGameObject *pObject)
 {
-switch(objP->Type ()) {
+switch(pObject->Type ()) {
 	case OBJ_ROBOT:
 		if (ViewObject (eViewObjectsRobots))
 			return true;
 		if (ViewObject (eViewObjectsKeys)) {
-			int nId = objP->Contains (OBJ_POWERUP);
+			int nId = pObject->Contains (OBJ_POWERUP);
 			if ((nId >= 0) && (powerupTypeTable [nId] == POWERUP_KEY_MASK))
 				return true;
-			nId = objP->TypeContains (OBJ_POWERUP);
+			nId = pObject->TypeContains (OBJ_POWERUP);
 			if ((nId >= 0) && (powerupTypeTable [nId] == POWERUP_KEY_MASK))
 				return true;
 			}
-		if (ViewObject (eViewObjectsControlCenter) && objP->IsBoss ())
+		if (ViewObject (eViewObjectsControlCenter) && pObject->IsBoss ())
 			return true;
 		return false;
 
@@ -608,7 +608,7 @@ switch(objP->Type ()) {
 		return ViewObject (eViewObjectsWeapons);
 
 	case OBJ_POWERUP:
-		switch (powerupTypeTable [objP->Id ()]) {
+		switch (powerupTypeTable [pObject->Id ()]) {
 			case POWERUP_WEAPON_MASK:
 				return ViewObject (eViewObjectsWeapons);
 			case POWERUP_POWERUP_MASK:
@@ -631,14 +631,14 @@ void CMineView::HiliteTarget (void)
 {
 	int i, nTarget;
 
-CGameObject *objP = current->Object ();
-if ((objP->Type () != OBJ_EFFECT) || (objP->Id () != LIGHTNING_ID))
+CGameObject *pObject = current->Object ();
+if ((pObject->Type () != OBJ_EFFECT) || (pObject->Id () != LIGHTNING_ID))
 	return;
 other->SetObjectId (current->ObjectId ());
-if (nTarget = objP->rType.lightningInfo.nTarget) {
-	CGameObject* objP = objectManager.Object (0);
-	for (i = objectManager.Count (); i; i--, objP++) {
-		if ((objP->Type () == OBJ_EFFECT) && (objP->Id () == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
+if (nTarget = pObject->rType.lightningInfo.nTarget) {
+	CGameObject* pObject = objectManager.Object (0);
+	for (i = objectManager.Count (); i; i--, pObject++) {
+		if ((pObject->Type () == OBJ_EFFECT) && (pObject->Id () == LIGHTNING_ID) && (pObject->rType.lightningInfo.nId == nTarget)) {
 			other->SetObjectId (i);
 			break;
 			return;
@@ -1113,10 +1113,10 @@ Refresh ();
 
 bool CMineView::VertexVisible (int v)
 {
-CSegment	*segP = segmentManager.Segment (0);
-for (int i = segmentManager.Count (); i; i--, segP++) {
+CSegment	*pSegment = segmentManager.Segment (0);
+for (int i = segmentManager.Count (); i; i--, pSegment++) {
 	for (short j = 0; j < MAX_VERTICES_PER_SEGMENT; j++)
-		if ((segP->m_info.vertexIds [j] == v) && Visible (segP))
+		if ((pSegment->m_info.vertexIds [j] == v) && Visible (pSegment))
 			return true;
 	}
 return false;

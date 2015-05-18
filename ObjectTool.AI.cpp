@@ -59,7 +59,7 @@ for (char** psz = pszBossTypes; *psz; psz++) {
 	int index = pcb->AddString (*psz);
 	pcb->SetItemData(index++, (int) (psz - pszBossTypes));
 	}
-CGameObject *objP = current->Object ();
+CGameObject *pObject = current->Object ();
 Refresh ();
 m_bInited = true;
 return TRUE;
@@ -90,8 +90,8 @@ if (current->ObjectId () == objectManager.Count ()) {
 	}
 EnableControls (TRUE);
 
-CGameObject* objP = current->Object ();
-m_bEndsLevel = (objP->Type () == OBJ_ROBOT) && (robotManager.RobotInfo (objP->Id ())->Info ().bossFlag > 0);
+CGameObject* pObject = current->Object ();
+m_bEndsLevel = (pObject->Type () == OBJ_ROBOT) && (robotManager.RobotInfo (pObject->Id ())->Info ().bossFlag > 0);
 RefreshRobot ();
 UpdateData (FALSE);
 DLE.MineView ()->Refresh (FALSE);
@@ -102,8 +102,8 @@ return true;
 
 void CObjectAITool::RefreshRobot (void)
 {
-CGameObject* objP = current->Object ();
-int nType = objP->Type ();
+CGameObject* pObject = current->Object ();
+int nType = pObject->Type ();
 
   // get selection
 if (nType != OBJ_ROBOT) {
@@ -120,7 +120,7 @@ if (nType != OBJ_ROBOT) {
 	return;
 	}
 
-int nId = int (objP->Id ());
+int nId = int (pObject->Id ());
 CRobotInfo robotInfo = *robotManager.RobotInfo (nId);
 
 SelectItemData (CBObjClassAI (), (int) robotInfo.Info ().behavior);
@@ -141,8 +141,8 @@ BtnCtrl (IDC_OBJ_AI_ENDSLEVEL)->SetCheck (m_bEndsLevel);
 
 void CObjectAITool::UpdateRobot (void)
 {
-CGameObject* objP = current->Object ();
-int nId = int (objP->Id ());
+CGameObject* pObject = current->Object ();
+int nId = int (pObject->Id ());
 
 if (nId < 0 || nId >= MAX_ROBOT_ID_D2)
 	nId = 0;

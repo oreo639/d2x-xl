@@ -194,18 +194,18 @@ if (!::IsWindow(m_hWnd))
 UpdateData (TRUE);
 nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 
-	CSegment*	segP = segmentManager.Segment (0);
+	CSegment*	pSegment = segmentManager.Segment (0);
 	bool			bChange = false;
 
 undoManager.Begin (__FUNCTION__, udSegments);
 for (CSegmentIterator si; si; si++) {
-	segP = &(*si);
-	CSide* sideP = segP->m_sides;
-	for (ubyte nSide = 0; nSide < 6; nSide++, sideP++) {
+	pSegment = &(*si);
+	CSide* pSide = pSegment->m_sides;
+	for (ubyte nSide = 0; nSide < 6; nSide++, pSide++) {
 		for (int i = 0; i < 4; i++) {
-			ushort nVertex = segP->m_info.vertexIds [segP->Side (nSide)->VertexIdIndex (i)];
+			ushort nVertex = pSegment->m_info.vertexIds [pSegment->Side (nSide)->VertexIdIndex (i)];
 			if (vertexManager.Status (nVertex) & TAGGED_MASK) {
-				sideP->m_info.uvls [i].l = nVertexLight;
+				pSide->m_info.uvls [i].l = nVertexLight;
 				bChange = true;
 				}
 			}

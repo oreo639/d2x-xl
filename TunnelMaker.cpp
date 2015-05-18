@@ -175,16 +175,16 @@ if (selection) {
 	*((CSelection*) this) = *selection;
 	}
 m_sign = sign;
-CSegment* segP = segmentManager.Segment (m_nSegment);
-CSide* sideP = segP->Side (m_nSide);
-segP->ComputeNormals (m_nSide);
-m_normal = sideP->Normal () * sign;
-segP->CreateOppVertexIndex (m_nSide, m_oppVertexIndex);
-m_point = segP->ComputeCenter (m_nSide);
+CSegment* pSegment = segmentManager.Segment (m_nSegment);
+CSide* pSide = pSegment->Side (m_nSide);
+pSegment->ComputeNormals (m_nSide);
+m_normal = pSide->Normal () * sign;
+pSegment->CreateOppVertexIndex (m_nSide, m_oppVertexIndex);
+m_point = pSegment->ComputeCenter (m_nSide);
 for (int i = 0; i < 4; i++)
 	m_vertices [i] = *Segment ()->Vertex (m_nSide, i);
 m_rotation.F () = m_normal;
-m_rotation.R () = m_vertices [(m_nPoint + 1) % sideP->VertexCount ()] - m_vertices [m_nPoint];
+m_rotation.R () = m_vertices [(m_nPoint + 1) % pSide->VertexCount ()] - m_vertices [m_nPoint];
 m_rotation.R ().Normalize ();
 #if !ROTAXIS_METHOD
 // As far as I can tell we do have to do this to allow users to pick matching lines at each end
@@ -216,9 +216,9 @@ if (!bNewSide && (Edge () != selection->Edge ())) {
 	m_nPoint = selection->Point ();
 	return m_updateStatus = UpdateOrientation;
 	}
-CSegment* segP = segmentManager.Segment (m_nSegment);
+CSegment* pSegment = segmentManager.Segment (m_nSegment);
 for (int i = 0; i < 4; i++)
-	if (m_vertices [i] != *segP->Vertex (m_nSide, i))
+	if (m_vertices [i] != *pSegment->Vertex (m_nSide, i))
 		return m_updateStatus = UpdateOrientation;
 return m_updateStatus = NoUpdate;
 }
@@ -241,13 +241,13 @@ if (!bUnTwist)
   ubyte				oppVertexIndex [4];
   CDoubleVector	edges [4];
 
-CSegment* segP = segmentManager.Segment (m_nSegment);
-segP->CreateOppVertexIndex (nSide, oppVertexIndex);
+CSegment* pSegment = segmentManager.Segment (m_nSegment);
+pSegment->CreateOppVertexIndex (nSide, oppVertexIndex);
 
-CVertex* v0 = segP->Vertex (nSide, 0);
+CVertex* v0 = pSegment->Vertex (nSide, 0);
 short nOffset = 0;
 for (short j = 0; j < 4; j++) {
-	edges [j] = *segP->Vertex (ushort (oppVertexIndex [j])) - *v0;
+	edges [j] = *pSegment->Vertex (ushort (oppVertexIndex [j])) - *v0;
 	double d = edges [j].Mag ();
 	edges [j] /= d;
 	if (d < minDist) {
@@ -257,8 +257,8 @@ for (short j = 0; j < 4; j++) {
 	}
 #if 0
 if (nOffset == 0) {
-	segP->ComputeNormals (nSide);
-	CDoubleVector& n = segP->Side (nSide)->Normal ();
+	pSegment->ComputeNormals (nSide);
+	CDoubleVector& n = pSegment->Side (nSide)->Normal ();
 	for (short j = 0; j < 4; j++) {
 		double d = fabs (Dot (edges [j], n));
 		if (d < minDist) {
@@ -271,9 +271,9 @@ if (nOffset == 0) {
 if (nOffset != 0) {
 	short vertexIds [4];
 	for (short j = 0; j < 4; j++)
-		vertexIds [j] = segP->VertexId (nSide, j);
+		vertexIds [j] = pSegment->VertexId (nSide, j);
 	for (short j = 0; j < 4; j++)
-		segP->SetVertexId (nSide, nOffset + j, vertexIds [j]);
+		pSegment->SetVertexId (nSide, nOffset + j, vertexIds [j]);
 	}
 }
 
@@ -399,10 +399,10 @@ for (uint nElement = 0, nElements = m_segments [0].m_elements.Length (); nElemen
 	for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 		e0 = e1;
 		e1 = &m_segments [nSegment].m_elements [nElement];
-		CSegment* segP = segmentManager.Segment (e1->m_nSegment);
+		CSegment* pSegment = segmentManager.Segment (e1->m_nSegment);
 		for (short nVertex = 0; nVertex < 4; nVertex++) {
-			segP->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
-			segP->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
+			pSegment->SetVertexId (m_base [0].m_nSide, nVertex, e1->m_nVertices [nVertex]);
+			pSegment->SetVertexId (m_base [0].m_oppVertexIndex [nVertex], e0->m_nVertices [nVertex]);
 			}
 #if UNTWIST // A hack that is not required anymore ...
 		//if (nSegment == m_nSteps)
@@ -485,42 +485,42 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 
 	for (short iElement = 0; iElement < nElements; iElement++) {
 		short nStartSeg = path.m_startSides [iElement].m_nSegment;
-		CSegment* startSegP = segmentManager.Segment (nStartSeg);
+		CSegment* pStartSeg = segmentManager.Segment (nStartSeg);
 		CTunnelElement& e0 = m_segments [nSegment].m_elements [iElement];
-		CSegment* segP = segmentManager.Segment (e0.m_nSegment);
+		CSegment* pSegment = segmentManager.Segment (e0.m_nSegment);
 
-		segP->m_info.function = startSegP->m_info.function;
-		segP->m_info.props = startSegP->m_info.props;
-		segP->m_info.owner = startSegP->m_info.owner;
-		segP->m_info.group = startSegP->m_info.group;
-		segP->m_nShape = startSegP->m_nShape;
-		CSide* sideP = segP->Side (0);
-		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+		pSegment->m_info.function = pStartSeg->m_info.function;
+		pSegment->m_info.props = pStartSeg->m_info.props;
+		pSegment->m_info.owner = pStartSeg->m_info.owner;
+		pSegment->m_info.group = pStartSeg->m_info.group;
+		pSegment->m_nShape = pStartSeg->m_nShape;
+		CSide* pSide = pSegment->Side (0);
+		for (short nSide = 0; nSide < 6; nSide++, pSide++) {
 #if 1
-			segP->SetUV (nSide, 0.0, 0.0);
+			pSegment->SetUV (nSide, 0.0, 0.0);
 #else
-			memcpy (sideP->m_info.uvls, startSegP->m_sides [nSide].m_info.uvls, sizeof (sideP->m_info.uvls));
-			memcpy (sideP->m_info.uvlDeltas, startSegP->m_sides [nSide].m_info.uvlDeltas, sizeof (sideP->m_info.uvlDeltas));
+			memcpy (pSide->m_info.uvls, pStartSeg->m_sides [nSide].m_info.uvls, sizeof (pSide->m_info.uvls));
+			memcpy (pSide->m_info.uvlDeltas, pStartSeg->m_sides [nSide].m_info.uvlDeltas, sizeof (pSide->m_info.uvlDeltas));
 #endif
-			sideP->m_info.nBaseTex = startSegP->m_sides [nSide].m_info.nBaseTex;
-			sideP->m_info.nOvlTex = startSegP->m_sides [nSide].m_info.nOvlTex;
-			sideP->m_nShape = startSegP->m_sides [nSide].m_nShape;
+			pSide->m_info.nBaseTex = pStartSeg->m_sides [nSide].m_info.nBaseTex;
+			pSide->m_info.nOvlTex = pStartSeg->m_sides [nSide].m_info.nOvlTex;
+			pSide->m_nShape = pStartSeg->m_sides [nSide].m_nShape;
 			}
 
 		if (bFinalize)
-			segP->Tag ();
+			pSegment->Tag ();
 		for (int j = 0; j < 6; j++)
-			segP->SetChild (j, -1);
+			pSegment->SetChild (j, -1);
 		if (bFinalize)
-			segP->m_info.bTunnel = 0;
+			pSegment->m_info.bTunnel = 0;
 		if (nSegment > 1) 
-			segP->SetChild (oppSideTable [nStartSide], m_segments [nSegment - 1].m_elements [iElement].m_nSegment); // previous tunnel segment
+			pSegment->SetChild (oppSideTable [nStartSide], m_segments [nSegment - 1].m_elements [iElement].m_nSegment); // previous tunnel segment
 		else if (bFinalize) {
-			startSegP->SetChild (nStartSide, e0.m_nSegment);
-			segP->SetChild (oppSideTable [nStartSide], nStartSeg);
+			pStartSeg->SetChild (nStartSide, e0.m_nSegment);
+			pSegment->SetChild (oppSideTable [nStartSide], nStartSeg);
 			} 
 		if (nSegment < m_nSteps)
-			segP->SetChild (nStartSide, m_segments [nSegment + 1].m_elements [iElement].m_nSegment); // next tunnel segment
+			pSegment->SetChild (nStartSide, m_segments [nSegment + 1].m_elements [iElement].m_nSegment); // next tunnel segment
 		}
 	}
 
@@ -539,13 +539,13 @@ AssignVertices ();
 for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 	for (short iElement = 0; iElement < nElements; iElement++) {
 		CTunnelElement& e0 = m_segments [nSegment].m_elements [iElement];
-		CSegment* segP = segmentManager.Segment (e0.m_nSegment);
+		CSegment* pSegment = segmentManager.Segment (e0.m_nSegment);
 
 #if 0 //ndef _DEBUG
 		// align the textures nicely
-		CSide* sideP = segP->Side (0);
-		for (short nSide = 0; nSide < 6; nSide++, sideP++) { 
-			if (sideP->IsVisible ())
+		CSide* pSide = pSegment->Side (0);
+		for (short nSide = 0; nSide < 6; nSide++, pSide++) { 
+			if (pSide->IsVisible ())
 				segmentManager.AlignTextures (e0.m_nSegment, nSide, 1, 0, 1, 1, 0);
 			}
 #endif
@@ -553,10 +553,10 @@ for (short nSegment = 1; nSegment <= m_nSteps; nSegment++) {
 			if (jElement == iElement)
 				continue;
 			short nChildSeg = m_segments [nSegment].m_elements [jElement].m_nSegment;
-			short nChildSide, nSide = segP->CommonSides (nChildSeg, nChildSide);
+			short nChildSide, nSide = pSegment->CommonSides (nChildSeg, nChildSide);
 			if (nSide < 0)
 				continue;
-			segP->SetChild (nSide, nChildSeg);
+			pSegment->SetChild (nSide, nChildSeg);
 			segmentManager.Segment (nChildSeg)->SetChild (nChildSide, e0.m_nSegment);
 			}
 		}
@@ -655,7 +655,7 @@ int nSides = tagger.Run ();
 
 #else // use all tagged sides
 
-CSegment* segP = segmentManager.Segment (0);
+CSegment* pSegment = segmentManager.Segment (0);
 short nSegments = segmentManager.Count ();
 current->Segment ()->ComputeNormals (current->SideId ());
 CDoubleVector reference = current->Side ()->Normal ();
@@ -663,15 +663,15 @@ double maxAngle = cos (Radians (22.5));
 
 CSLL<CSideKey, CSideKey> startSides;
 
-for (short nSegment = 0; nSegment < nSegments; nSegment++, segP++) {
-	segP->ComputeNormals (-1);
-	CSide* sideP = segP->Side (0);
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (!sideP->IsTagged ())
+for (short nSegment = 0; nSegment < nSegments; nSegment++, pSegment++) {
+	pSegment->ComputeNormals (-1);
+	CSide* pSide = pSegment->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+		if (!pSide->IsTagged ())
 			continue;
-		if (sideP->Shape ()) // only accept quads
+		if (pSide->Shape ()) // only accept quads
 			continue;
-		if (Dot (sideP->Normal (), reference) < maxAngle)
+		if (Dot (pSide->Normal (), reference) < maxAngle)
 			continue;
 		if (!startSides.Append (CSideKey (nSegment, nSide)))
 			return false;
@@ -695,9 +695,9 @@ CSLL<ushort,ushort>	startVertices;
 for (int nStartSide = 0; nStartSide < nSides; nStartSide++) {
 	m_startSides [nStartSide] = tagger.m_sideList [nStartSide].m_child;
 	short nSide = m_startSides [nStartSide].m_nSide;
-	CSegment* segP = segmentManager.Segment (m_startSides [nStartSide]);
-	for (int nVertex = 0, nVertexCount = segP->Side (nSide)->VertexCount (); nVertex < nVertexCount; nVertex++) {
-		ushort nId = segP->VertexId (nSide, nVertex);
+	CSegment* pSegment = segmentManager.Segment (m_startSides [nStartSide]);
+	for (int nVertex = 0, nVertexCount = pSegment->Side (nSide)->VertexCount (); nVertex < nVertexCount; nVertex++) {
+		ushort nId = pSegment->VertexId (nSide, nVertex);
 		int nIndex = startVertices.Index (nId);
 		if (nIndex < 0) {
 			if (!startVertices.Append (nId))
@@ -718,9 +718,9 @@ int nStartSide = 0;
 for (sideIter.Begin (); *sideIter != sideIter.End (); sideIter++, nStartSide++) {
 	m_startSides [nStartSide] = **sideIter;
 	short nSide = m_startSides [nStartSide].m_nSide;
-	CSegment* segP = segmentManager.Segment (m_startSides [nStartSide]);
-	for (int nVertex = 0, nVertexCount = segP->Side (nSide)->VertexCount (); nVertex < nVertexCount; nVertex++) {
-		ushort nId = segP->VertexId (nSide, nVertex);
+	CSegment* pSegment = segmentManager.Segment (m_startSides [nStartSide]);
+	for (int nVertex = 0, nVertexCount = pSegment->Side (nSide)->VertexCount (); nVertex < nVertexCount; nVertex++) {
+		ushort nId = pSegment->VertexId (nSide, nVertex);
 		int nIndex = startVertices.Index (nId);
 		if (nIndex < 0) {
 			if (!startVertices.Append (nId))

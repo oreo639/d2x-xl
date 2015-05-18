@@ -48,7 +48,7 @@ class CLightDeltaValue : public CSideKey, public CGameItem {
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual CGameItem* Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* pDest);
 };
 
 // -----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ class CLightDeltaIndex : public CSideKey, public CGameItem {
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual CGameItem* Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* pDest);
 };
 
 // -----------------------------------------------------------------------------
@@ -108,7 +108,7 @@ public:
 	
 	void Setup (CSideKey key, int time, uint mask);
 
-	virtual CGameItem* Copy (CGameItem* destP);
+	virtual CGameItem* Copy (CGameItem* pDest);
 
 	virtual CGameItem* Clone (void);
 	

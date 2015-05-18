@@ -157,12 +157,12 @@ CHECKMINE;
 CalcSegDist ();
 Renderer ().BeginRender (Renderer ().Type () == 0);
 Renderer ().SelectPen (penGray + 1);
-CSegment* segP = segmentManager.Segment (0);
+CSegment* pSegment = segmentManager.Segment (0);
 short segCount = segmentManager.Count ();
 if (m_nRenderer)
 	glDepthFunc (GL_LEQUAL);
-for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) 
-	DrawSegmentWireFrame (segP, bSparse);
+for (short nSegment = 0; nSegment < segCount; nSegment++, pSegment++) 
+	DrawSegmentWireFrame (pSegment, bSparse);
 Renderer ().EndRender ();
 if (Visible (current->Segment ())) {
 	DrawCurrentSegment (current->Segment (), bSparse);
@@ -208,39 +208,39 @@ if (!textureManager.Available ())
 // Draw Segments ()
 short segCount = segmentManager.Count ();
 int faceCount = 0;
-CSegment* segP = segmentManager.Segment (0);
-for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
-	if (!Visible (segP))
+CSegment* pSegment = segmentManager.Segment (0);
+for (short nSegment = 0; nSegment < segCount; nSegment++, pSegment++) {
+	if (!Visible (pSegment))
 		continue;
 
-	CSide* sideP = segP->Side (0);
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+	CSide* pSide = pSegment->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
 #ifdef _DEBUG
 		if ((nSegment == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 			nDbgSeg = nDbgSeg;
 #endif
 #ifdef _DEBUG
-		if (segP->m_info.bTunnel)
+		if (pSegment->m_info.bTunnel)
 			continue;
 #endif
-		if (segP->ChildId (nSide) != -1) { // not a solid side
-			CWall* wallP = sideP->Wall ();
-			if (wallP == null) // no wall either
+		if (pSegment->ChildId (nSide) != -1) { // not a solid side
+			CWall* pWall = pSide->Wall ();
+			if (pWall == null) // no wall either
 				continue;
-			if (wallP->Type () == WALL_OPEN) // invisible wall
+			if (pWall->Type () == WALL_OPEN) // invisible wall
 				continue;
-			if ((wallP->Type () == WALL_CLOAKED) && (wallP->Info ().cloakValue == 0)) // invisible cloaked wall
+			if ((pWall->Type () == WALL_CLOAKED) && (pWall->Info ().cloakValue == 0)) // invisible cloaked wall
 				continue;
 			}
 
-		if (!FaceIsVisible (segP, sideP))
+		if (!FaceIsVisible (pSegment, pSide))
 			continue;
-		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
+		if (pSide->Shape () > SIDE_SHAPE_TRIANGLE)
 			continue;
 
 		long zMin = -LONG_MIN, zMax = LONG_MIN;
 		for (ushort nVertex = 0; nVertex < 4; nVertex++) {
-			long z = vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (nVertex)]].m_screen.z;
+			long z = vertexManager [pSegment->m_info.vertexIds [pSide->VertexIdIndex (nVertex)]].m_screen.z;
 			if (zMin > z)
 				zMin = z;
 			if (zMax < z)
@@ -251,8 +251,8 @@ for (short nSegment = 0; nSegment < segCount; nSegment++, segP++) {
 		faceRenderList [faceCount].m_nSide = nSide;
 		faceRenderList [faceCount].m_zMin = zMin;
 		faceRenderList [faceCount].m_zMax = zMax;
-		CWall* wallP = sideP->Wall ();
-		faceRenderList [faceCount].m_bTransparent = segP->m_info.bTunnel || textureManager.Textures (sideP->BaseTex ())->Transparent () || ((wallP != null) && (wallP->Alpha () < 255));
+		CWall* pWall = pSide->Wall ();
+		faceRenderList [faceCount].m_bTransparent = pSegment->m_info.bTunnel || textureManager.Textures (pSide->BaseTex ())->Transparent () || ((pWall != null) && (pWall->Alpha () < 255));
 		++faceCount;
 		}
 	}
@@ -285,20 +285,20 @@ void CMineView::DrawSegmentHighlighted (short nSegment, short nSide, short nLine
 {
 CHECKMINE;
 
-	CSegment *segP = segmentManager.Segment (nSegment);
-	CSide* sideP = segP->Side (nSide);
+	CSegment *pSegment = segmentManager.Segment (nSegment);
+	CSide* pSide = pSegment->Side (nSide);
 	short xMax = ViewWidth () * 2;
 	short yMax = ViewHeight () * 2;
 
-	if (!Visible (segP))
+	if (!Visible (pSegment))
 		return;
 
 // draw the segment's wire frame
-if (segP->IsTagged ())
+if (pSegment->IsTagged ())
 	Renderer ().SelectPen (penGold + 1, 2.0f);
 else 
 	Renderer ().SelectPen (((nSegment == current->SegmentId ()) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSegment) ? penRed + 1 : penWhite + 1 : penGray + 1, 2);   
-DrawSegmentWireFrame (segP);
+DrawSegmentWireFrame (pSegment);
 
 // draw the current side's outline
 	int i;
@@ -306,40 +306,40 @@ if (!Renderer ().Ortho ())
 	i = 4;
 else {
 	for (i = 0; i < 4; i++)
-		if (!vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (i)]].InRange (xMax, yMax, Renderer ().Type ()))
+		if (!vertexManager [pSegment->m_info.vertexIds [pSide->VertexIdIndex (i)]].InRange (xMax, yMax, Renderer ().Type ()))
 			break;
 	}
 if (i == 4) {
 	Renderer ().SelectPen (((nSegment == current->SegmentId ()) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectSide) ? penRed + 1 : penGreen + 1 : penDkGreen + 1, 2);  
-	short nVertices = sideP->VertexCount ();
+	short nVertices = pSide->VertexCount ();
 	for (i = 0; i < nVertices; i++)
-		DrawLine (segP, sideP->VertexIdIndex (i), sideP->VertexIdIndex (i + 1));
+		DrawLine (pSegment, pSide->VertexIdIndex (i), pSide->VertexIdIndex (i + 1));
 	}
 
 // draw the current line
-short i1 = sideP->VertexIdIndex (nLine);
-short i2 = sideP->VertexIdIndex (nLine + 1);
+short i1 = pSide->VertexIdIndex (nLine);
+short i2 = pSide->VertexIdIndex (nLine + 1);
 if (!Renderer ().Ortho () ||
-		(vertexManager [segP->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
-		vertexManager [segP->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
+		(vertexManager [pSegment->m_info.vertexIds [i1]].InRange (xMax, yMax, Renderer ().Type ()) &&
+		vertexManager [pSegment->m_info.vertexIds [i2]].InRange (xMax, yMax, Renderer ().Type ()))) 
 	{
 	Renderer ().SelectPen (((nSegment == current->SegmentId ()) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectLine) ? penRed + 1 : penGold + 1 : penMedCyan + 1, 2);  
-	DrawLine (segP, i1, i2);
+	DrawLine (pSegment, i1, i2);
 	}
 
 // draw a circle around the current vertex
 Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
 Renderer ().SelectPen (((nSegment == current->SegmentId ()) || (nSegment == nearest->m_nSegment)) ? SelectMode (eSelectPoint) ? penRed + 1 : penGold + 1 : penMedCyan + 1, 2); 
-i = segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)];
+i = pSegment->m_info.vertexIds [pSide->VertexIdIndex (nPoint)];
 if (vertexManager [i].InRange (xMax, yMax, Renderer ().Type ()))
 	Renderer ().Ellipse (vertexManager [i], 4, 4);
 }
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentPartial (CSegment *segP) 
+void CMineView::DrawSegmentPartial (CSegment *pSegment) 
 {
-RenderSegmentWireFrame (segP, true);
+RenderSegmentWireFrame (pSegment, true);
 }
 
 //--------------------------------------------------------------------------
@@ -372,23 +372,23 @@ if (left < r)
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSparseSegmentWireFrame (CSegment *segP)
+void CMineView::DrawSparseSegmentWireFrame (CSegment *pSegment)
 {
 bool bOrtho = Renderer ().Ortho ();
 CEdgeList edgeList;
-int nEdges = segP->BuildEdgeList (edgeList, true);
+int nEdges = pSegment->BuildEdgeList (edgeList, true);
 
 for (short nSide = 0; nSide < 6; nSide++) {
-	if (segP->ChildId (nSide) >= 0)
+	if (pSegment->ChildId (nSide) >= 0)
 		continue;
-	CSide* sideP = segP->Side (nSide);
+	CSide* pSide = pSegment->Side (nSide);
 	CPoint side [4], line [2];
 	ubyte v [2];
 	int i, j;
 
 	for (i = 0; i < 4; i++) {
-		side [i].x = vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (i)]].m_screen.x; 
-		side [i].y = vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (i)]].m_screen.y; 
+		side [i].x = vertexManager [pSegment->m_info.vertexIds [pSide->VertexIdIndex (i)]].m_screen.x; 
+		side [i].y = vertexManager [pSegment->m_info.vertexIds [pSide->VertexIdIndex (i)]].m_screen.y; 
 		}
 	CDoubleVector a,b;
 	a.v.x = (double) (side [1].x - side [0].x);
@@ -404,7 +404,7 @@ for (short nSide = 0; nSide < 6; nSide++) {
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 2; j++) {
 			line [j] = side [(i+j)%4];
-			v [j] = sideP->VertexIdIndex ((i+j)%4);
+			v [j] = pSide->VertexIdIndex ((i+j)%4);
 			}
 
 		// Using the sparse edge list: if a neighboring side is 0xff, it's joined to another cube,
@@ -414,8 +414,8 @@ for (short nSide = 0; nSide < 6; nSide++) {
 		if (side1 == 0xff || side2 == 0xff)
 			continue;
 
-		CVertex& v1 = vertexManager [segP->m_info.vertexIds [v [0]]];
-		CVertex& v2 = vertexManager [segP->m_info.vertexIds [v [1]]];
+		CVertex& v1 = vertexManager [pSegment->m_info.vertexIds [v [0]]];
+		CVertex& v2 = vertexManager [pSegment->m_info.vertexIds [v [1]]];
 		if (!bOrtho) {
 			Renderer ().MoveTo (v1);
 			Renderer ().LineTo (v2);
@@ -430,16 +430,16 @@ for (short nSide = 0; nSide < 6; nSide++) {
 
 //--------------------------------------------------------------------------
 
-void CMineView::RenderSegmentWireFrame (CSegment *segP, bool bSparse, bool bTagged)
+void CMineView::RenderSegmentWireFrame (CSegment *pSegment, bool bSparse, bool bTagged)
 {
 	int	bOrtho = Renderer ().Ortho ();
 
 if (bOrtho) {
-	if (!Visible (segP))
+	if (!Visible (pSegment))
 		return;
 	}
 else if (!bSparse) {
-	if ((segP == current->Segment ()) || (segP == other->Segment ()))
+	if ((pSegment == current->Segment ()) || (pSegment == other->Segment ()))
 		glDisable (GL_DEPTH_TEST);
 	else
 		glEnable (GL_DEPTH_TEST);
@@ -447,27 +447,27 @@ else if (!bSparse) {
 	}
 
 	CEdgeList	edgeList;
-	ushort*		vertexIds = segP->m_info.vertexIds;
+	ushort*		vertexIds = pSegment->m_info.vertexIds;
 	short			xMax = ViewWidth (),
 					yMax = ViewHeight ();
 	int			nType = Renderer ().Type ();
 	ePenColor	pen;
 	float			penWeight;
-	bool			bSegmentIsTagged = segP->IsTagged ();
+	bool			bSegmentIsTagged = pSegment->IsTagged ();
 	bool			bSideTagged [2] = {false, false};
 	bool			bFullWireFrame = !bTagged || bSegmentIsTagged || (m_viewOption != eViewTextured);
 
 #ifdef _DEBUG
-if (segmentManager.Index (segP) == nDbgSeg)
+if (segmentManager.Index (pSegment) == nDbgSeg)
 	nDbgSeg = nDbgSeg;
 #endif
 Renderer ().GetPen (pen, penWeight);
-for (int i = 0, j = segP->BuildEdgeList (edgeList); i < j; i++) {
+for (int i = 0, j = pSegment->BuildEdgeList (edgeList); i < j; i++) {
 	ubyte i1, i2, side1, side2;
 	edgeList.Get (i, side1, side2, i1, i2);
 	if (!bSegmentIsTagged) {
 		bSideTagged [0] = bSideTagged [1];
-		bSideTagged [1] = segP->IsTagged (short (side1)) || segP->IsTagged (short (side2));
+		bSideTagged [1] = pSegment->IsTagged (short (side1)) || pSegment->IsTagged (short (side2));
 		if (bSideTagged [0] != bSideTagged [1]) {
 			if (bSideTagged [1])
 				Renderer ().SelectPen (penOrange + 1, ViewOption (eViewTexturedWireFrame) ? 3.0f : 2.0f);
@@ -495,19 +495,19 @@ if (bSideTagged [1])
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentWireFrame (CSegment *segP, bool bSparse, bool bTagged, char bTunnel)
+void CMineView::DrawSegmentWireFrame (CSegment *pSegment, bool bSparse, bool bTagged, char bTunnel)
 {
 CHECKMINE;
 
-if (!Visible (segP))
+if (!Visible (pSegment))
 	return;
-if (segP->m_info.bTunnel != bTunnel)
+if (pSegment->m_info.bTunnel != bTunnel)
 	return;
 
 if (!m_nRenderer && (bSparse || Renderer ().Ortho ())) {
 	short xMax = ViewWidth ();
 	short yMax = ViewHeight ();
-	ushort* vertexIds = segP->m_info.vertexIds;
+	ushort* vertexIds = pSegment->m_info.vertexIds;
 	for (int i = 0; i < 8; i++, vertexIds++) {
 		int v = *vertexIds;
 		if ((v <= MAX_VERTEX) && !vertexManager [v].InRange (xMax, yMax, Renderer ().Type ()))
@@ -516,20 +516,20 @@ if (!m_nRenderer && (bSparse || Renderer ().Ortho ())) {
 	}
 
 if (bSparse)
-	DrawSparseSegmentWireFrame (segP);
+	DrawSparseSegmentWireFrame (pSegment);
 else
-	RenderSegmentWireFrame (segP, false, bTagged);
+	RenderSegmentWireFrame (pSegment, false, bTagged);
 }
 
 //--------------------------------------------------------------------------
 //                        draw_segmentPoints()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawSegmentPoints (CSegment *segP)
+void CMineView::DrawSegmentPoints (CSegment *pSegment)
 {
 CHECKMINE;
 
-	ushort*	vertexIds = segP->m_info.vertexIds;
+	ushort*	vertexIds = pSegment->m_info.vertexIds;
 	int		h;
 
 Renderer ().SelectPen (penGray + 1);
@@ -541,15 +541,15 @@ for (int i = 0; i < 8; i++, vertexIds++)
 
 //--------------------------------------------------------------------------
 
-bool CMineView::SelectWireFramePen (CSegment* segP)
+bool CMineView::SelectWireFramePen (CSegment* pSegment)
 {
-if (segP->IsTagged ()) { 
+if (pSegment->IsTagged ()) { 
 	Renderer ().SelectPen (penOrange + 1); 
 	return true;
 	}
 
 if (ViewFlag (eViewMineSpecial) && (m_viewOption != eViewTextured)) {
-	switch (segP->m_info.function) {
+	switch (pSegment->m_info.function) {
 		case SEGMENT_FUNC_PRODUCER:
 		case SEGMENT_FUNC_SPEEDBOOST:
 			Renderer ().SelectPen (penYellow + 1);
@@ -573,11 +573,11 @@ if (ViewFlag (eViewMineSpecial) && (m_viewOption != eViewTextured)) {
 			Renderer ().SelectPen (penRed + 1);
 			return true;
 		default:
-			if (segP->m_info.props & SEGMENT_PROP_WATER)
+			if (pSegment->m_info.props & SEGMENT_PROP_WATER)
 				Renderer ().SelectPen (penMedBlue + 1);
-			else if (segP->m_info.props & SEGMENT_PROP_LAVA)
+			else if (pSegment->m_info.props & SEGMENT_PROP_LAVA)
 				Renderer ().SelectPen (penMedRed + 1);
-			else if (segP->IsTagged (short (-1))) 
+			else if (pSegment->IsTagged (short (-1))) 
 				Renderer ().SelectPen (penGray + 1);
 			else
 				return false;
@@ -585,7 +585,7 @@ if (ViewFlag (eViewMineSpecial) && (m_viewOption != eViewTextured)) {
 		}
 	}
 
-if (segP->IsTagged (short (-1))) {
+if (pSegment->IsTagged (short (-1))) {
 	Renderer ().SelectPen (penGray + 1); 
 	return true;
 	}
@@ -599,7 +599,7 @@ void CMineView::DrawTaggedSegments (void)
 {
 CHECKMINE;
 
-	CSegment*	segP;
+	CSegment*	pSegment;
 	short			xMax = ViewWidth ();
 	short			yMax = ViewHeight ();
 	short			i;
@@ -607,8 +607,8 @@ Renderer ().BeginRender (Renderer ().Type () == 0);
 if (!Renderer ().Ortho ())
 	glDepthFunc (GL_LEQUAL);
 for (i = 0; i < segmentManager.Count (); i++) 
-	if (SelectWireFramePen (segP = segmentManager.Segment (i)))
-		DrawSegmentWireFrame (segP, false, true);
+	if (SelectWireFramePen (pSegment = segmentManager.Segment (i)))
+		DrawSegmentWireFrame (pSegment, false, true);
 Renderer ().EndRender ();
 Renderer ().BeginRender (true);
 // draw a square around all marked points
@@ -629,7 +629,7 @@ Renderer ().EndRender ();
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCurrentSegment (CSegment *segP, bool bSparse)
+void CMineView::DrawCurrentSegment (CSegment *pSegment, bool bSparse)
 {
 CHECKMINE;
 
@@ -638,8 +638,8 @@ CHECKMINE;
 	short nSide = current->SideId ();
 	short nLine = current->Point ();
 	short	nPoint = current->Point ();
-	CSide* sideP = segP->Side (nSide);
-	short nVertices = sideP->VertexCount ();
+	CSide* pSide = pSegment->Side (nSide);
+	short nVertices = pSide->VertexCount ();
 
 if (Renderer ().Type ()) {
 	BeginRender ();
@@ -647,43 +647,43 @@ if (Renderer ().Type ()) {
 	}
 else {
 	for (int i = 0; i < nVertices; i++)
-		if (!vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (i)]].InRange (xMax, yMax, Renderer ().Type ()))
+		if (!vertexManager [pSegment->m_info.vertexIds [pSide->VertexIdIndex (i)]].InRange (xMax, yMax, Renderer ().Type ()))
 			return;
 	BeginRender (true);
 	}
 
 Renderer ().SelectPen ((m_selectMode == SIDE_MODE) ? penRed + 1 : penGreen + 1);
 for (int i = 0; i < nVertices; i++)
-	DrawLine (segP, sideP->VertexIdIndex (i), sideP->VertexIdIndex (i + 1));
+	DrawLine (pSegment, pSide->VertexIdIndex (i), pSide->VertexIdIndex (i + 1));
 // draw current line
 Renderer ().SelectPen ((m_selectMode == SIDE_MODE) ? penRed + 1 : penGold + 1);
-DrawLine (segP, sideP->VertexIdIndex (nLine), sideP->VertexIdIndex (nLine + 1));
+DrawLine (pSegment, pSide->VertexIdIndex (nLine), pSide->VertexIdIndex (nLine + 1));
 // draw a circle around the current point
 Renderer ().SelectObject ((HBRUSH) GetStockObject (NULL_BRUSH));
 Renderer ().SelectPen ((m_selectMode == SIDE_MODE) ? penRed + 1 : penGold + 1);
-Renderer ().Ellipse (vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (nPoint)]], 4, 4);
+Renderer ().Ellipse (vertexManager [pSegment->m_info.vertexIds [pSide->VertexIdIndex (nPoint)]], 4, 4);
 EndRender ();
 }
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawLine (CSegment* segP, short i1, short i2) 
+void CMineView::DrawLine (CSegment* pSegment, short i1, short i2) 
 {
 CHECKMINE;
 if (Renderer ().Ortho ()) {
-	Renderer ().MoveTo (vertexManager [segP->m_info.vertexIds [i1]].m_screen.x, vertexManager [segP->m_info.vertexIds [i1]].m_screen.y);
-	Renderer ().LineTo (vertexManager [segP->m_info.vertexIds [i2]].m_screen.x, vertexManager [segP->m_info.vertexIds [i2]].m_screen.y);
+	Renderer ().MoveTo (vertexManager [pSegment->m_info.vertexIds [i1]].m_screen.x, vertexManager [pSegment->m_info.vertexIds [i1]].m_screen.y);
+	Renderer ().LineTo (vertexManager [pSegment->m_info.vertexIds [i2]].m_screen.x, vertexManager [pSegment->m_info.vertexIds [i2]].m_screen.y);
 	}
 else {
-	Renderer ().MoveTo (vertexManager [segP->m_info.vertexIds [i1]]);
-	Renderer ().LineTo (vertexManager [segP->m_info.vertexIds [i2]]);
+	Renderer ().MoveTo (vertexManager [pSegment->m_info.vertexIds [i1]]);
+	Renderer ().LineTo (vertexManager [pSegment->m_info.vertexIds [i2]]);
 	}
 }
 //--------------------------------------------------------------------------
 
-void CMineView::SelectWallPen (CWall* wallP)
+void CMineView::SelectWallPen (CWall* pWall)
 {
-switch (wallP->Type ()) {
+switch (pWall->Type ()) {
 	case WALL_NORMAL:
 		Renderer ().SelectPen (penLtGray + 1);
 		break;
@@ -691,7 +691,7 @@ switch (wallP->Type ()) {
 		Renderer ().SelectPen (penLtGray + 1);
 		break;
 	case WALL_DOOR:
-		switch(wallP->Info ().keys) {
+		switch(pWall->Info ().keys) {
 			case KEY_NONE:
 				Renderer ().SelectPen (penLtGray + 1);
 				break;
@@ -730,8 +730,8 @@ CHECKMINE;
 
 	CWall*		walls = wallManager.Wall (0);
 	CSegment*	segments = segmentManager.Segment (0);
-	CSegment*	segP;
-	CSide*		sideP;
+	CSegment*	pSegment;
+	CSide*		pSide;
 	short			i,j;
 	short			xMax = ViewWidth () * 2;
 	short			yMax = ViewHeight () * 2;
@@ -739,13 +739,13 @@ CHECKMINE;
 for (i = 0; i < wallManager.WallCount (); i++) {
 	if (walls [i].m_nSegment > segmentManager.Count ())
 		continue;
-	segP = segments + (int) walls [i].m_nSegment;
-	if (!Visible (segP))
+	pSegment = segments + (int) walls [i].m_nSegment;
+	if (!Visible (pSegment))
 		continue;
 	short nSide = walls [i].m_nSide;
-	sideP = segP->Side (nSide);
+	pSide = pSegment->Side (nSide);
 	for (j = 0; j < 4; j++) {
-		CVertex& v = vertexManager [segP->m_info.vertexIds [sideP->VertexIdIndex (j)]];
+		CVertex& v = vertexManager [pSegment->m_info.vertexIds [pSide->VertexIdIndex (j)]];
 		if (IN_RANGE (v.m_screen.x, xMax) && IN_RANGE (v.m_screen.y, yMax))
 			break;
 		}
@@ -769,7 +769,7 @@ for (i = 0; i < wallManager.WallCount (); i++) {
 			arrowEndPoint.Transform (ViewMatrix ());
 			arrowEndPoint.Project (ViewMatrix ());
 			// direction toward center of line 0 from center
-			CVertex vector = Average (*segP->Vertex (nSide, 0), *segP->Vertex (nSide, 1));
+			CVertex vector = Average (*pSegment->Vertex (nSide, 0), *pSegment->Vertex (nSide, 1));
 			vector -= center;
 			vector.Normalize ();
 
@@ -790,9 +790,9 @@ for (i = 0; i < wallManager.WallCount (); i++) {
 			glEnable (GL_DEPTH_TEST);
 			SelectWallPen (&walls [i]);
 			glLineWidth (ViewOption (eViewTexturedWireFrame) ? 4.0f : 3.0f);
-			for (j = 0; j < sideP->VertexCount (); j++) {
+			for (j = 0; j < pSide->VertexCount (); j++) {
 				Renderer ().MoveTo (vector);
-				Renderer ().LineTo (*segP->Vertex (nSide, j));
+				Renderer ().LineTo (*pSegment->Vertex (nSide, j));
 				}
 			if (walls [i].Info ().nTrigger != NO_TRIGGER) {
 				// draw arrow
@@ -806,9 +806,9 @@ for (i = 0; i < wallManager.WallCount (); i++) {
 		else {
 			Renderer ().BeginRender (true);
 			SelectWallPen (&walls [i]);
-			for (j = 0; j < sideP->VertexCount (); j++) {
+			for (j = 0; j < pSide->VertexCount (); j++) {
 				Renderer ().MoveTo (vector.m_screen.x, vector.m_screen.y);
-				CVertex& v = *segP->Vertex (nSide, j);
+				CVertex& v = *pSegment->Vertex (nSide, j);
 				Renderer ().LineTo (v.m_screen.x, v.m_screen.y);
 				}
 			if (walls [i].Info ().nTrigger != NO_TRIGGER) {
@@ -832,14 +832,14 @@ CHECKMINE;
 
 // now show variable lights
 CViewMatrix* viewMatrix = Renderer ().ViewMatrix ();
-CVariableLight* flP = lightManager.VariableLight (0);
+CVariableLight* pLight = lightManager.VariableLight (0);
 
 // find variable light from
 Renderer ().BeginRender ();
-flP = lightManager.VariableLight (0);
-for (INT i = 0; i < lightManager.Count (); i++, flP++)
-	if (Visible (segmentManager.Segment (flP->m_nSegment)))
-	   DrawOctagon (flP->m_nSide, flP->m_nSegment);
+pLight = lightManager.VariableLight (0);
+for (INT i = 0; i < lightManager.Count (); i++, pLight++)
+	if (Visible (segmentManager.Segment (pLight->m_nSegment)))
+	   DrawOctagon (pLight->m_nSide, pLight->m_nSegment);
 Renderer ().EndRender ();
 }
 
@@ -853,34 +853,34 @@ CHECKMINE;
 	short yMax = ViewHeight ();
 
 if (nSegment >= 0 && nSegment <= segmentManager.Count () && nSide >= 0 && nSide <= 5) {
-	CSegment* segP = segmentManager.Segment (nSegment);
-	CSide* sideP = segP->Side (nSide);
-	short nVertices = sideP->VertexCount ();
+	CSegment* pSegment = segmentManager.Segment (nSegment);
+	CSide* pSide = pSegment->Side (nSide);
+	short nVertices = pSide->VertexCount ();
 	if (nVertices < 3)
 		return;
 
 
-	CVertex vCenter = segP->ComputeCenter (nSide);
+	CVertex vCenter = pSegment->ComputeCenter (nSide);
 	if (!vCenter.InRange (xMax, yMax, m_nRenderer)) 
 		return;
 
 	if (ViewMatrix ()->Distance (vCenter) <= MODEL_DISPLAY_LIMIT) {
-		sideP->ComputeNormals (segP->m_info.vertexIds, segP->ComputeCenter ());
-		vCenter += sideP->Normal ();
+		pSide->ComputeNormals (pSegment->m_info.vertexIds, pSegment->ComputeCenter ());
+		vCenter += pSide->Normal ();
 		Renderer ().Sprite (&textureManager.Icon (LIGHT_ICON), vCenter, 5.0, 5.0, false);
 		}
 	else {
-		sideP->ComputeNormals (segP->m_info.vertexIds, segP->ComputeCenter (true), true);
+		pSide->ComputeNormals (pSegment->m_info.vertexIds, pSegment->ComputeCenter (true), true);
 		CVertex vertices [4];
-		short nVertices = sideP->VertexCount ();
+		short nVertices = pSide->VertexCount ();
 #if 1
-		CDoubleVector vOffset = sideP->Normal ();
+		CDoubleVector vOffset = pSide->Normal ();
 		for (short i = 0; i < nVertices; i++)
-			vertices [i].m_view = segP->Vertex (nSide, i)->m_view + vOffset;
+			vertices [i].m_view = pSegment->Vertex (nSide, i)->m_view + vOffset;
 #else
 		for (short i = 0; i < nVertices; i++)
-			vertices [i] = *segP->Vertex (nSide, i);
-		CDoubleVector vNormal = Normal (vertices [0], vertices [1], vertices [2]); // = sideP->Normal ();
+			vertices [i] = *pSegment->Vertex (nSide, i);
+		CDoubleVector vNormal = Normal (vertices [0], vertices [1], vertices [2]); // = pSide->Normal ();
 		vertices [0] -= vCenter;
 		vertices [0].Normalize ();
 		vertices [3] = vCenter + vNormal;
@@ -951,11 +951,11 @@ for (h = tunnelMaker.Length () * 4, i = 0; i < h; i++) {
 	vertexManager [--j].Transform (ViewMatrix ());
 	vertexManager [--j].Project (ViewMatrix ());
 	}
-CSegment *segP = segmentManager.Segment (SEGMENT_LIMIT - 1);
+CSegment *pSegment = segmentManager.Segment (SEGMENT_LIMIT - 1);
 renderer.BeginRender (renderer.Type () == 0);
 renderer.SelectPen (penBlue + 1);
-for (i = 0; i < tunnelMaker.Length (); i++, segP--)
-	DrawSegmentWireFrame (segP, false, false, 1);
+for (i = 0; i < tunnelMaker.Length (); i++, pSegment--)
+	DrawSegmentWireFrame (pSegment, false, false, 1);
 renderer.EndRender ();
 #endif
 }
@@ -968,12 +968,12 @@ renderer.EndRender ();
 //        then its a secret return point)
 //--------------------------------------------------------------------------
 
-void CMineView::SelectObjectPen (CGameObject* objP) 
+void CMineView::SelectObjectPen (CGameObject* pObject) 
 {
-if ((m_selectMode == OBJECT_MODE) && (objP == current->Object ()))
+if ((m_selectMode == OBJECT_MODE) && (pObject == current->Object ()))
 	Renderer ().SelectPen (penRed + 1); // RED
 else {
-	switch(objP->Type ()) {
+	switch(pObject->Type ()) {
 		case OBJ_ROBOT: 
 		case OBJ_CAMBOT: 
 		case OBJ_EXPLOSION:
@@ -1014,50 +1014,50 @@ void CMineView::DrawObject (short nObject)
 {
 CHECKMINE;
 
-	CGameObject*	objP;
+	CGameObject*	pObject;
 	CGameObject		tempObj;
 
 if (nObject >= 0 && nObject < objectManager.Count ()) {
-	objP = objectManager.Object (nObject);
-	if (!Visible (segmentManager.Segment (objP->m_info.nSegment)))
+	pObject = objectManager.Object (nObject);
+	if (!Visible (segmentManager.Segment (pObject->m_info.nSegment)))
 		return;
 	}
 else {
 	// secret return
-	objP = &tempObj;
-	objP->Type () = -1;
-	objP->m_info.renderType = RT_NONE;
+	pObject = &tempObj;
+	pObject->Type () = -1;
+	pObject->m_info.renderType = RT_NONE;
 	// theMine->secret_orient = Objects () [0]->orient;
-	objP->m_location.orient.m.rVec = -objectManager.SecretOrient ().m.rVec;
-	objP->m_location.orient.m.uVec =  objectManager.SecretOrient ().m.fVec;
-	objP->m_location.orient.m.fVec =  objectManager.SecretOrient ().m.uVec;
-	// objP->m_location.orient =  theMine->secret_orient;
+	pObject->m_location.orient.m.rVec = -objectManager.SecretOrient ().m.rVec;
+	pObject->m_location.orient.m.uVec =  objectManager.SecretOrient ().m.fVec;
+	pObject->m_location.orient.m.fVec =  objectManager.SecretOrient ().m.uVec;
+	// pObject->m_location.orient =  theMine->secret_orient;
 	ushort nSegment = (ushort)objectManager.SecretSegment ();
 	if (nSegment >= segmentManager.Count ())
 		nSegment = 0;
 	if (!Visible (segmentManager.Segment (nSegment)))
 		return;
 	CVertex center;
-	objP->Position () = segmentManager.CalcCenter (center, nSegment); // define objP->position
+	pObject->Position () = segmentManager.CalcCenter (center, nSegment); // define pObject->position
 	}
 
-double d = (ViewOption (eViewTexturedWireFrame) || ViewOption (eViewTextured)) ? ViewMatrix ()->Distance (objP->Position ()) : 1e30;
-if (textureManager.Available (1) && objP->HasPolyModel () && modelManager.Setup (objP, m_renderer, DC ()) && ((nObject == current->ObjectId ()) || (d <= MODEL_DISPLAY_LIMIT))) {
-	SelectObjectPen (objP);
-	if (objP->IsInView (Renderer (), true)) { // only render if fully visible
+double d = (ViewOption (eViewTexturedWireFrame) || ViewOption (eViewTextured)) ? ViewMatrix ()->Distance (pObject->Position ()) : 1e30;
+if (textureManager.Available (1) && pObject->HasPolyModel () && modelManager.Setup (pObject, m_renderer, DC ()) && ((nObject == current->ObjectId ()) || (d <= MODEL_DISPLAY_LIMIT))) {
+	SelectObjectPen (pObject);
+	if (pObject->IsInView (Renderer (), true)) { // only render if fully visible
 		Renderer ().SelectObject ((HBRUSH) GetStockObject (BLACK_BRUSH));
 		modelManager.Draw ();
 		}
 	}
 else {
-	if ((d > MODEL_DISPLAY_LIMIT) || !objP->DrawSprite (Renderer ()) || (nObject == current->ObjectId ())) {
-		SelectObjectPen (objP);
-		objP->DrawArrow (Renderer (), (nObject == current->ObjectId ()));
+	if ((d > MODEL_DISPLAY_LIMIT) || !pObject->DrawSprite (Renderer ()) || (nObject == current->ObjectId ())) {
+		SelectObjectPen (pObject);
+		pObject->DrawArrow (Renderer (), (nObject == current->ObjectId ()));
 		}
 	}
 
-if (((nObject == current->ObjectId ()) || (nObject == other->ObjectId ())) && objP->IsInView (Renderer (), false))
-	objP->DrawHighlight (Renderer (), (nObject == current->ObjectId ()));
+if (((nObject == current->ObjectId ()) || (nObject == other->ObjectId ())) && pObject->IsInView (Renderer (), false))
+	pObject->DrawHighlight (Renderer (), (nObject == current->ObjectId ()));
 }
 
 //--------------------------------------------------------------------------
@@ -1081,9 +1081,9 @@ if (DLE.IsD2File ()) {
 		}
 	}
 HiliteTarget ();
-CGameObject *objP = objectManager.Object (0);
-for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
-	if (ViewObject (objP))
+CGameObject *pObject = objectManager.Object (0);
+for (i = objectManager.Count (), j = 0; i; i--, j++, pObject++)
+	if (ViewObject (pObject))
 		DrawObject (j);
 Renderer ().EndRender ();
 }
@@ -1188,9 +1188,9 @@ double minDist = 1e30;
 CSegment* nearestSegment = null;
 CSide* nearestSide = null;
 
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
-	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
-	CVertex& center = sideP->Center ();
+for (CSide* pSide = segmentManager.SelectedSides (); pSide; pSide = pSide->GetLink ()) {
+	CSegment* pSegment = segmentManager.Segment (pSide->GetParent ());
+	CVertex& center = pSide->Center ();
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 #if 0
 	if (dist > 64.0)
@@ -1198,8 +1198,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLi
 #endif
 	if (minDist > dist) {
 		minDist = dist;
-		nearestSegment = segmentManager.Segment (sideP->GetParent ());
-		nearestSide = sideP;
+		nearestSegment = segmentManager.Segment (pSide->GetParent ());
+		nearestSide = pSide;
 		}
 	}
 nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
@@ -1213,12 +1213,12 @@ if (m_nShowSelectionCandidates > 1) {
 		glEnable (GL_LINE_STIPPLE);
 		glDepthFunc (GL_ALWAYS);
 		}
-	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
-		CSegment* segP = segmentManager.Segment (sideP->GetParent ());
-		short nSide = segP->SideIndex (sideP);
-		short nVertices = sideP->VertexCount ();
-		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
-		CVertex& center = sideP->Center ();
+	for (CSide* pSide = segmentManager.SelectedSides (); pSide; pSide = pSide->GetLink ()) {
+		CSegment* pSegment = segmentManager.Segment (pSide->GetParent ());
+		short nSide = pSegment->SideIndex (pSide);
+		short nVertices = pSide->VertexCount ();
+		Renderer ().SelectPen ((pSide == nearestSide) ? penGold + 1 : penMedBlue + 1);
+		CVertex& center = pSide->Center ();
 	#if 0
 		double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 		if (dist > 64.0)
@@ -1228,7 +1228,7 @@ if (m_nShowSelectionCandidates > 1) {
 			glLineStipple (1, 0x00ff);  
 		if (Renderer ().Ortho ()) {
 			for (int i = 0; i <= nVertices; i++) {
-				CVertex* vertex = segP->Vertex (nSide, i);
+				CVertex* vertex = pSegment->Vertex (nSide, i);
 				if (i)
 					Renderer ().LineTo (vertex->m_screen.x, vertex->m_screen.y);
 				else
@@ -1237,7 +1237,7 @@ if (m_nShowSelectionCandidates > 1) {
 			}
 		else {
 			for (int i = 0; i <= nVertices; i++) {
-				CVertex* vertex = segP->Vertex (nSide, i);
+				CVertex* vertex = pSegment->Vertex (nSide, i);
 				if (i)
 					Renderer ().LineTo (*vertex);
 				else
@@ -1245,8 +1245,8 @@ if (m_nShowSelectionCandidates > 1) {
 				}
 			}
 
-		if (!sideP->IsVisible ()) {
-			CVertex normal = sideP->Normal (2);
+		if (!pSide->IsVisible ()) {
+			CVertex normal = pSide->Normal (2);
 			normal.Project (ViewMatrix ());
 			center += normal;
 			}
@@ -1254,7 +1254,7 @@ if (m_nShowSelectionCandidates > 1) {
 			glLineStipple (1, 0x3333);  
 		for (int i = 0; i < nVertices; i++) {
 			if (Renderer ().Ortho ()) {
-				CVertex* vertex = segP->Vertex (nSide, i);
+				CVertex* vertex = pSegment->Vertex (nSide, i);
 				CDoubleVector c (double (center.m_screen.x), double (center.m_screen.y), double (center.m_screen.z));
 				CDoubleVector v (double (vertex->m_screen.x), double (vertex->m_screen.y), double (vertex->m_screen.z));
 				c -= v;
@@ -1265,7 +1265,7 @@ if (m_nShowSelectionCandidates > 1) {
 				Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
 				}
 			else {
-				Renderer ().MoveTo (*segP->Vertex (nSide, i));
+				Renderer ().MoveTo (*pSegment->Vertex (nSide, i));
 				Renderer ().LineTo (center);
 				}
 			}
@@ -1277,16 +1277,16 @@ if (m_nShowSelectionCandidates > 0) {
 	Renderer ().BeginRender ();
 	if (m_nRenderer)
 		glDepthFunc (GL_ALWAYS);
-	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
-		CSegment* segP = segmentManager.Segment (sideP->GetParent ());
-		short nSide = segP->SideIndex (sideP);
-		CVertex& center = sideP->Center ();
+	for (CSide* pSide = segmentManager.SelectedSides (); pSide; pSide = pSide->GetLink ()) {
+		CSegment* pSegment = segmentManager.Segment (pSide->GetParent ());
+		short nSide = pSegment->SideIndex (pSide);
+		CVertex& center = pSide->Center ();
 #if 0
 		double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 		if (dist > 64.0)
 			continue;
 #endif
-		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
+		Renderer ().SelectPen ((pSide == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
 		Renderer ().Ellipse (center, 5.0, 5.0);
 		}
 	Renderer ().EndRender ();
@@ -1317,11 +1317,11 @@ CSegment* nearestSegment = null;
 CSide* nearestSide = null;
 
 short nSegment = -1;
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
-	if (nSegment == sideP->GetParent ())
+for (CSide* pSide = segmentManager.SelectedSides (); pSide; pSide = pSide->GetLink ()) {
+	if (nSegment == pSide->GetParent ())
 		continue;
-	CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
-	CVertex& center = segP->Center ();
+	CSegment* pSegment = segmentManager.Segment (nSegment = pSide->GetParent ());
+	CVertex& center = pSegment->Center ();
 	double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 #if 0
 	if (dist > 64.0)
@@ -1329,8 +1329,8 @@ for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLi
 #endif
 	if (minDist > dist) {
 		minDist = dist;
-		nearestSegment = segP;
-		nearestSide = sideP;
+		nearestSegment = pSegment;
+		nearestSide = pSide;
 		}
 	}
 nearest->Setup (segmentManager.Index (nearestSegment), nearestSegment->SideIndex (nearestSide));
@@ -1345,29 +1345,29 @@ if (m_nShowSelectionCandidates > 1) {
 		glEnable (GL_LINE_STIPPLE);
 		}
 	nSegment = -1;
-	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
-		if (nSegment == sideP->GetParent ())
+	for (CSide* pSide = segmentManager.SelectedSides (); pSide; pSide = pSide->GetLink ()) {
+		if (nSegment == pSide->GetParent ())
 			continue;
-		CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
-		short nSide = segP->SideIndex (sideP);
-		CVertex& center = segP->Center ();
+		CSegment* pSegment = segmentManager.Segment (nSegment = pSide->GetParent ());
+		short nSide = pSegment->SideIndex (pSide);
+		CVertex& center = pSegment->Center ();
 #if 0
 		double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 		if (dist > 64.0)
 			continue;
 #endif
-		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
+		Renderer ().SelectPen ((pSide == nearestSide) ? penGold + 1 : penMedBlue + 1);
 		if (m_nRenderer)
 			glLineStipple (1, 0x00ff);  
-		DrawSegmentWireFrame (segP);
-		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1);
+		DrawSegmentWireFrame (pSegment);
+		Renderer ().SelectPen ((pSide == nearestSide) ? penGold + 1 : penMedBlue + 1);
 		if (m_nRenderer)
 			glLineStipple (1, 0x3333);  
 		for (int i = 0; i < 8; i++) {
-			if (segP->VertexId (i) > MAX_VERTEX)
+			if (pSegment->VertexId (i) > MAX_VERTEX)
 				continue;
 			if (Renderer ().Ortho ()) {
-				CVertex* vertex = segP->Vertex (i);
+				CVertex* vertex = pSegment->Vertex (i);
 				CDoubleVector c (double (center.m_screen.x), double (center.m_screen.y), double (center.m_screen.z));
 				CDoubleVector v (double (vertex->m_screen.x), double (vertex->m_screen.y), double (vertex->m_screen.z));
 				c -= v;
@@ -1378,7 +1378,7 @@ if (m_nShowSelectionCandidates > 1) {
 				Renderer ().LineTo (long (Round (c.v.x)), long (Round (c.v.y)));
 				}
 			else {
-				Renderer ().MoveTo (*segP->Vertex (nSide, i));
+				Renderer ().MoveTo (*pSegment->Vertex (nSide, i));
 				Renderer ().LineTo (center);
 				}
 			}
@@ -1391,18 +1391,18 @@ if (m_nShowSelectionCandidates > 0) {
 	if (m_nRenderer)
 		glDepthFunc (GL_ALWAYS);
 	nSegment = -1;
-	for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
-		if (nSegment == sideP->GetParent ())
+	for (CSide* pSide = segmentManager.SelectedSides (); pSide; pSide = pSide->GetLink ()) {
+		if (nSegment == pSide->GetParent ())
 			continue;
-		CSegment* segP = segmentManager.Segment (nSegment = sideP->GetParent ());
-		short nSide = segP->SideIndex (sideP);
-		CVertex& center = segP->Center ();
+		CSegment* pSegment = segmentManager.Segment (nSegment = pSide->GetParent ());
+		short nSide = pSegment->SideIndex (pSide);
+		CVertex& center = pSegment->Center ();
 #if 0
 		double dist = sqrt (sqr (m_lastMousePos.x - center.m_screen.x) + sqr (m_lastMousePos.y - center.m_screen.y));
 		if (dist > 64.0)
 			continue;
 #endif
-		Renderer ().SelectPen ((sideP == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
+		Renderer ().SelectPen ((pSide == nearestSide) ? penGold + 1 : penMedBlue + 1, 1.5f);
 		Renderer ().Ellipse (center, 5.0, 5.0);
 		}
 	Renderer ().EndRender ();

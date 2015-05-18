@@ -303,7 +303,7 @@ undoManager.End (__FUNCTION__);
 
 // -----------------------------------------------------------------------------
 
-void CGameObject::DrawBitmap (CWnd* wndP)
+void CGameObject::DrawBitmap (CWnd* pWindow)
 {
 	static int powerupTable [48] = {
 		 0,  1,  2,  3,  4,  5,  6, -1, -1, -1, 
@@ -356,9 +356,9 @@ switch (m_info.type) {
 		nBitmap = -1; // undefined
 }
 
-CDC *pDC = wndP->GetDC ();
+CDC *pDC = pWindow->GetDC ();
 CRect rc;
-wndP->GetClientRect (rc);
+pWindow->GetClientRect (rc);
 pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 if ((nBitmap >= 0) && (nBitmap <= 129)) {
 	sprintf_s (message, sizeof (message),"OBJ_%03d_BMP", nBitmap);
@@ -376,9 +376,9 @@ if ((nBitmap >= 0) && (nBitmap <= 129)) {
 		SetDIBitsToDevice (pDC->m_hDC, xoffset, yoffset, width, height, 0, 0, 0, height,pImage, bmi, DIB_RGB_COLORS);
 		}
 	}
-wndP->ReleaseDC (pDC);
-wndP->InvalidateRect (null, TRUE);
-wndP->UpdateWindow ();
+pWindow->ReleaseDC (pDC);
+pWindow->InvalidateRect (null, TRUE);
+pWindow->UpdateWindow ();
 }
 
 // -----------------------------------------------------------------------------
@@ -508,25 +508,25 @@ if (nTexture < 0)
 	return false;
 
 // We render sprites using the D2 textures even in D1 levels
-const CTexture* texP = bEffect ? &textureManager.Icon (nTexture) : textureManager.TextureByIndex (nTexture, 1);
-if (!texP)
+const CTexture* pTexture = bEffect ? &textureManager.Icon (nTexture) : textureManager.TextureByIndex (nTexture, 1);
+if (!pTexture)
 	return false;
 
 	double dx, dy;
 	double size = bEffect ? 5.0 : X2D (m_info.size);
 
-if (texP->Width () > texP->Height ()) {
+if (pTexture->Width () > pTexture->Height ()) {
 	dx = size;
-	dy = dx * float (texP->Height ()) / float (texP->Width ());
+	dy = dx * float (pTexture->Height ()) / float (pTexture->Width ());
 	}
 else {
 	dy = size;
-	dx = dy * float (texP->Width ()) / float (texP->Height ());
+	dx = dy * float (pTexture->Width ()) / float (pTexture->Height ());
 	}
 
 #if 0
-	float				du = float (texP->m_info.xOffset) / float (texP->Width ());
-	float				dv = float (texP->m_info.yOffset) / float (texP->Height ());
+	float				du = float (pTexture->m_info.xOffset) / float (pTexture->Width ());
+	float				dv = float (pTexture->m_info.yOffset) / float (pTexture->Height ());
 	tTexCoord2d		texCoords [4] = {
 		{du, dv}, 
 		{du, 1.0f - dv}, 
@@ -549,11 +549,11 @@ vertices [2].m_view.v.x += dx;
 vertices [2].m_view.v.y += dy;
 vertices [3].m_view.v.x += dx;
 vertices [3].m_view.v.y -= dy;
-renderer.TexturedPolygon (texP, texCoords, &color, vertices, 4, index);
+renderer.TexturedPolygon (pTexture, texCoords, &color, vertices, 4, index);
 //renderer.EndRender ();
 #else
 renderer.BeginRender ();
-renderer.Sprite (texP, Position (), dx, dy, false);
+renderer.Sprite (pTexture, Position (), dx, dy, false);
 renderer.EndRender ();
 #endif
 return true;
@@ -1241,11 +1241,11 @@ return segmentManager.Segment (m_info.nSegment);
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CGameObject::Copy (CGameItem* destP)
+CGameItem* CGameObject::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CGameObject*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CGameObject*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------

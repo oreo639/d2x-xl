@@ -206,11 +206,11 @@ return DLE.IsD1File ()
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CTrigger::Copy (CGameItem* destP)
+CGameItem* CTrigger::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CTrigger*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CTrigger*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------
@@ -273,11 +273,11 @@ CTriggerTargets::Clear ();
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CReactorTrigger::Copy (CGameItem* destP)
+CGameItem* CReactorTrigger::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CReactorTrigger*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CReactorTrigger*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------

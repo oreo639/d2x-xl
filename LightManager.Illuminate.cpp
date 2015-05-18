@@ -53,12 +53,12 @@ class CVicinity {
 
 			if (nDepth > 1) {
 				// check each side of this segment for more children
-				CSegment* segP = segmentManager.Segment (nSegment);
+				CSegment* pSegment = segmentManager.Segment (nSegment);
 				for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 					// skip if there is a wall and its a door
-					CWall* wallP = segmentManager.Wall (CSideKey (nSegment, nSide));
-					if ((wallP == null) || (wallP->Type () != WALL_DOOR))
-						Compute (segP->ChildId (nSide), nDepth - 1);
+					CWall* pWall = segmentManager.Wall (CSideKey (nSegment, nSide));
+					if ((pWall == null) || (pWall->Type () != WALL_DOOR))
+						Compute (pSegment->ChildId (nSide), nDepth - 1);
 					}
 				}
 			}
@@ -83,16 +83,16 @@ undoManager.Begin (__FUNCTION__, udSegments);
 int nSegments = segmentManager.Count ();
 #pragma omp parallel for if (nSegments > 15)
 for (int i = 0; i < nSegments; i++) {
-	CSegment* segP = segmentManager.Segment (i);
-	CSide* sideP = segP->m_sides;
-	for (int j = 0; j < 6; j++, sideP++) {
-		if (bAll || sideP->IsTagged ()) {
-			CUVL* uvlP = sideP->m_info.uvls;
+	CSegment* pSegment = segmentManager.Segment (i);
+	CSide* pSide = pSegment->m_sides;
+	for (int j = 0; j < 6; j++, pSide++) {
+		if (bAll || pSide->IsTagged ()) {
+			CUVL* pTexCoord = pSide->m_info.uvls;
 			for (int i = 0; i < 4; i++) {
-				double l = ((double) ((ushort) uvlP [i].l)) * fLight;
+				double l = ((double) ((ushort) pTexCoord [i].l)) * fLight;
 				l = min (l, 0x8000);
 				l = max (l, 0);
-				uvlP [i].l = (ushort) l;
+				pTexCoord [i].l = (ushort) l;
 				}
 			}
 		}
@@ -131,34 +131,34 @@ undoManager.Begin (__FUNCTION__, udSegments);
 // smooth corner light by averaging all corners which share a vertex
 //#pragma omp parallel for
 for (int nSegment = 0; nSegment < nSegments; nSegment++) {
-	CSegment *segP = segmentManager.Segment (nSegment);
+	CSegment *pSegment = segmentManager.Segment (nSegment);
 #if DBG
-	if (segP - segmentManager.Segments ().Buffer () == nDbgSeg)
+	if (pSegment - segmentManager.Segments ().Buffer () == nDbgSeg)
 		nDbgSeg = nDbgSeg;
 #endif
 	for (ubyte nPoint = 0; nPoint < 8; nPoint++) {
-		int nVertex = segP->m_info.vertexIds [nPoint];
+		int nVertex = pSegment->m_info.vertexIds [nPoint];
 		if (nVertex > MAX_VERTEX)
 			continue;
 		if (bAll || (vertexManager.Status (nVertex) & TAGGED_MASK)) {
-			CSide* sideP = segP->Side (0);
-			for (int nSide = 0; nSide < 6; nSide++, sideP++) {
-				int nCorner = sideP->FindVertexIdIndex (nPoint);
+			CSide* pSide = pSegment->Side (0);
+			for (int nSide = 0; nSide < 6; nSide++, pSide++) {
+				int nCorner = pSide->FindVertexIdIndex (nPoint);
 				if (nCorner < 0) 
 					continue;
-				if (!sideP->IsVisible ())
+				if (!pSide->IsVisible ())
 					continue;
 #if DBG
 				if (nVertex == nDbgVertex)
 					nDbgVertex = nDbgVertex;
 #endif
 #if USE_AVG_LIGHT == 2
-				maxBrightness [nVertex].light += sqr (sideP->m_info.uvls [nCorner].l);
+				maxBrightness [nVertex].light += sqr (pSide->m_info.uvls [nCorner].l);
 #elif USE_AVG_LIGHT == 1
-				maxBrightness [nVertex].light += sideP->m_info.uvls [nCorner].l;
+				maxBrightness [nVertex].light += pSide->m_info.uvls [nCorner].l;
 #else
-				if (maxBrightness [nVertex].light < sideP->m_info.uvls [nCorner].l)
-					maxBrightness [nVertex].light = sideP->m_info.uvls [nCorner].l;
+				if (maxBrightness [nVertex].light < pSide->m_info.uvls [nCorner].l)
+					maxBrightness [nVertex].light = pSide->m_info.uvls [nCorner].l;
 #endif
 				maxBrightness [nVertex].count++;
 				}
@@ -178,26 +178,26 @@ for (int i = 0, j = vertexManager.Count (); i < j; i++)
 
 //#pragma omp parallel for
 for (int i = 0; i < nSegments; i++) {
-	CSegment *segP = segmentManager.Segment (i);
+	CSegment *pSegment = segmentManager.Segment (i);
 	bool bUndo = false;
-	bool bSelfIlluminate = DLE.IsD2XLevel () && (segP->Props () & SEGMENT_PROP_SELF_ILLUMINATE);
+	bool bSelfIlluminate = DLE.IsD2XLevel () && (pSegment->Props () & SEGMENT_PROP_SELF_ILLUMINATE);
 	for (int nPoint = 0; nPoint < 8; nPoint++) {
-		int nVertex = segP->m_info.vertexIds [nPoint];
+		int nVertex = pSegment->m_info.vertexIds [nPoint];
 		if ((maxBrightness [nVertex].count > 0) && (bAll || (vertexManager.Status (nVertex) & TAGGED_MASK))) {
-			CSide* sideP = segP->Side (0);
-			for (int nSide = 0; nSide < 6; nSide++, sideP++) {
-				if (bSelfIlluminate && (Brightness (segP, sideP) > 0))
+			CSide* pSide = pSegment->Side (0);
+			for (int nSide = 0; nSide < 6; nSide++, pSide++) {
+				if (bSelfIlluminate && (Brightness (pSegment, pSide) > 0))
 					continue;
-				int nCorner = sideP->FindVertexIdIndex (nPoint);
+				int nCorner = pSide->FindVertexIdIndex (nPoint);
 				if (nCorner < 0) 
 					continue;
-				if (!sideP->IsVisible ())
+				if (!pSide->IsVisible ())
 					continue;
 				if (!bUndo) {
-					segP->Backup ();
+					pSegment->Backup ();
 					bUndo = true;
 					}
-				sideP->m_info.uvls [nCorner].l = uint (maxBrightness [nVertex].light);
+				pSide->m_info.uvls [nCorner].l = uint (maxBrightness [nVertex].light);
 				}
 			}
 		}
@@ -209,13 +209,13 @@ delete[] maxBrightness;
 
 //---------------------------------------------------------------------------------
 
-uint CLightManager::Brightness (CSegment* segP, CSide* sideP)
+uint CLightManager::Brightness (CSegment* pSegment, CSide* pSide)
 {
-uint brightness = (segP->m_info.function == SEGMENT_FUNC_SKYBOX) ? 65535 : 0;
-int nTexture = sideP->BaseTex ();
+uint brightness = (pSegment->m_info.function == SEGMENT_FUNC_SKYBOX) ? 65535 : 0;
+int nTexture = pSide->BaseTex ();
 if ((nTexture >= 0) && (nTexture < MAX_TEXTURES))
 	brightness = max (brightness, LightWeight (nTexture));
-nTexture = sideP->OvlTex (0);
+nTexture = pSide->OvlTex (0);
 if ((nTexture > 0) && (nTexture < MAX_TEXTURES))
 	brightness = max (brightness, LightWeight (nTexture));
 return brightness;
@@ -225,8 +225,8 @@ return brightness;
 
 uint CLightManager::Brightness (CSideKey& key)
 {
-CSegment* segP = segmentManager.Segment (key.m_nSegment);
-return Brightness (segP, segP->Side (key.m_nSide));
+CSegment* pSegment = segmentManager.Segment (key.m_nSegment);
+return Brightness (pSegment, pSegment->Side (key.m_nSide));
 }
 
 //---------------------------------------------------------------------------------
@@ -240,15 +240,15 @@ if (bAll)
 	VertexColors ().Clear ();
 int nSegments = segmentManager.Count ();
 for (int i = 0; i < nSegments; i++) {
-	CSegment *segP = segmentManager.Segment (i);
-	segP->Backup ();
-	CSide* sideP = segP->m_sides;
-	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
-		if (bAll || sideP->IsTagged ()) {
+	CSegment *pSegment = segmentManager.Segment (i);
+	pSegment->Backup ();
+	CSide* pSide = pSegment->m_sides;
+	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, pSide++) {
+		if (bAll || pSide->IsTagged ()) {
 			for (int i = 0; i < 4; i++) {
-				sideP->m_info.uvls [i].l = 0;
+				pSide->m_info.uvls [i].l = 0;
 				if (!bAll)
-					VertexColor (segP->m_info.vertexIds [segP->Side (nSide)->VertexIdIndex (i)])->Clear ();
+					VertexColor (pSegment->m_info.vertexIds [pSegment->Side (nSide)->VertexIdIndex (i)])->Clear ();
 				}
 			}
 		}
@@ -266,26 +266,26 @@ for (; nSegment < nSegments; nSegment++) {
 	STATUSMSG (szMsg);
 #endif
 	DLE.MainFrame ()->Progress ().StepIt ();
-	CSegment *segP = segmentManager.Segment (nSegment);
+	CSegment *pSegment = segmentManager.Segment (nSegment);
 #if DBG
 	if (nSegment == nDbgSeg)
 		nDbgSeg = nDbgSeg;
 #endif
-	CSide* sideP = segP->m_sides;
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+	CSide* pSide = pSegment->m_sides;
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
 #if DBG
 		if ((nSegment == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 			nDbgSeg = nDbgSeg;
 #endif
-		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
+		if (pSide->Shape () > SIDE_SHAPE_TRIANGLE)
 			continue;
-		if (!(bAll || sideP->IsTagged ()))
+		if (!(bAll || pSide->IsTagged ()))
 			continue;
 		if (!segmentManager.IsWall (CSideKey (nSegment, nSide)))
 			continue;
 		if (bCopyTexLights)
 			FaceColor (nSegment, nSide)->Clear ();
-		uint brightness = Brightness (segP, sideP);
+		uint brightness = Brightness (pSegment, pSide);
 		if (brightness > 0)
 			GatherLight (nSegment, nSide, brightness, bAll, bCopyTexLights);
 		}
@@ -304,13 +304,13 @@ undoManager.End (__FUNCTION__);
 // srcBr: source brightness (remaining brightness at current vertex/side)
 // destBr: vertex/side brightness
 
-void CLightManager::BlendColors (CColor* srcColorP, CColor* destColorP, double srcBrightness, double destBrightness)
+void CLightManager::BlendColors (CColor* pSrcColor, CColor* pDestColor, double srcBrightness, double destBrightness)
 {
 if (destBrightness)
 	destBrightness /= 65536.0;
 else {
 	if (srcBrightness)
-		*destColorP = *srcColorP;
+		*pDestColor = *pSrcColor;
 	return;
 	}
 if (srcBrightness)
@@ -318,63 +318,63 @@ if (srcBrightness)
 else
 	return;
 
-if (destColorP->m_info.index) {
-	destColorP->m_info.color.r += srcColorP->m_info.color.r * srcBrightness;
-	destColorP->m_info.color.g += srcColorP->m_info.color.g * srcBrightness;
-	destColorP->m_info.color.b += srcColorP->m_info.color.b * srcBrightness;
-	double cMax = destColorP->m_info.color.r;
-		if (cMax < destColorP->m_info.color.g)
-			cMax = destColorP->m_info.color.g;
-		if (cMax < destColorP->m_info.color. b)
-			cMax = destColorP->m_info.color. b;
+if (pDestColor->m_info.index) {
+	pDestColor->m_info.color.r += pSrcColor->m_info.color.r * srcBrightness;
+	pDestColor->m_info.color.g += pSrcColor->m_info.color.g * srcBrightness;
+	pDestColor->m_info.color.b += pSrcColor->m_info.color.b * srcBrightness;
+	double cMax = pDestColor->m_info.color.r;
+		if (cMax < pDestColor->m_info.color.g)
+			cMax = pDestColor->m_info.color.g;
+		if (cMax < pDestColor->m_info.color. b)
+			cMax = pDestColor->m_info.color. b;
 		if (cMax > 1) {
-			destColorP->m_info.color.r /= cMax;
-			destColorP->m_info.color.g /= cMax;
-			destColorP->m_info.color.b /= cMax;
+			pDestColor->m_info.color.r /= cMax;
+			pDestColor->m_info.color.g /= cMax;
+			pDestColor->m_info.color.b /= cMax;
 			}
 	}
 else {
 	if (destBrightness) {
-		destColorP->m_info.index = 1;
-		destColorP->m_info.color.r = srcColorP->m_info.color.r * destBrightness;
-		destColorP->m_info.color.g = srcColorP->m_info.color.g * destBrightness;
-		destColorP->m_info.color.b = srcColorP->m_info.color.b * destBrightness;
+		pDestColor->m_info.index = 1;
+		pDestColor->m_info.color.r = pSrcColor->m_info.color.r * destBrightness;
+		pDestColor->m_info.color.g = pSrcColor->m_info.color.g * destBrightness;
+		pDestColor->m_info.color.b = pSrcColor->m_info.color.b * destBrightness;
 		}
 	else
-		*destColorP = *srcColorP;
+		*pDestColor = *pSrcColor;
 	}
 }
 
 //---------------------------------------------------------------------------------
 
-void CLightManager::GatherFaceLight (double cornerLights [], CSegment* segP, short nSide, uint brightness, CColor* lightColorP)
+void CLightManager::GatherFaceLight (double cornerLights [], CSegment* pSegment, short nSide, uint brightness, CColor* pLightColor)
 {
-	CSide*	sideP = segP->Side (nSide);
-	CUVL*		uvlP = sideP->m_info.uvls;
+	CSide*	pSide = pSegment->Side (nSide);
+	CUVL*		pTexCoord = pSide->m_info.uvls;
 
 #if DBG
-if ((segP - segmentManager.Segment (0) == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
+if ((pSegment - segmentManager.Segment (0) == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 	nDbgSeg = nDbgSeg;
 #endif
-for (int i = 0, j = sideP->VertexCount (); i < j; i++, uvlP++) {
-	CColor* vertColorP = VertexColor (segP->VertexId (nSide, i));
-	if (segP->m_info.function == SEGMENT_FUNC_SKYBOX) {
-		uvlP->l = (ushort) 0x7FFF;
-		vertColorP->m_info.color.r =
-		vertColorP->m_info.color.g =
-		vertColorP->m_info.color.b = 255;
+for (int i = 0, j = pSide->VertexCount (); i < j; i++, pTexCoord++) {
+	CColor* pVertexColor = VertexColor (pSegment->VertexId (nSide, i));
+	if (pSegment->m_info.function == SEGMENT_FUNC_SKYBOX) {
+		pTexCoord->l = (ushort) 0x7FFF;
+		pVertexColor->m_info.color.r =
+		pVertexColor->m_info.color.g =
+		pVertexColor->m_info.color.b = 255;
 		}
 	else {
 		uint lightBrightness = (uint) (brightness * cornerLights [i]);
 #pragma omp critical
 		{
-		BlendColors (lightColorP, vertColorP, lightBrightness, uvlP->l);
-		uvlP->l += lightBrightness;
+		BlendColors (pLightColor, pVertexColor, lightBrightness, pTexCoord->l);
+		pTexCoord->l += lightBrightness;
 		}
 		}
 	}
 #if DBG
-if ((segP - segmentManager.Segment (0) == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
+if ((pSegment - segmentManager.Segment (0) == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 	nDbgSeg = nDbgSeg;
 #endif
 }
@@ -385,9 +385,9 @@ if ((segP - segmentManager.Segment (0) == nDbgSeg) && ((nDbgSide < 0) || (nSide 
 
 void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brightness, bool bAll, bool bCopyTexLights) 
 {
-	CSegment* srcSegP = segmentManager.Segment (nSourceSeg);
+	CSegment* pSrcSeg = segmentManager.Segment (nSourceSeg);
 	// find orthogonal angle of source segment
-	CVertex sourceNormal = Average (srcSegP->Side (nSourceSide)->m_vNormal [0], srcSegP->Side (nSourceSide)->m_vNormal [1]);
+	CVertex sourceNormal = Average (pSrcSeg->Side (nSourceSide)->m_vNormal [0], pSrcSeg->Side (nSourceSide)->m_vNormal [1]);
 	// remember to flip the sign since we want it to point inward
 	// calculate the center of the source segment
 	CVertex sourceCenter = segmentManager.CalcSideCenter (CSideKey (nSourceSeg, nSourceSide));
@@ -399,16 +399,16 @@ void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brigh
 CVicinity vicinity;
 vicinity.Compute (nSourceSeg, m_staticRenderDepth);	//mark all children that are at most lightRenderDepth segments away
 
-CColor *lightColorP = LightColor (CSideKey (nSourceSeg, nSourceSide));
-if (!lightColorP->m_info.index) {
-	lightColorP->m_info.index = 255;
-	lightColorP->m_info.color.r =
-	lightColorP->m_info.color.g =
-	lightColorP->m_info.color.b = 1.0;
+CColor *pLightColor = LightColor (CSideKey (nSourceSeg, nSourceSide));
+if (!pLightColor->m_info.index) {
+	pLightColor->m_info.index = 255;
+	pLightColor->m_info.color.r =
+	pLightColor->m_info.color.g =
+	pLightColor->m_info.color.b = 1.0;
 	}
 if (ApplyFaceLightSettingsGlobally () && bCopyTexLights) {
-	CColor* colorP = LightColor (CSideKey (nSourceSeg, nSourceSide), false);
-	*lightColorP = *colorP;
+	CColor* pColor = LightColor (CSideKey (nSourceSeg, nSourceSide), false);
+	*pLightColor = *pColor;
 	}
 bool bWall = false; 
 
@@ -418,10 +418,10 @@ if ((nSourceSeg == nDbgSeg) && ((nDbgSide < 0) || (nSourceSide == nDbgSide)))
 #endif
 
 CVertex sourceCorners [5];
-short nVertices = srcSegP->Side (nSourceSide)->VertexCount ();
+short nVertices = pSrcSeg->Side (nSourceSide)->VertexCount ();
 sourceCorners [nVertices].Clear ();
 for (short i = 0; i < nVertices; i++) {
-	sourceCorners [i] = *srcSegP->Vertex (nSourceSide, i);
+	sourceCorners [i] = *pSrcSeg->Vertex (nSourceSide, i);
 	sourceCorners [nVertices] += sourceCorners [i];
 	}
 sourceCorners [nVertices] /= double (nVertices);
@@ -436,17 +436,17 @@ for (int nChildSeg = 0; nChildSeg < nSegments; nChildSeg++) {
 	// skip if this is too far away
 	if (vicinity [nChildSeg] <= 0)
 		continue;
-	CSegment *childSegP = segmentManager.Segment (nChildSeg);
+	CSegment *pChildSeg = segmentManager.Segment (nChildSeg);
 	// setup source corner vertex for length calculation later
 	// loop on child sides
 	for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 		// if side has a child..
-		if (!(bAll || childSegP->Side (nChildSide)->IsTagged ()))
+		if (!(bAll || pChildSeg->Side (nChildSide)->IsTagged ()))
 			continue;
 #if 0 // unfortunately this breaks object lighting because it needs values even where there is no wall
-		if (childSegP->ChildId (nChildSide) >= 0) {
-			CWall* wallP = childSegP->Side (nChildSide)->Wall ();
-			if ((wallP == null) || !wallP->IsVisible ())
+		if (pChildSeg->ChildId (nChildSide) >= 0) {
+			CWall* pWall = pChildSeg->Side (nChildSide)->Wall ();
+			if ((pWall == null) || !pWall->IsVisible ())
 				continue;
 			}
 #endif
@@ -457,11 +457,11 @@ for (int nChildSeg = 0; nChildSeg < nSegments; nChildSeg++) {
 		if ((nChildSide == nSourceSide) && (nChildSeg == nSourceSeg))
 			cornerLights [0] = cornerLights [1] = cornerLights [2] = cornerLights [3] = 1.0;
 		// calculate vector between center of source segment and center of child
-		else if (DLE.IsD2XLevel () && (srcSegP->Props () & SEGMENT_PROP_SELF_ILLUMINATE))
+		else if (DLE.IsD2XLevel () && (pSrcSeg->Props () & SEGMENT_PROP_SELF_ILLUMINATE))
 			continue;
 		else if (!CalcCornerLights (cornerLights, nChildSeg, nChildSide, nSourceSeg, nSourceSide, sourceCorners, sourceNormal, bWall)) 
 			continue;
-		GatherFaceLight (cornerLights, childSegP, nChildSide, brightness, lightColorP);
+		GatherFaceLight (cornerLights, pChildSeg, nChildSide, brightness, pLightColor);
 		}
 	}
 }
@@ -520,16 +520,16 @@ int CLightManager::FindLightDelta (short nSegment, short nSide, short *pi)
 {
 	int	i = pi ? *pi : 0;
 	int	j = DeltaIndexCount ()++;
-	CLightDeltaIndex	*indexP = LightDeltaIndex (0);
+	CLightDeltaIndex	*pIndex = LightDeltaIndex (0);
 
 if ((DLE.LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34)) {
-	for (; i < j; i++, indexP++)
-		if ((indexP->m_nSegment == nSegment) && (indexP->m_nSide = (ubyte) nSide))
+	for (; i < j; i++, pIndex++)
+		if ((pIndex->m_nSegment == nSegment) && (pIndex->m_nSide = (ubyte) nSide))
 			return i;
 	}
 else {
-	for (; i < j; i++, indexP++)
-		if ((indexP->m_nSegment == nSegment) && (indexP->m_nSide = (ubyte) nSide))
+	for (; i < j; i++, pIndex++)
+		if ((pIndex->m_nSegment == nSegment) && (pIndex->m_nSide = (ubyte) nSide))
 			return i;
 	}
 return -1;
@@ -537,24 +537,24 @@ return -1;
 
 //---------------------------------------------------------------------------------
 
-bool CLightManager::FaceHasVariableLight (CSideKey key, CSide* sideP, CWall* wallP) 
+bool CLightManager::FaceHasVariableLight (CSideKey key, CSide* pSide, CWall* pWall) 
 {
 short nBaseTex, nOvlTex;
-sideP->GetTextures (nBaseTex, nOvlTex);
+pSide->GetTextures (nBaseTex, nOvlTex);
 if ((IsLight (nBaseTex) == -1) && ((nOvlTex == 0) || (IsLight (nOvlTex) == -1)))
 	return false;
-if (wallP != null) {
-	if (!wallP->IsVisible ())
+if (pWall != null) {
+	if (!pWall->IsVisible ())
 		return false;
-	if (wallP->IsVariable ())
+	if (pWall->IsVariable ())
 		return true;
 	}
 if (IsVariableLight (key))
 	return true;
 if (IsBlastableLight (nBaseTex) || ((nOvlTex > 0) && IsBlastableLight (nOvlTex)))
 	return true;
-CTrigger* trigP = triggerManager.FindByTarget (key);
-if ((trigP != null) && (trigP->Type () >= TT_LIGHT_OFF))
+CTrigger* pTrigger = triggerManager.FindByTarget (key);
+if ((pTrigger != null) && (pTrigger->Type () >= TT_LIGHT_OFF))
 	return true;
 return false;
 }
@@ -583,20 +583,20 @@ int nSegments = segmentManager.Count ();
 DLE.MainFrame ()->InitProgress (nSegments);
 for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	CSegment* srcSegP = segmentManager.Segment (nSourceSeg);
+	CSegment* pSrcSeg = segmentManager.Segment (nSourceSeg);
 	// skip if not marked unless we are automatically saving
 	// loop on all sides
 #if DBG
 	if (nSourceSeg == nDbgSeg)
 		nDbgSeg = nDbgSeg;
 #endif
-	CSide* srcSideP = srcSegP->m_sides;
-	for (int nSourceSide = 0; !nErrors && (nSourceSide < 6); nSourceSide++, srcSideP++) {
-		if  (!(bForce || srcSideP->IsTagged ())) 
+	CSide* pSrcSide = pSrcSeg->m_sides;
+	for (int nSourceSide = 0; !nErrors && (nSourceSide < 6); nSourceSide++, pSrcSide++) {
+		if  (!(bForce || pSrcSide->IsTagged ())) 
 			continue;
 		CSideKey key (nSourceSeg, nSourceSide);
-		CWall* wallP = segmentManager.Wall (key);
-		if (!FaceHasVariableLight (key, srcSideP, wallP))
+		CWall* pWall = segmentManager.Wall (key);
+		if (!FaceHasVariableLight (key, pSrcSide, pWall))
 			continue;
 
 		if (DeltaIndexCount () >= nMaxIndices) {
@@ -610,19 +610,19 @@ for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 		CVertex sourceNormal, sourceCenter;
 
 // get index number and increment total number of lightDeltaIndices
-		CLightDeltaIndex *indexP = LightDeltaIndex (indexCount);
-		indexP->m_nSegment = nSourceSeg;
-		indexP->m_nSide = nSourceSide;
-		indexP->m_info.count = 0; // will be incremented below
-		indexP->m_info.index = (ushort) DeltaValueCount ();
+		CLightDeltaIndex *pIndex = LightDeltaIndex (indexCount);
+		pIndex->m_nSegment = nSourceSeg;
+		pIndex->m_nSide = nSourceSide;
+		pIndex->m_info.count = 0; // will be incremented below
+		pIndex->m_info.index = (ushort) DeltaValueCount ();
 
 		// find orthogonal angle of source segment
-		sourceNormal = Average (srcSideP->m_vNormal [0], srcSideP->m_vNormal [1]);
+		sourceNormal = Average (pSrcSide->m_vNormal [0], pSrcSide->m_vNormal [1]);
 
 		// calculate the center of the source segment
 		sourceCenter = segmentManager.CalcSideCenter (CSideKey (nSourceSeg, nSourceSide));
 
-		double fBrightness = double (Brightness (srcSegP, srcSideP)) * m_fDeltaLightScale / 100.0;
+		double fBrightness = double (Brightness (pSrcSeg, pSrcSide)) * m_fDeltaLightScale / 100.0;
 
 		// mark those segmentManager.Segment () within N children of current segment
 		//(note: this is done once per light instead of once per segment
@@ -638,7 +638,7 @@ for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 		sourceCorners [nVertices].Clear ();
 		for (int j = 0; j < nVertices; j++) {
 			ubyte nVertex = segmentManager.Segment (nSourceSeg)->Side (nSourceSide)->VertexIdIndex (j);
-			int h = srcSegP->m_info.vertexIds [nVertex];
+			int h = pSrcSeg->m_info.vertexIds [nVertex];
 			sourceCorners [j] = *vertexManager.Vertex (h);
 			sourceCorners [nVertices] += sourceCorners [j];
 			}
@@ -656,24 +656,24 @@ for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 #endif
 			if (vicinity [nChildSeg] == 0)
 				continue;
-			CSegment *childSegP = segmentManager.Segment (nChildSeg);
-			CSide* childSideP = childSegP->Side (0);
+			CSegment *pChildSeg = segmentManager.Segment (nChildSeg);
+			CSide* pChildSide = pChildSeg->Side (0);
 			// loop on child sides
-			for (int nChildSide = 0; !nErrors && (nChildSide < 6); nChildSide++, childSideP++) {
-				if (childSegP->ChildId (nChildSide) >= 0) {
-					CWall* wallP = childSideP->Wall ();
-					if (wallP == null)
+			for (int nChildSide = 0; !nErrors && (nChildSide < 6); nChildSide++, pChildSide++) {
+				if (pChildSeg->ChildId (nChildSide) >= 0) {
+					CWall* pWall = pChildSide->Wall ();
+					if (pWall == null)
 						continue;
-					if (wallP->Type () == WALL_OPEN) 
+					if (pWall->Type () == WALL_OPEN) 
 						continue; // don't put light because there is no texture here
 					}
 				// don't affect non-variable light emitting textures (e.g. lava)
 				if (m_nNoLightDeltas == 1) {
-					if (((IsLight (childSideP->BaseTex ()) >= 0) || (IsLight (childSideP->OvlTex (0)) >= 0)) && !IsVariableLight (CSideKey (nChildSeg, nChildSide)))
+					if (((IsLight (pChildSide->BaseTex ()) >= 0) || (IsLight (pChildSide->OvlTex (0)) >= 0)) && !IsVariableLight (CSideKey (nChildSeg, nChildSide)))
 						continue;
 					}
 				else if (m_nNoLightDeltas == 2) {
-					if ((textureManager.IsLava (childSideP->BaseTex ()) || textureManager.IsLava (childSideP->OvlTex (0))))
+					if ((textureManager.IsLava (pChildSide->BaseTex ()) || textureManager.IsLava (pChildSide->OvlTex (0))))
 						continue;
 					}
 
@@ -684,14 +684,14 @@ for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 					cornerLights [1] =
 					cornerLights [2] =
 					cornerLights [3] = 1.0;
-				else if (DLE.IsD2XLevel () && (srcSegP->Props () & SEGMENT_PROP_SELF_ILLUMINATE))
+				else if (DLE.IsD2XLevel () && (pSrcSeg->Props () & SEGMENT_PROP_SELF_ILLUMINATE))
 					continue;
-				else if (!CalcCornerLights (cornerLights, nChildSeg, nChildSide, nSourceSeg, nSourceSide, sourceCorners, sourceNormal, wallP != null))
+				else if (!CalcCornerLights (cornerLights, nChildSeg, nChildSide, nSourceSeg, nSourceSide, sourceCorners, sourceNormal, pWall != null))
 					continue;
-				CLightDeltaValue* deltaP;
+				CLightDeltaValue* pLightDelta;
 //#pragma omp critical
 				{
-				if ((DeltaValueCount () >= nMaxDeltas) || (indexP->m_info.count >= nMaxValues)) {
+				if ((DeltaValueCount () >= nMaxDeltas) || (pIndex->m_info.count >= nMaxValues)) {
 					if (++nErrors == 1) {
 						char szMsg [256];
 						sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many vertices affected by dynamic lights at render depth %d", nDepth);
@@ -699,22 +699,22 @@ for (short nSourceSeg = 0; !nErrors && (nSourceSeg < nSegments); nSourceSeg++) {
 						}
 					}
 				else {
-					deltaP = LightDeltaValue (DeltaValueCount ()++);
-					indexP->m_info.count++;
+					pLightDelta = LightDeltaValue (DeltaValueCount ()++);
+					pIndex->m_info.count++;
 					}
 				}
 //#pragma omp flush (nErrors)
 				if (nErrors)
 					continue;
 
-				deltaP->m_nSegment = nChildSeg;
-				deltaP->m_nSide = nChildSide;
+				pLightDelta->m_nSegment = nChildSeg;
+				pLightDelta->m_nSide = nChildSide;
 #if DBG
 				if ((nChildSeg == nDbgSeg) && ((nDbgSide < 0) || (nChildSide == nDbgSide)))
 						nDbgSeg = nDbgSeg;
 #endif
 				for (int nCorner = 0; nCorner < 4; nCorner++)
-					deltaP->m_info.vertLight [nCorner] = uint (cornerLights [nCorner] * fBrightness);
+					pLightDelta->m_info.vertLight [nCorner] = uint (cornerLights [nCorner] * fBrightness);
 				}
 			}
 		}
@@ -751,17 +751,17 @@ visited [nStartSeg] = 1;
 segmentList [0] = nStartSeg;
 while (nTail < nHead) {
 	short nSegment = segmentList [nTail++];
-	CSegment* segP = segmentManager.Segment (nSegment);
-	CSide* sideP = segP->Side (0);
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (0.0 > sideP->LineHitsFace (p1, p2, segP->m_info.vertexIds, maxDist))
+	CSegment* pSegment = segmentManager.Segment (nSegment);
+	CSide* pSide = pSegment->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+		if (0.0 > pSide->LineHitsFace (p1, p2, pSegment->m_info.vertexIds, maxDist))
 			continue;
 		if ((nSegment == nDestSeg) && (nSide == nDestSide))
 			return true;
-		if (!sideP->IsVisible ()) {
+		if (!pSide->IsVisible ()) {
 			if (nHead >= nSegments)
 				return false;
-			short nChildSeg = segP->ChildId (nSide);
+			short nChildSeg = pSegment->ChildId (nSide);
 			if ((nChildSeg >= 0) && !visited [nChildSeg]) {
 				if (nHead >= nSegments) {
 					STATUSMSG ("Buffer overflow in PointSeesPoint!");
@@ -845,12 +845,12 @@ if (Quality () == 1) {
 		}
 	}
 
-CSegment* segP = segmentManager.Segment (nChildSeg);
-int nDestVertices = segP->Side (nChildSide)->VertexCount ();
+CSegment* pSegment = segmentManager.Segment (nChildSeg);
+int nDestVertices = pSegment->Side (nChildSide)->VertexCount ();
 
 CVertex destCorners [4];
 for (int i = 0; i < nDestVertices; i++) {
-	destCorners [i] = *vertexManager.Vertex (segP->m_info.vertexIds [segP->Side (nChildSide)->VertexIdIndex (i)]);
+	destCorners [i] = *vertexManager.Vertex (pSegment->m_info.vertexIds [pSegment->Side (nChildSide)->VertexIdIndex (i)]);
 	}
 
 short nSourceVertices = segmentManager.Segment (nSourceSeg)->Side (nSourceSide)->VertexCount ();
@@ -885,29 +885,29 @@ void CLightManager::SetObjectLight (bool bAll, bool bDynSegLights)
 undoManager.Begin (__FUNCTION__, udSegments);
 int nSegments = segmentManager.Count ();
 for (int si = 0; si < nSegments; si++) {
-	CSegment* segP = segmentManager.Segment (si);
+	CSegment* pSegment = segmentManager.Segment (si);
 	if (!bDynSegLights) {
-		if (bAll || (segP->IsTagged ())) 
-			segP->m_info.staticLight = nLight;
+		if (bAll || (pSegment->IsTagged ())) 
+			pSegment->m_info.staticLight = nLight;
 		}
 	else {
 		int l = 0;
 		int c = 0;
-		CSide* sideP = segP->m_sides;
+		CSide* pSide = pSegment->m_sides;
 		for (short nSide = 0; nSide < 6; nSide++) {
-			if (bAll || sideP->IsTagged ()) {
+			if (bAll || pSide->IsTagged ()) {
 				for (short nCorner = 0; nCorner < 4; nCorner++) {
-					uint h = (uint) sideP [nSide].m_info.uvls [nCorner].l;
-					if (h || !sideP->IsVisible ()) {
+					uint h = (uint) pSide [nSide].m_info.uvls [nCorner].l;
+					if (h || !pSide->IsVisible ()) {
 						l += h;
 						c++;
 						}
 					}
 				}
 			}
-		segP->Backup ();
+		pSegment->Backup ();
 		// Segment light values seem to be higher than corner light values - factor of about 12
-		segP->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 * 12 : nLight);
+		pSegment->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 * 12 : nLight);
 		}
 	}
 undoManager.End (__FUNCTION__);
@@ -922,53 +922,53 @@ void CLightManager::Normalize (void)
 
 #pragma omp parallel for if (nSegments > 15)
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
-	CSegment* segP = segmentManager.Segment (nSegment);
-	CSide* sideP = segP->Side (0);
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		CUVL* uvlP = sideP->m_info.uvls;
-		short nVertices = sideP->VertexCount ();
-		for (short nVertex = 0; nVertex < nVertices; nVertex++, uvlP++) {
-			if (uvlP->l > maxLight) {
+	CSegment* pSegment = segmentManager.Segment (nSegment);
+	CSide* pSide = pSegment->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+		CUVL* pTexCoord = pSide->m_info.uvls;
+		short nVertices = pSide->VertexCount ();
+		for (short nVertex = 0; nVertex < nVertices; nVertex++, pTexCoord++) {
+			if (pTexCoord->l > maxLight) {
 #ifdef _DEBUG
 				if ((nSegment == nDbgSeg) && ((nDbgSide < 0) || (nSide == nDbgSide)))
 					nDbgSeg = nDbgSeg;
 #endif
 				int indexCount = lightManager.DeltaIndexCount ();
-				CLightDeltaIndex* indexP = lightManager.LightDeltaIndex (0);
+				CLightDeltaIndex* pIndex = lightManager.LightDeltaIndex (0);
 				uint deltaLight = 0;
-				for (int nIndex = 0; nIndex < indexCount; nIndex++, indexP++) {
+				for (int nIndex = 0; nIndex < indexCount; nIndex++, pIndex++) {
 #ifdef _DEBUG
-					if ((indexP->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (indexP->m_nSide == nDbgSide)))
+					if ((pIndex->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (pIndex->m_nSide == nDbgSide)))
 						nDbgSeg = nDbgSeg;
 #endif
-					if (VariableLight (*indexP) < 0)
+					if (VariableLight (*pIndex) < 0)
 						continue; // there's no variable light for this delta light index (-> light data error!)
-					CLightDeltaValue* deltaP = lightManager.LightDeltaValue (indexP->m_info.index);
-					for (ushort nDelta = indexP->m_info.count; nDelta; nDelta--, deltaP++) {
-						if ((deltaP->m_nSegment == nSegment) && (deltaP->m_nSide == nSide))
-							deltaLight += deltaP->m_info.vertLight [nVertex];
+					CLightDeltaValue* pLightDelta = lightManager.LightDeltaValue (pIndex->m_info.index);
+					for (ushort nDelta = pIndex->m_info.count; nDelta; nDelta--, pLightDelta++) {
+						if ((pLightDelta->m_nSegment == nSegment) && (pLightDelta->m_nSide == nSide))
+							deltaLight += pLightDelta->m_info.vertLight [nVertex];
 						}
 					}
 	
-				if (deltaLight > uvlP->l)
-					uvlP->l = deltaLight;
-				double lightScale = double (maxLight) / double (uvlP->l);
-				uvlP->l = maxLight;
+				if (deltaLight > pTexCoord->l)
+					pTexCoord->l = deltaLight;
+				double lightScale = double (maxLight) / double (pTexCoord->l);
+				pTexCoord->l = maxLight;
 				indexCount = lightManager.DeltaIndexCount ();
-				indexP = lightManager.LightDeltaIndex (0);
-				for (int nIndex = 0; nIndex < indexCount; nIndex++, indexP++) {
+				pIndex = lightManager.LightDeltaIndex (0);
+				for (int nIndex = 0; nIndex < indexCount; nIndex++, pIndex++) {
 #ifdef _DEBUG
-					if ((indexP->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (indexP->m_nSide == nDbgSide)))
+					if ((pIndex->m_nSegment == nDbgSeg) && ((nDbgSide < 0) || (pIndex->m_nSide == nDbgSide)))
 						nDbgSeg = nDbgSeg;
 #endif
-					if (VariableLight (*indexP) < 0)
+					if (VariableLight (*pIndex) < 0)
 						continue; // there's no variable light for this delta light index (-> light data error!)
-					CLightDeltaValue* deltaP = lightManager.LightDeltaValue (indexP->m_info.index);
-					for (ushort nDelta = indexP->m_info.count; nDelta; nDelta--, deltaP++) {
-						if ((deltaP->m_nSegment == nSegment) && (deltaP->m_nSide == nSide))
+					CLightDeltaValue* pLightDelta = lightManager.LightDeltaValue (pIndex->m_info.index);
+					for (ushort nDelta = pIndex->m_info.count; nDelta; nDelta--, pLightDelta++) {
+						if ((pLightDelta->m_nSegment == nSegment) && (pLightDelta->m_nSide == nSide))
 #pragma omp critical 
 							{
-							deltaP->m_info.vertLight [nVertex] = uint (double (deltaP->m_info.vertLight [nVertex]) * lightScale + 0.5);
+							pLightDelta->m_info.vertLight [nVertex] = uint (double (pLightDelta->m_info.vertLight [nVertex]) * lightScale + 0.5);
 							}
 						}
 					}

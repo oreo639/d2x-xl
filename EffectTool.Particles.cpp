@@ -81,23 +81,23 @@ void CParticleEffectTool::DoDataExchange (CDataExchange *pDX)
 {
 if (!HaveData (pDX)) 
 	return;
-CGameObject *objP = GetEffect (null, false);
-EnableControls (objP != null);
-if (objP) {
-	objP->rType.particleInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rType.particleInfo.bEnabled);
-	m_data [0].DoDataExchange (pDX, objP->rType.particleInfo.nLife);
-	m_data [1].DoDataExchange (pDX, objP->rType.particleInfo.nSize [0]);
-	m_data [2].DoDataExchange (pDX, objP->rType.particleInfo.nParts);
-	m_data [3].DoDataExchange (pDX, objP->rType.particleInfo.nSpeed);
-	m_data [4].DoDataExchange (pDX, objP->rType.particleInfo.nDrift);
-	m_data [5].DoDataExchange (pDX, objP->rType.particleInfo.nBrightness);
+CGameObject *pObject = GetEffect (null, false);
+EnableControls (pObject != null);
+if (pObject) {
+	pObject->rType.particleInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, pObject->rType.particleInfo.bEnabled);
+	m_data [0].DoDataExchange (pDX, pObject->rType.particleInfo.nLife);
+	m_data [1].DoDataExchange (pDX, pObject->rType.particleInfo.nSize [0]);
+	m_data [2].DoDataExchange (pDX, pObject->rType.particleInfo.nParts);
+	m_data [3].DoDataExchange (pDX, pObject->rType.particleInfo.nSpeed);
+	m_data [4].DoDataExchange (pDX, pObject->rType.particleInfo.nDrift);
+	m_data [5].DoDataExchange (pDX, pObject->rType.particleInfo.nBrightness);
 	for (int i = 0; i < 4; i++)
-		m_data [6 + i].DoDataExchange (pDX, objP->rType.particleInfo.color [i]);
-	m_data [10].DoDataExchange (pDX, objP->rType.particleInfo.nSide);
+		m_data [6 + i].DoDataExchange (pDX, pObject->rType.particleInfo.color [i]);
+	m_data [10].DoDataExchange (pDX, pObject->rType.particleInfo.nSide);
 	if (pDX->m_bSaveAndValidate)
-		objP->rType.particleInfo.nType = CBType ()->GetCurSel ();
+		pObject->rType.particleInfo.nType = CBType ()->GetCurSel ();
 	else
-		CBType ()->SetCurSel (objP->rType.particleInfo.nType);
+		CBType ()->SetCurSel (pObject->rType.particleInfo.nType);
 	}
 }
 
@@ -116,13 +116,13 @@ void CParticleEffectTool::Add (void)
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = current->Object ();
-objP->Type () = OBJ_EFFECT;
-objP->Id () = PARTICLE_ID;
-objP->m_info.movementType = MT_NONE;
-objP->m_info.controlType = CT_NONE;
-objP->m_info.renderType = RT_PARTICLE;
-memset (&objP->rType.particleInfo, 0, sizeof (objP->rType.particleInfo));
+CGameObject *pObject = current->Object ();
+pObject->Type () = OBJ_EFFECT;
+pObject->Id () = PARTICLE_ID;
+pObject->m_info.movementType = MT_NONE;
+pObject->m_info.controlType = CT_NONE;
+pObject->m_info.renderType = RT_PARTICLE;
+memset (&pObject->rType.particleInfo, 0, sizeof (pObject->rType.particleInfo));
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -131,21 +131,21 @@ DLE.MineView ()->Refresh ();
 
 void CParticleEffectTool::Copy (void)
 {
-CGameObject *objP = GetEffect ();
-if (!objP)
+CGameObject *pObject = GetEffect ();
+if (!pObject)
 	ErrorMsg ("No effect object currently selected");
 else {
-	m_particles = objP->rType.particleInfo;
+	m_particles = pObject->rType.particleInfo;
 	m_bValid = 1;
 	}
 }
 
 //------------------------------------------------------------------------
 
-void CParticleEffectTool::Paste (CGameObject* objP, bool bRefresh)
+void CParticleEffectTool::Paste (CGameObject* pObject, bool bRefresh)
 {
-if (Valid () && (objP = GetEffect (objP))) {
-	objP->rType.particleInfo = m_particles;
+if (Valid () && (pObject = GetEffect (pObject))) {
+	pObject->rType.particleInfo = m_particles;
 	if (bRefresh)
 		Refresh ();
 	}
@@ -164,8 +164,8 @@ return true;
 
 void CParticleEffectTool::OnSelectColor ()
 {
-CGameObject *objP = GetEffect (null, false);
-if (objP && CDlgHelpers::SelectColor (BYTE (objP->rType.particleInfo.color [0]), BYTE (objP->rType.particleInfo.color [1]), BYTE (objP->rType.particleInfo.color [2])))
+CGameObject *pObject = GetEffect (null, false);
+if (pObject && CDlgHelpers::SelectColor (BYTE (pObject->rType.particleInfo.color [0]), BYTE (pObject->rType.particleInfo.color [1]), BYTE (pObject->rType.particleInfo.color [2])))
 	UpdateColorCtrl ();
 }
 
@@ -210,11 +210,11 @@ if (!OnExtSlider (scrollCode, thumbPos, pScrollBar))
 
 void CParticleEffectTool::UpdateColorCtrl (void)
 {
-CGameObject *objP = GetEffect (null, false);
-CDlgHelpers::UpdateColorCtrl (&m_colorWnd, objP ? RGB (BYTE (objP->rType.particleInfo.color [0]), BYTE (objP->rType.particleInfo.color [1]), BYTE (objP->rType.particleInfo.color [2])) : RGB (0,0,0));
-if (objP) {
+CGameObject *pObject = GetEffect (null, false);
+CDlgHelpers::UpdateColorCtrl (&m_colorWnd, pObject ? RGB (BYTE (pObject->rType.particleInfo.color [0]), BYTE (pObject->rType.particleInfo.color [1]), BYTE (pObject->rType.particleInfo.color [2])) : RGB (0,0,0));
+if (pObject) {
 	for (int i = 0; i < 4; i++)
-		m_data [6 + i].SetValue (objP->rType.particleInfo.color [i]);
+		m_data [6 + i].SetValue (pObject->rType.particleInfo.color [i]);
 	}
 }
 

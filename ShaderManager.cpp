@@ -58,7 +58,7 @@ if (bAll)
 char* CShaderManager::Load (const char* fileName) //, char* Shadersource)
 {
 	FILE*	fp;
-	char*	bufP = null;
+	char*	pBuffer = null;
 	int 	fSize;
 	int	f;
 
@@ -75,14 +75,14 @@ if (fSize <= 0)
 if (!(fp = fopen (fileName, "rb")))
 	return null;	// couldn't open file
 
-if (!(bufP = new char [fSize + 1])) {
+if (!(pBuffer = new char [fSize + 1])) {
 	fclose (fp);
 	return null;	// out of memory
 	}
-fSize = (int) fread (bufP, sizeof (char), fSize, fp);
-bufP [fSize] = '\0';
+fSize = (int) fread (pBuffer, sizeof (char), fSize, fp);
+pBuffer [fSize] = '\0';
 fclose (fp);
-return bufP;
+return pBuffer;
 }
 
 //------------------------------------------------------------------------------

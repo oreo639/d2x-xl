@@ -36,12 +36,12 @@ void CSoundEffectTool::DoDataExchange (CDataExchange *pDX)
 {
 if (!HaveData (pDX)) 
 	return;
-CGameObject *objP = GetEffect (null, false);
-EnableControls (objP != null);
-if (objP) {
-	objP->rType.soundInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rType.soundInfo.bEnabled);
-	DDX_Text (pDX, IDC_SOUND_FILE, objP->rType.soundInfo.szFilename, sizeof (objP->rType.soundInfo.szFilename));
-	m_soundVolume.DoDataExchange (pDX, objP->rType.soundInfo.nVolume);
+CGameObject *pObject = GetEffect (null, false);
+EnableControls (pObject != null);
+if (pObject) {
+	pObject->rType.soundInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, pObject->rType.soundInfo.bEnabled);
+	DDX_Text (pDX, IDC_SOUND_FILE, pObject->rType.soundInfo.szFilename, sizeof (pObject->rType.soundInfo.szFilename));
+	m_soundVolume.DoDataExchange (pDX, pObject->rType.soundInfo.nVolume);
 	}
 }
 
@@ -60,14 +60,14 @@ void CSoundEffectTool::Add (void)
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = current->Object ();
-objP->Type () = OBJ_EFFECT;
-objP->Id () = SOUND_ID;
-objP->m_info.movementType = MT_NONE;
-objP->m_info.controlType = CT_NONE;
-objP->m_info.renderType = RT_SOUND;
-*objP->rType.soundInfo.szFilename = '\0';
-objP->rType.soundInfo.nVolume = 10;
+CGameObject *pObject = current->Object ();
+pObject->Type () = OBJ_EFFECT;
+pObject->Id () = SOUND_ID;
+pObject->m_info.movementType = MT_NONE;
+pObject->m_info.controlType = CT_NONE;
+pObject->m_info.renderType = RT_SOUND;
+*pObject->rType.soundInfo.szFilename = '\0';
+pObject->rType.soundInfo.nVolume = 10;
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -76,19 +76,19 @@ DLE.MineView ()->Refresh ();
 
 void CSoundEffectTool::Copy (void)
 {
-CGameObject *objP = GetEffect ();
-if (!objP) 
+CGameObject *pObject = GetEffect ();
+if (!pObject) 
 	ErrorMsg ("No effect object currently selected");
 else 
-	m_sound = objP->rType.soundInfo;
+	m_sound = pObject->rType.soundInfo;
 }
 
 //------------------------------------------------------------------------
 
-void CSoundEffectTool::Paste (CGameObject* objP, bool bRefresh)
+void CSoundEffectTool::Paste (CGameObject* pObject, bool bRefresh)
 {
-if (Valid () && (objP = GetEffect (objP))) {
-	objP->rType.soundInfo = m_sound;
+if (Valid () && (pObject = GetEffect (pObject))) {
+	pObject->rType.soundInfo = m_sound;
 	if (bRefresh)
 		Refresh ();
 	}

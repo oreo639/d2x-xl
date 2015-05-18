@@ -97,7 +97,7 @@ class CModelManager {
 	public:
 		CModelManager () : m_nGlow(-1), m_lastObjType(-1), m_lastObjId(-1) {}
 
-		int Setup (CGameObject* objP, CRenderer* renderer, CDC* pDC);
+		int Setup (CGameObject* pObject, CRenderer* renderer, CDC* pDC);
 
 		void Reset (void);
 
@@ -125,7 +125,7 @@ class CModelManager {
 
 		void LoadMod (void);
 
-		int BuildModel (CObject* objP, int nModel, CPolyModel* pp, CDynamicArray<CTexture*>& modelTextures);
+		int BuildModel (CObject* pObject, int nModel, CPolyModel* pp, CDynamicArray<CTexture*>& modelTextures);
 
 	private:
 		int Model (void);

@@ -11,11 +11,9 @@ class CPogDialog : public CDialog, private CDlgHelpers {
 		virtual void DoDataExchange (CDataExchange *pDX);
 
 	private:
-		CImageList m_customTextureIcons;
+		CImageList	m_customTextureIcons;
 		CAnimTexWnd m_preview;
-		bool m_bLevelLoaded;
-		bool m_bPaletteQueryDone;
-		int m_bShowCustomOnly; // int used for DDX_Check compatibility
+
 		enum TextureFilters : int {
 			TextureFilters_Level = 0,
 			TextureFilters_Robot,
@@ -23,12 +21,19 @@ class CPogDialog : public CDialog, private CDlgHelpers {
 			TextureFilters_Misc,
 			NUM_TEXTUREFILTERS // must come last
 			};
-		int m_filters [NUM_TEXTUREFILTERS];
-		bool m_bPreselectTexture;
-		uint m_uiPreselectedTexture;
-		int m_nTexPreviousFocused, m_nTexCurrentFocused;
-		int m_iSavedSelectedItem;
-		char m_szPreviousPigPath [256];
+
+		bool	m_bLevelLoaded;
+		bool	m_bPaletteQueryDone;
+		int	m_bShowCustomOnly; // int used for DDX_Check compatibility
+		int	m_filters [NUM_TEXTUREFILTERS];
+		bool	m_bPreselectTexture;
+		uint	m_uiPreselectedTexture;
+		int	m_nTexPreviousFocused, m_nTexCurrentFocused;
+		int	m_iSavedSelectedItem;
+		char	m_szPreviousPigPath [256];
+		int	m_nFrame;
+		int	m_xScrollOffset [2];
+		int	m_yScrollOffset [2];
 
 		inline CListCtrl *TextureList (void) { return (CListCtrl *) GetDlgItem (IDC_POGMANAGER_LIST); }
 		inline CComboBox *PaletteList (void) { return (CComboBox *) GetDlgItem (IDC_POGMANAGER_PALETTE); }
@@ -52,6 +57,10 @@ class CPogDialog : public CDialog, private CDlgHelpers {
 		bool IsSingleTextureSelected (void);
 		typedef void (CPogDialog::*ExecuteOnSelectedTexturesCallback)(const CTexture *pTexture, va_list args);
 		bool ExecuteOnSelectedTextures (ExecuteOnSelectedTexturesCallback callback, ...);
+
+		bool ScrollTexture (short nTexId);
+		bool UpdateTextureClip (short nTexId);
+		bool AnimateTexture (short nTexId);
 
 		// Supports < 0 values to allow nulls
 		inline const CTexture *CPogDialog::GetTextureFromId (int nIndex) {

@@ -133,7 +133,7 @@ typedef struct tEffectInfo {
   int		nDestEffect;					//what eclip to play when exploding
   int		nDestSize;						//3d size of explosion
   int		nSound;							//what sound this makes
-  int		nSegment, nSide;				//what segP & side, for one-shot clips
+  int		nSegment, nSide;				//what pSegment & side, for one-shot clips
 } tEffectInfo;
 
 typedef struct tWallEffectInfo {
@@ -435,7 +435,7 @@ class CTexture {
 		bool        m_bValid;       // is the texture properly loaded and containing image data?
 
 	public:
-		CTexture (CBGRA* dataP = null) : m_data (dataP), m_renderBuffer (null), m_glHandle (0), m_bExtBuffer (dataP != null), m_bValid (false) {
+		CTexture (CBGRA* pData = null) : m_data (pData), m_renderBuffer (null), m_glHandle (0), m_bExtBuffer (pData != null), m_bValid (false) {
 			memset (&m_info, 0, sizeof (m_info));
 			m_info.nTexture = -1;
 			}
@@ -639,9 +639,9 @@ public:
 
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb);
 
-bool PaintTexture (CWnd *wndP, int bkColor = -1, int texture1 = -1, int texture2 = 0, int xOffset = 0, int yOffset = 0);
+bool PaintTexture (CWnd *pWindow, int bkColor = -1, int texture1 = -1, int texture2 = 0, int xOffset = 0, int yOffset = 0);
 
-bool PaintTexture (CWnd *wndP, int bkColor = -1, 
+bool PaintTexture (CWnd *pWindow, int bkColor = -1, 
                    const CTexture *pBaseTex = null, const CTexture *pOvlTex = null, short nOvlAlignment = 0,
                    int xOffset = 0, int yOffset = 0);
 

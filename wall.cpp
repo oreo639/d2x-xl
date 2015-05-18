@@ -39,7 +39,7 @@ ubyte doorClipTable [NUM_OF_CLIPS_D2] = {
 void CWall::Setup (CSideKey key, ushort nWall, ubyte type, char nClip, short nTexture, bool bRedefine) 
 {
 undoManager.Begin (__FUNCTION__, udWalls);
-// define new wallP
+// define new pWall
 *((CSideKey*) this) = key;
 //m_nSegment = nSegment;
 //m_nSide = nSide;
@@ -128,18 +128,18 @@ void CWall::SetTextures (short nTexture)
 		{901,0}
 		};
 
-CSide *sideP = Side ();
+CSide *pSide = Side ();
 char nClip = m_info.nClip;
 
 undoManager.Begin (__FUNCTION__, udWalls);
 if (IsDoor ()) {
 	if (DLE.IsD1File ())
-		sideP->SetTextures (wallTexturesD1 [nClip][0], wallTexturesD1 [nClip][1]);
+		pSide->SetTextures (wallTexturesD1 [nClip][0], wallTexturesD1 [nClip][1]);
 	else
-		sideP->SetTextures (wallTexturesD2 [nClip][0], wallTexturesD2 [nClip][1]);
+		pSide->SetTextures (wallTexturesD2 [nClip][0], wallTexturesD2 [nClip][1]);
 		}
 else if (nTexture >= 0) {
-	sideP->SetTextures (nTexture, 0);
+	pSide->SetTextures (nTexture, 0);
 	}
 else {
 	undoManager.Unroll (__FUNCTION__);
@@ -223,10 +223,10 @@ return (m_info.type != WALL_OPEN);
 
 bool CWall::IsVariable (void)
 {
-CTrigger* trigP = Trigger ();
-if (trigP == null)
+CTrigger* pTrigger = Trigger ();
+if (pTrigger == null)
 	return false;
-char trigType = trigP->Type ();
+char trigType = pTrigger->Type ();
 return (trigType == TT_ILLUSION_OFF) ||
 		 (trigType == TT_ILLUSION_ON) ||
 		 (trigType == TT_CLOSE_WALL) ||
@@ -258,11 +258,11 @@ return -1;
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CWall::Copy (CGameItem* destP)
+CGameItem* CWall::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CWall*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CWall*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------
@@ -341,11 +341,11 @@ fp->Write (m_info.time);
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CDoor::Copy (CGameItem* destP)
+CGameItem* CDoor::Copy (CGameItem* pDest)
 {
-if (destP != null)
-	*dynamic_cast<CDoor*> (destP) = *this;
-return destP;
+if (pDest != null)
+	*dynamic_cast<CDoor*> (pDest) = *this;
+return pDest;
 }
 
 // -----------------------------------------------------------------------------

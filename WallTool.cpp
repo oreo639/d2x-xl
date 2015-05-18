@@ -126,7 +126,7 @@ memset (m_bFlags, 0, sizeof (m_bFlags));
 
 BOOL CWallTool::TextureIsVisible ()
 {
-return m_wallP [0] != null;
+return m_pWall [0] != null;
 }
 
 //------------------------------------------------------------------------------
@@ -284,8 +284,8 @@ if (!(m_bInited && theMine))
 	return;
 
 InitCBWallNo ();
-m_wallP [0] = current->Wall ();
-if (m_wallP [0] == null) {
+m_pWall [0] = current->Wall ();
+if (m_pWall [0] == null) {
 	strcpy_s (m_szMsg, sizeof (m_szMsg), "No wall for current side");
 	EnableControls (FALSE);
 	if (current->Segment ()->ChildId (current->SideId ()) >= 0)
@@ -301,12 +301,12 @@ else {
     // enable all
 	EnableControls (TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (FALSE);
-   if ((DLE.IsD2File ()) && (m_wallP [0]->Type () == WALL_COLORED))
+   if ((DLE.IsD2File ()) && (m_pWall [0]->Type () == WALL_COLORED))
 		GetDlgItem (IDC_WALL_STRENGTH)->EnableWindow (FALSE);
 	else {
 		GetDlgItem (IDC_WALL_FLYTHROUGH)->EnableWindow (FALSE);
 		}
-   if ((DLE.IsD1File ()) || (m_wallP [0]->Type () == WALL_COLORED))
+   if ((DLE.IsD1File ()) || (m_pWall [0]->Type () == WALL_COLORED))
 		GetDlgItem (IDC_WALL_CLOAK)->EnableWindow (FALSE);
 
     // enable buddy proof and switch checkboxes only if d2 level
@@ -316,22 +316,22 @@ else {
 			GetDlgItem (IDC_WALL_SWITCH + i)->EnableWindow (FALSE);
 		}
 	// update wall data
-	if (m_wallP [0]->Info ().nTrigger == NO_TRIGGER)
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "segment = %ld, side = %ld, no trigger", m_wallP [0]->m_nSegment, m_wallP [0]->m_nSide);
+	if (m_pWall [0]->Info ().nTrigger == NO_TRIGGER)
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "segment = %ld, side = %ld, no trigger", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide);
 	else
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "segment = %ld, side = %ld, trigger= %d", m_wallP [0]->m_nSegment, m_wallP [0]->m_nSide, (int)m_wallP [0]->Info ().nTrigger);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "segment = %ld, side = %ld, trigger= %d", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide, (int)m_pWall [0]->Info ().nTrigger);
 
-	m_nWall [0] = int (m_wallP [0] - wallManager.Wall (0));
+	m_nWall [0] = int (m_pWall [0] - wallManager.Wall (0));
 	GetOtherWall ();
-	m_nSegment = m_wallP [0]->m_nSegment;
-	m_nSide = m_wallP [0]->m_nSide + 1;
-	m_nTrigger = (m_wallP [0]->Info ().nTrigger < triggerManager.WallTriggerCount ()) ? m_wallP [0]->Info ().nTrigger : -1;
-	m_nType = m_wallP [0]->Type ();
-	m_nClip = m_wallP [0]->Info ().nClip;
-	m_nStrength = ((double) m_wallP [0]->Info ().hps) / F1_0;
+	m_nSegment = m_pWall [0]->m_nSegment;
+	m_nSide = m_pWall [0]->m_nSide + 1;
+	m_nTrigger = (m_pWall [0]->Info ().nTrigger < triggerManager.WallTriggerCount ()) ? m_pWall [0]->Info ().nTrigger : -1;
+	m_nType = m_pWall [0]->Type ();
+	m_nClip = m_pWall [0]->Info ().nClip;
+	m_nStrength = ((double) m_pWall [0]->Info ().hps) / F1_0;
 	if (m_bFlyThrough = (m_nStrength < 0))
 		m_nStrength = -m_nStrength;
-	m_nCloak = ((double) (m_wallP [0]->Info ().cloakValue % 32)) * 100.0 / 31.0;
+	m_nCloak = ((double) (m_pWall [0]->Info ().cloakValue % 32)) * 100.0 / 31.0;
 	CBWallNo ()->SetCurSel (m_nWall [0]);
 	//CBType ()->SetCurSel (m_nType);
 	SelectItemData (CBType (), m_nType);
@@ -344,11 +344,11 @@ else {
 	m_nClip = i;
 	CBClipNo ()->SetCurSel ((i < NUM_OF_CLIPS_D2) ? i : 0);
 	for (i = 0; i < MAX_WALL_FLAGS; i++)
-		m_bFlags [i] = ((m_wallP [0]->Info ().flags & wallFlagTable [i]) != 0);
+		m_bFlags [i] = ((m_pWall [0]->Info ().flags & wallFlagTable [i]) != 0);
 	for (i = 0; i < 4; i++)
-		m_bKeys [i] = ((m_wallP [0]->Info ().keys & (1 << i)) != 0);
+		m_bKeys [i] = ((m_pWall [0]->Info ().keys & (1 << i)) != 0);
 	if (!m_bLock) {
-		m_defWall = *m_wallP [0];
+		m_defWall = *m_pWall [0];
 		i = segmentManager.Segment (m_defWall.m_nSegment)->m_sides [m_defWall.m_nSide].Info ().nBaseTex;
 		if (m_defWall.Type () == WALL_CLOAKED)
 			m_defOvlTexture = i;
@@ -376,41 +376,41 @@ UpdateData (FALSE);
 void CWallTool::OnAddWall ()
 {
 
-CWall *wallP;
-CSegment *segP [2];
-CSide *sideP [2];
+CWall *pWall;
+CSegment *pSegment [2];
+CSide *pSide [2];
 CSideKey keys [2];
 
 bool bRefresh = false;
 
 m_bDelayRefresh = true;
-segP [0] = current->Segment ();
-sideP [0] = current->Side ();
+pSegment [0] = current->Segment ();
+pSide [0] = current->Side ();
 keys [0] = *current;
-sideP [1] = segmentManager.BackSide (keys [0], keys [1]);
-if (sideP [1] != null) 
-	segP [1] = segmentManager.Segment (keys [1].m_nSegment);
+pSide [1] = segmentManager.BackSide (keys [0], keys [1]);
+if (pSide [1] != null) 
+	pSegment [1] = segmentManager.Segment (keys [1].m_nSegment);
 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (sideP [bSide]->Info ().nWall < wallManager.WallCount ())
+	if (pSide [bSide]->Info ().nWall < wallManager.WallCount ())
 		ErrorMsg ("There is already a wall at that side of the current segment.");
 	else if (wallManager.WallCount () >= MAX_WALLS)
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
-		if ((DLE.IsD2File ()) && (segP [bSide]->ChildId (keys [bSide].m_nSide) == -1))
+		if ((DLE.IsD2File ()) && (pSegment [bSide]->ChildId (keys [bSide].m_nSide) == -1))
 			wallManager.Create (*current, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
-		else if (wallP = wallManager.Create (keys [bSide], m_defWall.Type (), m_defWall.Info ().flags, m_defWall.Info ().keys, m_defWall.Info ().nClip, m_defTexture)) {
-			if (wallP->Type () == m_defWall.Type ()) {
-				wallP->Info ().hps = m_defWall.Info ().hps;
-				wallP->Info ().cloakValue = m_defWall.Info ().cloakValue;
+		else if (pWall = wallManager.Create (keys [bSide], m_defWall.Type (), m_defWall.Info ().flags, m_defWall.Info ().keys, m_defWall.Info ().nClip, m_defTexture)) {
+			if (pWall->Type () == m_defWall.Type ()) {
+				pWall->Info ().hps = m_defWall.Info ().hps;
+				pWall->Info ().cloakValue = m_defWall.Info ().cloakValue;
 				}
-			else if (wallP->Type () == WALL_CLOAKED) {
-				wallP->Info ().hps = 0;
-				wallP->Info ().cloakValue = 16;
+			else if (pWall->Type () == WALL_CLOAKED) {
+				pWall->Info ().hps = 0;
+				pWall->Info ().cloakValue = 16;
 				}
 			else {
-				wallP->Info ().hps = 0;
-				wallP->Info ().cloakValue = 31;
+				pWall->Info ().hps = 0;
+				pWall->Info ().cloakValue = 31;
 				}
 			}
 			// update main window
@@ -463,16 +463,16 @@ void CWallTool::OnDeleteWallAll ()
 {
 undoManager.Begin (__FUNCTION__, udWalls | udTriggers);
 DLE.MineView ()->DelayRefresh (true);
-CSegment *segP = segmentManager.Segment (0);
+CSegment *pSegment = segmentManager.Segment (0);
 bool bAll = !segmentManager.HasTaggedSegments ();
 int h, i, j, nDeleted = 0;
-for (h = segmentManager.Count (), i = 0; i < h; i++, segP++) {
-	CSide* sideP = segP->m_sides;
-	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
-		if (sideP->Info ().nWall >= MAX_WALLS)
+for (h = segmentManager.Count (), i = 0; i < h; i++, pSegment++) {
+	CSide* pSide = pSegment->m_sides;
+	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pSide++) {
+		if (pSide->Info ().nWall >= MAX_WALLS)
 			continue;
 		if (bAll || segmentManager.IsTagged (CSideKey (i, j))) {
-			wallManager.Delete (sideP->Info ().nWall);
+			wallManager.Delete (pSide->Info ().nWall);
 			nDeleted++;
 			}
 		}
@@ -503,9 +503,9 @@ CWall *CWallTool::GetOtherWall (void)
 CSideKey opp;
 
 if (!segmentManager.BackSide (opp))
-	return m_wallP [1] = null;
+	return m_pWall [1] = null;
 m_nWall [1] = segmentManager.Segment (opp.m_nSegment)->m_sides [opp.m_nSide].Info ().nWall;
-return m_wallP [1] = (m_nWall [1] < wallManager.WallCount () ? wallManager.Wall (m_nWall [1]) : null);
+return m_pWall [1] = (m_nWall [1] < wallManager.WallCount () ? wallManager.Wall (m_nWall [1]) : null);
 }
 
 //------------------------------------------------------------------------------
@@ -515,13 +515,13 @@ bool CWallTool::GetWalls ()
 m_nWall [0] = CBWallNo ()->GetCurSel ();
 if (m_nWall [0] < 0) {
 	m_nWall [1] = -1;
-	m_wallP [0] =
-	m_wallP [1] = null;
+	m_pWall [0] =
+	m_pWall [1] = null;
 	return false;
 	}
-m_wallP [0] = wallManager.Wall (m_nWall [0]);
-*((CSideKey *) current) = *((CSideKey *) m_wallP [0]);
-m_nTrigger = m_wallP [0]->Info ().nTrigger;
+m_pWall [0] = wallManager.Wall (m_nWall [0]);
+*((CSideKey *) current) = *((CSideKey *) m_pWall [0]);
+m_nTrigger = m_pWall [0]->Info ().nTrigger;
 GetOtherWall ();
 return true;
 }
@@ -539,9 +539,9 @@ Refresh ();
 
 void CWallTool::OnSetType ()
 {
-	CSegment	*segP [2];
-	CSide		*sideP [2];
-	CWall		*wallP;
+	CSegment	*pSegment [2];
+	CSide		*pSide [2];
+	CWall		*pWall;
 	CSideKey	keys [2];
 	int		nType;
 
@@ -555,24 +555,24 @@ if ((nType > WALL_CLOAKED) && (DLE.IsStdLevel ()))
 m_defWall.Type () = m_nType = nType;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
-m_wallP [0] = wallManager.Wall (m_nWall [0]);
+m_pWall [0] = wallManager.Wall (m_nWall [0]);
 */
-segP [0] = current->Segment ();
-sideP [0] = current->Side ();
+pSegment [0] = current->Segment ();
+pSide [0] = current->Side ();
 keys [0] = *current;
 if (segmentManager.BackSide (keys [0], keys [1])) {
-	segP [1] = segmentManager.Segment (keys [1].m_nSegment);
-	sideP [1] = segP [1]->m_sides + keys [1].m_nSide;
+	pSegment [1] = segmentManager.Segment (keys [1].m_nSegment);
+	pSide [1] = pSegment [1]->m_sides + keys [1].m_nSide;
 	}
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if ((wallP = m_wallP [bSide]) && sideP [bSide]) {
-		short nBaseTex  = sideP [bSide]->Info ().nBaseTex;
-		short nOvlTex = sideP [bSide]->Info ().nOvlTex;
-		wallManager.Wall (m_nWall [bSide])->Setup (keys [bSide], m_nWall [bSide], m_nType, m_wallP [0]->Info ().nClip, -1, true);
-		if ((wallP->Type () == WALL_OPEN) || (wallP->Type () == WALL_CLOSED))
-			segmentManager.SetTextures (*wallP, nBaseTex, nOvlTex);
-//		else if ((wallP->Type () == WALL_CLOAKED) || (wallP->Type () == WALL_COLORED))
-//			wallP->Info ().cloakValue = m_defWall.cloakValue;
+	if ((pWall = m_pWall [bSide]) && pSide [bSide]) {
+		short nBaseTex  = pSide [bSide]->Info ().nBaseTex;
+		short nOvlTex = pSide [bSide]->Info ().nOvlTex;
+		wallManager.Wall (m_nWall [bSide])->Setup (keys [bSide], m_nWall [bSide], m_nType, m_pWall [0]->Info ().nClip, -1, true);
+		if ((pWall->Type () == WALL_OPEN) || (pWall->Type () == WALL_CLOSED))
+			segmentManager.SetTextures (*pWall, nBaseTex, nOvlTex);
+//		else if ((pWall->Type () == WALL_CLOAKED) || (pWall->Type () == WALL_COLORED))
+//			pWall->Info ().cloakValue = m_defWall.cloakValue;
 		}
 DLE.MineView ()->Refresh ();
 Refresh ();
@@ -583,22 +583,22 @@ Refresh ();
 void CWallTool::OnSetClip ()
 {
 	int		nClip;
-	CWall	*wallP;
+	CWall	*pWall;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
-m_wallP [0] = wallManager.Wall () + m_nWall [0];
+m_pWall [0] = wallManager.Wall () + m_nWall [0];
 */
 GetWalls ();
 m_nClip = CBClipNo ()->GetCurSel ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (wallP = m_wallP [bSide])
-		if ((wallP->Type () == WALL_BLASTABLE) || (wallP->Type () == WALL_DOOR)) {
+	if (pWall = m_pWall [bSide])
+		if ((pWall->Type () == WALL_BLASTABLE) || (pWall->Type () == WALL_DOOR)) {
 			if (m_nWall [bSide] < wallManager.WallCount ()) {
 				undoManager.Begin (__FUNCTION__, udWalls);
 				nClip = animClipTable [m_nClip];
-				wallP->Info ().nClip = nClip;
+				pWall->Info ().nClip = nClip;
 				// define door textures based on clip number
-				if (wallP->Info ().nClip >= 0)
+				if (pWall->Info ().nClip >= 0)
 					wallManager.Wall (m_nWall [bSide])->SetTextures (m_defTexture);
 				undoManager.End (__FUNCTION__);
 				DLE.MineView ()->Refresh ();
@@ -606,7 +606,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 				}
 			}
 		else
-			wallP->Info ().nClip = -1;
+			pWall->Info ().nClip = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -617,9 +617,9 @@ GetWalls ();
 memset (m_bKeys, 0, sizeof (m_bKeys));
 m_bKeys [i] = TRUE;
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (m_wallP [bSide]) {
+	if (m_pWall [bSide]) {
 		undoManager.Begin (__FUNCTION__, udWalls);
-		m_wallP [bSide]->Info ().keys = (1 << i);
+		m_pWall [bSide]->Info ().keys = (1 << i);
 		undoManager.End (__FUNCTION__);
 		Refresh ();
 		}
@@ -630,12 +630,12 @@ void CWallTool::OnFlag (int i)
 GetWalls ();
 m_bFlags [i] = BtnCtrl (IDC_WALL_BLASTED + i)->GetCheck ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (m_wallP [bSide]) {
+	if (m_pWall [bSide]) {
 		undoManager.Begin (__FUNCTION__, udWalls);
 		if (m_bFlags [i])
-			m_wallP [bSide]->Info ().flags |= wallFlagTable [i];
+			m_pWall [bSide]->Info ().flags |= wallFlagTable [i];
 		else
-			m_wallP [bSide]->Info ().flags &= ~wallFlagTable [i];
+			m_pWall [bSide]->Info ().flags &= ~wallFlagTable [i];
 		undoManager.End (__FUNCTION__);
 		Refresh ();
 		}
@@ -661,12 +661,12 @@ void CWallTool::OnIgnoreMarker () { OnFlag (8); }
 void CWallTool::OnStrength ()
 {
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (m_wallP [bSide]) {
+	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
 		undoManager.Begin (__FUNCTION__, udWalls);
-		m_wallP [bSide]->Info ().hps = (int) m_nStrength * F1_0;
-		if ((m_wallP [bSide]->Type () == WALL_COLORED) && m_bFlyThrough)
-			m_wallP [bSide]->Info ().hps = -m_wallP [bSide]->Info ().hps;
+		m_pWall [bSide]->Info ().hps = (int) m_nStrength * F1_0;
+		if ((m_pWall [bSide]->Type () == WALL_COLORED) && m_bFlyThrough)
+			m_pWall [bSide]->Info ().hps = -m_pWall [bSide]->Info ().hps;
 		undoManager.End (__FUNCTION__);
 		}
 }
@@ -676,11 +676,11 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 void CWallTool::OnCloak ()
 {
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (m_wallP [bSide]) {
+	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
 		undoManager.Begin (__FUNCTION__, udWalls);
 		m_defWall.Info ().cloakValue =
-		m_wallP [bSide]->Info ().cloakValue = (char) (m_nCloak * 31.0 / 100.0) % 32;
+		m_pWall [bSide]->Info ().cloakValue = (char) (m_nCloak * 31.0 / 100.0) % 32;
 		undoManager.End (__FUNCTION__);
 		}
 	else
@@ -695,7 +695,7 @@ if (nValue < 0)
 	nValue = 0;
 else if (nValue > 100)
 	nValue = 10;
-if (m_wallP [0]->Type () == WALL_COLORED) {
+if (m_pWall [0]->Type () == WALL_COLORED) {
 	m_nStrength = nValue;
 	UpdateData (FALSE);
 	OnStrength ();
@@ -711,7 +711,7 @@ else {
 
 void CWallTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-if (!m_wallP [0])
+if (!m_pWall [0])
 	return;
 #if 1
 if (m_transpSlider.OnScroll (scrollCode, thumbPos, pScrollBar))

@@ -73,12 +73,12 @@ if (h > 1) {
 
 void CTriggerManager::RenumberObjTriggers (void)
 {
-	CTrigger*	trigP = ObjTrigger (0);
+	CTrigger*	pTrigger = ObjTrigger (0);
 	int			i;
 
 undoManager.Begin (__FUNCTION__, udTriggers);
-for (i = ObjTriggerCount (); i; i--, trigP++)
-	trigP->Info ().nObject = objectManager.Index (objectManager.FindBySig (trigP->Info ().nObject));
+for (i = ObjTriggerCount (); i; i--, pTrigger++)
+	pTrigger->Info ().nObject = objectManager.Index (objectManager.FindBySig (pTrigger->Info ().nObject));
 i = ObjTriggerCount ();
 while (i) {
 	if (ObjTrigger (--i)->Info ().nObject < 0)
@@ -92,20 +92,20 @@ undoManager.End (__FUNCTION__);
 
 void CTriggerManager::RenumberTargetObjs (void)
 {
-	CTrigger* trigP = ObjTrigger (0);
+	CTrigger* pTrigger = ObjTrigger (0);
 
 undoManager.Begin (__FUNCTION__, udTriggers);
-for (int i = ObjTriggerCount (); i; i--, trigP++) {
-	CSideKey* targetP = trigP->Target ();
-	for (int j = 0; j < trigP->Count (); j++) {
-		if (targetP->m_nSide >= 0) // trigger target is geometry
-			targetP++;
+for (int i = ObjTriggerCount (); i; i--, pTrigger++) {
+	CSideKey* pTarget = pTrigger->Target ();
+	for (int j = 0; j < pTrigger->Count (); j++) {
+		if (pTarget->m_nSide >= 0) // trigger target is geometry
+			pTarget++;
 		else {
-			CGameObject* objP = objectManager.FindBySig (targetP->m_nSegment);
-			if (objP == null)
-				trigP->Delete (j--);
+			CGameObject* pObject = objectManager.FindBySig (pTarget->m_nSegment);
+			if (pObject == null)
+				pTrigger->Delete (j--);
 			else
-				(targetP++)->m_nSegment = objectManager.Index (objP);
+				(pTarget++)->m_nSegment = objectManager.Index (pObject);
 			}
 		}
 	}
@@ -162,17 +162,17 @@ if (Full ()) {
 // if no wall at current side, try to add a wall of proper type
 undoManager.Begin (__FUNCTION__, udTriggers);
 
-CWall* wallP = current->Wall ();
+CWall* pWall = current->Wall ();
 
-if (wallP == null) {
+if (pWall == null) {
 	if (bAddWall) {
 		if (wallManager.Count () >= MAX_WALLS) {
 			ErrorMsg ("Cannot add a wall for this trigger\nsince the maximum number of walls is already reached.");
 			undoManager.Unroll (__FUNCTION__);
 			return null;
 			}
-		wallP = wallManager.Create (CSideKey (), (current->ChildId () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
-		if (wallP == null) {
+		pWall = wallManager.Create (CSideKey (), (current->ChildId () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
+		if (pWall == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			undoManager.Unroll (__FUNCTION__);
 			return null;
@@ -226,10 +226,10 @@ Count (0)++;
 #else
 short nTrigger = Count (0)++;
 #endif
-CTrigger* trigP = Trigger (nTrigger);
-trigP->Setup (type, flags);
-trigP->Index () = nTrigger;
-wallP->SetTrigger (nTrigger);
+CTrigger* pTrigger = Trigger (nTrigger);
+pTrigger->Setup (type, flags);
+pTrigger->Index () = nTrigger;
+pWall->SetTrigger (nTrigger);
 UpdateReactor ();
 undoManager.End (__FUNCTION__);
 DLE.MineView ()->Refresh ();
@@ -244,10 +244,10 @@ if (nDelTrigger == NO_TRIGGER)
 	return;
 
 if (nDelTrigger < 0) {
-	CWall* wallP = current->Wall ();
-	if (wallP == null)
+	CWall* pWall = current->Wall ();
+	if (pWall == null)
 		return;
-	nDelTrigger = wallP->Info ().nTrigger;
+	nDelTrigger = pWall->Info ().nTrigger;
 	}
 
 CTrigger* delTrigP = Trigger (nDelTrigger, 0);
@@ -264,10 +264,10 @@ WallTriggerCount ()--;
 #else
 if (nDelTrigger < --WallTriggerCount ()) {
 	*delTrigP = *WallTrigger (WallTriggerCount ());
-	CWall* wallP = wallManager.FindByTrigger (WallTriggerCount ());
-	if (wallP != null) {
+	CWall* pWall = wallManager.FindByTrigger (WallTriggerCount ());
+	if (pWall != null) {
 		undoManager.Begin (__FUNCTION__, udWalls);
-		wallP->Info ().nTrigger = (ubyte) nDelTrigger;
+		pWall->Info ().nTrigger = (ubyte) nDelTrigger;
 		undoManager.End (__FUNCTION__);
 		}
 	}
@@ -284,10 +284,10 @@ UpdateReactor ();
 
 void CTriggerManager::DeleteTarget (CSideKey key, short nClass) 
 {
-CTrigger* trigP = &m_triggers [nClass][0];
+CTrigger* pTrigger = &m_triggers [nClass][0];
 undoManager.Begin (__FUNCTION__, udTriggers);
-for (int i = 0; i < Count (nClass); i++, trigP++)
-	trigP->Delete (key);
+for (int i = 0; i < Count (nClass); i++, pTrigger++)
+	pTrigger->Delete (key);
 undoManager.End (__FUNCTION__);
 }
 
@@ -298,10 +298,10 @@ undoManager.End (__FUNCTION__);
 short CTriggerManager::FindBySide (short& nTrigger, CSideKey key)
 {
 current->Get (key);
-CWall *wallP = wallManager.FindBySide (key);
-if (wallP != null) {
-	nTrigger = wallP->Info ().nTrigger;
-	return wallManager.Index (wallP);
+CWall *pWall = wallManager.FindBySide (key);
+if (pWall != null) {
+	nTrigger = pWall->Info ().nTrigger;
+	return wallManager.Index (pWall);
 	}
 return NO_WALL;
 }
@@ -340,18 +340,18 @@ for (short nTarget = 0; nTarget < reactorTrigger->Count (); nTarget++) {
 	}
 // add any exits to target list that are not already in it
 for (CWallIterator wi; wi; wi++) {
-	CWall* wallP = &(*wi);
-	CTrigger* trigP = wallP->Trigger ();
-	if (trigP == null)
+	CWall* pWall = &(*wi);
+	CTrigger* pTrigger = pWall->Trigger ();
+	if (pTrigger == null)
 		continue;
-	bool bExit = trigP->IsExit (false);
-	bool bFound = (reactorTrigger->Find (*wallP) >= 0);
+	bool bExit = pTrigger->IsExit (false);
+	bool bFound = (reactorTrigger->Find (*pWall) >= 0);
 	if (bFound == bExit)
 		continue;
 	if (bExit)
-		reactorTrigger->Add (*wallP);
+		reactorTrigger->Add (*pWall);
 	else 
-		reactorTrigger->Delete (*wallP);
+		reactorTrigger->Delete (*pWall);
 	}
 undoManager.End (__FUNCTION__);
 }
@@ -360,18 +360,18 @@ undoManager.End (__FUNCTION__);
 
 CTrigger* CTriggerManager::AddToObject (short nObject, short type) 
 {
-	CGameObject* objP = (nObject < 0) ? current->Object () : objectManager.Object (nObject);
+	CGameObject* pObject = (nObject < 0) ? current->Object () : objectManager.Object (nObject);
 
-if (objP == null) {
+if (pObject == null) {
 	ErrorMsg ("Couldn't find object to attach triggers to.");
 	return null;
 	}
 
-if ((objP->Info ().type != OBJ_ROBOT) && 
-	 (objP->Info ().type != OBJ_CAMBOT) &&
-	 (objP->Info ().type != OBJ_POWERUP) &&
-	 (objP->Info ().type != OBJ_HOSTAGE) &&
-	 (objP->Info ().type != OBJ_REACTOR)) {
+if ((pObject->Info ().type != OBJ_ROBOT) && 
+	 (pObject->Info ().type != OBJ_CAMBOT) &&
+	 (pObject->Info ().type != OBJ_POWERUP) &&
+	 (pObject->Info ().type != OBJ_HOSTAGE) &&
+	 (pObject->Info ().type != OBJ_REACTOR)) {
 	ErrorMsg ("Object triggers can only be attached to robots, reactors, hostages, powerups and cameras.");
 	return null;
 	}
@@ -381,13 +381,13 @@ if (ObjTriggerCount () >= MAX_OBJ_TRIGGERS) {
 	return null;
 	}
 
-nObject = objectManager.Index (objP);
+nObject = objectManager.Index (pObject);
 undoManager.Begin (__FUNCTION__, udTriggers);
 short nTrigger = ObjTriggerCount ()++;
-CTrigger* trigP = ObjTrigger (nTrigger);
-trigP->Setup (type, 0);
-trigP->Info ().nObject = nObject;
-trigP->Index () = nTrigger;
+CTrigger* pTrigger = ObjTrigger (nTrigger);
+pTrigger->Setup (type, 0);
+pTrigger->Info ().nObject = nObject;
+pTrigger->Index () = nTrigger;
 SortObjTriggers ();
 undoManager.End (__FUNCTION__);
 for (ushort i = ObjTriggerCount (); i; )
@@ -480,12 +480,12 @@ if (m_info [0].Restore (fp)) {
 	for (short i = 0; i < Count (0); i++) {
 		if (Count (0) < MAX_TRIGGERS) {
 	#if USE_FREELIST
-			CTrigger* trigP = WallTrigger (--m_free);
+			CTrigger* pTrigger = WallTrigger (--m_free);
 	#else
-			CTrigger* trigP = WallTrigger (i);
+			CTrigger* pTrigger = WallTrigger (i);
 	#endif
-			trigP->Read (fp, false);
-			trigP->Index () = i;
+			pTrigger->Read (fp, false);
+			pTrigger->Index () = i;
 			}
 		else {
 			CTrigger t;
@@ -599,11 +599,11 @@ if (!HaveResources ())
 	return false;
 // make a new wall and a new trigger
 undoManager.Begin (__FUNCTION__, udTriggers);
-CWall* wallP = wallManager.Create (*current, (ubyte) wallType, wallFlags, KEY_NONE, -1, -1);
-if (wallP != null) {
-	CTrigger* trigP = AddToWall (wallManager.Index (wallP), triggerType, false);
-	if (trigP != null) 
-		trigP->Add (other->m_nSegment, other->m_nSide);
+CWall* pWall = wallManager.Create (*current, (ubyte) wallType, wallFlags, KEY_NONE, -1, -1);
+if (pWall != null) {
+	CTrigger* pTrigger = AddToWall (wallManager.Index (pWall), triggerType, false);
+	if (pTrigger != null) 
+		pTrigger->Add (other->m_nSegment, other->m_nSide);
 	undoManager.End (__FUNCTION__);
 	DLE.MineView ()->Refresh ();
 	return true;

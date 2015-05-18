@@ -105,36 +105,36 @@ void CLightningEffectTool::DoDataExchange (CDataExchange *pDX)
 {
 if (!HaveData (pDX)) 
 	return;
-CGameObject *objP = GetEffect (null, false);
-EnableControls (objP != null);
-if (objP) {
-	objP->rType.lightningInfo.nId = DDX_Int (pDX, IDC_LIGHTNING_ID, objP->rType.lightningInfo.nId);
-	objP->rType.lightningInfo.nTarget = DDX_Int (pDX, IDC_LIGHTNING_TARGET, objP->rType.lightningInfo.nTarget);
-	objP->rType.lightningInfo.nWayPoint = DDX_Int (pDX, IDC_LIGHTNING_WAYPOINT, objP->rType.lightningInfo.nWayPoint);
-	m_data [0].DoDataExchange (pDX, objP->rType.lightningInfo.nBolts);
-	m_data [1].DoDataExchange (pDX, objP->rType.lightningInfo.nNodes);
-	m_data [2].DoDataExchange (pDX, objP->rType.lightningInfo.nChildren);
-	m_data [3].DoDataExchange (pDX, objP->rType.lightningInfo.nLife);
-	m_data [4].DoDataExchange (pDX, objP->rType.lightningInfo.nDelay);
-	m_data [5].DoDataExchange (pDX, objP->rType.lightningInfo.nLength);
-	m_data [6].DoDataExchange (pDX, objP->rType.lightningInfo.nWidth);
-	m_data [7].DoDataExchange (pDX, objP->rType.lightningInfo.nAmplitude);
-	m_data [8].DoDataExchange (pDX, objP->rType.lightningInfo.nFrames);
-	m_data [9].DoDataExchange (pDX, objP->rType.lightningInfo.nAngle);
-	m_data [10].DoDataExchange (pDX, objP->rType.lightningInfo.nOffset);
+CGameObject *pObject = GetEffect (null, false);
+EnableControls (pObject != null);
+if (pObject) {
+	pObject->rType.lightningInfo.nId = DDX_Int (pDX, IDC_LIGHTNING_ID, pObject->rType.lightningInfo.nId);
+	pObject->rType.lightningInfo.nTarget = DDX_Int (pDX, IDC_LIGHTNING_TARGET, pObject->rType.lightningInfo.nTarget);
+	pObject->rType.lightningInfo.nWayPoint = DDX_Int (pDX, IDC_LIGHTNING_WAYPOINT, pObject->rType.lightningInfo.nWayPoint);
+	m_data [0].DoDataExchange (pDX, pObject->rType.lightningInfo.nBolts);
+	m_data [1].DoDataExchange (pDX, pObject->rType.lightningInfo.nNodes);
+	m_data [2].DoDataExchange (pDX, pObject->rType.lightningInfo.nChildren);
+	m_data [3].DoDataExchange (pDX, pObject->rType.lightningInfo.nLife);
+	m_data [4].DoDataExchange (pDX, pObject->rType.lightningInfo.nDelay);
+	m_data [5].DoDataExchange (pDX, pObject->rType.lightningInfo.nLength);
+	m_data [6].DoDataExchange (pDX, pObject->rType.lightningInfo.nWidth);
+	m_data [7].DoDataExchange (pDX, pObject->rType.lightningInfo.nAmplitude);
+	m_data [8].DoDataExchange (pDX, pObject->rType.lightningInfo.nFrames);
+	m_data [9].DoDataExchange (pDX, pObject->rType.lightningInfo.nAngle);
+	m_data [10].DoDataExchange (pDX, pObject->rType.lightningInfo.nOffset);
 	for (int i = 0; i < 4; i++)
-		m_data [11 + i].DoDataExchange (pDX, objP->rType.lightningInfo.color [i]);
-	objP->rType.lightningInfo.nSmoothe = DDX_Flag (pDX, IDC_LIGHTNING_SMOOTHE, objP->rType.lightningInfo.nSmoothe);
-	objP->rType.lightningInfo.bClamp = DDX_Flag (pDX, IDC_LIGHTNING_CLAMP, objP->rType.lightningInfo.bClamp);
-	objP->rType.lightningInfo.bSound = DDX_Flag (pDX, IDC_LIGHTNING_SOUND, objP->rType.lightningInfo.bSound);
-	objP->rType.lightningInfo.bPlasma = DDX_Flag (pDX, IDC_LIGHTNING_PLASMA, objP->rType.lightningInfo.bPlasma);
-	objP->rType.lightningInfo.bRandom = DDX_Flag (pDX, IDC_LIGHTNING_RANDOM, objP->rType.lightningInfo.bRandom);
-	objP->rType.lightningInfo.bInPlane = DDX_Flag (pDX, IDC_LIGHTNING_INPLANE, objP->rType.lightningInfo.bInPlane);
-	objP->rType.lightningInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rType.lightningInfo.bEnabled);
+		m_data [11 + i].DoDataExchange (pDX, pObject->rType.lightningInfo.color [i]);
+	pObject->rType.lightningInfo.nSmoothe = DDX_Flag (pDX, IDC_LIGHTNING_SMOOTHE, pObject->rType.lightningInfo.nSmoothe);
+	pObject->rType.lightningInfo.bClamp = DDX_Flag (pDX, IDC_LIGHTNING_CLAMP, pObject->rType.lightningInfo.bClamp);
+	pObject->rType.lightningInfo.bSound = DDX_Flag (pDX, IDC_LIGHTNING_SOUND, pObject->rType.lightningInfo.bSound);
+	pObject->rType.lightningInfo.bPlasma = DDX_Flag (pDX, IDC_LIGHTNING_PLASMA, pObject->rType.lightningInfo.bPlasma);
+	pObject->rType.lightningInfo.bRandom = DDX_Flag (pDX, IDC_LIGHTNING_RANDOM, pObject->rType.lightningInfo.bRandom);
+	pObject->rType.lightningInfo.bInPlane = DDX_Flag (pDX, IDC_LIGHTNING_INPLANE, pObject->rType.lightningInfo.bInPlane);
+	pObject->rType.lightningInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, pObject->rType.lightningInfo.bEnabled);
 	if (pDX->m_bSaveAndValidate)
-		objP->rType.lightningInfo.nStyle = ubyte (CBStyle ()->GetCurSel () - 1);
+		pObject->rType.lightningInfo.nStyle = ubyte (CBStyle ()->GetCurSel () - 1);
 	else {
-		CBStyle ()->SetCurSel (ubyte (objP->rType.lightningInfo.nStyle + 1));
+		CBStyle ()->SetCurSel (ubyte (pObject->rType.lightningInfo.nStyle + 1));
 		HiliteTarget ();
 		}
 	}
@@ -155,14 +155,14 @@ void CLightningEffectTool::Add (void)
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = current->Object ();
-objP->Type () = OBJ_EFFECT;
-objP->Id () = LIGHTNING_ID;
-objP->m_info.movementType = MT_NONE;
-objP->m_info.controlType = CT_NONE;
-objP->m_info.renderType = RT_LIGHTNING;
-memset (&objP->rType.lightningInfo, 0, sizeof (objP->rType.lightningInfo));
-objP->rType.lightningInfo.nWayPoint = -1;
+CGameObject *pObject = current->Object ();
+pObject->Type () = OBJ_EFFECT;
+pObject->Id () = LIGHTNING_ID;
+pObject->m_info.movementType = MT_NONE;
+pObject->m_info.controlType = CT_NONE;
+pObject->m_info.renderType = RT_LIGHTNING;
+memset (&pObject->rType.lightningInfo, 0, sizeof (pObject->rType.lightningInfo));
+pObject->rType.lightningInfo.nWayPoint = -1;
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -171,19 +171,19 @@ DLE.MineView ()->Refresh ();
 
 void CLightningEffectTool::Copy (void)
 {
-CGameObject *objP = GetEffect ();
-if (objP) {
-	m_lightning = objP->rType.lightningInfo;
+CGameObject *pObject = GetEffect ();
+if (pObject) {
+	m_lightning = pObject->rType.lightningInfo;
 	m_bValid = 1;
 	}
 }
 
 //------------------------------------------------------------------------
 
-void CLightningEffectTool::Paste (CGameObject* objP, bool bRefresh)
+void CLightningEffectTool::Paste (CGameObject* pObject, bool bRefresh)
 {
-if (Valid () && (objP = GetEffect (objP))) {
-	objP->rType.lightningInfo = m_lightning;
+if (Valid () && (pObject = GetEffect (pObject))) {
+	pObject->rType.lightningInfo = m_lightning;
 	if (bRefresh)
 		Refresh ();
 	}
@@ -202,8 +202,8 @@ return true;
 
 void CLightningEffectTool::OnSelectColor ()
 {
-CGameObject *objP = GetEffect (null, false);
-if (objP && CDlgHelpers::SelectColor (BYTE (objP->rType.lightningInfo.color [0]), BYTE (objP->rType.lightningInfo.color [1]), BYTE (objP->rType.lightningInfo.color [2])))
+CGameObject *pObject = GetEffect (null, false);
+if (pObject && CDlgHelpers::SelectColor (BYTE (pObject->rType.lightningInfo.color [0]), BYTE (pObject->rType.lightningInfo.color [1]), BYTE (pObject->rType.lightningInfo.color [2])))
 	UpdateColorCtrl (true);
 }
 
@@ -211,9 +211,9 @@ if (objP && CDlgHelpers::SelectColor (BYTE (objP->rType.lightningInfo.color [0])
 
 void CLightningEffectTool::OnSetStyle ()
 {
-CGameObject *objP = GetEffect ();
-if (objP)
-	objP->rType.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
+CGameObject *pObject = GetEffect ();
+if (pObject)
+	pObject->rType.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
 //Refresh ();
 }
 
@@ -224,13 +224,13 @@ void CLightningEffectTool::HiliteTarget (void)
 #if 0
 	int i, nTarget;
 
-CGameObject *objP = current->Object ();
-if ((objP->Type () != OBJ_EFFECT) || (objP->Id () != LIGHTNING_ID))
+CGameObject *pObject = current->Object ();
+if ((pObject->Type () != OBJ_EFFECT) || (pObject->Id () != LIGHTNING_ID))
 	return;
 other->ObjectId () = current->ObjectId ();
-if (nTarget = objP->rType.lightningInfo.nTarget)
-	for (i = 0, objP = objectManager.Object (0); i < objectManager.Count (); i++, objP++)
-		if ((objP->Type () == OBJ_EFFECT) && (objP->Id () == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
+if (nTarget = pObject->rType.lightningInfo.nTarget)
+	for (i = 0, pObject = objectManager.Object (0); i < objectManager.Count (); i++, pObject++)
+		if ((pObject->Type () == OBJ_EFFECT) && (pObject->Id () == LIGHTNING_ID) && (pObject->rType.lightningInfo.nId == nTarget)) {
 			other->ObjectId () = i;
 			break;
 			return;
@@ -284,11 +284,11 @@ else
 
 void CLightningEffectTool::UpdateColorCtrl (bool bSave)
 {
-CGameObject *objP = GetEffect (null, false);
-CDlgHelpers::UpdateColorCtrl (&m_colorWnd, objP ? RGB (BYTE (objP->rType.lightningInfo.color [0]), BYTE (objP->rType.lightningInfo.color [1]), BYTE (objP->rType.lightningInfo.color [2])) : RGB (0,0,0));
-if (bSave && (objP != null)) {
+CGameObject *pObject = GetEffect (null, false);
+CDlgHelpers::UpdateColorCtrl (&m_colorWnd, pObject ? RGB (BYTE (pObject->rType.lightningInfo.color [0]), BYTE (pObject->rType.lightningInfo.color [1]), BYTE (pObject->rType.lightningInfo.color [2])) : RGB (0,0,0));
+if (bSave && (pObject != null)) {
 	for (int i = 0; i < 3; i++)
-		m_data [11 + i].SetValue (objP->rType.lightningInfo.color [i]);
+		m_data [11 + i].SetValue (pObject->rType.lightningInfo.color [i]);
 	}
 }
 

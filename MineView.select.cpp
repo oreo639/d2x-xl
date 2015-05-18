@@ -41,7 +41,7 @@ return (u >= 0.0) && (v >= 0.0) && (u + v <= 1.0);
 
 void CMineView::SelectCurrentObject (long xMouse, long yMouse) 
 {
-	CGameObject*	objP, tempObj;
+	CGameObject*	pObject, tempObj;
 	short				nClosestObj;
 	short				i;
 	double			radius, closestRadius;
@@ -63,36 +63,36 @@ for (i = 0; i < objectManager.Count () + (enable_secret ? 1 : 0); i++) {
 	BOOL drawable = false;
 	// define temp object type and position for secret object selection
 	if (i == objectManager.Count () && DLE.IsD2File () && enable_secret) {
-		objP = &tempObj;
-		objP->Type () = OBJ_PLAYER;
-		// define objP->position
+		pObject = &tempObj;
+		pObject->Type () = OBJ_PLAYER;
+		// define pObject->position
 		CVertex center;
-		objP->Position () = segmentManager.CalcCenter (center, (short) objectManager.SecretSegment ());
+		pObject->Position () = segmentManager.CalcCenter (center, (short) objectManager.SecretSegment ());
 		}
 	else
-		objP = objectManager.Object (i);
+		pObject = objectManager.Object (i);
 #if 0
-	switch(objP->Type ()) {
+	switch(pObject->Type ()) {
 		case OBJ_WEAPON:
 			if (ViewObject (eViewObjectsPowerups | eViewObjectsWeapons)) {
 				drawable = true;
 				}
 		case OBJ_POWERUP:
-			if (ViewObject (powerupTypeTable [objP->Id ()])) {
+			if (ViewObject (powerupTypeTable [pObject->Id ()])) {
 				drawable = true;
 				}
 			break;
 		default:
-			if(ViewObject (1<<objP->Type ()))
+			if(ViewObject (1<<pObject->Type ()))
 				drawable = true;
 		}
 	if (drawable) 
 #else
-	if (ViewObject (objP))
+	if (ViewObject (pObject))
 #endif
 		{
 		// translate object's position to screen coordinates
-		CVertex v = objP->Position ();
+		CVertex v = pObject->Position ();
 		Renderer ().BeginRender ();
 		v.Transform (ViewMatrix ());
 		v.Project (ViewMatrix ());
@@ -157,19 +157,19 @@ bool bSkyBox = ViewFlag (eViewMineSkyBox);
 
 #pragma omp parallel for if (nSegments > 15)
 for (short nSegment = 0; nSegment < nSegments; nSegment++) {
-	CSegment* segP = segmentManager.Segment (nSegment);
-	if (!bSkyBox && (segP->Function () == SEGMENT_FUNC_SKYBOX))
+	CSegment* pSegment = segmentManager.Segment (nSegment);
+	if (!bSkyBox && (pSegment->Function () == SEGMENT_FUNC_SKYBOX))
 		continue;
-	CSide* sideP = segP->Side (0);
-	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
+	CSide* pSide = pSegment->Side (0);
+	for (short nSide = 0; nSide < 6; nSide++, pSide++) {
 		double d;
-		if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
+		if (pSide->Shape () > SIDE_SHAPE_TRIANGLE)
 			continue;
-		if (!sideP->IsVisible ())
+		if (!pSide->IsVisible ())
 			continue;
-		if ((d = Dot (mouseDir, sideP->m_vNormal [0])) > 0.0)
+		if ((d = Dot (mouseDir, pSide->m_vNormal [0])) > 0.0)
 			continue; // looking at the back of the side
-		d = sideP->LineHitsFace (&p1, &p2, segP->m_info.vertexIds, minDist, true);
+		d = pSide->LineHitsFace (&p1, &p2, pSegment->m_info.vertexIds, minDist, true);
 		if (d < 0.0)
 			continue;
 #pragma omp critical
@@ -237,16 +237,16 @@ if (bCurrentSideOnly) {
 else {
 	short nSegments = segmentManager.Count ();
 	for (short nSegment = 0; nSegment < nSegments; nSegment++) {
-		CSegment* segP = segmentManager.Segment (nSegment);
+		CSegment* pSegment = segmentManager.Segment (nSegment);
 		bool bSegmentSelected = false;
-		CSide* sideP = segP->Side (0);
-		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-			if (sideP->Shape () > SIDE_SHAPE_TRIANGLE)
+		CSide* pSide = pSegment->Side (0);
+		for (short nSide = 0; nSide < 6; nSide++, pSide++) {
+			if (pSide->Shape () > SIDE_SHAPE_TRIANGLE)
 				continue;
-			short nEdge = sideP->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, segP->m_info.vertexIds, minDist);
+			short nEdge = pSide->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, pSegment->m_info.vertexIds, minDist);
 			if (nEdge >= 0) {
-				*nearestSegment = segP;
-				*nearestSide = sideP;
+				*nearestSegment = pSegment;
+				*nearestSide = pSide;
 				nNearestEdge = nEdge;
 				}
 			}
@@ -256,12 +256,12 @@ else {
 if (!segmentManager.GatherSelectableSides (viewport, m_lastMousePos.x, m_lastMousePos.y))
 	return false;
 
-for (CSide* sideP = segmentManager.SelectedSides (); sideP; sideP = sideP->GetLink ()) {
-	CSegment* segP = segmentManager.Segment (sideP->GetParent ());
-	short nEdge = sideP->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, segP->m_info.vertexIds, minDist);
+for (CSide* pSide = segmentManager.SelectedSides (); pSide; pSide = pSide->GetLink ()) {
+	CSegment* pSegment = segmentManager.Segment (pSide->GetParent ());
+	short nEdge = pSide->NearestEdge (viewport, m_lastMousePos.x, m_lastMousePos.y, pSegment->m_info.vertexIds, minDist);
 	if (nEdge >= 0) {
-		nearestSegment = segP;
-		nearestSide = sideP;
+		nearestSegment = pSegment;
+		nearestSide = pSide;
 		nNearestEdge = nEdge;
 		}
 	}
@@ -278,23 +278,23 @@ if (!m_bEnableQuickSelection && m_mouseState != eMouseStateSelect)
 	return false;
 
 short nSegment = -1, nSide = -1, nEdge = -1;
-CSegment *segP = null;
+CSegment *pSegment = null;
 if (m_mouseState == eMouseStateSelect && nearest->Edge () >= 0) {
 	nSegment = nearest->m_nSegment;
 	nSide = nearest->m_nSide;
 	nEdge = nearest->Edge ();
-	segP = nearest->Segment ();
+	pSegment = nearest->Segment ();
 	}
 else {
-	CSide *sideP = null;
-	nEdge = FindNearestLine (&segP, &sideP, m_mouseState != eMouseStateSelect);
-	if (nEdge < 0 || !segP || !sideP)
+	CSide *pSide = null;
+	nEdge = FindNearestLine (&pSegment, &pSide, m_mouseState != eMouseStateSelect);
+	if (nEdge < 0 || !pSegment || !pSide)
 		return false;
-	nSegment = segmentManager.Index (segP);
-	nSide = segP->SideIndex (sideP);
+	nSegment = segmentManager.Index (pSegment);
+	nSide = pSegment->SideIndex (pSide);
 	}
 
-ushort nVertices [2] = {segP->VertexId (nSide, nEdge), segP->VertexId (nSide, nEdge + 1)};
+ushort nVertices [2] = {pSegment->VertexId (nSide, nEdge), pSegment->VertexId (nSide, nEdge + 1)};
 if (bAddToTagged && (nVertices [0] <= MAX_VERTEX) && (nVertices [1] <= MAX_VERTEX)) {
 	vertexManager [nVertices [0]].Tag ();
 	vertexManager [nVertices [1]].Tag ();
@@ -314,24 +314,24 @@ return true;
 int CMineView::FindNearestVertex (long xMouse, long yMouse, bool bCurrentSideOnly)
 {
 	CDoubleVector screen, clickPos (m_clickPos.x, m_clickPos.y, 0.0);
-	CVertex* vertexP = vertexManager.Vertex (0);
+	CVertex* pVertex = vertexManager.Vertex (0);
 	double dMin = 1e30;
 	int xMax = ViewWidth (), yMax = ViewHeight ();
 	int nVertex = -1;
 
-for (int i = vertexManager.Count (); i; i--, vertexP++) {
+for (int i = vertexManager.Count (); i; i--, pVertex++) {
 #if 0
-	if (!vertexP->InRange (xMax, yMax, m_nRenderer))
+	if (!pVertex->InRange (xMax, yMax, m_nRenderer))
 		continue;
-	double d = Distance (clickPos, vertexP->m_proj);
+	double d = Distance (clickPos, pVertex->m_proj);
 #else
-	CVertex v = *vertexP;
+	CVertex v = *pVertex;
 	if (!v.InRange (xMax, yMax, m_nRenderer))
 		continue;
 	if (bCurrentSideOnly) {
-		if (!current->Segment ()->HasVertex (vertexManager.Index (vertexP)))
+		if (!current->Segment ()->HasVertex (vertexManager.Index (pVertex)))
 			continue;
-		short nSegmentVertexIndex = current->Segment ()->VertexIndex (vertexManager.Index(vertexP));
+		short nSegmentVertexIndex = current->Segment ()->VertexIndex (vertexManager.Index(pVertex));
 		if (!current->Side ()->HasVertex ((ubyte) nSegmentVertexIndex))
 			continue;
 		}
@@ -367,11 +367,11 @@ if (nVertex >= 0) {
 		}
 	else {
 		// Need to find a segment with this vertex
-		CSegment *segP = segmentManager.Segment (0);
-		for (int i = 0; i < segmentManager.Count (); i++, segP++) {
-			nSegmentVertexIndex = segP->VertexIndex (nVertex);
+		CSegment *pSegment = segmentManager.Segment (0);
+		for (int i = 0; i < segmentManager.Count (); i++, pSegment++) {
+			nSegmentVertexIndex = pSegment->VertexIndex (nVertex);
 			for (int j = 0; nSegmentVertexIndex >= 0 && j < MAX_SIDES_PER_SEGMENT; j++) {
-				nSideVertexIndex = segP->SideVertexIndex (j, (ubyte) nSegmentVertexIndex);
+				nSideVertexIndex = pSegment->SideVertexIndex (j, (ubyte) nSegmentVertexIndex);
 				if (nSideVertexIndex >= 0) {
 					current->SetSegmentId (i);
 					current->SetSideId (j);
@@ -490,7 +490,7 @@ NextSegment (-1);
 //-----------------------------------------------------------------------------
 // MENU - Forward_Cube
 //
-// ACTION - If child exists, this routine sets current_segment to child segP
+// ACTION - If child exists, this routine sets current_segment to child pSegment
 //
 // Changes - Smart side selection added (v0.8)
 //         Smart side selection done before moving (instead of after) (v0.9)
@@ -498,17 +498,17 @@ NextSegment (-1);
 
 void CMineView::SegmentForward (int dir) 
 {
-	CSegment *segP,*childSegP;
+	CSegment *pSegment,*pChildSeg;
 	short nChild, nSide;
 	bool bFwd = (dir == 1);
 
-segP = segmentManager.Segment (current->SegmentId ());
-nChild = segP->ChildId (bFwd ? current->SideId (): oppSideTable [current->SideId ()]);
+pSegment = segmentManager.Segment (current->SegmentId ());
+nChild = pSegment->ChildId (bFwd ? current->SideId (): oppSideTable [current->SideId ()]);
 if (nChild <= -1) {
 	// first try to find a non backwards route
 	for (nSide = 0; nSide < 6; nSide++) {
-		if (segP->ChildId (nSide) != m_lastSegment && segP->ChildId (nSide) > -1) {
-			nChild = segP->ChildId (nSide);
+		if (pSegment->ChildId (nSide) != m_lastSegment && pSegment->ChildId (nSide) > -1) {
+			nChild = pSegment->ChildId (nSide);
 			current->SetSideId (bFwd ? nSide: oppSideTable [nSide]);
 			break;
 			}
@@ -516,8 +516,8 @@ if (nChild <= -1) {
 	// then settle for any way out
 	if (nSide == 6) {
 		for (nSide = 0; nSide < 6; nSide++) {
-			if (segP->ChildId (nSide) > -1) {
-				nChild = segP->ChildId (nSide);
+			if (pSegment->ChildId (nSide) > -1) {
+				nChild = pSegment->ChildId (nSide);
 				current->SetSideId (bFwd ? nSide: oppSideTable [nSide]);
 				break;
 				}
@@ -525,10 +525,10 @@ if (nChild <= -1) {
 		}
 	}
 if (nChild > -1) {
-	childSegP = segmentManager.Segment (nChild);
+	pChildSeg = segmentManager.Segment (nChild);
 	// try to select side which is in same direction as current side
 	for (nSide = 0; nSide < 6; nSide++) {
-		if (childSegP->ChildId (nSide) == current->SegmentId ()) {
+		if (pChildSeg->ChildId (nSide) == current->SegmentId ()) {
 			current->SetSideId (bFwd ? oppSideTable [nSide]: nSide);
 			break;
 			}
@@ -627,10 +627,10 @@ void CMineView::LocateTexture (short nTexture)
 	short	nSegments = segmentManager.Count ();
 
 for (short i = nSegments; i; i--) {
-	CSegment* segP = segmentManager.Segment (nSegment);
+	CSegment* pSegment = segmentManager.Segment (nSegment);
 	for (short j = nSide; j < MAX_SIDES_PER_SEGMENT; j++) {
-		CSide* sideP = segP->Side (j);
-		if ((sideP->Shape () <= SIDE_SHAPE_TRIANGLE) && ((sideP->BaseTex () == nTexture) || (nTexture && (sideP->OvlTex () == nTexture)))) {
+		CSide* pSide = pSegment->Side (j);
+		if ((pSide->Shape () <= SIDE_SHAPE_TRIANGLE) && ((pSide->BaseTex () == nTexture) || (nTexture && (pSide->OvlTex () == nTexture)))) {
 			current->SetSegmentId (nSegment);
 			current->SetSideId (j);
 			DLE.ToolView ()->Refresh ();

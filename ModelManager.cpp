@@ -59,7 +59,7 @@ return nModel;
 
 //------------------------------------------------------------------------------
 
-int CModelManager::Setup (CGameObject *objP, CRenderer* renderer, CDC* pDC) 
+int CModelManager::Setup (CGameObject *pObject, CRenderer* renderer, CDC* pDC) 
 {
 m_renderer = renderer;
 m_viewMatrix = renderer->ViewMatrix ();
@@ -68,13 +68,13 @@ m_pDC = pDC;
 m_offset.Clear ();
 m_data.nPoints = 0;
 m_nGlow = -1;
-modelManager.m_object = objP;
+modelManager.m_object = pObject;
 m_nModel = Model ();
 
 if (m_nModel < 0)
 	return 0;
 
-int bVertigo = objP->Id () > N_ROBOT_TYPES_D2;
+int bVertigo = pObject->Id () > N_ROBOT_TYPES_D2;
 
 if (m_polyModels [0][m_nModel].m_info.renderData || (!bVertigo && (m_polyModels [1][m_nModel].m_info.renderData || (m_renderModels [m_nModel].m_nModel >= 0))))
 	return 1;
@@ -88,7 +88,7 @@ if (slash)
 else
 	filename [0] = '\0';
 
-int bCustom = robotManager.RobotInfo (objP->Id ())->Info ().bCustom;
+int bCustom = robotManager.RobotInfo (pObject->Id ())->Info ().bCustom;
 
 if (bCustom || bVertigo) {
 	char *psz = strstr (filename, "data");
@@ -119,13 +119,13 @@ return 1;
 
 void CModelManager::Reset (void)
 {
-CPolyModel* modelP = &m_polyModels [1][0];
-for (int i = 0; i < MAX_POLYGON_MODELS; i++, modelP++) {
+CPolyModel* pModel = &m_polyModels [1][0];
+for (int i = 0; i < MAX_POLYGON_MODELS; i++, pModel++) {
 	m_renderModels [i].Destroy ();
 	m_aseModels [i].Destroy ();
 	m_oofModels [i].Destroy ();
-	modelP->Release ();
-	modelP->Clear ();
+	pModel->Release ();
+	pModel->Clear ();
 	}
 }
 

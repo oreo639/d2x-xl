@@ -204,7 +204,7 @@ class CRenderer {
 		virtual void Zoom (int nSteps, double zoom);
 		virtual int Project (CRect* pRC = null, bool bCheckBehind = false) = 0; 
 		virtual void DrawFaceTextured (CFaceListEntry& fle) = 0; 
-		virtual int FaceIsVisible (CSegment* segP, CSide* sideP) = 0; 
+		virtual int FaceIsVisible (CSegment* pSegment, CSide* pSide) = 0; 
 		virtual void BeginRender (bool bOrtho = false) = 0; 
 		virtual void EndRender (bool bSwapBuffers = false) = 0; 
 		virtual int ZoomIn (int nSteps = 1, bool bSlow = false) = 0; 
@@ -239,9 +239,9 @@ class CRenderer {
 		virtual void PolyLine (CVertex* vertices, int nVertices) = 0;
 		virtual void Polygon (CVertex* vertices, int nVertices) = 0;
 		virtual void Polygon (CVertex* vertices, int nVertices, ushort* index) = 0;
-		virtual void TexturedPolygon (const CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) = 0;
+		virtual void TexturedPolygon (const CTexture* pTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) = 0;
 		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) = 0;
-		virtual void Sprite (const CTexture* texP, CVertex center, double width, double height, bool bAlways = false) = 0;
+		virtual void Sprite (const CTexture* pTexture, CVertex center, double width, double height, bool bAlways = false) = 0;
 
 		virtual int Type (void) = 0;
 		virtual bool SetPerspective (int nPerspective) = 0;
@@ -283,7 +283,7 @@ class CRendererSW : public CRenderer {
 		virtual int ZoomIn (int nSteps = 1, bool bSlow = false);
 		virtual int ZoomOut (int nSteps = 1, bool bSlow = false);
 		virtual void DrawFaceTextured (CFaceListEntry& fle);
-		virtual int FaceIsVisible (CSegment* segP, CSide* sideP);
+		virtual int FaceIsVisible (CSegment* pSegment, CSide* pSide);
 		virtual void BeginRender (bool bOrtho = false) {}
 		virtual void EndRender (bool bSwapBuffers = false);
 		virtual void SetCenter (CVertex v, int nType);
@@ -305,16 +305,16 @@ class CRendererSW : public CRenderer {
 		virtual void PolyLine (CVertex* vertices, int nVertices) {}
 		virtual void Polygon (CVertex* vertices, int nVertices) {}
 		virtual void Polygon (CVertex* vertices, int nVertices, ushort* index) {}
-		virtual void TexturedPolygon (const CTexture* texP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) {}
+		virtual void TexturedPolygon (const CTexture* pTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) {}
 		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index) {}
-		virtual void Sprite (const CTexture* texP, CVertex center, double width, double height, bool bAlways = false) {}
+		virtual void Sprite (const CTexture* pTexture, CVertex center, double width, double height, bool bAlways = false) {}
 
 		virtual CPen* SelectObject (CPen* pen) { return m_pDC->SelectObject (pen); }
 		virtual CBrush* SelectObject (CBrush* brush) { return m_pDC->SelectObject (brush); }
 		virtual HGDIOBJ SelectObject (HGDIOBJ object) { return m_pDC->SelectObject (object); }
 
 		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys);
-		void RenderFace (CFaceListEntry& fle, const CTexture* texP, ushort rowOffset, CBGRA* colorP = null);
+		void RenderFace (CFaceListEntry& fle, const CTexture* pTexture, ushort rowOffset, CBGRA* pColor = null);
 
 		virtual int Type (void) { return 0; }
 		virtual bool SetPerspective (int nPerspective) { return false; }
@@ -371,7 +371,7 @@ class CRendererGL : public CRenderer {
 		virtual int ZoomIn (int nSteps = 1, bool bSlow = false);
 		virtual int ZoomOut (int nSteps = 1, bool bSlow = false);
 		virtual void DrawFaceTextured (CFaceListEntry& fle);
-		virtual int FaceIsVisible (CSegment* segP, CSide* sideP) { return 1; }
+		virtual int FaceIsVisible (CSegment* pSegment, CSide* pSide) { return 1; }
 		virtual void BeginRender (bool bOrtho = false);
 		virtual void EndRender (bool bSwapBuffers = false);
 		virtual void SetCenter (CVertex v, int nType);
@@ -396,14 +396,14 @@ class CRendererGL : public CRenderer {
 		virtual void Polygon (CVertex* vertices, int nVertices, ushort* index);
 		virtual void TexturedPolygon (const CTexture* textP, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index);
 		virtual void TexturedPolygon (short nTexture, tTexCoord2d* texCoords, rgbColord* color, CVertex* vertices, int nVertices, ushort* index);
-		virtual void Sprite (const CTexture* texP, CVertex center, double width, double height, bool bAlways = false);
+		virtual void Sprite (const CTexture* pTexture, CVertex center, double width, double height, bool bAlways = false);
 
 		virtual CPen* SelectObject (CPen* pen) { return pen; }
 		virtual CBrush* SelectObject (CBrush* brush) { return brush; }
 		virtual HGDIOBJ SelectObject (HGDIOBJ object) { return object; }
 
 		virtual void RenderFaces (CFaceListEntry* faceRenderList, int faceCount, int bRenderSideKeys);
-		void RenderFace (CFaceListEntry& fle, const CTexture* texP [], CBGRA* colorP = null);
+		void RenderFace (CFaceListEntry& fle, const CTexture* pTexture [], CBGRA* pColor = null);
 		void ComputeZoom (void);
 
 		BOOL InitProjection (void);

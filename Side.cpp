@@ -167,8 +167,8 @@ return wallManager.Wall (m_info.nWall);
 
 CTrigger _const_ * CSide::Trigger (void) _const_
 { 
-CWall* wallP = wallManager.Wall (m_info.nWall); 
-return (wallP == null) ? null : wallP->Trigger ();
+CWall* pWall = wallManager.Wall (m_info.nWall); 
+return (pWall == null) ? null : pWall->Trigger ();
 }
 
 // -----------------------------------------------------------------------------

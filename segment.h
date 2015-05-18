@@ -179,7 +179,7 @@ public:
 	//void Read (CFileManager* fp, bool bFlag = false) {}
 	//void Write (CFileManager* fp, bool bFlag = false) {}
 
-	inline short SideIndex (CSide* sideP) { return short (sideP - &m_sides [0]); }
+	inline short SideIndex (CSide* pSide) { return short (pSide - &m_sides [0]); }
 
 	inline CSide _const_ * Side (short i = 0) _const_ { return ((i < 0) || (i > 6)) ? null : &m_sides [i]; }
 
@@ -223,7 +223,7 @@ public:
 
 	virtual void Backup (eEditType editType = opModify);
 
-	virtual CGameItem* Copy (CGameItem* destP);
+	virtual CGameItem* Copy (CGameItem* pDest);
 
 	virtual void Redo (void);
 
@@ -307,7 +307,7 @@ public:
 
 	CVertex& ComputeCenter (short nSide);
 
-	inline CVertex& ComputeCenter (CSide* sideP) { return ComputeCenter (SideIndex (sideP)); }
+	inline CVertex& ComputeCenter (CSide* pSide) { return ComputeCenter (SideIndex (pSide)); }
 
 	void ComputeNormals (short nSide, bool bView = false);
 
@@ -365,7 +365,7 @@ public:
 
 	virtual void Backup (eEditType editType = opModify);
 
-	virtual CGameItem* Copy (CGameItem* destP);
+	virtual CGameItem* Copy (CGameItem* pDest);
 
 	inline bool operator< (CObjectProducer& other) { return m_info.nSegment < other.m_info.nSegment; }
 

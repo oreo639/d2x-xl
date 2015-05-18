@@ -127,7 +127,7 @@ public:
 
 	short NearestEdge (CRect& viewport, long xMouse, long yMouse, ushort vertexIds [], double& minDist);
 
-	inline CSide* SetLink (CSide* sideP) { return m_link = sideP; }
+	inline CSide* SetLink (CSide* pSide) { return m_link = pSide; }
 
 	inline CSide* GetLink (void) { return m_link; }
 

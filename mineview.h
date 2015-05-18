@@ -177,12 +177,12 @@ public:
 		(m_nViewDist < 20) ? 10 + 2 * (m_nViewDist - 10) : 30 + 3 * (m_nViewDist - 20);
 		}
 
-	inline bool Visible (CSegment *segP) {
-		if ((segP->m_info.function == SEGMENT_FUNC_SKYBOX) && !ViewFlag (eViewMineSkyBox))
+	inline bool Visible (CSegment *pSegment) {
+		if ((pSegment->m_info.function == SEGMENT_FUNC_SKYBOX) && !ViewFlag (eViewMineSkyBox))
 			return false;
 		if (!m_nViewDist)
 			return true;
-		return (segP->Index () >= 0) && (segP->Index () <= ViewDist ()); 
+		return (pSegment->Index () >= 0) && (pSegment->Index () <= ViewDist ()); 
 		}
 
 	inline void SetElementMovementReference (int nReference) { m_nElementMovementReference = nReference; }
@@ -202,16 +202,16 @@ public:
 	void DrawWireFrame (bool bSparse);
 	void DrawTexturedSegments (void);
 	void DrawTaggedSegments (void);
-	void DrawSegment (CSegment *segP, bool bSparse);
+	void DrawSegment (CSegment *pSegment, bool bSparse);
 	void DrawSegmentHighlighted (short nSegment,short nSide, short nEdge, short nPoint);
-	void DrawSegmentPartial (CSegment *segP);
-	void DrawSegmentWireFrame (CSegment *segP, bool bSparse = false, bool bTagged = false, char bTunnel = 0);
-	void DrawSparseSegmentWireFrame (CSegment *segP);
-	void RenderSegmentWireFrame (CSegment *segP, bool bSparse, bool bTagged = false);
-	void DrawSegmentPoints (CSegment *segP);
+	void DrawSegmentPartial (CSegment *pSegment);
+	void DrawSegmentWireFrame (CSegment *pSegment, bool bSparse = false, bool bTagged = false, char bTunnel = 0);
+	void DrawSparseSegmentWireFrame (CSegment *pSegment);
+	void RenderSegmentWireFrame (CSegment *pSegment, bool bSparse, bool bTagged = false);
+	void DrawSegmentPoints (CSegment *pSegment);
 
-	void DrawCurrentSegment (CSegment *segP, bool bSparse);
-	void DrawLine (CSegment *segP, short vert1, short vert2);
+	void DrawCurrentSegment (CSegment *pSegment, bool bSparse);
+	void DrawLine (CSegment *pSegment, short vert1, short vert2);
 
 	void DrawWalls (void);
 	void DrawLights (void);
@@ -224,9 +224,9 @@ public:
 	bool DrawSelectableSegments (void);
 	void DrawHighlight (void);
 	void DrawTunnel (void);
-	bool SelectWireFramePen (CSegment* segP);
-	void SelectWallPen (CWall* wallP);
-	void SelectObjectPen (CGameObject* objP);
+	bool SelectWireFramePen (CSegment* pSegment);
+	void SelectWallPen (CWall* pWall);
+	void SelectObjectPen (CGameObject* pObject);
 
 	// view control functions
 	int FitToView (void);
@@ -273,7 +273,7 @@ public:
 
 	void AlignViewerWithSide (void);
 
-	bool ViewObject (CGameObject *objP);
+	bool ViewObject (CGameObject *pObject);
 	inline bool ViewObject (uint flag = 0) { return flag ? ((ViewObjectFlags () & flag) != 0) : (ViewObjectFlags () != 0); }
 	inline bool ViewFlag (uint flag = 0) { return flag ? (ViewMineFlags () & flag) != 0 : (ViewMineFlags () != 0); }
 	inline bool ViewOption (uint option) { return m_viewOption == option; }
@@ -346,7 +346,7 @@ public:
 		}
 	inline int Project (CRect* pRC = null, bool bCheckBehind = false) { return Renderer ().Project (pRC, bCheckBehind); } 
 	inline void DrawFaceTextured (CFaceListEntry& fle) { Renderer ().DrawFaceTextured (fle); } 
-	inline int FaceIsVisible (CSegment* segP, CSide* sideP) { return Renderer ().FaceIsVisible (segP, sideP); }
+	inline int FaceIsVisible (CSegment* pSegment, CSide* pSide) { return Renderer ().FaceIsVisible (pSegment, pSide); }
 	inline void BeginRender (bool bOrtho = false) { Renderer ().BeginRender (bOrtho); }
 	inline void EndRender (bool bSwapBuffers = false) { Renderer ().EndRender (bSwapBuffers); } 
 	inline int ZoomIn (int nSteps = 1, bool bSlow = false) { 

@@ -273,25 +273,25 @@ LoadResource (-1);
 void CRobotManager::LoadResource (int nRobot) 
 {
   int			i,	j,	t;
-  ubyte*		bufP;
+  ubyte*		pBuffer;
   CResource	res;
 
-if (!(bufP = res.Load ("ROBOT.HXM"))) {
+if (!(pBuffer = res.Load ("ROBOT.HXM"))) {
 	ErrorMsg ("Could not lock robot resource data");
 	return;
 	}
-t = (ushort) (*((uint *) bufP));
+t = (ushort) (*((uint *) pBuffer));
 m_nRobotTypes = min (t, MAX_ROBOT_TYPES);
-bufP += sizeof (uint);
+pBuffer += sizeof (uint);
 for (j = 0; j < t; j++) {
-	i = (ushort) (*((uint *) bufP));
+	i = (ushort) (*((uint *) pBuffer));
 	if (i > MAX_ROBOT_TYPES) 
 		break;
-	bufP += sizeof (uint);
+	pBuffer += sizeof (uint);
 	// copy the robot info for one robot, or all robots
 	if ((j == nRobot) || (nRobot == -1)) 
-		memcpy (RobotInfo (i), bufP, sizeof (tRobotInfo));
-	bufP += sizeof (tRobotInfo);
+		memcpy (RobotInfo (i), pBuffer, sizeof (tRobotInfo));
+	pBuffer += sizeof (tRobotInfo);
 	}
 }
 
@@ -311,20 +311,20 @@ if (!memcmp (RobotInfo (nId), DefRobotInfo (nId), sizeof (tRobotInfo)))
 	RobotInfo (nId)->Info ().bCustom = 0; //same as default
 else { //they're different
 	// find a robot of that type
-	CGameObject* objP = objectManager.FindRobot (nId);
-	if (objP != null) // found one
+	CGameObject* pObject = objectManager.FindRobot (nId);
+	if (pObject != null) // found one
 		bFound = true;
 	else { //no robot of that type present
 		// find a matcen producing a robot of that type
-		CSegment* segP;
-		for (short i = 0; (segP = segmentManager.FindRobotMaker (i)) != null; i = segmentManager.Index (segP) + 1) {
-			int nBotGen = segP->Info ().nProducer;
+		CSegment* pSegment;
+		for (short i = 0; (pSegment = segmentManager.FindRobotMaker (i)) != null; i = segmentManager.Index (pSegment) + 1) {
+			int nBotGen = pSegment->Info ().nProducer;
 			if ((nId < 32) 
 				 ? segmentManager.RobotMaker (nBotGen)->Info ().objFlags [0] & (1 << nId) 
 				 : segmentManager.RobotMaker (nBotGen)->Info ().objFlags [1] & (1 << (nId - 32)))
 				break;
 			}
-		if (segP != null) // found one
+		if (pSegment != null) // found one
 			bFound = true;
 		else
 			RobotInfo (nId)->Info ().bCustom = 0; // no matcens or none producing that robot type

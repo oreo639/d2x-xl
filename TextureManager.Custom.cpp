@@ -25,7 +25,7 @@ int CTextureManager::ReadPog (CFileManager& fp, long nFileSize)
 	ushort*			xlatTbl = null;
 	uint				offset, hdrOffset, bmpOffset, hdrSize, xlatSize;
 	ushort			nCustomTextures, nUnknownTextures, nMissingTextures;
-	CTexture*		texP;
+	CTexture*		pTexture;
 	int				fileType = DLE.FileType ();
 
 // make sure this is descent 2 fp
@@ -77,8 +77,8 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 		}
 	
 	fp.Seek (bmpOffset + pigTexInfo.offset, SEEK_SET);
-	texP = OverrideTexture (nIndex - 1, null, 1);
-	texP->LoadFromPog (fp, pigTexInfo);
+	pTexture = OverrideTexture (nIndex - 1, null, 1);
+	pTexture->LoadFromPog (fp, pigTexInfo);
 	nCustomTextures++;
 	}
 if (nUnknownTextures) {
@@ -102,46 +102,46 @@ return 0;
 
 //-----------------------------------------------------------------------------------
 
-uint CTextureManager::WriteCustomTextureHeader (CFileManager& fp, const CTexture *texP, uint nId, uint nOffset)
+uint CTextureManager::WriteCustomTextureHeader (CFileManager& fp, const CTexture *pTexture, uint nId, uint nOffset)
 {
 	CPigTexture pigTexInfo (1);
-	ubyte *palIndex, *srcP;
+	ubyte *palIndex, *pSrc;
 
 memset (pigTexInfo.name, 0, sizeof (pigTexInfo.name));
-if (*texP->Name ())
+if (*pTexture->Name ())
 	// Texture name in pigTexInfo is not null-terminated
-	memcpy_s (pigTexInfo.name, sizeof (pigTexInfo.name), texP->Name (), strlen (texP->Name ()));
+	memcpy_s (pigTexInfo.name, sizeof (pigTexInfo.name), pTexture->Name (), strlen (pTexture->Name ()));
 else {
 	char name [9];
 	sprintf_s (name, sizeof (name), "POG%04d", nId);
 	memcpy (pigTexInfo.name, name, sizeof (pigTexInfo.name));
 	}
 #if 1
-pigTexInfo.Setup (1, texP->Width (), texP->Height (), (texP->Format () == TGA) ? 0x80 : 0, nOffset);
+pigTexInfo.Setup (1, pTexture->Width (), pTexture->Height (), (pTexture->Format () == TGA) ? 0x80 : 0, nOffset);
 #else
 pigTexInfo.dflags = 0;
-pigTexInfo.flags = texP->m_info.nFormat ? 0x80 : 0;
+pigTexInfo.flags = pTexture->m_info.nFormat ? 0x80 : 0;
 pigTexInfo.width =  % 256;
-if ((pigTexInfo.flags & 0x80) && (texP->m_info.width > 256)) {
-	pigTexInfo.whExtra = (texP->m_info.width >> 8);
-	pigTexInfo.height = texP->m_info.height / texP->m_info.width;
+if ((pigTexInfo.flags & 0x80) && (pTexture->m_info.width > 256)) {
+	pigTexInfo.whExtra = (pTexture->m_info.width >> 8);
+	pigTexInfo.height = pTexture->m_info.height / pTexture->m_info.width;
 	}
 else {
-	pigTexInfo.height = texP->m_info.height % 256;
-	pigTexInfo.whExtra = (texP->m_info.width >> 8) | ((texP->m_info.height >> 4) & 0xF0);
+	pigTexInfo.height = pTexture->m_info.height % 256;
+	pigTexInfo.whExtra = (pTexture->m_info.width >> 8) | ((pTexture->m_info.height >> 4) & 0xF0);
 	}
 pigTexInfo.avgColor = 0;
 pigTexInfo.offset = nOffset;
 #endif
 
 // check for transparency and super transparency
-if (texP->Format () == BMP)
+if (pTexture->Format () == BMP)
 	try {
-	if (palIndex = srcP = texP->ToBitmap ()) {
-		for (uint j = 0, h = texP->Size (); j < h; j++, srcP++) {
-			if (*srcP == 255) 
+	if (palIndex = pSrc = pTexture->ToBitmap ()) {
+		for (uint j = 0, h = pTexture->Size (); j < h; j++, pSrc++) {
+			if (*pSrc == 255) 
 				pigTexInfo.flags |= BM_FLAG_TRANSPARENT;
-			if (*srcP == 254) 
+			if (*pSrc == 254) 
 				pigTexInfo.flags |= BM_FLAG_SUPER_TRANSPARENT;
 			if ((pigTexInfo.flags & (BM_FLAG_TRANSPARENT | BM_FLAG_SUPER_TRANSPARENT)) == (BM_FLAG_TRANSPARENT | BM_FLAG_SUPER_TRANSPARENT))
 				break;
@@ -155,36 +155,36 @@ if (texP->Format () == BMP)
 #endif
 		}
 pigTexInfo.Write (&fp);
-return nOffset + ((texP->Format () == TGA) ? texP->Size () * sizeof (CBGRA) : texP->Size ());
+return nOffset + ((pTexture->Format () == TGA) ? pTexture->Size () * sizeof (CBGRA) : pTexture->Size ());
 }
 
 //-----------------------------------------------------------------------------------
 
-int CTextureManager::WriteCustomTexture (CFileManager& fp, const CTexture *texP)
+int CTextureManager::WriteCustomTexture (CFileManager& fp, const CTexture *pTexture)
 {
-if (texP->Format () == TGA && DLE.IsD2XLevel ()) {
+if (pTexture->Format () == TGA && DLE.IsD2XLevel ()) {
 	tRGBA rgba [16384];
 	uint h = 0;
-	const CBGRA* bufP = texP->Buffer (texP->Width () * (texP->Height () - 1));
-	for (uint i = texP->Height (); i; i--) {
-		for (uint j = texP->Width (); j; j--, bufP++) {
-			rgba [h].r = bufP->r;
-			rgba [h].g = bufP->g;
-			rgba [h].b = bufP->b;
-			rgba [h].a = bufP->a;
+	const CBGRA* pBuffer = pTexture->Buffer (pTexture->Width () * (pTexture->Height () - 1));
+	for (uint i = pTexture->Height (); i; i--) {
+		for (uint j = pTexture->Width (); j; j--, pBuffer++) {
+			rgba [h].r = pBuffer->r;
+			rgba [h].g = pBuffer->g;
+			rgba [h].b = pBuffer->b;
+			rgba [h].a = pBuffer->a;
 			if (++h == sizeofa (rgba)) {
 				fp.Write (rgba, sizeof (tRGBA), h);
 				h = 0;
 				}
 			}
-		bufP -= 2 * texP->Width ();
+		pBuffer -= 2 * pTexture->Width ();
 		}
 	if (h > 0)
 		fp.Write (rgba, sizeof (tRGBA), h);
 	}
 else {
-	ubyte* palIndex = texP->ToBitmap ();
-	fp.Write (palIndex, 1, texP->Size ());
+	ubyte* palIndex = pTexture->ToBitmap ();
+	fp.Write (palIndex, 1, pTexture->Size ());
 	delete [] palIndex;
 	}
 return 1;
@@ -233,7 +233,7 @@ if (!textureManager.Available ())
 	uint				textureCount = 0, nOffset = 0;
 	int				nVersion = DLE.FileType ();
 	int				nId, i, h = m_header [nVersion].nTextures;
-	const CTexture*	texP;
+	const CTexture*	pTexture;
 
 if (DLE.IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
@@ -251,34 +251,34 @@ pigFileInfo.nVersion = 1;
 pigFileInfo.nTextures = 0;
 
 for (i = 0; i < h; i++) {
-	texP = TextureByIndex (i);
-	if (texP->IsCustom ())
+	pTexture = TextureByIndex (i);
+	if (pTexture->IsCustom ())
 		pigFileInfo.nTextures++;
 	}
 pigFileInfo.Write (fp);
 
 // write list of textures
 for (i = 0; i < h; i++) {
-	texP = TextureByIndex (i);
-	if (texP->IsCustom ())
+	pTexture = TextureByIndex (i);
+	if (pTexture->IsCustom ())
 		fp.WriteUInt16 (ushort (i + 1));
 	}
 
 // write texture headers
 nId = 0;
 for (i = 0; i < h; i++) {
-	texP = TextureByIndex (i);
-	if (texP->IsCustom ())
-		nOffset = WriteCustomTextureHeader (fp, texP, nId++, nOffset);
+	pTexture = TextureByIndex (i);
+	if (pTexture->IsCustom ())
+		nOffset = WriteCustomTextureHeader (fp, pTexture, nId++, nOffset);
 	}
 
 sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures", pigFileInfo.nTextures);
 DEBUGMSG (message);
 
 for (i = 0; i < h; i++) {
-	texP = TextureByIndex (i);
-	if (texP->IsCustom ())
-		WriteCustomTexture (fp, texP);
+	pTexture = TextureByIndex (i);
+	if (pTexture->IsCustom ())
+		WriteCustomTexture (fp, pTexture);
 	}
 
 return 1;
@@ -293,23 +293,23 @@ void CTextureManager::ReadMod (char* pszFolder)
 
 for (int i = 0; i < h; i++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	const CTexture* texP = Textures (i);
+	const CTexture* pTexture = Textures (i);
 #ifdef _DEBUG
 	if (i == nDbgTexture)
 		nDbgTexture = nDbgTexture;
 #endif
-	if (texP->IsCustom ())
+	if (pTexture->IsCustom ())
 		continue;
-	sprintf (szFile, "%s\\%s%s.tga", pszFolder, texP->Name (), texP->IsAnimated () ? "#0" : "");
-	CTexture *newTexP = new CTexture ();
-	if (!newTexP)
+	sprintf (szFile, "%s\\%s%s.tga", pszFolder, pTexture->Name (), pTexture->IsAnimated () ? "#0" : "");
+	CTexture *pNewTexture = new CTexture ();
+	if (!pNewTexture)
 		ErrorMsg ("Not enough memory for texture.");
-	else if (newTexP->Copy (*texP) && newTexP->LoadFromFile (szFile, false)) {
-		OverrideTexture (texP->Index (), newTexP);
-		newTexP->SetCustom ();
+	else if (pNewTexture->Copy (*pTexture) && pNewTexture->LoadFromFile (szFile, false)) {
+		OverrideTexture (pTexture->Index (), pNewTexture);
+		pNewTexture->SetCustom ();
 		}
 	else
-		delete newTexP;
+		delete pNewTexture;
 	}
 }
 

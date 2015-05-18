@@ -99,7 +99,7 @@ class CWall : public CSideKey, public CGameItem {
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual CGameItem* Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* pDest);
 
 		virtual void Undo (void);
 
@@ -134,7 +134,7 @@ class CDoor : public CGameItem {
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual CGameItem* Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* pDest);
 	};
 
 //------------------------------------------------------------------------------

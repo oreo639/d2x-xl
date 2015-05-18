@@ -80,7 +80,7 @@ BEGIN
     RTEXT           "light:",IDC_STATIC,18,46,18,8
     CTEXT           "used bots",IDC_STATIC,228,11,81,8
     CTEXT           "available bots",IDC_STATIC,316,11,81,8
-    RTEXT           "triggered by (segP,side)",IDC_STATIC,409,11,70,8
+    RTEXT           "triggered by (pSegment,side)",IDC_STATIC,409,11,70,8
     GROUPBOX        "robot maker data",IDC_STATIC,222,2,180,92,BS_CENTER
     GROUPBOX        "trigger data",IDC_STATIC,404,2,82,126,BS_CENTER
     GROUPBOX        "segment data",IDC_STATIC,4,2,92,74,BS_CENTER
@@ -2192,7 +2192,7 @@ BEGIN
     RTEXT           "light:",IDC_STATIC,18,46,18,8
     CTEXT           "used bots",IDC_STATIC,228,11,81,8
     CTEXT           "available bots",IDC_STATIC,316,11,81,8
-    LTEXT           "triggered by (segP,side)",IDC_STATIC,409,11,70,8
+    LTEXT           "triggered by (pSegment,side)",IDC_STATIC,409,11,70,8
     GROUPBOX        "robot maker data",IDC_STATIC,222,2,180,92,BS_CENTER
     GROUPBOX        "trigger data",IDC_STATIC,404,2,82,126,BS_CENTER
     GROUPBOX        "segment data",IDC_STATIC,4,2,92,74,BS_CENTER
@@ -3683,8 +3683,8 @@ BEGIN
 
     IDD_POGMANAGER, DIALOG
     BEGIN
-        RIGHTMARGIN, 400
-        BOTTOMMARGIN, 186
+        RIGHTMARGIN, 436
+        BOTTOMMARGIN, 197
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -6951,8 +6951,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,12,13,0
- PRODUCTVERSION 1,12,13,0
+ FILEVERSION 1,12,14,0
+ PRODUCTVERSION 1,12,14,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6969,12 +6969,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
             VALUE "FileDescription", "Descent Level Editor [3 may 2015]"
-            VALUE "FileVersion", "1.12.13.0"
+            VALUE "FileVersion", "1.12.14.0"
             VALUE "InternalName", "DLE"
             VALUE "LegalCopyright", "Copyright (C) Bryan Aamot, Dietfrid Mali"
             VALUE "OriginalFilename", "DLE.EXE"
             VALUE "ProductName", "Descent Level Editor"
-            VALUE "ProductVersion", "1.12.13.0"
+            VALUE "ProductVersion", "1.12.14.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -7001,7 +7001,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor 1.12.13\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor 1.12.14\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 
