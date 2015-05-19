@@ -156,6 +156,7 @@ for (i = 0; i < sizeof (ctrlMap) / sizeof (tCtrlMap); i++) {
 	else
 		DLE.TextureView ()->TextureFilter () &= ~ctrlMap [i].nFlag;
 	}
+appSettings.WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
 }
 
 //------------------------------------------------------------------------------
@@ -166,6 +167,7 @@ if (DLE.TextureView ()->TextureFilter () & ctrlMap [i].nFlag)
 	DLE.TextureView ()->TextureFilter () &= ~ctrlMap [i].nFlag;
 else
 	DLE.TextureView ()->TextureFilter () |= ctrlMap [i].nFlag;
+appSettings.WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
 UpdateData (FALSE);
 DLE.TextureView ()->Refresh ();
 }
@@ -179,7 +181,8 @@ if (nValue == 1)
 else if (nValue == 0)
 	DLE.TextureView ()->TextureFilter () &= ~nFlags;
 else if (nValue == -1)
-	DLE.TextureView ()->TextureFilter ()	^= nFlags;
+	DLE.TextureView ()->TextureFilter () ^= nFlags;
+appSettings.WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
 UpdateData (FALSE);
 DLE.TextureView ()->Refresh ();
 }

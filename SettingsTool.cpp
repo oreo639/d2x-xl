@@ -413,7 +413,6 @@ WritePrivateProfileInt ("ViewDistance", appSettings.m_nViewDist);
 WritePrivateProfileInt ("MineCenter", appSettings.m_nMineCenter);
 WritePrivateProfileInt ("MaxUndo", appSettings.m_nMaxUndo);
 WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
-WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
 WritePrivateProfileInt ("EnableQuickSelection", DLE.MineView ()->EnableQuickSelection ());
 WritePrivateProfileInt ("ShowSelectionCandidates", DLE.MineView ()->ShowSelectionCandidates ());
 WritePrivateProfileInt ("ElementMovementReference", DLE.MineView ()->GetElementMovementReference ());

@@ -161,7 +161,7 @@ else {
 	}
 offs = 0;
 w = pOvlTex->Width () / scale.c * scale.d;
-h = pOvlTex->FrameHeight ();
+h = pOvlTex->FrameHeight () / scale.c * scale.d;
 
 if (!(x0 || y0)) {
 	if (nOvlAlignment == 0) {

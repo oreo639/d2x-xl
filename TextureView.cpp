@@ -321,7 +321,7 @@ m_filter.Process (filterP, m_bShowAll);
 m_nRows [ShowAll ()] = (m_filter.Count (ShowAll ()) + m_viewSpace.cx - 1) / m_viewSpace.cx;
 
 // read scroll position to get offset for bitmap tiles
-SetScrollRange (SB_VERT, 0, m_nRows [m_bShowAll] - m_viewSpace.cy, TRUE);
+SetScrollRange (SB_VERT, 0, m_nRows [ShowAll ()] - m_viewSpace.cy, TRUE);
 // if there is enough lines to show all textures, then hide the scroll bar
 if (m_nRows [ShowAll ()] <= m_viewSpace.cy) {
 	ShowScrollBar (SB_VERT,FALSE);
@@ -462,8 +462,8 @@ if ((pt.x < rc.left) || (pt.x >= rc.right) || (pt.y < rc.top) || (pt.y >= rc.bot
 
 int nPos = GetScrollPos (SB_VERT) - zDelta / WHEEL_DELTA;
 
-if (nPos >= m_nRows [m_bShowAll])
-	nPos = m_nRows [m_bShowAll] - m_viewSpace.cy;
+if (nPos >= m_nRows [ShowAll ()])
+	nPos = m_nRows [ShowAll ()] - m_viewSpace.cy;
 if (nPos < 0)
 	nPos = 0;
 SetScrollPos (SB_VERT, nPos, TRUE);
