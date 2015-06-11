@@ -280,7 +280,7 @@ if (nIdEvent != (UINT) m_nAnimTimer)
 	CWnd::OnTimer (nIdEvent);
 else {
 	if (!AnimateTexture (m_nTexId)) {
-		const CTexture *pTexture = textureManager.TextureByIndex (m_nTexId);
+		const CTexture *pTexture = textureManager.Textures (m_nTexId);
 		PaintTexture (this, IMG_BKCOLOR, pTexture->GetFrame (m_nFrame));
 		m_nFrame = (m_nFrame + 1) % pTexture->GetFrameCount ();
 		}
