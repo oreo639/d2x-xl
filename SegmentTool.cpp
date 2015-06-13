@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_SEGMENT_BLOCKED, OnProp3)
 	ON_BN_CLICKED (IDC_SEGMENT_NODAMAGE, OnProp4)
 	ON_BN_CLICKED (IDC_SEGMENT_OUTDOORS, OnProp5)
+	ON_BN_CLICKED (IDC_SEGMENT_FOG, OnProp6)
 	ON_BN_CLICKED (IDC_SEGMENT_SIDE1, OnSide1)
 	ON_BN_CLICKED (IDC_SEGMENT_SIDE2, OnSide2)
 	ON_BN_CLICKED (IDC_SEGMENT_SIDE3, OnSide3)
@@ -185,7 +186,7 @@ for (int	i = 0; i < 3; i++) {
 
 int i;
 
-for (i = 0; i < 5; i++) {
+for (i = 0; i < 6; i++) {
 	int h = (m_nProps & (1 << i)) != 0;
 	DDX_Check (pDX, IDC_SEGMENT_WATER + i, h);
 	if (h)
@@ -319,6 +320,7 @@ void CSegmentTool::OnProp2 () { OnProp (1); }
 void CSegmentTool::OnProp3 () { OnProp (2); }
 void CSegmentTool::OnProp4 () { OnProp (3); }
 void CSegmentTool::OnProp5 () { OnProp (4); }
+void CSegmentTool::OnProp6 () { OnProp (5); }
 
 //------------------------------------------------------------------------------
 

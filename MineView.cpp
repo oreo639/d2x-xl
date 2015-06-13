@@ -88,6 +88,7 @@ COLORREF CRenderData::PenColor (int nPen)
 		RGB (255,  0, 64),
 		RGB (128,128,128),
 		RGB (160,160,160),
+		RGB ( 64, 64, 64),
 		RGB (  0,255,  0),
 		RGB (  0,255,128),
 		RGB (  0,128,  0),

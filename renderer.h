@@ -86,6 +86,7 @@ typedef enum ePenColor {
 	penMedRed,
 	penGray,
 	penLtGray, 
+	penDkGray,
 	penGreen,
 	penMedGreen,
 	penDkGreen,

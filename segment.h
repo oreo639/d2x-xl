@@ -69,6 +69,7 @@ extern int sideChildTable[6][4];
 #define SEGMENT_PROP_BLOCKED				4
 #define SEGMENT_PROP_NODAMAGE				8
 #define SEGMENT_PROP_SELF_ILLUMINATE	16
+#define SEGMENT_PROP_FOG					32
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

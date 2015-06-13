@@ -1047,6 +1047,7 @@ class CSegmentTool : public CToolDlg
 		afx_msg void OnProp3 ();
 		afx_msg void OnProp4 ();
 		afx_msg void OnProp5 ();
+		afx_msg void OnProp6 ();
 		void OnFlag (int nID, int& nFlag);
 		afx_msg void OnSetDefTexture ();
 		afx_msg void OnSide1 ();

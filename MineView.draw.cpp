@@ -577,6 +577,8 @@ if (ViewFlag (eViewMineSpecial) && (m_viewOption != eViewTextured)) {
 				Renderer ().SelectPen (penMedBlue + 1);
 			else if (pSegment->m_info.props & SEGMENT_PROP_LAVA)
 				Renderer ().SelectPen (penMedRed + 1);
+			else if (pSegment->m_info.props & SEGMENT_PROP_FOG)
+				Renderer ().SelectPen (penDkGray + 1);
 			else if (pSegment->IsTagged (short (-1))) 
 				Renderer ().SelectPen (penGray + 1);
 			else

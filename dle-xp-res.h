@@ -114,10 +114,11 @@
 #define IDC_SEGMENT_BLOCKED                10046
 #define IDC_SEGMENT_NODAMAGE               10047
 #define IDC_SEGMENT_OUTDOORS               10048
-#define IDC_SEGMENT_SHIELD_DAMAGE          10049
-#define IDC_SEGMENT_ENERGY_DAMAGE          10050
-#define IDC_SEGMENT_ID_SPINNER             10051
-#define IDC_SEGMENT_FUNCTION_SPINNER       10052
+#define IDC_SEGMENT_FOG                    10049
+#define IDC_SEGMENT_SHIELD_DAMAGE          10050
+#define IDC_SEGMENT_ENERGY_DAMAGE          10051
+#define IDC_SEGMENT_ID_SPINNER             10052
+#define IDC_SEGMENT_FUNCTION_SPINNER       10053
 
 
 #define IDD_WALLDATA_HORZ               10100
