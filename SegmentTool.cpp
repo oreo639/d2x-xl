@@ -34,7 +34,8 @@ BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_SEGMENT_BLOCKED, OnProp3)
 	ON_BN_CLICKED (IDC_SEGMENT_NODAMAGE, OnProp4)
 	ON_BN_CLICKED (IDC_SEGMENT_OUTDOORS, OnProp5)
-	ON_BN_CLICKED (IDC_SEGMENT_FOG, OnProp6)
+	ON_BN_CLICKED (IDC_SEGMENT_LIGHT_FOG, OnProp6)
+	ON_BN_CLICKED (IDC_SEGMENT_DENSE_FOG, OnProp7)
 	ON_BN_CLICKED (IDC_SEGMENT_SIDE1, OnSide1)
 	ON_BN_CLICKED (IDC_SEGMENT_SIDE2, OnSide2)
 	ON_BN_CLICKED (IDC_SEGMENT_SIDE3, OnSide3)
@@ -321,6 +322,7 @@ void CSegmentTool::OnProp3 () { OnProp (2); }
 void CSegmentTool::OnProp4 () { OnProp (3); }
 void CSegmentTool::OnProp5 () { OnProp (4); }
 void CSegmentTool::OnProp6 () { OnProp (5); }
+void CSegmentTool::OnProp7 () { OnProp (6); }
 
 //------------------------------------------------------------------------------
 
