@@ -575,7 +575,6 @@ void CRendererGL::RenderFace (CFaceListEntry& fle, const CTexture* pTexture [], 
 	CSide*			pSide = pSegment->Side (fle.m_nSide);
 	CWall*			pWall = pSide->Wall ();
 	float				alpha = float (Alpha ()) / 255.0f * (pColor ? float (pColor->a) / 255.0f : 1.0f);
-	float				heightScale = (float) pTexture [0]->RenderWidth () / (float) pTexture [0]->RenderHeight ();
 	int				bIlluminate = RenderIllumination () && (pSegment->m_info.function != SEGMENT_FUNC_SKYBOX);
 	ushort*			vertexIds = pSegment->m_info.vertexIds;
 	ubyte*			vertexIdIndex = pSide->m_vertexIdIndex;
@@ -585,6 +584,16 @@ void CRendererGL::RenderFace (CFaceListEntry& fle, const CTexture* pTexture [], 
 	double			scrollAngle = 0.0;
 	short				nOvlAlignment = pSide->OvlAlignment ();
 	ushort			brightness [4];
+#if 1
+	float				heightScale = 1.0f;
+#else
+	float				heightScale = 
+							(nTextures == 1)
+							? (float) pTexture [0]->RenderWidth () / (float) pTexture [0]->RenderHeight ()
+							: (nTextures == 2)
+								? MinVal ((float) pTexture [0]->RenderWidth () / (float) pTexture [0]->RenderHeight (), (float) pTexture [1]->RenderWidth () / (float) pTexture [1]->RenderHeight ())
+								: 1.0f;
+#endif
 
 	tDoubleVector	vertices [4];
 	tTexCoord2d		texCoords [3][4];

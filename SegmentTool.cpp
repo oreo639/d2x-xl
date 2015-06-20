@@ -187,7 +187,7 @@ for (int	i = 0; i < 3; i++) {
 
 int i;
 
-for (i = 0; i < 6; i++) {
+for (i = 0; i < 7; i++) {
 	int h = (m_nProps & (1 << i)) != 0;
 	DDX_Check (pDX, IDC_SEGMENT_WATER + i, h);
 	if (h)

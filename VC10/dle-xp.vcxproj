@@ -689,6 +689,7 @@
     </ClCompile>
     <ClCompile Include="..\DlgHelpers.cpp" />
     <ClCompile Include="..\EffectTool.cpp" />
+    <ClCompile Include="..\EffectTool.Fog.cpp" />
     <ClCompile Include="..\EffectTool.Lightning.cpp" />
     <ClCompile Include="..\EffectTool.Particles.cpp" />
     <ClCompile Include="..\EffectTool.Sounds.cpp" />

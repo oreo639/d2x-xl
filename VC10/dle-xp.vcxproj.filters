@@ -690,6 +690,9 @@
     <ClCompile Include="..\PogDialog.cpp">
       <Filter>UI\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\EffectTool.Fog.cpp">
+      <Filter>UI\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\dle-xp.rc">

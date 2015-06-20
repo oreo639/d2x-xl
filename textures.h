@@ -408,7 +408,7 @@ class CUV {
 };
 
 // 0: Bitmap, 1: TGA (RGB)
-enum TextureFormat : ubyte {
+enum eTextureFormat : ubyte {
 	BMP = 0,
 	TGA = 1
 };
@@ -419,7 +419,7 @@ typedef struct tTexture {
 	int            nTexture;
 	bool           bFromMod, bAnimated, bTransparent, bSuperTransparent, bFlat;
 	ubyte          bCustom;
-	TextureFormat  format;
+	eTextureFormat  format;
 	ubyte          nFrameCount, nFrame;
 	char           szName [9];
 	rgbaColorf     averageColor;
@@ -497,7 +497,7 @@ class CTexture {
 		}
 
 		inline uint RenderHeight () const {
-			return (m_info.format == TGA) ? FrameHeight () : Pow2Dim (m_info.width, FrameHeight ());
+			return (m_info.format == TGA) ? RenderWidth () : Pow2Dim (m_info.width, FrameHeight ());
 		}
 
 		inline uint RenderSize (void) const { return RenderWidth () * RenderHeight (); }
@@ -591,7 +591,7 @@ class CTexture {
 
 		inline const char *Name (void) const { return m_info.szName; }
 
-		inline TextureFormat Format (void) const { return m_info.format; }
+		inline eTextureFormat Format (void) const { return m_info.format; }
 
 		bool CreateBitmap (CBitmap **ppImage, bool bScale = false, int width = -1, int height = -1) const;
 

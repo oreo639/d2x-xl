@@ -826,8 +826,10 @@
 #define IDD_EFFECT_SOUND_VERT           11708
 #define IDD_EFFECT_WAYPOINT_HORZ        11709
 #define IDD_EFFECT_WAYPOINT_VERT        11710
-#define IDD_EFFECTDATA_VERT_OLD         11711
-#define IDD_EFFECTDATA_HORZ_OLD         11712
+#define IDD_EFFECT_FOG_VERT             11711
+#define IDD_EFFECT_FOG_HORZ             11712
+#define IDD_EFFECTDATA_VERT_OLD         11713
+#define IDD_EFFECTDATA_HORZ_OLD         11714
 
 #define IDC_TOOL_TAB							 11700
 
@@ -927,13 +929,25 @@
 #define IDC_WAYPOINT_BOUNCE				 11793
 #define IDC_WAYPOINT_ADD                11794
 
-#define IDC_EFFECT_OBJECTS					 11800
-#define IDC_EFFECT_COPY						 11801
-#define IDC_EFFECT_PASTE					 11802
-#define IDC_EFFECT_PASTE_ALL				 11803
-#define IDC_EFFECT_ADD                  11804
-#define IDC_EFFECT_DELETE               11805
-#define IDC_EFFECT_ENABLED              11806
+#define IDC_FOG_PALETTE                 11800
+#define IDC_LIGHT_FOG_TRANSP_SLIDER     11801
+#define IDC_LIGHT_FOG_TRANSP_TEXT       11802
+#define IDC_LIGHT_FOG_TRANSP_SPINNER    11803
+#define IDC_LIGHT_FOG_PICK_COLOR        11804
+#define IDC_LIGHT_FOG_COLOR             11805
+#define IDC_DENSE_FOG_TRANSP_SLIDER     11806
+#define IDC_DENSE_FOG_TRANSP_TEXT       11807
+#define IDC_DENSE_FOG_TRANSP_SPINNER    11808
+#define IDC_DENSE_FOG_PICK_COLOR        11809
+#define IDC_DENSE_FOG_COLOR             11810
+
+#define IDC_EFFECT_OBJECTS					 11820
+#define IDC_EFFECT_COPY						 11821
+#define IDC_EFFECT_PASTE					 11822
+#define IDC_EFFECT_PASTE_ALL				 11823
+#define IDC_EFFECT_ADD                  11824
+#define IDC_EFFECT_DELETE               11825
+#define IDC_EFFECT_ENABLED              11826
 
 #define IDD_POGMANAGER                  11900
 #define IDC_POGMANAGER_LIST             11901

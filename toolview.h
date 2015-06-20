@@ -993,6 +993,40 @@ class CWayPointTool : public CEffectTabDlg
 
 //------------------------------------------------------------------------------
 
+class CFogTool : public CEffectTabDlg
+{
+	public:
+		rgbColor			m_fogColor [2];
+		int				m_fogDensity [2];
+		CExtSliderCtrl	m_transpSlider [2];
+		CWnd				m_colorWnd [2];
+		int				m_nFogType;
+
+      virtual BOOL OnInitDialog ();
+      virtual void DoDataExchange (CDataExchange *pDX);
+		BOOL OnSetActive ();
+		BOOL OnKillActive ();
+		void EnableControls (BOOL bEnable);
+
+		afx_msg void OnEdit ();
+		afx_msg void OnPickLightFogColor ();
+		afx_msg void OnPickDenseFogColor ();
+
+		void Add (void);
+		void Copy (void);
+		void Paste (CGameObject* pObject = null, bool bRefresh = true);
+		void UpdateTransparency (int nFogType, int nValue);
+		void PickColor (int nFogType);
+		void UpdateColor (int nFogType);
+		void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+
+		CFogTool (UINT nId, CWnd* pParent = null) : CEffectTabDlg (nId, pParent) {}
+
+		DECLARE_MESSAGE_MAP ()
+};
+
+//------------------------------------------------------------------------------
+
 class CSegmentTool : public CToolDlg
 {
 	public:
@@ -1607,17 +1641,17 @@ class CTextureLightTool : public CTextureTabDlg
 		CBitmapButton		m_btnAddLight;
 		CBitmapButton		m_btnDelLight;
 		CExtSliderCtrl		m_lightTimerCtrl;
-		CWnd				m_lightWnd;
-		CWnd				m_colorWnd;
+		CWnd					m_lightWnd;
+		CWnd					m_colorWnd;
 		CPaletteWnd			m_paletteWnd;
 
-		UINT_PTR			m_nLightTimer;
+		UINT_PTR				m_nLightTimer;
 		int					m_nLightDelay;
 		double				m_nLightTime;
 		int					m_nHighlight;
-		char				m_szLight [33];
+		char					m_szLight [33];
 		int					m_iLight;
-		BOOL				m_bLightEnabled;
+		BOOL					m_bLightEnabled;
 		int					m_nColorIndex;
 		PALETTEENTRY		m_rgbColor;
 
