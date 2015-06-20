@@ -78,6 +78,7 @@ DLE.MineView ()->SetViewDist (0);
 DLE.ToolView ()->Refresh ();
 undoManager.Reset ();
 tunnelMaker.Destroy ();
+segmentManager.InitFogInfo ();
 // if no file passed, define a new level w/ 1 object
 short i = LoadLevel (fp, bLoadFromHog);
 if (i != 0)

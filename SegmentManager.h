@@ -365,7 +365,7 @@ class CSegmentManager {
 
 		inline void WriteEquipMakerInfo (CFileManager* fp) { m_producerInfo [1].Write (fp); }
 
-		inline void InitFogInfo (CFileManager* fp) { 
+		inline void InitFogInfo (void) { 
 			for (int i = 0; i < 2; i++)
 				m_fogInfo [i].Init (i);
 			}
