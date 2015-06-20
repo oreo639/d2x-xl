@@ -100,8 +100,12 @@ triggerManager.ReadReactorInfo (fp);
 segmentManager.ReadRobotMakerInfo (fp);
 if (fileInfo.version >= 29)
 	lightManager.ReadLightDeltaInfo (fp);
-if (bIsD2XLevel && (theMine->LevelVersion () > 15))
-	segmentManager.ReadEquipMakerInfo (fp);
+if (bIsD2XLevel) {
+	if (theMine->LevelVersion () > 15)
+		segmentManager.ReadEquipMakerInfo (fp);
+	if (theMine->LevelVersion () > 26)
+		segmentManager.ReadFogInfo (fp);
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -123,8 +127,10 @@ triggerManager.WriteReactorInfo (fp);
 segmentManager.WriteRobotMakerInfo (fp);
 if (fileInfo.version >= 29)
 	lightManager.WriteLightDeltaInfo (fp);
-if (bIsD2XLevel)
+if (bIsD2XLevel) {
 	segmentManager.WriteEquipMakerInfo (fp);
+	segmentManager.WriteFogInfo (fp);
+	}
 if (fileInfo.size < 0) {
 	fileInfo.size = fp->Tell () - startPos;
 	long endPos = fp->Tell ();
@@ -135,4 +141,37 @@ if (fileInfo.size < 0) {
 }
 
 // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+void CFogInfo::Init (int nType)
+{
+m_color.r = m_color.g = m_color.b = ubyte (255.0f * 0.7f);
+m_density = nType ? 5 : 12;
+}
+
+// -----------------------------------------------------------------------------
+
+void CFogInfo::Read (CFileManager *fp)
+{
+m_color.r = (ubyte) fp->ReadChar ();
+m_color.g = (ubyte) fp->ReadChar ();
+m_color.b = (ubyte) fp->ReadChar ();
+m_density = (ubyte) fp->ReadChar ();
+}
+
+// -----------------------------------------------------------------------------
+
+void CFogInfo::Write (CFileManager *fp)
+{
+fp->WriteChar (char (m_color.r));
+fp->WriteChar (char (m_color.g));
+fp->WriteChar (char (m_color.b));
+fp->WriteChar (char (m_density));
+}
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 

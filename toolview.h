@@ -993,17 +993,15 @@ class CWayPointTool : public CEffectTabDlg
 
 //------------------------------------------------------------------------------
 
-typedef struct tFogProps {
-	rgbColor			color;
-	int				density;
+typedef struct tFogControls {
 	CExtSliderCtrl	transpSlider;
 	CWnd				colorWnd;
-} tFogProps;
+} tFogControls;
 
 class CFogTool : public CEffectTabDlg
 {
 	public:
-		tFogProps		m_fog [2];
+		tFogControls	m_fog [2];
 
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);

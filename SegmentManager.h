@@ -94,6 +94,16 @@ typedef struct tVertMatch {
 		double	d;
 	} tVertMatch; 
 
+class CFogInfo {
+	public:
+		rgbColor			m_color;
+		ubyte				m_density;
+
+		void Init (int nType);
+		void Read (CFileManager *fp);
+		void Write (CFileManager *fp);
+	};
+
 // -----------------------------------------------------------------------------
 
 class CSegmentManager {
@@ -107,6 +117,7 @@ class CSegmentManager {
 		bool						m_bCreating;
 		CSegment*				m_selectedSegments;
 		CSide*					m_selectedSides;
+		CFogInfo					m_fogInfo [2];
 
 	public:
 		inline void ResetInfo (void) {
@@ -353,6 +364,21 @@ class CSegmentManager {
 		inline void ReadEquipMakerInfo (CFileManager* fp) { m_producerInfo [1].Read (fp); }
 
 		inline void WriteEquipMakerInfo (CFileManager* fp) { m_producerInfo [1].Write (fp); }
+
+		inline void InitFogInfo (CFileManager* fp) { 
+			for (int i = 0; i < 2; i++)
+				m_fogInfo [i].Init (i);
+			}
+
+		inline void ReadFogInfo (CFileManager* fp) { 
+			for (int i = 0; i < 2; i++)
+				m_fogInfo [i].Read (fp);
+			}
+
+		inline void WriteFogInfo (CFileManager* fp) { 
+			for (int i = 0; i < 2; i++)
+				m_fogInfo [i].Write (fp);
+			}
 
 		void ReadSegments (CFileManager* fp);
 		

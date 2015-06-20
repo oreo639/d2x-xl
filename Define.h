@@ -137,7 +137,7 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 #define EXTENDED_HAM 1
 #define NORMAL_HAM	0
 
-#define LEVEL_VERSION				26	//current level version
+#define LEVEL_VERSION				27	//current level version
 
 #define MAX_PLAYERS_D2				8
 #define MAX_PLAYERS_D2X				16

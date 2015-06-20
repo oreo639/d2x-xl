@@ -52,7 +52,7 @@ public:
 class CMineInfo {
 public:
 	CMineFileInfo		fileInfo;
-	char					mineFilename[15];
+	char					mineFilename [15];
 	int					level;
 	CPlayerItemInfo	player;
 
