@@ -91,12 +91,14 @@ if (nLayout) {
 	m_effectTools.Add (new CLightningEffectTool (IDD_EFFECT_LIGHTNING_VERT, this), IDD_EFFECT_LIGHTNING_VERT, "Lightning");
 	m_effectTools.Add (new CSoundEffectTool (IDD_EFFECT_SOUND_VERT, this), IDD_EFFECT_SOUND_VERT, "Sounds");
 	m_effectTools.Add (new CWayPointTool (IDD_EFFECT_WAYPOINT_VERT, this), IDD_EFFECT_WAYPOINT_VERT, "Way points");
+	m_effectTools.Add (new CFogTool (IDD_EFFECT_FOG_VERT, this), IDD_EFFECT_FOG_VERT, "Fog");
 	}
 else {
 	m_effectTools.Add (new CParticleEffectTool (IDD_EFFECT_PARTICLE_HORZ, this), IDD_EFFECT_PARTICLE_HORZ, "Particles");
 	m_effectTools.Add (new CLightningEffectTool (IDD_EFFECT_LIGHTNING_HORZ, this), IDD_EFFECT_LIGHTNING_HORZ, "Lightning");
 	m_effectTools.Add (new CSoundEffectTool (IDD_EFFECT_SOUND_HORZ, this), IDD_EFFECT_SOUND_HORZ, "Sounds");
 	m_effectTools.Add (new CWayPointTool (IDD_EFFECT_WAYPOINT_HORZ, this), IDD_EFFECT_WAYPOINT_HORZ, "Way points");
+	m_effectTools.Add (new CFogTool (IDD_EFFECT_FOG_HORZ, this), IDD_EFFECT_FOG_HORZ, "Fog");
 	}
 m_effectTools.Setup ();
 m_bInited = true;

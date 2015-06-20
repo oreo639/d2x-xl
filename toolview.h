@@ -993,14 +993,17 @@ class CWayPointTool : public CEffectTabDlg
 
 //------------------------------------------------------------------------------
 
+typedef struct tFogProps {
+	rgbColor			color;
+	int				density;
+	CExtSliderCtrl	transpSlider;
+	CWnd				colorWnd;
+} tFogProps;
+
 class CFogTool : public CEffectTabDlg
 {
 	public:
-		rgbColor			m_fogColor [2];
-		int				m_fogDensity [2];
-		CExtSliderCtrl	m_transpSlider [2];
-		CWnd				m_colorWnd [2];
-		int				m_nFogType;
+		tFogProps		m_fog [2];
 
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -1019,6 +1022,9 @@ class CFogTool : public CEffectTabDlg
 		void PickColor (int nFogType);
 		void UpdateColor (int nFogType);
 		void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
+
+		virtual ubyte GetType (void) { return 255; }
+		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) { return null; }
 
 		CFogTool (UINT nId, CWnd* pParent = null) : CEffectTabDlg (nId, pParent) {}
 
