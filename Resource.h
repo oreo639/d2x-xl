@@ -2,9 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by dle-xp.rc
 //
-#define IDC_LIGHT_FOG_TRANSP_TEXT       1761
-#define IDC_DENSE_FOG_TRANSP_TEXT       1762
-
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

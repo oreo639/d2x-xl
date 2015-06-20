@@ -1015,9 +1015,6 @@ class CFogTool : public CEffectTabDlg
 		afx_msg void OnPickLightFogColor ();
 		afx_msg void OnPickDenseFogColor ();
 
-		void Add (void);
-		void Copy (void);
-		void Paste (CGameObject* pObject = null, bool bRefresh = true);
 		void UpdateTransparency (int nFogType, int nValue);
 		void PickColor (int nFogType);
 		void UpdateColor (int nFogType);
