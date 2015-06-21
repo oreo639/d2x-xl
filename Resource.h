@@ -2,6 +2,17 @@
 // Microsoft Visual C++ generated include file.
 // Used by dle-xp.rc
 //
+#define IDC_LIGHT_FOG_TRANSP_SLIDER2    11805
+#define IDC_DENSE_FOG_TRANSP_SLIDER2    11806
+#define IDC_LIGHT_FOG_TRANSP_SPINNER2   11809
+#define IDC_DENSE_FOG_TRANSP_SPINNER2   11810
+#define IDC_LIGHT_FOG_TRANSP_TEXT2      11813
+#define IDC_DENSE_FOG_TRANSP_TEXT2      11814
+#define IDC_LIGHT_FOG_PICK_COLOR2       11817
+#define IDC_DENSE_FOG_PICK_COLOR2       11818
+#define IDC_LIGHT_FOG_COLOR2            11821
+#define IDC_DENSE_FOG_COLOR2            11822
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

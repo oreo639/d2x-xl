@@ -1001,7 +1001,7 @@ typedef struct tFogControls {
 class CFogTool : public CEffectTabDlg
 {
 	public:
-		tFogControls	m_fog [2];
+		tFogControls	m_fog [NUM_FOG_TYPES];
 
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -1010,6 +1010,8 @@ class CFogTool : public CEffectTabDlg
 		void EnableControls (BOOL bEnable);
 
 		afx_msg void OnEdit ();
+		afx_msg void OnPickWaterFogColor ();
+		afx_msg void OnPickLavaFogColor ();
 		afx_msg void OnPickLightFogColor ();
 		afx_msg void OnPickDenseFogColor ();
 

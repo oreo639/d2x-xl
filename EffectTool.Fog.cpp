@@ -25,14 +25,10 @@ BOOL CFogTool::OnInitDialog ()
 {
 if (!CDialog::OnInitDialog ())
 	return FALSE;
-segmentManager.m_fogInfo [0].m_density = 12;
-segmentManager.m_fogInfo [1].m_density = 5;
-segmentManager.m_fogInfo [0].m_color.r = segmentManager.m_fogInfo [0].m_color.g = segmentManager.m_fogInfo [0].m_color.b = ubyte (255.0f * 0.7f);
-segmentManager.m_fogInfo [1].m_color.r = segmentManager.m_fogInfo [1].m_color.g = segmentManager.m_fogInfo [1].m_color.b = ubyte (255.0f * 0.7f);
-m_fog [0].transpSlider.Init (this, IDC_LIGHT_FOG_TRANSP_SLIDER, IDC_LIGHT_FOG_TRANSP_SPINNER, -IDC_LIGHT_FOG_TRANSP_TEXT, 0, 19, 1.0, 100.0 / 15.0, 1, "transp: %d%%");
-m_fog [1].transpSlider.Init (this, IDC_DENSE_FOG_TRANSP_SLIDER, IDC_DENSE_FOG_TRANSP_SPINNER, -IDC_DENSE_FOG_TRANSP_TEXT, 0, 19, 1.0, 100.0 / 15.0, 1, "transp: %d%%");
-CreateColorCtrl (&m_fog [0].colorWnd, IDC_LIGHT_FOG_COLOR);
-CreateColorCtrl (&m_fog [1].colorWnd, IDC_DENSE_FOG_COLOR);
+for (int i = 0; i < NUM_FOG_TYPES; i++) {
+	m_fog [0].transpSlider.Init (this, IDC_WATER_FOG_TRANSP_SLIDER + i, IDC_WATER_FOG_TRANSP_SPINNER + i, -(IDC_WATER_FOG_TRANSP_TEXT + i), 0, 19, 1.0, 100.0 / 15.0, 1, "transp: %d%%");
+	CreateColorCtrl (&m_fog [i].colorWnd, IDC_WATER_FOG_COLOR + i);
+	}
 m_bInited = true;
 return TRUE;
 }
@@ -61,14 +57,14 @@ void CFogTool::DoDataExchange (CDataExchange *pDX)
 if (!HaveData (pDX)) 
 	return;
 if (!pDX->m_bSaveAndValidate) {
-	m_fog [0].transpSlider.SetValue (segmentManager.m_fogInfo [0].m_density);
-	m_fog [1].transpSlider.SetValue (segmentManager.m_fogInfo [1].m_density);
-	UpdateColor (0);
-	UpdateColor (1);
+	for (int i = 0; i < NUM_FOG_TYPES; i++) {
+		m_fog [i].transpSlider.SetValue (segmentManager.m_fogInfo [i].m_density);
+		UpdateColor (i);
+		}
 	}
 else {
-	segmentManager.m_fogInfo [0].m_density = m_fog [0].transpSlider.GetValue ();
-	segmentManager.m_fogInfo [1].m_density = m_fog [1].transpSlider.GetValue ();
+	for (int i = 0; i < NUM_FOG_TYPES; i++)
+		segmentManager.m_fogInfo [i].m_density = m_fog [i].transpSlider.GetValue ();
 	}	
 }
 
@@ -103,19 +99,22 @@ if (CDlgHelpers::SelectColor (segmentManager.m_fogInfo [nFogType].m_color.r, seg
 	UpdateColor (nFogType);
 }
 
-void CFogTool::OnPickLightFogColor () { PickColor (0); }
-void CFogTool::OnPickDenseFogColor () { PickColor (1); }
+void CFogTool::OnPickWaterFogColor () { PickColor (0); }
+void CFogTool::OnPickLavaFogColor  () { PickColor (1); }
+void CFogTool::OnPickLightFogColor () { PickColor (2); }
+void CFogTool::OnPickDenseFogColor () { PickColor (3); }
 
 //------------------------------------------------------------------------------
 
 void CFogTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-if (m_fog [0].transpSlider.OnScroll (scrollCode, thumbPos, pScrollBar))
-	UpdateTransparency (0, m_fog [0].transpSlider.GetValue ());
-if (m_fog [1].transpSlider.OnScroll (scrollCode, thumbPos, pScrollBar))
-	UpdateTransparency (1, m_fog [1].transpSlider.GetValue ());
-else
-	pScrollBar->SetScrollPos (thumbPos, TRUE);
+for (int i = 0; i < 3; i++) {
+	if (m_fog [i].transpSlider.OnScroll (scrollCode, thumbPos, pScrollBar)) {
+		UpdateTransparency (i, m_fog [i].transpSlider.GetValue ());
+		return;
+		}
+	}
+pScrollBar->SetScrollPos (thumbPos, TRUE);
 }
 
 //------------------------------------------------------------------------

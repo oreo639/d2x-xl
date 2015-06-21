@@ -13,9 +13,9 @@
 
 // -----------------------------------------------------------------------------
 
-#define MAX_SEGMENTS_D1		800  // descent 1 max # of cubes
-#define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes
-#define SEGMENT_LIMIT		20000 // D2X-XL max # of cubes
+#define MAX_SEGMENTS_D1				800  // descent 1 max # of cubes
+#define MAX_SEGMENTS_D2				900  // descent 2 max # of cubes
+#define SEGMENT_LIMIT				20000 // D2X-XL max # of cubes
 
 #define MAX_SEGMENTS ((theMine == null) ? MAX_SEGMENTS_D2 : DLE.IsD1File () ? MAX_SEGMENTS_D1  : DLE.IsStdLevel () ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT)
 
@@ -26,6 +26,8 @@
 #define MAX_NUM_RECHARGERS_D2X	500
 
 #define MAX_NUM_RECHARGERS ((theMine == null) ? MAX_NUM_RECHARGERS_D2X : (DLE.IsD1File () || (DLE.LevelVersion () < 12)) ? MAX_NUM_RECHARGERS_D2 : MAX_NUM_RECHARGERS_D2X)
+
+#define NUM_FOG_TYPES				4
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -94,6 +96,8 @@ typedef struct tVertMatch {
 		double	d;
 	} tVertMatch; 
 
+// -----------------------------------------------------------------------------
+
 class CFogInfo {
 	public:
 		rgbColor			m_color;
@@ -117,7 +121,7 @@ class CSegmentManager {
 		bool						m_bCreating;
 		CSegment*				m_selectedSegments;
 		CSide*					m_selectedSides;
-		CFogInfo					m_fogInfo [2];
+		CFogInfo					m_fogInfo [NUM_FOG_TYPES];
 
 	public:
 		inline void ResetInfo (void) {
@@ -366,17 +370,17 @@ class CSegmentManager {
 		inline void WriteEquipMakerInfo (CFileManager* fp) { m_producerInfo [1].Write (fp); }
 
 		inline void InitFogInfo (void) { 
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < NUM_FOG_TYPES; i++)
 				m_fogInfo [i].Init (i);
 			}
 
 		inline void ReadFogInfo (CFileManager* fp) { 
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < NUM_FOG_TYPES; i++)
 				m_fogInfo [i].Read (fp);
 			}
 
 		inline void WriteFogInfo (CFileManager* fp) { 
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < NUM_FOG_TYPES; i++)
 				m_fogInfo [i].Write (fp);
 			}
 

@@ -176,20 +176,20 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 // #define MAX_SUBMODELS   10  // I guessed at this value (BAA)
 
 // allow all caps types for vectors
-#define RDL_FILE  0
-#define RL2_FILE  1
+#define RDL_FILE						0
+#define RL2_FILE						1
 
-#define SMALLMINE_ID			51
+#define SMALLMINE_ID					51
 
-#define MINE_CLIP_NUMBER	159
+#define MINE_CLIP_NUMBER			159
 
-#define N_WALL_TEXTURES_D1 26
-#define N_WALL_TEXTURES_D2 51
-#define NUM_OF_CLIPS_D1		24
-#define NUM_OF_CLIPS_D2		49
+#define N_WALL_TEXTURES_D1			26
+#define N_WALL_TEXTURES_D2			51
+#define NUM_OF_CLIPS_D1				24
+#define NUM_OF_CLIPS_D2				49
 
-#define MAX_WALL_TYPES		6
-#define D2_MAX_WALL_TYPES	8
+#define MAX_WALL_TYPES				6
+#define D2_MAX_WALL_TYPES			8
 
 #define TEXTURE_STRING_TABLE_D1 1000
 #define TEXTURE_STRING_TABLE_D2 2000
@@ -276,17 +276,17 @@ return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5) : 1; // round (assum
 
 #define COMPILED_MINE_VERSION 0
 
-#define LEFT_BUTTON 0x01
-#define RIGHT_BUTTON 0x02
+#define LEFT_BUTTON			0x01
+#define RIGHT_BUTTON			0x02
 
-#define ASPECT_TOP 3
-#define ASPECT_BOT 5
-#define ANGLE_RATE 0.01
-#define MOVE_RATE 5
+#define ASPECT_TOP			3
+#define ASPECT_BOT			5
+#define ANGLE_RATE			0.01
+#define MOVE_RATE				5
 
-#define MAX_POLY 6
+#define MAX_POLY				6
 
-#define PI	3.141592653589793240
+#define PI						3.141592653589793240
 
 inline double Radians (double a) { return a * (PI / 180.0); }
 inline double Degrees (double a) { 
@@ -307,25 +307,25 @@ inline double Degrees (double a) {
 
 // -----------------------------------------------------------------------------
 // macro modes 
-#define MACRO_OFF      0
-#define MACRO_RECORD   1
-#define MACRO_PLAY     2
+#define MACRO_OFF			0
+#define MACRO_RECORD		1
+#define MACRO_PLAY		2
 
 // -----------------------------------------------------------------------------
 // select modes 
-#define POINT_MODE     0
-#define LINE_MODE      1
-#define SIDE_MODE      2
-#define SEGMENT_MODE   3
-#define OBJECT_MODE    4
-#define BLOCK_MODE     5
-#define N_SELECT_MODES 6
+#define POINT_MODE		0
+#define LINE_MODE			1
+#define SIDE_MODE			2
+#define SEGMENT_MODE		3
+#define OBJECT_MODE		4
+#define BLOCK_MODE		5
+#define N_SELECT_MODES	6
 
 // -----------------------------------------------------------------------------
 // edit modes 
-#define EDIT_OFF     0
-#define EDIT_MOVE    1
-#define N_EDIT_MODES 2
+#define EDIT_OFF			0
+#define EDIT_MOVE			1
+#define N_EDIT_MODES		2
 
 // -----------------------------------------------------------------------------
 
@@ -363,12 +363,12 @@ inline double Degrees (double a) {
 
 // -----------------------------------------------------------------------------
 
-#define MAX_ROBOT_ID_D1					24
-#define MAX_ROBOT_IDS_TOTAL			78
-#define MAX_POWERUP_IDS_D1				26
-#define MAX_POWERUP_IDS_D2				50
-#define MAX_POWERUP_IDS_USED			48
-#define MAX_POWERUP_IDS					(DLE.IsD1File () ? MAX_POWERUP_IDS_D1 : MAX_POWERUP_IDS_D2)
+#define MAX_ROBOT_ID_D1				24
+#define MAX_ROBOT_IDS_TOTAL		78
+#define MAX_POWERUP_IDS_D1			26
+#define MAX_POWERUP_IDS_D2			50
+#define MAX_POWERUP_IDS_USED		48
+#define MAX_POWERUP_IDS				(DLE.IsD1File () ? MAX_POWERUP_IDS_D1 : MAX_POWERUP_IDS_D2)
 
 // -----------------------------------------------------------------------------
 
@@ -434,10 +434,10 @@ inline double Degrees (double a) {
 
 // -----------------------------------------------------------------------------
 
-#define MAX_POWERUP_TYPES_D2		48
-#define MAX_POWERUP_TYPES			50
-#define D2X_POWERUP_TYPES			100
-#define MAX_POWERUP_TYPES_D1  	29
+#define MAX_POWERUP_TYPES_D2			48
+#define MAX_POWERUP_TYPES				50
+#define D2X_POWERUP_TYPES				100
+#define MAX_POWERUP_TYPES_D1  		29
 
 #define MAX_OBJECTS_D1					350
 #define MAX_OBJECTS_D2					2000
