@@ -84,6 +84,8 @@ class CDlgHelpers {
 		void CreateColorCtrl (CWnd *pWnd, int nIdC);
 		void UpdateColorCtrl (CWnd *pWnd, COLORREF color);
 
+		inline CWnd *Parent (void) { return m_pParent; }
+
 		inline CComboBox *CBCtrl (int nId) { return (CComboBox *) m_pParent->GetDlgItem (nId); }
 		inline CListBox *LBCtrl (int nId) { return (CListBox *) m_pParent->GetDlgItem (nId); }
 		inline CButton *BtnCtrl (int nId){ return (CButton *) m_pParent->GetDlgItem (nId); }
@@ -108,7 +110,10 @@ class CTabDlg : public CDialog, public CDlgHelpers {
 			return m_bHaveData;
 			}
 
-		virtual bool Refresh (void) { UpdateData (FALSE); return true; }
+		virtual bool Refresh (void) { 
+			UpdateData (FALSE); 
+			return true; 
+			}
 
 		virtual BOOL OnSetActive () { return FALSE; }
 		virtual BOOL OnKillActive () { return FALSE; }
@@ -816,6 +821,8 @@ class CEffectTabDlg : public CTabDlg {
 		BOOL OnSetActive ();
 		BOOL OnKillActive ();
 
+		void OnShowWindow (BOOL bShow, UINT nStatus);
+
 		virtual void Add (void) {}
 		virtual void Delete (void) { DeleteEffect (); }
 		virtual void Copy (void) {}
@@ -825,6 +832,8 @@ class CEffectTabDlg : public CTabDlg {
 		virtual ubyte GetType (void) = 0;
 
 		CEffectTabDlg (UINT nId, CWnd* pParent = null) : CTabDlg (nId, pParent) {}
+
+		DECLARE_MESSAGE_MAP ()
 	};
 
 //------------------------------------------------------------------------------
@@ -843,6 +852,7 @@ class CEffectTool : public CToolDlg
 		void Reset ();
 		void Refresh ();
 		void LoadEffectList ();
+		void EnableControls (int nIdFirst, int nIdLast, BOOL bEnable);
 
 		inline CComboBox *CBEffects ()
 			{ return CBCtrl(IDC_EFFECT_OBJECTS); }
@@ -1001,6 +1011,7 @@ typedef struct tFogControls {
 class CFogTool : public CEffectTabDlg
 {
 	public:
+		CEffectTool		*m_pParent;
 		tFogControls	m_fog [NUM_FOG_TYPES];
 
       virtual BOOL OnInitDialog ();
@@ -1015,15 +1026,21 @@ class CFogTool : public CEffectTabDlg
 		afx_msg void OnPickLightFogColor ();
 		afx_msg void OnPickDenseFogColor ();
 
+#if 0
+		afx_msg void OnShowWindow (BOOL bShow, UINT nStatus);
+#endif
+
 		void UpdateTransparency (int nFogType, int nValue);
 		void PickColor (int nFogType);
 		void UpdateColor (int nFogType);
 		void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
 
+		virtual bool Refresh (void);
+
 		virtual ubyte GetType (void) { return 255; }
 		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) { return null; }
 
-		CFogTool (UINT nId, CWnd* pParent = null) : CEffectTabDlg (nId, pParent) {}
+		CFogTool (UINT nId, CEffectTool* pParent = null) : CEffectTabDlg (nId, pParent) { m_pParent = pParent; }
 
 		DECLARE_MESSAGE_MAP ()
 };

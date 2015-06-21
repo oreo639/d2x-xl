@@ -133,6 +133,16 @@ Refresh ();
 return CToolDlg::OnKillActive ();
 }
 
+								/*--------------------------*/
+
+void CEffectTool::EnableControls (int nIdFirst, int nIdLast, BOOL bEnable)
+{
+CWnd *pWnd;
+for (int i = nIdFirst; i <= nIdLast; i++)
+	if (pWnd = GetDlgItem (i))
+		pWnd->EnableWindow (bEnable);
+}
+
 //------------------------------------------------------------------------
 // CEffectTool - RefreshData
 //------------------------------------------------------------------------
@@ -220,6 +230,12 @@ if (nOld != nNew) {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+BEGIN_MESSAGE_MAP (CEffectTabDlg, CTabDlg)
+	ON_WM_SHOWWINDOW ()
+END_MESSAGE_MAP ()
+
+//------------------------------------------------------------------------
+
 bool CEffectTabDlg::AddEffect (void)
 {
 if (objectManager.Count () >= MAX_OBJECTS) {
@@ -276,7 +292,7 @@ bool CEffectTabDlg::Refresh (void)
 {
 if (!(m_bInited && theMine))
 	return false;
-EnableControls (true);
+EnableControls (TRUE);
 UpdateData (FALSE);
 return true;
 }
@@ -296,6 +312,17 @@ BOOL CEffectTabDlg::OnKillActive ()
 {
 Refresh ();
 return TRUE;
+}
+
+//------------------------------------------------------------------------
+
+void CEffectTabDlg::OnShowWindow (BOOL bShow, UINT nStatus)
+{
+if (bShow)
+	OnSetActive ();
+else
+	OnKillActive ();
+CWnd::OnShowWindow (bShow, nStatus);
 }
 
 //------------------------------------------------------------------------
