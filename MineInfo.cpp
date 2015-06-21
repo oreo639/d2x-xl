@@ -147,15 +147,15 @@ if (fileInfo.size < 0) {
 void CFogInfo::Init (int nType)
 {
 if (nType == 0) {
-	m_color.r = 0.2f;
-	m_color.g = 0.4f;
-	m_color.b = 0.6f;
+	m_color.r = ubyte (255.0f * 0.2f);
+	m_color.g = ubyte (255.0f * 0.4f);
+	m_color.b = ubyte (255.0f * 0.6f);
 	m_density = 11;
 	}
 else if (nType == 1) {
-	m_color.r = 1.0f;
-	m_color.g = 0.7f;
-	m_color.b = 0.4f;
+	m_color.r = ubyte (255.0f * 1.0f);
+	m_color.g = ubyte (255.0f * 0.7f);
+	m_color.b = ubyte (255.0f * 0.4f);
 	m_density = 2;
 	}
 else {
