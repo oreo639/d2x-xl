@@ -86,9 +86,9 @@ if (pObject) {
 
 //------------------------------------------------------------------------
 
-void CWayPointTool::Paste (CGameObject* pObject, bool bRefresh)
+void CWayPointTool::Paste (CGameObject* pObject, bool bRefresh, bool bVerbose)
 {
-if (Valid () && (pObject = GetEffect (pObject))) {
+if (Valid () && (pObject = GetEffect (pObject, bVerbose))) {
 	pObject->cType.wayPointInfo = m_wayPoint;
 	if (bRefresh)
 		Refresh ();

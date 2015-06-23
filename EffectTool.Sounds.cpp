@@ -85,9 +85,9 @@ else
 
 //------------------------------------------------------------------------
 
-void CSoundEffectTool::Paste (CGameObject* pObject, bool bRefresh)
+void CSoundEffectTool::Paste (CGameObject* pObject, bool bRefresh, bool bVerbose)
 {
-if (Valid () && (pObject = GetEffect (pObject))) {
+if (Valid () && (pObject = GetEffect (pObject, bVerbose))) {
 	pObject->rType.soundInfo = m_sound;
 	if (bRefresh)
 		Refresh ();

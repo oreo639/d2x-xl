@@ -826,7 +826,7 @@ class CEffectTabDlg : public CTabDlg {
 		virtual void Add (void) {}
 		virtual void Delete (void) { DeleteEffect (); }
 		virtual void Copy (void) {}
-		virtual void Paste (CGameObject* pObject = null, bool bRefresh = true) {}
+		virtual void Paste (CGameObject* pObject = null, bool bRefresh = true, bool bVerbose = true) {}
 
 		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) = 0;
 		virtual ubyte GetType (void) = 0;
@@ -896,7 +896,7 @@ class CParticleEffectTool : public CEffectTabDlg
 
 		void Add (void);
 		void Copy (void);
-		void Paste (CGameObject* pObject = null, bool bRefresh = true);
+		void Paste (CGameObject* pObject = null, bool bRefresh = true, bool bVerbose = true);
 		bool Refresh (void);
 		void UpdateColorCtrl (void);
 
@@ -934,7 +934,7 @@ class CLightningEffectTool : public CEffectTabDlg
 
 		void Add (void);
 		void Copy (void);
-		void Paste (CGameObject* pObject = null, bool bRefresh = true);
+		void Paste (CGameObject* pObject = null, bool bRefresh = true, bool bVerbose = true);
 		bool Refresh (void);
 		void UpdateColorCtrl (bool bSave = false);
 
@@ -966,7 +966,7 @@ class CSoundEffectTool : public CEffectTabDlg
 
 		virtual void Add (void);
 		virtual void Copy (void);
-		virtual void Paste (CGameObject* pObject = null, bool bRefresh = true);
+		virtual void Paste (CGameObject* pObject = null, bool bRefresh = true, bool bVerbose = true);
 
 		virtual ubyte GetType (void) { return SOUND_ID; }
 		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (pObject, SOUND_ID, bVerbose ? "sound" : null); }
@@ -991,7 +991,7 @@ class CWayPointTool : public CEffectTabDlg
 
 		void Add (void);
 		void Copy (void);
-		void Paste (CGameObject* pObject = null, bool bRefresh = true);
+		void Paste (CGameObject* pObject = null, bool bRefresh = true, bool bVerbose = true);
 
 		virtual ubyte GetType (void) { return WAYPOINT_ID; }
 		virtual CGameObject* GetEffect (CGameObject* pObject = null, bool bVerbose = true) { return CEffectTabDlg::GetEffect (pObject, WAYPOINT_ID, bVerbose ? "waypoint" : null); }

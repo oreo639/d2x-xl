@@ -206,7 +206,7 @@ if (!Current ()->Valid ())
 else {
 	CGameObject *pObject = objectManager.Object (0);
 	for (int i = objectManager.Count (); i; i--, pObject++)
-		Current ()->Paste (pObject, false);
+		Current ()->Paste (pObject, false, false);
 	}
 Refresh ();
 }
