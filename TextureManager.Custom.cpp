@@ -184,7 +184,19 @@ if (pTexture->Format () == TGA && DLE.IsD2XLevel ()) {
 	}
 else {
 	ubyte* palIndex = pTexture->ToBitmap ();
-	fp.Write (palIndex, 1, pTexture->Size ());
+
+	// The row length of a bitmap when written to file must be a multiple of 4 bytes,
+	// but in memory it isn't always, so we need to do this line-by-line
+	ubyte* pRow = palIndex;
+	ubyte pad [4] = { 0 };
+	uint padLength = -(int)pTexture->Width () & 3;
+	for (uint i = pTexture->Height (); i; i--) {
+		fp.Write (pRow, 1, pTexture->Width ());
+		if (padLength > 0)
+			fp.Write (pad, 1, padLength);
+		pRow += pTexture->Width ();
+		}
+
 	delete [] palIndex;
 	}
 return 1;

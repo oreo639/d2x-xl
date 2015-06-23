@@ -31,9 +31,6 @@ class CPogDialog : public CDialog, private CDlgHelpers {
 		int	m_nTexPreviousFocused, m_nTexCurrentFocused;
 		int	m_iSavedSelectedItem;
 		char	m_szPreviousPigPath [256];
-		int	m_nFrame;
-		int	m_xScrollOffset [2];
-		int	m_yScrollOffset [2];
 
 		inline CListCtrl *TextureList (void) { return (CListCtrl *) GetDlgItem (IDC_POGMANAGER_LIST); }
 		inline CComboBox *PaletteList (void) { return (CComboBox *) GetDlgItem (IDC_POGMANAGER_PALETTE); }
@@ -57,10 +54,6 @@ class CPogDialog : public CDialog, private CDlgHelpers {
 		bool IsSingleTextureSelected (void);
 		typedef void (CPogDialog::*ExecuteOnSelectedTexturesCallback)(const CTexture *pTexture, va_list args);
 		bool ExecuteOnSelectedTextures (ExecuteOnSelectedTexturesCallback callback, ...);
-
-		bool ScrollTexture (short nTexId);
-		bool UpdateTextureClip (short nTexId);
-		bool AnimateTexture (short nTexId);
 
 		// Supports < 0 values to allow nulls
 		inline const CTexture *CPogDialog::GetTextureFromId (int nIndex) {
