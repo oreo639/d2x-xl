@@ -70,6 +70,8 @@ DDX_Text (pDX, IDC_PREFS_MOVERATE, appSettings.m_moveRate [0]);
 DDX_Text (pDX, IDC_PREFS_VIEW_MOVERATE, appSettings.m_moveRate [1]);
 DDX_Text (pDX, IDC_PREFS_UNDO, appSettings.m_nMaxUndo);
 DDX_Check (pDX, IDC_PREFS_BUMPOBJECTS, appSettings.m_bBumpObjects);
+if (pDX->m_bSaveAndValidate)
+	appSettings.Set ();
 }
 
 //------------------------------------------------------------------------------
