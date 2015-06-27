@@ -31,7 +31,7 @@ BOOL CFogTool::OnInitDialog ()
 if (!CDialog::OnInitDialog ())
 	return FALSE;
 for (int i = 0; i < NUM_FOG_TYPES; i++) {
-	m_fog [i].transpSlider.Init (this, IDC_WATER_FOG_TRANSP_SLIDER + i, IDC_WATER_FOG_TRANSP_SPINNER + i, -(IDC_WATER_FOG_TRANSP_TEXT + i), 1, 20, 1.0, 100.0 / 20.0, 1, "transp: %d%%");
+	m_fog [i].transpSlider.Init (this, IDC_WATER_FOG_TRANSP_SLIDER + i, IDC_WATER_FOG_TRANSP_SPINNER + i, -(IDC_WATER_FOG_TRANSP_TEXT + i), 1, 40, 1.0, 100.0 / 40.0, 1, "transp: %d%%");
 	CreateColorCtrl (&m_fog [i].colorWnd, IDC_WATER_FOG_COLOR + i);
 	}
 m_bInited = true;

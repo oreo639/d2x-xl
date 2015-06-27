@@ -160,7 +160,7 @@ else if (nType == 1) {
 	}
 else {
 	m_color.r = m_color.g = m_color.b = ubyte (255.0f * 0.7f);
-	m_density = nType ? 4 : 11;
+	m_density = (nType == 3) ? 4 : 11;
 	}
 }
 

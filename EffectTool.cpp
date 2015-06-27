@@ -232,6 +232,7 @@ if (nOld != nNew) {
 
 BEGIN_MESSAGE_MAP (CEffectTabDlg, CTabDlg)
 	ON_WM_SHOWWINDOW ()
+	ON_WM_ACTIVATE ()
 END_MESSAGE_MAP ()
 
 //------------------------------------------------------------------------
@@ -323,6 +324,17 @@ if (bShow)
 else
 	OnKillActive ();
 CWnd::OnShowWindow (bShow, nStatus);
+}
+
+//------------------------------------------------------------------------
+
+void CEffectTabDlg::OnActivate (UINT nState, CWnd* pWndOther, BOOL bMinimized)
+{
+if (nState == WA_INACTIVE)
+	OnKillActive ();
+else
+	OnSetActive ();
+CWnd::OnActivate (nState, pWndOther, bMinimized);
 }
 
 //------------------------------------------------------------------------

@@ -27,6 +27,38 @@ static char THIS_FILE[] = __FILE__;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+BEGIN_MESSAGE_MAP (CColorControl, CWnd)
+	ON_WM_ERASEBKGND ()
+	ON_WM_PAINT ()
+END_MESSAGE_MAP ()
+
+//------------------------------------------------------------------------------
+
+void CColorControl::OnPaint ()
+{
+if (GetSafeHwnd ()) {
+	CDC *pDC = GetDC ();
+	CRect rc;
+	GetClientRect (rc);
+	pDC->FillSolidRect (&rc, m_bkColor);
+	ReleaseDC (pDC);
+	}
+CWnd::OnPaint ();
+}
+
+//------------------------------------------------------------------------------
+
+void CColorControl::OnEraseBkGnd (CDC *pDC)
+{
+CRect rc;
+GetClientRect (rc);
+pDC->FillSolidRect (&rc, m_bkColor);
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 void CDlgHelpers::DDX_Double (CDataExchange * pDX, int nIDC, double& fVal, double min, double max, LPSTR pszFmt, LPSTR pszErrMsg)
 {
    HWND  hWndCtrl = pDX->PrepareEditCtrl (nIDC);
@@ -251,7 +283,7 @@ return TRUE;
 
 //------------------------------------------------------------------------------
 
-void CDlgHelpers::CreateColorCtrl (CWnd *pWnd, int nIdC)
+void CDlgHelpers::CreateColorCtrl (CColorControl *pWnd, int nIdC)
 {
 CWnd *pParentWnd = m_pParent->GetDlgItem (nIdC);
 CRect rc;
@@ -261,8 +293,11 @@ pWnd->Create (null, null, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 
 //------------------------------------------------------------------------------
 
-void CDlgHelpers::UpdateColorCtrl (CWnd *pWnd, COLORREF color)
+void CDlgHelpers::UpdateColorCtrl (CColorControl *pWnd, COLORREF color)
 {
+#if 1
+pWnd->SetColor (color);
+#else
 if (pWnd->GetSafeHwnd ()) {
 	CDC *pDC = pWnd->GetDC ();
 	CRect rc;
@@ -272,6 +307,7 @@ if (pWnd->GetSafeHwnd ()) {
 	pWnd->Invalidate ();
 	pWnd->UpdateWindow ();
 	}
+#endif
 }
 
 //------------------------------------------------------------------------------

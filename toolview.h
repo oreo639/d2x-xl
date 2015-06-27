@@ -58,6 +58,23 @@ class CExtBitmapButton : public CBitmapButton
 
 //------------------------------------------------------------------------------
 
+class CColorControl : public CWnd {
+	private:
+		COLORREF	m_bkColor;
+
+	public:
+		afx_msg void OnEraseBkGnd (CDC *pDC);
+		afx_msg void OnPaint ();
+
+		inline void SetColor (COLORREF bkColor) { m_bkColor = bkColor; }
+
+		CColorControl () : m_bkColor (RGB (128, 128, 128)) {}
+
+		DECLARE_MESSAGE_MAP ()
+	};
+
+//------------------------------------------------------------------------------
+
 class CDlgHelpers {
 	private:
 		CWnd*	m_pParent;
@@ -81,8 +98,8 @@ class CDlgHelpers {
 		void EnableControls (int nIdFirst, int nIdLast, BOOL bEnable);
 
 		BOOL SelectColor (BYTE& red, BYTE& green, BYTE& blue);
-		void CreateColorCtrl (CWnd *pWnd, int nIdC);
-		void UpdateColorCtrl (CWnd *pWnd, COLORREF color);
+		void CreateColorCtrl (CColorControl *pWnd, int nIdC);
+		void UpdateColorCtrl (CColorControl *pWnd, COLORREF color);
 
 		inline CWnd *Parent (void) { return m_pParent; }
 
@@ -821,7 +838,8 @@ class CEffectTabDlg : public CTabDlg {
 		BOOL OnSetActive ();
 		BOOL OnKillActive ();
 
-		void OnShowWindow (BOOL bShow, UINT nStatus);
+		afx_msg void OnShowWindow (BOOL bShow, UINT nStatus);
+		afx_msg void OnActivate (UINT nState, CWnd* pWndOther, BOOL bMinimized);
 
 		virtual void Add (void) {}
 		virtual void Delete (void) { DeleteEffect (); }
@@ -879,7 +897,7 @@ class CParticleEffectTool : public CEffectTabDlg
 	public:
 		CParticleInfo	m_particles;
 		CExtSliderCtrl	m_data [11];
-		CWnd m_colorWnd;
+		CColorControl	m_colorWnd;
 
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -915,7 +933,7 @@ class CLightningEffectTool : public CEffectTabDlg
 	public:
 		CLightningInfo	m_lightning;
 		CExtSliderCtrl	m_data [15];
-		CWnd m_colorWnd;
+		CColorControl	m_colorWnd;
 
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -1005,7 +1023,7 @@ class CWayPointTool : public CEffectTabDlg
 
 typedef struct tFogControls {
 	CExtSliderCtrl	transpSlider;
-	CWnd				colorWnd;
+	CColorControl	colorWnd;
 } tFogControls;
 
 class CFogTool : public CEffectTabDlg
@@ -1661,8 +1679,8 @@ class CTextureLightTool : public CTextureTabDlg
 		CBitmapButton		m_btnAddLight;
 		CBitmapButton		m_btnDelLight;
 		CExtSliderCtrl		m_lightTimerCtrl;
-		CWnd					m_lightWnd;
-		CWnd					m_colorWnd;
+		CColorControl		m_lightWnd;
+		CColorControl		m_colorWnd;
 		CPaletteWnd			m_paletteWnd;
 
 		UINT_PTR				m_nLightTimer;
