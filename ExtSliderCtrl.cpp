@@ -53,8 +53,8 @@ if (!(m_nPageSize = (m_nMax - m_nMin) / 10))
 if (m_bReverseSlider)
 	m_nPageSize = -m_nPageSize;
 if (m_nSlider) {
-	Slider ()->SetTicFreq (nTicFreq);
 	Slider ()->SetRange (m_nMin, m_nMax, TRUE);
+	Slider ()->SetTicFreq ((nTicFreq > 1) ? nTicFreq : MaxVal ((nMax - nMin + 1) / 10, 1));
 	Slider ()->SetPos (m_nMin);
 	}
 if (m_nSpinner) {
