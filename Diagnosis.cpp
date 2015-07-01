@@ -1470,7 +1470,7 @@ for (int i = 0, j = lightManager.Count (); i < j; i++) {
 	CVariableLight* pLight = lightManager.VariableLight (i);
 	CSide* pSide = segmentManager.Segment (pLight->m_nSegment)->Side (pLight->m_nSide);
 	if (!(lightManager.IsLight (pSide->BaseTex ()) || lightManager.IsLight (pSide->OvlTex (0)))) {
-		sprintf_s (message, sizeof (message), "%: Variable light doesn't refer to a light source (segment=%d, side=%d)", 
+		sprintf_s (message, sizeof (message), "%s: Variable light doesn't refer to a light source (segment=%d, side=%d)", 
 					  m_bAutoFixBugs ? "FIXED" : "ERROR", pLight->m_nSegment, pLight->m_nSide);
 		if (UpdateStats (message, m_bAutoFixBugs ? 1 : 0, pLight->m_nSegment, pLight->m_nSide)) return true;
 		if (m_bAutoFixBugs) {
