@@ -160,9 +160,9 @@ class CTextureManager {
 			return TextureByIndex (Index (nTexture), nVersionResolved);
 			}
 
-		inline bool HaveAnimationInfo (void) { return m_animationIndex [Version ()].Buffer () != null; }
+		inline bool HaveAnimationInfo (int nVersion = -1) { return m_animationIndex [Version (nVersion)].Buffer () != null; }
 
-		inline CAnimationClipInfo* AnimationIndex (short nTexture) { return HaveAnimationInfo () ? m_animationIndex [Version ()][nTexture] : null; }
+		inline CAnimationClipInfo* AnimationIndex (short nTexture, int nVersion = -1) { return HaveAnimationInfo () ? m_animationIndex [Version (nVersion)][nTexture] : null; }
 
 		inline int AnimationFrame (int nTexture) { 
 			nTexture = (nTexture < 0) ? -nTexture - 1 : Index (nTexture);
@@ -172,9 +172,9 @@ class CTextureManager {
 			return int (pClipInfo->Find (nTexture));
 			}
 
-		inline bool IsAnimationRoot (int nTexture) { 
+		inline bool IsAnimationRoot (int nTexture, int nVersion = -1) { 
 			nTexture = (nTexture < 0) ? -nTexture - 1 : Index (nTexture);
-			CAnimationClipInfo* pClipInfo = AnimationIndex (nTexture); 
+			CAnimationClipInfo* pClipInfo = AnimationIndex (nTexture, nVersion); 
 			return pClipInfo ? nTexture == pClipInfo->Frame (0) : false;
 			}
 
@@ -284,7 +284,7 @@ class CTextureManager {
 
 		inline bool HaveInfo (int nVersion) { return m_info [nVersion] != null; }
 		
-		int Version (void);
+		int Version (int nVersion = -1);
 		
 		inline char* Name (int nVersion, short nTexture) { 
 			if (nVersion < 0)

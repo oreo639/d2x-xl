@@ -562,7 +562,7 @@ class CTexture {
 		inline bool IsSuperTransparent (void) const { return m_info.bSuperTransparent; }
 
 
-		inline bool IsAnimated (void) const;
+		inline bool IsAnimated (int nVersion = -1) const;
 
 		inline bool MaybeAnimated (void) const { 
 			if (m_info.bAnimated)

@@ -294,9 +294,9 @@ for (int i = 0; i < 2; i++)
 
 //------------------------------------------------------------------------
 
-int CTextureManager::Version (void) 
+int CTextureManager::Version (int nVersion) 
 { 
-return DLE.IsD1File () ? 0 : 1; 
+return (nVersion > -1) ? nVersion : DLE.IsD1File () ? 0 : 1; 
 }
 
 //------------------------------------------------------------------------
@@ -722,7 +722,7 @@ m_animationClips [nVersion].Destroy ();
 for (int nType = 0; nType < 3; nType++)
 	LoadAnimationClips (m_animationClips [nVersion], fp, alf.GetAnimationLoader (nVersion, nType));
 
-m_animationIndex [nVersion].Create (GlobalTextureCount () + 1);
+m_animationIndex [nVersion].Create (GlobalTextureCount (nVersion) + 1);
 m_animationIndex [nVersion].Clear ();
 BuildAnimationIndex (nVersion);
 CreateMissingAnimationClips (nVersion);
@@ -803,7 +803,7 @@ for (int i = 0, j = m_header [nVersion].nTextures; i < j; i++)
 LoadAnimationData (nVersion);
 // Some textures (e.g. doors) don't have animation clip data in the HAM; we calculate frame counts for those here
 for (int i = 0; i < m_header [nVersion].nTextures; i++) {
-	if (textures [i].IsAnimated () && textures [i].GetCurrentFrame () == 0 && textures [i].GetFrameCount () == 1) {
+	if (textures [i].IsAnimated (nVersion) && textures [i].GetCurrentFrame () == 0 && textures [i].GetFrameCount () == 1) {
 		textures [i].CalculateFrameCount ();
 		}
 	}
