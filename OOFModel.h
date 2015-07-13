@@ -96,7 +96,7 @@ class CFace {
 		int					m_bTextured;
 		union {
 			int				nTexId;
-			rgbColor		color;
+			rgbColor			color;
 			} m_texProps;
 		CFaceVert*			m_vertices;
 		float					m_fBoundingLength;
@@ -317,11 +317,11 @@ class CSubModel {
 		int							m_nMovementType;
 		int							m_nMovementAxis;
 		int							m_nFSLists;
-		CDynamicArray<int>					m_fsLists;
+		CDynamicArray<int>		m_fsLists;
 		int							m_nVerts;
-		CDynamicArray<CFloatVector>		m_vertices;
-		CDynamicArray<CFloatVector>		m_rotVerts;
-		CDynamicArray<CFloatVector>		m_normals;
+		CDynamicArray<CFloatVector>	m_vertices;
+		CDynamicArray<CFloatVector>	m_rotVerts;
+		CDynamicArray<CFloatVector>	m_normals;
 		CDynamicArray<CFaceColor>		m_vertColors;
 		CDynamicArray<float>				m_pfAlpha;	// only present if version >= 2300
 		CFaceList					m_faces;

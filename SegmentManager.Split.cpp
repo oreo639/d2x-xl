@@ -634,8 +634,10 @@ if (pSide->VertexCount() < 2)
 if (nEdge < 0)
 	nEdge = current->Edge ();
 
-for (int i = 0; i < 2; i++) 
-	nEdgeVerts [i] = pSegment->m_info.vertexIds [nSegVerts [i] = pSide->m_vertexIdIndex [(nEdge + i) % pSide->VertexCount ()]]; 
+for (int i = 0; i < 2; i++) {
+	nSegVerts [i] = pSide->m_vertexIdIndex [(nEdge + i) % pSide->VertexCount ()];
+	nEdgeVerts [i] = pSegment->m_info.vertexIds [nSegVerts [i]]; 
+	}
 
 if (nSegVerts [0] == nSegVerts [1])
 	return false;
