@@ -138,6 +138,7 @@ int CFileManager::Exist (const char *filename)
 
 if (!fp)
 	return 0;
+fclose (fp);
 return 1;
 }
 
@@ -552,11 +553,13 @@ if (!Open (pszSrc, "rb")) {
 while (!EoF ()) {
 	int nRead = (int) Read (buffer, 1, COPY_BUF_SIZE);
 	if (Error ()) {
+		Close ();
 		cf.Close ();
 		return -2;
 	}
 	cf.Write (buffer, 1, nRead);
 	if (cf.Error ()) {
+		Close ();
 		cf.Close ();
 		return -2;
 		}
