@@ -329,7 +329,7 @@ class CTextureManager {
 
 		int CreatePog (CFileManager& fp);
 
-		int WriteCustomTexture (CFileManager& fp, const CTexture *pTexture);
+		int WriteCustomTexture (CFileManager& fp, const CTexture *pTexture, bool bUseBMPFileFormat = false);
 
 		void Setup (void);
 

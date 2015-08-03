@@ -160,7 +160,7 @@ return nOffset + ((pTexture->Format () == TGA) ? pTexture->Size () * sizeof (CBG
 
 //-----------------------------------------------------------------------------------
 
-int CTextureManager::WriteCustomTexture (CFileManager& fp, const CTexture *pTexture)
+int CTextureManager::WriteCustomTexture (CFileManager& fp, const CTexture *pTexture, bool bUseBMPFileFormat)
 {
 if (pTexture->Format () == TGA && DLE.IsD2XLevel ()) {
 	tRGBA rgba [16384];
@@ -185,16 +185,22 @@ if (pTexture->Format () == TGA && DLE.IsD2XLevel ()) {
 else {
 	ubyte* palIndex = pTexture->ToBitmap ();
 
-	// The row length of a bitmap when written to file must be a multiple of 4 bytes,
-	// but in memory it isn't always, so we need to do this line-by-line
-	ubyte* pRow = palIndex;
-	ubyte pad [4] = { 0 };
-	uint padLength = -(int)pTexture->Width () & 3;
-	for (uint i = pTexture->Height (); i; i--) {
-		fp.Write (pRow, 1, pTexture->Width ());
-		if (padLength > 0)
-			fp.Write (pad, 1, padLength);
-		pRow += pTexture->Width ();
+	if (bUseBMPFileFormat) {
+		// The row length of a bitmap when written to file must be a multiple of 4 bytes,
+		// but in memory it isn't always, so we need to do this line-by-line
+		ubyte* pRow = palIndex;
+		ubyte pad [4] = { 0 };
+		uint padLength = -(int)pTexture->Width () & 3;
+		for (uint i = pTexture->Height (); i; i--) {
+			fp.Write (pRow, 1, pTexture->Width ());
+			if (padLength > 0)
+				fp.Write (pad, 1, padLength);
+			pRow += pTexture->Width ();
+			}
+		}
+	else {
+		// Writing to POG etc - we can just write the unaligned blob in this case.
+		fp.Write (palIndex, 1, pTexture->Size ());
 		}
 
 	delete [] palIndex;

@@ -1199,7 +1199,7 @@ fp.Write (&bmi->bmiHeader, sizeof (BITMAPINFOHEADER), 1);
 fp.Write (bmi->bmiColors, sizeof (RGBQUAD), 256);
 
 // save bitmap data
-textureManager.WriteCustomTexture (fp, this);
+textureManager.WriteCustomTexture (fp, this, true);
 
 return true;
 }

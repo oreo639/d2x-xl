@@ -745,7 +745,10 @@ switch (pTexture->Format ()) {
 	default:
 		break;
 	}
-sprintf_s (szFile, ARRAYSIZE (szFile), "%s\\%s.%s", szPath, pTexture->Name (), szExt);
+if (pTexture->GetCurrentFrame () > 0)
+	sprintf_s (szFile, ARRAYSIZE (szFile), "%s\\%s_%02d.%s", szPath, pTexture->Name (), pTexture->GetCurrentFrame (), szExt);
+else
+	sprintf_s (szFile, ARRAYSIZE (szFile), "%s\\%s.%s", szPath, pTexture->Name (), szExt);
 pTexture->Save (szFile);
 }
 
