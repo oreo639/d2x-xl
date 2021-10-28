@@ -5,17 +5,17 @@
 
 //-----------------------------------------------------------------------------
 
-template < class _T > 
+template < class DATA_T > 
 class CQuickSort {
 	public:
-		typedef int32_t (*comparator) (const _T*, const _T*);
+		typedef int32_t (*comparator) (const DATA_T*, const DATA_T*);
 
-		void SortAscending (_T* buffer, int32_t left, int32_t right);
-		void SortDescending (_T* buffer, int32_t left, int32_t right);
-		void SortAscending (_T* buffer, int32_t left, int32_t right, comparator compare);
-		void SortDescending (_T* buffer, int32_t left, int32_t right, comparator compare);
-		inline void Swap (_T* left, _T* right);
-		int32_t BinSearch (_T* buffer, int32_t l, int32_t r, _T key);
+		void SortAscending (DATA_T* buffer, int32_t left, int32_t right);
+		void SortDescending (DATA_T* buffer, int32_t left, int32_t right);
+		void SortAscending (DATA_T* buffer, int32_t left, int32_t right, comparator compare);
+		void SortDescending (DATA_T* buffer, int32_t left, int32_t right, comparator compare);
+		inline void Swap (DATA_T* left, DATA_T* right);
+		int32_t BinSearch (DATA_T* buffer, int32_t l, int32_t r, DATA_T key);
 	};
 
 //-----------------------------------------------------------------------------

@@ -28,46 +28,44 @@ void ArrayError (const char* pszMsg);
 
 //-----------------------------------------------------------------------------
 
-template < class _T > 
-class CArray : public CQuickSort < _T > {
+template < class DATA_T > 
+class CArray : public CQuickSort < DATA_T > {
 
-	template < class _U > 
 	class CArrayData {
 		public:
-			char			szName [256];
-			_U	*			buffer;
-			_U				null;
-			uint32_t		length;
-			uint32_t		pos;
+			char		szName [256];
+			DATA_T	*	buffer;
+			DATA_T		none;
+			uint32_t	length;
+			uint32_t	pos;
 			int32_t		nMode;
-			bool			bWrap;
+			bool		bWrap;
 
 		public:
 			inline uint32_t Length (void) { return length; }
 		};
 
 	protected:
-		CArrayData<_T>	m_data;
+		CArrayData		m_data;
 
 	public:
-		template < class _V >
 		class Iterator {
 			private:
-				_V*			m_start;
-				_V*			m_end;
-				_V*			m_p;
-				CArray<_V>&	m_a;
+				DATA_T*			m_start;
+				DATA_T*			m_end;
+				DATA_T*			m_p;
+				CArray<DATA_T>&	m_a;
 			public:
-				Iterator () : m_start (NULL), m_end (NULL), m_p (NULL) {}
-				Iterator (CArray<_V>& a) : m_start (NULL), m_end (NULL), m_p (NULL), m_a (a) {}
-				operator bool() const { return m_p != NULL; }
-				_V* operator*() const { return m_p; }
+				Iterator () : m_start (nullptr), m_end (nullptr), m_p (nullptr) {}
+				Iterator (CArray<DATA_T>& a) : m_start (nullptr), m_end (nullptr), m_p (nullptr), m_a (a) {}
+				operator bool() const { return m_p != nullptr; }
+				DATA_T* operator*() const { return m_p; }
 				Iterator& operator++() { 
 					if (m_p) {
 						if (m_p < m_end)
 							m_p++;
 						else
-							m_p = NULL;
+							m_p = nullptr;
 						}
 					return *this;
 					}
@@ -76,15 +74,15 @@ class CArray : public CQuickSort < _T > {
 						if (m_p > m_end)
 							m_p--;
 						else
-							m_p = NULL;
+							m_p = nullptr;
 						}
 					return *this;
 					}
-				_V* Start (void) {
+				DATA_T* Start (void) {
 					m_p = m_start = m_a.Start (); m_end = m_a.End ();
 					return m_p;
 					}
-				_V* End (void) {
+				DATA_T* End (void) {
 					m_p = m_start = m_a.End (); m_end = m_a.Start ();
 					return m_p;
 					}
@@ -92,37 +90,41 @@ class CArray : public CQuickSort < _T > {
 
 		// ----------------------------------------
 
-		explicit CArray<_T> () { 
+		explicit CArray () { 
 			Init (); 
 			}
 		
-		explicit CArray<_T> (const uint32_t nLength) { 
+		explicit CArray (const uint32_t nLength) { 
 			Init (); 
 			Create (nLength);
 			}
 		
-		explicit CArray<_T> (const CArray& other) { 
+		CArray (CArray&& other) {
+			Move (other);
+		}
+
+		CArray(CArray const& other) {
 			Init (); 
 			Copy (other);
 			}
 		
-		~CArray<_T>() { Destroy (); }
+		~CArray() { Destroy (); }
 		
 		// ----------------------------------------
 
-		void Init (void) { 
+		void Init (void) noexcept { 
 			*m_data.szName = 0;
-			m_data.buffer = reinterpret_cast<_T *> (NULL); 
+			m_data.buffer = nullptr; 
 			m_data.length = 0;
 			m_data.pos = 0;
 			m_data.nMode = 0;
 			m_data.bWrap = false;
-			memset (&m_data.null, 0, sizeof (m_data.null));
+			memset (&m_data.none, 0, uint32_t (sizeof(m_data.none)));
 			}
 
 		// ----------------------------------------
 
-		void Clear (uint8_t filler = 0, uint32_t count = 0xffffffff) { 
+		void Clear (uint8_t filler = 0, uint32_t count = 0xffffffff) noexcept {
 #if DBG_ARRAYS
 			if ((count != 0xffffffff) && (count > 1000000)) {
 				count = count;
@@ -134,21 +136,21 @@ class CArray : public CQuickSort < _T > {
 				}
 #endif
 			if (m_data.buffer) 
-				memset (m_data.buffer, filler, sizeof (_T) * ((count < m_data.length) ? count : m_data.length)); 
+				memset (m_data.buffer, filler, sizeof (DATA_T) * ((count < m_data.length) ? count : m_data.length)); 
 			}
 
 		// ----------------------------------------
 
-		inline bool IsIndex (uint32_t i) { return (m_data.buffer != NULL) && (i < m_data.length); }
+		inline bool IsIndex (uint32_t i) { return (m_data.buffer != nullptr) && (i < m_data.length); }
 		
 		// ----------------------------------------
 
-		inline bool IsElement (_T* elem, bool bDiligent = false) {
+		inline bool IsElement (DATA_T* elem, bool bDiligent = false) {
 			if (!m_data.buffer || (elem < m_data.buffer) || (elem >= m_data.buffer + m_data.length))
 				return false;	// no buffer or element out of buffer
 			if (bDiligent) {
 				uint32_t i = static_cast<uint32_t> (reinterpret_cast<uint8_t*> (elem) - reinterpret_cast<uint8_t*> (m_data.buffer));
-				if (i % sizeof (_T))	
+				if (i % sizeof (DATA_T))	
 					return false;	// elem in the buffer, but not properly aligned
 				}
 			return true;
@@ -157,39 +159,39 @@ class CArray : public CQuickSort < _T > {
 		// ----------------------------------------
 
 #if DBG_ARRAYS
-		inline int32_t Index (_T* elem) { 
+		inline int32_t Index (DATA_T* elem) { 
 			if (IsElement (elem))
 				return static_cast<int32_t> (elem - m_data.buffer); 
 			ArrayError ("invalid array index\n");
 			return -1;
 			}
 #else
-		inline uint32_t Index (_T* elem) { return uint32_t (elem - m_data.buffer); }
+		inline uint32_t Index (DATA_T* elem) noexcept { return uint32_t (elem - m_data.buffer); }
 #endif
 
 		// ----------------------------------------
 
 #if DBG_ARRAYS
-		inline _T* Pointer (uint32_t i) { 
+		inline DATA_T* Pointer (uint32_t i) { 
 			if (!m_data.buffer || (i >= m_data.length)) {
 				ArrayError ("invalid array handle or index\n");
-				return NULL;
+				return nullptr;
 				}
 			return m_data.buffer + i; 
 			}
 #else
-		inline _T* Pointer (uint32_t i) { return m_data.buffer + i; }
+		inline DATA_T* Pointer (uint32_t i) { return m_data.buffer + i; }
 #endif
 
 		// ----------------------------------------
 
-		inline void SetName (const char* pszName) { 
+		inline void SetName (const char* pszName) noexcept {
 #if DBG_ARRAYS
 			if (strlen (pszName) > 255)
 				ArrayError ("invalid array name\n");
 #endif
 			strncpy (m_data.szName, pszName, 256); 
-			m_data.szName [sizeof (m_data.szName) - 1] = '\0';
+			m_data.szName [(uint32_t) sizeof(m_data.szName) - 1] = '\0';
 			}
 
 		// ----------------------------------------
@@ -198,7 +200,7 @@ class CArray : public CQuickSort < _T > {
 
 		// ----------------------------------------
 
-		void Destroy (void) { 
+		void Destroy (void) noexcept {
 			if (m_data.buffer) {
 				if (!m_data.nMode) {
 #if DBG_MALLOC
@@ -217,7 +219,7 @@ class CArray : public CQuickSort < _T > {
 					TrackMemory (b);
 #endif
 #if DBG_ARRAYS
-					m_data.buffer = reinterpret_cast<_T *> (NULL); 
+					m_data.buffer = reinterpret_cast<DATA_T *> (nullptr); 
 #endif
 					}
 				Init ();
@@ -226,7 +228,7 @@ class CArray : public CQuickSort < _T > {
 			
 		// ----------------------------------------
 
-		_T *Create (uint32_t length, const char* pszName = NULL) {
+		DATA_T *Create (uint32_t length, const char* pszName = nullptr) {
 			if (pszName)
 				SetName (pszName);
 			if (m_data.length != length) {
@@ -235,18 +237,18 @@ class CArray : public CQuickSort < _T > {
 				bool b = TrackMemory (false);
 #endif
 				try {
-					if ((m_data.buffer = NEW _T [length]))
+					if ((m_data.buffer = NEW DATA_T [length]))
 						m_data.length = length;
 					}
 				catch(...) {
 #if DBG_ARRAYS
 					ArrayError ("invalid buffer size\n");
 #endif
-					m_data.buffer = NULL;
+					m_data.buffer = nullptr;
 					}
 #if DBG_MALLOC
 				TrackMemory (b);
-				RegisterMemBlock (m_data.buffer, length * sizeof (_T), m_data.szName, 0);
+				RegisterMemBlock (m_data.buffer, length * sizeof (DATA_T), m_data.szName, 0);
 #endif
 				}
 			return m_data.buffer;
@@ -254,11 +256,11 @@ class CArray : public CQuickSort < _T > {
 			
 		// ----------------------------------------
 
-		inline _T* Buffer (uint32_t i = 0) const { return m_data.buffer + i; }
+		inline DATA_T* Buffer (uint32_t i = 0) const { return m_data.buffer + i; }
 		
 		// ----------------------------------------
 
-		void SetBuffer (_T *buffer, int32_t nMode = 0, uint32_t length = 0xffffffff) {
+		void SetBuffer (DATA_T *buffer, int32_t nMode = 0, uint32_t length = 0xffffffff) {
 			if (m_data.buffer != buffer) {
 				if (!(m_data.buffer = buffer))
 					Init ();
@@ -271,23 +273,23 @@ class CArray : public CQuickSort < _T > {
 			
 		// ----------------------------------------
 
-		_T* Resize (uint32_t length, bool bCopy = true) {
+		DATA_T* Resize (uint32_t length, bool bCopy = true) {
 			if (m_data.nMode == 2)
 				return m_data.buffer;
 			if (!m_data.buffer)
 				return Create (length);
-			_T* p;
+			DATA_T* p;
 #if DBG_MALLOC
 			bool b = TrackMemory (false);
 #endif
 			try {
-				p = NEW _T [length];
+				p = NEW DATA_T [length];
 				}
 			catch(...) {
 #if DBG_ARRAYS
 				ArrayError ("invalid buffer size\n");
 #endif
-				p = NULL;
+				p = nullptr;
 				}
 			if (!p) {
 #if DBG_MALLOC
@@ -297,10 +299,10 @@ class CArray : public CQuickSort < _T > {
 				}
 #if DBG_MALLOC
 				TrackMemory (true);
-				RegisterMemBlock (p, length * sizeof (_T), m_data.szName, 0);
+				RegisterMemBlock (p, length * sizeof (DATA_T), m_data.szName, 0);
 #endif
 			if (bCopy) {
-				memcpy (p, m_data.buffer, ((length > m_data.length) ? m_data.length : length) * sizeof (_T)); 
+				memcpy (p, m_data.buffer, ((length > m_data.length) ? m_data.length : length) * sizeof (DATA_T)); 
 				Clear (); // hack to avoid d'tors
 				}
 			m_data.length = length;
@@ -326,77 +328,122 @@ class CArray : public CQuickSort < _T > {
 
 		// ----------------------------------------
 
-		inline uint32_t Length (void) { return m_data.length; }
+		inline uint32_t Length (void) const { return m_data.length; }
 
 		// ----------------------------------------
 
-		inline _T* Current (void) { return m_data.buffer ? m_data.buffer + m_data.pos : NULL; }
+		inline DATA_T* Current (void) { return m_data.buffer ? m_data.buffer + m_data.pos : nullptr; }
 
 		// ----------------------------------------
 
-		inline size_t Size (void) { return m_data.length * sizeof (_T); }
+		inline uint32_t Size (void) { return m_data.length * sizeof (DATA_T); }
 #if DBG_ARRAYS
-		inline _T& operator[] (uint32_t i) { 
+		inline DATA_T& operator[] (uint32_t i) { 
 			if (m_data.buffer && (i < m_data.length))
 				return m_data.buffer [i];
 			if (i == m_data.length)
-				return m_data.null; 
+				return m_data.none; 
 			else {
 				ArrayError ("invalid array handle or index\n");
-				return m_data.null; 
+				return m_data.none; 
 				}
 			}
 #else
-		inline _T& operator[] (const uint32_t i) { return m_data.buffer [i]; }
+		inline DATA_T& operator[] (const uint32_t i) { return m_data.buffer [i]; }
 #endif
 
 		// ----------------------------------------
 
-		inline _T& operator* () const { return m_data.buffer; }
+		inline DATA_T& operator* () const { return m_data.buffer; }
 
 		// ----------------------------------------
 
-		inline _T& operator= (CArray<_T>& source) { return Copy (source); }
+		//inline DATA_T& operator= (CArray<DATA_T> const& source) { return _Copy (source); }
 
 		// ----------------------------------------
 
-		inline _T& operator= (_T* source) { 
+		inline CArray<DATA_T>& operator= (CArray<DATA_T> const& source) { return Copy (source); }
+
+		// ----------------------------------------
+
+		inline CArray<DATA_T> operator= (CArray<DATA_T>&& source) { return Move (source); }
+
+		// ----------------------------------------
+
+		inline DATA_T& operator= (DATA_T* source) {
 #if DBG_ARRAYS
 			if (!m_data.buffer) 
-				return m_data.null;
+				return m_data.none;
 #endif
-			memcpy (m_data.buffer, source, m_data.length * sizeof (_T)); 
+			memcpy (m_data.buffer, source, m_data.length * sizeof (DATA_T)); 
 			return m_data.buffer [0];
 			}
 
 		// ----------------------------------------
-
-		_T& Copy (CArray<_T> const & source, uint32_t offset = 0) { 
-#if DBG_ARRAYS
+#if 0
+		DATA_T& Copy (CArray const& source, uint32_t offset = 0) { 
+#	if DBG_ARRAYS
 			if (!source.m_data.buffer) 
-				return m_data.null;
-#endif
+				return m_data.none;
+#	endif
 			if (((static_cast<int32_t> (m_data.length)) >= 0) && (static_cast<int32_t> (source.m_data.length) > 0)) {
 				if (!*GetName ())
 					SetName (source.m_data.szName);
 				if ((m_data.buffer && (m_data.length >= source.m_data.length + offset)) || Resize (source.m_data.length + offset, false)) {
-					memcpy (m_data.buffer + offset, source.m_data.buffer, ((m_data.length - offset < source.m_data.length) ? m_data.length - offset : source.m_data.length) * sizeof (_T)); 
+					memcpy (m_data.buffer + offset, source.m_data.buffer, ((m_data.length - offset < source.m_data.length) ? m_data.length - offset : source.m_data.length) * sizeof (DATA_T)); 
 					}
 				}
 			return m_data.buffer [0];
 			}
+#endif
+		// ----------------------------------------
+
+		inline CArray& Copy (CArray const& source, uint32_t offset = 0) {
+#if DBG_ARRAYS
+			if (!source.Buffer())
+				return m_data.none;
+#endif
+			if (source.Length () > 0) {
+				if (!*GetName ())
+					SetName (source.m_data.szName);
+				_Copy (source.Buffer (), source.Length (), offset);
+			}
+			return *this;
+		}
 
 		// ----------------------------------------
 
-		inline _T operator+ (CArray<_T>& source) { 
-			CArray<_T> a (*this);
+		DATA_T& _Copy (DATA_T const* source, uint32_t const length, uint32_t offset = 0) {
+			if ((m_data.buffer && (m_data.length >= length + offset)) || Resize (length + offset, false))
+				memcpy (m_data.buffer + offset, source, ((m_data.length - offset < length) ? m_data.length - offset : length) * sizeof (DATA_T));
+			return m_data.buffer [0];
+		}
+
+		// ----------------------------------------
+
+		CArray<DATA_T>& Move (CArray<DATA_T>& source) {
+			Destroy ();
+			m_data.buffer = source.m_data.buffer;
+			m_data.length = source.m_data.length;
+			m_data.pos = source.m_data.pos;
+			m_data.mode = source.m_data.mode;
+			m_data.wrap = source.m_data.wrap;
+			source.m_data.buffer = nullptr;
+			source.Destroy ();
+			return *this;
+		}
+
+		// ----------------------------------------
+
+		inline DATA_T operator+ (CArray<DATA_T>& source) { 
+			CArray<DATA_T> a (*this);
 			a += source;
 			return a;
 			}
 
 		// ----------------------------------------
 
-		inline _T& operator+= (CArray<_T>& source) { 
+		inline DATA_T& operator+= (CArray<DATA_T>& source) { 
 			uint32_t offset = m_data.length;
 			if (m_data.buffer) 
 				Resize (m_data.length + source.m_data.length);
@@ -405,49 +452,49 @@ class CArray : public CQuickSort < _T > {
 
 		// ----------------------------------------
 
-		inline bool operator== (CArray<_T>& other) { 
+		inline bool operator== (CArray<DATA_T>& other) { 
 			return (m_data.length == other.m_data.length) && !(m_data.length && memcmp (m_data.buffer, other.m_data.buffer)); 
 			}
 
 		// ----------------------------------------
 
-		inline bool operator!= (CArray<_T>& other) { 
+		inline bool operator!= (CArray<DATA_T>& other) { 
 			return (m_data.length != other.m_data.length) || (m_data.length && memcmp (m_data.buffer, other.m_data.buffer)); 
 			}
 
 		// ----------------------------------------
 
-		inline _T* Start (void) { return m_data.buffer; }
+		inline DATA_T* Start (void) { return m_data.buffer; }
 
 		// ----------------------------------------
 
-		inline _T* End (void) { return (m_data.buffer && m_data.length) ? m_data.buffer + m_data.length - 1 : NULL; }
+		inline DATA_T* End (void) { return (m_data.buffer && m_data.length) ? m_data.buffer + m_data.length - 1 : nullptr; }
 
 		// ----------------------------------------
 
-		inline _T* operator++ (void) { 
+		inline DATA_T* operator++ (void) { 
 			if (!m_data.buffer)
-				return NULL;
+				return nullptr;
 			if (m_data.pos < m_data.length - 1)
 				m_data.pos++;
 			else if (m_data.bWrap) 
 				m_data.pos = 0;
 			else
-				return NULL;
+				return nullptr;
 			return m_data.buffer + m_data.pos;
 			}
 
 		// ----------------------------------------
 
-		inline _T* operator-- (void) { 
+		inline DATA_T* operator-- (void) { 
 			if (!m_data.buffer)
-				return NULL;
+				return nullptr;
 			if (m_data.pos > 0)
 				m_data.pos--;
 			else if (m_data.bWrap)
 				m_data.pos = m_data.length - 1;
 			else
-				return NULL;
+				return nullptr;
 			return m_data.buffer + m_data.pos;
 			}
 
@@ -455,31 +502,31 @@ class CArray : public CQuickSort < _T > {
 
 		// ----------------------------------------
 
-		inline _T* operator+ (uint32_t i) { 
+		inline DATA_T* operator+ (uint32_t i) { 
 			if (m_data.buffer && (i < m_data.length))
 				return m_data.buffer + i;
 			if (i == m_data.length)
-				return NULL;
+				return nullptr;
 			else {
 				ArrayError ("invalid array handle or index\n");
-				return  NULL; 
+				return  nullptr; 
 				}
 			}
 
 #else
 
-		inline _T* operator+ (uint32_t i) { return m_data.buffer ? m_data.buffer + i : NULL; }
+		inline DATA_T* operator+ (uint32_t i) { return m_data.buffer ? m_data.buffer + i : nullptr; }
 
 #endif
 
 		// ----------------------------------------
 
-		inline _T* operator- (uint32_t i) { return m_data.buffer ? m_data.buffer - i : NULL; }
+		inline DATA_T* operator- (uint32_t i) { return m_data.buffer ? m_data.buffer - i : nullptr; }
 
 		// ----------------------------------------
 
-		CArray<_T>& ShareBuffer (CArray<_T>& child) {
-			memcpy (&child.m_data, &m_data, sizeof (m_data));
+		CArray<DATA_T>& ShareBuffer (CArray<DATA_T>& child) {
+			memcpy (&child.m_data, &m_data, sizeof(m_data));
 			if (!child.m_data.nMode)
 				child.m_data.nMode = 1;
 			return child;
@@ -487,7 +534,7 @@ class CArray : public CQuickSort < _T > {
 
 		// ----------------------------------------
 
-		inline bool operator! () { return m_data.buffer == NULL; }
+		inline bool operator! () { return m_data.buffer == nullptr; }
 
 		// ----------------------------------------
 
@@ -508,7 +555,7 @@ class CArray : public CQuickSort < _T > {
 				nCount = m_data.length - nOffset;
 			else if (nCount > m_data.length - nOffset)
 				nCount = m_data.length - nOffset;
-			return cf.Read (m_data.buffer + nOffset, sizeof (_T), nCount, bCompressed);
+			return cf.Read (m_data.buffer + nOffset, sizeof (DATA_T), nCount, bCompressed);
 			}
 
 		// ----------------------------------------
@@ -522,7 +569,7 @@ class CArray : public CQuickSort < _T > {
 				nCount = m_data.length - nOffset;
 			else if (nCount > m_data.length - nOffset)
 				nCount = m_data.length - nOffset;
-			return cf.Write (m_data.buffer + nOffset, sizeof (_T), nCount, bCompressed);
+			return cf.Write (m_data.buffer + nOffset, sizeof (DATA_T), nCount, bCompressed);
 			}
 
 		// ----------------------------------------
@@ -533,14 +580,14 @@ class CArray : public CQuickSort < _T > {
 
 		inline void SortAscending (int32_t left = 0, int32_t right = -1) { 
 			if (m_data.buffer) 
-				CQuickSort<_T>::SortAscending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1); 
+				CQuickSort<DATA_T>::SortAscending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1); 
 				}
 
 		// ----------------------------------------
 
 		inline void SortDescending (int32_t left = 0, int32_t right = -1) {
 			if (m_data.buffer) 
-				CQuickSort<_T>::SortDescending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1);
+				CQuickSort<DATA_T>::SortDescending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1);
 			}
 
 		// ----------------------------------------
@@ -548,32 +595,32 @@ class CArray : public CQuickSort < _T > {
 #ifdef _WIN32
 		inline void SortAscending (comparator compare, int32_t left = 0, int32_t right = -1) {
 			if (m_data.buffer) 
-				CQuickSort<_T>::SortAscending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1, compare);
+				CQuickSort<DATA_T>::SortAscending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1, compare);
 			}
 
 		// ----------------------------------------
 
 		inline void SortDescending (comparator compare, int32_t left = 0, int32_t right = -1) {
 			if (m_data.buffer) 
-				CQuickSort<_T>::SortDescending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1, compare);
+				CQuickSort<DATA_T>::SortDescending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1, compare);
 			}
 #endif
 
 		// ----------------------------------------
 
-		inline int32_t BinSearch (_T key, int32_t left = 0, int32_t right = -1) {
-			return m_data.buffer ? CQuickSort<_T>::BinSearch (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1, key) : -1;
+		inline int32_t BinSearch (DATA_T key, int32_t left = 0, int32_t right = -1) {
+			return m_data.buffer ? CQuickSort<DATA_T>::BinSearch (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1, key) : -1;
 			}
 	};
 
 //-----------------------------------------------------------------------------
 
-inline int32_t operator- (char* v, CArray<char>& a) { return a.Index (v); }
-inline int32_t operator- (uint8_t* v, CArray<uint8_t>& a) { return a.Index (v); }
-inline int32_t operator- (int16_t* v, CArray<int16_t>& a) { return a.Index (v); }
-inline int32_t operator- (uint16_t* v, CArray<uint16_t>& a) { return a.Index (v); }
-inline int32_t operator- (int32_t* v, CArray<int32_t>& a) { return a.Index (v); }
-inline int32_t operator- (uint32_t* v, CArray<uint32_t>& a) { return a.Index (v); }
+inline int32_t operator- (char* v, CArray<char>& a) noexcept { return a.Index (v); }
+inline int32_t operator- (uint8_t* v, CArray<uint8_t>& a) noexcept { return a.Index (v); }
+inline int32_t operator- (int16_t* v, CArray<int16_t>& a) noexcept { return a.Index (v); }
+inline int32_t operator- (uint16_t* v, CArray<uint16_t>& a) noexcept { return a.Index (v); }
+inline int32_t operator- (int32_t* v, CArray<int32_t>& a) noexcept { return a.Index (v); }
+inline int32_t operator- (uint32_t* v, CArray<uint32_t>& a) noexcept { return a.Index (v); }
 
 //-----------------------------------------------------------------------------
 
@@ -582,7 +629,7 @@ class CCharArray : public CArray<char> {
 		inline char* operator= (const char* source) { 
 			uint32_t l = uint32_t (strlen (source) + 1);
 			if ((l > this->m_data.length) && !this->Resize (this->m_data.length + l))
-				return NULL;
+				return nullptr;
 			memcpy (this->m_data.buffer, source, l);
 			return this->m_data.buffer;
 		}
@@ -599,22 +646,22 @@ class CFloatArray : public CArray<float> {};
 
 //-----------------------------------------------------------------------------
 
-template < class _T, uint32_t length > 
-class CStaticArray : public CArray < _T > {
+template < class DATA_T, uint32_t length > 
+class CStaticArray : public CArray < DATA_T > {
 
-	template < class _U, uint32_t _length > 
+	template < class DATA_T, uint32_t _length > 
 	class CStaticArrayData {
 		public:
-			_U		buffer [_length];
+			DATA_T		buffer [_length];
 			};
 
 	protected:
-		CStaticArrayData< _T, length > m_data;
+		CStaticArrayData< DATA_T, length > m_data;
 
 	public:
 		CStaticArray () { Create (length); }
 
-		_T *Create (uint32_t _length) { 
+		DATA_T *Create (uint32_t _length) { 
 			this->SetBuffer (m_data.buffer, 2, _length); 
 			return m_data.buffer;
 			}

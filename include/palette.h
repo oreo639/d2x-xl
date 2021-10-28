@@ -19,7 +19,7 @@ COPYRIGHT 1993-1998 PARALLAX SOFTWARE CORPORATION.  ALL RIGHTS RESERVED.
 
 #include "cstack.h"
 #include "color.h"
-//#include "cfile.h"
+#include "cfile.h"
 
 #define PALETTE_SIZE				256
 #define MAX_COMPUTED_COLORS	64

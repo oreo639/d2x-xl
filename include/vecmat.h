@@ -1475,14 +1475,14 @@ cbch = FixMul (cosb, cosh);
 cbsh = FixMul (cosb, sinh);
 sbch = FixMul (sinb, cosh);
 m.m.dir.r.v.coord.x = cbch + FixMul (sinp, sbsh);		//m1
-m.m.dir.u.v.coord.z = sbsh + FixMul (sinp, cbch);		//m8
+m.m.dir.r.v.coord.y = FixMul(sinb, cosp);			//m4
+m.m.dir.r.v.coord.z = FixMul(sinp, sbch) - cbsh;		//m7
 m.m.dir.u.v.coord.x = FixMul (sinp, cbsh) - sbch;		//m2
-m.m.dir.r.v.coord.z = FixMul (sinp, sbch) - cbsh;		//m7
+m.m.dir.u.v.coord.y = FixMul(cosb, cosp);			//m5
+m.m.dir.u.v.coord.z = sbsh + FixMul(sinp, cbch);		//m8
 m.m.dir.f.v.coord.x = FixMul (sinh, cosp);			//m3
-m.m.dir.r.v.coord.y = FixMul (sinb, cosp);			//m4
-m.m.dir.u.v.coord.y = FixMul (cosb, cosp);			//m5
-m.m.dir.f.v.coord.z = FixMul (cosh, cosp);			//m9
 m.m.dir.f.v.coord.y = -sinp;							//m6
+m.m.dir.f.v.coord.z = FixMul (cosh, cosp);			//m9
 return m;
 }
 

@@ -10,9 +10,6 @@
 #include "visibility.h"
 #include "trackobject.h"
 
-#define	OMEGA_MIN_TRACKABLE_DOT			 (I2X (15) / 16)		//	Larger values mean narrower cone.  I2X (1) means damn near impossible.  0 means 180 degree field of view.
-#define	OMEGA_MAX_TRACKABLE_DIST		MAX_OMEGA_DIST	//	An CObject must be at least this close to be tracked.
-
 #define NEW_TARGETTING 1
 
 //	-----------------------------------------------------------------------------
@@ -194,8 +191,8 @@ int32_t CObject::MaxTrackableDist (int32_t& xBestDot)
 ENTER (0, 0);
 if (Type () == OBJ_WEAPON) {
 	if (Id () == OMEGA_ID) {
-		xBestDot = OMEGA_MIN_TRACKABLE_DOT;
-		RETVAL (OMEGA_MAX_TRACKABLE_DIST)
+		xBestDot = gameData.OmegaMinTrackableDot ();
+		RETVAL (gameData.OmegaMaxTrackableRange ())
 		}
 	if ((Id () == EARTHSHAKER_MEGA_ID) && EGI_FLAG (bEnhancedShakers, 0, 0, 0)) {
 		xBestDot = I2X (1) / 4;

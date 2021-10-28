@@ -2,22 +2,22 @@
 
 //-----------------------------------------------------------------------------
 
-template <typename _T>
-inline void CQuickSort< _T >::Swap (_T* left, _T* right)
+template <typename DATA_T>
+inline void CQuickSort< DATA_T >::Swap (DATA_T* left, DATA_T* right)
 {
-_T h = *left;
+DATA_T h = *left;
 *left = *right;
 *right = h;
 }
 
 //-----------------------------------------------------------------------------
 
-template <typename _T>
-void CQuickSort< _T >::SortAscending (_T* buffer, int32_t left, int32_t right) 
+template <typename DATA_T>
+void CQuickSort< DATA_T >::SortAscending (DATA_T* buffer, int32_t left, int32_t right) 
 {
 	int32_t	l = left,
 				r = right;
-	_T			median = buffer [(l + r) / 2];
+	DATA_T			median = buffer [(l + r) / 2];
 
 do {
 	while (buffer [l] < median)
@@ -39,12 +39,12 @@ if (left < r)
 
 //-----------------------------------------------------------------------------
 
-template <typename _T>
-void CQuickSort< _T >::SortDescending (_T* buffer, int32_t left, int32_t right) 
+template <typename DATA_T>
+void CQuickSort< DATA_T >::SortDescending (DATA_T* buffer, int32_t left, int32_t right) 
 {
 	int32_t	l = left,
 				r = right;
-	_T			median = buffer [(l + r) / 2];
+	DATA_T		median = buffer [(l + r) / 2];
 
 do {
 	while (buffer [l] > median)
@@ -66,12 +66,12 @@ if (left < r)
 
 //-----------------------------------------------------------------------------
 
-template <typename _T>
-void CQuickSort< _T >::SortAscending (_T* buffer, int32_t left, int32_t right, comparator compare) 
+template <typename DATA_T>
+void CQuickSort< DATA_T >::SortAscending (DATA_T* buffer, int32_t left, int32_t right, comparator compare) 
 {
 	int32_t	l = left,
 				r = right;
-	_T			median = buffer [(l + r) / 2];
+	DATA_T			median = buffer [(l + r) / 2];
 
 do {
 	while (compare (buffer + l, &median) < 0)
@@ -93,12 +93,12 @@ if (left < r)
 
 //-----------------------------------------------------------------------------
 
-template <typename _T>
-void CQuickSort< _T >::SortDescending (_T* buffer, int32_t left, int32_t right, comparator compare) 
+template <typename DATA_T>
+void CQuickSort< DATA_T >::SortDescending (DATA_T* buffer, int32_t left, int32_t right, comparator compare) 
 {
 	int32_t	l = left,
 				r = right;
-	_T			m = buffer [(l + r) / 2];
+	DATA_T			m = buffer [(l + r) / 2];
 
 do {
 	while (compare (buffer + l, &m) > 0)
@@ -120,8 +120,8 @@ if (left < r)
 
 // ----------------------------------------------------------------------------
 
-template <typename _T>
-int32_t CQuickSort< _T >::BinSearch (_T* buffer, int32_t l, int32_t r, _T key)
+template <typename DATA_T>
+int32_t CQuickSort< DATA_T >::BinSearch (DATA_T* buffer, int32_t l, int32_t r, DATA_T key)
 {
 	int32_t	m;
 

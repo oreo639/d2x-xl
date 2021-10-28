@@ -65,7 +65,7 @@ void DefaultGameplaySettings (bool bSetup = false);
 static const char *pszGuns [] = {"Laser", "Vulcan", "Spreadfire", "Plasma", "Fusion", "Super Laser", "Gauss", "Helix", "Phoenix", "Omega"};
 static const char *pszDevices [] = {"Full Map", "Ammo Rack", "Converter", "Quad Lasers", "Afterburner", "Headlight", "Slow Motion", "Bullet Time"};
 static int32_t nDeviceFlags [] = {PLAYER_FLAGS_FULLMAP, PLAYER_FLAGS_AMMO_RACK, PLAYER_FLAGS_CONVERTER, PLAYER_FLAGS_QUAD_LASERS,
-											 PLAYER_FLAGS_AFTERBURNER, PLAYER_FLAGS_HEADLIGHT, PLAYER_FLAGS_SLOWMOTION, PLAYER_FLAGS_BULLETTIME};
+								  PLAYER_FLAGS_AFTERBURNER, PLAYER_FLAGS_HEADLIGHT, PLAYER_FLAGS_SLOWMOTION, PLAYER_FLAGS_BULLETTIME};
 
 static int32_t optGuns, optDevices;
 
@@ -391,6 +391,8 @@ do {
 				}
 			}
 		}
+	if (!IsMultiGame || IsCoopGame)
+		m.AddCheck ("boost omega", TXT_BOOST_OMEGA_CANNON, gameOpts->gameplay.bBoostOmega, KEY_N, HTX_BOOST_OMEGA_CANNON);
 	m.AddText ("", "");
 	m.AddMenu ("reorder guns", TXT_PRIMARY_PRIO, KEY_P, HTX_OPTIONS_PRIMPRIO);
 	m.AddMenu ("reorder missiles", TXT_SECONDARY_PRIO, KEY_E, HTX_OPTIONS_SECPRIO);
@@ -439,6 +441,8 @@ if (!bRestricted) {
 			SetDefaultWeaponProps ();
 		}
 	}
+if (!IsMultiGame || IsCoopGame)
+	GET_VAL (gameOpts->gameplay.bBoostOmega, "boost omega");
 GetShipSelection (m, optShip);
 DefaultGameplaySettings ();
 if (IsMultiGame && !COMPETITION && EGI_FLAG (bSmokeGrenades, 0, 0, 0))

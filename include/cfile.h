@@ -22,33 +22,33 @@ class CFilename {
 	public:
 		char m_buffer [FILENAME_LEN + 1];
 	public:
-		CFilename () { m_buffer [0] = '\0'; }
-		inline CFilename& operator= (CFilename& other) { 
+		CFilename () noexcept { m_buffer [0] = '\0'; }
+		inline CFilename& operator= (CFilename& other) noexcept {
 			memcpy (m_buffer, other.m_buffer, sizeof (m_buffer)); 
 			return *this;
 			}
-		inline CFilename& operator= (const char* other) { 
+		inline CFilename& operator= (const char* other) noexcept {
 			strncpy (m_buffer, other, sizeof (m_buffer)); 
 			return *this;
 			}
-		inline bool operator== (CFilename& other)
+		inline bool operator== (CFilename& other) noexcept
 			{ return !strcmp (m_buffer, other.m_buffer); }
-		inline bool operator< (CFilename& other)
+		inline bool operator< (CFilename& other) noexcept
 			{ return strcmp (m_buffer, other.m_buffer) < 0; }
-		inline bool operator> (CFilename& other)
+		inline bool operator> (CFilename& other) noexcept
 			{ return strcmp (m_buffer, other.m_buffer) > 0; }
-		inline operator const char*()
-			{ return reinterpret_cast<char*> (&m_buffer [0]); }
+		inline operator const char*() noexcept
+			{ return m_buffer; }
 	};
 
 
 typedef struct CFILE {
-	FILE		*file;
-	char		*filename;
+	FILE*	file;
+	char*	filename;
 	size_t	size;
 	size_t	libOffset;
 	size_t	rawPosition;
-	char		buffer [16384];
+	char	buffer [16384];
 	int32_t	bufLen;
 	int32_t	pBuffer;
 } CFILE;

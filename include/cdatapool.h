@@ -1,9 +1,9 @@
-#ifndef _CDATAPOOL_H
-#define _CDATAPOOL_H
+#pragma once
 
 #include "carray.h"
 
 //-----------------------------------------------------------------------------
+// list of data buffers for other data containers
 
 template < class _T > 
 class CDataPool {
@@ -123,5 +123,3 @@ class CDataPool {
 
 
 //-----------------------------------------------------------------------------
-
-#endif //_CDATAPOOL_H

@@ -154,16 +154,18 @@ return 1;
 // ---------------------------------------------------------------------------------
 
 #define OMEGA_PLASMA 0
-#if 0
-#	define OMEGA_BOLTS 1
+#if 1
+#	define OMEGA_BOLTS 2
 #	define OMEGA_NODES 150
-#	define OMEGA_FRAMES 30
+#	define OMEGA_FRAMES 3
 #	define OMEGA_LIFE -50000
+#	define OMEGA_WIDTH 20
 #else
 #	define OMEGA_BOLTS 8
 #	define OMEGA_NODES 150
 #	define OMEGA_FRAMES 3
 #	define OMEGA_LIFE -5000
+#	define OMEGA_WIDTH 9
 #endif
 
 static tLightningInfo omegaLightningInfo [2] = {
@@ -171,16 +173,16 @@ static tLightningInfo omegaLightningInfo [2] = {
 	OMEGA_LIFE, // nLife
 	0, // nDelay
 	0, // nLength
-	-4, // nAmplitude
+	8, // nAmplitude
 	0, // nOffset
 	-1, // nWayPoint
-	OMEGA_BOLTS, // nBolts
+	3 * OMEGA_BOLTS / 4, // nBolts
 	-1, // nId
 	-1, // nTarget
 	OMEGA_NODES, // nNodes
 	0, // nChildren
 	OMEGA_FRAMES, // nFrames
-	3, // nWidth
+	OMEGA_WIDTH, // nWidth
 	0, // nAngle
 	-1, // nStyle
 	1, // nSmoothe
@@ -197,16 +199,16 @@ static tLightningInfo omegaLightningInfo [2] = {
 	OMEGA_LIFE, // nLife
 	0, // nDelay
 	0, // nLength
-	4, // nAmplitude
+	-4, // nAmplitude
 	0, // nOffset
 	-1, // nWayPoint
-	3 * OMEGA_BOLTS / 4, // nBolts
+	OMEGA_BOLTS * 2, // nBolts
 	-1, // nId
 	-1, // nTarget
 	OMEGA_NODES, // nNodes
 	0, // nChildren
 	OMEGA_FRAMES, // nFrames
-	9, // nWidth
+	OMEGA_WIDTH / 3, // nWidth
 	0, // nAngle
 	-1, // nStyle
 	1, // nSmoothe
@@ -255,7 +257,7 @@ else {
 		pHandle->nLightning [1] = -1;
 	else {
 		m_nHandles++;
-#if 0
+#if 1
 		pHandle->nLightning [1] = -1;
 #else
 		pHandle->nLightning [1] = (gameOpts->render.nQuality < 3) ? -1 : lightningManager.Create (omegaLightningInfo [1], &vMuzzle, vTarget, NULL, nObject);

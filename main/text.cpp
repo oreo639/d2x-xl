@@ -2009,6 +2009,7 @@ const char *defaultGameTexts [][2] = {
  {"~Glanzlicht: %d%%", "~Specular light: %d%%"},
  {"~Direktes Licht: %d%%", "~Direct light: %d%%"},
  {"~Lightmaps neu berechnen", "~Rebuild lightmaps"},
+ { "Omegakanone ~Verstaerken", "boost omega ca~Nnon" },
 
 #if 0
  {"", ""},
@@ -2788,6 +2789,8 @@ const char *defaultHelpTexts [][2] = {
  {"Hier kann der fuer direkten Lichteinfall verwendete Lichtanteil eingestellt\nwerden.", "Adjust the light contribution of direct light here."},
  {"Wenn angekreuzt, werden die Lightmaps fuer jede Mission,\ndie gestartet oder geladen wird, neu berechnet.\n\nDiese Einstellung wird nicht gespeichert, wenn das Programm beendet wird.", 
   "If checked, lightmaps are recomputed\nfor every mission being started or loaded.\n\nThis setting is not stored when the program is terminated."},
+  { "Wenn angekreuzt, wird die Omega-Kanone erheblich staerker.",
+   "If checked, the Omega cannon will be significantly stronger." },
 #if 0
  {"", ""},
 #endif

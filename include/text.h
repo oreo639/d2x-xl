@@ -2023,10 +2023,10 @@ void LoadGameTexts(void);
 #define TXT_SPECULAR_LIGHT				GT(1265)
 #define TXT_DIRECT_LIGHT				GT(1266)
 #define TXT_REBUILD_LIGHTMAPS			GT(1267)
+#define TXT_BOOST_OMEGA_CANNON			GT(1268)
 
 #if 0
 
-#define TXT_					GT(1268)
 #define TXT_					GT(1269)
 #define TXT_					GT(1270)
 #define TXT_					GT(1271)
@@ -2639,10 +2639,10 @@ void LoadGameTexts(void);
 #define HTX_SPECULAR_LIGHT				HT(459)
 #define HTX_DIRECT_LIGHT				HT(460)
 #define HTX_REBUILD_LIGHTMAPS			HT(461)
+#define HTX_BOOST_OMEGA_CANNON			HT(462)
 
 #if 0
 
-#define HTX_						HT(462)
 #define HTX_						HT(463)
 #define HTX_						HT(464)
 #define HTX_						HT(465)

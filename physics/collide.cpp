@@ -42,6 +42,7 @@ COPYRIGHT 1993-1999 PARALLAX SOFTWARE CORPORATION.  ALL RIGHTS RESERVED.
 #include "sphere.h"
 #include "monsterball.h"
 #include "marker.h"
+#include "omega.h"
 
 #ifdef FORCE_FEEDBACK
 #include "tactile.h"
@@ -714,11 +715,6 @@ else if (info.nType == OBJ_DEBRIS)
 RETURN
 }
 
-//	Copied from laser.c!
-#define	DESIRED_OMEGA_DIST	 (I2X (5))		//	This is the desired distance between blobs.  For distances > MIN_OMEGA_BLOBS*DESIRED_OMEGA_DIST, but not very large, this will apply.
-#define	MAX_OMEGA_BLOBS		16				//	No matter how far away the obstruction, this is the maximum number of blobs.
-#define	MAX_OMEGA_DIST			 (MAX_OMEGA_BLOBS * DESIRED_OMEGA_DIST)		//	Maximum extent of lightning blobs.
-
 //	-----------------------------------------------------------------------------
 //	Return true if ok to do Omega damage.
 int32_t OkToDoOmegaDamage (CObject* pWeapon)
@@ -731,7 +727,7 @@ CObject *pParent = OBJECT (pWeapon->cType.laserInfo.parent.nObject);
 if (pParent->info.nSignature != nParentSig)
 	RETVAL (1)
 fix dist = CFixVector::Dist (pParent->info.position.vPos, pWeapon->info.position.vPos);
-if (dist > MAX_OMEGA_DIST)
+if (dist > gameData.MaxOmegaRange ())
 	RETVAL (0)
 RETVAL (1)
 }

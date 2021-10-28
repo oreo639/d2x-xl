@@ -111,7 +111,7 @@ gameStates.input.bCybermouseActive = 0;
 #if !DBG
 gameStates.input.bGrabMouse = 1;
 #else
-gameStates.input.bGrabMouse = 0;
+gameStates.input.bGrabMouse = 1;
 #endif
 gameStates.input.bSkipControls = 0;
 gameStates.input.bControlsSkipFrame = 0;

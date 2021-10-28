@@ -70,6 +70,7 @@
 #include "lightcluster.h"
 #include "multi.h"
 #include "marker.h"
+#include "omega.h"
 #include "trackobject.h"
 #if USE_DACS
 #	include "dialheap.h"
@@ -2257,6 +2258,41 @@ return
 	(gameStates.app.bHaveExtraGameInfo [IsMultiGame] && !COMPETITION && !EGI_FLAG (bUnnerfD1Weapons, 0, 0, 0))
 	? fix (float (xBaseDamage) * float (extraGameInfo [IsMultiGame].nFusionRamp) / 2)
 	: xBaseDamage;
+}
+
+// ----------------------------------------------------------------------------
+
+bool CGameData::BoostOmega (void)
+{
+	return gameOpts->gameplay.bBoostOmega && (!IsMultiGame || IsCoopGame);
+}
+
+// ----------------------------------------------------------------------------
+
+fix CGameData::MaxOmegaBlobs (void)
+{
+	return BoostOmega () ? MAX_OMEGA_BLOBS * 2 : MAX_OMEGA_BLOBS;
+}
+
+// ----------------------------------------------------------------------------
+
+fix CGameData::MaxOmegaRange (void)
+{
+	return MaxOmegaBlobs () * MAX_OMEGA_BLOB_DIST;
+}
+
+// ----------------------------------------------------------------------------
+
+fix CGameData::OmegaMinTrackableDot (void)
+{
+	return BoostOmega () ? I2X (14) / 16 : I2X (15) / 16;  // ~30 deg : ~20 deg
+}
+
+// ----------------------------------------------------------------------------
+
+fix CGameData::OmegaMaxTrackableRange (void)
+{
+	return MaxOmegaRange ();
 }
 
 // ----------------------------------------------------------------------------

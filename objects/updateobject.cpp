@@ -688,7 +688,7 @@ gameData.objData.update.Reset ();
 ++gameData.objData.nFrameCount;
 FORALL_OBJS (pObj) {
 #if DBG
-	if (pObj->info.nType == OBJ_REACTOR)
+	if (pObj->info.nType == OBJ_PLAYER)
 		BRP;
 #endif
 	if ((pObj->info.nType != OBJ_NONE) && (pObj->info.nType != OBJ_GHOST) && !(pObj->info.nFlags & OF_SHOULD_BE_DEAD) && !pObj->Update ()) {

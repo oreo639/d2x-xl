@@ -454,7 +454,7 @@ void CSubModel::SortFaces (CBitmap* pTexture)
 for (int32_t i = 0; i < m_nFaces; i++)
 	m_faces [i].SetTexture (pTexture);
 if (m_nFaces > 1)
-	qs.SortAscending (m_faces, 0, static_cast<uint32_t> (m_nFaces - 1), &RenderModel::CFace::Compare);
+	qs.SortAscending (m_faces, 0, static_cast<uint32_t> (m_nFaces - 1), RenderModel::CFace::Compare);
 }
 
 //------------------------------------------------------------------------------

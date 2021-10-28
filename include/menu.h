@@ -382,7 +382,7 @@ public:
 	int32_t AddInputBox (const char* szId, const char* szText, int32_t nLen, int32_t nKey = 0, const char* szHelp = NULL);
 	int32_t AddNumber (const char* szId, const char* szText, int32_t nValue, int32_t nMin, int32_t nMax);
 	int32_t AddGauge (const char* szId, const char* szText, int32_t nValue, int32_t nMax);
-	inline CMenuItem& Item (int32_t i = -1) {return (i < 0) ? m_data.buffer [ToS () - 1] : m_data.buffer [i];	}
+	inline CMenuItem& Item (int32_t i = -1) {return (i < 0) ? *Buffer (ToS () - 1) : *Buffer (i);	}
 
 	inline CBackground& Background (void) { return m_background; }
 	void SetBoxColor (uint8_t red = PAL2RGBA (22), uint8_t green = PAL2RGBA (22), uint8_t blue = PAL2RGBA (38)) { Background ().SetBoxColor (red, green, blue); }

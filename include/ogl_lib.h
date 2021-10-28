@@ -202,9 +202,9 @@ class COglStates {
 		int32_t	nColorBits;
 		int32_t	nPreloadTextures;
 		uint8_t	nTransparencyLimit;
-		GLint	nDepthBits;
-		GLint	nStencilBits;
-		GLint	nStereo;
+		GLint		nDepthBits;
+		GLint		nStencilBits;
+		GLint		nStereo;
 		int32_t	bEnableTexture2D;
 		int32_t	bEnableTexClamp;
 		int32_t	bEnableScissor;
