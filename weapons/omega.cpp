@@ -95,10 +95,10 @@ if (xGoalDist < MIN_OMEGA_BLOBS * MIN_OMEGA_BLOB_DIST) {
 		nOmegaBlobs = 1;
 	}
 else {
-	xOmegaBlobDist = DESIRED_OMEGA_DIST;
+	xOmegaBlobDist = MAX_OMEGA_BLOB_DIST;
 	nOmegaBlobs = xGoalDist / xOmegaBlobDist;
-	if (nOmegaBlobs > MAX_OMEGA_BLOBS) {
-		nOmegaBlobs = MAX_OMEGA_BLOBS;
+	if (nOmegaBlobs > gameData.MaxOmegaBlobs ()) {
+		nOmegaBlobs = gameData.MaxOmegaBlobs ();
 		xOmegaBlobDist = xGoalDist / nOmegaBlobs;
 		}
 	else if (nOmegaBlobs < MIN_OMEGA_BLOBS) {
@@ -159,7 +159,7 @@ for (i = 0; i < nOmegaBlobs; i++) {
 		pObj->mType.physInfo.velocity *= (I2X (4));
 		pObj->SetSize (WI_BlobSize (pObj->info.nId));
 		pObj->info.xShield = FixMul (OMEGA_DAMAGE_SCALE * gameData.timeData.xFrame, WI_Strength (pObj->info.nId, gameStates.app.nDifficultyLevel));
-		if (gameData.gameplay.BoostOmega ())
+		if (gameData.BoostOmega ())
 			pObj->info.xShield *= 4;
 		pObj->cType.laserInfo.parent.nType = pParentObj->info.nType;
 		pObj->cType.laserInfo.parent.nSignature = pParentObj->info.nSignature;
@@ -290,7 +290,7 @@ else {	//	If couldn't lock on anything, fire straight ahead.
 
 	vPerturb = CFixVector::Random();
 	perturbed_fvec = bSpectate ? gameStates.app.playerPos.mOrient.m.dir.f : pParentObj->info.position.mOrient.m.dir.f + vPerturb * (I2X (1) / 16);
-	vTargetPos = *vMuzzle + perturbed_fvec * MAX_OMEGA_DIST;
+	vTargetPos = *vMuzzle + perturbed_fvec * gameData.MaxOmegaRange ();
 	CHitQuery	hitQuery (FQ_IGNORE_POWERUPS | FQ_TRANSPOINT | FQ_CHECK_OBJS, vMuzzle, &vTargetPos, nFiringSeg, OBJ_IDX (pParentObj), 0, 0, ++gameData.physicsData.bIgnoreObjFlag);
 	CHitResult	hitResult;
 	int32_t fate = FindHitpoint (hitQuery, hitResult);

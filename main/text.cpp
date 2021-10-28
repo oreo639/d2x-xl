@@ -2009,7 +2009,7 @@ const char *defaultGameTexts [][2] = {
  {"~Glanzlicht: %d%%", "~Specular light: %d%%"},
  {"~Direktes Licht: %d%%", "~Direct light: %d%%"},
  {"~Lightmaps neu berechnen", "~Rebuild lightmaps"},
- { "Omegakanone ~Verstaerken", "boost omega ca~Nnon" },
+ { "Omegakanone ~Verstaerken", "impro~Ve omega cannon" },
 
 #if 0
  {"", ""},
