@@ -56,10 +56,6 @@ typedef struct CFILE {
 class CFile {
 	private:
 		CFILE	m_info;
-#ifdef _WIN32
-		inline // g++ can be such a PITA
-#endif
-		int32_t FillBuffer (void);
 
 	public:
 		CFile () { Init (); }
@@ -77,6 +73,7 @@ class CFile {
 		int32_t Error (void);
 		size_t Write (const void *buf, int32_t elsize, int32_t nelem, int32_t bCompressed = 0);
 		inline int32_t GetC (void) { return (FillBuffer () == EOF) ? EOF : m_info.buffer [m_info.pBuffer++]; }
+		int32_t FillBuffer (void);
 
 		size_t ReadCompressed (const void* buf, uint32_t bufLen);
 		size_t WriteCompressed (const void* buf, uint32_t bufLen);

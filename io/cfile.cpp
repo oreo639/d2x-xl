@@ -494,9 +494,6 @@ return char_written;
 
 // ----------------------------------------------------------------------------
 
-#ifdef _WIN32
-inline 
-#endif
 int32_t CFile::FillBuffer (void)
 {
 if (m_info.pBuffer >= m_info.bufLen) {
