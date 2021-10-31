@@ -382,6 +382,7 @@ void CHUDIcons::DrawWeapons (void)
 {
 	int32_t	nWeaponIcons = /*(gameStates.render.cockpit.nType == CM_STATUS_BAR) ? 3 :*/ extraGameInfo [0].nWeaponIcons;
 	int32_t	nIconScale = (gameOpts->render.weaponIcons.bSmall || (gameStates.render.cockpit.nType != CM_FULL_SCREEN)) ? 4 : 3;
+	int32_t	hIconMax = CCanvas::Current ()->Height() / 20;
 	int32_t	nIconPos = nWeaponIcons - 1;
 	int32_t	nMaxAutoSelect;
 	int32_t	nDmgIconWidth = 0;
@@ -406,6 +407,7 @@ void CHUDIcons::DrawWeapons (void)
 						h = -1;
 	static int32_t bInitIcons = 1;
 	static int32_t nIdIcons [2][10] = {{0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0}};
+	static float fSizeScale = 1.0f;
 
 if (gameOpts->render.weaponIcons.bShowAmmo) {
 	fontManager.SetCurrent (SMALL_FONT);
@@ -466,6 +468,11 @@ for (int32_t i = 0; i < 2; i++) {
 			h = pBm->Height ();
 		wIcon = (int32_t) ((w + nIconScale - 1) / nIconScale * m_xScale);
 		hIcon = (int32_t) ((h + nIconScale - 1) / nIconScale * m_yScale);
+		if (hIcon > hIconMax) {
+			fSizeScale = float (hIconMax) / float (hIcon);
+			hIcon = hIconMax;
+			wIcon = int32_t (float (wIcon) * fSizeScale);
+		}
 
 		if (bInitIcons)
 			continue;
@@ -483,7 +490,7 @@ for (int32_t i = 0; i < 2; i++) {
 			OglDrawEmptyRect (cockpit->X (x - 1), y - hIcon - 1, cockpit->X (x + wIcon + 2), y + 2);
 			}
 
-		cockpit->BitBlt (-1, nIconScale * (x + (w - pBm->Width ()) / (2 * nIconScale)), nIconScale * (y - hIcon), false, true, I2X (nIconScale), 0, pBm);
+		cockpit->BitBlt (-1, nIconScale * (x + (w - pBm->Width ()) / (2 * nIconScale)), nIconScale * (y - hIcon), false, true, I2X (nIconScale), fSizeScale, 0, pBm);
 
 		nAmmoColor = GREEN_RGBA;
 		*szAmmo = '\0';
@@ -594,6 +601,7 @@ if (ogl.IsOculusRift ())
 	CBitmap*	pBm;
 	char		szCount [20];
 	int32_t	nIconScale = (gameOpts->render.weaponIcons.bSmall || (gameStates.render.cockpit.nType != CM_FULL_SCREEN)) ? 3 : 2;
+	int32_t	hIconMax = CCanvas::Current ()->Height () / 20;
 	int32_t	nIconPos = extraGameInfo [0].nWeaponIcons & 1;
 	int32_t	nHiliteColor = gameOpts->app.bColorblindFriendly;
 	int32_t	fw, fh, faw;
@@ -603,6 +611,12 @@ if (ogl.IsOculusRift ())
 				x, y, dy;
 	int32_t	w = bmpInventory->Width (), 
 				h = bmpInventory->Width ();
+	float		fSizeScale = 1.0f;
+	if (h > hIconMax) {
+		fSizeScale = float (hIconMax) / float (h);
+		h = hIconMax;
+		w = int32_t (float (w) * fSizeScale);
+	}
 	int32_t	wIcon = (int32_t) ((w + nIconScale - 1) / nIconScale * m_xScale), 
 				hIcon = (int32_t) ((h + nIconScale - 1) / nIconScale * m_yScale);
 	int32_t	nDmgIconWidth = 0;
@@ -612,7 +626,7 @@ if (ogl.IsOculusRift ())
 									     gameData.objData.pConsole->CriticalDamage ()))) ? 80 : 0;
 #endif
 	float		fLineWidth = float (gameData.renderData.scene.Width ()) / 640.0f;
-	uint8_t		alpha = gameOpts->render.weaponIcons.alpha;
+	uint8_t	alpha = gameOpts->render.weaponIcons.alpha;
 
 	static int32_t nInvFlags [NUM_INV_ITEMS] = {
 		PLAYER_FLAGS_AFTERBURNER, 
@@ -649,7 +663,7 @@ for (j = firstItem; j < n; j++) {
 	pBm = bmInvItems + j;
 	if (j == (n - firstItem + 1) / 2)
 		x += nDmgIconWidth;
-	cockpit->BitBlt (-1, nIconScale * (x + (w - pBm->Width ()) / (2 * nIconScale)), nIconScale * (y - hIcon), false, true, I2X (nIconScale), 0, pBm);
+	cockpit->BitBlt (-1, nIconScale * (x + (w - int32_t (float (pBm->Width ()) * fSizeScale)) / (2 * nIconScale)), nIconScale * (y - hIcon), false, true, I2X (nIconScale), fSizeScale, 0, pBm);
 	//m = 9 - j;
 	*szCount = '\0';
 	if (j == INV_ITEM_HEADLIGHT)

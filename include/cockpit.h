@@ -168,7 +168,7 @@ class CGenericCockpit {
 		inline CCanvas& Window (int32_t nWindow) { return m_info.windows [ nWindow]; }
 		inline void PageInGauge (int32_t nGauge) { LoadTexture (gameData.cockpitData.gauges [!gameStates.render.fonts.bHires][nGauge].index, 0, 0); }
 		inline uint16_t GaugeIndex (int32_t nGauge) { return gameData.cockpitData.gauges [!gameStates.render.fonts.bHires][nGauge].index; }
-		CBitmap* BitBlt (int32_t nGauge, int32_t x, int32_t y, bool bScalePos = true, bool bScaleSize = true, int32_t scale = I2X (1), int32_t orient = 0, CBitmap* pBm = NULL, CBitmap* pBmo = NULL);
+		CBitmap* BitBlt (int32_t nGauge, int32_t x, int32_t y, bool bScalePos = true, bool bScaleSize = true, int32_t scale = I2X (1), float fSizeScale = 1.0f, int32_t orient = 0, CBitmap* pBm = NULL, CBitmap* pBmo = NULL);
 		int32_t _CDECL_ PrintF (int32_t *idP, int32_t x, int32_t y, const char *pszFmt, ...);
 		void Rect (int32_t left, int32_t top, int32_t width, int32_t height) {
 			OglDrawFilledRect (HUD_SCALE_X (left), HUD_SCALE_Y (top), HUD_SCALE_X (width), HUD_SCALE_Y (height));

@@ -97,7 +97,7 @@ return h;
 
 //	-----------------------------------------------------------------------------
 
-CBitmap* CGenericCockpit::BitBlt (int32_t nGauge, int32_t x, int32_t y, bool bScalePos, bool bScaleSize, int32_t scale, int32_t orient, CBitmap* pBm, CBitmap* pOverride)
+CBitmap* CGenericCockpit::BitBlt (int32_t nGauge, int32_t x, int32_t y, bool bScalePos, bool bScaleSize, int32_t scale, float fSizeScale, int32_t orient, CBitmap* pBm, CBitmap* pOverride)
 {
 	CBitmap*	saveBmP = NULL;
 
@@ -127,6 +127,8 @@ if (pBm) {
 		w = ScaleX (w);
 		h = ScaleY (h);
 		}
+	w = int32_t (float (w) * fSizeScale);
+	h = int32_t (float (h) * fSizeScale);
 	//AdjustCockpitXY (x, y);
 	if (ogl.IsSideBySideDevice ()) {
 		x = int32_t (float (x) / X2F (scale)); // unscale
@@ -524,7 +526,7 @@ if (Hide ())
 	static int32_t nIdOrbs = 0, nIdEntropy [2] = {0, 0};
 
 if (gameData.appData.GameMode (GM_HOARD | GM_ENTROPY)) {
-	CBitmap* pBm = BitBlt (-1, x, y, false, false, I2X (1), 0, &gameData.hoardData.icon [gameStates.render.fonts.bHires].bm);
+	CBitmap* pBm = BitBlt (-1, x, y, false, false, I2X (1), 1.0f, 0, &gameData.hoardData.icon [gameStates.render.fonts.bHires].bm);
 
 	x += 3 * pBm->Width () / 2;
 	y += gameStates.render.fonts.bHires + 1;
@@ -682,7 +684,7 @@ if (!(pBm = gameData.pigData.tex.bitmaps [0] + i))
 	return;
 color = (m_info.weaponBoxStates [nWeaponType] == WS_SET) ? 255 : int32_t (X2F (m_info.weaponBoxFadeValues [nWeaponType]) / float (FADE_LEVELS) * 255);
 m_info.nColor = RGBA (color, color, color, 255);
-BitBlt (-1, xPic, yPic, true, true, (gameStates.render.cockpit.nType == CM_FULL_SCREEN) ? I2X (2) : I2X (1), orient, pBm);
+BitBlt (-1, xPic, yPic, true, true, (gameStates.render.cockpit.nType == CM_FULL_SCREEN) ? I2X (2) : I2X (1), 1.0f, orient, pBm);
 m_info.nColor = WHITE_RGBA;
 CCanvas::Current ()->SetColorRGB (255, 255, 255, 255);
 fontManager.SetColorRGBi (GREEN_RGBA, 1, 0, 0);
@@ -838,7 +840,7 @@ bmp = gameData.pigData.tex.bitmaps [0] + vc->frames [framenum].index;
 h = boxofs + nWindow;
 for (x = hudWindowAreas [h].left; x < hudWindowAreas [h].right; x += bmp->Width ())
 	for (y = hudWindowAreas [h].top; y < hudWindowAreas [h].bot; y += bmp->Height ())
-		BitBlt (-1, x, y, true, true, I2X (1), 0, bmp);
+		BitBlt (-1, x, y, true, true, I2X (1), 1.0f, 0, bmp);
 }
 
 //	-----------------------------------------------------------------------------
